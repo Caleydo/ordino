@@ -1,0 +1,35 @@
+{
+  "name": "targid2",
+  "version": "0.0.1",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": "Caleydo/targid2",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "clue": "*"
+  },
+  "caleydo": {
+    "plugins": {
+      "web": [
+        {
+          "type": "application",
+          "name": "Targid V2"
+        }
+      ]
+    },
+    "products": [
+      {
+        "name": "Targid V2",
+        "type": "python",
+        "app": "targid2",
+        "plugins": [
+          "targid2",
+          "caleydo_server"
+        ]
+      }
+    ]
+  },
+  "publishConfig": {
+    "registry": "http://registry.caleydo.org/"
+  }
+}

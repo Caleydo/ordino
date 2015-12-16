@@ -1,0 +1,9 @@
+
+*.log
+*.pot
+*.pyc
+*.swp
+*.lock
+*.map
+*.css
+*.js

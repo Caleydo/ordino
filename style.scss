@@ -21,8 +21,8 @@ main.targid {
     flex-direction: row;
 
     div.lineup {
-      -webkit-flex: 1 1 auto;
-      flex: 1 1 auto;
+      -webkit-flex: 50 1 auto;
+      flex: 50 1 auto;
       background-color: #b2e0ff;
       position: relative;
 
@@ -48,6 +48,12 @@ main.targid {
       }
     }
 
+    div.detail {
+      -webkit-flex: 50 1 auto;
+      flex: 50 1 auto;
+      background-color: #ffcebd;
+    }
+
     div.slider {
       -webkit-flex: 0 0 5px;
       flex: 0 0 5px;
@@ -63,12 +69,6 @@ main.targid {
           cursor: pointer;
         }
       }
-    }
-
-    div.detail {
-      -webkit-flex: 1 1 auto;
-      flex: 1 1 auto;
-      background-color: #ffcebd;
     }
 
     .hide {

@@ -6,7 +6,8 @@
   "dependencies": {
   },
   "peerDependencies": {
-    "clue": "*"
+    "clue": "*",
+    "caleydo_vis_lineup": "*"
   },
   "caleydo": {
     "plugins": {
@@ -14,6 +15,12 @@
         {
           "type": "application",
           "name": "Targid V2"
+        },
+        {
+          "type": "actionFactory",
+          "file": "cmds",
+          "factory": "createCmd",
+          "creates": "(showTargetArea|hideTargetArea|changeRatioTargetArea)"
         }
       ]
     },

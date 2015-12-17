@@ -40,32 +40,25 @@ elems.graph.then((graph) => {
     .on('drag', function () {
       const xy = d3.mouse(this.parentElement);
       const ratio = xy[0] / this.parentElement.getBoundingClientRect().width;
-      $lineup.classed('hide',false).style('flex-grow', 100*ratio);
-      $detail.classed('hide',false).style('flex-grow', 100*(1-ratio));
-      console.log(ratio);
+      $lineup.classed('hide', false).style('flex-grow', 100 * ratio);
+      $detail.classed('hide', false).style('flex-grow', 100 * (1 - ratio));
+    }).on('dragend', function () {
+      const xy = d3.mouse(this.parentElement);
+      const ratio = xy[0] / this.parentElement.getBoundingClientRect().width;
+      graph.push(cmds.changeRatio(elems.$main_ref, ratio));
     }));
 
   elems.$main.select('div.slider i.fa-caret-left').on('click', function () {
     if (d3.event.defaultPrevented) {
       return;
     } // click suppressed
-    if ($lineup.classed('hide')) {
-      $lineup.classed('hide', false);
-    } else {
-      $detail.classed('hide', false);
-      $lineup.classed('hide', true);
-    }
+    graph.push(cmds.hide(elems.$main_ref, 'lineup'));
   });
   elems.$main.select('div.slider i.fa-caret-right').on('click', function () {
     if (d3.event.defaultPrevented) {
       return;
     } // click suppressed
-    if ($detail.classed('hide')) {
-      $detail.classed('hide', false);
-    } else {
-      $lineup.classed('hide', false);
-      $detail.classed('hide', true);
-    }
+    graph.push(cmds.hide(elems.$main_ref, 'detail'));
   });
 
 

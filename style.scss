@@ -2,6 +2,10 @@
  * Created by Samuel Gratzl on 16.12.2015
  */
 
+@import "../clue/styles/vars";
+$select-data-color: orange;
+$hover-data-color: #ffc46b;
+
 main.targid {
   display: -webkit-flex;
   display: flex;
@@ -19,6 +23,28 @@ main.targid {
     div.lineup {
       flex: 1 1 auto;
       background-color: #b2e0ff;
+      position: relative;
+
+      > div {
+        //height: 100%;
+        max-width: none;
+
+        .row.selected rect.bg {
+          stroke: $select-data-color;
+          stroke-width: 1;
+        }
+        .row.hover rect.bg {
+          stroke: $hover-data-color;
+          stroke-width: 1;
+
+        }
+      }
+
+      div.lu {
+        left: 2px;
+        top: 2px;
+
+      }
     }
 
     div.detail {

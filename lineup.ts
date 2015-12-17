@@ -8,7 +8,12 @@ import vector = require('../caleydo_core/vector');
 import tables = require('../caleydo_core/table_impl');
 
 function convertToTable(data: vector.IVector) {
-  return tables.fromVectors([data]);
+  return tables.fromVectors({
+    id: 'test',
+    type: 'table',
+    name: 'test',
+    fqname: 'test'
+  },[data]);
 }
 
 export function create(data: vector.IVector, parent: Element) {

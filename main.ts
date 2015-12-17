@@ -1,12 +1,15 @@
 /**
  * Created by Samuel Gratzl on 16.12.2015
  */
-/// <amd-dependency path="./lineup" name="lineup"/>
-declare const lineup:any;
 
 import template = require('../clue/template');
 import cmds = require('./cmds');
 import cmode = require('../caleydo_provenance/mode');
+import datas = require('../caleydo_core/data');
+import matrix = require('../caleydo_core/matrix');
+import lineup = require('./lineup');
+import detail = require('./detail');
+import d3 = require('d3');
 
 import $ = require('jquery');
 
@@ -25,7 +28,19 @@ while(helper.firstChild) {
 }
 
 elems.graph.then((graph) => {
-  const l = lineup.create(main.querySelector('div.lineup'));
+  datas.list().then((data) => {
+    var vectors = data.filter((d) => d.desc.type === 'matrix' && d.idtypes[1].name === 'GENE_SYMBOL');
+
+    var $buttons = d3.select('div.browser').selectAll('button').data(vectors);
+    $buttons.enter().append('button')
+      .on('click', (d: matrix.IMatrix) => {
+        d = d.t;
+        lineup.create(d.slice(0), main.querySelector('div.lineup'));
+        detail.create(d, main.querySelector('div.detail'));
+      });
+    $buttons.text((d) => d.desc.name);
+    $buttons.exit().remove();
+  });
 });
 
 elems.jumpToStored();

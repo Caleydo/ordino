@@ -7,10 +7,7 @@ import cmds = require('./cmds');
 import cmode = require('../caleydo_provenance/mode');
 import datas = require('../caleydo_core/data');
 import matrix = require('../caleydo_core/matrix');
-import lineup = require('./lineup');
-import detail = require('./detail');
 import d3 = require('d3');
-
 import $ = require('jquery');
 
 let helper = document.getElementById('app');
@@ -26,6 +23,20 @@ main.classList.add('targid');
 while (helper.firstChild) {
   main.appendChild(helper.firstChild);
 }
+
+var $left_data = $('div.browser');
+if (cmode.getMode().exploration < 0.8) {
+  $left_data.hide();
+} else {
+  $left_data.show();
+}
+elems.on('modeChanged', function (event, new_) {
+  if (new_.exploration < 0.8) {
+    $left_data.animate({height: 'hide'}, 'fast');
+  } else {
+    $left_data.animate({height: 'show'}, 'fast');
+  }
+});
 
 var lineup_instance,
   detail_instance;
@@ -69,15 +80,8 @@ elems.graph.then((graph) => {
     $buttons.enter().append('button')
       .on('click', (d:matrix.IMatrix) => {
         d = d.t;
-        if (lineup_instance) {
-          lineup_instance.then((v) => v.destroy());
-        }
-        lineup_instance = lineup.create(d.slice(0), main.querySelector('div.lineup'));
-
-        if (detail_instance) {
-          detail_instance.destroy();
-        }
-        detail_instance = detail.create(d, main.querySelector('div.detail'));
+        const data_ref = graph.findOrAddObject(d, d.desc.name, 'data');
+        graph.push(cmds.selectData(elems.$main_ref, data_ref));
       });
     $buttons.text((d) => d.desc.name);
     $buttons.exit().remove();

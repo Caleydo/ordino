@@ -1,8 +1,8 @@
 /**
  * Created by Samuel Gratzl on 16.12.2015
  */
-
 @import "../clue/styles/vars";
+
 $select-data-color: orange;
 $hover-data-color: #ffc46b;
 
@@ -23,8 +23,10 @@ main.targid {
     div.lineup {
       -webkit-flex: 50 1 auto;
       flex: 50 1 auto;
-      background-color: #b2e0ff;
       position: relative;
+
+      border: 2px solid gray;
+      border-radius: 5px;
 
       > div {
         //height: 100%;
@@ -51,14 +53,15 @@ main.targid {
     div.detail {
       -webkit-flex: 50 1 auto;
       flex: 50 1 auto;
-      background-color: #ffcebd;
+
+      border: 2px solid gray;
+      border-radius: 5px;
     }
 
     div.slider {
       -webkit-flex: 0 0 5px;
       flex: 0 0 5px;
       background-color: #dedede;
-      border-radius: 5px;
 
       cursor: ew-resize;
       position: relative;
@@ -79,6 +82,22 @@ main.targid {
 
   div.browser {
     height: 20vh;
-    background-color: #b0fffd;
+    margin: 2px;
+
+    border: 1px solid $exploration-stage;
+    border-radius: 5px;
+
+    div.header {
+      background-color: $exploration-stage;
+    }
+
+    h2 {
+      margin-top: 0;
+      padding: 0.2em 0.5em;
+      font-size: 18px;
+      margin-bottom: 0.1em;
+      color: $core_colour_text;
+      vertical-align: middle;
+    }
   }
 }

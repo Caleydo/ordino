@@ -15,9 +15,11 @@ export class DetailView {
 
   constructor(private data: datatypes.IDataType, parent: Element) {
     this.node = document.createElement('div');
+    (<any>this.node).__data__ = data;
     C.onDOMNodeRemoved(this.node, this.destroy.bind(this));
     parent.appendChild(this.node);
     data.on('select-selected', this.s);
+
   }
 
   private destroy() {

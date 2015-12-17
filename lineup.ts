@@ -2,7 +2,6 @@
  * Created by Samuel Gratzl on 16.12.2015.
  */
 
-import C = require('../caleydo_core/main');
 import vis = require('../caleydo_core/vis');
 import vector = require('../caleydo_core/vector');
 import tables = require('../caleydo_core/table_impl');

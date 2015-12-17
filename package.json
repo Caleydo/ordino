@@ -20,7 +20,7 @@
           "type": "actionFactory",
           "file": "cmds",
           "factory": "createCmd",
-          "creates": "(showTargetArea|hideTargetArea|changeRatioTargetArea)"
+          "creates": "(showTargetArea|hideTargetArea|changeRatioTargetArea|selectTargidData)"
         }
       ]
     },

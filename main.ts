@@ -38,8 +38,6 @@ elems.on('modeChanged', function (event, new_) {
   }
 });
 
-var lineup_instance,
-  detail_instance;
 
 elems.graph.then((graph) => {
 

@@ -3,8 +3,6 @@
  */
 
 import C = require('../caleydo_core/main');
-import vis = require('../caleydo_core/vis');
-import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import datatypes = require('../caleydo_core/datatype');
 

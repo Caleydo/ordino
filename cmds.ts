@@ -2,7 +2,6 @@
  * Created by Samuel Gratzl on 16.12.2015.
  */
 
-import C = require('../caleydo_core/main');
 import prov = require('../caleydo_provenance/main');
 import datatypes = require('../caleydo_core/datatype');
 import d3 = require('d3');
@@ -23,7 +22,7 @@ export function changeRatioImpl(inputs, parameter) {
 
   return {
     inverse: changeRatio(inputs[0], old)
-  }
+  };
 }
 
 export function hideImpl(inputs, parameter) {
@@ -41,17 +40,16 @@ export function hideImpl(inputs, parameter) {
 
   return {
     inverse: show(inputs[0], parameter.elem)
-  }
+  };
 }
 export function showImpl(inputs, parameter) {
   const $main = inputs[0].value;
-  const hideLineUp = parameter.elem === 'lineup';
   const $elem = $main.select('div.' + parameter.elem);
   $elem.classed('hide', false);
 
   return {
     inverse: hide(inputs[0], parameter.elem)
-  }
+  };
 }
 
 
@@ -67,11 +65,11 @@ export function selectDataImpl(inputs, parameter, graph) {
     if (data) {
       lineup.create(data.slice(0), <Element>l.node());
 
-      detail.create(data, <Element>l.node());
+      detail.create(data, <Element>d.node());
     }
     return {
       inverse: selectData(inputs[0], prev ? graph.findObject(prev) : null)
-    }
+    };
   });
 }
 

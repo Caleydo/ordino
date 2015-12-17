@@ -17,6 +17,12 @@
         }
       ]
     },
+    "dependencies": {
+      "web": {
+        "d3": "~3.5.5",
+        "lineupjsN": "https://github.com/sgratzl/lineup.js.git"
+      }
+    },
     "products": [
       {
         "name": "Targid V2",

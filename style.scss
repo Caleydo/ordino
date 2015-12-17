@@ -2,3 +2,33 @@
  * Created by Samuel Gratzl on 16.12.2015
  */
 
+main.targid {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+
+  div.content {
+    flex: 1 1 auto;
+
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+
+    div.lineup {
+      flex: 1 1 auto;
+      background-color: #b2e0ff;
+    }
+
+    div.detail {
+      flex: 2 1 auto;
+      background-color: #ffcebd;
+    }
+  }
+
+  div.browser {
+    height: 20vh;
+    background-color: #b0fffd;
+  }
+}

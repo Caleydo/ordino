@@ -22,6 +22,10 @@ export class DetailView {
 
   private destroy() {
     this.data.off('select-selected', this.s);
+    const n = (<any>this).node;
+    if (n && n.parentNode && !(window.event && window.event.type === 'DOMNodeRemoved' && window.event.target === n)) {
+      n.parentNode.removeChild(n);
+    }
   }
 
   private select(event: any, range : ranges.Range) {

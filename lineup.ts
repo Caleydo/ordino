@@ -19,5 +19,7 @@ function convertToTable(data: vector.IVector) {
 export function create(data: vector.IVector, parent: Element) {
   const table = convertToTable(data);
   var lineup = vis.list(table).filter((v) => v.id === 'caleydo-vis-lineup')[0];
-  return lineup.load().then((p) => p.factory(table, parent));
+  return lineup.load().then((p) => p.factory(table, parent, {
+    rowNames: true
+  }));
 }

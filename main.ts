@@ -23,20 +23,68 @@ const elems = template.create(document.body, {
 
 const main = <HTMLElement>elems.$main.node();
 main.classList.add('targid');
-while(helper.firstChild) {
+while (helper.firstChild) {
   main.appendChild(helper.firstChild);
 }
 
+var lineup_instance,
+  detail_instance;
+
 elems.graph.then((graph) => {
+
+  const $lineup = elems.$main.select('div.lineup');
+  const $detail = elems.$main.select('div.detail');
+
+  elems.$main.select('div.slider').call(d3.behavior.drag()
+    .on('dragstart', () => (<any>d3.event).sourceEvent.stopPropagation())
+    .on('drag', function () {
+      const xy = d3.mouse(this.parentElement);
+      const ratio = xy[0] / this.parentElement.getBoundingClientRect().width;
+      $lineup.classed('hide',false).style('flex-grow', 100*ratio);
+      $detail.classed('hide',false).style('flex-grow', 100*(1-ratio));
+      console.log(ratio);
+    }));
+
+  elems.$main.select('div.slider i.fa-caret-left').on('click', function () {
+    if (d3.event.defaultPrevented) {
+      return;
+    } // click suppressed
+    if ($lineup.classed('hide')) {
+      $lineup.classed('hide', false);
+    } else {
+      $detail.classed('hide', false);
+      $lineup.classed('hide', true);
+    }
+  });
+  elems.$main.select('div.slider i.fa-caret-right').on('click', function () {
+    if (d3.event.defaultPrevented) {
+      return;
+    } // click suppressed
+    if ($detail.classed('hide')) {
+      $detail.classed('hide', false);
+    } else {
+      $lineup.classed('hide', false);
+      $detail.classed('hide', true);
+    }
+  });
+
+
   datas.list().then((data) => {
     var vectors = data.filter((d) => d.desc.type === 'matrix' && d.idtypes[1].name === 'GENE_SYMBOL');
 
     var $buttons = d3.select('div.browser').selectAll('button').data(vectors);
     $buttons.enter().append('button')
-      .on('click', (d: matrix.IMatrix) => {
+      .on('click', (d:matrix.IMatrix) => {
         d = d.t;
-        lineup.create(d.slice(0), main.querySelector('div.lineup'));
-        detail.create(d, main.querySelector('div.detail'));
+        if (lineup_instance) {
+          lineup_instance.then((v) => v.destroy());
+        }
+        lineup_instance = lineup.create(d.slice(0), main.querySelector('div.lineup'));
+
+        if (detail_instance) {
+          detail_instance.destroy();
+        }
+        detail_instance = detail.create(d, main.querySelector('div.detail'));
       });
     $buttons.text((d) => d.desc.name);
     $buttons.exit().remove();

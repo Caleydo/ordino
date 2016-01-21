@@ -27,7 +27,7 @@
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
-        "lineupjsN": "https://github.com/sgratzl/lineup.js.git"
+        "lineupjs": "https://github.com/Caleydo/lineup.js.git"
       }
     },
     "products": [

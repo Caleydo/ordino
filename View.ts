@@ -3,9 +3,8 @@
  */
 
 import prov = require('../caleydo_provenance/main');
-import {IEventHandler, EventHandler} from "../caleydo_core/event";
-import {IPluginDesc} from "../caleydo_core/plugin";
-import {IPlugin} from "../caleydo_core/plugin";
+import {EventHandler} from '../caleydo_core/event';
+import {IPluginDesc,IPlugin} from '../caleydo_core/plugin';
 
 
 export enum EViewMode {

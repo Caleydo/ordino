@@ -6,7 +6,6 @@ import template = require('../clue/template');
 import cmode = require('../caleydo_provenance/mode');
 import plugins = require('../caleydo_core/plugin');
 import targid = require('./Targid');
-import d3 = require('d3');
 import $ = require('jquery');
 
 let helper = document.getElementById('app');

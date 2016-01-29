@@ -4,7 +4,6 @@
 
 import prov = require('../caleydo_provenance/main');
 import {AView, EViewMode} from './View';
-import {IPluginDesc} from "../caleydo_core/plugin";
 
 
 export class SimpleView extends AView {

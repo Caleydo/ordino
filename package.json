@@ -23,6 +23,12 @@
           "creates": "(targidFocus|targidCreateView|targidRemoveView)"
         },
         {
+          "type": "actionCompressor",
+          "id": "targidFocusCompressor",
+          "file": "Targid",
+          "factory": "compressFocus"
+        },
+        {
           "id": "lineup",
           "name": "Ranking",
           "type": "targidView",

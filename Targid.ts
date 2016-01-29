@@ -5,11 +5,9 @@
 
 import C = require('../caleydo_core/main');
 import prov = require('../caleydo_provenance/main');
-import datatypes = require('../caleydo_core/datatype');
 import plugins = require('../caleydo_core/plugin');
 import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper} from './View';
-import {IEvent} from "../caleydo_core/event";
 
 export function focusImpl(inputs: prov.IObjectRef<any>[], parameter: any) {
   const targid : Targid = inputs[0].value;
@@ -34,7 +32,7 @@ export function createViewImpl(inputs: prov.IObjectRef<any>[], parameter: any, g
     return {
       created: [ prov.ref(wrapper, 'View '+view.name, prov.cat.visual) ],
       inverse: (inputs, created, removed) => removeView(inputs[0], created[0], oldFocus)
-    }
+    };
   });
 }
 export function removeViewImpl(inputs: prov.IObjectRef<any>[], parameter) {
@@ -45,7 +43,7 @@ export function removeViewImpl(inputs: prov.IObjectRef<any>[], parameter) {
   targid.removeImpl(view, oldFocus);
   return {
     inverse: createView(inputs[0], view.desc.id)
-  }
+  };
 }
 
 export function focus(targid:prov.IObjectRef<Targid>, index: number) {
@@ -78,6 +76,26 @@ export function createCmd(id): prov.ICmdFunction {
       return removeViewImpl;
   }
   return null;
+}
+
+/**
+ * compresses the given path by removing redundant focus operations
+ * @param path
+ * @returns {prov.ActionNode[]}
+ */
+export function compressFocus(path:prov.ActionNode[]) {
+  var last = null;
+  path.forEach((p) => {
+    if (p.f_id === 'targidFocus') {
+      last = p;
+    }
+  });
+  if (!last) {
+    return path;
+  }
+  return path.filter((p) => {
+    return p.f_id !== 'targidFocus' || p === last;
+  });
 }
 
 
@@ -119,13 +137,13 @@ export class Targid {
     return C.resolveIn(100).then(() => this.focusImpl(this.views.length-1));
   }
 
-  removeImpl(view: ViewWrapper, focus?: number) {
+  removeImpl(view: ViewWrapper, focus: number = -1) {
     const i = this.views.indexOf(view);
     view.off('remove', this.removeWrapper);
 
     this.views.splice(i, 1);
     this.update();
-    if (typeof focus === 'undefined') {
+    if (focus < 0) {
       focus = i - 1;
     }
     view.destroy();

@@ -47,6 +47,11 @@ main.targid {
       &.t-hide {
         -webkit-flex-grow: 0.00001;
         flex-grow: 0.00001;
+        border-width: 0;
+
+        > * {
+          display: none;
+        }
       }
     }
   }

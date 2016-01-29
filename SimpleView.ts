@@ -3,30 +3,30 @@
  */
 
 import prov = require('../caleydo_provenance/main');
-import {AView, EViewMode} from './AView';
+import {AView, EViewMode} from './View';
 import {IPluginDesc} from "../caleydo_core/plugin";
 
 
 export class SimpleView extends AView {
-  constructor(graph: prov.ProvenanceGraph, parent: Element, desc: IPluginDesc) {
-    super(graph, parent, desc);
+  constructor(graph: prov.ProvenanceGraph, parent: Element) {
+    super(graph, parent);
     this.$node.classed('simple', true);
 
     this.build();
   }
 
   private build() {
-    this.$node.text('Test');
+    this.$node.html('<div>Test</div>');
   }
 
   modeChanged(mode: EViewMode) {
     super.modeChanged(mode);
-    this.$node.text('Test ' + mode);
+    this.$node.select('div').text('Test ' + mode);
   }
 }
 
-export function create(graph: prov.ProvenanceGraph, parent: Element, desc: IPluginDesc) {
-  return new SimpleView(graph, parent, desc);
+export function create(graph: prov.ProvenanceGraph, parent: Element) {
+  return new SimpleView(graph, parent);
 }
 
 

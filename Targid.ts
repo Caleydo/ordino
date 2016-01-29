@@ -87,11 +87,14 @@ export class Targid {
   ref: prov.IObjectRef<Targid>;
 
   private $node : d3.Selection<Targid>;
+  private $history: d3.Selection<any>;
 
   private removeWrapper = (event: any, view: ViewWrapper) => this.remove(view);
 
   constructor(public graph: prov.ProvenanceGraph, parent: Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
+
+    this.$history = d3.select(parent).insert('div',':first-child').classed('history', true);
     this.$node = d3.select(parent).insert('div',':first-child').classed('targid', true).datum(this);
   }
 
@@ -104,15 +107,15 @@ export class Targid {
   }
 
   remove(index_or_view: number|ViewWrapper) {
-    const view = index_or_view instanceof ViewWrapper ? <ViewWrapper>index_or_view : this.views[<number>index_or_view];
+    const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
     const view_ref = this.graph.findObject(view);
     return this.graph.push(removeView(this.ref, view_ref));
   }
 
   pushImpl(view: ViewWrapper) {
     view.on('remove', this.removeWrapper);
-
     this.views.push(view);
+    this.update();
     return C.resolveIn(100).then(() => this.focusImpl(this.views.length-1));
   }
 
@@ -121,6 +124,7 @@ export class Targid {
     view.off('remove', this.removeWrapper);
 
     this.views.splice(i, 1);
+    this.update();
     if (typeof focus === 'undefined') {
       focus = i - 1;
     }
@@ -138,11 +142,8 @@ export class Targid {
     this.pushImpl(view);
   }
 
-  setInFocus(view: ViewWrapper) {
-    this.focus(this.views.indexOf(view));
-  }
-
-  focus(index: number) {
+  focus(index_or_view: number|ViewWrapper) {
+    const index = typeof index_or_view === 'number' ? <number>index_or_view : this.views.indexOf(<ViewWrapper>index_or_view);
     return this.graph.push(focus(this.ref, index));
   }
 
@@ -160,7 +161,24 @@ export class Targid {
       }
       v.mode = target;
     });
+    this.update();
     return C.resolveIn(1000).then(() => old);
+  }
+
+  private update() {
+    const $views = this.$history.selectAll('div.hview').data(this.views);
+    $views.enter().append('div').classed('hview', true).on('click', (d) => {
+      this.focus(d);
+    }).on('contextmenu', (d) => {
+      d3.event.preventDefault();
+      this.remove(d);
+    });
+    $views
+      .text((d) => d.desc.name)
+      .classed('t-context', (d) => d.mode === EViewMode.CONTEXT)
+      .classed('t-hide', (d) => d.mode === EViewMode.HIDDEN)
+      .classed('t-focus', (d) => d.mode === EViewMode.FOCUS);
+    $views.exit().remove();
   }
 }
 

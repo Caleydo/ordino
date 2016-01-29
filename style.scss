@@ -12,7 +12,7 @@ main.targid {
   -webkit-flex-direction: column;
   flex-direction: column;
 
-  div.content {
+  div.targid {
     flex: 1 1 auto;
 
     display: -webkit-flex;
@@ -20,7 +20,7 @@ main.targid {
     -webkit-flex-direction: row;
     flex-direction: row;
 
-    div.lineup {
+    div.view {
       -webkit-flex: 50 1 auto;
       flex: 50 1 auto;
       position: relative;
@@ -31,52 +31,17 @@ main.targid {
       > div {
         //height: 100%;
         max-width: none;
-
-        .row.selected rect.bg {
-          stroke: $select-data-color;
-          stroke-width: 1;
-        }
-        .row.hover rect.bg {
-          stroke: $hover-data-color;
-          stroke-width: 1;
-
-        }
       }
 
-      div.lu {
-        left: 2px;
-        top: 2px;
-
+      &.focus {
+        transition: flex-grow 1s linear;
+        flex-grow: 3;
       }
-    }
 
-    div.detail {
-      -webkit-flex: 50 1 auto;
-      flex: 50 1 auto;
-
-      border: 2px solid gray;
-      border-radius: 5px;
-    }
-
-    div.slider {
-      -webkit-flex: 0 0 5px;
-      flex: 0 0 5px;
-      background-color: #dedede;
-
-      cursor: ew-resize;
-      position: relative;
-
-      > div {
-
-        i {
-          cursor: pointer;
-        }
+      &.hide {
+        transition: flex-grow 1s linear;
+        flex-grow: 0.00001;
       }
-    }
-
-    .hide {
-      transition: flex-grow 1s linear;
-      flex-grow: 0.00001;
     }
   }
 
@@ -98,6 +63,21 @@ main.targid {
       margin-bottom: 0.1em;
       color: $core_colour_text;
       vertical-align: middle;
+    }
+  }
+
+  div.lu {
+    left: 2px;
+    top: 2px;
+
+    .row.selected rect.bg {
+      stroke: $select-data-color;
+      stroke-width: 1;
+    }
+    .row.hover rect.bg {
+      stroke: $hover-data-color;
+      stroke-width: 1;
+
     }
   }
 }

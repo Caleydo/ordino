@@ -18,9 +18,21 @@
         },
         {
           "type": "actionFactory",
-          "file": "cmds",
+          "file": "Targid",
           "factory": "createCmd",
-          "creates": "(showTargetArea|hideTargetArea|changeRatioTargetArea|selectTargidData)"
+          "creates": "(targidFocus|targidCreateView|targidRemoveView)"
+        },
+        {
+          "id": "lineup",
+          "name": "Ranking",
+          "type": "targidView",
+          "file": "LineUpView"
+        },
+        {
+          "id": "simple",
+          "name": "Simple",
+          "type": "targidView",
+          "file": "SimpleView"
         }
       ]
     },

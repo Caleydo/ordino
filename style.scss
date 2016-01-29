@@ -21,8 +21,9 @@ main.targid {
     flex-direction: row;
 
     div.view {
-      -webkit-flex: 50 1 auto;
-      flex: 50 1 auto;
+      -webkit-flex: 0.00001 1 auto;
+      transition: flex-grow 1s linear;
+      flex: 0.00001 1 auto;
       position: relative;
 
       border: 2px solid gray;
@@ -33,13 +34,18 @@ main.targid {
         max-width: none;
       }
 
-      &.focus {
-        transition: flex-grow 1s linear;
-        flex-grow: 3;
+      &.t-focus {
+        -webkit-flex-grow: 4;
+        flex-grow: 4;
       }
 
-      &.hide {
-        transition: flex-grow 1s linear;
+      &.t-context {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+      }
+
+      &.t-hide {
+        -webkit-flex-grow: 0.00001;
         flex-grow: 0.00001;
       }
     }

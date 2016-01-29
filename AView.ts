@@ -23,7 +23,7 @@ export interface IView extends IEventHandler {
 export class AView extends EventHandler implements IView {
   protected $node : d3.Selection<IView>;
 
-  private mode_ = EViewMode.FOCUS;
+  private mode_ : EViewMode = null;
 
   constructor(protected graph: prov.ProvenanceGraph, parent: Element, public desc: IPluginDesc) {
     super();
@@ -35,12 +35,15 @@ export class AView extends EventHandler implements IView {
       return;
     }
     const b = this.mode_;
-    this.modeChanged(this.mode);
+    this.modeChanged(mode);
     this.fire('modeChanged', this.mode_ = mode, b);
   }
 
   protected modeChanged(mode: EViewMode) {
-    //hook
+    this.$node
+      .classed('t-hide', mode === EViewMode.HIDDEN)
+      .classed('t-focus', mode === EViewMode.FOCUS)
+      .classed('t-context', mode === EViewMode.CONTEXT);
   }
 
   get mode() {

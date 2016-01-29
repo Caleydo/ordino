@@ -3,6 +3,7 @@
  */
 
 
+import C = require('../caleydo_core/main');
 import prov = require('../caleydo_provenance/main');
 import datatypes = require('../caleydo_core/datatype');
 import plugins = require('../caleydo_core/plugin');
@@ -15,11 +16,9 @@ export function focusImpl(inputs: prov.IObjectRef<any>[], parameter: any) {
 
   const index: number = parameter.index;
 
-  const old = targid.focusImpl(index);
-
-  return {
+  return targid.focusImpl(index).then((old) => ({
     inverse: focus(inputs[0], old)
-  }
+  }));
 }
 
 export function createViewImpl(inputs: prov.IObjectRef<any>[], parameter: any, graph: prov.ProvenanceGraph) {
@@ -27,11 +26,13 @@ export function createViewImpl(inputs: prov.IObjectRef<any>[], parameter: any, g
   const viewId: string = parameter.viewId;
   const view = plugins.get('targidView', viewId);
 
+  var instance;
   return view.load().then((plugin) => {
-    const instance = plugin.factory(graph, targid.node, view);
-    const oldFocus = targid.pushImpl(instance);
+    instance = plugin.factory(graph, targid.node, view);
+    return targid.pushImpl(instance);
+  }).then((oldFocus) => {
     return {
-      created: [ prov.ref(view, 'View '+view.name, prov.cat.visual) ],
+      created: [ prov.ref(instance, 'View '+view.name, prov.cat.visual) ],
       inverse: (inputs, created, removed) => removeView(inputs[0], created[0], oldFocus)
     }
   });
@@ -89,7 +90,7 @@ export class Targid {
 
   constructor(private graph: prov.ProvenanceGraph, parent: Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
-    this.$node = d3.select(parent).append('div').classed('targid', true).datum(this);
+    this.$node = d3.select(parent).insert('div',':first-child').classed('targid', true).datum(this);
   }
 
   get node() {
@@ -107,7 +108,7 @@ export class Targid {
 
   pushImpl(view: IView) {
     this.views.push(view);
-    return this.focusImpl(this.views.length-1);
+    return C.resolveIn(100).then(() => this.focusImpl(this.views.length-1));
   }
 
   removeImpl(view: IView, focus?: number) {
@@ -152,7 +153,7 @@ export class Targid {
       }
       v.mode = target;
     });
-    return 0;
+    return C.resolveIn(1000).then(() => old);
   }
 }
 

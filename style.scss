@@ -32,6 +32,9 @@ main.targid {
       > div {
         //height: 100%;
         max-width: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
       }
 
       &.t-focus {
@@ -119,8 +122,12 @@ main.targid {
   }
 
   div.lu {
+    position: absolute;
     left: 2px;
     top: 2px;
+    right: 2px;
+    bottom: 2px;
+    overflow: auto;
 
     .row.selected rect.bg {
       stroke: $select-data-color;

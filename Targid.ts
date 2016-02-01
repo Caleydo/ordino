@@ -7,7 +7,7 @@ import C = require('../caleydo_core/main');
 import prov = require('../caleydo_provenance/main');
 import plugins = require('../caleydo_core/plugin');
 import d3 = require('d3');
-import {ViewWrapper, EViewMode, createWrapper} from './View';
+import {ViewWrapper, EViewMode, createWrapper, createContext} from './View';
 
 export function focusImpl(inputs: prov.IObjectRef<any>[], parameter: any) {
   const targid : Targid = inputs[0].value;
@@ -25,7 +25,7 @@ export function createViewImpl(inputs: prov.IObjectRef<any>[], parameter: any, g
   const view = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(graph, targid.node, view).then((instance) => {
+  return createWrapper(createContext(graph), targid.node, view).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);
   }).then((oldFocus) => {

@@ -3,12 +3,13 @@
  */
 
 import prov = require('../caleydo_provenance/main');
-import {AView, EViewMode} from './View';
+import {AView, EViewMode, IViewContext} from './View';
+import {IView} from "./View";
 
 
 export class SimpleView extends AView {
-  constructor(graph: prov.ProvenanceGraph, parent: Element) {
-    super(graph, parent);
+  constructor(context: IViewContext, parent: Element, options?) {
+    super(context, parent, options);
     this.$node.classed('simple', true);
 
     this.build();
@@ -24,8 +25,8 @@ export class SimpleView extends AView {
   }
 }
 
-export function create(graph: prov.ProvenanceGraph, parent: Element) {
-  return new SimpleView(graph, parent);
+export function create(context: IViewContext, parent: Element, options?) {
+  return new SimpleView(context, parent, options);
 }
 
 

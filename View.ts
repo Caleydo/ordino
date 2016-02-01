@@ -3,31 +3,53 @@
  */
 
 import prov = require('../caleydo_provenance/main');
-import {EventHandler} from '../caleydo_core/event';
+import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc,IPlugin} from '../caleydo_core/plugin';
+import idtypes = require('../caleydo_core/idtype');
+import ranges = require('../caleydo_core/range');
 
 
 export enum EViewMode {
   FOCUS, CONTEXT, HIDDEN
 }
 
-export interface IView {
+export interface IViewContext {
+  graph: prov.ProvenanceGraph;
+  idtype: idtypes.IDType;
+  selection: ranges.Range;
+}
+
+export interface IView extends IEventHandler {
+  //constructor(context: IViewContext, parent: Element, options?);
+
   node: Element;
 
-  modeChanged(mode: EViewMode);
+  modeChanged(mode:EViewMode);
 
   destroy();
 }
 
-export class AView implements IView {
-  protected $node : d3.Selection<IView>;
+export class AView extends EventHandler implements IView {
+  /**
+   * event when one or more elements are selected for the next level
+   * @type {string}
+   * @argument idtype {IDType}
+   * @argument range {Range}
+   */
+  static EVENT_SELECT = 'select';
 
-  constructor(protected graph: prov.ProvenanceGraph, parent: Element) {
+  protected $node:d3.Selection<IView>;
+
+  constructor(protected context:IViewContext, parent:Element, options?) {
+    super();
     this.$node = d3.select(parent).append('div').datum(this);
   }
 
+  protected selectItems(idtype:idtypes.IDType, range:ranges.Range) {
+    this.fire(AView.EVENT_SELECT, idtype, range);
+  }
 
-  modeChanged(mode: EViewMode) {
+  modeChanged(mode:EViewMode) {
     //hook
   }
 
@@ -42,19 +64,20 @@ export class AView implements IView {
 }
 
 export class ViewWrapper extends EventHandler {
-  private $node : d3.Selection<ViewWrapper>;
+  private $node:d3.Selection<ViewWrapper>;
 
-  private mode_ : EViewMode = null;
+  private mode_:EViewMode = null;
 
-  private instance : IView = null;
+  private instance:IView = null;
 
-  constructor(protected graph: prov.ProvenanceGraph, parent: Element, private plugin : IPlugin) {
+  constructor(protected context:IViewContext, parent:Element, private plugin:IPlugin, options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
-    this.instance = plugin.factory(graph, this.node);
+    this.instance = plugin.factory(context, this.node, options);
+    super.propagate(this.instance, 'select');
   }
 
-  set mode(mode: EViewMode) {
+  set mode(mode:EViewMode) {
     if (this.mode_ === mode) {
       return;
     }
@@ -63,8 +86,8 @@ export class ViewWrapper extends EventHandler {
     this.fire('modeChanged', this.mode_ = mode, b);
   }
 
-  protected modeChanged(mode: EViewMode) {
-   this.$node
+  protected modeChanged(mode:EViewMode) {
+    this.$node
       .classed('t-hide', mode === EViewMode.HIDDEN)
       .classed('t-focus', mode === EViewMode.FOCUS)
       .classed('t-context', mode === EViewMode.CONTEXT);
@@ -80,6 +103,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   destroy() {
+    this.instance.destroy();
     this.$node.remove();
   }
 
@@ -96,6 +120,14 @@ export class ViewWrapper extends EventHandler {
   }
 }
 
-export function createWrapper(graph: prov.ProvenanceGraph, parent: Element, plugin: IPluginDesc) {
-  return plugin.load().then((p) => new ViewWrapper(graph, parent, p));
+export function createContext(graph:prov.ProvenanceGraph, idtype?:idtypes.IDType, selection?:ranges.Range):IViewContext {
+  return {
+    graph: graph,
+    idtype: idtype,
+    selection: selection
+  };
+}
+
+export function createWrapper(context:IViewContext, parent:Element, plugin:IPluginDesc, options?) {
+  return plugin.load().then((p) => new ViewWrapper(context, parent, p, options));
 }

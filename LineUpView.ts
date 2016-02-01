@@ -4,15 +4,18 @@
 /// <reference path="./tsd.d.ts" />
 
 import prov = require('../caleydo_provenance/main');
-import {AView, EViewMode} from './View';
+import {AView, EViewMode, IViewContext} from './View';
 import lineup = require('lineupjs');
 import d3 = require('d3');
+import idtypes = require('../caleydo_core/idtype');
+import ranges = require('../caleydo_core/range');
+import {IEvent} from '../caleydo_core/event';
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {
     type: 'number',
     column: col,
-    label: col,
+    label: label,
     domain: d3.extent(rows, (d) => d[col])
   };
 }
@@ -21,24 +24,83 @@ export function stringCol(col:string, label = col) {
   return {
     type: 'string',
     column: col,
-    label: col
+    label: label
   };
 }
 
 export class ALineUpView extends AView {
   protected lineup:any;
 
-  constructor(graph:prov.ProvenanceGraph, parent:Element) {
-    super(graph, parent);
+  private idtype:idtypes.IDType;
+  private id2index = d3.map<number>();
+
+  constructor(context:IViewContext, parent:Element, options?) {
+    super(context, parent, options);
     this.$node.classed('lineup', true);
   }
 
-  protected buildLineUp(rows:any[], columns:any[]) {
+  protected buildLineUp(rows:any[], columns:any[], idAccessor:(row:any) => number, idtype:idtypes.IDType) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
     this.lineup = lineup.create(storage, this.node);
     this.lineup.update();
+
+    if (idAccessor) {
+      this.initSelection(rows, idAccessor, idtype);
+    }
+
     return this.lineup;
+  }
+
+  private initSelection(rows:any[], idAccessor:(row:any) => number, idtype:idtypes.IDType) {
+    this.idtype = idtype;
+
+    this.lineup.on('hoverChanged', (data_index) => {
+      var id = null;
+      if (data_index < 0) {
+        idtype.clear(idtypes.hoverSelectionType);
+      } else {
+        id = idAccessor(rows[data_index]);
+        idtype.select(idtypes.hoverSelectionType, [id]);
+      }
+    });
+    this.lineup.on('multiSelectionChanged', (data_indices) => {
+      const ids = data_indices.map(idAccessor);
+      if (data_indices.length === 0) {
+        idtype.clear(idtypes.defaultSelectionType);
+      } else {
+        idtype.select(idtypes.defaultSelectionType, ids);
+      }
+      this.selectItems(idtype, ids);
+    });
+
+    //create lookup cache
+    rows.forEach((row, i) => {
+      this.id2index.set(String(idAccessor(row)), i);
+    });
+
+    this.idtype.on('select-selected', this.listener);
+    this.listener(null, this.idtype.selections());
+  }
+
+  private listener = (event:IEvent, act:ranges.Range) => {
+    if (!this.lineup) {
+      return;
+    }
+    var indices:number[] = [];
+    act.dim(0).forEach((id) => {
+      const index = this.id2index.get(String(id));
+      if (typeof index === 'number') {
+        indices.push(index);
+      }
+    });
+    this.lineup.data.setSelection(indices);
+  };
+
+  destroy() {
+    if (this.idtype) {
+      this.idtype.off('select-selected', this.listener);
+    }
   }
 
   modeChanged(mode:EViewMode) {
@@ -59,8 +121,8 @@ export class ALineUpView extends AView {
 
 
 export class LineUpView extends ALineUpView {
-  constructor(graph:prov.ProvenanceGraph, parent:Element) {
-    super(graph, parent);
+  constructor(context:IViewContext, parent:Element, options?) {
+    super(context, parent, options);
     //TODO
     this.build();
   }
@@ -70,7 +132,7 @@ export class LineUpView extends ALineUpView {
     const rows = d3.range(300).map((i) => ({name: 'Row#' + i, v1: Math.random() * 100, v2: Math.random() * 100}));
 
     const columns = [stringCol('name'), numberCol('v1', rows), numberCol('v2', rows)];
-    const l = this.buildLineUp(rows, columns);
+    const l = this.buildLineUp(rows, columns, null, null);
     const r = l.data.pushRanking();
     l.data.push(r, columns[0]).setWidth(130);
     const stack = l.data.push(r, lineup.model.createStackDesc('Combined'));
@@ -82,8 +144,8 @@ export class LineUpView extends ALineUpView {
 }
 
 
-export function create(graph:prov.ProvenanceGraph, parent:Element) {
-  return new LineUpView(graph, parent);
+export function create(context:IViewContext, parent:Element, options?) {
+  return new LineUpView(context, parent, options);
 }
 
 

@@ -20,6 +20,7 @@ main.targid {
     -webkit-flex-direction: row;
     flex-direction: row;
 
+
     div.view {
       -webkit-flex: 0.00001 1 auto;
       transition: flex-grow 1s linear;
@@ -55,6 +56,17 @@ main.targid {
         > * {
           display: none;
         }
+      }
+    }
+
+    div.chooser {
+      -webkit-flex: 0 0 auto;
+      flex: 0 0 auto;
+
+      width: 3em;
+
+      &.t-hide {
+        display: none;
       }
     }
   }

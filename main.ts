@@ -41,10 +41,10 @@ elems.graph.then((graph) => {
 
   const views = plugins.list('targidView');
   const $views = elems.$main.select('div.browser').selectAll('button').data(views);
-  $views.enter().append('button').on('click', (d) =>  {
-    t.push(d.id);
+  $views.enter().append('button').on('click', (d) => {
+    t.push(d.id, null, null);
   });
-  $views.text((d) => '+ '+ d.name);
+  $views.text((d) => '+ ' + d.name);
 });
 
 elems.jumpToStored();

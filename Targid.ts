@@ -6,6 +6,8 @@
 import C = require('../caleydo_core/main');
 import prov = require('../caleydo_provenance/main');
 import plugins = require('../caleydo_core/plugin');
+import ranges = require('../caleydo_core/range');
+import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper, createContext} from './View';
 
@@ -22,10 +24,13 @@ export function focusImpl(inputs: prov.IObjectRef<any>[], parameter: any) {
 export function createViewImpl(inputs: prov.IObjectRef<any>[], parameter: any, graph: prov.ProvenanceGraph) {
   const targid : Targid = inputs[0].value;
   const viewId: string = parameter.viewId;
+  const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype): null;
+  const selection = parameter.selection ? ranges.parse(parameter.selection): ranges.none();
+
   const view = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(createContext(graph), targid.node, view).then((instance) => {
+  return createWrapper(createContext(graph, idtype, selection), targid.node, view).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);
   }).then((oldFocus) => {
@@ -42,7 +47,7 @@ export function removeViewImpl(inputs: prov.IObjectRef<any>[], parameter) {
 
   targid.removeImpl(view, oldFocus);
   return {
-    inverse: createView(inputs[0], view.desc.id)
+    inverse: createView(inputs[0], view.desc.id, view.context.idtype, view.context.selection)
   };
 }
 
@@ -52,11 +57,13 @@ export function focus(targid:prov.IObjectRef<Targid>, index: number) {
   });
 }
 
-export function createView(targid:prov.IObjectRef<Targid>, viewId: string) {
+export function createView(targid:prov.IObjectRef<Targid>, viewId: string, idtype: idtypes.IDType, selection: ranges.Range) {
   const view = plugins.get('targidView', viewId);
   //assert view
   return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), 'targidCreateView', createViewImpl, [targid], {
-    viewId: viewId
+    viewId: viewId,
+    idtype: idtype ? idtype.id : null,
+    selection: selection ? selection.toString() : ranges.none().toString()
   });
 }
 export function removeView(targid:prov.IObjectRef<Targid>, view: prov.IObjectRef<ViewWrapper>, oldFocus = -1) {
@@ -120,8 +127,8 @@ export class Targid {
     return <Element>this.$node.node();
   }
 
-  push(viewId: string) {
-    return this.graph.push(createView(this.ref, viewId));
+  push(viewId: string, idtype: idtypes.IDType, selection: ranges.Range) {
+    return this.graph.push(createView(this.ref, viewId, idtype, selection));
   }
 
   remove(index_or_view: number|ViewWrapper) {

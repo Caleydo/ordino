@@ -23,6 +23,7 @@ export interface IView extends IEventHandler {
   //constructor(context: IViewContext, parent: Element, options?);
 
   node: Element;
+  context:IViewContext
 
   modeChanged(mode:EViewMode);
 
@@ -40,7 +41,7 @@ export class AView extends EventHandler implements IView {
 
   protected $node:d3.Selection<IView>;
 
-  constructor(protected context:IViewContext, parent:Element, options?) {
+  constructor(public context:IViewContext, parent:Element, options?) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
   }
@@ -65,14 +66,22 @@ export class AView extends EventHandler implements IView {
 
 export class ViewWrapper extends EventHandler {
   private $node:d3.Selection<ViewWrapper>;
+  private $chooser:d3.Selection<ViewWrapper>;
 
   private mode_:EViewMode = null;
 
   private instance:IView = null;
 
-  constructor(protected context:IViewContext, parent:Element, private plugin:IPlugin, options?) {
+  private listener = (event: any, idtype:idtypes.IDType, range:ranges.Range) => {
+
+    this.chooseNextViews(event, idtype, range);
+    this.fire(AView.EVENT_SELECT, idtype, range);
+  };
+
+  constructor(public context:IViewContext, parent:Element, private plugin:IPlugin, options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
+    this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this);
     this.instance = plugin.factory(context, this.node, options);
     super.propagate(this.instance, 'select');
   }
@@ -91,6 +100,8 @@ export class ViewWrapper extends EventHandler {
       .classed('t-hide', mode === EViewMode.HIDDEN)
       .classed('t-focus', mode === EViewMode.FOCUS)
       .classed('t-context', mode === EViewMode.CONTEXT);
+    this.$chooser
+      .classed('t-hide', mode === EViewMode.HIDDEN);
     this.instance.modeChanged(mode);
   }
 

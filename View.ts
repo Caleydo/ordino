@@ -32,7 +32,7 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : IView
     const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
     return p.selection === selectionType && (selectionType === 'none' || pattern.test(idtype.id));
   }
-  return listPlugins('targidView').filter(byType).map(toViewPluginDesc)
+  return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
 }
 
 
@@ -46,7 +46,7 @@ export interface IView extends IEventHandler {
   //constructor(context: IViewContext, parent: Element, options?);
 
   node: Element;
-  context:IViewContext
+  context:IViewContext;
 
   modeChanged(mode:EViewMode);
 

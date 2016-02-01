@@ -3,7 +3,6 @@
  */
 /// <reference path="./tsd.d.ts" />
 
-import prov = require('../caleydo_provenance/main');
 import {AView, EViewMode, IViewContext} from './View';
 import lineup = require('lineupjs');
 import d3 = require('d3');

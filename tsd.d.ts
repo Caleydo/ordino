@@ -1,7 +1,8 @@
 /**
  * declare lineup mock
  */
+
+declare var lineupjs: any;
 declare module 'lineupjs' {
   export = lineupjs;
 }
-declare var lineupjs: any;

@@ -2,9 +2,7 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-import prov = require('../caleydo_provenance/main');
 import {AView, EViewMode, IViewContext} from './View';
-import {IView} from "./View";
 
 
 export class SimpleView extends AView {

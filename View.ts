@@ -4,14 +4,37 @@
 
 import prov = require('../caleydo_provenance/main');
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
-import {IPluginDesc,IPlugin} from '../caleydo_core/plugin';
+import {IPluginDesc,IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
+
 
 
 export enum EViewMode {
   FOCUS, CONTEXT, HIDDEN
 }
+
+export interface IViewPluginDesc extends IPluginDesc {
+  selection: string; //none, single, multiple
+  idtype?: string;
+}
+
+function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
+  var r : any = p;
+  r.selection = r.selection || 'none';
+  r.idtype = r.idtype ? new RegExp(r.idtype) : /.*/;
+  return r;
+}
+
+export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : IViewPluginDesc[] {
+  const selectionType = idtype === null || selection.isNone ? 'none' : selection.dim(0).length === 1 ? 'single' : 'multiple';
+  function byType(p: any) {
+    const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
+    return p.selection === selectionType && (selectionType === 'none' || pattern.test(idtype.id));
+  }
+  return listPlugins('targidView').filter(byType).map(toViewPluginDesc)
+}
+
 
 export interface IViewContext {
   graph: prov.ProvenanceGraph;
@@ -65,6 +88,10 @@ export class AView extends EventHandler implements IView {
 }
 
 export class ViewWrapper extends EventHandler {
+  static EVENT_OPEN = 'open';
+  static EVENT_FOCUS = 'focus';
+  static EVENT_REMOVE = 'remove';
+
   private $node:d3.Selection<ViewWrapper>;
   private $chooser:d3.Selection<ViewWrapper>;
 
@@ -73,17 +100,16 @@ export class ViewWrapper extends EventHandler {
   private instance:IView = null;
 
   private listener = (event: any, idtype:idtypes.IDType, range:ranges.Range) => {
-
-    this.chooseNextViews(event, idtype, range);
+    this.chooseNextViews(idtype, range);
     this.fire(AView.EVENT_SELECT, idtype, range);
   };
 
   constructor(public context:IViewContext, parent:Element, private plugin:IPlugin, options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
-    this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this);
+    this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).classed('t-hide', true);
     this.instance = plugin.factory(context, this.node, options);
-    super.propagate(this.instance, 'select');
+    this.instance.on(AView.EVENT_SELECT, this.listener);
   }
 
   set mode(mode:EViewMode) {
@@ -105,8 +131,22 @@ export class ViewWrapper extends EventHandler {
     this.instance.modeChanged(mode);
   }
 
+  private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
+    const isNone = selection.isNone;
+    this.$chooser.classed('t-hide', isNone);
+
+    const views = isNone ? [] : findViews(idtype, selection);
+
+    const $buttons = this.$chooser.selectAll('button').data(views);
+    $buttons.enter().append('button').on('click', (d) => {
+      this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
+    });
+    $buttons.text((d) => d.name);
+    $buttons.exit().remove();
+  }
+
   get desc() {
-    return this.plugin.desc;
+    return toViewPluginDesc(this.plugin.desc);
   }
 
   get mode() {
@@ -114,6 +154,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   destroy() {
+    this.instance.off(AView.EVENT_SELECT, this.listener);
     this.instance.destroy();
     this.$node.remove();
   }
@@ -123,11 +164,11 @@ export class ViewWrapper extends EventHandler {
   }
 
   remove() {
-    this.fire('remove', this);
+    this.fire(ViewWrapper.EVENT_REMOVE, this);
   }
 
   focus() {
-    this.fire('focus', this);
+    this.fire(ViewWrapper.EVENT_FOCUS, this);
   }
 }
 

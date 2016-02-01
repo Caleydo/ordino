@@ -63,7 +63,14 @@ main.targid {
       -webkit-flex: 0 0 auto;
       flex: 0 0 auto;
 
-      width: 3em;
+      vertical-align: middle;
+
+      width: 5em;
+      text-align: center;
+
+      > button {
+        height: 4em;
+      }
 
       &.t-hide {
         display: none;
@@ -113,7 +120,7 @@ main.targid {
   }
 
   div.browser {
-    height: 20vh;
+    height: 5vh;
     margin: 2px;
 
     border: 1px solid $exploration-stage;

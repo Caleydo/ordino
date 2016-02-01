@@ -4,8 +4,8 @@
 
 import template = require('../clue/template');
 import cmode = require('../caleydo_provenance/mode');
-import plugins = require('../caleydo_core/plugin');
 import targid = require('./Targid');
+import views = require('./View');
 import $ = require('jquery');
 
 let helper = document.getElementById('app');
@@ -39,8 +39,8 @@ elems.on('modeChanged', function (event, new_) {
 elems.graph.then((graph) => {
   const t = targid.create(graph, main);
 
-  const views = plugins.list('targidView');
-  const $views = elems.$main.select('div.browser').selectAll('button').data(views);
+  const view = views.findViews(null, null);
+  const $views = elems.$main.select('div.browser').selectAll('button').data(view);
   $views.enter().append('button').on('click', (d) => {
     t.push(d.id, null, null);
   });

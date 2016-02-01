@@ -16,7 +16,11 @@ export class SimpleView extends AView {
   }
 
   private build() {
-    this.$node.html('<div>Test</div>');
+    this.$node.html(`
+    <p>
+      <div>IDType: ${this.context.idtype}</div>
+      <div>Selection: ${this.context.selection}</div>
+    </p>`);
   }
 
   modeChanged(mode: EViewMode) {

@@ -6,6 +6,7 @@
 import C = require('../caleydo_core/main');
 import prov = require('../caleydo_provenance/main');
 import plugins = require('../caleydo_core/plugin');
+import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
@@ -115,6 +116,7 @@ export class Targid {
   private $history: d3.Selection<any>;
 
   private removeWrapper = (event: any, view: ViewWrapper) => this.remove(view);
+  private openWrapper = (event: events.IEvent, viewId: string, idtype: idtypes.IDType, selection: ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
 
   constructor(public graph: prov.ProvenanceGraph, parent: Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
@@ -125,6 +127,14 @@ export class Targid {
 
   get node() {
     return <Element>this.$node.node();
+  }
+
+  private openRight(view: ViewWrapper, viewId: string, idtype: idtypes.IDType, selection: ranges.Range) {
+    if (view === this.views[this.views.length-1]) { //last one just open
+      return this.push(viewId, idtype, selection);
+    }
+    //remove all to the right and open the new one
+    return this.remove(this.views[this.views.length-1]).then(() => this.push(viewId, idtype, selection));
   }
 
   push(viewId: string, idtype: idtypes.IDType, selection: ranges.Range) {
@@ -138,7 +148,8 @@ export class Targid {
   }
 
   pushImpl(view: ViewWrapper) {
-    view.on('remove', this.removeWrapper);
+    view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
+    view.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
     this.views.push(view);
     this.update();
     return C.resolveIn(100).then(() => this.focusImpl(this.views.length-1));
@@ -147,6 +158,7 @@ export class Targid {
   removeImpl(view: ViewWrapper, focus: number = -1) {
     const i = this.views.indexOf(view);
     view.off('remove', this.removeWrapper);
+    view.off('open', this.openWrapper);
 
     this.views.splice(i, 1);
     this.update();

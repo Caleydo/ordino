@@ -32,13 +32,15 @@
           "id": "lineup",
           "name": "Ranking",
           "type": "targidView",
-          "file": "LineUpView"
+          "file": "LineUpView",
+          "selection": "none"
         },
         {
           "id": "simple",
           "name": "Simple",
           "type": "targidView",
-          "file": "SimpleView"
+          "file": "SimpleView",
+          "selection": "single"
         }
       ]
     },

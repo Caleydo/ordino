@@ -39,7 +39,7 @@ export class ALineUpView extends AView {
     this.$node.classed('lineup', true);
   }
 
-  protected buildLineUp(rows:any[], columns:any[], idAccessor:(row:any) => number, idtype:idtypes.IDType) {
+  protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
     this.lineup = lineup.create(storage, this.node);
@@ -65,7 +65,7 @@ export class ALineUpView extends AView {
       }
     });
     this.lineup.on('multiSelectionChanged', (data_indices) => {
-      const ids = data_indices.map(idAccessor);
+      const ids = ranges.list(data_indices.map((i) => idAccessor(rows[i])));
       if (data_indices.length === 0) {
         idtype.clear(idtypes.defaultSelectionType);
       } else {
@@ -129,10 +129,10 @@ export class LineUpView extends ALineUpView {
 
   private build() {
     //generate random data
-    const rows = d3.range(300).map((i) => ({name: 'Row#' + i, v1: Math.random() * 100, v2: Math.random() * 100}));
+    const rows = d3.range(300).map((i) => ({name: '' + i, id: i, v1: Math.random() * 100, v2: Math.random() * 100}));
 
     const columns = [stringCol('name'), numberCol('v1', rows), numberCol('v2', rows)];
-    const l = this.buildLineUp(rows, columns, null, null);
+    const l = this.buildLineUp(rows, columns, idtypes.resolve('DummyRow'), (r) => r.id);
     const r = l.data.pushRanking();
     l.data.push(r, columns[0]).setWidth(130);
     const stack = l.data.push(r, lineup.model.createStackDesc('Combined'));

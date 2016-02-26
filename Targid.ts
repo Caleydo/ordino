@@ -4,7 +4,7 @@
 
 
 import C = require('../caleydo_core/main');
-import prov = require('../clue/prov');
+import prov = require('../caleydo_clue/prov');
 import plugins = require('../caleydo_core/plugin');
 import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');

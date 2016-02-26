@@ -6,7 +6,7 @@
   "dependencies": {
   },
   "peerDependencies": {
-    "clue": "*",
+    "caleydo_clue": "*",
     "caleydo_vis_lineup": "*"
   },
   "caleydo": {

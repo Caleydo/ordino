@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-import prov = require('../caleydo_provenance/main');
+import prov = require('../clue/prov');
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc,IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import idtypes = require('../caleydo_core/idtype');

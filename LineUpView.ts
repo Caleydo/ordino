@@ -8,6 +8,7 @@ import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
+import tables = require('../caleydo_core/table');
 import {IEvent} from '../caleydo_core/event';
 
 export function numberCol(col:string, rows:any[], label = col) {
@@ -27,6 +28,37 @@ export function stringCol(col:string, label = col) {
   };
 }
 
+export function deriveCol(col: tables.IVector) {
+  var r:any = {
+    column: col.desc.name
+  };
+  const desc = <any>col.desc;
+  if (desc.color) {
+    r.color = desc.color;
+  } else if (desc.cssClass) {
+    r.cssClass = desc.cssClass;
+  }
+  var val = desc.value;
+  switch (val.type) {
+    case 'string':
+      r.type = 'string';
+      break;
+    case 'categorical':
+      r.type = 'categorical';
+      r.categories = desc.categories;
+      break;
+    case 'real':
+    case 'int':
+      r.type = 'number';
+      r.domain = val.range;
+      break;
+    default:
+      r.type = 'string';
+      break;
+  }
+  return r;
+}
+
 export class ALineUpView extends AView {
   protected lineup:any;
 
@@ -36,6 +68,21 @@ export class ALineUpView extends AView {
   constructor(context:IViewContext, parent:Element, options?) {
     super(context, parent, options);
     this.$node.classed('lineup', true);
+  }
+
+  protected buildLineUpFromTable(table: tables.ITable) {
+    const columns = table.cols().map(deriveCol);
+    lineup.deriveColors(columns);
+    return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
+      const rows : any[] = args[0];
+      const rowIds : ranges.Range = args[1];
+
+      const storage = lineup.createLocalStorage(rows, columns);
+      this.lineup = lineup.create(storage, this.node);
+      this.lineup.update();
+      this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
+      return this.lineup;
+    });
   }
 
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {

@@ -13,11 +13,14 @@ export class SimpleView extends AView {
   }
 
   private build() {
-    this.$node.html(`
-    <p>
-      <div>IDType: ${this.context.idtype}</div>
-      <div>Selection: ${this.context.selection}</div>
-    </p>`);
+    this.context.idtype.unmap(this.context.selection).then((names) => {
+      this.$node.html(`
+      <p>
+        <div>IDType: ${this.context.idtype}</div>
+        <div>Selection: ${this.context.selection}</div>
+        <div>Selection: ${names}</div>
+      </p>`);
+    });
   }
 
   modeChanged(mode: EViewMode) {

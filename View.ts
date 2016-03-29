@@ -92,7 +92,8 @@ export class AView extends EventHandler implements IView {
 
 export class ProxyView extends AView {
   private options = {
-    proxy: 'unknown',
+    proxy: null,
+    site: null,
     argument: 'gene',
     extra: {}
   };
@@ -105,9 +106,23 @@ export class ProxyView extends AView {
     this.build();
   }
 
+  private createUrl(args: any) {
+    if (this.options.proxy) {
+      return ajax.api2absURL('/targid/proxy/' + this.options.proxy, args);
+    }
+    if (this.options.site) {
+      return this.options.site.replace(/\{([^}]+)\}/gi, (match, variable) => args[variable]);
+    }
+    return null;
+  }
+
   private build() {
-    var args = C.mixin(this.options.extra, { [ this.options.argument]: this.context.selection.first });
-    this.$node.append('iframe').attr('src', ajax.api2absURL('/targid/proxy/'+this.options.proxy, args));
+    const id = this.context.selection.first;
+    this.context.idtype.unmap([id]).then((gene_name) => {
+      var args = C.mixin(this.options.extra, { [this.options.argument] : gene_name[0]||id });
+      const url = this.createUrl(args);
+      this.$node.append('iframe').attr('src', url);
+    });
   }
 
   modeChanged(mode:EViewMode) {
@@ -210,7 +225,7 @@ export function createContext(graph:prov.ProvenanceGraph, idtype?:idtypes.IDType
 }
 
 export function createWrapper(context:IViewContext, parent:Element, plugin:IPluginDesc, options?) {
-  if ((<any>plugin)['proxy']) {
+  if ((<any>plugin)['proxy'] || (<any>plugin)['site']) {
     //inline proxy
     return Promise.resolve(new ViewWrapper(context, parent, {
       desc: plugin,

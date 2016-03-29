@@ -1,6 +1,6 @@
 __author__ = 'Samuel Gratzl'
 
-from flask import Flask, Response, request
+from flask import Flask, Response, request, abort
 import requests
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ def _to_site_url(site):
   proxy_defs = caleydo_server.plugin.list('targid_proxy')
   for p in proxy_defs:
     if p.id == site:
-      return p.url.format(request.args)
+      return p.url.format(**request.args.to_dict())
   #none matching found
   return None
 
@@ -21,7 +21,7 @@ def get_details(site):
   if url:
     r = requests.get(url)
     return Response(r.text, status=r.status_code, content_type=r.headers['content-type'])
-  return 404
+  abort(404)
 
 def create():
   return app

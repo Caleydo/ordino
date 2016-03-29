@@ -42,12 +42,22 @@
           "file": "SimpleView",
           "selection": "single"
         }
+      ],
+      "python": [
+        {
+          "type": "namespace",
+          "file": "proxy",
+          "namespace": "/api/targid/proxy"
+        }
       ]
     },
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
         "lineupjs": "https://github.com/Caleydo/lineup.js.git"
+      },
+      "python": {
+        "requests": "==2.2.1"
       }
     },
     "products": [

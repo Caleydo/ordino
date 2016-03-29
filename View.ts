@@ -7,6 +7,8 @@ import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc,IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
+import ajax = require('../caleydo_core/ajax');
+import C = require('../caleydo_core/main');
 
 
 
@@ -84,6 +86,32 @@ export class AView extends EventHandler implements IView {
 
   get node() {
     return <Element>this.$node.node();
+  }
+}
+
+
+export class ProxyView extends AView {
+  private options = {
+    proxy: 'unknown',
+    argument: 'gene',
+    extra: {}
+  };
+  constructor(context:IViewContext, parent:Element, plugin: IPluginDesc, options?) {
+    super(context, parent, options);
+    C.mixin(this.options, plugin, options);
+
+    this.$node.classed('proxy_view', true);
+
+    this.build();
+  }
+
+  private build() {
+    var args = C.mixin(this.options.extra, { [ this.options.argument]: this.context.selection.first });
+    this.$node.append('iframe').attr('src', ajax.api2absURL('/targid/proxy/'+this.options.proxy, args));
+  }
+
+  modeChanged(mode:EViewMode) {
+    super.modeChanged(mode);
   }
 }
 
@@ -182,5 +210,12 @@ export function createContext(graph:prov.ProvenanceGraph, idtype?:idtypes.IDType
 }
 
 export function createWrapper(context:IViewContext, parent:Element, plugin:IPluginDesc, options?) {
+  if ((<any>plugin)['proxy']) {
+    //inline proxy
+    return Promise.resolve(new ViewWrapper(context, parent, {
+      desc: plugin,
+      factory: (context, node, options) => new ProxyView(context, node, plugin, options)
+    }, options));
+  }
   return plugin.load().then((p) => new ViewWrapper(context, parent, p, options));
 }

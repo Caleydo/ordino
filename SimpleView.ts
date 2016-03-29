@@ -4,7 +4,6 @@
 
 import {AView, EViewMode, IViewContext} from './View';
 
-
 export class SimpleView extends AView {
   constructor(context: IViewContext, parent: Element, options?) {
     super(context, parent, options);
@@ -27,8 +26,9 @@ export class SimpleView extends AView {
   }
 }
 
+
+
 export function create(context: IViewContext, parent: Element, options?) {
   return new SimpleView(context, parent, options);
 }
-
 

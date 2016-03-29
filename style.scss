@@ -159,3 +159,10 @@ main.targid {
     }
   }
 }
+
+div.view .proxy_view {
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+}

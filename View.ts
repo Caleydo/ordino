@@ -24,17 +24,24 @@ export interface IViewPluginDesc extends IPluginDesc {
 function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
   var r : any = p;
   r.selection = r.selection || 'none';
-  r.idtype = r.idtype ? new RegExp(r.idtype) : /.*/;
   return r;
 }
 
-export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : IViewPluginDesc[] {
+
+export function findStartViews() : IViewPluginDesc[] {
+  return listPlugins('targidView').filter((d: any) => d.selection === 'none').map(toViewPluginDesc);
+}
+
+export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<IViewPluginDesc[]> {
   const selectionType = idtype === null || selection.isNone ? 'none' : selection.dim(0).length === 1 ? 'single' : 'multiple';
-  function byType(p: any) {
-    const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
-    return p.selection === selectionType && (selectionType === 'none' || pattern.test(idtype.id));
-  }
-  return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
+  return idtype.getCanBeMappedTo().then((mappedTypes) => {
+    const all = [idtype].concat(mappedTypes);
+    function byType(p: any) {
+      const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
+      return p.selection === selectionType && (selectionType === 'none' || all.some((i) => pattern.test(i.id)));
+    }
+    return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
+  });
 }
 
 
@@ -95,6 +102,7 @@ export class ProxyView extends AView {
     proxy: null,
     site: null,
     argument: 'gene',
+    idtype: null,
     extra: {}
   };
   constructor(context:IViewContext, parent:Element, plugin: IPluginDesc, options?) {
@@ -116,12 +124,28 @@ export class ProxyView extends AView {
     return null;
   }
 
+  private resolveId(idtype: idtypes.IDType, id: number): Promise<string> {
+    const target = this.options.idtype === null ? idtype: idtypes.resolve(this.options.idtype);
+    if (idtype.id === target.id) {
+      //same just unmap to name
+      return idtype.unmap([id]).then((names) => name[0]);
+    }
+    //assume mappable
+    return idtype.mapToFirstName([id], target).then((names) => name[0])
+  }
+
   private build() {
     const id = this.context.selection.first;
-    this.context.idtype.unmap([id]).then((gene_name) => {
-      var args = C.mixin(this.options.extra, { [this.options.argument] : gene_name[0]||id });
-      const url = this.createUrl(args);
-      this.$node.append('iframe').attr('src', url);
+    const idtype = this.context.idtype;
+
+    this.resolveId(idtype, id).then((gene_name) => {
+      if (gene_name) {
+        var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
+        const url = this.createUrl(args);
+        this.$node.append('iframe').attr('src', url);
+      } else {
+        this.$node.text('cant be mapped');
+      }
     });
   }
 
@@ -178,14 +202,15 @@ export class ViewWrapper extends EventHandler {
     const isNone = selection.isNone;
     this.$chooser.classed('t-hide', isNone);
 
-    const views = isNone ? [] : findViews(idtype, selection);
-
-    const $buttons = this.$chooser.selectAll('button').data(views);
-    $buttons.enter().append('button').on('click', (d) => {
-      this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
+    const viewPromise = isNone ? Promise.resolve([]) : findViews(idtype, selection);
+    viewPromise.then((views) => {
+      const $buttons = this.$chooser.selectAll('button').data(views);
+      $buttons.enter().append('button');
+      $buttons.text((d) => d.name).on('click', (d) => {
+        this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
+      });
+      $buttons.exit().remove();
     });
-    $buttons.text((d) => d.name);
-    $buttons.exit().remove();
   }
 
   get desc() {

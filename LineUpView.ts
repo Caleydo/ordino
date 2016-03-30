@@ -155,8 +155,9 @@ export class ALineUpView extends AView {
       //collapse all columns
       const compress = mode !== EViewMode.FOCUS;
       this.lineup.data.getRankings().forEach((r) => {
+        const sortBy = r.sortCriteria().col;
         r.children.forEach((col, i) => {
-          if (i > 0) {
+          if (i > 1) {
             col.compressed = compress;
           }
         });

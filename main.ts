@@ -39,7 +39,7 @@ elems.on('modeChanged', function (event, new_) {
 elems.graph.then((graph) => {
   const t = targid.create(graph, main);
 
-  const view = views.findViews(null, null);
+  const view = views.findStartViews();
   const $views = elems.$main.select('div.browser').selectAll('button').data(view);
   $views.enter().append('button').on('click', (d) => {
     t.push(d.id, null, null);

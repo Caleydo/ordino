@@ -29,6 +29,12 @@
           "factory": "compressFocus"
         },
         {
+          "type": "actionCompressor",
+          "id": "targidCreateRemoveCompressor",
+          "file": "Targid",
+          "factory": "compressCreateRemove"
+        },
+        {
           "id": "lineup",
           "name": "Ranking",
           "type": "targidView",

@@ -128,10 +128,10 @@ export class ProxyView extends AView {
     const target = this.options.idtype === null ? idtype: idtypes.resolve(this.options.idtype);
     if (idtype.id === target.id) {
       //same just unmap to name
-      return idtype.unmap([id]).then((names) => name[0]);
+      return idtype.unmap([id]).then((names) => names[0]);
     }
     //assume mappable
-    return idtype.mapToFirstName([id], target).then((names) => name[0])
+    return idtype.mapToFirstName([id], target).then((names) => names[0])
   }
 
   private build() {
@@ -139,7 +139,7 @@ export class ProxyView extends AView {
     const idtype = this.context.idtype;
 
     this.resolveId(idtype, id).then((gene_name) => {
-      if (gene_name) {
+      if (gene_name != null) {
         var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
         const url = this.createUrl(args);
         this.$node.append('iframe').attr('src', url);

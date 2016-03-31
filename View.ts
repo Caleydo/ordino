@@ -86,6 +86,16 @@ export class AView extends EventHandler implements IView {
     //hook
   }
 
+  protected resolveId(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string> {
+    const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
+    if (from_idtype.id === target.id) {
+      //same just unmap to name
+      return from_idtype.unmap([id]).then((names) => names[0]);
+    }
+    //assume mappable
+    return from_idtype.mapToFirstName([id], target).then((names) => names[0])
+  }
+
 
   destroy() {
     this.$node.remove();
@@ -124,21 +134,11 @@ export class ProxyView extends AView {
     return null;
   }
 
-  private resolveId(idtype: idtypes.IDType, id: number): Promise<string> {
-    const target = this.options.idtype === null ? idtype: idtypes.resolve(this.options.idtype);
-    if (idtype.id === target.id) {
-      //same just unmap to name
-      return idtype.unmap([id]).then((names) => names[0]);
-    }
-    //assume mappable
-    return idtype.mapToFirstName([id], target).then((names) => names[0])
-  }
-
   private build() {
     const id = this.context.selection.first;
     const idtype = this.context.idtype;
 
-    this.resolveId(idtype, id).then((gene_name) => {
+    this.resolveId(idtype, id, this.options.idtype).then((gene_name) => {
       if (gene_name != null) {
         var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
         const url = this.createUrl(args);

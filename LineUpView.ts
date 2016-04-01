@@ -65,6 +65,8 @@ export class ALineUpView extends AView {
   private idtype:idtypes.IDType;
   private id2index = d3.map<number>();
 
+  private dump: any = null;
+
   constructor(context:IViewContext, parent:Element, options?) {
     super(context, parent, options);
     this.$node.classed('lineup', true);
@@ -153,15 +155,27 @@ export class ALineUpView extends AView {
     super.modeChanged(mode);
     if (this.lineup) {
       //collapse all columns
-      const compress = mode !== EViewMode.FOCUS;
-      this.lineup.data.getRankings().forEach((r) => {
-        const sortBy = r.sortCriteria().col;
-        r.children.forEach((col, i) => {
-          if (i > 1) {
-            col.compressed = compress;
-          }
-        });
-      });
+      const data = this.lineup.data;
+      if (mode === EViewMode.FOCUS) {
+        if (this.dump) {
+          data.restore(this.dump);
+        }
+        this.dump = null;
+      } else if (this.dump === null) {
+        this.dump = data.dump();
+        const r = data.getRankings()[0];
+        const s = r.sortCriteria();
+        const labelColumn = r.children.filter((c) => c.desc.type === 'string')[0];
+        data.clearRankings();
+        const new_r = data.pushRanking();
+        new_r.push(labelColumn);
+        if (s.col !== labelColumn) {
+          new_r.push(s.col);
+          s.col.sortByMe(s.asc);
+        } else {
+          labelColumn.sortByMe(s.asc);
+        }
+      }
     }
   }
 }

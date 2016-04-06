@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 16.12.2015
  */
 
-import template = require('../caleydo_clue/template');
+import template = require('../caleydo_clue/dummy');
 import cmode = require('../caleydo_clue/mode');
 import targid = require('./Targid');
 import views = require('./View');

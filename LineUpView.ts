@@ -171,6 +171,9 @@ export class ALineUpView extends AView {
         new_r.push(labelColumn);
         if (s.col !== labelColumn) {
           new_r.push(s.col);
+          if (s.col.desc.type === 'stack') {
+            s.col.collapse = true;
+          }
           s.col.sortByMe(s.asc);
         } else {
           labelColumn.sortByMe(s.asc);

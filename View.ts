@@ -93,7 +93,7 @@ export class AView extends EventHandler implements IView {
       return from_idtype.unmap([id]).then((names) => names[0]);
     }
     //assume mappable
-    return from_idtype.mapToFirstName([id], target).then((names) => names[0])
+    return from_idtype.mapToFirstName([id], target).then((names) => names[0]);
   }
 
 
@@ -250,7 +250,7 @@ export function createContext(graph:prov.ProvenanceGraph, idtype?:idtypes.IDType
 }
 
 export function createWrapper(context:IViewContext, parent:Element, plugin:IPluginDesc, options?) {
-  if ((<any>plugin)['proxy'] || (<any>plugin)['site']) {
+  if ((<any>plugin).proxy || (<any>plugin).site) {
     //inline proxy
     return Promise.resolve(new ViewWrapper(context, parent, {
       desc: plugin,

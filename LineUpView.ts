@@ -60,6 +60,13 @@ export function deriveCol(col: tables.IVector) {
 }
 
 export class ALineUpView extends AView {
+  static CONFIG = {
+    renderingOptions: {
+      histograms: true
+    }
+  };
+
+
   protected lineup:any;
 
   private idtype:idtypes.IDType;
@@ -80,7 +87,7 @@ export class ALineUpView extends AView {
       const rowIds : ranges.Range = args[1];
 
       const storage = lineup.createLocalStorage(rows, columns);
-      this.lineup = lineup.create(storage, this.node);
+      this.lineup = lineup.create(storage, this.node, ALineUpView.CONFIG);
       this.lineup.update();
       this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
       return this.lineup;
@@ -90,7 +97,7 @@ export class ALineUpView extends AView {
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
-    this.lineup = lineup.create(storage, this.node);
+    this.lineup = lineup.create(storage, this.node, ALineUpView.CONFIG);
     this.lineup.update();
 
     if (idAccessor) {

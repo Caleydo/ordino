@@ -57,6 +57,17 @@ main.targid {
           display: none;
         }
       }
+
+      div.busy {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.26) url('../assets/caleydo_c_anim.svg') no-repeat center center;
+        z-index: 999;
+      }
     }
 
     div.chooser {

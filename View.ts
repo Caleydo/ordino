@@ -80,6 +80,11 @@ export class AView extends EventHandler implements IView {
   constructor(public context:IViewContext, parent:Element, options?) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
+    this.$node.append('div').classed('busy', true);
+  }
+
+  protected setBusy(busy: boolean) {
+    this.$node.select('div.busy').style('display',busy ? 'block': null);
   }
 
   changeSelection(selection: ISelection) {
@@ -156,7 +161,7 @@ export class ProxyView extends AView {
   changeSelection(selection: ISelection) {
     const id = selection.range.first;
     const idtype = selection.idtype;
-
+    this.setBusy(true);
     this.resolveId(idtype, id, this.options.idtype).then((gene_name) => {
       if (gene_name != null) {
         var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
@@ -165,6 +170,7 @@ export class ProxyView extends AView {
       } else {
         this.$node.text('cant be mapped');
       }
+      this.setBusy(false);
     });
   }
 

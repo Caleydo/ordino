@@ -33,20 +33,6 @@
           "id": "targidCreateRemoveCompressor",
           "file": "Targid",
           "factory": "compressCreateRemove"
-        },
-        {
-          "id": "lineup",
-          "name": "Ranking",
-          "type": "targidView",
-          "file": "LineUpView",
-          "selection": "none"
-        },
-        {
-          "id": "simple",
-          "name": "Simple",
-          "type": "targidView",
-          "file": "SimpleView",
-          "selection": "single"
         }
       ],
       "python": [

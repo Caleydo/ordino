@@ -48,8 +48,30 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter) {
 
   targid.removeImpl(view, oldFocus);
   return {
+    removed: inputs[1],
     inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range)
   };
+}
+export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
+  const targid:Targid = inputs[0].value;
+  const view:ViewWrapper = inputs[1].value;
+  const viewId:string = parameter.withViewId;
+  const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
+  const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none();
+
+  const newView = plugins.get('targidView', viewId);
+
+  var wrapper;
+  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, newView).then((instance) => {
+    wrapper = instance;
+    return targid.replaceImpl(view, instance);
+  }).then((oldFocus) => {
+    return {
+      created: [prov.ref(wrapper, 'View ' + newView.name, prov.cat.visual)],
+      removed: [inputs[1]],
+      inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], wrapper.desc.id, wrapper.selection.idtype, wrapper.selection.range)
+    };
+  });
 }
 
 export function focus(targid:prov.IObjectRef<Targid>, index:number) {
@@ -74,6 +96,15 @@ export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<
     focus: oldFocus
   });
 }
+export function replaceView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
+  //assert view
+  return prov.action(prov.meta('Replace View: ' + view.toString()+' with ' + view.name, prov.cat.visual, prov.op.update), 'targidReplaceView', replaceViewImpl, [targid, view], {
+    viewId: view.value.desc.id,
+    withViewId: viewId,
+    idtype: idtype ? idtype.id : null,
+    selection: selection ? selection.toString() : ranges.none().toString()
+  });
+}
 
 export function createCmd(id):prov.ICmdFunction {
   switch (id) {
@@ -83,6 +114,8 @@ export function createCmd(id):prov.ICmdFunction {
       return createViewImpl;
     case 'targidRemoveView':
       return removeViewImpl;
+    case 'targidReplaceView':
+      return replaceViewImpl;
   }
   return null;
 }
@@ -151,8 +184,9 @@ export class Targid {
     if (view === this.views[this.views.length - 1]) { //last one just open
       return this.push(viewId, idtype, selection);
     }
+    return this.replace(this.views[this.views.length - 1], viewId, idtype, selection);
     //remove all to the right and open the new one
-    return this.remove(this.views[this.views.length - 1]).then(() => this.push(viewId, idtype, selection));
+    //return this.remove(this.views[this.views.length - 1]).then(() => this.push(viewId, idtype, selection));
   }
 
   private updateRight(view:ViewWrapper, idtype:idtypes.IDType, selection:ranges.Range) {
@@ -174,6 +208,12 @@ export class Targid {
     return this.graph.push(removeView(this.ref, view_ref));
   }
 
+  replace(index_or_view:number|ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
+    const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
+    const view_ref = this.graph.findObject(view);
+    return this.graph.push(replaceView(this.ref, view_ref, viewId, idtype, selection));
+  }
+
   pushImpl(view:ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
@@ -191,11 +231,32 @@ export class Targid {
 
     this.views.splice(i, 1);
     this.update();
-    if (focus < 0) {
-      focus = i - 1;
-    }
     view.destroy();
-    return this.focusImpl(focus);
+    //remove with focus change if not already hidden
+    if (!isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
+      if (focus < 0) {
+        focus = i - 1;
+      }
+      return this.focusImpl(focus);
+    }
+    return Promise.resolve(NaN);
+  }
+
+  replaceImpl(view:ViewWrapper, withView: ViewWrapper) {
+    const i = this.views.indexOf(view);
+    view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
+    view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
+    view.off(AView.EVENT_SELECT, this.updateSelection);
+
+    withView.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
+    withView.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
+    withView.on(AView.EVENT_SELECT, this.updateSelection);
+    withView.mode = view.mode;
+
+    this.views.splice(i, 1, withView);
+    this.update();
+    view.destroy();
+    return C.resolveIn(100);
   }
 
   removeLastImpl() {
@@ -210,6 +271,9 @@ export class Targid {
 
   focus(index_or_view:number|ViewWrapper) {
     const index = typeof index_or_view === 'number' ? <number>index_or_view : this.views.indexOf(<ViewWrapper>index_or_view);
+    if (this.views[index].mode === EViewMode.FOCUS) {
+      return;
+    }
     return this.graph.push(focus(this.ref, index));
   }
 
@@ -227,6 +291,9 @@ export class Targid {
       }
       v.mode = target;
     });
+    if (old === index) {
+      return Promise.resolve(old);
+    }
     this.update();
     return C.resolveIn(1000).then(() => old);
   }

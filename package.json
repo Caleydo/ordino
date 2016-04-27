@@ -20,7 +20,7 @@
           "type": "actionFactory",
           "file": "Targid",
           "factory": "createCmd",
-          "creates": "(targidFocus|targidCreateView|targidRemoveView)"
+          "creates": "(targidFocus|targidCreateView|targidRemoveView|targidReplaceView)"
         },
         {
           "type": "actionCompressor",

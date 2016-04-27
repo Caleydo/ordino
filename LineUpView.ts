@@ -3,7 +3,7 @@
  */
 /// <reference path="./tsd.d.ts" />
 
-import {AView, EViewMode, IViewContext} from './View';
+import {AView, EViewMode, IViewContext, ISelection} from './View';
 import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
@@ -70,7 +70,11 @@ export class ALineUpView extends AView {
   protected lineup:any;
 
   private idtype:idtypes.IDType;
-  private id2index = d3.map<number>();
+  private selectionHelper = {
+    id2index : d3.map<number>(),
+    rows: [],
+    idAccessor: (x) => x
+  };
 
   private dump: any = null;
 
@@ -94,6 +98,19 @@ export class ALineUpView extends AView {
     });
   }
 
+  protected replaceLineUpDataFromTable(table: tables.ITable) {
+    return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
+      const rows : any[] = args[0];
+      const rowIds : ranges.Range = args[1];
+      const dump = this.lineup.dump();
+      const storage = lineup.createLocalStorage(rows, this.lineup.data.columns);
+      storage.restore(dump);
+      this.lineup.changeDataStorage(storage);
+      this.updateSelection(rowIds.dim(0).asList());
+      return this.lineup;
+    });
+  }
+
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
@@ -107,20 +124,32 @@ export class ALineUpView extends AView {
     return this.lineup;
   }
 
-  private initSelection(rows:any[], idAccessor:(row:any) => number, idtype:idtypes.IDType) {
+  protected replaceLineUpData(rows: any[]) {
+    const dump = this.lineup.dump();
+    const storage = lineup.createLocalStorage(rows, this.lineup.data.columns);
+    storage.restore(dump);
+    this.lineup.changeDataStorage(storage);
+    this.updateSelection(rows);
+    return this.lineup;
+  }
+
+  private initSelection(rows: any[], idAccessor:(row:any) => number, idtype:idtypes.IDType) {
     this.idtype = idtype;
+
+    this.selectionHelper.idAccessor = idAccessor;
+    this.selectionHelper.rows = rows;
 
     this.lineup.on('hoverChanged', (data_index) => {
       var id = null;
       if (data_index < 0) {
         idtype.clear(idtypes.hoverSelectionType);
       } else {
-        id = idAccessor(rows[data_index]);
+        id = idAccessor(this.selectionHelper.rows[data_index]);
         idtype.select(idtypes.hoverSelectionType, [id]);
       }
     });
     this.lineup.on('multiSelectionChanged', (data_indices) => {
-      const ids = ranges.list(data_indices.map((i) => idAccessor(rows[i])));
+      const ids = ranges.list(data_indices.map((i) => idAccessor(this.selectionHelper.rows[i])));
       if (data_indices.length === 0) {
         idtype.clear(idtypes.defaultSelectionType);
       } else {
@@ -131,11 +160,19 @@ export class ALineUpView extends AView {
 
     //create lookup cache
     rows.forEach((row, i) => {
-      this.id2index.set(String(idAccessor(row)), i);
+      this.selectionHelper.id2index.set(String(idAccessor(row)), i);
     });
 
     this.idtype.on('select-selected', this.listener);
     this.listener(null, this.idtype.selections());
+  }
+
+  private updateSelection(rows: any[]) {
+    this.selectionHelper.id2index = d3.map<number>();
+    //create lookup cache
+    rows.forEach((row, i) => {
+      this.selectionHelper.id2index.set(String(this.selectionHelper.idAccessor(row)), i);
+    });
   }
 
   private listener = (event:IEvent, act:ranges.Range) => {
@@ -144,7 +181,7 @@ export class ALineUpView extends AView {
     }
     var indices:number[] = [];
     act.dim(0).forEach((id) => {
-      const index = this.id2index.get(String(id));
+      const index = this.selectionHelper.id2index.get(String(id));
       if (typeof index === 'number') {
         indices.push(index);
       }
@@ -192,7 +229,7 @@ export class ALineUpView extends AView {
 
 
 export class LineUpView extends ALineUpView {
-  constructor(context:IViewContext, parent:Element, options?) {
+  constructor(context:IViewContext, selection: ISelection, parent:Element, options?) {
     super(context, parent, options);
     //TODO
     this.build();
@@ -215,8 +252,8 @@ export class LineUpView extends ALineUpView {
 }
 
 
-export function create(context:IViewContext, parent:Element, options?) {
-  return new LineUpView(context, parent, options);
+export function create(context:IViewContext, selection: ISelection, parent:Element, options?) {
+  return new LineUpView(context, selection, parent, options);
 }
 
 

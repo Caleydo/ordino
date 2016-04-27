@@ -10,7 +10,7 @@ import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
-import {ViewWrapper, EViewMode, createWrapper, createContext} from './View';
+import {ViewWrapper, EViewMode, createWrapper, createContext, AView} from './View';
 
 export function focusImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   const targid:Targid = inputs[0].value;
@@ -31,7 +31,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const view = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(createContext(graph, idtype, selection), targid.node, view).then((instance) => {
+  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, view).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);
   }).then((oldFocus) => {
@@ -48,7 +48,7 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter) {
 
   targid.removeImpl(view, oldFocus);
   return {
-    inverse: createView(inputs[0], view.desc.id, view.context.idtype, view.context.selection)
+    inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range)
   };
 }
 
@@ -134,6 +134,7 @@ export class Targid {
 
   private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private openWrapper = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
+  private updateSelection = (event:events.IEvent, idtype:idtypes.IDType, selection:ranges.Range) => this.updateRight(<ViewWrapper>event.target, idtype, selection);
 
   constructor(public graph:prov.ProvenanceGraph, parent:Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
@@ -154,6 +155,15 @@ export class Targid {
     return this.remove(this.views[this.views.length - 1]).then(() => this.push(viewId, idtype, selection));
   }
 
+  private updateRight(view:ViewWrapper, idtype:idtypes.IDType, selection:ranges.Range) {
+    const i = this.views.indexOf(view);
+    if (i === (this.views.length - 1)) { //last one no propagation
+       return;
+    }
+    this.views[i+1].setSelection({ idtype: idtype, range: selection});
+    //TODO remove all +1
+  }
+
   push(viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
     return this.graph.push(createView(this.ref, viewId, idtype, selection));
   }
@@ -167,6 +177,7 @@ export class Targid {
   pushImpl(view:ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
+    view.on(AView.EVENT_SELECT, this.updateSelection);
     this.views.push(view);
     this.update();
     return C.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
@@ -174,8 +185,9 @@ export class Targid {
 
   removeImpl(view:ViewWrapper, focus:number = -1) {
     const i = this.views.indexOf(view);
-    view.off('remove', this.removeWrapper);
-    view.off('open', this.openWrapper);
+    view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
+    view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
+    view.off(AView.EVENT_SELECT, this.updateSelection);
 
     this.views.splice(i, 1);
     this.update();

@@ -44,18 +44,22 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promi
   });
 }
 
+export interface ISelection {
+  idtype: idtypes.IDType;
+  range: ranges.Range;
+}
 
 export interface IViewContext {
   graph: prov.ProvenanceGraph;
-  idtype: idtypes.IDType;
-  selection: ranges.Range;
 }
 
 export interface IView extends IEventHandler {
-  //constructor(context: IViewContext, parent: Element, options?);
+  //constructor(context: IViewContext, selection: ISelection, parent: Element, options?);
 
   node: Element;
   context:IViewContext;
+
+  changeSelection(selection: ISelection);
 
   modeChanged(mode:EViewMode);
 
@@ -78,6 +82,10 @@ export class AView extends EventHandler implements IView {
     this.$node = d3.select(parent).append('div').datum(this);
   }
 
+  changeSelection(selection: ISelection) {
+    //hook
+  }
+
   protected selectItems(idtype:idtypes.IDType, range:ranges.Range) {
     this.fire(AView.EVENT_SELECT, idtype, range);
   }
@@ -94,6 +102,16 @@ export class AView extends EventHandler implements IView {
     }
     //assume mappable
     return from_idtype.mapToFirstName([id], target).then((names) => names[0]);
+  }
+
+  protected resolveIds(from_idtype: idtypes.IDType, ids: ranges.Range|number[], to_idtype : idtypes.IDType|string = null): Promise<string[]> {
+    const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
+    if (from_idtype.id === target.id) {
+      //same just unmap to name
+      return from_idtype.unmap(ids);
+    }
+    //assume mappable
+    return from_idtype.mapToFirstName(ids, target);
   }
 
 
@@ -115,13 +133,14 @@ export class ProxyView extends AView {
     idtype: null,
     extra: {}
   };
-  constructor(context:IViewContext, parent:Element, plugin: IPluginDesc, options?) {
+  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
     super(context, parent, options);
     C.mixin(this.options, plugin, options);
 
     this.$node.classed('proxy_view', true);
 
     this.build();
+    this.changeSelection(selection);
   }
 
   private createUrl(args: any) {
@@ -134,19 +153,23 @@ export class ProxyView extends AView {
     return null;
   }
 
-  private build() {
-    const id = this.context.selection.first;
-    const idtype = this.context.idtype;
+  changeSelection(selection: ISelection) {
+    const id = selection.range.first;
+    const idtype = selection.idtype;
 
     this.resolveId(idtype, id, this.options.idtype).then((gene_name) => {
       if (gene_name != null) {
         var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
         const url = this.createUrl(args);
-        this.$node.append('iframe').attr('src', url);
+        this.$node.select('iframe').attr('src', url);
       } else {
         this.$node.text('cant be mapped');
       }
     });
+  }
+
+  private build() {
+    this.$node.append('iframe').attr('src', null);
   }
 
   modeChanged(mode:EViewMode) {
@@ -171,12 +194,17 @@ export class ViewWrapper extends EventHandler {
     this.fire(AView.EVENT_SELECT, idtype, range);
   };
 
-  constructor(public context:IViewContext, parent:Element, private plugin:IPlugin, options?) {
+  constructor(public context:IViewContext, public selection: ISelection, parent:Element, private plugin:IPlugin, options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
     this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).classed('t-hide', true);
-    this.instance = plugin.factory(context, this.node, options);
+    this.instance = plugin.factory(context, selection, this.node, options);
     this.instance.on(AView.EVENT_SELECT, this.listener);
+  }
+
+  setSelection(selection: ISelection) {
+    this.selection = selection;
+    this.instance.changeSelection(selection);
   }
 
   set mode(mode:EViewMode) {
@@ -241,21 +269,19 @@ export class ViewWrapper extends EventHandler {
   }
 }
 
-export function createContext(graph:prov.ProvenanceGraph, idtype?:idtypes.IDType, selection?:ranges.Range):IViewContext {
+export function createContext(graph:prov.ProvenanceGraph):IViewContext {
   return {
-    graph: graph,
-    idtype: idtype,
-    selection: selection
+    graph: graph
   };
 }
 
-export function createWrapper(context:IViewContext, parent:Element, plugin:IPluginDesc, options?) {
+export function createWrapper(context:IViewContext, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
   if ((<any>plugin).proxy || (<any>plugin).site) {
     //inline proxy
-    return Promise.resolve(new ViewWrapper(context, parent, {
+    return Promise.resolve(new ViewWrapper(context, selection, parent, {
       desc: plugin,
-      factory: (context, node, options) => new ProxyView(context, node, plugin, options)
+      factory: (context, selection, node, options) => new ProxyView(context, selection, node, plugin, options)
     }, options));
   }
-  return plugin.load().then((p) => new ViewWrapper(context, parent, p, options));
+  return plugin.load().then((p) => new ViewWrapper(context, selection, parent, p, options));
 }

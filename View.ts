@@ -203,7 +203,7 @@ export class ViewWrapper extends EventHandler {
   constructor(public context:IViewContext, public selection: ISelection, parent:Element, private plugin:IPlugin, options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
-    this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).classed('t-hide', true);
+    this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).style('display', 'none');
     this.instance = plugin.factory(context, selection, this.node, options);
     this.instance.on(AView.EVENT_SELECT, this.listener);
   }
@@ -234,7 +234,7 @@ export class ViewWrapper extends EventHandler {
 
   private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
     const isNone = selection.isNone;
-    this.$chooser.classed('t-hide', isNone);
+    this.$chooser.style('display', isNone ? 'none' : null);
 
     const viewPromise = isNone ? Promise.resolve([]) : findViews(idtype, selection);
     viewPromise.then((views) => {

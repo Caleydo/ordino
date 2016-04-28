@@ -243,6 +243,7 @@ export class ViewWrapper extends EventHandler {
       $buttons.text((d) => d.name).on('click', (d) => {
         this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
       });
+      $buttons.attr('disabled', (d) => d.mockup ? 'disabled' : null);
       $buttons.exit().remove();
     });
   }

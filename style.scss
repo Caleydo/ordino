@@ -76,15 +76,16 @@ main.targid {
 
       vertical-align: middle;
 
-      width: 5em;
+      width: 7em;
       text-align: center;
 
-      > button {
-        height: 4em;
+      button {
+        min-height: 4em;
 
         &[disabled] {
           border: none;
         }
+        width: 100%;
       }
 
       &.t-hide {

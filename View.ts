@@ -19,6 +19,7 @@ export enum EViewMode {
 export interface IViewPluginDesc extends IPluginDesc {
   selection: string; //none, single, multiple
   idtype?: string;
+  mockup?: boolean;
 }
 
 function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
@@ -204,6 +205,7 @@ export class ViewWrapper extends EventHandler {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
     this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).style('display', 'none');
+
     this.instance = plugin.factory(context, selection, this.node, options);
     this.instance.on(AView.EVENT_SELECT, this.listener);
   }
@@ -238,13 +240,20 @@ export class ViewWrapper extends EventHandler {
 
     const viewPromise = isNone ? Promise.resolve([]) : findViews(idtype, selection);
     viewPromise.then((views) => {
-      const $buttons = this.$chooser.selectAll('button').data(views);
+      //group views by category
+      const data = d3.nest().key((d) => (<any>d).category || 'static').entries(views);
+      const $categories = this.$chooser.selectAll('div.category').data(data);
+      $categories.enter().append('div').classed('category', true).append('span');
+      $categories.select('span').text((d) => d.key);
+      const $buttons = $categories.selectAll('button').data((d) => <IViewPluginDesc[]>d.values);
       $buttons.enter().append('button');
       $buttons.text((d) => d.name).on('click', (d) => {
         this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
       });
       $buttons.attr('disabled', (d) => d.mockup ? 'disabled' : null);
       $buttons.exit().remove();
+
+      $categories.exit().remove();
     });
   }
 

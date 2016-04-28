@@ -59,10 +59,18 @@ export function deriveCol(col: tables.IVector) {
   return r;
 }
 
+
+
 export class ALineUpView extends AView {
-  static CONFIG = {
+  private config = {
     renderingOptions: {
       histograms: true
+    },
+    header: {
+      rankingButtons: this.lineupRankingButtons.bind(this)
+    },
+    body: {
+      freezeCols: 2
     }
   };
 
@@ -83,6 +91,24 @@ export class ALineUpView extends AView {
     this.$node.classed('lineup', true);
   }
 
+  private lineupRankingButtons($node: d3.Selection<any>) {
+    $node.append('button').attr('class', 'fa fa-download').on('click', (ranking) => {
+      this.lineup.data.exportTable(ranking, { separator: ';', quote: true}).then((content) => {
+        var downloadLink = document.createElement('a');
+        var blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
+        downloadLink.href = URL.createObjectURL(blob);
+        (<any>downloadLink).download = 'export.csv';
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      });
+    });
+    $node.append('button').attr('class', 'fa fa-plus').on('click', (d) => {
+      //TODO add column dialog
+    });
+  }
+
   protected buildLineUpFromTable(table: tables.ITable) {
     const columns = table.cols().map(deriveCol);
     lineup.deriveColors(columns);
@@ -91,7 +117,7 @@ export class ALineUpView extends AView {
       const rowIds : ranges.Range = args[1];
 
       const storage = lineup.createLocalStorage(rows, columns);
-      this.lineup = lineup.create(storage, this.node, ALineUpView.CONFIG);
+      this.lineup = lineup.create(storage, this.node, this.config);
       this.lineup.update();
       this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
       return this.lineup;
@@ -114,7 +140,7 @@ export class ALineUpView extends AView {
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
-    this.lineup = lineup.create(storage, this.node, ALineUpView.CONFIG);
+    this.lineup = lineup.create(storage, this.node,  this.config);
     this.lineup.update();
 
     if (idAccessor) {

@@ -135,27 +135,6 @@ main.targid {
     }
   }
 
-  div.browser {
-    height: 5vh;
-    margin: 2px;
-
-    border: 1px solid $exploration-stage;
-    border-radius: 5px;
-
-    div.header {
-      background-color: $exploration-stage;
-    }
-
-    h2 {
-      margin-top: 0;
-      padding: 0.2em 0.5em;
-      font-size: 18px;
-      margin-bottom: 0.1em;
-      color: $core_colour_text;
-      vertical-align: middle;
-    }
-  }
-
   div.lu {
     position: absolute;
     left: 2px;

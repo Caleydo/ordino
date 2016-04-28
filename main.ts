@@ -9,6 +9,7 @@ import views = require('./View');
 import $ = require('jquery');
 
 let helper = document.getElementById('app');
+let helper2 = document.getElementById('extras');
 
 const elems = template.create(document.body, {
   app: 'Targid V2',
@@ -21,30 +22,24 @@ main.classList.add('targid');
 while (helper.firstChild) {
   main.appendChild(helper.firstChild);
 }
-
-var $left_data = $('div.browser');
-if (cmode.getMode().exploration < 0.8) {
-  $left_data.hide();
-} else {
-  $left_data.show();
+while (helper2.firstChild) {
+  document.body.appendChild(helper2.firstChild);
 }
-elems.on('modeChanged', function (event, new_) {
-  if (new_.exploration < 0.8) {
-    $left_data.animate({height: 'hide'}, 'fast');
-  } else {
-    $left_data.animate({height: 'show'}, 'fast');
-  }
-});
 
 elems.graph.then((graph) => {
   const t = targid.create(graph, main);
 
   const view = views.findStartViews();
-  const $views = elems.$main.select('div.browser').selectAll('button').data(view);
+  const $views = d3.select('#tab_old').selectAll('button').data(view);
   $views.enter().append('button').on('click', (d) => {
     t.push(d.id, null, null);
+    (<any>$('#welcomeDialog')).modal('hide');
   });
   $views.text((d) => '+ ' + d.name);
+
+  if (graph.isEmpty) {
+    (<any>$('#welcomeDialog')).modal('show');
+  }
 });
 
 elems.jumpToStored();

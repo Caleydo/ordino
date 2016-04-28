@@ -7,11 +7,101 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="style.css">
+    <link type="text/css" rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
     <script src="/caleydo_web.js"></script>
 </head>
 <body>
+
 <div id="app" style="display: none">
-  <div class="browser">
+</div>
+
+<div id="extras">
+
+  <div class="modal fade" id="welcomeDialog" tabindex="-1" role="dialog" aria-labelledby="welcomeDialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" >Add Score</h4>
+        </div>
+        <div class="modal-body">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#tab_old" aria-controls="tab_old" role="tab" data-toggle="tab">Compatibility</a></li>
+            <li role="presentation"><a href="#tab_start" aria-controls="tab_start" role="tab" data-toggle="tab">Start</a></li>
+            <li role="presentation"><a href="#tab_upload" aria-controls="tab_upload" role="tab" data-toggle="tab">Upload</a></li>
+            <li role="presentation"><a href="#tab_continue" aria-controls="tab_continue" role="tab" data-toggle="tab">Continue</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="tab_old">
+            </div>
+            <div role="tabpanel" class="tab-pane" id="tab_start">
+              <form>
+                <h2>Entity Type</h2>
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-primary active">
+                    <input type="radio" autocomplete="off" checked="checked" name="entity_type" value="gene">Gene
+                  </label>
+                  <label class="btn btn-primary">
+                    <input type="radio" autocomplete="off" name="entity_type" value="disease_model">Disease Model
+                  </label>
+                  <label class="btn btn-primary">
+                    <input type="radio" autocomplete="off" name="entity_type" value="celllines">Cell lines</label>
+                </div>
+
+                <h2>Subset</h2>
+                  TODO
+              </form>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="tab_upload">
+              TODO integrate importer
+            </div>
+            <div role="tabpanel" class="tab-pane" id="tab_continue">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Entity Type</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Creator</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="addScoreDialog" tabindex="-1" role="dialog" aria-labelledby="addScoreDialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" >Add Score</h4>
+        </div>
+        <div class="modal-body">
+          <h2>Add Score</h2>
+
+          <h2>Derive Score</h2>
+          <div class="row">
+            <select class="col-md-4 form-control">
+            </select>
+            <select class="col-md-4 form-control">
+            </select>
+            <select class="col-md-4 form-control">
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 </body>

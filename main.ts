@@ -3,7 +3,6 @@
  */
 
 import template = require('../caleydo_clue/template');
-import cmode = require('../caleydo_clue/mode');
 import targid = require('./Targid');
 import views = require('./View');
 import $ = require('jquery');

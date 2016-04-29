@@ -62,6 +62,12 @@ export interface IView extends IEventHandler {
 
   changeSelection(selection: ISelection);
 
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>);
+
+  getParameter(name: string): any;
+
+  setParameter(name: string, value: any);
+
   modeChanged(mode:EViewMode);
 
   destroy();
@@ -144,6 +150,7 @@ export class AView extends EventHandler implements IView {
 }
 
 
+
 export class ProxyView extends AView {
   private options = {
     proxy: null,
@@ -197,6 +204,54 @@ export class ProxyView extends AView {
   }
 }
 
+
+export function setParameterImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
+  return inputs[0].v.then((view:ViewWrapper) => {
+    const name = parameter.name;
+    const value = parameter.value;
+
+    const bak = view.getParameter(name);
+    view.setParameterImpl(name, value);
+    return {
+      inverse: setParameter(inputs[0], name, bak)
+    };
+  });
+}
+export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, value: any) {
+  //assert view
+  return prov.action(prov.meta('Set Parameter "'+name+'"', prov.cat.visual, prov.op.update), 'targidSetParameter', setParameterImpl, [view], {
+    name: name,
+    value: value
+  });
+}
+
+export function createCmd(id):prov.ICmdFunction {
+  switch (id) {
+    case 'targidSetParameter':
+      return setParameterImpl;
+  }
+  return null;
+}
+
+/**
+ * compresses the given path by removing redundant focus operations
+ * @param path
+ * @returns {prov.ActionNode[]}
+ */
+export function compressSetParameter(path:prov.ActionNode[]) {
+  const possible = path.filter((p) => p.f_id === 'targidSetParameter');
+  //group by view and parameter
+  const toKey = (p: prov.ActionNode) => p.requires[0].id+'_'+p.parameter.name;
+  const last = d3.nest().key(toKey).map(possible);
+  return path.filter((p) => {
+    if (p.f_id !== 'targidSetParameter') {
+      return false;
+    }
+    const elems = last[toKey(p)];
+    return elems[elems.length-1] === p; //just the last survives
+  });
+}
+
 export class ViewWrapper extends EventHandler {
   static EVENT_OPEN = 'open';
   static EVENT_FOCUS = 'focus';
@@ -217,10 +272,24 @@ export class ViewWrapper extends EventHandler {
   constructor(public context:IViewContext, public selection: ISelection, parent:Element, private plugin:IPlugin, options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
+    const $params = this.$node.append('div').attr('class', 'parameters form-inline');
     this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).style('display', 'none');
-
-    this.instance = plugin.factory(context, selection, this.node, options);
+    const $inner = this.$node.append('div').classed('inner', true);
+    this.instance = plugin.factory(context, selection, <Element>$inner.node(), options);
+    this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
     this.instance.on(AView.EVENT_SELECT, this.listener);
+  }
+
+  private onParameterChange(name: string, value: any) {
+    const view_ref = this.context.graph.findObject(this);
+    return this.context.graph.push(setParameter(view_ref, name, value));
+  }
+
+  getParameter(name: string) {
+    return this.instance.getParameter(name);
+  }
+  setParameterImpl(name: string, value: any) {
+    return this.instance.setParameter(name, value);
   }
 
   setSelection(selection: ISelection) {

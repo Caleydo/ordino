@@ -33,6 +33,18 @@
           "id": "targidCreateRemoveCompressor",
           "file": "Targid",
           "factory": "compressCreateRemove"
+        },
+        {
+          "type": "actionFactory",
+          "file": "View",
+          "factory": "createCmd",
+          "creates": "(targidSetParameter)"
+        },
+        {
+          "type": "actionCompressor",
+          "id": "targidCompressSetParameter",
+          "file": "View",
+          "factory": "compressSetParameter"
         }
       ],
       "python": [

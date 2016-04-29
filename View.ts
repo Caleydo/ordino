@@ -92,6 +92,19 @@ export class AView extends EventHandler implements IView {
     //hook
   }
 
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
+    //hook
+  }
+
+  getParameter(name: string): any {
+    return null;
+  }
+
+  setParameter(name: string, value: any) {
+    //hook
+    return null;
+  }
+
   protected selectItems(idtype:idtypes.IDType, range:ranges.Range) {
     this.fire(AView.EVENT_SELECT, idtype, range);
   }

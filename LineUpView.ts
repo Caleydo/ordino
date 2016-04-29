@@ -20,6 +20,26 @@ export function numberCol(col:string, rows:any[], label = col) {
   };
 }
 
+export function numberCol2(col:string, min: number, max: number, label = col) {
+  return {
+    type: 'number',
+    column: col,
+    label: label,
+    domain: [min, max]
+  };
+}
+
+
+export function categoricalCol(col:string, categories: string[], label = col) {
+  return {
+    type: 'categorical',
+    column: col,
+    label: label,
+    categories: categories
+  };
+}
+
+
 export function stringCol(col:string, label = col) {
   return {
     type: 'string',

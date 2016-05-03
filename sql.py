@@ -41,28 +41,37 @@ def _run_to_index(db, sql, **kwargs):
   result = db.execute(sqlalchemy.sql.text(sql),**kwargs)
   return [r['_index'] for r in result]
 
-@app.route('/<database>/<viewName>')
-def get_data(database, viewName):
+def _get_data(database, viewName)
   config, engine = _resolve(database)
-  #convert to index lookup
-  #row id start with 1
-  view = config.view('views.'+viewName)
+  # convert to index lookup
+  # row id start with 1
+  view = config.view('views.' + viewName)
   kwargs = {}
   if view['arguments'] is not None:
     for arg in view['arguments']:
       kwargs[arg] = request.args[arg]
   replace = tuple()
   if view['replacements'] is not None:
-    replace = tuple([ request.args[arg] for arg in view['replacements']])
+    replace = tuple([request.args[arg] for arg in view['replacements']])
   db = engine.connect()
   if 'i' in request.args:
     kwargs['query'] = request.args['i']
     r = _run(db, view['querySlice'] % replace, **kwargs)
     indices = map(int, request.args['i'].split(','))
-    r.sort(lambda a,b: indices.index(a['_index'])- indices.index(b['_index']))
+    r.sort(lambda a, b: indices.index(a['_index']) - indices.index(b['_index']))
   else:
     r = _run(db, view['query'] % replace, **kwargs)
+  return r, view
+
+@app.route('/<database>/<viewName>')
+def get_data(database, viewName):
+  r, view = _get_data(database, viewName)
   r = assign_ids(r, view['idType'])
+  return jsonify(r)
+
+@app.route('/<database>/<viewName>/raw')
+def get_data(database, viewName):
+  r, _ = _get_data(database, viewName)
   return jsonify(r)
 
 def _check_column(col, view):

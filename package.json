@@ -52,6 +52,12 @@
           "type": "namespace",
           "file": "proxy",
           "namespace": "/api/targid/proxy"
+        },
+        {
+          "type": "namespace",
+          "id": "db_connector",
+          "file": "sql",
+          "namespace": "/api/targid/db"
         }
       ]
     },
@@ -61,7 +67,8 @@
         "lineupjs": "https://github.com/Caleydo/lineup.js.git"
       },
       "python": {
-        "requests": "==2.2.1"
+        "requests": "==2.2.1",
+        "SQLAlchemy": "==1.0.12"
       }
     },
     "products": [

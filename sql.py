@@ -32,6 +32,7 @@ def assign_ids(rows, idtype):
   return rows
 
 def _run(db ,sql, **kwargs):
+  _log.info(sqlalchemy.sql.text(sql))
   result = db.execute(sqlalchemy.sql.text(sql),**kwargs)
   columns = result.keys()
   return [{c: r[c] for c in columns} for r in result]

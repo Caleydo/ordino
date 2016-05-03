@@ -215,6 +215,7 @@ export class ALineUpView extends AView {
 
   private updateSelection(rows: any[]) {
     this.selectionHelper.id2index = d3.map<number>();
+    this.selectionHelper.rows = rows;
     //create lookup cache
     rows.forEach((row, i) => {
       this.selectionHelper.id2index.set(String(this.selectionHelper.idAccessor(row)), i);

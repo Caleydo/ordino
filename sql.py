@@ -41,7 +41,7 @@ def _run_to_index(db, sql, **kwargs):
   result = db.execute(sqlalchemy.sql.text(sql),**kwargs)
   return [r['_index'] for r in result]
 
-def _get_data(database, viewName)
+def _get_data(database, viewName):
   config, engine = _resolve(database)
   # convert to index lookup
   # row id start with 1
@@ -70,9 +70,14 @@ def get_data(database, viewName):
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/raw')
-def get_data(database, viewName):
+def get_raw_data(database, viewName):
   r, _ = _get_data(database, viewName)
   return jsonify(r)
+
+@app.route('/<database>/<viewName>/raw/<col>')
+def get_raw_col_data(database, viewName, col):
+  r, _ = _get_data(database, viewName)
+  return jsonify([ e[col] for e in r])
 
 def _check_column(col, view):
   cols = view.columns

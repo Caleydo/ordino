@@ -132,8 +132,17 @@ export class ALineUpView extends AView {
         document.body.removeChild(downloadLink);
       });
     });
-    $node.append('button').attr('class', 'fa fa-plus').on('click', (d) => {
-      this.addScore(d);
+    const $div = $node.append('div');
+    $div.append('button').attr('class', 'fa fa-plus dropdown-toggle').attr('data-toggle','dropdown');
+    const $ul = $div.append('ul').attr('class', 'dropdown-menu');
+
+    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idtype.id);
+
+    $ul.selectAll('li').data(scores).enter().append('li').append('a').attr('href','#').text((d) => d.name).on('click', (d) => {
+      d.load().then((p) => {
+        this.pushScore(p);
+      });
+      d3.event.preventDefault();
     });
   }
 
@@ -145,6 +154,7 @@ export class ALineUpView extends AView {
       const rowIds : ranges.Range = args[1];
 
       const storage = lineup.createLocalStorage(rows, columns);
+      this.idtype = table.idtypes[0];
       this.lineup = lineup.create(storage, this.node, this.config);
       this.lineup.update();
       this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
@@ -168,6 +178,7 @@ export class ALineUpView extends AView {
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
+    this.idtype = idtype;
     this.lineup = lineup.create(storage, this.node,  this.config);
     this.lineup.update();
 
@@ -230,14 +241,16 @@ export class ALineUpView extends AView {
     });
   }
 
-  pushScore(score: IScore<any>, ranking = this.lineup.data.getLastRanking()) {
-    const desc = score.createDesc();
-    desc.accessor = this.scoreAccessor;
-    this.lineup.data.pushDesc(desc);
-    this.lineup.data.push(ranking, desc);
-    return score.compute([], this.idtype).then((scores) => {
-      desc.scores = scores;
-      this.lineup.update();
+  pushScore(score: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+    Promise.resolve(score.factory()).then((scoreImpl) => {
+      const desc = scoreImpl.createDesc();
+      desc.accessor = this.scoreAccessor;
+      this.lineup.data.pushDesc(desc);
+      this.lineup.data.push(ranking, desc);
+      return scoreImpl.compute([], this.idtype).then((scores) => {
+        desc.scores = scores;
+        this.lineup.update();
+      });
     });
   }
 
@@ -254,25 +267,6 @@ export class ALineUpView extends AView {
     });
     this.lineup.data.setSelection(indices);
   };
-
-  private addScore(ranking: any) {
-    const dialog = dialogs.generateDialog('Add Score', 'Add');
-    dialog.onHide(() => {
-      dialog.destroy();
-    });
-    const $body = d3.select(dialog.body);
-
-    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idtype.id);
-
-    $body.selectAll('button').data(scores).enter()
-      .append('button').text((d) => d.name).on('click', (d) => {
-        d.load().then((p) => {
-          this.pushScore(p.factory(), ranking);
-          dialog.hide();
-        });
-    });
-    dialog.show();
-  }
 
   destroy() {
     if (this.idtype) {
@@ -313,7 +307,7 @@ export class ALineUpView extends AView {
 }
 
 export interface IScore<T> {
-  createDesc();
+  createDesc(): Promise<any>;
   compute(ids: ranges.Range|number[], idtype: idtypes.IDType): Promise<{ [id:string]: T }>;
 }
 

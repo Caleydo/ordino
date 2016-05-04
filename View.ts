@@ -301,6 +301,10 @@ export class ViewWrapper extends EventHandler {
     this.instance.on(AView.EVENT_SELECT, this.listener);
   }
 
+  getInstance() {
+    return this.instance;
+  }
+
   private onParameterChange(name: string, value: any) {
     const view_ref = this.context.graph.findObject(this);
     return this.context.graph.push(setParameter(view_ref, name, value));

@@ -8,8 +8,10 @@ import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
-import tables = require('../caleydo_core/table');
+import tables = require('../caleydo_core/table')
+import plugins = require('../caleydo_core/plugin');
 import {IEvent} from '../caleydo_core/event';
+import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {
@@ -86,7 +88,6 @@ export function deriveCol(col: tables.IVector) {
 }
 
 
-
 export class ALineUpView extends AView {
   private config = {
     renderingOptions: {
@@ -109,6 +110,7 @@ export class ALineUpView extends AView {
     rows: [],
     idAccessor: (x) => x
   };
+  private scoreAccessor = (row: any, id: string, desc: any) => desc.scores ? desc.scores[this.selectionHelper.idAccessor(row)]: null;
 
   private dump: any = null;
 
@@ -131,7 +133,7 @@ export class ALineUpView extends AView {
       });
     });
     $node.append('button').attr('class', 'fa fa-plus').on('click', (d) => {
-      //TODO add column dialog
+      this.addScore(d);
     });
   }
 
@@ -228,6 +230,17 @@ export class ALineUpView extends AView {
     });
   }
 
+  pushScore(score: IScore<any>, ranking = this.lineup.data.getLastRanking()) {
+    const desc = score.createDesc();
+    desc.accessor = this.scoreAccessor;
+    this.lineup.data.pushDesc(desc);
+    this.lineup.data.push(ranking, desc);
+    return score.compute([], this.idtype).then((scores) => {
+      desc.scores = scores;
+      this.lineup.update();
+    });
+  }
+
   private listener = (event:IEvent, act:ranges.Range) => {
     if (!this.lineup) {
       return;
@@ -241,6 +254,25 @@ export class ALineUpView extends AView {
     });
     this.lineup.data.setSelection(indices);
   };
+
+  private addScore(ranking: any) {
+    const dialog = dialogs.generateDialog('Add Score', 'Add');
+    dialog.onHide(() => {
+      dialog.destroy();
+    });
+    const $body = d3.select(dialog.body);
+
+    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idtype.id);
+
+    $body.selectAll('button').data(scores).enter()
+      .append('button').text((d) => d.name).on('click', (d) => {
+        d.load().then((p) => {
+          this.pushScore(p.factory(), ranking);
+          dialog.hide();
+        });
+    });
+    dialog.show();
+  }
 
   destroy() {
     if (this.idtype) {
@@ -278,6 +310,11 @@ export class ALineUpView extends AView {
       }
     }
   }
+}
+
+export interface IScore<T> {
+  createDesc();
+  compute(ids: ranges.Range|number[], idtype: idtypes.IDType): Promise<{ [id:string]: T }>;
 }
 
 

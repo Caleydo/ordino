@@ -48,6 +48,12 @@ export function stringCol(col:string, label = col) {
   };
 }
 
+export function useDefaultLayout(instance: any) {
+  instance.data.deriveDefault();
+  //insert selection column
+  instance.data.insert(instance.data.getRankings()[0], 1, lineup.model.createSelectionDesc());
+}
+
 export function deriveCol(col: tables.IVector) {
   var r:any = {
     column: col.desc.name

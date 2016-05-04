@@ -8,10 +8,9 @@ import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
-import tables = require('../caleydo_core/table')
+import tables = require('../caleydo_core/table');
 import plugins = require('../caleydo_core/plugin');
 import {IEvent} from '../caleydo_core/event';
-import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {

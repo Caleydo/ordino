@@ -17,7 +17,7 @@ export enum EViewMode {
 }
 
 export interface IViewPluginDesc extends IPluginDesc {
-  selection: string; //none, single, multiple
+  selection: string; //none (0), single (1), multiple (>=1),
   idtype?: string;
   mockup?: boolean;
 }
@@ -28,18 +28,39 @@ function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
   return r;
 }
 
+function matchLength(s: any, length: number) {
+  switch(String(s)) {
+    case '':
+    case 'none':
+    case '0':
+      return length === 0;
+    case 'any':
+      return true;
+    case 'single':
+    case '1':
+      return length === 1;
+    case 'multiple':
+    case 'some':
+      return length >= 1;
+    case '2':
+      return length === 2;
+    default:
+      return false;
+  }
+}
+
 
 export function findStartViews() : IViewPluginDesc[] {
-  return listPlugins('targidView').filter((d: any) => d.selection === 'none').map(toViewPluginDesc);
+  return listPlugins('targidView').filter((d: any) => matchLength(d.selection, 0)).map(toViewPluginDesc);
 }
 
 export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<IViewPluginDesc[]> {
-  const selectionType = idtype === null || selection.isNone ? 'none' : selection.dim(0).length === 1 ? 'single' : 'multiple';
+  const selectionLength = idtype === null || selection.isNone ? 0 : selection.dim(0).length;
   return idtype.getCanBeMappedTo().then((mappedTypes) => {
     const all = [idtype].concat(mappedTypes);
     function byType(p: any) {
       const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
-      return p.selection === selectionType && (selectionType === 'none' || all.some((i) => pattern.test(i.id)));
+      return matchLength(p.selection, selectionLength) && (matchLength(p.selection, 0) || all.some((i) => pattern.test(i.id)));
     }
     return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
   });

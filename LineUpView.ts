@@ -307,7 +307,7 @@ export class ALineUpView extends AView {
 }
 
 export interface IScore<T> {
-  createDesc(): Promise<any>;
+  createDesc(): any;
   compute(ids: ranges.Range|number[], idtype: idtypes.IDType): Promise<{ [id:string]: T }>;
 }
 

@@ -49,6 +49,17 @@ export function stringCol(col:string, label = col) {
   };
 }
 
+export function booleanCol(col:string, label = col) {
+  return {
+    type: 'boolean',
+    column: col,
+    label: label
+  };
+}
+
+
+
+
 export function useDefaultLayout(instance: any) {
   instance.data.deriveDefault();
   //insert selection column

@@ -9,6 +9,7 @@ import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
+import d3 = require('d3');
 
 
 
@@ -50,8 +51,73 @@ function matchLength(s: any, length: number) {
 }
 
 
-export function findStartViews() : IViewPluginDesc[] {
+function findStartViews() : IViewPluginDesc[] {
   return listPlugins('targidView').filter((d: any) => matchLength(d.selection, 0)).map(toViewPluginDesc);
+}
+
+export interface IStartFactory {
+  name: string;
+  build(element : HTMLElement);
+  options(): Promise<{ viewId: string; options: any }>;
+}
+
+class StartFactory implements IStartFactory {
+  private builder: Promise<() => any> = null;
+
+  constructor(private p : IPluginDesc) {
+
+  }
+
+  get name() {
+    return this.p.name;
+  }
+
+  build(element: HTMLElement) {
+    this.builder = this.p.load().then((i) => i.factory(element));
+  }
+
+  options() {
+    return this.builder.then((i) => ({ viewId: (<any>this.p).viewId, options: i() }));
+  }
+}
+
+class MockStartFactory implements IStartFactory {
+  private current: IViewPluginDesc = null;
+
+  constructor(private views: IViewPluginDesc[]) {
+
+  }
+
+  get name() {
+    return 'Extras';
+  }
+
+  build(element: HTMLElement) {
+    const $options = d3.select(element).selectAll('label').data(this.views);
+    this.current = this.views[0];
+    $options.enter().append('label')
+      .html((d) => `<input type="radio" name="startView" value="${d.id}">${d.name}`)
+      .select('input').on('change', (d) => this.current = d);
+  }
+
+  options() {
+    return Promise.resolve({viewId: this.current.id, options: {}});
+  }
+}
+
+function toStartFactory(p: IPluginDesc): IStartFactory {
+  return new StartFactory(p);
+}
+
+export function findStartViewCreators(): IStartFactory[] {
+  const plugins = listPlugins('targidStart');
+  var factories = plugins.map(toStartFactory);
+  const used = plugins.map((d) => (<any>d).viewId);
+  const singleViews = findStartViews().filter((d) => used.indexOf(d.id) < 0);
+  if (singleViews.length > 0) {
+    factories.push(new MockStartFactory(singleViews));
+  }
+  return factories;
 }
 
 export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<IViewPluginDesc[]> {
@@ -290,7 +356,7 @@ export class ViewWrapper extends EventHandler {
     this.fire(AView.EVENT_SELECT, idtype, range);
   };
 
-  constructor(public context:IViewContext, public selection: ISelection, parent:Element, private plugin:IPlugin, options?) {
+  constructor(public context:IViewContext, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
     const $params = this.$node.append('div').attr('class', 'parameters form-inline');
@@ -407,4 +473,9 @@ export function createWrapper(context:IViewContext, selection: ISelection, paren
     }, options));
   }
   return plugin.load().then((p) => new ViewWrapper(context, selection, parent, p, options));
+}
+
+export interface IStartViewFactory {
+  //constructor($parent: Element)
+  create(): { viewId: string, options: any };
 }

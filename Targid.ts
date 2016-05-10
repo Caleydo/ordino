@@ -27,11 +27,12 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const viewId:string = parameter.viewId;
   const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
   const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none();
+  const options = parameter.options;
 
   const view = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, view).then((instance) => {
+  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, view, options).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);
   }).then((oldFocus) => {
@@ -49,7 +50,7 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter) {
   targid.removeImpl(view, oldFocus);
   return {
     removed: inputs[1],
-    inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range)
+    inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range, view.options)
   };
 }
 export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
@@ -58,18 +59,19 @@ export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter, graph:
   const viewId:string = parameter.withViewId;
   const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
   const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none();
+  const options = parameter.options;
 
   const newView = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, newView).then((instance) => {
+  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, newView, options).then((instance) => {
     wrapper = instance;
     return targid.replaceImpl(view, instance);
   }).then((oldFocus) => {
     return {
       created: [prov.ref(wrapper, 'View ' + newView.name, prov.cat.visual)],
       removed: [inputs[1]],
-      inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], wrapper.desc.id, wrapper.selection.idtype, wrapper.selection.range)
+      inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], wrapper.desc.id, wrapper.selection.idtype, wrapper.selection.range, wrapper.options)
     };
   });
 }
@@ -80,13 +82,14 @@ export function focus(targid:prov.IObjectRef<Targid>, index:number) {
   });
 }
 
-export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
+export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
   const view = plugins.get('targidView', viewId);
   //assert view
   return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), 'targidCreateView', createViewImpl, [targid], {
     viewId: viewId,
     idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : ranges.none().toString()
+    selection: selection ? selection.toString() : ranges.none().toString(),
+    options: options
   });
 }
 export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, oldFocus = -1) {
@@ -96,13 +99,14 @@ export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<
     focus: oldFocus
   });
 }
-export function replaceView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
+export function replaceView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
   //assert view
   return prov.action(prov.meta('Replace View: ' + view.toString()+' with ' + view.name, prov.cat.visual, prov.op.update), 'targidReplaceView', replaceViewImpl, [targid, view], {
     viewId: view.value.desc.id,
     withViewId: viewId,
     idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : ranges.none().toString()
+    selection: selection ? selection.toString() : ranges.none().toString(),
+    options: options
   });
 }
 
@@ -180,11 +184,11 @@ export class Targid {
     return <Element>this.$node.node();
   }
 
-  private openRight(view:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
+  private openRight(view:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
     if (view === this.views[this.views.length - 1]) { //last one just open
-      return this.push(viewId, idtype, selection);
+      return this.push(viewId, idtype, selection, options);
     }
-    return this.replace(this.views[this.views.length - 1], viewId, idtype, selection);
+    return this.replace(this.views[this.views.length - 1], viewId, idtype, selection, options);
     //remove all to the right and open the new one
     //return this.remove(this.views[this.views.length - 1]).then(() => this.push(viewId, idtype, selection));
   }
@@ -198,8 +202,8 @@ export class Targid {
     //TODO remove all +1
   }
 
-  push(viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
-    return this.graph.push(createView(this.ref, viewId, idtype, selection));
+  push(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+    return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
   }
 
   remove(index_or_view:number|ViewWrapper) {
@@ -208,10 +212,10 @@ export class Targid {
     return this.graph.push(removeView(this.ref, view_ref));
   }
 
-  replace(index_or_view:number|ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) {
+  replace(index_or_view:number|ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options) {
     const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
     const view_ref = this.graph.findObject(view);
-    return this.graph.push(replaceView(this.ref, view_ref, viewId, idtype, selection));
+    return this.graph.push(replaceView(this.ref, view_ref, viewId, idtype, selection, options));
   }
 
   pushImpl(view:ViewWrapper) {

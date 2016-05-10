@@ -153,6 +153,16 @@ def search(database, viewName):
   r = _run_to_index(db, view['querySearch'] % (column, ),query=query)
   return jsonify(r)
 
+@app.route('/<database>/<viewName>/match')
+def match(database, viewName):
+  config, engine = _resolve(database)
+  db = engine.connect()
+  view = config.view('views.' + viewName)
+  query = '%' + request.args['query'] + '%'
+  column = _check_column(request.args['column'], view)
+  r = _run_to_index(db, view['querySearch'] % (column,), query=query)
+  return jsonify(r)
+
  # 'row_number() over(order by x) as index'
  # 'rowid'
 

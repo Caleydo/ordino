@@ -29,36 +29,30 @@ elems.graph.then((graph) => {
   const t = targid.create(graph, main);
 
   const view = views.findStartViewCreators();
-  const $parent = d3.select('#tab_start');
-  const $views = $parent.select('div').selectAll('div.panel').data(view);
-  $views.enter().append('div').attr('class', 'panel panel-default').html((d,i) => `<div class="panel-heading" role="tab" id="view${i}">
-                    <h4 class="panel-title">
-                      <a role="button" ${i > 0 ? 'class="collapsed"' : ''} data-toggle="collapse" data-parent="#tab_start_acc" href="#viewBody${i}" aria-expanded="true" aria-controls="collapseOne">
-                        ${d.name}
-                      </a>
-                    </h4>
-                  </div>
-                  <div id="viewBody${i}" class="panel-collapse collapse ${i === 0 ? 'in' : ''}" role="tabpanel" aria-labelledby="view${i}">
-                    <div class="panel-body"></div>
-                  </div>
-                </div>`);
+  const $body = d3.select('#welcomeDialog div.modal-body');
 
-  $views.select('div.panel-body').each(function(d) {
+  const $views = $body.select('ul.nav').selectAll('li.view').data(view);
+  $views.enter().insert('li','.before').attr({
+    role: 'presentation',
+    'class': (d, i) => (i === 0 ? ' active' : '') + ' view'
+  }).html((d,i) => `<a href="#tab_view${i}" aria-controls="tab_old" role="tab" data-toggle="tab">${d.name}</a>`);
+
+  const $views2 = $body.select('div.tab-content').selectAll('div.tab-pane.view').data(view);
+  const $views2_enter = $views2.enter().insert('div','.before').attr({
+    role: 'tabpanel',
+    'class': (d, i) => (i === 0 ? ' active' : '') + ' tab-pane view',
+    id: (d,i) => `tab_view${i}`
+  }).html(`<div></div><button class="btn btn-primary">Start</button>`);
+  $views2_enter.select('div').each(function(d) {
     d.build(this);
   });
-  $parent.select('button.btn-primary').on('click', () => {
-    const s : views.IStartFactory = d3.select((<HTMLElement>$parent.select('div.collapse.in').node()).parentNode).datum();
-    s.options().then((o) => {
+  $views2_enter.select('button:last-of-type').on('click', (d) => {
+    d.options().then((o) => {
       t.push(o.viewId, null, null, o.options);
       (<any>$('#welcomeDialog')).modal('hide');
     });
   });
-  /*$views.enter().append('button').on('click', (d) => {
-    t.push(d.id, null, null);
-    (<any>$('#welcomeDialog')).modal('hide');
-  });
-  $views.text((d) => '+ ' + d.name);
-  */
+
   if (graph.isEmpty) {
     (<any>$('#welcomeDialog')).modal('show');
   }

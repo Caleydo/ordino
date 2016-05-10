@@ -93,10 +93,10 @@ class MockStartFactory implements IStartFactory {
   }
 
   build(element: HTMLElement) {
-    const $options = d3.select(element).selectAll('label').data(this.views);
     this.current = this.views[0];
-    $options.enter().append('label')
-      .html((d) => `<input type="radio" name="startView" value="${d.id}">${d.name}`)
+    const $options = d3.select(element).selectAll('div.radio').data(this.views);
+    $options.enter().append('div').classed('radio', true)
+      .html((d,i) => `<label><input type="radio" name="startView" value="${d.id}" ${i === 0 ? 'checked' : ''}>${d.name}</label>`)
       .select('input').on('change', (d) => this.current = d);
   }
 

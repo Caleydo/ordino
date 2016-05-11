@@ -153,12 +153,20 @@ export class ALineUpView extends AView {
 
     const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
 
-    $ul.selectAll('li').data(scores).enter().append('li').append('a').attr('href','#').text((d) => d.name).on('click', (d) => {
+    const columns = this.lineup.data.getColumns().filter((d) => !d._score);
+    $ul.selectAll('li.col').data(columns).enter().append('li').classed('col',true).append('a').attr('href','#').text((d: any) => d.label).on('click', (d) => {
+      const ranking = this.lineup.data.getLastRanking();
+      this.lineup.data.push(ranking, d);
+      d3.event.preventDefault();
+    });
+    $ul.append('li').classed('divider', true);
+    $ul.selectAll('li.score').data(scores).enter().append('li').classed('score',true).append('a').attr('href','#').text((d) => d.name).on('click', (d) => {
       d.load().then((p) => {
         this.pushScore(p);
       });
       d3.event.preventDefault();
     });
+
   }
 
   protected buildLineUpFromTable(table: tables.ITable) {
@@ -259,6 +267,7 @@ export class ALineUpView extends AView {
   pushScore(score: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
     Promise.resolve(score.factory()).then((scoreImpl) => {
       const desc = scoreImpl.createDesc();
+      desc._score = score;
       desc.accessor = this.scoreAccessor;
       this.lineup.data.pushDesc(desc);
       this.lineup.data.push(ranking, desc);

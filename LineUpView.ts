@@ -10,7 +10,9 @@ import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import tables = require('../caleydo_core/table');
 import plugins = require('../caleydo_core/plugin');
+import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import {IEvent} from '../caleydo_core/event';
+import {saveNamedSet} from './storage';
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {
@@ -114,7 +116,7 @@ export class ALineUpView extends AView {
 
   protected lineup:any;
 
-  private idtype:idtypes.IDType;
+  private idType:idtypes.IDType;
   private selectionHelper = {
     id2index : d3.map<number>(),
     rows: [],
@@ -142,11 +144,14 @@ export class ALineUpView extends AView {
         document.body.removeChild(downloadLink);
       });
     });
+    $node.append('button').attr('class', 'fa fa-save').on('click', (ranking) => {
+      this.saveRanking(ranking.getOrder());
+    });
     const $div = $node.append('div');
     $div.append('button').attr('class', 'fa fa-plus dropdown-toggle').attr('data-toggle','dropdown');
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
-    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idtype.id);
+    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
 
     $ul.selectAll('li').data(scores).enter().append('li').append('a').attr('href','#').text((d) => d.name).on('click', (d) => {
       d.load().then((p) => {
@@ -164,7 +169,7 @@ export class ALineUpView extends AView {
       const rowIds : ranges.Range = args[1];
 
       const storage = lineup.createLocalStorage(rows, columns);
-      this.idtype = table.idtypes[0];
+      this.idType = table.idtypes[0];
       this.lineup = lineup.create(storage, this.node, this.config);
       this.lineup.update();
       this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
@@ -188,7 +193,7 @@ export class ALineUpView extends AView {
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
-    this.idtype = idtype;
+    this.idType = idtype;
     this.lineup = lineup.create(storage, this.node,  this.config);
     this.lineup.update();
 
@@ -208,8 +213,8 @@ export class ALineUpView extends AView {
     return this.lineup;
   }
 
-  private initSelection(rows: any[], idAccessor:(row:any) => number, idtype:idtypes.IDType) {
-    this.idtype = idtype;
+  private initSelection(rows: any[], idAccessor:(row:any) => number, idType:idtypes.IDType) {
+    this.idType = idType;
 
     this.selectionHelper.idAccessor = idAccessor;
     this.selectionHelper.rows = rows;
@@ -217,20 +222,20 @@ export class ALineUpView extends AView {
     this.lineup.on('hoverChanged', (data_index) => {
       var id = null;
       if (data_index < 0) {
-        idtype.clear(idtypes.hoverSelectionType);
+        idType.clear(idtypes.hoverSelectionType);
       } else {
         id = idAccessor(this.selectionHelper.rows[data_index]);
-        idtype.select(idtypes.hoverSelectionType, [id]);
+        idType.select(idtypes.hoverSelectionType, [id]);
       }
     });
     this.lineup.on('multiSelectionChanged', (data_indices) => {
       const ids = ranges.list(data_indices.map((i) => idAccessor(this.selectionHelper.rows[i])));
       if (data_indices.length === 0) {
-        idtype.clear(idtypes.defaultSelectionType);
+        idType.clear(idtypes.defaultSelectionType);
       } else {
-        idtype.select(idtypes.defaultSelectionType, ids);
+        idType.select(idtypes.defaultSelectionType, ids);
       }
-      this.selectItems(idtype, ids);
+      this.selectItems(idType, ids);
     });
 
     //create lookup cache
@@ -238,8 +243,8 @@ export class ALineUpView extends AView {
       this.selectionHelper.id2index.set(String(idAccessor(row)), i);
     });
 
-    this.idtype.on('select-selected', this.listener);
-    this.listener(null, this.idtype.selections());
+    this.idType.on('select-selected', this.listener);
+    this.listener(null, this.idType.selections());
   }
 
   private updateSelection(rows: any[]) {
@@ -257,11 +262,39 @@ export class ALineUpView extends AView {
       desc.accessor = this.scoreAccessor;
       this.lineup.data.pushDesc(desc);
       this.lineup.data.push(ranking, desc);
-      return scoreImpl.compute([], this.idtype).then((scores) => {
+      return scoreImpl.compute([], this.idType).then((scores) => {
         desc.scores = scores;
         this.lineup.update();
       });
     });
+  }
+
+  saveRanking(order: number[]) {
+    const r = this.selectionHelper.rows;
+    const acc = this.selectionHelper.idAccessor;
+    const ids = ranges.list(order.map((i) => acc(r[i])).sort(d3.ascending));
+    const dialog = dialogs.generateDialog('Save Named Set', 'Save');
+    dialog.body.innerHTML = `<form>
+            <div class="form-group">
+              <label for="namedset_name">Name</label>
+              <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required">
+            </div>
+            <div class="form-group">
+              <label for="namedset_description">Description</label>
+              <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
+            </div>
+          </form>`;
+     (<HTMLFormElement>dialog.body.querySelector('form')).onsubmit = () => {
+       dialog.hide();
+       return false;
+     };
+     dialog.onHide(() => {
+       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
+       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
+       saveNamedSet(name, this.idType, ids, description).then((d) => console.log('saved', d));
+       dialog.destroy();
+     });
+     dialog.show();
   }
 
   private listener = (event:IEvent, act:ranges.Range) => {
@@ -279,8 +312,8 @@ export class ALineUpView extends AView {
   };
 
   destroy() {
-    if (this.idtype) {
-      this.idtype.off('select-selected', this.listener);
+    if (this.idType) {
+      this.idType.off('select-selected', this.listener);
     }
   }
 

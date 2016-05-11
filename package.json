@@ -58,6 +58,12 @@
           "id": "db_connector",
           "file": "sql",
           "namespace": "/api/targid/db"
+        },
+        {
+          "type": "namespace",
+          "id": "targid_storage",
+          "file": "storage",
+          "namespace": "/api/targid/storage"
         }
       ]
     },

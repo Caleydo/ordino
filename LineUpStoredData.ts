@@ -3,10 +3,8 @@
  */
 /// <reference path="./tsd.d.ts" />
 
-import ajax = require('../caleydo_core/ajax');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
-import ranges = require('../caleydo_core/range');
 import datas = require('../caleydo_core/data');
 import lineupData = require('../lineup4bi/lineup_data');
 import {IViewContext, ISelection} from '../targid2/View';
@@ -29,12 +27,12 @@ export class StoredLineUp extends ALineUpView {
     this.setBusy(true);
     datas.get(this.dataId).then((d: lineupData.LineUpDataSet) => {
       return d.data().then((data) => {
-        const colId = data.columns[0].column;
+        //const colId = data.columns[0].column;
         const l = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
         useDefaultLayout(l);
         this.setBusy(false);
       });
-    })
+    });
   }
 }
 
@@ -54,7 +52,7 @@ export function createLoadStartFactory(parent: HTMLElement) {
     }
     return {
       dataId: current.desc.id
-    }
+    };
   }
   return () => buildOptions();
 }

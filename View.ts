@@ -296,34 +296,6 @@ export class ProxyView extends AView {
   }
 }
 
-
-export class SmallMultipleView extends AView {
-  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
-    super(context, parent, options);
-    this.build();
-    this.changeSelection(selection);
-  }
-
-
-  changeSelection(selection: ISelection) {
-    const idtype = selection.idtype;
-    const l = selection.range.dim(0).asList();
-    const $views = this.$node.selectAll('div.sm').data(l, String);
-    $views.enter().append('div').classed('sm',true);
-    $views.exit().remove();
-  }
-
-  private build() {
-    this.$node.classed('small-multiple', true);
-
-  }
-
-  modeChanged(mode:EViewMode) {
-    super.modeChanged(mode);
-  }
-}
-
-
 export function setParameterImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
   return inputs[0].v.then((view:ViewWrapper) => {
     const name = parameter.name;

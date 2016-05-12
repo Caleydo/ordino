@@ -332,7 +332,7 @@ export function compressSetParameter(path:prov.ActionNode[]) {
   const last = d3.nest().key(toKey).map(possible);
   return path.filter((p) => {
     if (p.f_id !== 'targidSetParameter') {
-      return false;
+      return true;
     }
     const elems = last[toKey(p)];
     return elems[elems.length-1] === p; //just the last survives

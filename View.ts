@@ -39,6 +39,7 @@ function matchLength(s: any, length: number) {
       return true;
     case 'single':
     case '1':
+    case 'small_multiple':
       return length === 1;
     case 'multiple':
     case 'some':
@@ -48,6 +49,10 @@ function matchLength(s: any, length: number) {
     default:
       return false;
   }
+}
+
+function showAsSmallMultiple(desc: any) {
+  return desc.selection === 'small_multiple';
 }
 
 
@@ -126,7 +131,7 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promi
     const all = [idtype].concat(mappedTypes);
     function byType(p: any) {
       const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
-      return matchLength(p.selection, selectionLength) && (matchLength(p.selection, 0) || all.some((i) => pattern.test(i.id)));
+      return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1)) && (matchLength(p.selection, 0) || all.some((i) => pattern.test(i.id)));
     }
     return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
   });
@@ -292,6 +297,33 @@ export class ProxyView extends AView {
 }
 
 
+export class SmallMultipleView extends AView {
+  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
+    super(context, parent, options);
+    this.build();
+    this.changeSelection(selection);
+  }
+
+
+  changeSelection(selection: ISelection) {
+    const idtype = selection.idtype;
+    const l = selection.range.dim(0).asList();
+    const $views = this.$node.selectAll('div.sm').data(l, String);
+    $views.enter().append('div').classed('sm',true);
+    $views.exit().remove();
+  }
+
+  private build() {
+    this.$node.classed('small-multiple', true);
+
+  }
+
+  modeChanged(mode:EViewMode) {
+    super.modeChanged(mode);
+  }
+}
+
+
 export function setParameterImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
   return inputs[0].v.then((view:ViewWrapper) => {
     const name = parameter.name;
@@ -320,6 +352,7 @@ export function createCmd(id):prov.ICmdFunction {
   return null;
 }
 
+
 /**
  * compresses the given path by removing redundant focus operations
  * @param path
@@ -332,7 +365,7 @@ export function compressSetParameter(path:prov.ActionNode[]) {
   const last = d3.nest().key(toKey).map(possible);
   return path.filter((p) => {
     if (p.f_id !== 'targidSetParameter') {
-      return false;
+      return true;
     }
     const elems = last[toKey(p)];
     return elems[elems.length-1] === p; //just the last survives
@@ -350,6 +383,7 @@ export class ViewWrapper extends EventHandler {
   private mode_:EViewMode = null;
 
   private instance:IView = null;
+  private sm_instances:IView[] = [];
 
   private listener = (event: any, idtype:idtypes.IDType, range:ranges.Range) => {
     this.chooseNextViews(idtype, range);
@@ -362,7 +396,16 @@ export class ViewWrapper extends EventHandler {
     const $params = this.$node.append('div').attr('class', 'parameters form-inline');
     this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).style('display', 'none');
     const $inner = this.$node.append('div').classed('inner', true);
-    this.instance = plugin.factory(context, selection, <Element>$inner.node(), options);
+    if(showAsSmallMultiple(this.desc)) {
+      const ids = selection.range.dim(0).asList();
+      $inner.classed('multiple', ids.length > 1);
+      this.instance = plugin.factory(context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
+      ids.forEach((id) => {
+        this.sm_instances.push(plugin.factory(context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options));
+      });
+    } else {
+      this.instance = plugin.factory(context, selection, <Element>$inner.node(), options);
+    }
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
     this.instance.on(AView.EVENT_SELECT, this.listener);
   }
@@ -380,12 +423,30 @@ export class ViewWrapper extends EventHandler {
     return this.instance.getParameter(name);
   }
   setParameterImpl(name: string, value: any) {
+    this.sm_instances.forEach((d) => d.setParameter(name, value));
     return this.instance.setParameter(name, value);
   }
 
   setSelection(selection: ISelection) {
     this.selection = selection;
-    this.instance.changeSelection(selection);
+    if(showAsSmallMultiple(this.desc)) {
+      const ids = selection.range.dim(0).asList();
+      this.$node.select('div.inner').classed('multiple', ids.length > 1);
+      //first
+      this.instance.changeSelection({idtype: selection.idtype, range: ranges.list(ids.shift())});
+      //create a matching
+      this.sm_instances.splice(ids.length).forEach((v) => {
+        v.destroy();
+      });
+      this.sm_instances.forEach((v) => {
+        v.changeSelection({idtype: selection.idtype, range: ranges.list(ids.shift())});
+      });
+      ids.forEach((id) => {
+        this.sm_instances.push(this.plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>this.$node.select('div.inner').node(), this.options));
+      });
+    } else {
+      this.instance.changeSelection(selection);
+    }
   }
 
   set mode(mode:EViewMode) {
@@ -404,6 +465,7 @@ export class ViewWrapper extends EventHandler {
       .classed('t-context', mode === EViewMode.CONTEXT);
     this.$chooser
       .classed('t-hide', mode === EViewMode.HIDDEN);
+    this.sm_instances.forEach((d) => d.modeChanged(mode));
     this.instance.modeChanged(mode);
   }
 

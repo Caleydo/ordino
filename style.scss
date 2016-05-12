@@ -77,6 +77,11 @@ main.targid {
       > div.inner {
         flex: 1 1 auto;
         position: relative;
+
+        &.multiple {
+          display: flex;
+          flex-wrap: wrap;
+        }
       }
     }
 

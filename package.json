@@ -45,6 +45,23 @@
           "id": "targidCompressSetParameter",
           "file": "View",
           "factory": "compressSetParameter"
+        },
+        {
+          "id": "targid_start_loaded",
+          "name": "Stored LineUp",
+          "type": "targidView",
+          "file": "LineUpStoredData",
+          "idtype": "Custom",
+          "selection": "none"
+        },
+        {
+          "id": "targid_start_loaded",
+          "name": "Load",
+          "type": "targidStart",
+          "file": "LineUpStoredData",
+          "factory": "createLoadStartFactory",
+          "viewId": "targid_start_loaded",
+          "idtype": "Custom"
         }
       ],
       "python": [

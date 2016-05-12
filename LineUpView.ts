@@ -109,7 +109,7 @@ export class ALineUpView extends AView {
       rankingButtons: this.lineupRankingButtons.bind(this)
     },
     body: {
-      freezeCols: 2
+      freezeCols: 3
     }
   };
 
@@ -147,11 +147,10 @@ export class ALineUpView extends AView {
     $node.append('button').attr('class', 'fa fa-save').on('click', (ranking) => {
       this.saveRanking(ranking.getOrder());
     });
+
     const $div = $node.append('div');
     $div.append('button').attr('class', 'fa fa-plus dropdown-toggle').attr('data-toggle','dropdown');
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
-
-    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
     $ul.selectAll('li.col').data(columns).enter().append('li').classed('col',true).append('a').attr('href','#').text((d: any) => d.label).on('click', (d) => {
@@ -159,7 +158,10 @@ export class ALineUpView extends AView {
       this.lineup.data.push(ranking, d);
       d3.event.preventDefault();
     });
+
     $ul.append('li').classed('divider', true);
+
+    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
     $ul.selectAll('li.score').data(scores).enter().append('li').classed('score',true).append('a').attr('href','#').text((d) => d.name).on('click', (d) => {
       d.load().then((p) => {
         this.pushScore(p);

@@ -2,7 +2,8 @@
  * Created by Samuel Gratzl on 16.12.2015
  */
 
-import template = require('../caleydo_clue/dummy');
+import template = require('../caleydo_clue/template');
+import header = require('../caleydo_bootstrap_fontawesome/header');
 import targid = require('./Targid');
 import views = require('./View');
 import $ = require('jquery');
@@ -12,6 +13,10 @@ let helper2 = document.getElementById('extras');
 
 const elems = template.create(document.body, {
   app: 'Targid V2',
+  appLink: new header.AppHeaderLink('Targid V2', (event) => {
+    (<any>$('#welcomeDialog')).modal('show');
+    return false;
+  }),
   application: '/targid2',
   id: 'targid2'
 });

@@ -6,7 +6,6 @@
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
 import datas = require('../caleydo_core/data');
-import lineupData = require('../lineup4bi/lineup_data');
 import {IViewContext, ISelection} from '../targid2/View';
 import {ALineUpView, useDefaultLayout,} from '../targid2/LineUpView';
 
@@ -25,7 +24,7 @@ export class StoredLineUp extends ALineUpView {
   private build() {
     //generate random data
     this.setBusy(true);
-    datas.get(this.dataId).then((d: lineupData.LineUpDataSet) => {
+    datas.get(this.dataId).then((d: any) => {
       return d.data().then((data) => {
         //const colId = data.columns[0].column;
         const l = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);

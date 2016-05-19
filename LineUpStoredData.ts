@@ -29,6 +29,7 @@ export class StoredLineUp extends ALineUpView {
         //const colId = data.columns[0].column;
         const l = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
         useDefaultLayout(l);
+        this.initializedLineUp();
         this.setBusy(false);
       });
     });

@@ -23,6 +23,12 @@
           "creates": "(targidFocus|targidCreateView|targidRemoveView|targidReplaceView)"
         },
         {
+          "type": "actionFactory",
+          "file": "LineUpCommands",
+          "factory": "createCmd",
+          "creates": "(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)"
+        },
+        {
           "type": "actionCompressor",
           "id": "targidFocusCompressor",
           "file": "Targid",

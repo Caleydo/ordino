@@ -7,10 +7,12 @@ import {AView, EViewMode, IViewContext, ISelection} from './View';
 import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
+import prov = require('../caleydo_clue/prov');
 import ranges = require('../caleydo_core/range');
 import tables = require('../caleydo_core/table');
 import plugins = require('../caleydo_core/plugin');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
+import cmds = require('./LineUpCommands');
 import {IEvent} from '../caleydo_core/event';
 import {saveNamedSet} from './storage';
 
@@ -126,9 +128,16 @@ export class ALineUpView extends AView {
 
   private dump: any = null;
 
+  resolver: (d: any) => void;
+
   constructor(context:IViewContext, parent:Element, options?) {
     super(context, parent, options);
     this.$node.classed('lineup', true);
+
+    this.context.ref.value.data = new Promise((resolve) => {
+      this.resolver = resolve;
+    });
+    //context.graph.findOrAddObject()
   }
 
   private lineupRankingButtons($node: d3.Selection<any>) {
@@ -187,6 +196,14 @@ export class ALineUpView extends AView {
     });
   }
 
+  private updateRef(storage) {
+    if (this.resolver) {
+      this.resolver(storage);
+      this.resolver = null;
+    }
+    this.context.ref.value.data = Promise.resolve(storage);
+  }
+
   protected replaceLineUpDataFromTable(table: tables.ITable) {
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
       const rows : any[] = args[0];
@@ -195,6 +212,10 @@ export class ALineUpView extends AView {
       const storage = lineup.createLocalStorage(rows, this.lineup.data.columns);
       storage.restore(dump);
       this.lineup.changeDataStorage(storage);
+
+      this.updateRef(storage);
+      cmds.clueify(this.context.ref, this.context.graph);
+
       this.updateSelection(rowIds.dim(0).asList());
       return this.lineup;
     });
@@ -214,11 +235,20 @@ export class ALineUpView extends AView {
     return this.lineup;
   }
 
+  protected initializedLineUp() {
+    this.updateRef(this.lineup.data);
+    cmds.clueify(this.context.ref, this.context.graph);
+  }
+
   protected replaceLineUpData(rows: any[]) {
     const dump = this.lineup.dump();
     const storage = lineup.createLocalStorage(rows, this.lineup.data.columns);
     storage.restore(dump);
     this.lineup.changeDataStorage(storage);
+
+    this.updateRef(storage);
+    cmds.clueify(this.context.ref, this.context.graph);
+
     this.updateSelection(rows);
     return this.lineup;
   }
@@ -267,6 +297,7 @@ export class ALineUpView extends AView {
   }
 
   pushScore(score: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+    //TODO clueify
     Promise.resolve(score.factory()).then((scoreImpl) => {
       const desc = scoreImpl.createDesc();
       desc._score = score;
@@ -343,6 +374,9 @@ export class ALineUpView extends AView {
         const r = data.getRankings()[0];
         const s = r.sortCriteria();
         const labelColumn = r.children.filter((c) => c.desc.type === 'string')[0];
+
+        //TODO what about tracking and custom scores?
+
         data.clearRankings();
         const new_r = data.pushRanking();
         new_r.push(labelColumn);

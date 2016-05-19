@@ -144,6 +144,8 @@ export interface ISelection {
 
 export interface IViewContext {
   graph: prov.ProvenanceGraph;
+  desc: IViewPluginDesc;
+  ref: prov.IObjectRef<any>;
 }
 
 export interface IView extends IEventHandler {
@@ -362,8 +364,14 @@ export class ViewWrapper extends EventHandler {
     this.fire(AView.EVENT_SELECT, idtype, range);
   };
 
-  constructor(public context:IViewContext, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
+  ref: prov.IObjectRef<ViewWrapper>;
+
+  context: IViewContext;
+
+  constructor(graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
+    this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual);
+    this.context = createContext(graph, plugin.desc, this.ref);
     this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
     const $params = this.$node.append('div').attr('class', 'parameters form-inline');
     this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).style('display', 'none');
@@ -371,12 +379,12 @@ export class ViewWrapper extends EventHandler {
     if(showAsSmallMultiple(this.desc)) {
       const ids = selection.range.dim(0).asList();
       $inner.classed('multiple', ids.length > 1);
-      this.instance = plugin.factory(context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
+      this.instance = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
       ids.forEach((id) => {
-        this.sm_instances.push(plugin.factory(context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options));
+        this.sm_instances.push(plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options));
       });
     } else {
-      this.instance = plugin.factory(context, selection, <Element>$inner.node(), options);
+      this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
     }
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
     this.instance.on(AView.EVENT_SELECT, this.listener);
@@ -387,8 +395,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   private onParameterChange(name: string, value: any) {
-    const view_ref = this.context.graph.findObject(this);
-    return this.context.graph.push(setParameter(view_ref, name, value));
+    return this.context.graph.push(setParameter(this.ref, name, value));
   }
 
   getParameter(name: string) {
@@ -492,21 +499,23 @@ export class ViewWrapper extends EventHandler {
   }
 }
 
-export function createContext(graph:prov.ProvenanceGraph):IViewContext {
+export function createContext(graph:prov.ProvenanceGraph, desc: IPluginDesc, ref: prov.IObjectRef<any>):IViewContext {
   return {
-    graph: graph
+    graph: graph,
+    desc: toViewPluginDesc(desc),
+    ref: ref
   };
 }
 
-export function createWrapper(context:IViewContext, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
+export function createWrapper(graph: prov.ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
   if ((<any>plugin).proxy || (<any>plugin).site) {
     //inline proxy
-    return Promise.resolve(new ViewWrapper(context, selection, parent, {
+    return Promise.resolve(new ViewWrapper(graph, selection, parent, {
       desc: plugin,
       factory: (context, selection, node, options) => new ProxyView(context, selection, node, plugin, options)
     }, options));
   }
-  return plugin.load().then((p) => new ViewWrapper(context, selection, parent, p, options));
+  return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
 }
 
 export interface IStartViewFactory {

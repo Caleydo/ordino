@@ -32,12 +32,12 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const view = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, view, options).then((instance) => {
+  return createWrapper(graph, { idtype: idtype, range: selection },targid.node, view, options).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);
   }).then((oldFocus) => {
     return {
-      created: [prov.ref(wrapper, 'View ' + view.name, prov.cat.visual)],
+      created: [wrapper.ref],
       inverse: (inputs, created, removed) => removeView(inputs[0], created[0], oldFocus)
     };
   });
@@ -64,7 +64,7 @@ export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter, graph:
   const newView = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(createContext(graph), { idtype: idtype, range: selection },targid.node, newView, options).then((instance) => {
+  return createWrapper(graph, { idtype: idtype, range: selection },targid.node, newView, options).then((instance) => {
     wrapper = instance;
     return targid.replaceImpl(view, instance);
   }).then((oldFocus) => {

@@ -41,6 +41,11 @@ def _run_to_index(db, sql, **kwargs):
   result = db.execute(sqlalchemy.sql.text(sql),**kwargs)
   return [r['_index'] for r in result]
 
+def _concat(v):
+  if type(v) is list:
+    return '\n'.join(v)
+  return v
+
 def _get_data(database, viewName):
   config, engine = _resolve(database)
   # convert to index lookup
@@ -50,9 +55,9 @@ def _get_data(database, viewName):
   if view['arguments'] is not None:
     for arg in view['arguments']:
       kwargs[arg] = request.args[arg]
-  replace = tuple()
+  replace = {}
   if view['replacements'] is not None:
-    replace = tuple([request.args[arg] for arg in view['replacements']])
+    replace = { arg: request.args[arg] for arg in view['replacements'] }
   db = engine.connect()
   if 'i' in request.args:
     kwargs['query'] = request.args['i']
@@ -60,7 +65,7 @@ def _get_data(database, viewName):
     indices = map(int, request.args['i'].split(','))
     r.sort(lambda a, b: indices.index(a['_index']) - indices.index(b['_index']))
   else:
-    r = _run(db, view['query'] % replace, **kwargs)
+    r = _run(db, _concat(view['query']) % replace, **kwargs)
   return r, view
 
 @app.route('/<database>/<viewName>')
@@ -125,7 +130,7 @@ def get_sample(database, viewName):
   view = config.view('views.'+viewName)
 
   l = int(request.args.get('length',100))
-  r = _run_to_index(db, view['querySample'] % (l, ))
+  r = _run_to_index(db, _concat(view['querySample']) % (l, ))
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/sort')
@@ -139,7 +144,7 @@ def sort(database, viewName):
   else:
     #multi criteria -> create a computed score field
     score = ' + '.join(('( {} * {} )'.format(_check_column(k,view),float(v)) for k,v in request.args.items() if not k.startswith('_')))
-    query = view['querySort'] % (score, asc)
+    query = _concat(view['querySort']) % (score, asc)
   r = _run_to_index(db, query)
   return jsonify(r)
 
@@ -150,7 +155,7 @@ def search(database, viewName):
   view = config.view('views.' + viewName)
   query = '%'+request.args['query']+'%'
   column = _check_column(request.args['column'], view)
-  r = _run_to_index(db, view['querySearch'] % (column, ),query=query)
+  r = _run_to_index(db, _concat(view['querySearch']) % (column, ),query=query)
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/match')
@@ -160,7 +165,7 @@ def match(database, viewName):
   view = config.view('views.' + viewName)
   query = '%' + request.args['query'] + '%'
   column = _check_column(request.args['column'], view)
-  r = _run_to_index(db, view['querySearch'] % (column,), query=query)
+  r = _run_to_index(db, _concat(view['querySearch']) % (column,), query=query)
   return jsonify(r)
 
  # 'row_number() over(order by x) as index'

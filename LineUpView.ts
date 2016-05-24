@@ -208,14 +208,7 @@ export class ALineUpView extends AView {
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
       const rows : any[] = args[0];
       const rowIds : ranges.Range = args[1];
-      const dump = this.lineup.dump();
-      const storage = lineup.createLocalStorage(rows, this.lineup.data.columns);
-      storage.restore(dump);
-      this.lineup.changeDataStorage(storage);
-
-      this.updateRef(storage);
-      cmds.clueify(this.context.ref, this.context.graph);
-
+      this.lineup.data.setData(rows);
       this.updateSelection(rowIds.dim(0).asList());
       return this.lineup;
     });
@@ -241,14 +234,7 @@ export class ALineUpView extends AView {
   }
 
   protected replaceLineUpData(rows: any[]) {
-    const dump = this.lineup.dump();
-    const storage = lineup.createLocalStorage(rows, this.lineup.data.columns);
-    storage.restore(dump);
-    this.lineup.changeDataStorage(storage);
-
-    this.updateRef(storage);
-    cmds.clueify(this.context.ref, this.context.graph);
-
+    this.lineup.data.setData(rows);
     this.updateSelection(rows);
     return this.lineup;
   }
@@ -372,7 +358,7 @@ export class ALineUpView extends AView {
       } else if (this.dump === null) {
         this.dump = data.dump();
         const r = data.getRankings()[0];
-        const s = r.sortCriteria();
+        const s = r.getSortCriteria();
         const labelColumn = r.children.filter((c) => c.desc.type === 'string')[0];
 
         //TODO what about tracking and custom scores?

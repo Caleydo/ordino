@@ -1,0 +1,178 @@
+body, html {
+  font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 400;
+}
+
+main.targid {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+
+  div.targid {
+    flex: 1 1 auto;
+
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+
+
+    div.view {
+      -webkit-flex: 0.00001 1 auto;
+      transition: flex-grow 1s linear;
+      flex: 0.00001 1 auto;
+      position: relative;
+
+      //border: 2px solid gray;
+      //border-radius: 5px;
+
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+
+
+      &.t-focus {
+        -webkit-flex-grow: 4;
+        flex-grow: 4;
+      }
+
+      &.t-context {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+      }
+
+      &.t-hide {
+        -webkit-flex-grow: 0.00001;
+        flex-grow: 0.00001;
+        border-width: 0;
+
+        > * {
+          display: none;
+        }
+      }
+
+      div.busy {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.26) url('../assets/caleydo_c_anim.svg') no-repeat center center;
+        z-index: 999;
+      }
+
+      > div.parameters {
+        background-color: gray;
+        flex: 0 0 auto;
+        height: auto;
+      }
+
+      > div.inner {
+        flex: 1 1 auto;
+        position: relative;
+
+        &.multiple {
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+    }
+
+    div.chooser {
+      -webkit-flex: 0 0 auto;
+      flex: 0 0 auto;
+
+      vertical-align: middle;
+
+      width: 7em;
+      text-align: center;
+
+      button {
+        min-height: 4em;
+
+        &[disabled] {
+          border: none;
+        }
+        width: 100%;
+      }
+
+      &.t-hide {
+        display: none;
+      }
+    }
+  }
+
+  div.history {
+    height: 2em;
+    margin: 2px;
+
+    border: 1px solid $exploration-stage;
+    border-radius: 5px;
+
+    div.hview {
+      height: 100%;
+      display: inline-block;
+      width: 10em;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      border: 1px solid gray;
+      border-radius: 5px;
+
+      cursor: pointer;
+
+      background-color: white;
+
+      opacity: 1;
+
+      transition: background-color 1s linear;
+      transition: opacity 1s linear;
+
+      &.t-focus {
+        background-color: lightgrey;
+      }
+
+      &.t-context {
+        background-color: #e8e8e8;
+      }
+
+      &.t-hide {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  div.lu {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    overflow: auto;
+
+    .row.selected rect.bg {
+      stroke: $select-data-color;
+      stroke-width: 1;
+    }
+    .row.hover rect.bg {
+      stroke: $hover-data-color;
+      stroke-width: 1;
+
+    }
+  }
+}
+
+div.view .proxy_view {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+}

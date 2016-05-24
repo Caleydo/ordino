@@ -10,7 +10,7 @@ import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
-import {ViewWrapper, EViewMode, createWrapper, createContext, AView} from './View';
+import {ViewWrapper, EViewMode, createWrapper, AView} from './View';
 
 export function focusImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   const targid:Targid = inputs[0].value;

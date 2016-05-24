@@ -110,7 +110,6 @@ export class ALineUpView extends AView {
       rankingButtons: this.lineupRankingButtons.bind(this)
     },
     body: {
-      freezeCols: 3
     }
   };
 
@@ -351,29 +350,28 @@ export class ALineUpView extends AView {
       const data = this.lineup.data;
       if (mode === EViewMode.FOCUS) {
         if (this.dump) {
-          data.restore(this.dump);
+          const r = data.getRankings()[0];
+          r.children.forEach((c) => {
+            if (c.id in this.dump) {
+              c.setWidth(this.dump[c.id]);
+            }
+          });
         }
         this.dump = null;
       } else if (this.dump === null) {
-        this.dump = data.dump();
         const r = data.getRankings()[0];
         const s = r.getSortCriteria();
         const labelColumn = r.children.filter((c) => c.desc.type === 'string')[0];
 
-        //TODO what about tracking and custom scores?
-
-        data.clearRankings();
-        const new_r = data.pushRanking();
-        new_r.push(labelColumn);
-        if (s.col !== labelColumn) {
-          new_r.push(s.col);
-          if (s.col.desc.type === 'stack') {
-            s.col.collapse = true;
+        this.dump = {};
+        r.children.forEach((c) => {
+          if (c === labelColumn || c === s.col || c.desc.type === 'rank' || c.desc.type === 'selection') {
+            //keep
+          } else {
+            this.dump[c.id] = c.getWidth();
+            c.setWidth(0);
           }
-          s.col.sortByMe(s.asc);
-        } else {
-          labelColumn.sortByMe(s.asc);
-        }
+        });
       }
     }
   }

@@ -178,6 +178,27 @@ export class Targid {
 
     this.$history = d3.select(parent).insert('div', ':first-child').classed('history', true);
     this.$node = d3.select(parent).insert('div', ':first-child').classed('targid', true).datum(this);
+
+    this.createWelcomeView();
+  }
+
+  /**
+   * Create welcome view *without* creating a node in the provenance graph
+   */
+  private createWelcomeView() {
+    createViewImpl(
+      [this.ref],
+      {
+        viewId: "welcome",
+        idtype: null,
+        selection: ranges.none().toString(),
+        options: {
+          graph: this.graph,
+          targid: this
+        }
+      },
+      this.graph
+    );
   }
 
   get node() {
@@ -209,12 +230,20 @@ export class Targid {
   remove(index_or_view:number|ViewWrapper) {
     const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
     const view_ref = this.graph.findObject(view);
+    if(view_ref === null) {
+      console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
+      return;
+    }
     return this.graph.push(removeView(this.ref, view_ref));
   }
 
   replace(index_or_view:number|ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options) {
     const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
     const view_ref = this.graph.findObject(view);
+    if(view_ref === null) {
+      console.warn('replace view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
+      return;
+    }
     return this.graph.push(replaceView(this.ref, view_ref, viewId, idtype, selection, options));
   }
 

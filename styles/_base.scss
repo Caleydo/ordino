@@ -105,44 +105,121 @@ main.targid {
     }
   }
 
-  div.history {
-    height: 2em;
-    margin: 2px;
 
-    border: 1px solid $exploration-stage;
-    border-radius: 5px;
+  .history {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: hidden;
 
-    div.hview {
-      height: 100%;
-      display: inline-block;
-      width: 10em;
-      text-align: center;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    //background-color: $core_colour;
+    border-bottom: 1px solid $core_colour_selected;
 
-      border: 1px solid gray;
-      border-radius: 5px;
+    li {
+      float: left;
 
-      cursor: pointer;
+      a {
+        color: $core_colour_text;
+        text-decoration: none;
+        padding: 4px 0 4px 30px;
+        background: #fff; /* fallback color */
+        //background: lighten($core_border, 12%);
+        position: relative;
+        display: block;
+        float: left;
 
-      background-color: white;
+        &:after {
+          content: " ";
+          display: block;
+          width: 0;
+          height: 0;
+          border-top: 30px solid transparent; /* Go big on the size, and let overflow hide */
+          border-bottom: 30px solid transparent;
+          border-left: 20px solid #fff;
+          //border-left: 20px solid lighten($core_border, 12%);
+          position: absolute;
+          top: 50%;
+          margin-top: -30px;
+          padding-left: 1px;
+          left: 100%;
+          z-index: 2;
+        }
 
-      opacity: 1;
+        &:before {
+          content: " ";
+          display: block;
+          width: 0;
+          height: 0;
+          border-top: 30px solid transparent; /* Go big on the size, and let overflow hide */
+          border-bottom: 30px solid transparent;
+          border-left: 20px solid $core_border;
+          position: absolute;
+          top: 50%;
+          margin-top: -30px;
+          margin-left: 1px;
+          left: 100%;
+          z-index: 1;
+        }
 
-      transition: background-color 1s linear;
-      transition: opacity 1s linear;
+        &.t-focus {
+          background-color: $core_colour;
 
-      &.t-focus {
-        background-color: lightgrey;
+          &:before,
+          &:after {
+            border-left-color: $core_colour;
+          }
+        }
+
+        &.t-context {
+          background-color: lighten($core_colour, 3%);
+
+          &:before,
+          &:after {
+            border-left-color: lighten($core_colour, 3%);
+          }
+        }
+
+        &.t-hide {
+          //opacity: 0.5;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          background: lighten($core_border, 0%);
+
+          &:before,
+          &:after {
+            border-left-color: lighten($core_border, 0%);
+          }
+        }
       }
 
-      &.t-context {
-        background-color: #e8e8e8;
+      &:first-child a {
+        padding-left: 10px;
       }
 
-      &.t-hide {
-        opacity: 0.5;
+      // traces that gets darker to the current item
+      /*&:nth-child(2) a       { background:        lighten($core_border, 10%); }
+      &:nth-child(2) a:after { border-left-color: lighten($core_border, 10%); }
+      &:nth-child(3) a       { background:        lighten($core_border, 8%); }
+      &:nth-child(3) a:after { border-left-color: lighten($core_border, 8%); }
+      &:nth-child(4) a       { background:        lighten($core_border, 6%); }
+      &:nth-child(4) a:after { border-left-color: lighten($core_border, 6%); }
+      &:nth-child(5) a       { background:        lighten($core_border, 4%); }
+      &:nth-child(5) a:after { border-left-color: lighten($core_border, 4%); }
+      &:last-child a {
+        background: lighten($core_border, 2%);
+        color: $core_colour_text;
+        //pointer-events: none;
+        //cursor: default;
       }
+      &:last-child  a:before {
+        border-left-color: lighten($core_border, 2%);
+      }
+      &:last-child  a:after {
+        border: 0;
+      }*/
     }
   }
 

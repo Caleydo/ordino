@@ -176,8 +176,8 @@ export class Targid {
   constructor(public graph:prov.ProvenanceGraph, parent:Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
 
-    this.$history = d3.select(parent).insert('div', ':first-child').classed('history', true);
     this.$node = d3.select(parent).insert('div', ':first-child').classed('targid', true).datum(this);
+    this.$history = d3.select(parent).insert('ul', ':first-child').classed('history', true);
 
     this.createWelcomeView();
   }
@@ -332,14 +332,18 @@ export class Targid {
   }
 
   private update() {
-    const $views = this.$history.selectAll('div.hview').data(this.views);
-    $views.enter().append('div').classed('hview', true).on('click', (d) => {
-      this.focus(d);
-    }).on('contextmenu', (d) => {
-      d3.event.preventDefault();
-      this.remove(d);
-    });
-    $views
+    const $views = this.$history.selectAll('li.hview').data(this.views);
+    $views.enter()
+      .append('li').classed('hview', true)
+      .append('a').attr('href', '#')
+      .on('click', (d) => {
+        d3.event.preventDefault();
+        this.focus(d);
+      }).on('contextmenu', (d) => {
+        d3.event.preventDefault();
+        this.remove(d);
+      });
+    $views.select('a')
       .text((d) => d.desc.name)
       .classed('t-context', (d) => d.mode === EViewMode.CONTEXT)
       .classed('t-hide', (d) => d.mode === EViewMode.HIDDEN)

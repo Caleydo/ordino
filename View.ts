@@ -351,6 +351,7 @@ export class ViewWrapper extends EventHandler {
   static EVENT_FOCUS = 'focus';
   static EVENT_REMOVE = 'remove';
 
+  private $viewWrapper:d3.Selection<ViewWrapper>;
   private $node:d3.Selection<ViewWrapper>;
   private $chooser:d3.Selection<ViewWrapper>;
 
@@ -372,9 +373,10 @@ export class ViewWrapper extends EventHandler {
     super();
     this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual);
     this.context = createContext(graph, plugin.desc, this.ref);
-    this.$node = d3.select(parent).append('div').classed('view', true).datum(this);
+    this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+    this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
+    this.$chooser = this.$viewWrapper.append('div').classed('chooser', true).datum(this).style('display', 'none');
     const $params = this.$node.append('div').attr('class', 'parameters form-inline');
-    this.$chooser = d3.select(parent).append('div').classed('chooser', true).datum(this).style('display', 'none');
     const $inner = this.$node.append('div').classed('inner', true);
     if(showAsSmallMultiple(this.desc)) {
       const ids = selection.range.dim(0).asList();
@@ -438,14 +440,19 @@ export class ViewWrapper extends EventHandler {
   }
 
   protected modeChanged(mode:EViewMode) {
-    this.$node
+    this.$viewWrapper
       .classed('t-hide', mode === EViewMode.HIDDEN)
       .classed('t-focus', mode === EViewMode.FOCUS)
-      .classed('t-context', mode === EViewMode.CONTEXT);
+      .classed('t-context', mode === EViewMode.CONTEXT)
+      .classed('t-active', mode === EViewMode.CONTEXT || mode === EViewMode.FOCUS);
     this.$chooser
       .classed('t-hide', mode === EViewMode.HIDDEN);
     this.sm_instances.forEach((d) => d.modeChanged(mode));
     this.instance.modeChanged(mode);
+
+    if(mode === EViewMode.FOCUS) {
+      (<any>this.$node.node()).scrollIntoView();
+    }
   }
 
   private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {

@@ -9,6 +9,107 @@ main.targid {
   -webkit-flex-direction: column;
   flex-direction: column;
 
+  .scrollbar {
+    margin: 0 0 1em 0;
+    height: 2px;
+    background: #ccc;
+    line-height: 0;
+
+    .handle {
+      width: 100px;
+      height: 100%;
+      background: #292a33;
+      cursor: pointer;
+
+      .mousearea {
+        position: absolute;
+        top: -9px;
+        left: 0;
+        width: 100%;
+        height: 20px;
+      }
+    }
+  }
+
+  div.targid {
+    display: flex;
+    flex-flow: row;
+    position: absolute;
+    width: 100%;
+    min-height: calc(100% - 29px); // 29px == .history height
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+
+    > .viewWrapper {
+      position: relative;
+      flex: none;
+
+      display: flex;
+      flex-direction: row;
+
+      width: 50%;
+      transition: width 0.5s linear;
+
+      // hide empty views
+      &:empty {
+        display: none;
+      }
+
+      /*&.t-context {
+        width: 30%
+      }
+
+      &.t-focus {
+        width: 70%
+      }*/
+
+      > .view {
+        flex: 1;
+        position: relative;
+
+        > div.multiple {
+          height: 500px;
+          overflow-y: auto;
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+
+      > .chooser {
+        width: 7em;
+        vertical-align: middle;
+        text-align: center;
+
+        .category {
+          display: flex;
+          flex-direction: column;
+        }
+
+        button {
+          min-height: 4em;
+
+          &[disabled] {
+            border: none;
+          }
+          width: 100%;
+        }
+      }
+
+      div.busy {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.26) url('../assets/caleydo_c_anim.svg') no-repeat center center;
+        z-index: 999;
+      }
+    }
+  }
+
+/*
   div.targid {
     flex: 1 1 auto;
 
@@ -20,7 +121,7 @@ main.targid {
 
     div.view {
       -webkit-flex: 0.00001 1 auto;
-      transition: flex-grow 1s linear;
+      transition: flex-grow .5s linear;
       flex: 0.00001 1 auto;
       position: relative;
 
@@ -33,6 +134,12 @@ main.targid {
       flex-direction: column;
 
 
+      > * {
+        transition: opacity .5s linear;
+        opacity: 1;
+      }
+
+
       &.t-focus {
         -webkit-flex-grow: 4;
         flex-grow: 4;
@@ -41,6 +148,7 @@ main.targid {
       &.t-context {
         -webkit-flex-grow: 1;
         flex-grow: 1;
+        width: 400px;
       }
 
       &.t-hide {
@@ -49,7 +157,8 @@ main.targid {
         border-width: 0;
 
         > * {
-          display: none;
+          opacity: 0;
+          display: none !important;
         }
       }
 
@@ -75,6 +184,7 @@ main.targid {
         position: relative;
 
         &.multiple {
+          overflow-y: auto;
           display: flex;
           flex-wrap: wrap;
         }
@@ -104,7 +214,7 @@ main.targid {
       }
     }
   }
-
+  */
 
   .history {
     margin: 0;

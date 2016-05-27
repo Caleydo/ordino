@@ -166,8 +166,8 @@ export class Targid {
 
   ref:prov.IObjectRef<Targid>;
 
-  private $node:d3.Selection<Targid>;
   private $history:d3.Selection<any>;
+  private $node:d3.Selection<Targid>;
 
   private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private openWrapper = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
@@ -176,8 +176,8 @@ export class Targid {
   constructor(public graph:prov.ProvenanceGraph, parent:Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
 
-    this.$node = d3.select(parent).insert('div', ':first-child').classed('targid', true).datum(this);
-    this.$history = d3.select(parent).insert('ul', ':first-child').classed('history', true);
+    this.$history = d3.select(parent).append('ul').classed('history', true);
+    this.$node = d3.select(parent).append('div').classed('targid', true).datum(this);
 
     this.createWelcomeView();
   }

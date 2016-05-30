@@ -1,7 +1,7 @@
 {
   "name": "targid2",
   "title": "Target Discovery Platform",
-  "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities."
+  "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
   "version": "0.0.1",
   "license": "SEE LICENSE IN LICENSE",
   "repository": "Caleydo/targid2",

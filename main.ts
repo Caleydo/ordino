@@ -15,8 +15,6 @@
 import template = require('../caleydo_clue/template');
 import header = require('../caleydo_bootstrap_fontawesome/header');
 import targid = require('./Targid');
-import views = require('./View');
-import $ = require('jquery');
 
 let helper = document.getElementById('app');
 let helper2 = document.getElementById('extras');
@@ -41,7 +39,7 @@ while (helper2.firstChild) {
 }
 
 elems.graph.then((graph) => {
-  const t = targid.create(graph, main);
+  targid.create(graph, main);
 });
 
 elems.jumpToStored();

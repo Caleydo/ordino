@@ -189,7 +189,7 @@ export class Targid {
     createViewImpl(
       [this.ref],
       {
-        viewId: "welcome",
+        viewId: 'welcome',
         idtype: null,
         selection: ranges.none().toString(),
         options: {

@@ -287,9 +287,12 @@ export class ALineUpView extends AView {
       desc._score = score;
       desc.accessor = this.scoreAccessor;
       this.lineup.data.pushDesc(desc);
-      this.lineup.data.push(ranking, desc);
+      const col = this.lineup.data.push(ranking, desc);
       return scoreImpl.compute([], this.idType).then((scores) => {
         desc.scores = scores;
+        if (desc.type === 'number') {
+          col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>(d3.values(scores)))));
+        }
         this.lineup.update();
       });
     });

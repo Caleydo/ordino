@@ -243,32 +243,33 @@ export class ALineUpView extends AView {
     this.selectionHelper.idAccessor = idAccessor;
     this.selectionHelper.rows = rows;
 
-    this.lineup.on('hoverChanged', (data_index) => {
-      var id = null;
-      if (data_index < 0) {
-        idType.clear(idtypes.hoverSelectionType);
-      } else {
-        id = idAccessor(this.selectionHelper.rows[data_index]);
-        idType.select(idtypes.hoverSelectionType, [id]);
-      }
-    });
-    this.lineup.on('multiSelectionChanged', (data_indices) => {
-      const ids = ranges.list(data_indices.map((i) => idAccessor(this.selectionHelper.rows[i])));
-      if (data_indices.length === 0) {
-        idType.clear(idtypes.defaultSelectionType);
-      } else {
-        idType.select(idtypes.defaultSelectionType, ids);
-      }
-      this.selectItems(idType, ids);
-    });
+    this.lineup.on('multiSelectionChanged', this.onChange);
 
     //create lookup cache
     rows.forEach((row, i) => {
       this.selectionHelper.id2index.set(String(idAccessor(row)), i);
     });
+  }
 
-    this.idType.on('select-selected', this.listener);
-    this.listener(null, this.idType.selections());
+  private onChange = (data_indices) => {
+    const ids = ranges.list(data_indices.map((i) => this.selectionHelper.idAccessor(this.selectionHelper.rows[i])));
+    this.setItemSelection({idtype: this.idType, range: ids});
+  };
+
+  setItemSelection(sel: ISelection) {
+    if (this.lineup) {
+      var indices:number[] = [];
+      sel.range.dim(0).forEach((id) => {
+        const index = this.selectionHelper.id2index.get(String(id));
+        if (typeof index === 'number') {
+          indices.push(index);
+        }
+      });
+      this.lineup.on('multiSelectionChanged', null);
+      this.lineup.data.setSelection(indices);
+      this.lineup.on('multiSelectionChanged', this.onChange);
+    }
+    super.setItemSelection(sel);
   }
 
   private updateSelection(rows: any[]) {
@@ -326,24 +327,8 @@ export class ALineUpView extends AView {
      dialog.show();
   }
 
-  private listener = (event:IEvent, act:ranges.Range) => {
-    if (!this.lineup) {
-      return;
-    }
-    var indices:number[] = [];
-    act.dim(0).forEach((id) => {
-      const index = this.selectionHelper.id2index.get(String(id));
-      if (typeof index === 'number') {
-        indices.push(index);
-      }
-    });
-    this.lineup.data.setSelection(indices);
-  };
 
   destroy() {
-    if (this.idType) {
-      this.idType.off('select-selected', this.listener);
-    }
   }
 
   modeChanged(mode:EViewMode) {

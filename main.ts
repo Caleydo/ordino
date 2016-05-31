@@ -26,7 +26,8 @@ const elems = template.create(document.body, {
     return false;
   }),
   application: '/targid2',
-  id: 'targid2'
+  id: 'targid2',
+  recordSelectionTypes: null //no automatic selection recording
 });
 
 const main = <HTMLElement>elems.$main.node();

@@ -219,7 +219,7 @@ export class Targid {
     if (i === (this.views.length - 1)) { //last one no propagation
        return;
     }
-    this.views[i+1].setSelection({ idtype: idtype, range: selection});
+    this.views[i+1].setParameterSelection({ idtype: idtype, range: selection});
     //TODO remove all +1
   }
 
@@ -250,7 +250,7 @@ export class Targid {
   pushImpl(view:ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
-    view.on(AView.EVENT_SELECT, this.updateSelection);
+    view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
     this.views.push(view);
     this.update();
     return C.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
@@ -260,7 +260,7 @@ export class Targid {
     const i = this.views.indexOf(view);
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
-    view.off(AView.EVENT_SELECT, this.updateSelection);
+    view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
 
     this.views.splice(i, 1);
     this.update();
@@ -279,11 +279,11 @@ export class Targid {
     const i = this.views.indexOf(view);
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
-    view.off(AView.EVENT_SELECT, this.updateSelection);
+    view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
 
     withView.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     withView.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
-    withView.on(AView.EVENT_SELECT, this.updateSelection);
+    withView.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
     withView.mode = view.mode;
 
     this.views.splice(i, 1, withView);

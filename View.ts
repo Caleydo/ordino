@@ -10,6 +10,7 @@ import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
+import {createSelection} from "../caleydo_clue/selection";
 
 
 
@@ -156,6 +157,10 @@ export interface IView extends IEventHandler {
 
   changeSelection(selection: ISelection);
 
+  setItemSelection(selection: ISelection);
+
+  getItemSelection(): ISelection;
+
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>);
 
   getParameter(name: string): any;
@@ -171,12 +176,12 @@ export class AView extends EventHandler implements IView {
   /**
    * event when one or more elements are selected for the next level
    * @type {string}
-   * @argument idtype {IDType}
-   * @argument range {Range}
+   * @argument selection {ISelection}
    */
-  static EVENT_SELECT = 'select';
+  static EVENT_ITEM_SELECT = 'select';
 
   protected $node:d3.Selection<IView>;
+  private itemSelection: ISelection = { idtype: null, range: ranges.none() };
 
   constructor(public context:IViewContext, parent:Element, options?) {
     super();
@@ -192,6 +197,25 @@ export class AView extends EventHandler implements IView {
     //hook
   }
 
+  setItemSelection(selection: ISelection) {
+    if (isSameSelection(this.itemSelection, selection)) {
+      return;
+    }
+    //propagate
+    if (selection.idtype) {
+      if (selection.range.isNone) {
+        selection.idtype.clear(idtypes.defaultSelectionType);
+      } else {
+        selection.idtype.select(selection.range);
+      }
+    }
+    this.fire(AView.EVENT_ITEM_SELECT, this.itemSelection, this.itemSelection = selection);
+  }
+
+  getItemSelection() {
+    return this.itemSelection;
+  }
+
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
     //hook
   }
@@ -203,10 +227,6 @@ export class AView extends EventHandler implements IView {
   setParameter(name: string, value: any) {
     //hook
     return null;
-  }
-
-  protected selectItems(idtype:idtypes.IDType, range:ranges.Range) {
-    this.fire(AView.EVENT_SELECT, idtype, range);
   }
 
   modeChanged(mode:EViewMode) {
@@ -318,14 +338,44 @@ export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, va
   });
 }
 
+export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
+  return inputs[0].v.then((view:ViewWrapper) => {
+    const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
+    const range = ranges.parse(parameter.range);
+
+    const bak = view.getItemSelection();
+    view.setItemSelection({ idtype: idtype, range: range});
+    return {
+      inverse: setSelection(inputs[0], bak.idtype, bak.range)
+    };
+  });
+}
+export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
+  //assert view
+  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view], {
+    idtype: idtype ? idtype.id: null,
+    range: range.toString()
+  });
+}
+
 export function createCmd(id):prov.ICmdFunction {
   switch (id) {
     case 'targidSetParameter':
       return setParameterImpl;
+    case 'targidSetSelection':
+      return setSelectionImpl;
   }
   return null;
 }
 
+function isSameSelection(a: ISelection, b: ISelection) {
+  const aNull = (a === null || a.idtype === null);
+  const bNull = (b === null || b.idtype === null);
+  if (aNull || bNull) {
+    return aNull === bNull;
+  }
+  return a.idtype.id === b.idtype.id && a.range.eq(b.range);
+}
 
 /**
  * compresses the given path by removing redundant focus operations
@@ -346,6 +396,24 @@ export function compressSetParameter(path:prov.ActionNode[]) {
   });
 }
 
+export function compressSetSelection(path:prov.ActionNode[]) {
+  const lastByIDType : any = {};
+  path.forEach((p) => {
+    if (p.f_id === 'targidSetSelection') {
+      const para = p.parameter;
+      lastByIDType[para.idtype+'@'+p.requires[0].id] = p;
+    }
+  });
+  return path.filter((p) => {
+    if (p.f_id !== 'targidSetSelection') {
+      return true;
+    }
+    const para = p.parameter;
+    //last one remains
+    return lastByIDType[para.idtype+'@'+p.requires[0].id] === p;
+  });
+}
+
 export class ViewWrapper extends EventHandler {
   static EVENT_OPEN = 'open';
   static EVENT_FOCUS = 'focus';
@@ -360,9 +428,13 @@ export class ViewWrapper extends EventHandler {
   private instance:IView = null;
   private sm_instances:IView[] = [];
 
-  private listener = (event: any, idtype:idtypes.IDType, range:ranges.Range) => {
-    this.chooseNextViews(idtype, range);
-    this.fire(AView.EVENT_SELECT, idtype, range);
+  private propagateListener = (event: any, old: ISelection, new_: ISelection) => {
+    this.chooseNextViews(new_.idtype, new_.range);
+    this.fire(AView.EVENT_ITEM_SELECT, new_.idtype, new_.range);
+  };
+  private listener = (event: any, old: ISelection, new_: ISelection) => {
+    this.context.graph.pushWithResult(setSelection(this.ref, new_.idtype, new_.range), { inverse: setSelection(this.ref, old.idtype, old.range)});
+    this.propagateListener(event, old, new_);
   };
 
   ref: prov.IObjectRef<ViewWrapper>;
@@ -389,7 +461,7 @@ export class ViewWrapper extends EventHandler {
       this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
     }
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
-    this.instance.on(AView.EVENT_SELECT, this.listener);
+    this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
   }
 
   getInstance() {
@@ -408,7 +480,25 @@ export class ViewWrapper extends EventHandler {
     return this.instance.setParameter(name, value);
   }
 
-  setSelection(selection: ISelection) {
+  getItemSelection() {
+    return this.instance.getItemSelection();
+  }
+  setItemSelection(sel: ISelection) {
+    this.sm_instances.forEach((d) => d.setItemSelection(sel));
+
+    this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
+    this.instance.on(AView.EVENT_ITEM_SELECT, this.propagateListener);
+
+    this.instance.setItemSelection(sel);
+
+    this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
+    this.instance.off(AView.EVENT_ITEM_SELECT, this.propagateListener);
+  }
+
+  setParameterSelection(selection: ISelection) {
+    if (isSameSelection(this.selection, selection)) {
+      return;
+    }
     this.selection = selection;
     if(showAsSmallMultiple(this.desc)) {
       const ids = selection.range.dim(0).asList();
@@ -428,6 +518,10 @@ export class ViewWrapper extends EventHandler {
     } else {
       this.instance.changeSelection(selection);
     }
+  }
+
+  getParameterSelection() {
+    return this.selection;
   }
 
   set mode(mode:EViewMode) {
@@ -487,7 +581,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   destroy() {
-    this.instance.off(AView.EVENT_SELECT, this.listener);
+    this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
     this.instance.destroy();
     this.$node.remove();
     this.$chooser.remove();

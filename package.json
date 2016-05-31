@@ -34,25 +34,35 @@
           "type": "actionCompressor",
           "id": "targidFocusCompressor",
           "file": "Targid",
-          "factory": "compressFocus"
+          "factory": "compressFocus",
+          "matches": "(targidFocus)"
         },
         {
           "type": "actionCompressor",
           "id": "targidCreateRemoveCompressor",
           "file": "Targid",
-          "factory": "compressCreateRemove"
+          "factory": "compressCreateRemove",
+          "matches": "(targidRemoveView|targidCreateView)"
         },
         {
           "type": "actionFactory",
           "file": "View",
           "factory": "createCmd",
-          "creates": "(targidSetParameter)"
+          "creates": "(targidSetParameter|targidSetSelection)"
         },
         {
           "type": "actionCompressor",
           "id": "targidCompressSetParameter",
           "file": "View",
-          "factory": "compressSetParameter"
+          "factory": "compressSetParameter",
+          "matches": "(targidSetParameter)"
+        },
+        {
+          "type": "actionCompressor",
+          "id": "targidCompressSetSelection",
+          "file": "View",
+          "factory": "compressSetSelection",
+          "matches": "(targidSetSelection)"
         },
         {
           "id": "targid_start_loaded",

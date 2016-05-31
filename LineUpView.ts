@@ -12,7 +12,6 @@ import ranges = require('../caleydo_core/range');
 import plugins = require('../caleydo_core/plugin');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import cmds = require('./LineUpCommands');
-import {IEvent} from '../caleydo_core/event';
 import {saveNamedSet} from './storage';
 
 export function numberCol(col:string, rows:any[], label = col) {
@@ -329,6 +328,7 @@ export class ALineUpView extends AView {
 
 
   destroy() {
+    //nothing to do
   }
 
   modeChanged(mode:EViewMode) {

@@ -12,6 +12,7 @@ import C = require('../caleydo_core/main');
 import d3 = require('d3');
 
 
+
 export enum EViewMode {
   FOCUS, CONTEXT, HIDDEN
 }
@@ -28,7 +29,7 @@ function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
   return r;
 }
 
-function matchLength(s: any, length: number) {
+export function matchLength(s: any, length: number) {
   switch(String(s)) {
     case '':
     case 'none':
@@ -426,13 +427,9 @@ export class ViewWrapper extends EventHandler {
   private instance:IView = null;
   private sm_instances:IView[] = [];
 
-  private propagateListener = (event: any, old: ISelection, new_: ISelection) => {
-    this.chooseNextViews(new_.idtype, new_.range);
-    this.fire(AView.EVENT_ITEM_SELECT, new_.idtype, new_.range);
-  };
   private listener = (event: any, old: ISelection, new_: ISelection) => {
-    this.context.graph.pushWithResult(setSelection(this.ref, new_.idtype, new_.range), { inverse: setSelection(this.ref, old.idtype, old.range)});
-    this.propagateListener(event, old, new_);
+    this.chooseNextViews(new_.idtype, new_.range);
+    this.fire(AView.EVENT_ITEM_SELECT, old, new_);
   };
 
   ref: prov.IObjectRef<ViewWrapper>;
@@ -482,15 +479,14 @@ export class ViewWrapper extends EventHandler {
     return this.instance.getItemSelection();
   }
   setItemSelection(sel: ISelection) {
-    this.sm_instances.forEach((d) => d.setItemSelection(sel));
-
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
-    this.instance.on(AView.EVENT_ITEM_SELECT, this.propagateListener);
+
+    this.sm_instances.forEach((d) => d.setItemSelection(sel));
 
     this.instance.setItemSelection(sel);
 
+    this.chooseNextViews(sel.idtype, sel.range);
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
-    this.instance.off(AView.EVENT_ITEM_SELECT, this.propagateListener);
   }
 
   setParameterSelection(selection: ISelection) {
@@ -520,6 +516,10 @@ export class ViewWrapper extends EventHandler {
 
   getParameterSelection() {
     return this.selection;
+  }
+
+  matchSelectionLength(length: number) {
+    return matchLength(this.desc.selection, length) ||(showAsSmallMultiple(this.desc) && length > 1);
   }
 
   set mode(mode:EViewMode) {

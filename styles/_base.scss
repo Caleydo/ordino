@@ -23,6 +23,16 @@ main.targid {
   -webkit-flex-direction: column;
   flex-direction: column;
 
+  svg {
+    path,
+    .axis path {
+      fill: none;
+      stroke-width: 1;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+  }
+
   div.targid {
     display: flex;
     flex-flow: row;
@@ -90,6 +100,7 @@ main.targid {
           overflow-y: auto;
           display: flex;
           flex-wrap: wrap;
+          justify-content: space-around;
         }
 
         > div {
@@ -146,7 +157,7 @@ main.targid {
           &:active,
           &:focus,
           &:hover {
-            background: white;
+            background: lighten($core_colour, 3%);
             border-color: $hover-data-color;
           }
 

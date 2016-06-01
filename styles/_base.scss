@@ -9,28 +9,6 @@ main.targid {
   -webkit-flex-direction: column;
   flex-direction: column;
 
-  .scrollbar {
-    margin: 0 0 1em 0;
-    height: 2px;
-    background: #ccc;
-    line-height: 0;
-
-    .handle {
-      width: 100px;
-      height: 100%;
-      background: #292a33;
-      cursor: pointer;
-
-      .mousearea {
-        position: absolute;
-        top: -9px;
-        left: 0;
-        width: 100%;
-        height: 20px;
-      }
-    }
-  }
-
   div.targid {
     display: flex;
     flex-flow: row;
@@ -49,7 +27,7 @@ main.targid {
       flex-direction: row;
 
       width: 50%;
-      transition: width 0.5s linear;
+      transition: width 0.5s ease;
 
       // hide empty views
       &:empty {
@@ -68,12 +46,43 @@ main.targid {
         flex: 1;
         position: relative;
 
+        transition: width 0.3s ease;
+        border-top: 6px solid #fff;
+
         > div.multiple {
           height: 500px;
           overflow-y: auto;
           display: flex;
           flex-wrap: wrap;
         }
+
+        > div {
+          transition: opacity 0.3s ease;
+        }
+      }
+
+      &.t-hide > .view > div {
+        opacity: 0.2;
+      }
+
+      &.t-context > .view {
+        border-top: 8px solid lighten($core_border, 10%);
+
+        > div {
+          opacity: 0.6;
+        }
+      }
+
+      &.t-focus > .view {
+        border-top: 8px solid lighten($core_border, 5%);
+
+        > div {
+          opacity: 1;
+        }
+      }
+
+      &:hover > .view > div {
+        opacity: 1;
       }
 
       > .chooser {
@@ -272,20 +281,20 @@ main.targid {
         }
 
         &.t-focus {
-          background-color: $core_colour;
+          background-color: lighten($core_border, 5%);
 
           &:before,
           &:after {
-            border-left-color: $core_colour;
+            border-left-color: lighten($core_border, 5%);
           }
         }
 
         &.t-context {
-          background-color: lighten($core_colour, 3%);
+          background-color: lighten($core_border, 10%);
 
           &:before,
           &:after {
-            border-left-color: lighten($core_colour, 3%);
+            border-left-color: lighten($core_border, 10%);
           }
         }
 

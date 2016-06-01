@@ -556,10 +556,10 @@ export class ViewWrapper extends EventHandler {
       //group views by category
       const data = d3.nest().key((d) => (<any>d).category || 'static').entries(views);
       const $categories = this.$chooser.selectAll('div.category').data(data);
-      $categories.enter().append('div').classed('category', true).append('span');
-      $categories.select('span').text((d) => d.key);
+      $categories.enter().append('div').classed('category', true);//.append('span');
+      //$categories.select('span').text((d) => d.key);
       const $buttons = $categories.selectAll('button').data((d) => <IViewPluginDesc[]>d.values);
-      $buttons.enter().append('button');
+      $buttons.enter().append('button').classed('btn', true).classed('btn-default', true);
       $buttons.text((d) => d.name).on('click', (d) => {
         this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
       });

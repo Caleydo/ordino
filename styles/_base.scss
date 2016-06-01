@@ -3,6 +3,18 @@ body, html {
   font-weight: 400;
 }
 
+.form-inline .form-group {
+  margin-right: 15px;
+
+  label {
+    margin-right: 5px;
+  }
+}
+
+label {
+  font-weight: 500 !important;
+}
+
 main.targid {
   display: -webkit-flex;
   display: flex;
@@ -17,7 +29,6 @@ main.targid {
     min-height: calc(100% - 29px); // 29px == .history height
     overflow-x: auto;
     overflow-y: hidden;
-    white-space: nowrap;
 
     > .viewWrapper {
       position: relative;
@@ -27,29 +38,53 @@ main.targid {
       flex-direction: row;
 
       width: 50%;
+      //overflow: auto;
       transition: width 0.5s ease;
+
+      &:nth-child(1):nth-last-child(1) {
+        width: 100%;
+      }
 
       // hide empty views
       &:empty {
         display: none;
       }
 
-      /*&.t-context {
+      &.t-context {
         width: 30%
       }
 
       &.t-focus {
         width: 70%
-      }*/
+      }
+
+      &.t-hide {
+        width: 30%;
+      }
 
       > .view {
         flex: 1;
         position: relative;
 
         transition: width 0.3s ease;
-        border-top: 6px solid #fff;
+        border-top: 8px solid #fff;
 
-        > div.multiple {
+        > .inner,
+        > .parameters {
+          margin: 10px;
+        }
+
+        > .parameters:not(:empty) ~ .inner {
+          border-top: 1px solid $core_border;
+          padding-top: 10px;
+          position: absolute;
+          top: 45px;
+          bottom: 0;
+          left: 0;
+          right: 0;
+        }
+
+        > .multiple {
           height: 500px;
           overflow-y: auto;
           display: flex;
@@ -81,27 +116,44 @@ main.targid {
         }
       }
 
-      &:hover > .view > div {
+      > .view:hover > div {
         opacity: 1;
       }
 
       > .chooser {
-        width: 7em;
+        width: 8em;
+        padding-top: 8px;
+        background-color: $core_colour;
         vertical-align: middle;
         text-align: center;
 
         .category {
           display: flex;
           flex-direction: column;
+          align-items: center;
         }
 
         button {
-          min-height: 4em;
+          width: 90%;
+          margin-bottom: 4px;
+          padding: 10px 5px;
+          white-space: normal;
+          //border-radius: 0;
+          line-height: 1.2;
+          border: 1px solid #ccc;
+
+          &:active,
+          &:focus,
+          &:hover {
+            background: white;
+            border-color: $hover-data-color;
+          }
 
           &[disabled] {
-            border: none;
+            //opacity: 0.3;
+            background: transparent;
+            border-color: $core_border;
           }
-          width: 100%;
         }
       }
 
@@ -117,113 +169,6 @@ main.targid {
       }
     }
   }
-
-/*
-  div.targid {
-    flex: 1 1 auto;
-
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-
-
-    div.view {
-      -webkit-flex: 0.00001 1 auto;
-      transition: flex-grow .5s linear;
-      flex: 0.00001 1 auto;
-      position: relative;
-
-      //border: 2px solid gray;
-      //border-radius: 5px;
-
-      display: -webkit-flex;
-      display: flex;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-
-
-      > * {
-        transition: opacity .5s linear;
-        opacity: 1;
-      }
-
-
-      &.t-focus {
-        -webkit-flex-grow: 4;
-        flex-grow: 4;
-      }
-
-      &.t-context {
-        -webkit-flex-grow: 1;
-        flex-grow: 1;
-        width: 400px;
-      }
-
-      &.t-hide {
-        -webkit-flex-grow: 0.00001;
-        flex-grow: 0.00001;
-        border-width: 0;
-
-        > * {
-          opacity: 0;
-          display: none !important;
-        }
-      }
-
-      div.busy {
-        display: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.26) url('../assets/caleydo_c_anim.svg') no-repeat center center;
-        z-index: 999;
-      }
-
-      > div.parameters {
-        background-color: gray;
-        flex: 0 0 auto;
-        height: auto;
-      }
-
-      > div.inner {
-        flex: 1 1 auto;
-        position: relative;
-
-        &.multiple {
-          overflow-y: auto;
-          display: flex;
-          flex-wrap: wrap;
-        }
-      }
-    }
-
-    div.chooser {
-      -webkit-flex: 0 0 auto;
-      flex: 0 0 auto;
-
-      vertical-align: middle;
-
-      width: 7em;
-      text-align: center;
-
-      button {
-        min-height: 4em;
-
-        &[disabled] {
-          border: none;
-        }
-        width: 100%;
-      }
-
-      &.t-hide {
-        display: none;
-      }
-    }
-  }
-  */
 
   .history {
     margin: 0;
@@ -305,11 +250,11 @@ main.targid {
         &:hover,
         &:active,
         &:focus {
-          background: lighten($core_border, 0%);
+          background: $hover-data-color;
 
           &:before,
           &:after {
-            border-left-color: lighten($core_border, 0%);
+            border-left-color: $hover-data-color;
           }
         }
       }
@@ -344,10 +289,10 @@ main.targid {
 
   div.lu {
     position: absolute;
-    left: 2px;
-    top: 2px;
-    right: 2px;
-    bottom: 2px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     overflow: auto;
 
     .row.selected rect.bg {
@@ -363,11 +308,14 @@ main.targid {
 }
 
 div.view .proxy_view {
-  width: 100%;
-  height: 100%;
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   iframe {
+    border: 0;
     width: 100%;
     height: 100%;
   }

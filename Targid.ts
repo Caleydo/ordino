@@ -270,13 +270,6 @@ function isCreateView(d: prov.StateNode) {
   return creator != null && creator.meta.category === prov.cat.visual && creator.meta.operation === prov.op.create;
 }
 
-function findCreateView(graph: prov.ProvenanceGraph) {
-  const path = graph.act.path.reverse();
-  const state = C.search(path, isCreateView);
-  return state ? state.creator: null;
-}
-
-
 export function create(graph:prov.ProvenanceGraph, parent:Element) {
   return new Targid(graph, parent);
 }

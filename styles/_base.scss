@@ -3,16 +3,18 @@ body, html {
   font-weight: 400;
 }
 
+th,
+label,
+.label {
+  font-weight: 500 !important;
+}
+
 .form-inline .form-group {
   margin-right: 15px;
 
   label {
     margin-right: 5px;
   }
-}
-
-label {
-  font-weight: 500 !important;
 }
 
 main.targid {

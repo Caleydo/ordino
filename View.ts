@@ -12,6 +12,7 @@ import C = require('../caleydo_core/main');
 import d3 = require('d3');
 import {IStateToken, TokenType, StateTokenLeaf, StateTokenNode} from "../caleydo_clue/statetoken";
 import {BStart} from "../targid_dummy/StartList";
+import {ALineUpView} from "./LineUpView";
 
 
 export enum EViewMode {

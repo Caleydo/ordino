@@ -10,6 +10,8 @@ import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
+import {IStateToken, TokenType, StateTokenLeaf, StateTokenNode} from "../caleydo_clue/statetoken";
+import {BStart} from "../targid_dummy/StartList";
 
 
 export enum EViewMode {
@@ -438,6 +440,13 @@ export class ViewWrapper extends EventHandler {
   ref: prov.IObjectRef<ViewWrapper>;
 
   context: IViewContext;
+
+  get stateTokens():IStateToken {
+    let token:StateTokenNode = null;
+    let idtypeToken:IStateToken = new StateTokenLeaf(this.desc.id + "selection", 1, TokenType.idtype, (<ALineUpView>this.instance).idtype, 'selection');
+    token = new StateTokenNode(this.desc.id + " view", 1, [idtypeToken]);
+    return token;
+  }
 
   constructor(graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();

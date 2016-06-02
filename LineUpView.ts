@@ -116,6 +116,11 @@ export class ALineUpView extends AView {
   protected lineup:any;
 
   private idType:idtypes.IDType;
+
+  get idtype() {
+    return this.idType;
+  }
+
   private selectionHelper = {
     id2index : d3.map<number>(),
     rows: [],

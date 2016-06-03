@@ -11,7 +11,8 @@ import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper, AView} from './View';
-import {IStateToken, StateTokenLeaf, TokenType} from "../caleydo_clue/statetoken";
+import {IStateToken, StateTokenLeaf, TokenType, StateTokenNode} from "../caleydo_clue/statetoken";
+import {StateNode} from "../caleydo_clue/prov";
 
 export function focusImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   const targid:Targid = inputs[0].value;
@@ -207,7 +208,12 @@ export class Targid {
   }
 
   get stateTokens():IStateToken {
-    return new StateTokenLeaf("dummy",  1,  TokenType.string,  "dummyvalue",  "visual")
+    let viewTokens:StateTokenLeaf[] =  []
+    for (let i = 0; i < this.views.length; i++) {
+      viewTokens = viewTokens.concat(new StateTokenLeaf(this.views[i].desc.id,1,TokenType.string,this.views[i].desc.name, "analysis"))
+    }
+    let tokens:IStateToken = new StateTokenNode("History", 1, viewTokens)
+    return tokens
   }
 
   private openRight(view:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {

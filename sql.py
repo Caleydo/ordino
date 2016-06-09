@@ -116,7 +116,7 @@ def get_desc(database, viewName):
       infos[num_col]['min'] = row[num_col + '_min']
       infos[num_col]['max'] = row[num_col+'_max']
   for cat_col in categorical_columns:
-    cats = [ r['Category'] for r in db.execute(sqlalchemy.sql.text(view['queryCategories'] % (cat_col,)))]
+    cats = [ r['Category'] for r in db.execute(sqlalchemy.sql.text(view['queryCategories'] % dict(col=cat_col)))]
     infos[view['columns'][cat_col]['label']]['categories'] = cats
 
   r = dict(idType=view['idType'],

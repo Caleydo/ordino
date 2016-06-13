@@ -343,3 +343,71 @@ div.view .proxy_view {
     height: 100%;
   }
 }
+
+div.oncoPrint {
+  display: flex;
+  flex-direction: column;
+
+  .legend {
+    border-top: 1px solid $core_border;
+    width: 100%;
+    order: 1; // place at the bottom of gene list
+
+    display: flex;
+    justify-content: space-between;
+
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 20px;
+    padding-top: 20px;
+
+    .title {
+      font-weight: 500;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+    }
+
+    li > span:first-child {
+      width: 10px;
+      height: 25px;
+      margin-right: 5px;
+    }
+
+    li.mut > span:first-child {
+      width: 8px;
+      height: 8px;
+    }
+  }
+
+  .geneLabel {
+    color: $core_colour_text;
+    width: 8em;
+    text-align: left;
+  }
+
+  .gene {
+    margin-top: 8px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    display: flex;
+    align-items: center;
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2px;
+
+      .mut {
+        width: 100%;
+      }
+    }
+  }
+}

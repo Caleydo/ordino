@@ -12,17 +12,6 @@ import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection} from './View';
 import {IStateToken, StateTokenLeaf, TokenType, StateTokenNode} from "../caleydo_clue/statetoken";
-import {StateNode} from "../caleydo_clue/prov";
-
-export function focusImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
-  const targid:Targid = inputs[0].value;
-
-  const index:number = parameter.index;
-
-  return targid.focusImpl(index).then((old) => ({
-    inverse: focus(inputs[0], old)
-  }));
-}
 
 export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, graph:prov.ProvenanceGraph) {
   const targid:Targid = inputs[0].value;

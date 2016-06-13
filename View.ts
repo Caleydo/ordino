@@ -128,15 +128,18 @@ export function findStartViewCreators(): IStartFactory[] {
   return factories;
 }
 
-export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<IViewPluginDesc[]> {
+export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {
   const selectionLength = idtype === null || selection.isNone ? 0 : selection.dim(0).length;
   return idtype.getCanBeMappedTo().then((mappedTypes) => {
     const all = [idtype].concat(mappedTypes);
     function byType(p: any) {
       const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
-      return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1)) && (matchLength(p.selection, 0) || all.some((i) => pattern.test(i.id)));
+      return all.some((i) => pattern.test(i.id)) && !matchLength(p.selection, 0);
     }
-    return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
+    function bySelection(p: any) {
+      return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
+    }
+    return listPlugins('targidView').filter(byType).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
   });
 }
 
@@ -551,22 +554,21 @@ export class ViewWrapper extends EventHandler {
   }
 
   private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
-    const isNone = selection.isNone;
-    this.$chooser.style('display', isNone ? 'none' : null);
+    this.$chooser.style('display', selection.isNone ? 'none' : null);
 
-    const viewPromise = isNone ? Promise.resolve([]) : findViews(idtype, selection);
+    const viewPromise = findViews(idtype, selection);
     viewPromise.then((views) => {
       //group views by category
-      const data = d3.nest().key((d) => (<any>d).category || 'static').entries(views);
+      const data = d3.nest().key((d) => (<any>d).v.category || 'static').entries(views);
       const $categories = this.$chooser.selectAll('div.category').data(data);
       $categories.enter().append('div').classed('category', true);//.append('span');
       //$categories.select('span').text((d) => d.key);
-      const $buttons = $categories.selectAll('button').data((d) => <IViewPluginDesc[]>d.values);
+      const $buttons = $categories.selectAll('button').data((d) => <{enabled: boolean, v: IViewPluginDesc}[]>d.values);
       $buttons.enter().append('button').classed('btn', true).classed('btn-default', true);
-      $buttons.text((d) => d.name).on('click', (d) => {
-        this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
+      $buttons.text((d) => d.v.name).on('click', (d) => {
+        this.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, selection);
       });
-      $buttons.attr('disabled', (d) => d.mockup ? 'disabled' : null);
+      $buttons.attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null);
       $buttons.exit().remove();
 
       $categories.exit().remove();

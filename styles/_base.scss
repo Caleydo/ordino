@@ -32,8 +32,11 @@ main.targid {
   flex-direction: column;
 
   svg {
+    // generic axes styles
     path,
-    .axis path {
+    .axis path,
+    line,
+    .axis line {
       fill: none;
       stroke-width: 1;
       stroke: black;

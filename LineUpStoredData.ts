@@ -39,13 +39,19 @@ export class StoredLineUp extends ALineUpView {
 export function createLoadStartFactory(parent: HTMLElement) {
   const $parent = d3.select(parent);
   var current = null;
-  datas.list().then((items: any[]) => {
-    items = items.filter((d) => d.desc.type === 'lineup_data');
-    const $options = $parent.selectAll('div.radio').data(items);
-    $options.enter().append('div').classed('radio', true)
-      .html((d,i) => `<label><input type="radio" name="loadedDataSet" value="${d.desc.name}" ${i === 0 ? 'checked' : ''}>${d.desc.name}</label>`)
-      .select('input').on('change', (d) => current = d);
-  });
+  function update() {
+    datas.list({ type: 'lineup_data'} ).then((items: any[]) => {
+      const $options = $parent.selectAll('div.radio').data(items);
+      $options.enter().append('div').classed('radio', true);
+      $options.html((d,i) => `<label><input type="radio" name="loadedDataSet" value="${d.desc.name}" ${i === 0 ? 'checked' : ''}>${d.desc.name}</label>`)
+        .select('input').on('change', (d) => current = d);
+      $options.exit().remove();
+    });
+  }
+  $parent.append('span').text('Don\'t forget to login!');
+  $parent.append('button').attr('class', 'btn btn-default btn-xs').text('Refresh').on('click', update);
+  update();
+
   function buildOptions(): any {
     if (current === null) {
       return {};

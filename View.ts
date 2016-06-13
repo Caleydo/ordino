@@ -55,11 +55,6 @@ function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
 
-
-function findStartViews() : IViewPluginDesc[] {
-  return listPlugins('targidView').filter((d: any) => matchLength(d.selection, 0)).map(toViewPluginDesc);
-}
-
 export interface IStartFactory {
   name: string;
   build(element : HTMLElement);

@@ -19,23 +19,25 @@
           "name": "TargID 2"
         },
         {
+          "id": "welcome",
+          "name": "Welcome",
+          "type": "targidView",
+          "file": "WelcomeView",
+          "factory": "create",
+          "idtype": "none",
+          "selection": "none"
+        },
+        {
           "type": "actionFactory",
           "file": "Targid",
           "factory": "createCmd",
-          "creates": "(targidFocus|targidCreateView|targidRemoveView|targidReplaceView)"
+          "creates": "(targidCreateView|targidRemoveView)"
         },
         {
           "type": "actionFactory",
           "file": "LineUpCommands",
           "factory": "createCmd",
           "creates": "(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidFocusCompressor",
-          "file": "Targid",
-          "factory": "compressFocus",
-          "matches": "(targidFocus)"
         },
         {
           "type": "actionCompressor",

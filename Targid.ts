@@ -10,7 +10,7 @@ import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
-import {ViewWrapper, EViewMode, createWrapper, AView} from './View';
+import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection} from './View';
 import {IStateToken, StateTokenLeaf, TokenType, StateTokenNode} from "../caleydo_clue/statetoken";
 import {StateNode} from "../caleydo_clue/prov";
 
@@ -55,34 +55,6 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter) {
     inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range, view.options)
   };
 }
-export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
-  const targid:Targid = inputs[0].value;
-  const view:ViewWrapper = inputs[1].value;
-  const viewId:string = parameter.withViewId;
-  const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
-  const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none();
-  const options = parameter.options;
-
-  const newView = plugins.get('targidView', viewId);
-
-  var wrapper;
-  return createWrapper(graph, { idtype: idtype, range: selection },targid.node, newView, options).then((instance) => {
-    wrapper = instance;
-    return targid.replaceImpl(view, instance);
-  }).then((oldFocus) => {
-    return {
-      created: [prov.ref(wrapper, 'View ' + newView.name, prov.cat.visual)],
-      removed: [inputs[1]],
-      inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], wrapper.desc.id, wrapper.selection.idtype, wrapper.selection.range, wrapper.options)
-    };
-  });
-}
-
-export function focus(targid:prov.IObjectRef<Targid>, index:number) {
-  return prov.action(prov.meta('Focus ' + index, prov.cat.layout), 'targidFocus', focusImpl, [targid], {
-    index: index
-  });
-}
 
 export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
   const view = plugins.get('targidView', viewId);
@@ -101,49 +73,15 @@ export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<
     focus: oldFocus
   });
 }
-export function replaceView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
-  //assert view
-  return prov.action(prov.meta('Replace View: ' + view.toString()+' with ' + view.name, prov.cat.visual, prov.op.update), 'targidReplaceView', replaceViewImpl, [targid, view], {
-    viewId: view.value.desc.id,
-    withViewId: viewId,
-    idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : ranges.none().toString(),
-    options: options
-  });
-}
 
 export function createCmd(id):prov.ICmdFunction {
   switch (id) {
-    case 'targidFocus':
-      return focusImpl;
     case 'targidCreateView':
       return createViewImpl;
     case 'targidRemoveView':
       return removeViewImpl;
-    case 'targidReplaceView':
-      return replaceViewImpl;
   }
   return null;
-}
-
-/**
- * compresses the given path by removing redundant focus operations
- * @param path
- * @returns {prov.ActionNode[]}
- */
-export function compressFocus(path:prov.ActionNode[]) {
-  var last = null;
-  path.forEach((p) => {
-    if (p.f_id === 'targidFocus') {
-      last = p;
-    }
-  });
-  if (!last) {
-    return path;
-  }
-  return path.filter((p) => {
-    return p.f_id !== 'targidFocus' || p === last;
-  });
 }
 
 export function compressCreateRemove(path:prov.ActionNode[]) {
@@ -173,7 +111,7 @@ export class Targid {
 
   private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private openWrapper = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
-  private updateSelection = (event:events.IEvent, idtype:idtypes.IDType, selection:ranges.Range) => this.updateRight(<ViewWrapper>event.target, idtype, selection);
+  private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
 
   constructor(public graph:prov.ProvenanceGraph, parent:Element) {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
@@ -217,24 +155,36 @@ export class Targid {
   }
 
   private openRight(view:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
-    if (view === this.views[this.views.length - 1]) { //last one just open
-      return this.push(viewId, idtype, selection, options);
-    }
-    return this.replace(this.views[this.views.length - 1], viewId, idtype, selection, options);
-    //remove all to the right and open the new one
-    //return this.remove(this.views[this.views.length - 1]).then(() => this.push(viewId, idtype, selection));
+    this.focus(view).then(() => this.pushView(viewId, idtype, selection, options));
   }
 
-  private updateRight(view:ViewWrapper, idtype:idtypes.IDType, selection:ranges.Range) {
-    const i = this.views.indexOf(view);
-    if (i === (this.views.length - 1)) { //last one no propagation
-       return;
+  private updateItemSelection(view:ViewWrapper, old: ISelection, new_: ISelection, options?) {
+    if (this.lastView === view) {
+      //just update the selection
+      this.graph.pushWithResult(setSelection(view.ref,new_.idtype, new_.range), { inverse : setSelection(view.ref, old.idtype, old.range)});
+    } else {
+      const i = this.views.indexOf(view);
+      const right = this.views[i+1];
+      //jump to a previous state, record the selection and then patch the rest
+      this.focus(view).then(() => {
+        return this.graph.pushWithResult(setSelection(view.ref, new_.idtype, new_.range), {inverse: setSelection(view.ref, old.idtype, old.range)});
+      }).then(() => {
+        if (right.matchSelectionLength(new_.range.dim(0).length)) {
+          return this.pushView(right.desc.id, new_.idtype, new_.range, options);
+        }
+      });
     }
-    this.views[i+1].setParameterSelection({ idtype: idtype, range: selection});
-    //TODO remove all +1
+  }
+
+  get lastView() {
+    return this.views[this.views.length-1];
   }
 
   push(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+    return this.focus(this.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
+  }
+
+  private pushView(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
     return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
   }
 
@@ -246,16 +196,6 @@ export class Targid {
       return;
     }
     return this.graph.push(removeView(this.ref, view_ref));
-  }
-
-  replace(index_or_view:number|ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options) {
-    const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
-    const view_ref = this.graph.findObject(view);
-    if(view_ref === null) {
-      console.warn('replace view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
-      return;
-    }
-    return this.graph.push(replaceView(this.ref, view_ref, viewId, idtype, selection, options));
   }
 
   pushImpl(view:ViewWrapper) {
@@ -286,39 +226,25 @@ export class Targid {
     return Promise.resolve(NaN);
   }
 
-  replaceImpl(view:ViewWrapper, withView: ViewWrapper) {
-    const i = this.views.indexOf(view);
-    view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
-    view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-
-    withView.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    withView.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
-    withView.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    withView.mode = view.mode;
-
-    this.views.splice(i, 1, withView);
-    this.update();
-    view.destroy();
-    return C.resolveIn(100);
+  focus(view: ViewWrapper) {
+    const creators = this.graph.act.path.filter(isCreateView).map((d) => d.creator);
+    const createdBy = this.graph.findOrAddJustObject(view.ref).createdBy;
+    const i = creators.indexOf(createdBy);
+    if ( i === (creators.length-1)) {
+      //we are in focus - or should be
+      return Promise.resolve(null);
+    } else {
+      //jump to the last state this view was in focus
+      return this.graph.jumpTo(creators[i+1].previous);
+    }
   }
 
   removeLastImpl() {
     return this.removeImpl(this.views[this.views.length - 1]);
   }
 
-  replaceLastImpl(view:ViewWrapper) {
-    const old = this.views.pop();
-    old.destroy();
-    this.pushImpl(view);
-  }
-
-  focus(index_or_view:number|ViewWrapper) {
-    const index = typeof index_or_view === 'number' ? <number>index_or_view : this.views.indexOf(<ViewWrapper>index_or_view);
-    if (this.views[index].mode === EViewMode.FOCUS) {
-      return;
-    }
-    return this.graph.push(focus(this.ref, index));
+  showInFocus(d: ViewWrapper) {
+    this.focusImpl(this.views.indexOf(d));
   }
 
   focusImpl(index:number) {
@@ -349,10 +275,7 @@ export class Targid {
       .append('a').attr('href', '#')
       .on('click', (d) => {
         d3.event.preventDefault();
-        this.focus(d);
-      }).on('contextmenu', (d) => {
-        d3.event.preventDefault();
-        this.remove(d);
+        this.showInFocus(d);
       });
     $views.select('a')
       .text((d) => d.desc.name)
@@ -361,6 +284,11 @@ export class Targid {
       .classed('t-focus', (d) => d.mode === EViewMode.FOCUS);
     $views.exit().remove();
   }
+}
+
+function isCreateView(d: prov.StateNode) {
+  const creator = d.creator;
+  return creator != null && creator.meta.category === prov.cat.visual && creator.meta.operation === prov.op.create;
 }
 
 export function create(graph:prov.ProvenanceGraph, parent:Element) {

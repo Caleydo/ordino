@@ -19,6 +19,15 @@
           "name": "TargID 2"
         },
         {
+          "id": "welcome",
+          "name": "Welcome",
+          "type": "targidView",
+          "file": "WelcomeView",
+          "factory": "create",
+          "idtype": "none",
+          "selection": "none"
+        },
+        {
           "type": "actionFactory",
           "file": "Targid",
           "factory": "createCmd",

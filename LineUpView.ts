@@ -236,6 +236,14 @@ export class ALineUpView extends AView {
     return this.lineup;
   }
 
+  protected updateMapping(column: string, rows: any[]) {
+    const col = this.lineup.data.find((d) => d.desc.type === 'number' && d.desc.column === column);
+    if (col) {
+      col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(rows, (d) => d[column])));
+    }
+  }
+
+
   private initSelection(rows: any[], idAccessor:(row:any) => number, idType:idtypes.IDType) {
     this.idType = idType;
 

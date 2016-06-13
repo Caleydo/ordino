@@ -17,6 +17,14 @@ label,
   }
 }
 
+
+nav {
+  .caleydo_app {
+    background: transparent url("../assets/caleydo_c.svg") no-repeat 0.5em 45%;
+    background-size: 6%;
+  }
+}
+
 main.targid {
   display: -webkit-flex;
   display: flex;

@@ -16,7 +16,7 @@
       "web": [
         {
           "type": "application",
-          "name": "TargID 2"
+          "name": "Target Discovery Platform"
         },
         {
           "id": "welcome",
@@ -116,7 +116,7 @@
     },
     "products": [
       {
-        "name": "TargID 2",
+        "name": "Target Discovery Platform",
         "type": "python",
         "app": "targid2",
         "plugins": [

@@ -86,7 +86,12 @@ class StartFactory implements IStartFactory {
   }
 }
 
-class MockStartFactory implements IStartFactory {
+/**
+ * Creates the list of views that are used, but not of type "startView" (in package.json)
+ * All views are categorized under "Extras"
+ * @deprecated
+ */
+/*class MockStartFactory implements IStartFactory {
   private current: IViewPluginDesc = null;
 
   constructor(private views: IViewPluginDesc[]) {
@@ -108,7 +113,7 @@ class MockStartFactory implements IStartFactory {
   options() {
     return Promise.resolve({viewId: this.current.id, options: {}});
   }
-}
+}*/
 
 function toStartFactory(p: IPluginDesc): IStartFactory {
   return new StartFactory(p);
@@ -117,11 +122,14 @@ function toStartFactory(p: IPluginDesc): IStartFactory {
 export function findStartViewCreators(): IStartFactory[] {
   const plugins = listPlugins('targidStart');
   var factories = plugins.map(toStartFactory);
-  const used = plugins.map((d) => (<any>d).viewId);
+
+  // retrieve views that are used, but are not a start view and place them under "extras"
+  /*const used = plugins.map((d) => (<any>d).viewId);
   const singleViews = findStartViews().filter((d) => used.indexOf(d.id) < 0);
   if (singleViews.length > 0) {
     factories.push(new MockStartFactory(singleViews));
-  }
+  }*/
+
   return factories;
 }
 

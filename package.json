@@ -77,7 +77,7 @@
         {
           "id": "targid_start_loaded",
           "name": "Load",
-          "type": "targidStart",
+          "type": "__replace_this_string_with___targidStart___for_usage",
           "file": "LineUpStoredData",
           "factory": "createLoadStartFactory",
           "viewId": "targid_start_loaded",

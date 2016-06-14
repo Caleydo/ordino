@@ -76,8 +76,8 @@
         },
         {
           "id": "targid_start_loaded",
-          "name": "Load",
-          "type": "__replace_this_string_with___targidStart___for_usage",
+          "name": "Load Stored LineUp4BI",
+          "type": "targidStart",
           "file": "LineUpStoredData",
           "factory": "createLoadStartFactory",
           "viewId": "targid_start_loaded",

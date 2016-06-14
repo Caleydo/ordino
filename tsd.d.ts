@@ -7,7 +7,7 @@ declare module 'lineupjs' {
   export = lineupjs;
 }
 
-declare var scrollTo: any;
-declare module 'scrollTo' {
-  export = scrollTo;
+declare var scrollto: any;
+declare module 'scrollto' {
+  export = scrollto;
 }

@@ -250,6 +250,10 @@ export class ALineUpView extends AView {
     cmds.clueify(this.context.ref, this.context.graph);
   }
 
+  protected withoutTracking(f: (lineup: any)=>void) {
+    cmds.untrack(this.context.ref).then(f.bind(this, this.lineup)).then(cmds.clueify.bind(cmds, this.context.ref, this.context.graph));
+  }
+
   protected replaceLineUpData(rows:any[]) {
     this.lineup.data.setData(rows);
     this.updateSelection(rows);

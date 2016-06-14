@@ -100,13 +100,26 @@ div.stories {
 // overrides caleydo_clue/styles/provvis
 .provenance-layout-vis {
 
+  h2 i:last-of-type {
+    &:hover {
+      font-weight: 500;
+    }
+  }
+
   div.state {
 
     .toolbar {
       margin: .2em .5em;
+
+      i:hover {
+        font-weight: 500;
+      }
     }
 
     &.caleydo-select-selected {
+      font-weight: 500;
+    }
+    &.caleydo-select-hovered {
       font-weight: 500;
     }
   }

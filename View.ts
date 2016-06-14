@@ -4,7 +4,7 @@
 
 import prov = require('../caleydo_clue/prov');
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
-import {IPluginDesc,IPlugin, list as listPlugins} from '../caleydo_core/plugin';
+import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
@@ -419,6 +419,11 @@ export function compressSetSelection(path:prov.ActionNode[]) {
   });
 }
 
+function generate_hash(desc: IPluginDesc, selection: ISelection, options : any = {}) {
+  var s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
+  return desc.id+'_'+s;
+}
+
 export class ViewWrapper extends EventHandler {
   static EVENT_OPEN = 'open';
   static EVENT_FOCUS = 'focus';
@@ -444,7 +449,7 @@ export class ViewWrapper extends EventHandler {
 
   constructor(graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
-    this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual);
+    this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
     this.context = createContext(graph, plugin.desc, this.ref);
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
     this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);

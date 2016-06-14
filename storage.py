@@ -13,10 +13,10 @@ import logging
 _log = logging.getLogger(__name__)
 
 app = Flask(__name__)
-db = MongoClient(c.host, c.port)[c.database]
 
 @app.route('/namedsets/', methods=['GET', 'POST'])
 def get_namedsets():
+  db = MongoClient(c.host, c.port)[c.database]
   if request.method == 'GET':
     q = dict(idType=request.args['idType']) if 'idType' in request.args else {}
     return jsonify(list(db.namedsets.find(q, { '_id': 0})))
@@ -34,7 +34,6 @@ def create():
   """
    entry point of this plugin
   """
-  app.debug = True
   return app
 
 

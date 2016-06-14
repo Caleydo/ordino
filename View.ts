@@ -577,7 +577,8 @@ export class ViewWrapper extends EventHandler {
 
     // on focus view scroll into view
     if(mode === EViewMode.FOCUS) {
-      let scrollToPos = (<any>this.$viewWrapper.node()).previousSibling.offsetLeft || 0;
+      let prev = (<any>this.$viewWrapper.node()).previousSibling;
+      let scrollToPos = prev ? prev.offsetLeft || 0 : 0;
       let $jqTargid = $(this.$viewWrapper.node()).parent();
       (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
     }

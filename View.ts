@@ -558,11 +558,11 @@ export class ViewWrapper extends EventHandler {
       let $jqTargid = $(this.$viewWrapper.node()).parent();
       let viewWrapperNode = (<any>this.$viewWrapper.node());
 
-      console.log($jqTargid, $jqTargid[0].scrollLeft, $jqTargid[0].getBoundingClientRect(), (<any>this.$viewWrapper.node()).offsetLeft);
-
+      // use right border of viewWrapper if it is more to the right of div.targid
       if($jqTargid[0].scrollLeft + $jqTargid[0].getBoundingClientRect().width <= viewWrapperNode.offsetLeft) {
         (<any>$jqTargid).scrollTo(viewWrapperNode.getBoundingClientRect().right, 500, {axis:'x'});
 
+      // use left border of viewWrapper if it is more to the left of div.targid
       } else {
         (<any>$jqTargid).scrollTo(viewWrapperNode.getBoundingClientRect().left, 500, {axis:'x'});
       }

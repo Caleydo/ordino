@@ -144,7 +144,7 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promi
     function bySelection(p: any) {
       return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
     }
-    return listPlugins('targidView').filter(byType).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
+    return listPlugins('targidView').filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
   });
 }
 
@@ -596,19 +596,15 @@ export class ViewWrapper extends EventHandler {
     const viewPromise = findViews(idtype, selection);
     viewPromise.then((views) => {
       //group views by category
-      const data = d3.nest().key((d) => (<any>d).v.category || 'static').entries(views);
-      const $categories = this.$chooser.selectAll('div.category').data(data);
-      $categories.enter().append('div').classed('category', true);//.append('span');
+      const $cats = this.$chooser.append('div').classed('category', true);
       //$categories.select('span').text((d) => d.key);
-      const $buttons = $categories.selectAll('button').data((d) => <{enabled: boolean, v: IViewPluginDesc}[]>d.values);
+      const $buttons = $cats.selectAll('button').data(views);
       $buttons.enter().append('button').classed('btn', true).classed('btn-default', true);
       $buttons.text((d) => d.v.name).on('click', (d) => {
         this.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, selection);
       });
       $buttons.attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null);
       $buttons.exit().remove();
-
-      $categories.exit().remove();
     });
   }
 

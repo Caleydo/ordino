@@ -81,7 +81,8 @@
           "file": "LineUpStoredData",
           "factory": "createLoadStartFactory",
           "viewId": "targid_start_loaded",
-          "idtype": "Custom"
+          "idtype": "Custom",
+          "priority": 100
         }
       ],
       "python": [

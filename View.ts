@@ -576,17 +576,9 @@ export class ViewWrapper extends EventHandler {
 
     // on focus view scroll into view
     if(mode === EViewMode.FOCUS) {
+      let scrollToPos = (<any>this.$viewWrapper.node()).previousSibling.offsetLeft || 0;
       let $jqTargid = $(this.$viewWrapper.node()).parent();
-      let viewWrapperNode = (<any>this.$viewWrapper.node());
-
-      // use right border of viewWrapper if it is more to the right of div.targid
-      if($jqTargid[0].scrollLeft + $jqTargid[0].getBoundingClientRect().width <= viewWrapperNode.offsetLeft) {
-        (<any>$jqTargid).scrollTo(viewWrapperNode.getBoundingClientRect().right, 500, {axis:'x'});
-
-      // use left border of viewWrapper if it is more to the left of div.targid
-      } else {
-        (<any>$jqTargid).scrollTo(viewWrapperNode.getBoundingClientRect().left, 500, {axis:'x'});
-      }
+      (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
     }
   }
 

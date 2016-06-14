@@ -2,6 +2,8 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
+/// <amd-dependency path="scrollTo" />
+
 import prov = require('../caleydo_clue/prov');
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc,IPlugin, list as listPlugins} from '../caleydo_core/plugin';
@@ -538,6 +540,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   protected modeChanged(mode:EViewMode) {
+    // update css classes
     this.$viewWrapper
       .classed('t-hide', mode === EViewMode.HIDDEN)
       .classed('t-focus', mode === EViewMode.FOCUS)
@@ -545,11 +548,24 @@ export class ViewWrapper extends EventHandler {
       .classed('t-active', mode === EViewMode.CONTEXT || mode === EViewMode.FOCUS);
     this.$chooser
       .classed('t-hide', mode === EViewMode.HIDDEN);
+
+    // trigger modeChanged
     this.sm_instances.forEach((d) => d.modeChanged(mode));
     this.instance.modeChanged(mode);
 
+    // on focus view scroll into view
     if(mode === EViewMode.FOCUS) {
-      (<any>this.$node.node()).scrollIntoView();
+      let $jqTargid = $(this.$viewWrapper.node()).parent();
+      let viewWrapperNode = (<any>this.$viewWrapper.node());
+
+      console.log($jqTargid, $jqTargid[0].scrollLeft, $jqTargid[0].getBoundingClientRect(), (<any>this.$viewWrapper.node()).offsetLeft);
+
+      if($jqTargid[0].scrollLeft + $jqTargid[0].getBoundingClientRect().width <= viewWrapperNode.offsetLeft) {
+        (<any>$jqTargid).scrollTo(viewWrapperNode.getBoundingClientRect().right, 500, {axis:'x'});
+
+      } else {
+        (<any>$jqTargid).scrollTo(viewWrapperNode.getBoundingClientRect().left, 500, {axis:'x'});
+      }
     }
   }
 

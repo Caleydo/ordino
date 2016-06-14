@@ -175,6 +175,7 @@ export class ALineUpView extends AView {
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
+    columns.push(lineup.model.createStackDesc());
     $ul.selectAll('li.col').data(columns).enter().append('li').classed('col', true).append('a').attr('href', '#').text((d:any) => d.label).on('click', (d) => {
       const ranking = this.lineup.data.getLastRanking();
       this.lineup.data.push(ranking, d);

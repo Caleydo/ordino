@@ -602,7 +602,7 @@ export class ViewWrapper extends EventHandler {
   destroy() {
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
     this.instance.destroy();
-    this.$node.remove();
+    this.$viewWrapper.remove();
     this.$chooser.remove();
   }
 

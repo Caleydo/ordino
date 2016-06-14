@@ -15,24 +15,26 @@ export class StoredLineUp extends ALineUpView {
 
   constructor(context:IViewContext, selection: ISelection, parent:Element, options?) {
     super(context, parent, options);
-    this.dataId = options && options.dataId ? options.dataId : null;
+    this.dataId = options && (typeof options.dataId !== 'undefined') ? options.dataId : null;
     this.dataIDType = options && options.dataIDType ? options.dataId : 'custom';
     //TODO
     this.build();
   }
 
   private build() {
-    //generate random data
-    this.setBusy(true);
-    datas.get(this.dataId).then((d: any) => {
-      return d.data().then((data) => {
-        //const colId = data.columns[0].column;
-        const l = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
-        useDefaultLayout(l);
-        this.initializedLineUp();
-        this.setBusy(false);
+    if (this.dataId !== null) {
+      //generate random data
+      this.setBusy(true);
+      datas.get(this.dataId).then((d:any) => {
+        return d.data().then((data) => {
+          //const colId = data.columns[0].column;
+          const l = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
+          useDefaultLayout(l);
+          this.initializedLineUp();
+          this.setBusy(false);
+        });
       });
-    });
+    }
   }
 }
 

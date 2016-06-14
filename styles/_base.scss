@@ -396,6 +396,7 @@ div.oncoPrint {
     align-items: center;
 
     .cell {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -403,6 +404,49 @@ div.oncoPrint {
 
       .mut {
         width: 100%;
+      }
+
+      &:after{
+        display: block;
+        visibility: hidden;
+        position: absolute;
+        bottom: -38px;
+        left: -50%;
+        opacity: 0;
+        content: attr(title);
+        height: auto;
+        padding: 5px 8px;
+        z-index: 999;
+        color: #fff;
+        text-decoration: none;
+        text-align: center;
+        background: rgba(0,0,0,0.85);
+        border-radius: 3px;
+        pointer-events: none;
+        transition: all 0.2s ease-in-out;
+        white-space: nowrap;
+      }
+
+      &:before {
+        position: absolute;
+        visibility: hidden;
+        width: 0;
+        height: 0;
+        bottom: -8px;
+        left: -10%;
+        opacity: 0;
+        content: "";
+        border-style: solid;
+        border-width: 0 5px 8.7px 5px;
+        border-color: transparent transparent rgba(0,0,0,0.85) transparent;
+        pointer-events: none;
+        transition: all 0.2s ease-in-out;
+      }
+
+      &:hover:after,
+      &:hover:before{
+        visibility: visible;
+        opacity: 1;
       }
     }
   }

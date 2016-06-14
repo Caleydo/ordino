@@ -134,7 +134,10 @@ export class ALineUpView extends AView {
     rows: [],
     idAccessor: (x) => x
   };
-  private scoreAccessor = (row:any, id:string, desc:any) => desc.scores ? desc.scores[this.selectionHelper.idAccessor(row)] : null;
+  private scoreAccessor = (row:any, id:string, desc:any) => {
+    const row_id = this.selectionHelper.idAccessor(row);
+    return (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+  };
 
   private dump:any = null;
 

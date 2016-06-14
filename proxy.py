@@ -19,6 +19,7 @@ def _to_site_url(site):
 def get_details(site):
   url = _to_site_url(site)
   if url:
+    print url
     r = requests.get(url)
     return Response(r.text, status=r.status_code, content_type=r.headers['content-type'])
   abort(404)

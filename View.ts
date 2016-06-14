@@ -117,7 +117,7 @@ function toStartFactory(p: IPluginDesc): IStartFactory {
 }
 
 export function findStartViewCreators(): IStartFactory[] {
-  const plugins = listPlugins('targidStart');
+  const plugins = listPlugins('targidStart').sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
   var factories = plugins.map(toStartFactory);
 
   // retrieve views that are used, but are not a start view and place them under "extras"

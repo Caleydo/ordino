@@ -108,7 +108,7 @@
       "web": {
         "d3": "~3.5.5",
         "lineupjs": "https://github.com/Caleydo/lineup.js.git",
-        "scrollTo": "https://github.com/flesler/jquery.scrollTo.git"
+        "scrollto": "https://github.com/flesler/jquery.scrollTo.git"
       },
       "python": {
         "requests": "==2.2.1",

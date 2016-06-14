@@ -472,6 +472,7 @@ export class ViewWrapper extends EventHandler {
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
     this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
     this.$chooser = this.$viewWrapper.append('div').classed('chooser', true).datum(this).style('display', 'none');
+    this.$chooser.append('div').classed('category', true);
     const $params = this.$node.append('div').attr('class', 'parameters form-inline');
     const $inner = this.$node.append('div').classed('inner', true);
     if(showAsSmallMultiple(this.desc)) {
@@ -596,7 +597,7 @@ export class ViewWrapper extends EventHandler {
     const viewPromise = findViews(idtype, selection);
     viewPromise.then((views) => {
       //group views by category
-      const $cats = this.$chooser.append('div').classed('category', true);
+      const $cats = this.$chooser.select('div.category');
       //$categories.select('span').text((d) => d.key);
       const $buttons = $cats.selectAll('button').data(views);
       $buttons.enter().append('button').classed('btn', true).classed('btn-default', true);

@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-/// <amd-dependency path="scrollto" />
+/// <amd-dependency path="scrollTo" />
 
 import prov = require('../caleydo_clue/prov');
 import {EventHandler, IEventHandler} from '../caleydo_core/event';

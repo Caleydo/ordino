@@ -131,6 +131,9 @@ export function findStartViewCreators(): IStartFactory[] {
 }
 
 export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {
+  if (idtype === null) {
+    return Promise.resolve([]);
+  }
   const selectionLength = idtype === null || selection.isNone ? 0 : selection.dim(0).length;
   return idtype.getCanBeMappedTo().then((mappedTypes) => {
     const all = [idtype].concat(mappedTypes);
@@ -346,20 +349,33 @@ export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, va
 }
 
 export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
-  return inputs[0].v.then((view:ViewWrapper) => {
+  return Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]).then((views:ViewWrapper[]) => {
+    const view = views[0];
+    const target = views[1];
     const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
     const range = ranges.parse(parameter.range);
 
     const bak = view.getItemSelection();
     view.setItemSelection({ idtype: idtype, range: range});
+    if (target) {
+      target.setParameterSelection({ idtype: idtype, range: range});
+    }
     return {
-      inverse: setSelection(inputs[0], bak.idtype, bak.range)
+      inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range): setSelection(inputs[0], bak.idtype, bak.range)
     };
   });
 }
 export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
   //assert view
   return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view], {
+    idtype: idtype ? idtype.id: null,
+    range: range.toString()
+  });
+}
+
+export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
+  //assert view
+  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id: null,
     range: range.toString()
   });

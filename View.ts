@@ -23,6 +23,7 @@ export interface IViewPluginDesc extends IPluginDesc {
   selection: string; //none (0), single (1), multiple (>=1),
   idtype?: string;
   mockup?: boolean;
+  ['']
 }
 
 function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
@@ -75,7 +76,7 @@ class StartFactory implements IStartFactory {
   }
 
   build(element: HTMLElement) {
-    this.builder = this.p.load().then((i) => i.factory(element));
+    this.builder = this.p.load().then((i) => i.factory(element, this.p));
   }
 
   options() {

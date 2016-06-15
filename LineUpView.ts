@@ -314,7 +314,7 @@ export class ALineUpView extends AView {
 
   pushScore(score:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
     //TODO clueify
-    Promise.resolve(score.factory()).then((scoreImpl) => {
+    Promise.resolve(score.factory(score.desc)).then((scoreImpl) => {
       const desc = scoreImpl.createDesc();
       desc._score = score;
       desc.accessor = this.scoreAccessor;

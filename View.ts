@@ -23,7 +23,6 @@ export interface IViewPluginDesc extends IPluginDesc {
   selection: string; //none (0), single (1), multiple (>=1),
   idtype?: string;
   mockup?: boolean;
-  ['']
 }
 
 function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {

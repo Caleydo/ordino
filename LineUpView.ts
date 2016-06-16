@@ -23,7 +23,7 @@ export function numberCol(col:string, rows:any[], label = col) {
   };
 }
 
-export function numberCol2(col:string, min: number, max: number, label = col) {
+export function numberCol2(col:string, min:number, max:number, label = col) {
   return {
     type: 'number',
     column: col,
@@ -33,7 +33,7 @@ export function numberCol2(col:string, min: number, max: number, label = col) {
 }
 
 
-export function categoricalCol(col:string, categories: string[], label = col) {
+export function categoricalCol(col:string, categories:string[], label = col) {
   return {
     type: 'categorical',
     column: col,
@@ -60,15 +60,13 @@ export function booleanCol(col:string, label = col) {
 }
 
 
-
-
-export function useDefaultLayout(instance: any) {
+export function useDefaultLayout(instance:any) {
   instance.data.deriveDefault();
   //insert selection column
   instance.data.insert(instance.data.getRankings()[0], 1, lineup.model.createSelectionDesc());
 }
 
-export function deriveCol(col: tables.IVector) {
+export function deriveCol(col:tables.IVector) {
   var r:any = {
     column: col.desc.name
   };
@@ -99,6 +97,22 @@ export function deriveCol(col: tables.IVector) {
   return r;
 }
 
+function handleNamedFilter(options:any, columns, rows) {
+  const filter = (options && options.filter ? ranges.parse(options.filter) : ranges.none()).dim(0);
+  if (!filter.isNone && !filter.isAll) {
+    columns.splice(1, 0, booleanCol('_checked', options && options.filterName ? options.filterName : 'F'));
+    rows.forEach((row) => row._checked = filter.contains(row._id));
+  }
+}
+function useNamedFilter(options, lineup) {
+  if (options && options.filter) {
+    //activate the filter to be just the checked ones
+    const f = lineup.data.find((col) => col.desc.type === 'boolean' && col.desc.column === '_checked');
+    if (f) {
+      f.setFilter(true);
+    }
+  }
+}
 
 export class ALineUpView extends AView {
   private config = {
@@ -108,8 +122,7 @@ export class ALineUpView extends AView {
     header: {
       rankingButtons: this.lineupRankingButtons.bind(this)
     },
-    body: {
-    }
+    body: {}
   };
 
 
@@ -122,17 +135,20 @@ export class ALineUpView extends AView {
   }
 
   private selectionHelper = {
-    id2index : d3.map<number>(),
+    id2index: d3.map<number>(),
     rows: [],
     idAccessor: (x) => x
   };
-  private scoreAccessor = (row: any, id: string, desc: any) => desc.scores ? desc.scores[this.selectionHelper.idAccessor(row)]: null;
+  private scoreAccessor = (row:any, id:string, desc:any) => {
+    const row_id = this.selectionHelper.idAccessor(row);
+    return (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+  };
 
-  private dump: any = null;
+  private dump:any = null;
 
-  resolver: (d: any) => void;
+  resolver:(d:any) => void;
 
-  constructor(context:IViewContext, parent:Element, options?) {
+  constructor(context:IViewContext, parent:Element, private options?) {
     super(context, parent, options);
     this.$node.classed('lineup', true);
 
@@ -142,9 +158,9 @@ export class ALineUpView extends AView {
     //context.graph.findOrAddObject()
   }
 
-  private lineupRankingButtons($node: d3.Selection<any>) {
+  private lineupRankingButtons($node:d3.Selection<any>) {
     $node.append('button').attr('class', 'fa fa-download').on('click', (ranking) => {
-      this.lineup.data.exportTable(ranking, { separator: ';', quote: true}).then((content) => {
+      this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
         var downloadLink = document.createElement('a');
         var blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
         downloadLink.href = URL.createObjectURL(blob);
@@ -160,11 +176,12 @@ export class ALineUpView extends AView {
     });
 
     const $div = $node.append('div');
-    $div.append('button').attr('class', 'fa fa-plus dropdown-toggle').attr('data-toggle','dropdown');
+    $div.append('button').attr('class', 'fa fa-plus dropdown-toggle').attr('data-toggle', 'dropdown');
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
-    $ul.selectAll('li.col').data(columns).enter().append('li').classed('col',true).append('a').attr('href','#').text((d: any) => d.label).on('click', (d) => {
+    columns.push(lineup.model.createStackDesc());
+    $ul.selectAll('li.col').data(columns).enter().append('li').classed('col', true).append('a').attr('href', '#').text((d:any) => d.label).on('click', (d) => {
       const ranking = this.lineup.data.getLastRanking();
       this.lineup.data.push(ranking, d);
       d3.event.preventDefault();
@@ -172,8 +189,8 @@ export class ALineUpView extends AView {
 
     $ul.append('li').classed('divider', true);
 
-    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
-    $ul.selectAll('li.score').data(scores).enter().append('li').classed('score',true).append('a').attr('href','#').text((d) => d.name).on('click', (d) => {
+    const scores = plugins.list('targidScore').filter((d:any) => d.idtype === this.idType.id);
+    $ul.selectAll('li.score').data(scores).enter().append('li').classed('score', true).append('a').attr('href', '#').text((d) => d.name).on('click', (d) => {
       d.load().then((p) => {
         this.pushScore(p);
       });
@@ -182,12 +199,13 @@ export class ALineUpView extends AView {
 
   }
 
-  protected buildLineUpFromTable(table: tables.ITable) {
+  protected buildLineUpFromTable(table:tables.ITable) {
     const columns = table.cols().map(deriveCol);
     lineup.deriveColors(columns);
-    return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
-      const rows : any[] = args[0];
-      const rowIds : ranges.Range = args[1];
+    return Promise.all([<any>table.objects(), table.rowIds()]).then((args:any) => {
+      const rows:any[] = args[0];
+      const rowIds:ranges.Range = args[1];
+      handleNamedFilter(this.options, columns, rows);
 
       const storage = lineup.createLocalStorage(rows, columns);
       this.idType = table.idtypes[0];
@@ -206,10 +224,10 @@ export class ALineUpView extends AView {
     this.context.ref.value.data = Promise.resolve(storage);
   }
 
-  protected replaceLineUpDataFromTable(table: tables.ITable) {
-    return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
-      const rows : any[] = args[0];
-      const rowIds : ranges.Range = args[1];
+  protected replaceLineUpDataFromTable(table:tables.ITable) {
+    return Promise.all([<any>table.objects(), table.rowIds()]).then((args:any) => {
+      const rows:any[] = args[0];
+      const rowIds:ranges.Range = args[1];
       this.lineup.data.setData(rows);
       this.updateSelection(rowIds.dim(0).asList());
       return this.lineup;
@@ -217,10 +235,11 @@ export class ALineUpView extends AView {
   }
 
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
+    handleNamedFilter(this.options, columns, rows);
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
     this.idType = idtype;
-    this.lineup = lineup.create(storage, this.node,  this.config);
+    this.lineup = lineup.create(storage, this.node, this.config);
     this.lineup.update();
 
     if (idAccessor) {
@@ -231,17 +250,30 @@ export class ALineUpView extends AView {
   }
 
   protected initializedLineUp() {
+    useNamedFilter(this.options, this.lineup);
     this.updateRef(this.lineup.data);
     cmds.clueify(this.context.ref, this.context.graph);
   }
 
-  protected replaceLineUpData(rows: any[]) {
+  protected withoutTracking(f: (lineup: any)=>void) {
+    cmds.untrack(this.context.ref).then(f.bind(this, this.lineup)).then(cmds.clueify.bind(cmds, this.context.ref, this.context.graph));
+  }
+
+  protected replaceLineUpData(rows:any[]) {
     this.lineup.data.setData(rows);
     this.updateSelection(rows);
     return this.lineup;
   }
 
-  private initSelection(rows: any[], idAccessor:(row:any) => number, idType:idtypes.IDType) {
+  protected updateMapping(column:string, rows:any[]) {
+    const col = this.lineup.data.find((d) => d.desc.type === 'number' && d.desc.column === column);
+    if (col) {
+      col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(rows, (d) => d[column])));
+    }
+  }
+
+
+  private initSelection(rows:any[], idAccessor:(row:any) => number, idType:idtypes.IDType) {
     this.idType = idType;
 
     this.selectionHelper.idAccessor = idAccessor;
@@ -260,7 +292,7 @@ export class ALineUpView extends AView {
     this.setItemSelection({idtype: this.idType, range: ids});
   };
 
-  setItemSelection(sel: ISelection) {
+  setItemSelection(sel:ISelection) {
     if (this.lineup) {
       var indices:number[] = [];
       sel.range.dim(0).forEach((id) => {
@@ -276,7 +308,7 @@ export class ALineUpView extends AView {
     super.setItemSelection(sel);
   }
 
-  private updateSelection(rows: any[]) {
+  private updateSelection(rows:any[]) {
     this.selectionHelper.id2index = d3.map<number>();
     this.selectionHelper.rows = rows;
     //create lookup cache
@@ -285,7 +317,7 @@ export class ALineUpView extends AView {
     });
   }
 
-  pushScore(score: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+  pushScore(score:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
     //TODO clueify
     Promise.resolve(score.factory()).then((scoreImpl) => {
       const desc = scoreImpl.createDesc();
@@ -295,7 +327,7 @@ export class ALineUpView extends AView {
       const col = this.lineup.data.push(ranking, desc);
       return scoreImpl.compute([], this.idType).then((scores) => {
         desc.scores = scores;
-        if (desc.type === 'number') {
+        if (desc.type === 'number' && !(desc.constantDomain)) {
           col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>(d3.values(scores)))));
         }
         this.lineup.update();
@@ -303,7 +335,7 @@ export class ALineUpView extends AView {
     });
   }
 
-  saveRanking(order: number[]) {
+  saveRanking(order:number[]) {
     const r = this.selectionHelper.rows;
     const acc = this.selectionHelper.idAccessor;
     const ids = ranges.list(order.map((i) => acc(r[i])).sort(d3.ascending));
@@ -318,17 +350,17 @@ export class ALineUpView extends AView {
               <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
             </div>
           </form>`;
-     (<HTMLFormElement>dialog.body.querySelector('form')).onsubmit = () => {
-       dialog.hide();
-       return false;
-     };
-     dialog.onHide(() => {
-       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
-       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
-       saveNamedSet(name, this.idType, ids, description).then((d) => console.log('saved', d));
-       dialog.destroy();
-     });
-     dialog.show();
+    (<HTMLFormElement>dialog.body.querySelector('form')).onsubmit = () => {
+      dialog.hide();
+      return false;
+    };
+    dialog.onHide(() => {
+      const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
+      const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
+      saveNamedSet(name, this.idType, ids, description).then((d) => console.log('saved', d));
+      dialog.destroy();
+    });
+    dialog.show();
   }
 
 
@@ -371,13 +403,13 @@ export class ALineUpView extends AView {
 }
 
 export interface IScore<T> {
-  createDesc(): any;
-  compute(ids: ranges.Range|number[], idtype: idtypes.IDType): Promise<{ [id:string]: T }>;
+  createDesc():any;
+  compute(ids:ranges.Range|number[], idtype:idtypes.IDType):Promise<{ [id:string]:T }>;
 }
 
 
 export class LineUpView extends ALineUpView {
-  constructor(context:IViewContext, selection: ISelection, parent:Element, options?) {
+  constructor(context:IViewContext, selection:ISelection, parent:Element, options?) {
     super(context, parent, options);
     //TODO
     this.build();
@@ -400,7 +432,7 @@ export class LineUpView extends ALineUpView {
 }
 
 
-export function create(context:IViewContext, selection: ISelection, parent:Element, options?) {
+export function create(context:IViewContext, selection:ISelection, parent:Element, options?) {
   return new LineUpView(context, selection, parent, options);
 }
 

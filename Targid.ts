@@ -10,7 +10,8 @@ import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
-import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection} from './View';
+import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
+
 import {IStateToken, StateTokenLeaf, TokenType, StateTokenNode} from "../caleydo_clue/statetoken";
 
 export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, graph:prov.ProvenanceGraph) {
@@ -154,14 +155,20 @@ export class Targid {
     } else {
       const i = this.views.indexOf(view);
       const right = this.views[i+1];
-      //jump to a previous state, record the selection and then patch the rest
-      this.focus(view).then(() => {
-        return this.graph.pushWithResult(setSelection(view.ref, new_.idtype, new_.range), {inverse: setSelection(view.ref, old.idtype, old.range)});
-      }).then(() => {
-        if (right.matchSelectionLength(new_.range.dim(0).length)) {
-          return this.pushView(right.desc.id, new_.idtype, new_.range, options);
-        }
-      });
+      if (right === this.lastView && right.matchSelectionLength(new_.range.dim(0).length)) {
+        //update selection and within the view
+        right.setParameterSelection(new_);
+        this.graph.pushWithResult(setAndUpdateSelection(view.ref,right.ref, new_.idtype, new_.range), { inverse : setAndUpdateSelection(view.ref, right.ref, old.idtype, old.range)});
+      } else {
+        //jump to a previous state, record the selection and then patch the rest
+        this.focus(view).then(() => {
+          return this.graph.pushWithResult(setSelection(view.ref, new_.idtype, new_.range), {inverse: setSelection(view.ref, old.idtype, old.range)});
+        }).then(() => {
+          if (right.matchSelectionLength(new_.range.dim(0).length)) {
+            return this.pushView(right.desc.id, new_.idtype, new_.range, options);
+          }
+        });
+      }
     }
   }
 

@@ -16,7 +16,7 @@
       "web": [
         {
           "type": "application",
-          "name": "TargID 2"
+          "name": "Target Discovery Platform"
         },
         {
           "id": "welcome",
@@ -76,12 +76,13 @@
         },
         {
           "id": "targid_start_loaded",
-          "name": "Load",
+          "name": "Load Stored LineUp4BI",
           "type": "targidStart",
           "file": "LineUpStoredData",
           "factory": "createLoadStartFactory",
           "viewId": "targid_start_loaded",
-          "idtype": "Custom"
+          "idtype": "Custom",
+          "priority": 100
         }
       ],
       "python": [
@@ -107,7 +108,8 @@
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
-        "lineupjs": "https://github.com/Caleydo/lineup.js.git"
+        "lineupjs": "https://github.com/Caleydo/lineup.js.git",
+        "scrollTo": "https://github.com/flesler/jquery.scrollTo.git"
       },
       "python": {
         "requests": "==2.2.1",
@@ -116,7 +118,7 @@
     },
     "products": [
       {
-        "name": "TargID 2",
+        "name": "Target Discovery Platform",
         "type": "python",
         "app": "targid2",
         "plugins": [

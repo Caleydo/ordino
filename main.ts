@@ -21,7 +21,7 @@ let helper2 = document.getElementById('extras');
 
 const elems = template.create(document.body, {
   app: 'TargID 2',
-  appLink: new header.AppHeaderLink('TargID 2', (event) => {
+  appLink: new header.AppHeaderLink('Target Discovery Platform', (event) => {
     //(<any>$('#welcomeDialog')).modal('show');
     return false;
   }),

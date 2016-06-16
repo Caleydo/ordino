@@ -67,7 +67,7 @@ export class WelcomeView extends AView {
   }
 
   private build() {
-    this.$node.append('h1').text('Welcome to the Target Discovery Platform');
+    this.$node.append('h1').text('Welcome');
 
     let $body = this.$node.append('div').html(this.template);
 

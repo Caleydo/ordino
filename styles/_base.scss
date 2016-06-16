@@ -17,6 +17,14 @@ label,
   }
 }
 
+
+nav {
+  .caleydo_app {
+    background: transparent url("../assets/caleydo_c.svg") no-repeat 0.5em 45%;
+    background-size: 6%;
+  }
+}
+
 main.targid {
   display: -webkit-flex;
   display: flex;
@@ -24,8 +32,11 @@ main.targid {
   flex-direction: column;
 
   svg {
+    // generic axes styles
     path,
-    .axis path {
+    .axis path,
+    line,
+    .axis line {
       fill: none;
       stroke-width: 1;
       stroke: black;
@@ -57,11 +68,6 @@ main.targid {
         width: 100%;
       }
 
-      // hide empty views
-      &:empty {
-        display: none;
-      }
-
       &.t-context {
         width: 30%
       }
@@ -78,7 +84,7 @@ main.targid {
         flex: 1;
         position: relative;
 
-        transition: width 0.3s ease;
+        //transition: width 0.3s ease;
         border-top: 8px solid #fff;
 
         > .inner,
@@ -94,6 +100,7 @@ main.targid {
           bottom: 0;
           left: 0;
           right: 0;
+          overflow-y: auto;
         }
 
         > .multiple {
@@ -330,5 +337,117 @@ div.view .proxy_view {
     border: 0;
     width: 100%;
     height: 100%;
+  }
+}
+
+div.oncoPrint {
+  display: flex;
+  flex-direction: column;
+
+  .legend {
+    border-top: 1px solid $core_border;
+    width: 100%;
+    order: 1; // place at the bottom of gene list
+
+    display: flex;
+    justify-content: space-between;
+
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 20px;
+    padding-top: 20px;
+
+    .title {
+      font-weight: 500;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+    }
+
+    li > span:first-child {
+      width: 10px;
+      height: 25px;
+      margin-right: 5px;
+    }
+
+    li.mut > span:first-child {
+      width: 8px;
+      height: 8px;
+    }
+  }
+
+  .geneLabel {
+    color: $core_colour_text;
+    width: 8em;
+    text-align: left;
+  }
+
+  .gene {
+    margin-top: 8px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    display: flex;
+    align-items: center;
+
+    .cell {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2px;
+
+      .mut {
+        width: 100%;
+      }
+
+      &:after{
+        display: block;
+        visibility: hidden;
+        position: absolute;
+        bottom: -38px;
+        left: -50%;
+        opacity: 0;
+        content: attr(title);
+        height: auto;
+        padding: 5px 8px;
+        z-index: 999;
+        color: #fff;
+        text-decoration: none;
+        text-align: center;
+        background: rgba(0,0,0,0.85);
+        border-radius: 3px;
+        pointer-events: none;
+        transition: all 0.2s ease-in-out;
+        white-space: nowrap;
+      }
+
+      &:before {
+        position: absolute;
+        visibility: hidden;
+        width: 0;
+        height: 0;
+        bottom: -8px;
+        left: -10%;
+        opacity: 0;
+        content: "";
+        border-style: solid;
+        border-width: 0 5px 8.7px 5px;
+        border-color: transparent transparent rgba(0,0,0,0.85) transparent;
+        pointer-events: none;
+        transition: all 0.2s ease-in-out;
+      }
+
+      &:hover:after,
+      &:hover:before{
+        visibility: visible;
+        opacity: 1;
+      }
+    }
   }
 }

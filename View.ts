@@ -2,9 +2,11 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
+/// <amd-dependency path="scrollTo" />
+
 import prov = require('../caleydo_clue/prov');
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
-import {IPluginDesc,IPlugin, list as listPlugins} from '../caleydo_core/plugin';
+import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
@@ -58,11 +60,6 @@ function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
 
-
-function findStartViews() : IViewPluginDesc[] {
-  return listPlugins('targidView').filter((d: any) => matchLength(d.selection, 0)).map(toViewPluginDesc);
-}
-
 export interface IStartFactory {
   name: string;
   build(element : HTMLElement);
@@ -89,7 +86,12 @@ class StartFactory implements IStartFactory {
   }
 }
 
-class MockStartFactory implements IStartFactory {
+/**
+ * Creates the list of views that are used, but not of type "startView" (in package.json)
+ * All views are categorized under "Extras"
+ * @deprecated
+ */
+/*class MockStartFactory implements IStartFactory {
   private current: IViewPluginDesc = null;
 
   constructor(private views: IViewPluginDesc[]) {
@@ -111,32 +113,41 @@ class MockStartFactory implements IStartFactory {
   options() {
     return Promise.resolve({viewId: this.current.id, options: {}});
   }
-}
+}*/
 
 function toStartFactory(p: IPluginDesc): IStartFactory {
   return new StartFactory(p);
 }
 
 export function findStartViewCreators(): IStartFactory[] {
-  const plugins = listPlugins('targidStart');
+  const plugins = listPlugins('targidStart').sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
   var factories = plugins.map(toStartFactory);
-  const used = plugins.map((d) => (<any>d).viewId);
+
+  // retrieve views that are used, but are not a start view and place them under "extras"
+  /*const used = plugins.map((d) => (<any>d).viewId);
   const singleViews = findStartViews().filter((d) => used.indexOf(d.id) < 0);
   if (singleViews.length > 0) {
     factories.push(new MockStartFactory(singleViews));
-  }
+  }*/
+
   return factories;
 }
 
-export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<IViewPluginDesc[]> {
+export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {
+  if (idtype === null) {
+    return Promise.resolve([]);
+  }
   const selectionLength = idtype === null || selection.isNone ? 0 : selection.dim(0).length;
   return idtype.getCanBeMappedTo().then((mappedTypes) => {
     const all = [idtype].concat(mappedTypes);
     function byType(p: any) {
       const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
-      return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1)) && (matchLength(p.selection, 0) || all.some((i) => pattern.test(i.id)));
+      return all.some((i) => pattern.test(i.id)) && !matchLength(p.selection, 0);
     }
-    return listPlugins('targidView').filter(byType).map(toViewPluginDesc);
+    function bySelection(p: any) {
+      return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
+    }
+    return listPlugins('targidView').filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
   });
 }
 
@@ -341,20 +352,33 @@ export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, va
 }
 
 export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
-  return inputs[0].v.then((view:ViewWrapper) => {
+  return Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]).then((views:ViewWrapper[]) => {
+    const view = views[0];
+    const target = views[1];
     const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
     const range = ranges.parse(parameter.range);
 
     const bak = view.getItemSelection();
     view.setItemSelection({ idtype: idtype, range: range});
+    if (target) {
+      target.setParameterSelection({ idtype: idtype, range: range});
+    }
     return {
-      inverse: setSelection(inputs[0], bak.idtype, bak.range)
+      inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range): setSelection(inputs[0], bak.idtype, bak.range)
     };
   });
 }
 export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
   //assert view
   return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view], {
+    idtype: idtype ? idtype.id: null,
+    range: range.toString()
+  });
+}
+
+export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
+  //assert view
+  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id: null,
     range: range.toString()
   });
@@ -416,6 +440,11 @@ export function compressSetSelection(path:prov.ActionNode[]) {
   });
 }
 
+function generate_hash(desc: IPluginDesc, selection: ISelection, options : any = {}) {
+  var s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
+  return desc.id+'_'+s;
+}
+
 export class ViewWrapper extends EventHandler {
   static EVENT_OPEN = 'open';
   static EVENT_FOCUS = 'focus';
@@ -448,11 +477,12 @@ export class ViewWrapper extends EventHandler {
 
   constructor(graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
-    this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual);
+    this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
     this.context = createContext(graph, plugin.desc, this.ref);
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
     this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
     this.$chooser = this.$viewWrapper.append('div').classed('chooser', true).datum(this).style('display', 'none');
+    this.$chooser.append('div').classed('category', true);
     const $params = this.$node.append('div').attr('class', 'parameters form-inline');
     const $inner = this.$node.append('div').classed('inner', true);
     if(showAsSmallMultiple(this.desc)) {
@@ -542,6 +572,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   protected modeChanged(mode:EViewMode) {
+    // update css classes
     this.$viewWrapper
       .classed('t-hide', mode === EViewMode.HIDDEN)
       .classed('t-focus', mode === EViewMode.FOCUS)
@@ -549,34 +580,35 @@ export class ViewWrapper extends EventHandler {
       .classed('t-active', mode === EViewMode.CONTEXT || mode === EViewMode.FOCUS);
     this.$chooser
       .classed('t-hide', mode === EViewMode.HIDDEN);
+
+    // trigger modeChanged
     this.sm_instances.forEach((d) => d.modeChanged(mode));
     this.instance.modeChanged(mode);
 
+    // on focus view scroll into view
     if(mode === EViewMode.FOCUS) {
-      (<any>this.$node.node()).scrollIntoView();
+      let prev = (<any>this.$viewWrapper.node()).previousSibling;
+      let scrollToPos = prev ? prev.offsetLeft || 0 : 0;
+      let $jqTargid = $(this.$viewWrapper.node()).parent();
+      (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
     }
   }
 
   private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
-    const isNone = selection.isNone;
-    this.$chooser.style('display', isNone ? 'none' : null);
+    this.$chooser.style('display', selection.isNone ? 'none' : null);
 
-    const viewPromise = isNone ? Promise.resolve([]) : findViews(idtype, selection);
+    const viewPromise = findViews(idtype, selection);
     viewPromise.then((views) => {
       //group views by category
-      const data = d3.nest().key((d) => (<any>d).category || 'static').entries(views);
-      const $categories = this.$chooser.selectAll('div.category').data(data);
-      $categories.enter().append('div').classed('category', true);//.append('span');
+      const $cats = this.$chooser.select('div.category');
       //$categories.select('span').text((d) => d.key);
-      const $buttons = $categories.selectAll('button').data((d) => <IViewPluginDesc[]>d.values);
+      const $buttons = $cats.selectAll('button').data(views);
       $buttons.enter().append('button').classed('btn', true).classed('btn-default', true);
-      $buttons.text((d) => d.name).on('click', (d) => {
-        this.fire(ViewWrapper.EVENT_OPEN, d.id, idtype, selection);
+      $buttons.text((d) => d.v.name).on('click', (d) => {
+        this.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, selection);
       });
-      $buttons.attr('disabled', (d) => d.mockup ? 'disabled' : null);
+      $buttons.attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null);
       $buttons.exit().remove();
-
-      $categories.exit().remove();
     });
   }
 
@@ -591,7 +623,7 @@ export class ViewWrapper extends EventHandler {
   destroy() {
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
     this.instance.destroy();
-    this.$node.remove();
+    this.$viewWrapper.remove();
     this.$chooser.remove();
   }
 

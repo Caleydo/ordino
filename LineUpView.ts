@@ -179,7 +179,7 @@ export class ALineUpView extends AView {
     $ul.selectAll('li.col').data(columns).enter().append('li').classed('col', true).append('a').attr('href', '#').text((d:any) => d.label).on('click', (d) => {
       const ranking = this.lineup.data.getLastRanking();
       this.lineup.data.push(ranking, d);
-      d3.event.preventDefault();
+      (<Event>d3.event).preventDefault();
     });
 
     $ul.append('li').classed('divider', true);
@@ -189,7 +189,7 @@ export class ALineUpView extends AView {
       d.load().then((p) => {
         this.pushScore(p);
       });
-      d3.event.preventDefault();
+      (<Event>d3.event).preventDefault();
     });
 
   }

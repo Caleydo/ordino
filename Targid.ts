@@ -259,7 +259,7 @@ export class Targid {
       .append('li').classed('hview', true)
       .append('a').attr('href', '#')
       .on('click', (d) => {
-        d3.event.preventDefault();
+        (<Event>d3.event).preventDefault();
         this.showInFocus(d);
       });
     $views.select('a')

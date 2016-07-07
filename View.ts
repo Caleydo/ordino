@@ -313,7 +313,7 @@ export class ProxyView extends AView {
         const url = this.createUrl(args);
         this.$node.select('iframe').attr('src', url);
       } else {
-        this.$node.text('cant be mapped');
+        this.$node.html(`<p>Cannot map <i>${idtype.name}</i> ('${id}') to <i>${this.options.idtype}</i>.</p>`);
       }
       this.setBusy(false);
     });

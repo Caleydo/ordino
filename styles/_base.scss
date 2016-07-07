@@ -413,7 +413,7 @@ div.oncoPrint {
         bottom: -38px;
         left: -50%;
         opacity: 0;
-        content: attr(title);
+        content: attr(data-title);
         height: auto;
         padding: 5px 8px;
         z-index: 999;

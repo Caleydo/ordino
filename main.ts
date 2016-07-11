@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 16.12.2015
  */
 
-// Dermine the order of css files manually
+// Determine the order of css files manually
 
 // HACK! because <amd-dependency path="bootstrap" /> is loaded after all the other stylesheets and not before (as declared)
 /// <amd-dependency path="css!/bower_components/bootstrap/dist/css/bootstrap" />
@@ -16,31 +16,37 @@ import template = require('../caleydo_clue/template');
 import header = require('../caleydo_bootstrap_fontawesome/header');
 import targid = require('./Targid');
 
-let helper = document.getElementById('app');
-let helper2 = document.getElementById('extras');
+// cache the nodes from the targid2/index.html before the TargID app is created
+// NOTE: the template (see next line) replaces the content of the document.body (but not document.head)
+let appNode = document.getElementById('app');
+let extrasNode = document.getElementById('extras');
 
+// create TargID app from CLUE template
 const elems = template.create(document.body, {
   app: 'TargID 2',
   appLink: new header.AppHeaderLink('Target Discovery Platform', (event) => {
     //(<any>$('#welcomeDialog')).modal('show');
     return false;
   }),
-  application: '/targid2',
+  application: '/targid2', // URL
   id: 'targid2',
-  recordSelectionTypes: null //no automatic selection recording
+  recordSelectionTypes: null // no automatic selection recording
 });
 
-const main = <HTMLElement>elems.$main.node();
-main.classList.add('targid');
-while (helper.firstChild) {
-  main.appendChild(helper.firstChild);
+// copy nodes from original document to new document (template)
+const mainNode = <HTMLElement>elems.$main.node();
+mainNode.classList.add('targid');
+while (appNode.firstChild) {
+  mainNode.appendChild(appNode.firstChild);
 }
-while (helper2.firstChild) {
-  document.body.appendChild(helper2.firstChild);
+while (extrasNode.firstChild) {
+  document.body.appendChild(extrasNode.firstChild);
 }
 
+// create TargID app once the provenance graph is available
 elems.graph.then((graph) => {
-  targid.create(graph, main);
+  targid.create(graph, mainNode);
 });
 
+// jump to last stored state
 elems.jumpToStored();

@@ -22,7 +22,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const view = plugins.get('targidView', viewId);
 
   var wrapper;
-  return createWrapper(graph, { idtype: idtype, range: selection },targid.node, view, options).then((instance) => {
+  return createWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);
   }).then((oldFocus) => {
@@ -94,6 +94,7 @@ export class Targid {
 
   ref:prov.IObjectRef<Targid>;
 
+  private $mainNavi:d3.Selection<any>;
   private $history:d3.Selection<any>;
   private $node:d3.Selection<Targid>;
 
@@ -102,10 +103,19 @@ export class Targid {
   private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
 
   constructor(public graph:prov.ProvenanceGraph, parent:Element) {
+
+    // add TargId app as (first) object to provenance graph
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
 
     this.$history = d3.select(parent).append('ul').classed('history', true);
     this.$node = d3.select(parent).append('div').classed('targid', true).datum(this);
+
+    // place outside of the <main> element as first sibling
+    this.$mainNavi = d3.select(parent.parentNode).insert('nav', ':first-child').classed('targid', true).classed('mainNavi', true);
+    // retrieve and load navigation view
+    plugins.get('targidView', 'mainNavi').load().then((p) => {
+      p.factory(ranges.none(), this.$mainNavi.node(), { targid: this });
+    });
 
     this.createWelcomeView();
   }
@@ -166,7 +176,13 @@ export class Targid {
   }
 
   push(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
-    return this.focus(this.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
+    // create the first view without changing the focus for the (non existing) previous view
+    if(this.views.length === 0) {
+      return this.pushView(viewId, idtype, selection, options);
+
+    } else {
+      return this.focus(this.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
+    }
   }
 
   private pushView(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {

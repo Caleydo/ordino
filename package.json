@@ -19,6 +19,15 @@
           "name": "Target Discovery Platform"
         },
         {
+          "id": "mainNavi",
+          "name": "mainNavi",
+          "type": "targidView",
+          "file": "MainNavi",
+          "factory": "create",
+          "idtype": "none",
+          "selection": "none"
+        },
+        {
           "id": "welcome",
           "name": "Welcome",
           "type": "targidView",

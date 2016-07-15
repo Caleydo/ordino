@@ -50,7 +50,7 @@ export function createLoadStartFactory(parent: HTMLElement) {
       $options.exit().remove();
     });
   }
-  $parent.append('span').text('Don\'t forget to login!');
+  $parent.append('span').html('Don\'t forget to login!<br>');
   $parent.append('button').attr('class', 'btn btn-default btn-xs').text('Refresh').on('click', update);
   update();
 

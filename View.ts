@@ -74,8 +74,8 @@ class StartFactory implements IStartFactory {
     return this.p.name;
   }
 
-  build(element: HTMLElement) {
-    this.builder = this.p.load().then((i) => i.factory(element, this.p));
+  build(element: HTMLElement, options = {}) {
+    return this.builder = this.p.load().then((i) => i.factory(element, this.p, options));
   }
 
   options() {

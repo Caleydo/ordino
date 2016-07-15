@@ -15,32 +15,9 @@ export class WelcomeView extends AView {
   private targid:Targid;
 
   private template = `
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="before"><a href="#tab_upload" aria-controls="tab_upload" role="tab" data-toggle="tab">Upload</a></li>
-    <li role="presentation"><a href="#tab_continue" aria-controls="tab_continue" role="tab" data-toggle="tab">Continue</a></li>
-  </ul>
-
-  <!-- Tab panes -->
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane before" id="tab_upload">
-      <p><span class="label label-default">TODO</span>Integrate importer</p>
-    </div>
-    <div role="tabpanel" class="tab-pane" id="tab_continue">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Entity Type</th>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Creator</th>
-          </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-      </table>
-    </div>
+  <div style="position:absolute;top: 10px;left:20px;z-index: 1;">
+    <img src="/targid2/images/welcome-view-arrow.svg" style="width: 300px; height: auto; opacity: 0.2">
+    <h1 style="position: absolute; left: 150px; margin: 0; padding: 0;width: 400px; color: #999; font-size: 4em;">Start here</h1>
   </div>`;
 
 
@@ -67,34 +44,7 @@ export class WelcomeView extends AView {
   }
 
   private build() {
-    this.$node.append('h1').text('Welcome');
-
     let $body = this.$node.append('div').html(this.template);
-
-    const view = findStartViewCreators();
-
-    // create tabs
-    const $views = $body.select('ul.nav').selectAll('li.view').data(view);
-    $views.enter().insert('li','.before').attr({
-      role: 'presentation',
-      'class': (d, i) => (i === 0 ? ' active' : '') + ' view'
-    }).html((d,i) => `<a href="#tab_view${i}" aria-controls="tab_old" role="tab" data-toggle="tab">${d.name}</a>`);
-
-    // create tab pane
-    const $views2 = $body.select('div.tab-content').selectAll('div.tab-pane.view').data(view);
-    const $views2_enter = $views2.enter().insert('div','.before').attr({
-      role: 'tabpanel',
-      'class': (d, i) => (i === 0 ? ' active' : '') + ' tab-pane',
-      id: (d,i) => `tab_view${i}`
-    }).html(`<div></div><button class="btn btn-primary">Start</button>`);
-    $views2_enter.select('div').each(function(d) {
-      d.build(this);
-    });
-    $views2_enter.select('button:last-of-type').on('click', (d) => {
-      d.options().then((o) => {
-        this.targid.push(o.viewId, null, null, o.options);
-      });
-    });
   }
 
   changeSelection(selection:ISelection) {

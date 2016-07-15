@@ -91,7 +91,8 @@
           "factory": "createLoadStartFactory",
           "viewId": "targid_start_loaded",
           "idtype": "Custom",
-          "priority": 100
+          "priority": 100,
+          "fa-icon": "fa-sort-amount-desc"
         }
       ],
       "python": [

@@ -210,6 +210,11 @@ export class Targid {
     return Promise.resolve(NaN);
   }
 
+  /**
+   * Jumps to a given viewWrapper in the provenance graph
+   * @param view
+   * @returns {any} Promise
+   */
   focus(view: ViewWrapper) {
     const creators = this.graph.act.path.filter(isCreateView).map((d) => d.creator);
     const createdBy = this.graph.findOrAddJustObject(view.ref).createdBy;
@@ -223,8 +228,11 @@ export class Targid {
     }
   }
 
+  /**
+   * Jumps back to the root of the provenance graph and consequentially removes all open views (undo)
+   */
   focusOnStart() {
-    const creators = this.graph.act.path.filter((d) => d.creator === null);
+    const creators = this.graph.act.path.filter((d) => d.creator === null); // null => start StateNode
     if(creators.length > 0) {
       this.graph.jumpTo(creators[0]);
     }

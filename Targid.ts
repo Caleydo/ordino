@@ -224,8 +224,10 @@ export class Targid {
   }
 
   focusOnStart() {
-    this.focus(this.views[0]);
-    this.graph.undo();
+    const creators = this.graph.act.path.filter((d) => d.creator === null);
+    if(creators.length > 0) {
+      this.graph.jumpTo(creators[0]);
+    }
   }
 
   removeLastImpl() {

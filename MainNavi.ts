@@ -61,7 +61,7 @@ export class MainNavi {
       </li>
     </ul>`;
 
-  constructor(private selection: ISelection, parent:Element, options?) {
+  constructor(parent:Element, options?) {
     this.$node = d3.select(parent);
     this.targid = options.targid;
     this.build();
@@ -77,7 +77,7 @@ export class MainNavi {
       // prevent changing the hash (href)
       (<Event>d3.event).preventDefault();
 
-      this.targid.focusStart();
+      this.targid.focusOnStart();
     });
 
     // get start views
@@ -133,6 +133,6 @@ export class MainNavi {
   }
 }
 
-export function create(selection:ISelection, parent:Element, options?) {
-  return new MainNavi(selection, parent, options);
+export function create(parent:Element, options?) {
+  return new MainNavi(parent, options);
 }

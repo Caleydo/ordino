@@ -110,33 +110,16 @@ export class Targid {
     this.$history = d3.select(parent).append('ul').classed('history', true);
     this.$node = d3.select(parent).append('div').classed('targid', true).datum(this);
 
+    plugins.get('targidView', 'welcome').load().then((p) => {
+      p.factory(this.$node.node(), {});
+    });
+
     // place outside of the <main> element as first sibling
     this.$mainNavi = d3.select(parent.parentNode).insert('nav', ':first-child').classed('targid', true).classed('mainNavi', true);
     // retrieve and load navigation view
     plugins.get('targidView', 'mainNavi').load().then((p) => {
-      p.factory(ranges.none(), this.$mainNavi.node(), { targid: this });
+      p.factory(this.$mainNavi.node(), { targid: this });
     });
-
-    this.createWelcomeView();
-  }
-
-  /**
-   * Create welcome view *without* creating a node in the provenance graph
-   */
-  private createWelcomeView() {
-    createViewImpl(
-      [this.ref],
-      {
-        viewId: 'welcome',
-        idtype: null,
-        selection: ranges.none().toString(),
-        options: {
-          graph: this.graph,
-          targid: this
-        }
-      },
-      this.graph
-    );
   }
 
   get node() {
@@ -240,8 +223,9 @@ export class Targid {
     }
   }
 
-  focusStart() {
-    return this.focus(this.views[0]);
+  focusOnStart() {
+    this.focus(this.views[0]);
+    this.graph.undo();
   }
 
   removeLastImpl() {

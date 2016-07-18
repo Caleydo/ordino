@@ -29,7 +29,7 @@ const elems = template.create(document.body, {
   app: 'TargID 2',
   appLink: new header.AppHeaderLink('Target Discovery Platform', (event) => {
     //(<any>$('#welcomeDialog')).modal('show');
-    targidInstance.focusStart();
+    targidInstance.focusOnStart();
     return false;
   }),
   application: '/targid2', // URL

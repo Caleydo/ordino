@@ -108,15 +108,25 @@ export class Targid {
     this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
 
     this.$history = d3.select(parent).append('ul').classed('history', true);
-    this.$node = d3.select(parent).append('div').classed('targid', true).datum(this);
+    this.$history.append('li').classed('homeButton', true)
+      .html(`<a href="#">
+        <i class="fa fa-home" aria-hidden="true"></i>
+        <span class="sr-only">Start</span>
+      </a>`);
+    this.$history.select('.homeButton > a').on('click', (d) => {
+      // prevent changing the hash (href)
+      (<Event>d3.event).preventDefault();
+      this.focusOnStart();
+    });
 
+    const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
+
+    this.$node = $wrapper.append('div').classed('targid', true).datum(this);
     plugins.get('targidView', 'welcome').load().then((p) => {
       p.factory(this.$node.node(), {});
     });
 
-    // place outside of the <main> element as first sibling
-    this.$mainNavi = d3.select(parent.parentNode).insert('nav', ':first-child').classed('targid', true).classed('mainNavi', true);
-    // retrieve and load navigation view
+    this.$mainNavi = $wrapper.insert('nav', ':first-child').classed('mainNavi', true);
     plugins.get('targidView', 'mainNavi').load().then((p) => {
       p.factory(this.$mainNavi.node(), { targid: this });
     });
@@ -276,11 +286,12 @@ export class Targid {
         (<Event>d3.event).preventDefault();
         this.showInFocus(d);
       });
-    $views.select('a')
-      .text((d) => d.desc.name)
+
+    $views
       .classed('t-context', (d) => d.mode === EViewMode.CONTEXT)
       .classed('t-hide', (d) => d.mode === EViewMode.HIDDEN)
-      .classed('t-focus', (d) => d.mode === EViewMode.FOCUS);
+      .classed('t-focus', (d) => d.mode === EViewMode.FOCUS)
+      .select('a').text((d) => d.desc.name);
     $views.exit().remove();
   }
 }

@@ -15,14 +15,6 @@ export class MainNavi {
 
   private targid:Targid;
 
-  private templateHomeButton = `
-    <div class="homeButton">
-      <a href="#">
-        <i class="fa fa-home" aria-hidden="true"></i>
-        <span class="sr-only">Start</span>
-      </a>
-    </div>`;
-
   private templateUploadAndContinue = `
     <ul>
       <li>
@@ -71,15 +63,6 @@ export class MainNavi {
    * Build multiple sections with entries grouped by database
    */
   private build() {
-    let $body = this.$node.html(this.templateHomeButton);
-
-    $body.select('.homeButton > a').on('click', (d) => {
-      // prevent changing the hash (href)
-      (<Event>d3.event).preventDefault();
-
-      this.targid.focusOnStart();
-    });
-
     // get start views
     const view = findStartViewCreators();
 
@@ -89,7 +72,7 @@ export class MainNavi {
       return (cat.toLowerCase().indexOf('db') > -1) ? cat : 'Other';
     }).entries(view);
 
-    const $cats = $body.selectAll('div.cat').data(data);
+    const $cats = this.$node.selectAll('div.cat').data(data);
     const $cat = $cats.enter().append('div').classed('cat', true);
     $cat.append('span').text((d) => d.key);
     const $ul = $cat.append('ul');
@@ -129,7 +112,7 @@ export class MainNavi {
       });
 
     // append last template
-    $body.append('div').html(this.templateUploadAndContinue);
+    this.$node.append('div').html(this.templateUploadAndContinue);
   }
 }
 

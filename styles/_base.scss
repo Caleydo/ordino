@@ -18,7 +18,7 @@ strong,
   }
 }
 
-
+// header navigation
 nav {
   .caleydo_app {
     background: transparent url("../assets/caleydo_c.svg") no-repeat 0.5em 45%;
@@ -26,24 +26,52 @@ nav {
   }
 }
 
+
+main.targid {
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-flex-direction: column;
+  flex-direction: column;
+
+  svg {
+    // generic axes styles
+    path,
+    .axis path,
+    line,
+    .axis line {
+      fill: none;
+      stroke-width: 1;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+  }
+
+  > div.wrapper {
+    display: flex;
+    flex-flow: row wrap;
+    height: 100%;
+  }
+}
+
 nav.mainNavi {
   display: flex;
   flex-direction: column;
-  background-color: $core_colour;
-  border-right: 2px solid  $core_border;
 
   //opacity: .6;
   //transition: opacity linear 0.2s;
+  transition: background linear 0.2s;
 
-  &+main.targid {
+  &+.targid {
     opacity: 1;
     transition: opacity linear 0.2s;
   }
 
   &:hover {
     //opacity: 1;
+    background-color: $core_colour;
 
-    &+main.targid {
+    &+.targid {
       opacity: .4;
     }
   }
@@ -58,24 +86,14 @@ nav.mainNavi {
     }
   }
 
-  .homeButton {
-    margin: 0;
-
-    a {
-      display: block;
-      width: 100%;
-      padding: 4px 0;
-      text-align: center;
-    }
-  }
-
-  > div:not(.homeButton) {
+  > div {
     margin-top: 10px;
     padding-top: 5px;
     border-top: 1px solid $core_border;
 
-    &:nth-of-type(2) {
+    &:nth-of-type(1) {
       margin-top: 0; // remove margin for first div
+      border-top: none;
     }
 
     > span {
@@ -215,335 +233,244 @@ nav.mainNavi {
   }
 }
 
-main.targid {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: column;
-  flex-direction: column;
+.history {
+  margin: 0;
+  padding: 5px 5px;
+  list-style: none;
+  overflow: hidden;
 
-  svg {
-    // generic axes styles
-    path,
-    .axis path,
-    line,
-    .axis line {
-      fill: none;
-      stroke-width: 1;
-      stroke: black;
-      shape-rendering: crispEdges;
+  //border-bottom: 1px solid $core_colour_selected;
+
+  display: flex;
+
+  li {
+    margin-left: -1px;
+    background: #fff;
+    border: 1px solid $core_border;
+
+    a {
+      display: block;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 1;
+      color: #000;
+      text-decoration: none;
+    }
+
+    // home button
+    &:first-of-type a {
+      margin-left: 0;
+      padding: 5px 18px;
+    }
+    &:only-child a {
+      background-color: lighten($core_border, 5%);
+    }
+
+    &.t-focus {
+      background-color: lighten($core_border, 5%);
+    }
+
+    &.t-context {
+      background-color: lighten($core_border, 10%);
     }
   }
+}
 
-  div.targid {
+div.targid {
+  flex: 1;
+
+  display: flex;
+  flex-flow: row;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  border-left: 1px solid #ddd;
+
+  > .viewWrapper {
+    position: relative;
+    flex: none;
+
+    border-top: 1px solid #ddd;
+
     display: flex;
-    flex-flow: row;
-    position: absolute;
-    width: 100%;
-    min-height: calc(100% - 29px); // 29px == .history height
-    overflow-x: auto;
-    overflow-y: hidden;
+    flex-direction: row;
 
-    > .viewWrapper {
+    width: 50%;
+    //overflow: auto;
+    transition: width 0.5s ease;
+
+    &:nth-child(1):nth-last-child(1) {
+      width: 100%;
+    }
+
+    &.t-context {
+      width: 30%
+    }
+
+    &.t-focus {
+      width: 70%
+    }
+
+    &.t-hide {
+      width: 30%;
+    }
+
+    > .view {
+      flex: 1;
       position: relative;
-      flex: none;
 
-      display: flex;
-      flex-direction: row;
+      //transition: width 0.3s ease;
+      //border-top: 8px solid #fff;
 
-      width: 50%;
-      //overflow: auto;
-      transition: width 0.5s ease;
-
-      &:nth-child(1):nth-last-child(1) {
-        width: 100%;
+      > .inner,
+      > .parameters {
+        margin: 10px;
       }
 
-      &.t-context {
-        width: 30%
+      > .parameters:not(:empty) ~ .inner {
+        border-top: 1px solid $core_border;
+        padding-top: 10px;
+        position: absolute;
+        top: 45px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow-y: auto;
       }
 
-      &.t-focus {
-        width: 70%
+      > .multiple {
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
       }
 
-      &.t-hide {
-        width: 30%;
+      > div {
+        transition: opacity 0.3s ease;
       }
+    }
 
-      > .view {
-        flex: 1;
-        position: relative;
+    &.t-hide > .view > div {
+      opacity: 0.2;
+    }
 
-        //transition: width 0.3s ease;
-        border-top: 8px solid #fff;
+    &.t-context > .view {
+      //border-top: 8px solid lighten($core_border, 10%);
 
-        > .inner,
-        > .parameters {
-          margin: 10px;
-        }
-
-        > .parameters:not(:empty) ~ .inner {
-          border-top: 1px solid $core_border;
-          padding-top: 10px;
-          position: absolute;
-          top: 45px;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          overflow-y: auto;
-        }
-
-        > .multiple {
-          overflow-y: auto;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-around;
-        }
-
-        > div {
-          transition: opacity 0.3s ease;
-        }
+      > div {
+        opacity: 0.6;
       }
+    }
 
-      &.t-hide > .view > div {
-        opacity: 0.2;
-      }
+    &.t-focus > .view {
+      //border-top: 8px solid lighten($core_border, 5%);
 
-      &.t-context > .view {
-        border-top: 8px solid lighten($core_border, 10%);
-
-        > div {
-          opacity: 0.6;
-        }
-      }
-
-      &.t-focus > .view {
-        border-top: 8px solid lighten($core_border, 5%);
-
-        > div {
-          opacity: 1;
-        }
-      }
-
-      > .view:hover > div {
+      > div {
         opacity: 1;
       }
+    }
 
-      > .chooser {
-        width: 8em;
-        padding-top: 8px;
-        background-color: $core_colour;
-        vertical-align: middle;
-        text-align: center;
+    > .view:hover > div {
+      opacity: 1;
+    }
 
-        .category {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
+    > .chooser {
+      width: 8em;
+      //padding-top: 8px;
+      background-color: $core_colour;
+      vertical-align: middle;
+      text-align: center;
 
-        button {
-          width: 90%;
-          margin-bottom: 4px;
-          padding: 10px 5px;
-          white-space: normal;
-          //border-radius: 0;
-          line-height: 1.2;
-          border: 1px solid #ccc;
-
-          &:active,
-          &:focus,
-          &:hover {
-            background: lighten($core_colour, 3%);
-            border-color: $hover-data-color;
-          }
-
-          &[disabled] {
-            //opacity: 0.3;
-            background: transparent;
-            border-color: $core_border;
-          }
-        }
+      .category {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
-      div.busy {
-        display: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.26) url('../assets/caleydo_c_anim.svg') no-repeat center center;
-        z-index: 999;
+      button {
+        width: 90%;
+        margin-bottom: 4px;
+        padding: 10px 5px;
+        white-space: normal;
+        //border-radius: 0;
+        line-height: 1.2;
+        border: 1px solid #ccc;
+
+        &:active,
+        &:focus,
+        &:hover {
+          background: lighten($core_colour, 3%);
+          border-color: $hover-data-color;
+        }
+
+        &[disabled] {
+          //opacity: 0.3;
+          background: transparent;
+          border-color: $core_border;
+        }
       }
     }
 
-    .welcomeView {
-      position: absolute;
-      top: 10px;
-      left: 20px;
-      z-index: 1;
-
+    div.busy {
       display: none;
-
-      &:only-child {
-        display: block;
-      }
-
-      img {
-        width: 300px;
-        height: auto;
-        opacity: 0.2
-      }
-
-      h1 {
-        position: absolute;
-        left: 150px;
-        margin: 0;
-        padding: 0;
-        width: 400px;
-        color: #999;
-        font-size: 4em;
-      }
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.26) url('../assets/caleydo_c_anim.svg') no-repeat center center;
+      z-index: 999;
     }
+  }
+}
 
+div.lu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+
+  .row.selected rect.bg {
+    stroke: $select-data-color;
+    stroke-width: 1;
+  }
+  .row.hover rect.bg {
+    stroke: $hover-data-color;
+    stroke-width: 1;
 
   }
+}
 
-  .history {
+
+div.welcomeView {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: 1;
+
+  display: none;
+
+  &:only-child {
+    display: block;
+  }
+
+  img {
+    width: 300px;
+    height: auto;
+    opacity: 0.2
+  }
+
+  h1 {
+    position: absolute;
+    left: 150px;
     margin: 0;
     padding: 0;
-    list-style: none;
-    overflow: hidden;
-
-    //background-color: $core_colour;
-    border-bottom: 1px solid $core_colour_selected;
-
-    li {
-      float: left;
-
-      a {
-        color: $core_colour_text;
-        text-decoration: none;
-        padding: 4px 0 4px 30px;
-        background: #fff; /* fallback color */
-        //background: lighten($core_border, 12%);
-        position: relative;
-        display: block;
-        float: left;
-
-        &:after {
-          content: " ";
-          display: block;
-          width: 0;
-          height: 0;
-          border-top: 30px solid transparent; /* Go big on the size, and let overflow hide */
-          border-bottom: 30px solid transparent;
-          border-left: 20px solid #fff;
-          //border-left: 20px solid lighten($core_border, 12%);
-          position: absolute;
-          top: 50%;
-          margin-top: -30px;
-          padding-left: 1px;
-          left: 100%;
-          z-index: 2;
-        }
-
-        &:before {
-          content: " ";
-          display: block;
-          width: 0;
-          height: 0;
-          border-top: 30px solid transparent; /* Go big on the size, and let overflow hide */
-          border-bottom: 30px solid transparent;
-          border-left: 20px solid $core_border;
-          position: absolute;
-          top: 50%;
-          margin-top: -30px;
-          margin-left: 1px;
-          left: 100%;
-          z-index: 1;
-        }
-
-        &.t-focus {
-          background-color: lighten($core_border, 5%);
-
-          &:before,
-          &:after {
-            border-left-color: lighten($core_border, 5%);
-          }
-        }
-
-        &.t-context {
-          background-color: lighten($core_border, 10%);
-
-          &:before,
-          &:after {
-            border-left-color: lighten($core_border, 10%);
-          }
-        }
-
-        &.t-hide {
-          //opacity: 0.5;
-        }
-
-        &:hover,
-        &:active,
-        &:focus {
-          background: $hover-data-color;
-
-          &:before,
-          &:after {
-            border-left-color: $hover-data-color;
-          }
-        }
-      }
-
-      &:first-child a {
-        padding-left: 10px;
-      }
-
-      // traces that gets darker to the current item
-      /*&:nth-child(2) a       { background:        lighten($core_border, 10%); }
-      &:nth-child(2) a:after { border-left-color: lighten($core_border, 10%); }
-      &:nth-child(3) a       { background:        lighten($core_border, 8%); }
-      &:nth-child(3) a:after { border-left-color: lighten($core_border, 8%); }
-      &:nth-child(4) a       { background:        lighten($core_border, 6%); }
-      &:nth-child(4) a:after { border-left-color: lighten($core_border, 6%); }
-      &:nth-child(5) a       { background:        lighten($core_border, 4%); }
-      &:nth-child(5) a:after { border-left-color: lighten($core_border, 4%); }
-      &:last-child a {
-        background: lighten($core_border, 2%);
-        color: $core_colour_text;
-        //pointer-events: none;
-        //cursor: default;
-      }
-      &:last-child  a:before {
-        border-left-color: lighten($core_border, 2%);
-      }
-      &:last-child  a:after {
-        border: 0;
-      }*/
-    }
-  }
-
-  div.lu {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-
-    .row.selected rect.bg {
-      stroke: $select-data-color;
-      stroke-width: 1;
-    }
-    .row.hover rect.bg {
-      stroke: $hover-data-color;
-      stroke-width: 1;
-
-    }
+    width: 400px;
+    color: #999;
+    font-size: 4em;
   }
 }
 

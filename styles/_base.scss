@@ -377,6 +377,37 @@ main.targid {
         z-index: 999;
       }
     }
+
+    .welcomeView {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      z-index: 1;
+
+      display: none;
+
+      &:only-child {
+        display: block;
+      }
+
+      img {
+        width: 300px;
+        height: auto;
+        opacity: 0.2
+      }
+
+      h1 {
+        position: absolute;
+        left: 150px;
+        margin: 0;
+        padding: 0;
+        width: 400px;
+        color: #999;
+        font-size: 4em;
+      }
+    }
+
+
   }
 
   .history {

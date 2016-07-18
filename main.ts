@@ -28,7 +28,7 @@ let targidInstance;
 const elems = template.create(document.body, {
   app: 'TargID 2',
   appLink: new header.AppHeaderLink('Target Discovery Platform', (event) => {
-    //(<any>$('#welcomeDialog')).modal('show');
+    event.preventDefault();
     targidInstance.focusOnStart();
     return false;
   }),

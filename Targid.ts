@@ -240,6 +240,10 @@ export class Targid {
     }
   }
 
+  focusStart() {
+    return this.focus(this.views[0]);
+  }
+
   removeLastImpl() {
     return this.removeImpl(this.views[this.views.length - 1]);
   }

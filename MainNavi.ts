@@ -73,6 +73,13 @@ export class MainNavi {
   private build() {
     let $body = this.$node.html(this.templateHomeButton);
 
+    $body.select('.homeButton > a').on('click', (d) => {
+      // prevent changing the hash (href)
+      (<Event>d3.event).preventDefault();
+
+      this.targid.focusStart();
+    });
+
     // get start views
     const view = findStartViewCreators();
 

@@ -21,11 +21,15 @@ import targid = require('./Targid');
 let appNode = document.getElementById('app');
 let extrasNode = document.getElementById('extras');
 
+// cache targid instance for logo app link
+let targidInstance;
+
 // create TargID app from CLUE template
 const elems = template.create(document.body, {
   app: 'TargID 2',
   appLink: new header.AppHeaderLink('Target Discovery Platform', (event) => {
     //(<any>$('#welcomeDialog')).modal('show');
+    targidInstance.focusStart();
     return false;
   }),
   application: '/targid2', // URL
@@ -45,7 +49,7 @@ while (extrasNode.firstChild) {
 
 // create TargID app once the provenance graph is available
 elems.graph.then((graph) => {
-  targid.create(graph, mainNode);
+  targidInstance = targid.create(graph, mainNode);
 });
 
 // jump to last stored state

@@ -297,7 +297,7 @@ div.targid {
     flex-direction: row;
 
     width: 50%;
-    //overflow: auto;
+    overflow: hidden;
     transition: width 0.5s ease;
 
     &:nth-child(1):nth-last-child(1) {
@@ -319,6 +319,7 @@ div.targid {
     > .view {
       flex: 1;
       position: relative;
+      overflow: hidden;
 
       //transition: width 0.3s ease;
       //border-top: 8px solid #fff;
@@ -326,6 +327,7 @@ div.targid {
       > .inner,
       > .parameters {
         margin: 10px;
+        overflow: hidden;
       }
 
       > .parameters:not(:empty) ~ .inner {
@@ -376,16 +378,23 @@ div.targid {
     }
 
     > .chooser {
-      width: 8em;
-      //padding-top: 8px;
+      flex: 0 0 10em;
       background-color: $core_colour;
-      vertical-align: middle;
       text-align: center;
+      position: relative;
 
       .category {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: auto;
+        padding: 8px 0;
+
+        //flex-direction: column;
+        //align-items: center;
       }
 
       button {

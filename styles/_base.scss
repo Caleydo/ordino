@@ -170,6 +170,15 @@ nav.mainNavi {
           padding: 0;
           list-style: none;
 
+          &:empty {
+            margin: 0;
+          }
+
+          &:not(:empty) + div {
+            margin-top: 25px;
+            margin-bottom: -5px;
+          }
+
           li {
             margin: 0;
             padding: 0;

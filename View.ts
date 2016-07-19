@@ -276,6 +276,13 @@ export class AView extends EventHandler implements IView {
 
 
 export class ProxyView extends AView {
+  /**
+   * event is fired when the loading of the iframe has finished
+   * @type {string}
+   * @argument selection {ISelection}
+   */
+  static EVENT_LOADING_FINISHED = 'loadingFinished';
+
   private options = {
     proxy: null,
     site: null,
@@ -311,9 +318,16 @@ export class ProxyView extends AView {
       if (gene_name != null) {
         var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
         const url = this.createUrl(args);
-        this.$node.select('iframe').attr('src', url);
+        //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
+        this.$node.select('iframe')
+          .attr('src', url)
+          .on('load', () => {
+            //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
+            this.fire(ProxyView.EVENT_LOADING_FINISHED);
+          });
       } else {
         this.$node.html(`<p>Cannot map <i>${idtype.name}</i> ('${id}') to <i>${this.options.idtype}</i>.</p>`);
+        this.fire(ProxyView.EVENT_LOADING_FINISHED);
       }
       this.setBusy(false);
     });
@@ -461,6 +475,14 @@ export class ViewWrapper extends EventHandler {
     this.fire(AView.EVENT_ITEM_SELECT, old, new_);
   };
 
+  /**
+   * Wrapper function for event listener
+   * @param event
+   */
+  private scrollIntoViewListener = (event:any) => {
+    this.scrollIntoView();
+  };
+
   ref: prov.IObjectRef<ViewWrapper>;
 
   context: IViewContext;
@@ -487,6 +509,11 @@ export class ViewWrapper extends EventHandler {
     }
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
+
+    // register listener only for ProxyViews
+    if(this.instance instanceof ProxyView) {
+      this.instance.on(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+    }
   }
 
   getInstance() {
@@ -577,11 +604,15 @@ export class ViewWrapper extends EventHandler {
 
     // on focus view scroll into view
     if(mode === EViewMode.FOCUS) {
-      let prev = (<any>this.$viewWrapper.node()).previousSibling;
-      let scrollToPos = prev ? prev.offsetLeft || 0 : 0;
-      let $jqTargid = $(this.$viewWrapper.node()).parent();
-      (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
+      this.scrollIntoView();
     }
+  }
+
+  private scrollIntoView() {
+    let prev = (<any>this.$viewWrapper.node()).previousSibling;
+    let scrollToPos = prev ? prev.offsetLeft || 0 : 0;
+    let $jqTargid = $(this.$viewWrapper.node()).parent();
+    (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
   }
 
   private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
@@ -611,6 +642,11 @@ export class ViewWrapper extends EventHandler {
   }
 
   destroy() {
+    // un/register listener only for ProxyViews
+    if(this.instance instanceof ProxyView) {
+      this.instance.off(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+    }
+
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
     this.instance.destroy();
     this.$viewWrapper.remove();

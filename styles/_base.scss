@@ -250,6 +250,7 @@ nav.mainNavi {
 
     a {
       display: block;
+      height: 100%;
       padding: 5px 10px;
       cursor: pointer;
       z-index: 1;
@@ -328,6 +329,10 @@ div.targid {
       > .parameters {
         margin: 10px;
         overflow: hidden;
+      }
+
+      > .parameters:empty {
+        display: none;
       }
 
       > .parameters:not(:empty) ~ .inner {

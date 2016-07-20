@@ -27,7 +27,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none();
   const options = parameter.options;
 
-  const view = plugins.get('targidView', viewId);
+  const view = plugins.get(Targid.VIEW, viewId);
 
   var wrapper;
   return createWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options).then((instance) => {
@@ -69,7 +69,7 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter):ICmdRes
  * @returns {IAction}
  */
 export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?):IAction {
-  const view = plugins.get('targidView', viewId);
+  const view = plugins.get(Targid.VIEW, viewId);
   // assert view
   return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), Targid.CMD_CREATE_VIEW, createViewImpl, [targid], {
     viewId: viewId,
@@ -156,6 +156,12 @@ export class Targid {
   static CMD_REMOVE_VIEW = 'targidRemoveView';
 
   /**
+   * Static constant as identification for Targid views
+   * Note: the string value is referenced for multiple view definitions in the package.json
+   */
+  static VIEW = 'targidView';
+
+  /**
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
    */
@@ -195,12 +201,12 @@ export class Targid {
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
 
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    plugins.get('targidView', 'welcome').load().then((p) => {
+    plugins.get(Targid.VIEW, 'welcome').load().then((p) => {
       p.factory(this.$node.node(), {});
     });
 
     this.$mainNavi = $wrapper.insert('nav', ':first-child').classed('mainNavi', true);
-    plugins.get('targidView', 'mainNavi').load().then((p) => {
+    plugins.get(Targid.VIEW, 'mainNavi').load().then((p) => {
       p.factory(this.$mainNavi.node(), { targid: this });
     });
   }

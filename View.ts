@@ -12,6 +12,7 @@ import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
+import {Targid} from "./Targid";
 
 
 
@@ -144,7 +145,7 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promi
     function bySelection(p: any) {
       return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
     }
-    return listPlugins('targidView').filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
+    return listPlugins(Targid.VIEW).filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
   });
 }
 

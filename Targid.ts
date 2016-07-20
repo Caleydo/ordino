@@ -135,41 +135,46 @@ export function compressCreateRemove(path:prov.ActionNode[]) {
 export class TargidConstants {
   /**
    * Name of the application
-   * Note: the string value is referenced in the package.json
+   * Note: the string value is referenced in the package.json, i.e. be careful when refactor the value
    * @type {string}
    */
   static APP_NAME = 'Targid';
 
   /**
    * Static constant for creating a view command
-   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json
+   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json,
+   *       i.e. be careful when refactor the value
    * @type {string}
    */
   static CMD_CREATE_VIEW = 'targidCreateView';
 
   /**
    * Static constant for removing a view command
-   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json
+   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json,
+   *       i.e. be careful when refactor the value
    * @type {string}
    */
   static CMD_REMOVE_VIEW = 'targidRemoveView';
 
   /**
    * Static constant as identification for Targid views
-   * Note: the string value is referenced for multiple view definitions in the package.json
+   * Note: the string value is referenced for multiple view definitions in the package.json,
+   *       i.e. be careful when refactor the value
    */
   static VIEW = 'targidView';
 
   /**
-   *
-   * Note: the string value is referenced for the `actionFactory` in the package.json
+   * Static constant for setting a parameter of a view
+   * Note: the string value is referenced for the `actionFactory` in the package.json,
+   *       i.e. be careful when refactor the value
    * @type {string}
    */
   static CMD_SET_PARAMETER = 'targidSetParameter';
 
   /**
-   *
-   * Note: the string value is referenced for the `actionFactory` in the package.json
+   * Static constant for setting a selection of a view
+   * Note: the string value is referenced for the `actionFactory` in the package.json,
+   *       i.e. be careful when refactor the value
    * @type {string}
    */
   static CMD_SET_SELECTION = 'targidSetSelection';

@@ -12,7 +12,7 @@ import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
-import {Targid} from './Targid';
+import {TargidConstants} from './Targid';
 
 
 
@@ -145,7 +145,7 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promi
     function bySelection(p: any) {
       return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
     }
-    return listPlugins(Targid.VIEW).filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
+    return listPlugins(TargidConstants.VIEW).filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
   });
 }
 
@@ -357,7 +357,7 @@ export function setParameterImpl(inputs:prov.IObjectRef<any>[], parameter, graph
 }
 export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, value: any) {
   //assert view
-  return prov.action(prov.meta('Set Parameter "'+name+'"', prov.cat.visual, prov.op.update), 'targidSetParameter', setParameterImpl, [view], {
+  return prov.action(prov.meta('Set Parameter "'+name+'"', prov.cat.visual, prov.op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
     name: name,
     value: value
   });
@@ -382,7 +382,7 @@ export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
 }
 export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
   //assert view
-  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view], {
+  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id: null,
     range: range.toString()
   });
@@ -390,7 +390,7 @@ export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.
 
 export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
   //assert view
-  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), 'targidSetSelection', setSelectionImpl, [view, target], {
+  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id: null,
     range: range.toString()
   });
@@ -398,9 +398,9 @@ export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:
 
 export function createCmd(id):prov.ICmdFunction {
   switch (id) {
-    case 'targidSetParameter':
+    case TargidConstants.CMD_SET_PARAMETER:
       return setParameterImpl;
-    case 'targidSetSelection':
+    case TargidConstants.CMD_SET_SELECTION:
       return setSelectionImpl;
   }
   return null;
@@ -421,12 +421,12 @@ function isSameSelection(a: ISelection, b: ISelection) {
  * @returns {prov.ActionNode[]}
  */
 export function compressSetParameter(path:prov.ActionNode[]) {
-  const possible = path.filter((p) => p.f_id === 'targidSetParameter');
+  const possible = path.filter((p) => p.f_id === TargidConstants.CMD_SET_PARAMETER);
   //group by view and parameter
   const toKey = (p: prov.ActionNode) => p.requires[0].id+'_'+p.parameter.name;
   const last = d3.nest().key(toKey).map(possible);
   return path.filter((p) => {
-    if (p.f_id !== 'targidSetParameter') {
+    if (p.f_id !== TargidConstants.CMD_SET_PARAMETER) {
       return true;
     }
     const elems = last[toKey(p)];
@@ -437,13 +437,13 @@ export function compressSetParameter(path:prov.ActionNode[]) {
 export function compressSetSelection(path:prov.ActionNode[]) {
   const lastByIDType : any = {};
   path.forEach((p) => {
-    if (p.f_id === 'targidSetSelection') {
+    if (p.f_id === TargidConstants.CMD_SET_SELECTION) {
       const para = p.parameter;
       lastByIDType[para.idtype+'@'+p.requires[0].id] = p;
     }
   });
   return path.filter((p) => {
-    if (p.f_id !== 'targidSetSelection') {
+    if (p.f_id !== TargidConstants.CMD_SET_SELECTION) {
       return true;
     }
     const para = p.parameter;

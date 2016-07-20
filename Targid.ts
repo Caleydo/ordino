@@ -27,7 +27,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none();
   const options = parameter.options;
 
-  const view = plugins.get(Targid.VIEW, viewId);
+  const view = plugins.get(TargidConstants.VIEW, viewId);
 
   var wrapper;
   return createWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options).then((instance) => {
@@ -69,9 +69,9 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter):ICmdRes
  * @returns {IAction}
  */
 export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?):IAction {
-  const view = plugins.get(Targid.VIEW, viewId);
+  const view = plugins.get(TargidConstants.VIEW, viewId);
   // assert view
-  return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), Targid.CMD_CREATE_VIEW, createViewImpl, [targid], {
+  return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
     viewId: viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : ranges.none().toString(),
@@ -88,7 +88,7 @@ export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype
  */
 export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, oldFocus = -1):IAction {
   // assert view
-  return prov.action(prov.meta('Remove View: ' + view.toString(), prov.cat.visual, prov.op.remove), Targid.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
+  return prov.action(prov.meta('Remove View: ' + view.toString(), prov.cat.visual, prov.op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
     viewId: view.value.desc.id,
     focus: oldFocus
   });
@@ -101,9 +101,9 @@ export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<
  */
 export function createCmd(id):prov.ICmdFunction {
   switch (id) {
-    case Targid.CMD_CREATE_VIEW:
+    case TargidConstants.CMD_CREATE_VIEW:
       return createViewImpl;
-    case Targid.CMD_REMOVE_VIEW:
+    case TargidConstants.CMD_REMOVE_VIEW:
       return removeViewImpl;
   }
   return null;
@@ -120,9 +120,9 @@ export function compressCreateRemove(path:prov.ActionNode[]) {
   var r = [];
   for (let i = 0; i < path.length; ++i) {
     let p = path[i];
-    if (p.f_id === Targid.CMD_REMOVE_VIEW && r.length > 0) {
+    if (p.f_id === TargidConstants.CMD_REMOVE_VIEW && r.length > 0) {
       let last = r[r.length - 1];
-      if (last.f_id === Targid.CMD_CREATE_VIEW && p.parameter.viewId === last.parameter.viewId) {
+      if (last.f_id === TargidConstants.CMD_CREATE_VIEW && p.parameter.viewId === last.parameter.viewId) {
         r.pop();
         continue;
       }
@@ -132,14 +132,13 @@ export function compressCreateRemove(path:prov.ActionNode[]) {
   return r;
 }
 
-/**
- * The main class for the TargID app
- * This class ...
- * - handles the creation, removal, and focus of views
- * - provides a reference to open views
- * - provides a reference to the provenance graph
- */
-export class Targid {
+export class TargidConstants {
+  /**
+   * Name of the application
+   * Note: the string value is referenced in the package.json
+   * @type {string}
+   */
+  static APP_NAME = 'Targid';
 
   /**
    * Static constant for creating a view command
@@ -161,6 +160,30 @@ export class Targid {
    */
   static VIEW = 'targidView';
 
+  /**
+   *
+   * Note: the string value is referenced for the `actionFactory` in the package.json
+   * @type {string}
+   */
+  static CMD_SET_PARAMETER = 'targidSetParameter';
+
+  /**
+   *
+   * Note: the string value is referenced for the `actionFactory` in the package.json
+   * @type {string}
+   */
+  static CMD_SET_SELECTION = 'targidSetSelection';
+
+}
+
+/**
+ * The main class for the TargID app
+ * This class ...
+ * - handles the creation, removal, and focus of views
+ * - provides a reference to open views
+ * - provides a reference to the provenance graph
+ */
+export class Targid {
   /**
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
@@ -184,7 +207,7 @@ export class Targid {
   constructor(public graph:prov.ProvenanceGraph, parent:Element) {
 
     // add TargId app as (first) object to provenance graph
-    this.ref = graph.findOrAddObject(this, 'Targid', prov.cat.visual);
+    this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
 
     this.$history = d3.select(parent).append('ul').classed('history', true);
     this.$history.append('li').classed('homeButton', true)
@@ -201,12 +224,12 @@ export class Targid {
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
 
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    plugins.get(Targid.VIEW, 'welcome').load().then((p) => {
+    plugins.get(TargidConstants.VIEW, 'welcome').load().then((p) => {
       p.factory(this.$node.node(), {});
     });
 
     this.$mainNavi = $wrapper.insert('nav', ':first-child').classed('mainNavi', true);
-    plugins.get(Targid.VIEW, 'mainNavi').load().then((p) => {
+    plugins.get(TargidConstants.VIEW, 'mainNavi').load().then((p) => {
       p.factory(this.$mainNavi.node(), { targid: this });
     });
   }

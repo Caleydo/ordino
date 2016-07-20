@@ -4,9 +4,8 @@
 /// <reference path='../../tsd.d.ts' />
 
 /// <amd-dependency path='css!./style' />
-import prov = require('../caleydo_clue/prov');
 
-import {ISelection, findStartViewCreators, IView} from './View';
+import {findStartViewCreators, IView} from './View';
 import {Targid} from './Targid';
 
 export class MainNavi {

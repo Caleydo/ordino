@@ -10,7 +10,7 @@ import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
-import {ICmdResult, IAction} from "../caleydo_clue/prov";
+import {ICmdResult, IAction} from '../caleydo_clue/prov';
 
 
 /**

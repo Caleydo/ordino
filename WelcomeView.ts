@@ -4,9 +4,8 @@
 /// <reference path='../../tsd.d.ts' />
 
 /// <amd-dependency path='css!./style' />
-import prov = require('../caleydo_clue/prov');
 
-import {AView, IViewContext, ISelection, findStartViewCreators, IView} from './View';
+import {IView} from './View';
 
 export class WelcomeView {//extends AView {
 

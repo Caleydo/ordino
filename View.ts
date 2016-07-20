@@ -12,7 +12,7 @@ import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
-import {Targid} from "./Targid";
+import {Targid} from './Targid';
 
 
 

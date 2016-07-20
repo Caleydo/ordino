@@ -9,7 +9,7 @@ import datas = require('../caleydo_core/data');
 import session = require('../caleydo_core/session');
 import {IViewContext, ISelection} from '../targid2/View';
 import {ALineUpView, useDefaultLayout,} from '../targid2/LineUpView';
-import {IPluginDesc} from "../caleydo_core/plugin";
+import {IPluginDesc} from '../caleydo_core/plugin';
 
 export class StoredLineUp extends ALineUpView {
   private dataId: string;
@@ -108,12 +108,11 @@ export function createLoadStartFactory(parent: HTMLElement, desc: IPluginDesc, o
           }
         });
     });
-    return ():any => {};
   }
 
   $hint.append('button').attr('class', 'btn btn-default btn-xs').text('Check again').on('click', update);
 
-  return update();
+  update();
 }
 
 

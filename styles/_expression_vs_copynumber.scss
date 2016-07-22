@@ -1,9 +1,7 @@
 .expressionVsCopyNumber {
 
   .mark {
-    fill: transparent;
-    stroke: $core_color_almost_black;
-    stroke-width: 1;
+    fill: $core_color_almost_black;
     cursor: pointer;
 
     &:active,

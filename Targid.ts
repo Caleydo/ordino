@@ -8,9 +8,11 @@ import plugins = require('../caleydo_core/plugin');
 import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
+import session = require('TargidSession');
 import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
 import {ICmdResult, IAction} from '../caleydo_clue/prov';
+import {CLUEGraphManager} from '../caleydo_clue/template';
 
 
 /**
@@ -179,6 +181,12 @@ export class TargidConstants {
    */
   static CMD_SET_SELECTION = 'targidSetSelection';
 
+  /**
+   * Static constant to store details about a new entry point in the session
+   * @type {string}
+   */
+  static NEW_ENTRY_POINT = 'targidNewEntryPoint';
+
 }
 
 /**
@@ -209,7 +217,7 @@ export class Targid {
   private openWrapper = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
   private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
 
-  constructor(public graph:prov.ProvenanceGraph, parent:Element) {
+  constructor(public graph:prov.ProvenanceGraph, public graphManager:CLUEGraphManager, parent:Element) {
 
     // add TargId app as (first) object to provenance graph
     this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
@@ -237,6 +245,19 @@ export class Targid {
     plugins.get(TargidConstants.VIEW, 'mainNavi').load().then((p) => {
       p.factory(this.$mainNavi.node(), { targid: this });
     });
+
+    this.checkForNewEntryPoint();
+  }
+
+  /**
+   * Checks if a new entry point was selected and stored in the session and if so, creates a new view
+   */
+  private checkForNewEntryPoint() {
+    if(session.has(TargidConstants.NEW_ENTRY_POINT)) {
+      const entryPoint:any = session.retrieve(TargidConstants.NEW_ENTRY_POINT);
+      this.push(entryPoint.view, null, null, entryPoint.options);
+      session.remove(TargidConstants.NEW_ENTRY_POINT);
+    }
   }
 
   get node() {
@@ -416,9 +437,10 @@ function isCreateView(stateNode: prov.StateNode) {
 /**
  * Factory method to create a new Targid instance
  * @param graph
+ * @param graphManager
  * @param parent
  * @returns {Targid}
  */
-export function create(graph:prov.ProvenanceGraph, parent:Element) {
-  return new Targid(graph, parent);
+export function create(graph:prov.ProvenanceGraph, graphManager:CLUEGraphManager, parent:Element) {
+  return new Targid(graph, graphManager, parent);
 }

@@ -310,7 +310,8 @@ div.targid {
     overflow: hidden;
     transition: width 0.5s ease;
 
-    &:nth-child(1):nth-last-child(1) {
+    // first view should have width:100%
+    &:nth-child(2):last-child {
       width: 100%;
     }
 

@@ -46,13 +46,6 @@
       display: block;
       font-size: 12px;
       color: #ccc;
-
-      &:before {
-        content: '(';
-      }
-      &:after {
-        content: ')';
-      }
     }
   }
 

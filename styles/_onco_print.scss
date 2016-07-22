@@ -39,12 +39,25 @@
 
   .geneLabel {
     color: $core_colour_text;
-    width: 8em;
+    width: 10em;
     text-align: left;
+
+    span {
+      display: block;
+      font-size: 12px;
+      color: #ccc;
+
+      &:before {
+        content: '(';
+      }
+      &:after {
+        content: ')';
+      }
+    }
   }
 
   .gene {
-    margin-top: 8px;
+    margin-top: 10px;
 
     &:first-child {
       margin-top: 0;

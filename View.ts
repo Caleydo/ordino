@@ -312,7 +312,7 @@ export class ProxyView extends AView {
   }
 
   changeSelection(selection: ISelection) {
-    const id = selection.range.first;
+    const id = selection.range.last;
     const idtype = selection.idtype;
     this.setBusy(true);
     this.resolveId(idtype, id, this.options.idtype).then((gene_name) => {

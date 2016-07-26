@@ -323,14 +323,15 @@ export class ProxyView extends AView {
         this.$node.select('iframe')
           .attr('src', url)
           .on('load', () => {
+            this.setBusy(false);
             //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
             this.fire(ProxyView.EVENT_LOADING_FINISHED);
           });
       } else {
+        this.setBusy(false);
         this.$node.html(`<p>Cannot map <i>${idtype.name}</i> ('${id}') to <i>${this.options.idtype}</i>.</p>`);
         this.fire(ProxyView.EVENT_LOADING_FINISHED);
       }
-      this.setBusy(false);
     });
   }
 
@@ -383,7 +384,7 @@ export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
 export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
   //assert view
   return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
-    idtype: idtype ? idtype.id: null,
+    idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
 }
@@ -391,7 +392,7 @@ export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.
 export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
   //assert view
   return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
-    idtype: idtype ? idtype.id: null,
+    idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
 }

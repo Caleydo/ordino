@@ -143,6 +143,8 @@ export class ALineUpView extends AView {
 
   resolver:(d:any) => void;
 
+  private orderedSelectionIndicies:number[] = [];
+
   constructor(context:IViewContext, parent:Element, private options?) {
     super(context, parent, options);
     this.$node.classed('lineup', true);
@@ -283,7 +285,27 @@ export class ALineUpView extends AView {
   }
 
   private onChange = (data_indices) => {
-    const ids = ranges.list(data_indices.map((i) => this.selectionHelper.idAccessor(this.selectionHelper.rows[i])));
+    // compute the difference
+    const diffAdded = array_diff(data_indices, this.orderedSelectionIndicies);
+    const diffRemoved = array_diff(this.orderedSelectionIndicies, data_indices);
+
+    // add new element to the end
+    if(diffAdded.length > 0) {
+      diffAdded.forEach((d) => {
+        this.orderedSelectionIndicies.push(d);
+      });
+    }
+
+    // remove elements within, but preserve order
+    if(diffRemoved.length > 0) {
+      diffRemoved.forEach((d) => {
+        this.orderedSelectionIndicies.splice(this.orderedSelectionIndicies.indexOf(d), 1);
+      });
+    }
+
+    const ids = ranges.list(this.orderedSelectionIndicies.map((i) => this.selectionHelper.idAccessor(this.selectionHelper.rows[i])));
+    //console.log(this.orderedSelectionIndicies, ids.toString(), diffAdded, diffRemoved);
+
     this.setItemSelection({idtype: this.idType, range: ids});
   };
 
@@ -431,4 +453,9 @@ export function create(context:IViewContext, selection:ISelection, parent:Elemen
   return new LineUpView(context, selection, parent, options);
 }
 
-
+// TODO improve performance of diff algorithm
+function array_diff(array1, array2) {
+  return array1.filter(function(elm) {
+    return array2.indexOf(elm) === -1;
+  })
+}

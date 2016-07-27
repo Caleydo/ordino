@@ -457,5 +457,5 @@ export function create(context:IViewContext, selection:ISelection, parent:Elemen
 function array_diff(array1, array2) {
   return array1.filter(function(elm) {
     return array2.indexOf(elm) === -1;
-  })
+  });
 }

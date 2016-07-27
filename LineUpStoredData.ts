@@ -7,9 +7,11 @@ import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
 import datas = require('../caleydo_core/data');
 import session = require('../caleydo_core/session');
+import targidSession = require('../targid2/TargidSession');
 import {IViewContext, ISelection} from '../targid2/View';
 import {ALineUpView, useDefaultLayout,} from '../targid2/LineUpView';
 import {IPluginDesc} from '../caleydo_core/plugin';
+import {TargidConstants} from '../targid2/Targid';
 
 export class StoredLineUp extends ALineUpView {
   private dataId: string;
@@ -39,33 +41,6 @@ export class StoredLineUp extends ALineUpView {
     }
   }
 }
-
-/*export function createLoadStartFactory(parent: HTMLElement) {
-  const $parent = d3.select(parent);
-  var current = null;
-  function update() {
-    datas.list({ type: 'lineup_data'} ).then((items: any[]) => {
-      const $options = $parent.selectAll('div.radio').data(items);
-      $options.enter().append('div').classed('radio', true);
-      $options.html((d,i) => `<label><input type="radio" name="loadedDataSet" value="${d.desc.name}" ${i === 0 ? 'checked' : ''}>${d.desc.name}</label>`)
-        .select('input').on('change', (d) => current = d);
-      $options.exit().remove();
-    });
-  }
-  $parent.append('span').html('Don\'t forget to login!<br>');
-  $parent.append('button').attr('class', 'btn btn-default btn-xs').text('Refresh').on('click', update);
-  update();
-
-  function buildOptions(): any {
-    if (current === null) {
-      return {};
-    }
-    return {
-      dataId: current.desc.id
-    };
-  }
-  return () => buildOptions();
-}*/
 
 export function createLoadStartFactory(parent: HTMLElement, desc: IPluginDesc, options:any) {
   const $parent = d3.select(parent);
@@ -101,8 +76,15 @@ export function createLoadStartFactory(parent: HTMLElement, desc: IPluginDesc, o
           if(options.targid) {
             // create options for new view
             let o = { dataId: d.desc.id };
-            // push new view with options to targid
-            options.targid.push((<any>desc).viewId, null, null, o);
+
+            // store state to session before creating a new graph
+            targidSession.store(TargidConstants.NEW_ENTRY_POINT, {
+              view: (<any>desc).viewId,
+              options: o
+            });
+
+            // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+            options.targid.graphManager.newGraph();
           } else {
             console.error('no targid object given to push new view');
           }

@@ -1,0 +1,44 @@
+
+.history {
+  margin: 0;
+  padding: 5px 5px;
+  list-style: none;
+  overflow: hidden;
+
+  //border-bottom: 1px solid $core_colour_selected;
+
+  display: flex;
+
+  li {
+    margin-left: -1px;
+    background: #fff;
+    border: 1px solid $core_border;
+
+    a {
+      display: block;
+      height: 100%;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 1;
+      color: #000;
+      text-decoration: none;
+    }
+
+    // home button
+    &:first-of-type a {
+      margin-left: 0;
+      padding: 5px 18px;
+    }
+    &:only-child a {
+      background-color: lighten($core_border, 5%);
+    }
+
+    &.t-focus {
+      background-color: lighten($core_border, 5%);
+    }
+
+    &.t-context {
+      background-color: lighten($core_border, 10%);
+    }
+  }
+}

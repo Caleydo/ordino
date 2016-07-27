@@ -1,0 +1,120 @@
+
+.startMenu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 3;
+
+  background-color: rgba($core_color_almost_black, 0);
+
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity ease 0.2s, background-color ease 0.2s;
+
+  &.open {
+    visibility: visible;
+    opacity: 1;
+    background-color: rgba($core_color_almost_black, 0.3);
+  }
+
+  .closeButton {
+    margin: 5px 4px;
+    background: #fff;
+    border: 1px solid $core_border;
+    padding: 5px 19px;
+  }
+
+  .menu {
+    position: absolute;
+    top: 45px;
+    left: 5px;
+
+    //width: 90%;
+
+    background: #fff;
+    border-color: 1px solid $header-menu-bg-color;
+    border-radius: 6px;
+    box-shadow: 0 0 1em rgba($core_color_almost_black, 0.4);
+
+    padding: 15px;
+
+    &:before {
+      position: absolute;
+      width: 0;
+      height: 0;
+      left: 16px;
+      top: -8px;
+      content: "";
+      border-style: solid;
+      border-width: 0 8px 8.7px 8px;
+      border-color: transparent transparent #fff transparent;
+    }
+
+    section header h1 {
+      margin: 15px 0 5px 0;
+      padding-top: 15px;
+      font-size: 1.3em;
+      border-top: 1px solid $header-menu-bg-color;
+    }
+
+    section:first-child header h1 {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    main {
+      display: flex;
+
+      .item {
+        margin-right: 30px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &:only-child {
+          width: 100%;
+        }
+      }
+
+      .header {
+        font-weight: 500;
+      }
+    }
+
+    ul {
+      min-width: 150px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      li {
+        margin: 0;
+        padding: 0;
+
+        > a {
+          display: block;
+          padding: 5px;
+          text-decoration: none;
+          font-weight: 500;
+          width: 100%;
+
+          &:before {
+            margin-right: 8px;
+            content: "\f105";
+            font-family: "FontAwesome", serif;
+          }
+
+          &:active,
+          &:hover,
+          &:focus {
+            background: $core_colour;
+          }
+        }
+      }
+    }
+  }
+}

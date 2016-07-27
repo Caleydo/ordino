@@ -209,7 +209,7 @@ export class Targid {
    */
   ref:prov.IObjectRef<Targid>;
 
-  private $mainNavi:d3.Selection<any>;
+  private $startMenu:d3.Selection<any>;
   private $history:d3.Selection<any>;
   private $node:d3.Selection<Targid>;
 
@@ -222,6 +222,15 @@ export class Targid {
     // add TargId app as (first) object to provenance graph
     this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
 
+    this.$startMenu = d3.select(parent).append('div').classed('startMenu', true);
+    plugins.get(TargidConstants.VIEW, 'startMenu').load().then((p) => {
+      p.factory(this.$startMenu.node(), { targid: this });
+    });
+
+    if(graph.isEmpty && session.has(TargidConstants.NEW_ENTRY_POINT) === false) {
+      this.$startMenu.classed('open', true);
+    }
+
     this.$history = d3.select(parent).append('ul').classed('history', true);
     this.$history.append('li').classed('homeButton', true)
       .html(`<a href="#">
@@ -231,7 +240,7 @@ export class Targid {
     this.$history.select('.homeButton > a').on('click', (d) => {
       // prevent changing the hash (href)
       (<Event>d3.event).preventDefault();
-      this.focusOnStart();
+      this.openStartMenu();
     });
 
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
@@ -241,16 +250,11 @@ export class Targid {
       p.factory(this.$node.node(), {});
     });
 
-    this.$mainNavi = $wrapper.insert('nav', ':first-child').classed('mainNavi', true);
-    plugins.get(TargidConstants.VIEW, 'mainNavi').load().then((p) => {
-      p.factory(this.$mainNavi.node(), { targid: this });
-    });
-
     this.checkForNewEntryPoint();
   }
 
   /**
-   * Checks if a new entry point was selected and stored in the session and if so, creates a new view
+   * Checks if a new entry point was selected (and stored in the session) and if so, creates a new view.
    */
   private checkForNewEntryPoint() {
     if(session.has(TargidConstants.NEW_ENTRY_POINT)) {
@@ -258,6 +262,10 @@ export class Targid {
       this.push(entryPoint.view, null, null, entryPoint.options);
       session.remove(TargidConstants.NEW_ENTRY_POINT);
     }
+  }
+
+  openStartMenu() {
+    this.$startMenu.classed('open', true);
   }
 
   get node() {
@@ -369,12 +377,12 @@ export class Targid {
   /**
    * Jumps back to the root of the provenance graph and consequentially removes all open views (undo)
    */
-  focusOnStart() {
+  /*focusOnStart() {
     const creators = this.graph.act.path.filter((d) => d.creator === null); // null => start StateNode
     if(creators.length > 0) {
       this.graph.jumpTo(creators[0]);
     }
-  }
+  }*/
 
   removeLastImpl() {
     return this.removeImpl(this.views[this.views.length - 1]);

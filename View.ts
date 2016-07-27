@@ -76,7 +76,14 @@ class StartFactory implements IStartFactory {
   }
 
   build(element: HTMLElement, options = {}) {
-    return this.builder = this.p.load().then((i) => i.factory(element, this.p, options));
+    return this.builder = this.p.load().then((i) => {
+      if(i.factory) {
+        return i.factory(element, this.p, options);
+      } else {
+        console.log(`No viewId and/or factory method found for '${i.desc.id}'`);
+        return null;
+      }
+    });
   }
 
   options() {
@@ -84,51 +91,17 @@ class StartFactory implements IStartFactory {
   }
 }
 
-/**
- * Creates the list of views that are used, but not of type "startView" (in package.json)
- * All views are categorized under "Extras"
- * @deprecated
- */
-/*class MockStartFactory implements IStartFactory {
-  private current: IViewPluginDesc = null;
 
-  constructor(private views: IViewPluginDesc[]) {
-
-  }
-
-  get name() {
-    return 'Extras';
-  }
-
-  build(element: HTMLElement) {
-    this.current = this.views[0];
-    const $options = d3.select(element).selectAll('div.radio').data(this.views);
-    $options.enter().append('div').classed('radio', true)
-      .html((d,i) => `<label><input type="radio" name="startView" value="${d.id}" ${i === 0 ? 'checked' : ''}>${d.name}</label>`)
-      .select('input').on('change', (d) => this.current = d);
-  }
-
-  options() {
-    return Promise.resolve({viewId: this.current.id, options: {}});
-  }
-}*/
-
-function toStartFactory(p: IPluginDesc): IStartFactory {
-  return new StartFactory(p);
+export function findViewCreators(type): IStartFactory[] {
+  const plugins = listPlugins(type).sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
+  var factories = plugins.map((p: IPluginDesc): IStartFactory => {
+    return new StartFactory(p);
+  });
+  return factories;
 }
 
 export function findStartViewCreators(): IStartFactory[] {
-  const plugins = listPlugins('targidStart').sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
-  var factories = plugins.map(toStartFactory);
-
-  // retrieve views that are used, but are not a start view and place them under "extras"
-  /*const used = plugins.map((d) => (<any>d).viewId);
-  const singleViews = findStartViews().filter((d) => used.indexOf(d.id) < 0);
-  if (singleViews.length > 0) {
-    factories.push(new MockStartFactory(singleViews));
-  }*/
-
-  return factories;
+  return findViewCreators('targidStart');
 }
 
 export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {

@@ -243,49 +243,6 @@ nav.mainNavi {
   }
 }
 
-.history {
-  margin: 0;
-  padding: 5px 5px;
-  list-style: none;
-  overflow: hidden;
-
-  //border-bottom: 1px solid $core_colour_selected;
-
-  display: flex;
-
-  li {
-    margin-left: -1px;
-    background: #fff;
-    border: 1px solid $core_border;
-
-    a {
-      display: block;
-      height: 100%;
-      padding: 5px 10px;
-      cursor: pointer;
-      z-index: 1;
-      color: #000;
-      text-decoration: none;
-    }
-
-    // home button
-    &:first-of-type a {
-      margin-left: 0;
-      padding: 5px 18px;
-    }
-    &:only-child a {
-      background-color: lighten($core_border, 5%);
-    }
-
-    &.t-focus {
-      background-color: lighten($core_border, 5%);
-    }
-
-    &.t-context {
-      background-color: lighten($core_border, 10%);
-    }
-  }
-}
 
 div.targid {
   flex: 1;
@@ -470,34 +427,6 @@ div.lu {
 }
 
 
-div.welcomeView {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  z-index: 1;
-
-  display: none;
-
-  &:only-child {
-    display: block;
-  }
-
-  img {
-    width: 300px;
-    height: auto;
-    opacity: 0.2
-  }
-
-  h1 {
-    position: absolute;
-    left: 150px;
-    margin: 0;
-    padding: 0;
-    width: 400px;
-    color: #999;
-    font-size: 4em;
-  }
-}
 
 div.view .proxy_view {
   position: absolute;

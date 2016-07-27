@@ -19,10 +19,10 @@
           "name": "Target Discovery Platform"
         },
         {
-          "id": "mainNavi",
-          "name": "mainNavi",
+          "id": "startMenu",
+          "name": "startMenu",
           "type": "targidView",
-          "file": "MainNavi",
+          "file": "StartMenu",
           "factory": "create",
           "idtype": "none",
           "selection": "none"
@@ -86,13 +86,22 @@
         {
           "id": "targid_start_loaded",
           "name": "Load Stored LineUp4BI",
-          "type": "targidStart",
+          "type": "targidStartLineUp",
           "file": "LineUpStoredData",
           "factory": "createLoadStartFactory",
           "viewId": "targid_start_loaded",
           "idtype": "Custom",
           "priority": 100,
           "fa-icon": "fa-sort-amount-desc"
+        },
+        {
+          "id": "targid_session_start",
+          "name": "Last Sessions",
+          "type": "targidStartSession",
+          "file": "SessionList",
+          "factory": "createStartFactory",
+          "idtype": "none",
+          "selection": "none"
         }
       ],
       "python": [

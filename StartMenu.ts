@@ -76,6 +76,12 @@ export class StartMenu {
     }
 
     $enter.append('div').classed('body', true)
+      .html(`
+        <div class="loading">
+          <i class="fa fa-spinner fa-pulse fa-fw"></i>
+          <span class="sr-only">Loading...</span>
+        </div>
+      `)
       .each(function(d:any) {
         // provide targid object as option object
         d.build(this, {targid: that.targid});//.then(() => { console.log(arguments); });

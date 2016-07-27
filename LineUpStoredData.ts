@@ -44,6 +44,9 @@ export class StoredLineUp extends ALineUpView {
 
 export function createLoadStartFactory(parent: HTMLElement, desc: IPluginDesc, options:any) {
   const $parent = d3.select(parent);
+
+  $parent.html(''); // remove loading element
+
   const $ul = $parent.append('ul');
   const $hint = $parent.append('div');//.attr('style', 'margin-top: 25px; margin-bottom: -10px;');
 

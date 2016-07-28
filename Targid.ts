@@ -32,7 +32,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
 
   const view = plugins.get(TargidConstants.VIEW, viewId);
 
-  var wrapper;
+  var wrapper; // store instance
   return createWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options).then((instance) => {
     wrapper = instance;
     return targid.pushImpl(instance);

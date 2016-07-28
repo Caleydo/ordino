@@ -100,10 +100,13 @@ export function findViewCreators(type): IStartFactory[] {
   return factories;
 }
 
-export function findStartViewCreators(): IStartFactory[] {
-  return findViewCreators('targidStart');
-}
-
+/**
+ * Find views for a given idtype and number of selected items.
+ * The seleted items itself are not considered in this function.
+ * @param idtype
+ * @param selection
+ * @returns {any}
+ */
 export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {
   if (idtype === null) {
     return Promise.resolve([]);
@@ -445,6 +448,13 @@ export class ViewWrapper extends EventHandler {
   private instance:IView = null;
   private sm_instances:IView[] = [];
 
+  /**
+   * Listens to the AView.EVENT_ITEM_SELECT event and decided if the chooser should be visible.
+   * Then dispatches the incoming event again (aka bubbles up).
+   * @param event
+   * @param old
+   * @param new_
+   */
   private listener = (event: any, old: ISelection, new_: ISelection) => {
     this.chooseNextViews(new_.idtype, new_.range);
     this.fire(AView.EVENT_ITEM_SELECT, old, new_);
@@ -464,25 +474,49 @@ export class ViewWrapper extends EventHandler {
 
   constructor(graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
+    // create provenance reference
     this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
+
+    console.log(graph, generate_hash(plugin.desc, selection, options));
+
+    // create (inner) view context
     this.context = createContext(graph, plugin.desc, this.ref);
-    this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
-    this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
-    this.$chooser = this.$viewWrapper.append('div').classed('chooser', true).datum(this).style('display', 'none');
-    this.$chooser.append('div').classed('category', true);
-    const $params = this.$node.append('div').attr('class', 'parameters form-inline');
-    const $inner = this.$node.append('div').classed('inner', true);
+
+    // append DOM elements
+    this.$viewWrapper = d3.select(parent).append('div')
+      .classed('viewWrapper', true);
+
+    this.$node = this.$viewWrapper.append('div')
+      .classed('view', true)
+      .datum(this);
+
+    this.$chooser = this.$viewWrapper.append('div')
+      .classed('chooser', true)
+      .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
+      .datum(this);
+
+    const $params = this.$node.append('div')
+      .attr('class', 'parameters form-inline');
+
+    const $inner = this.$node.append('div')
+      .classed('inner', true);
+
     if(showAsSmallMultiple(this.desc)) {
       const ids = selection.range.dim(0).asList();
       $inner.classed('multiple', ids.length > 1);
+
       this.instance = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
+
       ids.forEach((id) => {
         this.sm_instances.push(plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options));
       });
+
     } else {
       this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
     }
+
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
+
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
 
     // register listener only for ProxyViews
@@ -511,6 +545,7 @@ export class ViewWrapper extends EventHandler {
     return this.instance.getItemSelection();
   }
   setItemSelection(sel: ISelection) {
+    // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
 
     this.sm_instances.forEach((d) => d.setItemSelection(sel));
@@ -518,6 +553,8 @@ export class ViewWrapper extends EventHandler {
     this.instance.setItemSelection(sel);
 
     this.chooseNextViews(sel.idtype, sel.range);
+
+    // turn listener on again
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
   }
 
@@ -590,20 +627,34 @@ export class ViewWrapper extends EventHandler {
     (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
   }
 
+  /**
+   * Decide if a chooser for the next view should be shown and if so, which next views are available
+   * @param idtype
+   * @param selection
+   */
   private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
-    this.$chooser.style('display', selection.isNone ? 'none' : null);
+    const that = this;
+
+    // show chooser if selection available
+    this.$chooser.classed('hidden', selection.isNone);
 
     const viewPromise = findViews(idtype, selection);
     viewPromise.then((views) => {
-      //group views by category
-      const $cats = this.$chooser.select('div.category');
-      //$categories.select('span').text((d) => d.key);
-      const $buttons = $cats.selectAll('button').data(views);
-      $buttons.enter().append('button').classed('btn', true).classed('btn-default', true);
-      $buttons.text((d) => d.v.name).on('click', (d) => {
-        this.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, selection);
-      });
-      $buttons.attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null);
+      const $buttons = this.$chooser.selectAll('button').data(views);
+
+      $buttons.enter().append('button')
+        .classed('btn', true)
+        .classed('btn-default', true);
+
+      $buttons.text((d) => d.v.name)
+        .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
+        .on('click', function(d) {
+          $buttons.classed('active', false);
+          d3.select(this).classed('active', true);
+
+          that.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, selection);
+        });
+
       $buttons.exit().remove();
     });
   }

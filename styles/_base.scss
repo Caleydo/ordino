@@ -355,20 +355,7 @@ div.targid {
       background-color: $core_colour;
       text-align: center;
       position: relative;
-
-      .category {
-        display: block;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: auto;
-        padding: 8px 0;
-
-        //flex-direction: column;
-        //align-items: center;
-      }
+      padding: 8px 0;
 
       button {
         width: 90%;
@@ -390,6 +377,10 @@ div.targid {
           //opacity: 0.3;
           background: transparent;
           border-color: $core_border;
+        }
+
+        &.active {
+          background-color: $select-color-bright;
         }
       }
     }

@@ -422,7 +422,11 @@ div.lu {
   .row.hover rect.bg {
     stroke: $hover-data-color;
     stroke-width: 1;
+  }
 
+  .rankingbuttons .dropdown-menu {
+    left: auto;
+    right: 0;
   }
 }
 

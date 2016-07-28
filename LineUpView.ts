@@ -357,27 +357,34 @@ export class ALineUpView extends AView {
     const r = this.selectionHelper.rows;
     const acc = this.selectionHelper.idAccessor;
     const ids = ranges.list(order.map((i) => acc(r[i])).sort(d3.ascending));
-    const dialog = dialogs.generateDialog('Save Named Set', 'Save');
-    dialog.body.innerHTML = `<form>
-            <div class="form-group">
-              <label for="namedset_name">Name</label>
-              <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required">
-            </div>
-            <div class="form-group">
-              <label for="namedset_description">Description</label>
-              <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
-            </div>
-          </form>`;
-    (<HTMLFormElement>dialog.body.querySelector('form')).onsubmit = () => {
-      dialog.hide();
-      return false;
-    };
-    dialog.onHide(() => {
+    const dialog = dialogs.generateDialog('Save Named Set');
+    dialog.body.innerHTML = `
+      <form id="namedset_form">
+        <div class="form-group">
+          <label for="namedset_name">Name</label>
+          <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required">
+        </div>
+        <div class="form-group">
+          <label for="namedset_description">Description</label>
+          <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
+        </div>
+      </form>`;
+
+    const form = <HTMLFormElement>dialog.body.querySelector('#namedset_form');
+    form.onsubmit = () => {
       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
       saveNamedSet(name, this.idType, ids, description).then((d) => console.log('saved', d));
+      dialog.hide();
+      return false;
+    };
+
+    dialog.footer.innerHTML = `<button type="submit" form="namedset_form" class="btn btn-default btn-primary">Save</button>`;
+
+    dialog.onHide(() => {
       dialog.destroy();
     });
+
     dialog.show();
   }
 

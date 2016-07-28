@@ -13,6 +13,7 @@ import d3 = require('d3');
 import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
 import {ICmdResult, IAction} from '../caleydo_clue/prov';
 import {CLUEGraphManager} from '../caleydo_clue/template';
+import {StartMenu} from './StartMenu';
 
 
 /**
@@ -209,6 +210,7 @@ export class Targid {
    */
   ref:prov.IObjectRef<Targid>;
 
+  private startMenu:Promise<StartMenu>;
   private $startMenu:d3.Selection<any>;
   private $history:d3.Selection<any>;
   private $node:d3.Selection<Targid>;
@@ -223,12 +225,12 @@ export class Targid {
     this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
 
     this.$startMenu = d3.select(parent).append('div').classed('startMenu', true);
-    plugins.get(TargidConstants.VIEW, 'startMenu').load().then((p) => {
-      p.factory(this.$startMenu.node(), { targid: this });
+    this.startMenu = plugins.get(TargidConstants.VIEW, 'startMenu').load().then((p) => {
+      return p.factory(this.$startMenu.node(), { targid: this });
     });
 
     if(graph.isEmpty && session.has(TargidConstants.NEW_ENTRY_POINT) === false) {
-      this.$startMenu.classed('open', true);
+      this.openStartMenu();
     }
 
     this.$history = d3.select(parent).append('ul').classed('history', true);
@@ -265,7 +267,9 @@ export class Targid {
   }
 
   openStartMenu() {
-    this.$startMenu.classed('open', true);
+    this.startMenu.then((startMenu) => {
+      startMenu.open();
+    });
   }
 
   get node() {

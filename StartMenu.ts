@@ -32,10 +32,37 @@ export class StartMenu {
     </div>
   `;
 
+  /**
+   * Save an old key down listener to restore it later
+   */
+  private restoreKeyDownListener;
+
   constructor(parent:Element, options?) {
     this.$node = d3.select(parent);
     this.targid = options.targid;
     this.build();
+  }
+
+  /**
+   * Opens the start menu and attaches an key down listener, to close the menu again pressing the ESC key
+   */
+  public open() {
+    this.restoreKeyDownListener = document.onkeydown;
+    document.onkeydown = (evt) => {
+      evt = evt || <KeyboardEvent>window.event;
+      if (evt.keyCode === 27) {
+        this.close();
+      }
+    };
+    this.$node.classed('open', true);
+  }
+
+  /**
+   * Close the start menu and restore an old key down listener
+   */
+  public close() {
+    document.onkeydown = this.restoreKeyDownListener;
+    this.$node.classed('open', false);
   }
 
   /**
@@ -44,11 +71,17 @@ export class StartMenu {
   private build() {
     this.$node.html(this.template);
 
+    this.$node.on('click', () => {
+      if((<Event>d3.event).currentTarget === (<Event>d3.event).target) {
+        this.close();
+      }
+    });
+
     this.$node.select('.closeButton').on('click', (d) => {
       // prevent changing the hash (href)
       (<Event>d3.event).preventDefault();
 
-      this.$node.classed('open', false);
+      this.close();
     });
 
     this.createSection('targidStartEntryPoint', this.$node.select('.entryPoints main'), true);

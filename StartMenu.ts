@@ -26,7 +26,7 @@ export class StartMenu {
         <main></main>
       </section>
       <section class="targidSessionData">
-        <header><h1>Target Discovery Sessions</h1></header>
+        <header><h1>Sessions</h1></header>
         <main></main>
        </section>
     </div>

@@ -116,5 +116,15 @@
         }
       }
     }
+
+    .body.menuTable {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+
+      table {
+        margin-bottom: 0;
+      }
+    }
   }
 }

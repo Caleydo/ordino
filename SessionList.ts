@@ -8,7 +8,7 @@ import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 
 export function createStartFactory(parent: HTMLElement, desc: IPluginDesc, options:any) {
   const targid = options.targid;
-  const format = d3.time.format.utc('%Y-%m-%d %H:%M');
+  //const format = d3.time.format.utc('%Y-%m-%d %H:%M');
 
   const template = `<table class="table table-striped table-hover table-bordered">
     <thead>
@@ -27,7 +27,7 @@ export function createStartFactory(parent: HTMLElement, desc: IPluginDesc, optio
     </tbody>
   </table>`;
 
-  const $parent = d3.select(parent).html(`
+  const $parent = d3.select(parent).classed('menuTable', true).html(`
     <div class="loading">
       <i class="fa fa-spinner fa-pulse fa-fw"></i>
       <span class="sr-only">Loading...</span>
@@ -43,7 +43,7 @@ export function createStartFactory(parent: HTMLElement, desc: IPluginDesc, optio
     //$tr_enter.append('td').text((d) => 'Unknown');
     $tr_enter.append('td').text((d) => d.name);
     //$tr_enter.append('td').html((d) => d.description ? d.description : '<i>(none)</i>');
-    $tr_enter.append('td').text((d) => d.ts ? format(new Date(d.ts)) : 'Unknown');
+    $tr_enter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
     $tr_enter.append('td').text((d) => d.creator);
     //$tr_enter.append('td').text((d) => `${d.size[0]} / ${d.size[1]}`);
     $tr_enter.append('td').html((d) => {

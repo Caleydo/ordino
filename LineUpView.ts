@@ -258,7 +258,12 @@ export class ALineUpView extends AView {
   }
 
   protected replaceLineUpData(rows:any[]) {
-    this.lineup.data.setData(rows);
+    if(rows.length === 0) {
+      this.lineup.data.setData([{_id:0, id: '', score: 0, symbol: ''}]);
+    } else {
+
+      this.lineup.data.setData(rows);
+    }
     this.updateSelection(rows);
     return this.lineup;
   }

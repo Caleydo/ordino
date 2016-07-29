@@ -126,6 +126,7 @@ export class ALineUpView extends AView {
     body: {}
   };
 
+  protected $nodata;
 
   protected lineup:any;
 
@@ -154,6 +155,11 @@ export class ALineUpView extends AView {
       this.resolver = resolve;
     });
     //context.graph.findOrAddObject()
+
+    this.$nodata = this.$node.append('p')
+      .classed('nodata', true)
+      .classed('hidden', true)
+      .text('No data found for selection and parameter.');
   }
 
   private lineupRankingButtons($node:d3.Selection<any>) {
@@ -259,11 +265,9 @@ export class ALineUpView extends AView {
 
   protected replaceLineUpData(rows:any[]) {
     if(rows.length === 0) {
-      this.lineup.data.setData([{_id:0, id: '', score: 0, symbol: ''}]);
-    } else {
-
-      this.lineup.data.setData(rows);
+      console.warn('rows.length ===', rows.length, '--> LineUp does not support empty data and might throw errors');
     }
+    this.lineup.data.setData(rows);
     this.updateSelection(rows);
     return this.lineup;
   }
@@ -292,8 +296,8 @@ export class ALineUpView extends AView {
 
   private onChange = (data_indices) => {
     // compute the difference
-    const diffAdded = array_diff(data_indices, this.orderedSelectionIndicies);
-    const diffRemoved = array_diff(this.orderedSelectionIndicies, data_indices);
+    const diffAdded = this.array_diff(data_indices, this.orderedSelectionIndicies);
+    const diffRemoved = this.array_diff(this.orderedSelectionIndicies, data_indices);
 
     // add new element to the end
     if(diffAdded.length > 0) {
@@ -314,6 +318,19 @@ export class ALineUpView extends AView {
 
     this.setItemSelection({idtype: this.idType, range: ids});
   };
+
+  /**
+   * Returns the all items that are not in the given two arrays
+   * TODO improve performance of diff algorithm
+   * @param array1
+   * @param array2
+   * @returns {any}
+   */
+  private array_diff(array1, array2) {
+    return array1.filter(function(elm) {
+      return array2.indexOf(elm) === -1;
+    });
+  }
 
   setItemSelection(sel:ISelection) {
     if (this.lineup) {
@@ -432,25 +449,34 @@ export class ALineUpView extends AView {
   }
 
   protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], customOnChange?) {
-
     const $group = $parent.append('div').classed('form-group', true);
-    $group.append('label').attr('for', elementName+'_' + id).text(label);
-    const $selectType = $group.append('select').attr('id', elementName+'_' + id).attr({
-      'class': 'form-control',
-      required: 'required'
-    }).on('change', function () {
-      onChange(elementName, allElements[this.selectedIndex]);
-      if (customOnChange) {
-        customOnChange();
-      }
-      // store new values also to session for other views
-      session.store(elementName, allElements[this.selectedIndex]);
-    });
+
+    $group.append('label')
+      .attr('for', elementName+'_' + id)
+      .text(label);
+
+    const $selectType = $group.append('select')
+      .classed('form-control', true)
+      .attr('id', elementName+'_' + id)
+      .attr('required', 'required')
+      .on('change', function () {
+        if (customOnChange) {
+          customOnChange();
+        }
+        onChange(elementName, allElements[this.selectedIndex]);
+        // store new values also to session for other views
+        session.store(elementName, allElements[this.selectedIndex]);
+      });
+
+    // create options
     const $options = $selectType.selectAll('option').data(allNames);
     $options.enter().append('option');
     $options.text((d)=>d).attr('value', (d)=>d);
     $options.exit().remove();
+
+    // select first element by default
     $selectType.property('selectedIndex', 0);
+
     return $selectType;
   }
 }
@@ -461,6 +487,10 @@ export interface IScore<T> {
 }
 
 
+/**
+ * Sample LineUp view with random data
+ * @deprecated For testing purpose only
+ */
 export class LineUpView extends ALineUpView {
   constructor(context:IViewContext, selection:ISelection, parent:Element, options?) {
     super(context, parent, options);
@@ -484,14 +514,15 @@ export class LineUpView extends ALineUpView {
   }
 }
 
-
+/**
+ * Factory function that creates a sample LineUp view with random data
+ * @deprecated For testing purpose only
+ * @param context
+ * @param selection
+ * @param parent
+ * @param options
+ * @returns {LineUpView}
+ */
 export function create(context:IViewContext, selection:ISelection, parent:Element, options?) {
   return new LineUpView(context, selection, parent, options);
-}
-
-// TODO improve performance of diff algorithm
-function array_diff(array1, array2) {
-  return array1.filter(function(elm) {
-    return array2.indexOf(elm) === -1;
-  });
 }

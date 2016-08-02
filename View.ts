@@ -712,6 +712,11 @@ export class ViewWrapper extends EventHandler {
 
     const viewPromise = findViews(idtype, selection);
     viewPromise.then((views) => {
+
+      const dataViews = views.filter((d) => d.v.name.indexOf('Gene') === -1);
+      const geneViews = views.filter((d) => d.v.name.indexOf('Gene') !== -1);
+      views = dataViews.concat(geneViews);
+
       const $buttons = this.$chooser.selectAll('button').data(views);
 
       $buttons.enter().append('button')

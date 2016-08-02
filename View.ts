@@ -272,7 +272,9 @@ export class ProxyView extends AView {
    */
   static EVENT_LOADING_FINISHED = 'loadingFinished';
 
-  protected lastSelectedID;
+  private lastSelectedID;
+  private $selectType;
+  private $formGroup;
 
   private options = {
     proxy: null,
@@ -302,6 +304,24 @@ export class ProxyView extends AView {
     return null;
   }
 
+  buildParameterUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>) {
+    const id = random_id();
+
+    this.$formGroup = $parent.append('div').classed('form-group', true).classed('hidden', true);
+    this.$selectType = this.$formGroup.select('select');
+
+    const elementName = 'element';
+
+    this.$formGroup.append('label')
+     .attr('for', elementName+'_' + id)
+      .text(this.options.idtype + ' ID:');
+
+     this.$selectType = this.$formGroup.append('select')
+      .classed('form-control', true)
+      .attr('id', elementName+'_' + id)
+      .attr('required', 'required');
+  }
+
   changeSelection(selection: ISelection) {
     const id = selection.range.last;
     const idtype = selection.idtype;
@@ -320,45 +340,27 @@ export class ProxyView extends AView {
       this.lastSelectedID = allNames[0];
       this.loadProxyPage(selection);
 
-      const id = random_id();
-
       console.log(allNames);
       if (allNames.length === 1) {
         return;
       }
 
-      var $group = this.$node.select('.form-group');
-      var $selectType = $group.select('select');
-      if ($group.size() === 0) {
-        $group = this.$node.insert('div', ':first-child').classed('form-group', true);
+      this.$formGroup.classed('hidden', false);
+      this.$selectType.on('change', () => {
 
-        const elementName = 'element';
-
-        $group.append('label')
-         .attr('for', elementName+'_' + id)
-          .text(this.options.idtype + ' ID:');
-
-         $selectType = $group.append('select')
-          .classed('form-control', true)
-          .attr('id', elementName+'_' + id)
-          .attr('required', 'required');
-      }
-
-      $selectType.on('change', () => {
-
-        this.lastSelectedID = allNames[(<HTMLSelectElement>$selectType.node()).selectedIndex];
+        this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
 
         this.loadProxyPage(selection);
       });
 
       // create options
-      const $options = $selectType.selectAll('option').data(allNames);
+      const $options = this.$selectType.selectAll('option').data(allNames);
       $options.enter().append('option');
       $options.text((d)=>d).attr('value', (d)=>d);
       $options.exit().remove();
 
       // select first element by default
-      $selectType.property('selectedIndex', 0);
+      this.$selectType.property('selectedIndex', 0);
     });
   }
 

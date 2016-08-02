@@ -272,6 +272,7 @@ export class ProxyView extends AView {
    */
   static EVENT_LOADING_FINISHED = 'loadingFinished';
 
+  private $params;
   private lastSelectedID;
   private $selectType;
   private $formGroup;
@@ -307,8 +308,9 @@ export class ProxyView extends AView {
   buildParameterUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>) {
     const id = random_id();
 
-    this.$formGroup = $parent.append('div').classed('form-group', true).classed('hidden', true);
+    this.$formGroup = $parent.append('div').classed('form-group', true);
     this.$selectType = this.$formGroup.select('select');
+    this.$params = $parent;
 
     const elementName = 'element';
 
@@ -330,22 +332,17 @@ export class ProxyView extends AView {
 
       var allNames = names[0];
 
-      console.log(allNames);
-
       //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
       allNames = allNames.filter(d => d.indexOf('A0') !== 0);
-
-      console.log(allNames);
 
       this.lastSelectedID = allNames[0];
       this.loadProxyPage(selection);
 
-      console.log(allNames);
       if (allNames.length === 1) {
         return;
       }
 
-      this.$formGroup.classed('hidden', false);
+      this.$params.classed('hidden', false);
       this.$selectType.on('change', () => {
 
         this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
@@ -571,7 +568,7 @@ export class ViewWrapper extends EventHandler {
       .datum(this);
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline');
+      .attr('class', 'parameters form-inline hidden');
 
     const $inner = this.$node.append('div')
       .classed('inner', true);

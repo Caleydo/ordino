@@ -294,6 +294,9 @@ export class Targid {
       } else {
         //jump to a previous state, record the selection and then patch the rest
         this.focus(view).then(() => {
+
+          console.log(new_.idtype, new_.range, old.idtype, old.range);
+
           return this.graph.pushWithResult(setSelection(view.ref, new_.idtype, new_.range), {inverse: setSelection(view.ref, old.idtype, old.range)});
         }).then(() => {
           if (right.matchSelectionLength(new_.range.dim(0).length)) {

@@ -299,11 +299,7 @@ div.targid {
         overflow: hidden;
       }
 
-      > .parameters:empty {
-        display: none;
-      }
-
-      > .parameters:not(:empty) ~ .inner {
+      > .parameters:not(.hidden) ~ .inner {
         border-top: 1px solid $core_border;
         padding-top: 10px;
         position: absolute;

@@ -277,7 +277,10 @@ export class Targid {
   }
 
   private openRight(view:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
-    this.focus(view).then(() => this.pushView(viewId, idtype, selection, options));
+    this.focus(view).then(() => {
+      this.pushView(viewId, idtype, selection, options);
+      view.setItemSelection({idtype:idtype, range:selection});
+    });
   }
 
   private updateItemSelection(view:ViewWrapper, old: ISelection, new_: ISelection, options?) {
@@ -294,9 +297,6 @@ export class Targid {
       } else {
         //jump to a previous state, record the selection and then patch the rest
         this.focus(view).then(() => {
-
-          console.log(new_.idtype, new_.range, old.idtype, old.range);
-
           return this.graph.pushWithResult(setSelection(view.ref, new_.idtype, new_.range), {inverse: setSelection(view.ref, old.idtype, old.range)});
         }).then(() => {
           if (right.matchSelectionLength(new_.range.dim(0).length)) {

@@ -10,6 +10,7 @@ import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin'
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import ajax = require('../caleydo_core/ajax');
+import {random_id} from '../caleydo_core/main';
 import C = require('../caleydo_core/main');
 import d3 = require('d3');
 import {TargidConstants} from './Targid';
@@ -220,12 +221,24 @@ export class AView extends EventHandler implements IView {
     //hook
   }
 
+  protected resolveIdToNames(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string[][]> {
+    const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
+    if (from_idtype.id === target.id) {
+      //same just unmap to name
+      return from_idtype.unmap([id]).then((names) => [names]);
+    }
+
+    //assume mappable
+    return from_idtype.mapToName([id], target).then((names) => names);
+  }
+
   protected resolveId(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string> {
     const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
     if (from_idtype.id === target.id) {
       //same just unmap to name
       return from_idtype.unmap([id]).then((names) => names[0]);
     }
+
     //assume mappable
     return from_idtype.mapToFirstName([id], target).then((names) => names[0]);
   }
@@ -239,7 +252,6 @@ export class AView extends EventHandler implements IView {
     //assume mappable
     return from_idtype.mapToFirstName(ids, target);
   }
-
 
   destroy() {
     this.$node.remove();
@@ -260,6 +272,8 @@ export class ProxyView extends AView {
    */
   static EVENT_LOADING_FINISHED = 'loadingFinished';
 
+  protected lastSelectedID;
+
   private options = {
     proxy: null,
     site: null,
@@ -267,6 +281,7 @@ export class ProxyView extends AView {
     idtype: null,
     extra: {}
   };
+
   constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
     super(context, parent, options);
     C.mixin(this.options, plugin, options);
@@ -277,7 +292,7 @@ export class ProxyView extends AView {
     this.changeSelection(selection);
   }
 
-  private createUrl(args: any) {
+  protected createUrl(args: any) {
     if (this.options.proxy) {
       return ajax.api2absURL('/targid/proxy/' + this.options.proxy, args);
     }
@@ -290,10 +305,68 @@ export class ProxyView extends AView {
   changeSelection(selection: ISelection) {
     const id = selection.range.last;
     const idtype = selection.idtype;
-    this.setBusy(true);
-    this.resolveId(idtype, id, this.options.idtype).then((gene_name) => {
-      if (gene_name != null) {
-        var args = C.mixin(this.options.extra, {[this.options.argument]: gene_name});
+
+    this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
+
+      var allNames = names[0];
+
+      console.log(allNames);
+
+      //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
+      allNames = allNames.filter(d => d.indexOf('A0') !== 0);
+
+      console.log(allNames);
+
+      this.lastSelectedID = allNames[0];
+      this.loadProxyPage(selection);
+
+      const id = random_id();
+
+      console.log(allNames);
+      if (allNames.length === 1) {
+        return;
+      }
+
+      var $group = this.$node.select('.form-group');
+      var $selectType = $group.select('select');
+      if ($group.size() === 0) {
+        $group = this.$node.insert('div', ':first-child').classed('form-group', true);
+
+        const elementName = 'element';
+
+        $group.append('label')
+         .attr('for', elementName+'_' + id)
+          .text(this.options.idtype + ' ID:');
+
+         $selectType = $group.append('select')
+          .classed('form-control', true)
+          .attr('id', elementName+'_' + id)
+          .attr('required', 'required');
+      }
+
+      $selectType.on('change', () => {
+
+        this.lastSelectedID = allNames[(<HTMLSelectElement>$selectType.node()).selectedIndex];
+
+        this.loadProxyPage(selection);
+      });
+
+      // create options
+      const $options = $selectType.selectAll('option').data(allNames);
+      $options.enter().append('option');
+      $options.text((d)=>d).attr('value', (d)=>d);
+      $options.exit().remove();
+
+      // select first element by default
+      $selectType.property('selectedIndex', 0);
+    });
+  }
+
+  protected loadProxyPage(selection: ISelection) {
+     this.setBusy(true);
+
+      if (this.lastSelectedID != null) {
+        var args = C.mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
         const url = this.createUrl(args);
         //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
         this.$node.select('iframe')
@@ -305,13 +378,13 @@ export class ProxyView extends AView {
           });
       } else {
         this.setBusy(false);
-        this.$node.html(`<p>Cannot map <i>${idtype.name}</i> ('${id}') to <i>${this.options.idtype}</i>.</p>`);
+        this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
         this.fire(ProxyView.EVENT_LOADING_FINISHED);
       }
-    });
   }
 
   private build() {
+
     this.$node.append('iframe').attr('src', null);
   }
 

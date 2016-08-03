@@ -20,7 +20,8 @@ export function numberCol(col:string, rows:any[], label = col) {
     type: 'number',
     column: col,
     label: label,
-    domain: d3.extent(rows, (d) => d[col])
+    domain: d3.extent(rows, (d) => d[col]),
+    color: ''
   };
 }
 
@@ -29,7 +30,8 @@ export function numberCol2(col:string, min:number, max:number, label = col) {
     type: 'number',
     column: col,
     label: label,
-    domain: [min, max]
+    domain: [min, max],
+    color: ''
   };
 }
 
@@ -39,7 +41,8 @@ export function categoricalCol(col:string, categories:string[], label = col) {
     type: 'categorical',
     column: col,
     label: label,
-    categories: categories
+    categories: categories,
+    color: ''
   };
 }
 
@@ -48,7 +51,8 @@ export function stringCol(col:string, label = col) {
   return {
     type: 'string',
     column: col,
-    label: label
+    label: label,
+    color: ''
   };
 }
 
@@ -56,7 +60,8 @@ export function booleanCol(col:string, label = col) {
   return {
     type: 'boolean',
     column: col,
-    label: label
+    label: label,
+    color: ''
   };
 }
 

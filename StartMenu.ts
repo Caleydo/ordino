@@ -2,8 +2,13 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
+import session = require('../targid2/TargidSession');
+import idtypes = require('../caleydo_core/idtype');
 import {findViewCreators, IView} from './View';
-import {Targid} from './Targid';
+import {Targid, TargidConstants} from './Targid';
+import {listNamedSets, INamedSet} from '../targid2/storage';
+import {IPluginDesc} from '../caleydo_core/plugin';
+
 
 export class StartMenu {
 
@@ -125,4 +130,106 @@ export class StartMenu {
 
 export function create(parent:Element, options?) {
   return new StartMenu(parent, options);
+}
+
+
+export interface IEntryPointList {
+  getIdType():idtypes.IDType | string;
+  addNamedSet(namedSet:INamedSet);
+}
+
+/**
+ * Abstract entry point list
+ */
+export class AEntryPointList implements IEntryPointList {
+
+  protected idType = 'Ensembl';
+
+  protected $node;
+
+  protected data:any[] = [];
+
+  constructor(protected parent: HTMLElement, protected desc: IPluginDesc, protected options:any) {
+    this.$node = d3.select(parent);
+  }
+
+  public getIdType() {
+    return this.idType;
+  }
+
+  /**
+   * Add a single named set to this entry point list
+   * @param namedSet
+   */
+  public addNamedSet(namedSet:INamedSet) {
+    this.data.push(this.convertNamedSet(namedSet));
+    this.updateList(this.data);
+  }
+
+  protected build():Promise<INamedSet[]> {
+    // load named sets (stored LineUp sessions)
+    return listNamedSets(this.idType).then((namedSets: INamedSet[]) => {
+      this.$node.html(''); // remove loading element or previous data
+
+      // convert to data format and append to species data
+      this.data.push.apply(this.data, namedSets.map((d) => this.convertNamedSet(d)));
+
+      this.$node.append('ul');
+      this.updateList(this.data);
+
+      return namedSets;
+    });
+  }
+
+  /**
+   * Convert a given INamedSet into the d3 updateList function
+   * @param d
+   * @returns {{type: string, v: string, ids: string}}
+   */
+  private convertNamedSet(d:INamedSet) {
+    return { type: 'set', v: d.name, ids: d.ids};
+  }
+
+  /**
+   * Update the HTML list for this entry point.
+   * Also binds the click listener that saves the selection to the session, before reloading the page
+   * @param data
+   */
+  private updateList(data) {
+    // append the list items
+    const $ul = this.$node.select('ul');
+    const $options = $ul.selectAll('li').data(data);
+    $options.enter()
+      .append('li')
+      //.classed('selected', (d,i) => (i === 0))
+      .append('a')
+      .attr('href', '#')
+      .text((d:any) => d.v.charAt(0).toUpperCase() + d.v.slice(1))
+      .on('click', (d:any) => {
+        // prevent changing the hash (href)
+        (<Event>d3.event).preventDefault();
+
+        // if targid object is available
+        if(this.options.targid) {
+          // create options for new view
+          let o = {};
+          if(d.type === 'species') {
+            o = { species: d.v};
+          } else if(d.type === 'set') {
+            o = { filterName: d.name, filter: d.ids};
+          }
+
+          // store state to session before creating a new graph
+          session.store(TargidConstants.NEW_ENTRY_POINT, {
+            view: (<any>this.desc).viewId,
+            options: o
+          });
+
+          // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+          this.options.targid.graphManager.newGraph();
+        } else {
+          console.error('no targid object given to push new view');
+        }
+      });
+  }
 }

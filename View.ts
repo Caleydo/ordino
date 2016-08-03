@@ -307,21 +307,19 @@ export class ProxyView extends AView {
 
   buildParameterUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>) {
     const id = random_id();
-
+    const elementName = 'element';
     this.$formGroup = $parent.append('div').classed('form-group', true);
     this.$selectType = this.$formGroup.select('select');
     this.$params = $parent;
-
-    const elementName = 'element';
 
     this.$formGroup.append('label')
      .attr('for', elementName+'_' + id)
       .text(this.options.idtype + ' ID:');
 
-     this.$selectType = this.$formGroup.append('select')
-      .classed('form-control', true)
-      .attr('id', elementName+'_' + id)
-      .attr('required', 'required');
+    this.$selectType = this.$formGroup.append('select')
+     .classed('form-control', true)
+     .attr('id', elementName+'_' + id)
+     .attr('required', 'required');
   }
 
   changeSelection(selection: ISelection) {
@@ -549,7 +547,7 @@ export class ViewWrapper extends EventHandler {
     // create provenance reference
     this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
 
-    console.log(graph, generate_hash(plugin.desc, selection, options));
+    //console.log(graph, generate_hash(plugin.desc, selection, options));
 
     // create (inner) view context
     this.context = createContext(graph, plugin.desc, this.ref);
@@ -582,7 +580,6 @@ export class ViewWrapper extends EventHandler {
       ids.forEach((id) => {
         this.sm_instances.push(plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options));
       });
-
     } else {
       this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
     }
@@ -635,6 +632,8 @@ export class ViewWrapper extends EventHandler {
       return;
     }
     this.selection = selection;
+    this.setItemSelection(selection);
+
     if(showAsSmallMultiple(this.desc)) {
       const ids = selection.range.dim(0).asList();
       this.$node.select('div.inner').classed('multiple', ids.length > 1);

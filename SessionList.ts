@@ -39,7 +39,7 @@ export function createStartFactory(parent: HTMLElement, desc: IPluginDesc, optio
       .classed('loading', false)
       .selectAll('tr').data(list);
 
-    const $tr_enter = $list.enter().append('tr');
+    const $tr_enter = $list.enter().append('tr').attr('id',(d) => d.id);
     //$tr_enter.append('td').text((d) => 'Unknown');
     $tr_enter.append('td').text((d) => d.name);
     //$tr_enter.append('td').html((d) => d.description ? d.description : '<i>(none)</i>');
@@ -56,6 +56,7 @@ export function createStartFactory(parent: HTMLElement, desc: IPluginDesc, optio
       dialogs.areyousure('Are you sure to delete: "' + d.name + '"').then((deleteIt) => {
         if (deleteIt) {
           targid.graphManager.delete(d);
+          $table.selectAll('#'+d.id).remove();
         }
       });
     });

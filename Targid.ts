@@ -14,7 +14,7 @@ import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, 
 import {ICmdResult, IAction} from '../caleydo_clue/prov';
 import {CLUEGraphManager} from '../caleydo_clue/template';
 import {StartMenu} from './StartMenu';
-import {INamedSet} from "./storage";
+import {INamedSet} from './storage';
 
 
 /**

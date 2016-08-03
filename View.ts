@@ -14,6 +14,7 @@ import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import {random_id} from '../caleydo_core/main';
+import {INamedSet} from './storage';
 
 
 export enum EViewMode {
@@ -166,6 +167,8 @@ export class AView extends EventHandler implements IView {
    * @argument selection {ISelection}
    */
   static EVENT_ITEM_SELECT = 'select';
+
+  static EVENT_UPDATE_ENTRY_POINT = 'update_entry_point';
 
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: ranges.none() };
@@ -397,9 +400,19 @@ export class ViewWrapper extends EventHandler {
    * @param old
    * @param new_
    */
-  private listener = (event: any, old: ISelection, new_: ISelection) => {
+  private listenerItemSelect = (event: any, old: ISelection, new_: ISelection) => {
     this.chooseNextViews(new_.idtype, new_.range);
     this.fire(AView.EVENT_ITEM_SELECT, old, new_);
+  };
+
+  /**
+   * Forward event from view to Targid instance
+   * @param event
+   * @param idtype
+   * @param INamedSet
+   */
+  private listenerUpdateEntryPoint = (event: any, idtype: idtypes.IDType | string, namedSet: INamedSet) => {
+    this.fire(AView.EVENT_UPDATE_ENTRY_POINT, idtype, namedSet);
   };
 
   /**
@@ -458,7 +471,8 @@ export class ViewWrapper extends EventHandler {
 
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
 
-    this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
+    this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+    this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
 
     // register listener only for ProxyViews
     if(this.instance instanceof ProxyView) {
@@ -487,7 +501,7 @@ export class ViewWrapper extends EventHandler {
   }
   setItemSelection(sel: ISelection) {
     // turn listener off, to prevent an infinite event loop
-    this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
+    this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
 
     this.sm_instances.forEach((d) => d.setItemSelection(sel));
 
@@ -496,7 +510,7 @@ export class ViewWrapper extends EventHandler {
     this.chooseNextViews(sel.idtype, sel.range);
 
     // turn listener on again
-    this.instance.on(AView.EVENT_ITEM_SELECT, this.listener);
+    this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
   }
 
   setParameterSelection(selection: ISelection) {
@@ -621,7 +635,8 @@ export class ViewWrapper extends EventHandler {
       this.instance.off(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
     }
 
-    this.instance.off(AView.EVENT_ITEM_SELECT, this.listener);
+    this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+    this.instance.off(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
     this.instance.destroy();
     this.$viewWrapper.remove();
     this.$chooser.remove();

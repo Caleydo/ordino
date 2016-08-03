@@ -14,6 +14,7 @@ import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, 
 import {ICmdResult, IAction} from '../caleydo_clue/prov';
 import {CLUEGraphManager} from '../caleydo_clue/template';
 import {StartMenu} from './StartMenu';
+import {INamedSet} from "./storage";
 
 
 /**
@@ -218,6 +219,7 @@ export class Targid {
   private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private openWrapper = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
   private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
+  private updateStartMenu = (event:events.IEvent, idtype: idtypes.IDType | string, namedSet: INamedSet) => this.startMenu.then((menu) => menu.updateEntryPoint(idtype, namedSet));
 
   constructor(public graph:prov.ProvenanceGraph, public graphManager:CLUEGraphManager, parent:Element) {
 
@@ -339,6 +341,7 @@ export class Targid {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    view.on(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
     this.views.push(view);
     this.update();
     return C.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
@@ -349,6 +352,7 @@ export class Targid {
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
     view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    view.off(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
 
     this.views.splice(i, 1);
     this.update();

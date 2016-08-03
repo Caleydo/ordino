@@ -16,6 +16,8 @@ export class StartMenu {
 
   private targid:Targid;
 
+  private entryPoints:IEntryPointList[] = [];
+
   private template = `
     <button class="closeButton">
       <i class="fa fa-times" aria-hidden="true"></i>
@@ -70,6 +72,14 @@ export class StartMenu {
     this.$node.classed('open', false);
   }
 
+  public updateEntryPoint(idType: idtypes.IDType | string, namedSet: INamedSet) {
+    this.entryPoints
+      .filter((d) => d.getIdType() === idtypes.resolve(idType).id)
+      .forEach((d) => {
+        d.addNamedSet(namedSet);
+      });
+  }
+
   /**
    * Build multiple sections with entries grouped by database
    */
@@ -122,7 +132,12 @@ export class StartMenu {
       `)
       .each(function(d:any) {
         // provide targid object as option object
-        d.build(this, {targid: that.targid});//.then(() => { console.log(arguments); });
+        d.build(this, {targid: that.targid})
+          .then((entryPoint:IEntryPointList) => {
+            if(viewType === 'targidStartEntryPoint' && entryPoint !== undefined) {
+              that.entryPoints.push(entryPoint);
+            }
+          });
       });
   }
 

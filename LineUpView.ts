@@ -13,7 +13,7 @@ import plugins = require('../caleydo_core/plugin');
 import session = require('../caleydo_core/session');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import cmds = require('./LineUpCommands');
-import {saveNamedSet} from './storage';
+import {saveNamedSet, INamedSet} from './storage';
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {
@@ -398,10 +398,14 @@ export class ALineUpView extends AView {
       </form>`;
 
     const form = <HTMLFormElement>dialog.body.querySelector('#namedset_form');
+
     form.onsubmit = () => {
       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
-      saveNamedSet(name, this.idType, ids, description).then((d) => console.log('saved', d));
+      saveNamedSet(name, this.idType, ids, description).then((d) => {
+        console.log('saved', d);
+        this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
+      });
       dialog.hide();
       return false;
     };

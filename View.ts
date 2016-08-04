@@ -780,6 +780,12 @@ export class ProxyView extends AView {
     this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
 
       var allNames = names[0];
+      if (!allNames) {
+        this.setBusy(false);
+        this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
+        this.fire(ProxyView.EVENT_LOADING_FINISHED);
+        return;
+      }
 
       //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
       allNames = allNames.filter(d => d.indexOf('A0') !== 0);

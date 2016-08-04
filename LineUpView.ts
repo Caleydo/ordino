@@ -10,7 +10,6 @@ import idtypes = require('../caleydo_core/idtype');
 import tables = require('../caleydo_core/table');
 import ranges = require('../caleydo_core/range');
 import plugins = require('../caleydo_core/plugin');
-import session = require('../caleydo_core/session');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import cmds = require('./LineUpCommands');
 import {saveNamedSet} from './storage';
@@ -455,38 +454,6 @@ export class ALineUpView extends AView {
         });
       }
     }
-  }
-
-  protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], customOnChange?) {
-    const $group = $parent.append('div').classed('form-group', true);
-
-    $group.append('label')
-      .attr('for', elementName+'_' + id)
-      .text(label);
-
-    const $selectType = $group.append('select')
-      .classed('form-control', true)
-      .attr('id', elementName+'_' + id)
-      .attr('required', 'required')
-      .on('change', function () {
-        if (customOnChange) {
-          customOnChange();
-        }
-        onChange(elementName, allElements[this.selectedIndex]);
-        // store new values also to session for other views
-        session.store(elementName, allElements[this.selectedIndex]);
-      });
-
-    // create options
-    const $options = $selectType.selectAll('option').data(allNames);
-    $options.enter().append('option');
-    $options.text((d)=>d).attr('value', (d)=>d);
-    $options.exit().remove();
-
-    // select first element by default
-    $selectType.property('selectedIndex', 0);
-
-    return $selectType;
   }
 }
 

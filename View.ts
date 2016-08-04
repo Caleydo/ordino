@@ -10,6 +10,7 @@ import C = require('../caleydo_core/main');
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import d3 = require('d3');
+import session = require('../caleydo_core/session');
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
@@ -208,6 +209,38 @@ export class AView extends EventHandler implements IView {
 
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
     //hook
+  }
+
+  protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], customOnChange?) {
+    const $group = $parent.append('div').classed('form-group', true);
+
+    $group.append('label')
+      .attr('for', elementName+'_' + id)
+      .text(label);
+
+    const $selectType = $group.append('select')
+      .classed('form-control', true)
+      .attr('id', elementName+'_' + id)
+      .attr('required', 'required')
+      .on('change', function () {
+        if (customOnChange) {
+          customOnChange();
+        }
+        onChange(elementName, allElements[this.selectedIndex]);
+        // store new values also to session for other views
+        session.store(elementName, allElements[this.selectedIndex]);
+      });
+
+    // create options
+    const $options = $selectType.selectAll('option').data(allNames);
+    $options.enter().append('option');
+    $options.text((d)=>d).attr('value', (d)=>d);
+    $options.exit().remove();
+
+    // select first element by default
+    $selectType.property('selectedIndex', 0);
+
+    return $selectType;
   }
 
   getParameter(name: string): any {

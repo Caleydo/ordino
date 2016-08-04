@@ -739,8 +739,6 @@ export class ProxyView extends AView {
     C.mixin(this.options, plugin, options);
 
     this.$node.classed('proxy_view', true);
-
-    this.build();
     this.changeSelection(selection);
   }
 
@@ -776,7 +774,6 @@ export class ProxyView extends AView {
   changeSelection(selection: ISelection) {
     const id = selection.range.last;
     const idtype = selection.idtype;
-
     this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
 
       var allNames = names[0];
@@ -784,9 +781,12 @@ export class ProxyView extends AView {
         this.setBusy(false);
         this.$selectType.selectAll('option').data();
         this.$node.html(`<p>Cannot map selected gene to ${this.options.idtype}.</p>`);
+        this.$params.classed('hidden', true);
         this.fire(ProxyView.EVENT_LOADING_FINISHED);
         return;
       }
+
+      this.build();
 
       //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
       allNames = allNames.filter(d => d.indexOf('A0') !== 0);
@@ -800,9 +800,7 @@ export class ProxyView extends AView {
 
       this.$params.classed('hidden', false);
       this.$selectType.on('change', () => {
-
         this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
-
         this.loadProxyPage(selection);
       });
 
@@ -840,6 +838,7 @@ export class ProxyView extends AView {
 
   private build() {
 
+    this.$node.selectAll('p').remove();
     this.$node.append('iframe').attr('src', null);
   }
 

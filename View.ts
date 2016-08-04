@@ -782,7 +782,8 @@ export class ProxyView extends AView {
       var allNames = names[0];
       if (!allNames) {
         this.setBusy(false);
-        this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
+        this.$selectType.selectAll('option').data();
+        this.$node.html(`<p>Cannot map selected gene to ${this.options.idtype}.</p>`);
         this.fire(ProxyView.EVENT_LOADING_FINISHED);
         return;
       }

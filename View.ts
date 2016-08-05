@@ -943,6 +943,10 @@ export class ProxyView extends AView {
 
 export abstract class ASmallMultipleView extends AView {
 
+  protected margin = {top: 40, right: 5, bottom: 50, left: 50};
+  protected width = 280 - this.margin.left - this.margin.right;
+  protected height = 320 - this.margin.top - this.margin.bottom;
+
   protected smallMultipleParent: IView;
   protected allSelections : ISelection;
 

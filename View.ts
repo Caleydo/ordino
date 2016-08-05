@@ -902,7 +902,9 @@ export class ProxyView extends AView {
 
   private build() {
 
+    //remove old mapping error notice if any exists
     this.$node.selectAll('p').remove();
+
     this.$node.append('iframe').attr('src', null);
   }
 

@@ -10,7 +10,10 @@ import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
 import session = require('TargidSession');
 import d3 = require('d3');
-import {ViewWrapper, EViewMode, createWrapper, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
+import {
+  ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
+  replaceViewWrapper
+} from './View';
 import {ICmdResult, IAction} from '../caleydo_clue/prov';
 import {CLUEGraphManager} from '../caleydo_clue/template';
 import {StartMenu} from './StartMenu';
@@ -34,7 +37,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
   const view = plugins.get(TargidConstants.VIEW, viewId);
 
   var viewWrapperInstance; // store instance
-  return createWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options)
+  return createViewWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options)
     .then((instance) => {
       viewWrapperInstance = instance;
       return targid.pushImpl(instance);
@@ -94,10 +97,7 @@ export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter:any):Pr
   // create new (inner) view
   const view = plugins.get(TargidConstants.VIEW, viewId);
 
-  return view.load()
-    .then((p) => {
-      existingView.replaceView({ idtype: idtype, range: selection }, p, options);
-    })
+  return replaceViewWrapper(existingView, { idtype: idtype, range: selection }, view, options)
     .then(() => {
       return (<ICmdResult>{
         created: [existingView.ref],

@@ -760,15 +760,28 @@ export function createContext(graph:prov.ProvenanceGraph, desc: IPluginDesc, ref
   };
 }
 
-export function createWrapper(graph: prov.ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
+export function createViewWrapper(graph: prov.ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
+  // do not load proxy view via require (since they are available in this file), instead instantiate them immediately
   if ((<any>plugin).proxy || (<any>plugin).site) {
-    //inline proxy
-    return Promise.resolve(new ViewWrapper(graph, selection, parent, {
+    const pluginDesc = {
       desc: plugin,
       factory: (context, selection, node, options) => new ProxyView(context, selection, node, plugin, options)
-    }, options));
+    };
+    return Promise.resolve(new ViewWrapper(graph, selection, parent, pluginDesc, options));
   }
   return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
+}
+
+export function replaceViewWrapper(existingView:ViewWrapper, selection: ISelection, plugin:IPluginDesc, options?) {
+  // do not load proxy view via require (since they are available in this file), instead instantiate them immediately
+  if ((<any>plugin).proxy || (<any>plugin).site) {
+    const pluginDesc = {
+      desc: plugin,
+      factory: (context, selection, node, options) => new ProxyView(context, selection, node, plugin, options)
+    };
+    return Promise.resolve(existingView.replaceView(selection, pluginDesc, options));
+  }
+  return plugin.load().then((p) => existingView.replaceView(selection, p, options));
 }
 
 export interface IStartViewFactory {

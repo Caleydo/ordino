@@ -529,15 +529,19 @@ export class ViewWrapper extends EventHandler {
       $inner.classed('multiple', ids.length > 1);
 
       this.instance = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
+      (<ASmallMultipleView>this.instance).setAllSelections(selection);
+      this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
 
       ids.forEach((id) => {
-        this.sm_instances.push(plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options));
+        //create new small muliple instance
+        const smallMultiple = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options);
+        (<ASmallMultipleView>smallMultiple).setSmallMultipleParent(this.instance);
+        this.sm_instances.push(smallMultiple);
       });
     } else {
       this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
+      this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
     }
-
-    this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
 
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
     this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
@@ -595,6 +599,10 @@ export class ViewWrapper extends EventHandler {
     return this.instance;
   }
 
+  getSmallMultipleInstances() {
+    return this.sm_instances;
+  }
+
   private onParameterChange(name: string, value: any) {
     return this.context.graph.push(setParameter(this.ref, name, value));
   }
@@ -635,6 +643,7 @@ export class ViewWrapper extends EventHandler {
       const ids = selection.range.dim(0).asList();
       this.$node.select('div.inner').classed('multiple', ids.length > 1);
       //first
+      (<ASmallMultipleView>this.instance).setAllSelections(selection);
       this.instance.changeSelection({idtype: selection.idtype, range: ranges.list(ids.shift())});
       //create a matching
       this.sm_instances.splice(ids.length).forEach((v) => {
@@ -644,7 +653,10 @@ export class ViewWrapper extends EventHandler {
         v.changeSelection({idtype: selection.idtype, range: ranges.list(ids.shift())});
       });
       ids.forEach((id) => {
-        this.sm_instances.push(this.plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>this.$node.select('div.inner').node(), this.options));
+        //create new small muliple instance
+        const smallMultiple = this.plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>this.$node.select('div.inner').node(), this.options);
+        (<ASmallMultipleView>smallMultiple).setSmallMultipleParent(this.instance);
+        this.sm_instances.push(smallMultiple);
       });
     } else {
       this.instance.changeSelection(selection);
@@ -850,6 +862,9 @@ export class ProxyView extends AView {
 
   changeSelection(selection: ISelection) {
     const id = selection.range.last;
+
+    console.log('central selection', selection.range.dim(0).asList());
+
     const idtype = selection.idtype;
     this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
 
@@ -928,11 +943,19 @@ export class ProxyView extends AView {
 
 export abstract class ASmallMultipleView extends AView {
 
-  //holds selection of all small multiples and not just the single selection of this small multiple
-  protected globalSelection: ISelection;
+  protected smallMultipleParent: IView;
+  protected allSelections : ISelection;
 
-  setGlobalSelection(globalSelection: ISelection) {
-    this.globalSelection = globalSelection;
+  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
+    super(context, parent, options);
   }
 
+  setSmallMultipleParent(smallMultipleParent : IView) {
+    this.smallMultipleParent = smallMultipleParent;
+  }
+
+  setAllSelections(allSelections : ISelection) {
+    this.allSelections = allSelections;
+    console.log('global sel: ', allSelections.range.dim(0).asList());
+  }
 }

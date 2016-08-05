@@ -925,3 +925,14 @@ export class ProxyView extends AView {
     super.modeChanged(mode);
   }
 }
+
+export abstract class ASmallMultipleView extends AView {
+
+  //holds selection of all small multiples and not just the single selection of this small multiple
+  protected globalSelection: ISelection;
+
+  setGlobalSelection(globalSelection: ISelection) {
+    this.globalSelection = globalSelection;
+  }
+
+}

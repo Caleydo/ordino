@@ -456,24 +456,59 @@ export class ViewWrapper extends EventHandler {
     this.scrollIntoView();
   };
 
+  /**
+   * Provenance graph reference of this object
+   */
   ref: prov.IObjectRef<ViewWrapper>;
 
+  /**
+   * Provenance graph context
+   */
   context: IViewContext;
 
-  constructor(graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
+  /**
+   * Initialize this view, create the root node and the (inner) view
+   * @param graph
+   * @param selection
+   * @param parent
+   * @param plugin
+   * @param options
+   */
+  constructor(private graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
+
+    this.init(graph, selection, plugin, options);
+
+    // create ViewWrapper root node
+    this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+
+    this.createView(selection, plugin, options);
+  }
+
+  /**
+   * Create provenance reference object (`this.ref`) and the context (`this.context`)
+   * @param graph
+   * @param selection
+   * @param plugin
+   * @param options
+   */
+  private init(graph: prov.ProvenanceGraph, selection: ISelection, plugin:IPlugin, options?) {
     // create provenance reference
-    this.ref = prov.ref(this, 'View ' + plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
+    this.ref = prov.ref(this, plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
 
     //console.log(graph, generate_hash(plugin.desc, selection, options));
 
     // create (inner) view context
     this.context = createContext(graph, plugin.desc, this.ref);
+  }
 
-    // append DOM elements
-    this.$viewWrapper = d3.select(parent).append('div')
-      .classed('viewWrapper', true);
-
+  /**
+   * Create the corresponding DOM elements + chooser and the new (inner) view from the given parameters
+   * @param selection
+   * @param plugin
+   * @param options
+   */
+  private createView(selection: ISelection, plugin:IPlugin, options?) {
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)
       .datum(this);
@@ -513,6 +548,49 @@ export class ViewWrapper extends EventHandler {
     }
   }
 
+  /**
+   * Replace the inner view with a new view, created from the given parameters.
+   * Note: Destroys all references and DOM elements of the old view, except the root node of this ViewWrapper
+   * @param selection
+   * @param plugin
+   * @param options
+   */
+  public replaceView(selection: ISelection, plugin:IPlugin, options?) {
+    this.destroyView();
+
+    this.selection = selection;
+    this.plugin = plugin;
+    this.options = options;
+
+    this.init(this.graph, selection, plugin, options);
+    this.createView(selection, plugin, options);
+  }
+
+  /**
+   * De-attache the event listener to (inner) view, destroys instance and removes the DOM elements
+   */
+  private destroyView() {
+    // un/register listener only for ProxyViews
+    if(this.instance instanceof ProxyView) {
+      this.instance.off(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+    }
+
+    this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+    this.instance.off(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
+    this.instance.destroy();
+
+    this.$viewWrapper.select('.view').remove();
+    this.$chooser.remove();
+  }
+
+  /**
+   * Destroys the inner view and the ViewWrapper's root node
+   */
+  destroy() {
+    this.destroyView();
+    this.$viewWrapper.remove();
+  }
+
   getInstance() {
     return this.instance;
   }
@@ -524,6 +602,7 @@ export class ViewWrapper extends EventHandler {
   getParameter(name: string) {
     return this.instance.getParameter(name);
   }
+
   setParameterImpl(name: string, value: any) {
     this.sm_instances.forEach((d) => d.setParameter(name, value));
     return this.instance.setParameter(name, value);
@@ -532,6 +611,7 @@ export class ViewWrapper extends EventHandler {
   getItemSelection() {
     return this.instance.getItemSelection();
   }
+
   setItemSelection(sel: ISelection) {
     // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
@@ -550,8 +630,6 @@ export class ViewWrapper extends EventHandler {
     if (isSameSelection(this.selection, selection)) {
       return;
     }
-    this.selection = selection;
-    this.setItemSelection(selection);
 
     if(showAsSmallMultiple(this.desc)) {
       const ids = selection.range.dim(0).asList();
@@ -620,16 +698,15 @@ export class ViewWrapper extends EventHandler {
   /**
    * Decide if a chooser for the next view should be shown and if so, which next views are available
    * @param idtype
-   * @param selection
+   * @param range
    */
-  private chooseNextViews(idtype: idtypes.IDType, selection: ranges.Range) {
+  private chooseNextViews(idtype: idtypes.IDType, range: ranges.Range) {
     const that = this;
 
     // show chooser if selection available
-    this.$chooser.classed('hidden', selection.isNone);
+    this.$chooser.classed('hidden', range.isNone);
 
-    const viewPromise = findViews(idtype, selection);
-    viewPromise.then((views) => {
+    findViews(idtype, range).then((views) => {
 
       const dataViews = views.filter((d) => d.v.name.indexOf('Gene') === -1);
       const geneViews = views.filter((d) => d.v.name.indexOf('Gene') !== -1);
@@ -647,7 +724,7 @@ export class ViewWrapper extends EventHandler {
           $buttons.classed('active', false);
           d3.select(this).classed('active', true);
 
-          that.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, selection);
+          that.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, range);
         });
 
       $buttons.exit().remove();
@@ -660,19 +737,6 @@ export class ViewWrapper extends EventHandler {
 
   get mode() {
     return this.mode_;
-  }
-
-  destroy() {
-    // un/register listener only for ProxyViews
-    if(this.instance instanceof ProxyView) {
-      this.instance.off(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
-    }
-
-    this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
-    this.instance.off(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
-    this.instance.destroy();
-    this.$viewWrapper.remove();
-    this.$chooser.remove();
   }
 
   get node() {

@@ -40,7 +40,7 @@
           "type": "actionFactory",
           "file": "Targid",
           "factory": "createCmd",
-          "creates": "(targidCreateView|targidRemoveView)"
+          "creates": "(targidCreateView|targidRemoveView|targidReplaceView)"
         },
         {
           "type": "actionFactory",
@@ -53,7 +53,7 @@
           "id": "targidCreateRemoveCompressor",
           "file": "Targid",
           "factory": "compressCreateRemove",
-          "matches": "(targidRemoveView|targidCreateView)"
+          "matches": "(targidCreateView|targidRemoveView|targidReplaceView)"
         },
         {
           "type": "actionFactory",

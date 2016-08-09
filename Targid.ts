@@ -292,7 +292,7 @@ export class Targid {
   private $node:d3.Selection<Targid>;
 
   private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
-  private openWrapper = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.openRight(<ViewWrapper>event.target, viewId, idtype, selection);
+  private chooseNextView = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
   private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
   private updateStartMenu = (event:events.IEvent, idtype: idtypes.IDType | string, namedSet: INamedSet) => this.startMenu.then((menu) => menu.updateEntryPoint(idtype, namedSet));
 
@@ -354,15 +354,44 @@ export class Targid {
   }
 
   /**
+   * Decide if a new view should be opened or an existing (right) detail view should be closed.
+   * Closed: When the view to the right is equal to the new one
+   * Open or replace: When the new view is different from the next view
+   * @param viewWrapper
+   * @param viewId
+   * @param idtype
+   * @param selection
+   * @param options
+   */
+  private handleNextView(viewWrapper:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+    const index = this.views.indexOf(viewWrapper);
+    const nextView = this.views[index+1];
+
+    // close instead of "re-open" the same view again
+    if(nextView !== undefined && nextView.desc.id === viewId) {
+      this.views
+        .slice(index+1, this.views.length) // retrieve all following views
+        .reverse() // remove them in reverse order
+        .forEach((d) => {
+          this.remove(d);
+        });
+
+    // open or replace the new view to the right
+    } else {
+      this.openOrReplaceNextView(viewWrapper, viewId, idtype, selection, options);
+    }
+  }
+
+  /**
    * Opens a new view using the viewId, idtype, selection and options.
    *
-   * @param view The view that triggered the opener event.
+   * @param viewWrapper The view that triggered the opener event.
    * @param viewId The new view that should be opened to the right.
    * @param idtype
    * @param selection
    * @param options
    */
-  private openRight(view:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+  private openOrReplaceNextView(viewWrapper:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
     const mode = 2; // select opener mode
     switch (mode) {
       /**
@@ -372,9 +401,9 @@ export class Targid {
        */
       case 0:
         // first focus, then push the view
-        this.focus(view).then(() => {
+        this.focus(viewWrapper).then(() => {
           this.pushView(viewId, idtype, selection, options);
-          view.setItemSelection({idtype:idtype, range:selection});
+          viewWrapper.setItemSelection({idtype:idtype, range:selection});
         });
 
         break;
@@ -387,7 +416,7 @@ export class Targid {
        */
       case 1:
         // remove old views first, if the opener is not the last view
-        if(view !== this.lastView) {
+        if(this.lastView !== viewWrapper) {
           this.remove(this.lastView);
         }
         // then push the new view
@@ -402,18 +431,28 @@ export class Targid {
        */
       case 2:
         // the opener is the last view, then nothing to replace --> just open the new view
-        if(view === this.lastView) {
+        if(this.lastView === viewWrapper) {
           this.pushView(viewId, idtype, selection, options);
           break;
         }
 
         // find the next view
-        let index = this.views.lastIndexOf(view);
+        let index = this.views.lastIndexOf(viewWrapper);
         if(index === -1) {
-          console.error('Current view not found', view.desc.name);
+          console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
           return;
         }
         const nextView = this.views[index+1];
+
+        // if there are more views open, then close them first, before replacing the next view
+        if(nextView !== this.lastView) {
+          this.views
+            .slice(index + 2, this.views.length) // retrieve all following views
+            .reverse() // remove them in reverse order
+            .forEach((d) => {
+              this.remove(d);
+            });
+        }
 
         // trigger the replacement of the view
         this.replaceView(nextView.ref, viewId, idtype, selection, options);
@@ -484,7 +523,7 @@ export class Targid {
 
   pushImpl(view:ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    view.on(ViewWrapper.EVENT_OPEN, this.openWrapper);
+    view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
     view.on(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
     this.views.push(view);
@@ -495,7 +534,7 @@ export class Targid {
   removeImpl(view:ViewWrapper, focus:number = -1) {
     const i = this.views.indexOf(view);
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    view.off(ViewWrapper.EVENT_OPEN, this.openWrapper);
+    view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
     view.off(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
 

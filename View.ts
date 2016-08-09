@@ -413,7 +413,7 @@ function generate_hash(desc: IPluginDesc, selection: ISelection, options : any =
 }
 
 export class ViewWrapper extends EventHandler {
-  static EVENT_OPEN = 'open';
+  static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
   static EVENT_REMOVE = 'remove';
 
@@ -736,7 +736,7 @@ export class ViewWrapper extends EventHandler {
           $buttons.classed('active', false);
           d3.select(this).classed('active', true);
 
-          that.fire(ViewWrapper.EVENT_OPEN, d.v.id, idtype, range);
+          that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
         });
 
       $buttons.exit().remove();

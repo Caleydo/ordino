@@ -299,9 +299,19 @@ div.targid {
         overflow: hidden;
       }
 
-      > .parameters .btn-close {
-        float: right;
+      > .parameters {
+
+        p {
+          margin: 5px 0;
+        }
+
+        .btn-close {
+          float: right;
+        }
+
       }
+
+
 
       > .parameters:not(.hidden) ~ .inner {
         border-top: 1px solid $core_border;

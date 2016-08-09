@@ -519,7 +519,8 @@ export class ViewWrapper extends EventHandler {
       .datum(this);
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline');
+      .attr('class', 'parameters form-inline')
+      .datum(this);
 
     $params.append('button')
       .attr('class', 'btn btn-default btn-sm btn-close')

@@ -3,7 +3,7 @@
  */
 /// <reference path="./tsd.d.ts" />
 
-import {AView, EViewMode, IViewContext, ISelection} from './View';
+import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
 import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
@@ -131,6 +131,7 @@ export class ALineUpView extends AView {
   };
 
   protected $nodata;
+  private $params:d3.Selection<ViewWrapper>;
 
   protected lineup:any;
 
@@ -164,6 +165,11 @@ export class ALineUpView extends AView {
       .classed('nodata', true)
       .classed('hidden', true)
       .text('No data found for selection and parameter.');
+  }
+
+
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
+    this.$params = $parent.append('p');
   }
 
   private lineupRankingButtons($node:d3.Selection<any>) {
@@ -296,6 +302,8 @@ export class ALineUpView extends AView {
     rows.forEach((row, i) => {
       this.selectionHelper.id2index.set(String(idAccessor(row)), i);
     });
+
+    this.updateLineUpStats();
   }
 
   private onChange = (data_indices) => {
@@ -349,6 +357,8 @@ export class ALineUpView extends AView {
       this.lineup.data.setSelection(indices);
       this.lineup.on('multiSelectionChanged', this.onChange);
     }
+
+    this.updateLineUpStats();
     super.setItemSelection(sel);
   }
 
@@ -418,6 +428,18 @@ export class ALineUpView extends AView {
     dialog.show();
   }
 
+  updateLineUpStats() {
+    const total = this.lineup.data.data.length;
+    //const shown = total; // TODO just use the filtered ones
+    const selected = this.lineup.data.getSelection().length;
+
+    //this.$params.html(`Showing ${shown} of ${total} ${this.getItemName(total)}; ${selected} selected`);
+    this.$params.html(`Showing ${total} ${this.getItemName(total)}; ${selected} selected`);
+  }
+
+  getItemName(count: number) {
+    return (count === 1) ? 'item' : 'items';
+  }
 
   destroy() {
     // nothing to do

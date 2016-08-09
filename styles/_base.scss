@@ -314,7 +314,8 @@ div.targid {
         overflow-y: auto;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around;
+        justify-content: flex-start;
+        align-content: flex-start;
       }
 
       > div {
@@ -394,7 +395,7 @@ div.targid {
   }
 }
 
-2div.lineup {
+div.lineup {
   .nodata {
     margin-top: 40px;
   }

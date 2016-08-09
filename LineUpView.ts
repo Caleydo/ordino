@@ -169,7 +169,7 @@ export class ALineUpView extends AView {
 
 
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
-    this.$params = $parent.append('p');
+    this.$params = $parent.append('div').classed('form-group', true).append('p');
   }
 
   private lineupRankingButtons($node:d3.Selection<any>) {

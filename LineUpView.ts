@@ -420,13 +420,13 @@ export class ALineUpView extends AView {
 
 
   destroy() {
-    //nothing to do
+    // nothing to do
   }
 
   modeChanged(mode:EViewMode) {
     super.modeChanged(mode);
     if (this.lineup) {
-      //collapse all columns
+      // collapse all columns
       const data = this.lineup.data;
       if (mode === EViewMode.FOCUS) {
         if (this.dump) {
@@ -445,8 +445,13 @@ export class ALineUpView extends AView {
 
         this.dump = {};
         r.children.forEach((c) => {
-          if (c === labelColumn || c === s.col || c.desc.type === 'rank' || c.desc.type === 'selection') {
-            //keep
+          if (c === labelColumn ||
+              c === s.col ||
+              c.desc.type === 'rank' ||
+              c.desc.type === 'selection' ||
+              c.desc.column === 'id' // = Ensembl column
+          ) {
+            // keep these columns
           } else {
             this.dump[c.id] = c.getWidth();
             c.setWidth(0);

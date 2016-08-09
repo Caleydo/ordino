@@ -425,26 +425,31 @@ export class Targid {
     }
   }
 
-  private updateItemSelection(view:ViewWrapper, old: ISelection, new_: ISelection, options?) {
-    if (this.lastView === view) {
-      //just update the selection
-      this.graph.pushWithResult(setSelection(view.ref,new_.idtype, new_.range), { inverse : setSelection(view.ref, old.idtype, old.range)});
+  /**
+   * Sets the new given item selection to the last open view and stores an action in the provenance graph.
+   * @param viewWrapper
+   * @param oldSelection
+   * @param newSelection
+   * @param options
+   */
+  private updateItemSelection(viewWrapper:ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
+    // just update the selection for the last open view
+    if (this.lastView === viewWrapper) {
+      this.graph.pushWithResult(setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse : setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
+
+    // check last view and if it will stay open for the new given selection
     } else {
-      const i = this.views.indexOf(view);
+      const i = this.views.indexOf(viewWrapper);
       const right = this.views[i+1];
-      if (right === this.lastView && right.matchSelectionLength(new_.range.dim(0).length)) {
-        //update selection and within the view
-        right.setParameterSelection(new_);
-        this.graph.pushWithResult(setAndUpdateSelection(view.ref,right.ref, new_.idtype, new_.range), { inverse : setAndUpdateSelection(view.ref, right.ref, old.idtype, old.range)});
+
+      // update selection with the last open (= right) view
+      if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
+        right.setParameterSelection(newSelection);
+        this.graph.pushWithResult(setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse : setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+
+      // the selection does not match with the last open (= right) view --> close view
       } else {
-        //jump to a previous state, record the selection and then patch the rest
-        this.focus(view).then(() => {
-          return this.graph.pushWithResult(setSelection(view.ref, new_.idtype, new_.range), {inverse: setSelection(view.ref, old.idtype, old.range)});
-        }).then(() => {
-          if (right.matchSelectionLength(new_.range.dim(0).length)) {
-            return this.pushView(right.desc.id, new_.idtype, new_.range, options);
-          }
-        });
+        this.remove(right);
       }
     }
   }

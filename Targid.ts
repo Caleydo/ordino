@@ -369,12 +369,7 @@ export class Targid {
 
     // close instead of "re-open" the same view again
     if(nextView !== undefined && nextView.desc.id === viewId) {
-      this.views
-        .slice(index+1, this.views.length) // retrieve all following views
-        .reverse() // remove them in reverse order
-        .forEach((d) => {
-          this.remove(d);
-        });
+      this.remove(nextView);
 
     // open or replace the new view to the right
     } else {
@@ -442,16 +437,11 @@ export class Targid {
           console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
           return;
         }
-        const nextView = this.views[index+1];
+        const nextView = this.views[index + 1];
 
         // if there are more views open, then close them first, before replacing the next view
         if(nextView !== this.lastView) {
-          this.views
-            .slice(index + 2, this.views.length) // retrieve all following views
-            .reverse() // remove them in reverse order
-            .forEach((d) => {
-              this.remove(d);
-            });
+          this.remove(this.views[index + 2]);
         }
 
         // trigger the replacement of the view
@@ -511,14 +501,31 @@ export class Targid {
     return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
   }
 
+  /**
+   * Removes a view, and if there are multiple open (following) views, close them in reverse order.
+   * @param viewWrapper
+   */
   remove(index_or_view:number|ViewWrapper) {
-    const view = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
-    const view_ref = this.graph.findObject(view);
-    if(view_ref === null) {
-      console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
-      return;
+    const viewWrapper = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
+    const index = this.views.indexOf(viewWrapper);
+
+    this.views
+      .slice(index, this.views.length) // retrieve all following views
+      .reverse() // remove them in reverse order
+      .forEach((view) => {
+        //this.remove(d);
+        const view_ref = this.graph.findObject(view);
+        if(view_ref === null) {
+          console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
+          return;
+        }
+        return this.graph.push(removeView(this.ref, view_ref));
+      });
+
+    // no views available, then open start menu
+    if(index === 0) {
+      this.openStartMenu();
     }
-    return this.graph.push(removeView(this.ref, view_ref));
   }
 
   pushImpl(view:ViewWrapper) {

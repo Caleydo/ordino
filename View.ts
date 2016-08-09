@@ -519,7 +519,14 @@ export class ViewWrapper extends EventHandler {
       .datum(this);
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline hidden');
+      .attr('class', 'parameters form-inline');
+
+    $params.append('button')
+      .attr('class', 'btn btn-default btn-sm btn-close')
+      .html('<i class="fa fa-close"></i>')
+      .on('click', (d) => {
+        this.remove();
+      });
 
     const $inner = this.$node.append('div')
       .classed('inner', true);
@@ -756,6 +763,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   remove() {
+    console.log('EVENT_REMOVE');
     this.fire(ViewWrapper.EVENT_REMOVE, this);
   }
 

@@ -875,13 +875,12 @@ export class ProxyView extends AView {
 
   changeSelection(selection: ISelection) {
     const id = selection.range.last;
-
-    console.log('central selection', selection.range.dim(0).asList());
-
     const idtype = selection.idtype;
+
     this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
 
       var allNames = names[0];
+      console.log(allNames);
       if (!allNames) {
         this.setBusy(false);
         this.$selectType.selectAll('option').data();
@@ -900,6 +899,7 @@ export class ProxyView extends AView {
       this.loadProxyPage(selection);
 
       if (allNames.length === 1) {
+        this.$params.classed('hidden', true);
         return;
       }
 
@@ -973,6 +973,5 @@ export abstract class ASmallMultipleView extends AView {
 
   setAllSelections(allSelections : ISelection) {
     this.allSelections = allSelections;
-    console.log('global sel: ', allSelections.range.dim(0).asList());
   }
 }

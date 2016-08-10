@@ -428,13 +428,47 @@ export class ALineUpView extends AView {
     dialog.show();
   }
 
+  /**
+   * Writes the number of total, selected and shown items in the parameter area
+   */
   updateLineUpStats() {
-    const total = this.lineup.data.data.length;
-    //const shown = total; // TODO just use the filtered ones
-    const selected = this.lineup.data.getSelection().length;
 
-    //this.$params.html(`Showing ${shown} of ${total} ${this.getItemName(total)}; ${selected} selected`);
-    this.$params.html(`Showing ${total} ${this.getItemName(total)}; ${selected} selected`);
+    /**
+     * Builds the stats string
+     * @param total
+     * @param selected
+     * @param shown
+     * @returns {string}
+     */
+    const showStats = (total, selected = 0, shown = 0) => {
+      var str = 'Showing ';
+      if(shown > 0 && total !== shown) {
+        str += ` ${shown} of `;
+      }
+      str += `${total} ${this.getItemName(total)}`;
+      if(selected > 0) {
+        str += `; ${selected} selected`;
+      }
+      return str;
+    };
+
+    const selected = this.lineup.data.getSelection().length;
+    const total = this.lineup.data.data.length;
+
+    const r = this.lineup.data.getRankings()[0];
+    if(r) {
+      // needs a setTimeout, because LineUp needs time to filter the rows
+      const id = setTimeout(() => {
+        clearTimeout(id);
+        this.lineup.data.view(r.getOrder()).then((data) => {
+          const shown = data.length;
+          this.$params.html(showStats(total, selected, shown));
+        });
+      }, 150); // adjust the time depending on the number of rows(?)
+
+    } else {
+      this.$params.html(showStats(total, selected));
+    }
   }
 
   getItemName(count: number) {

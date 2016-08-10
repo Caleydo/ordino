@@ -5,6 +5,7 @@
 
 import prov = require('../caleydo_clue/prov');
 import lineupjs = require('lineupjs');
+import {ALineUpView} from './LineUpView';
 
 //TODO better solution
 var ignoreNext:string = null;
@@ -84,6 +85,9 @@ function setColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
 }
 
 export function setColumn(provider:prov.IObjectRef<any>, rid:number, path:string, prop:string, value:any) {
+  // assert ALineUpView and update the stats
+  (<ALineUpView>provider.value.getInstance()).updateLineUpStats();
+
   return prov.action(prov.meta('Set Property ' + prop, prov.cat.layout, prov.op.update), 'lineupSetColumn', setColumnImpl, [provider], {
     rid: rid,
     path: path,
@@ -164,7 +168,7 @@ function rankingId(provider:any, ranking:any) {
 }
 
 
-function recordPropertyChange(source:any, provider:any, lineup:prov.IObjectRef<any>, graph:prov.ProvenanceGraph, property:string, delayed = -1) {
+function recordPropertyChange(source:any, provider:any, lineupViewWrapper:prov.IObjectRef<any>, graph:prov.ProvenanceGraph, property:string, delayed = -1) {
   const f = (old:any, new_:any) => {
     if (ignoreNext === property + 'Changed') {
       ignoreNext = null;
@@ -172,15 +176,18 @@ function recordPropertyChange(source:any, provider:any, lineup:prov.IObjectRef<a
     }
     console.log(source, property, old, new_);
     if (source instanceof lineupjs.model.Column) {
+      // assert ALineUpView and update the stats
+      (<ALineUpView>lineupViewWrapper.value.getInstance()).updateLineUpStats();
+
       const rid = rankingId(provider, source.findMyRanker());
       const path = source.fqpath;
-      graph.pushWithResult(setColumn(lineup, rid, path, property, new_), {
-        inverse: setColumn(lineup, rid, path, property, old)
+      graph.pushWithResult(setColumn(lineupViewWrapper, rid, path, property, new_), {
+        inverse: setColumn(lineupViewWrapper, rid, path, property, old)
       });
     } else if (source instanceof lineupjs.model.Ranking) {
       const rid = rankingId(provider, source);
-      graph.pushWithResult(setColumn(lineup, rid, null, property, new_), {
-        inverse: setColumn(lineup, rid, null, property, old)
+      graph.pushWithResult(setColumn(lineupViewWrapper, rid, null, property, new_), {
+        inverse: setColumn(lineupViewWrapper, rid, null, property, old)
       });
     }
   };

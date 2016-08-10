@@ -11,9 +11,10 @@ import targidSession = require('../targid2/TargidSession');
 import {IViewContext, ISelection} from '../targid2/View';
 import {ALineUpView, useDefaultLayout,} from '../targid2/LineUpView';
 import {IPluginDesc} from '../caleydo_core/plugin';
-import {TargidConstants} from '../targid2/Targid';
+import {TargidConstants, Targid} from '../targid2/Targid';
+import {IStartMenuSectionEntry} from './StartMenu';
 
-export class StoredLineUp extends ALineUpView {
+class StoredLineUp extends ALineUpView {
   private dataId: string;
   private dataIDType: string;
 
@@ -42,68 +43,88 @@ export class StoredLineUp extends ALineUpView {
   }
 }
 
-export function createLoadStartFactory(parent: HTMLElement, desc: IPluginDesc, options:any) {
-  const $parent = d3.select(parent);
-
-  $parent.html(''); // remove loading element
-
-  const $ul = $parent.append('ul');
-  const $hint = $parent.append('div');//.attr('style', 'margin-top: 25px; margin-bottom: -10px;');
-
-  function update() {
-    if(session.retrieve('logged_in') === true) {
-      $hint.select('p').remove();
-      $hint.select('button').text('Update list');
-
-    } else if($hint.selectAll('p').size() === 0) {
-      $hint.insert('p', ':first-child').text('Please login first.');
-      $hint.select('button').text('Check again');
-
-    }
-
-    // load named sets (stored LineUp sessions)
-    datas.list({ type: 'lineup_data'} ).then((items: any[]) => {
-      // append the list items
-      const $options = $ul.selectAll('li').data(items);
-      $options.enter()
-        .append('li')
-        //.classed('selected', (d,i) => (i === 0))
-        .append('a')
-        .attr('href', '#')
-        .text((d:any) => d.desc.name)
-        .on('click', (d:any) => {
-          // prevent changing the hash (href)
-          (<Event>d3.event).preventDefault();
-
-          // if targid object is available
-          if(options.targid) {
-            // create options for new view
-            let o = { dataId: d.desc.id };
-
-            // store state to session before creating a new graph
-            targidSession.store(TargidConstants.NEW_ENTRY_POINT, {
-              view: (<any>desc).viewId,
-              options: o
-            });
-
-            // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-            options.targid.graphManager.newGraph();
-          } else {
-            console.error('no targid object given to push new view');
-          }
-        });
-    });
-  }
-
-  $hint.append('button').attr('class', 'btn btn-default btn-xs').text('Check again').on('click', update);
-
-  update();
+export function create(context:IViewContext, selection: ISelection, parent:Element, options?) {
+  return new StoredLineUp(context, selection, parent, options);
 }
 
 
+class StoredLineUpStartList implements IStartMenuSectionEntry {
 
-export function create(context:IViewContext, selection: ISelection, parent:Element, options?) {
-  return new StoredLineUp(context, selection, parent, options);
+  private targid:Targid;
+
+  /**
+   * Set the idType and the default data and build the list
+   * @param parent
+   * @param desc
+   * @param options
+   */
+  constructor(protected parent: HTMLElement, public desc: IPluginDesc, protected options:any) {
+    this.targid = options.targid;
+    this.build();
+  }
+
+  private build() {
+    const $parent = d3.select(this.parent);
+
+    $parent.html(''); // remove loading element
+
+    const $ul = $parent.append('ul');
+    const $hint = $parent.append('div');//.attr('style', 'margin-top: 25px; margin-bottom: -10px;');
+
+    function update() {
+      if(session.retrieve('logged_in') === true) {
+        $hint.select('p').remove();
+        $hint.select('button').text('Update list');
+
+      } else if($hint.selectAll('p').size() === 0) {
+        $hint.insert('p', ':first-child').text('Please login first.');
+        $hint.select('button').text('Check again');
+
+      }
+
+      // load named sets (stored LineUp sessions)
+      datas.list({ type: 'lineup_data'} ).then((items: any[]) => {
+        // append the list items
+        const $options = $ul.selectAll('li').data(items);
+        $options.enter()
+          .append('li')
+          //.classed('selected', (d,i) => (i === 0))
+          .append('a')
+          .attr('href', '#')
+          .text((d:any) => d.desc.name)
+          .on('click', (d:any) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
+
+            // if targid object is available
+            if(this.targid) {
+              // create options for new view
+              let o = { dataId: d.desc.id };
+
+              // store state to session before creating a new graph
+              targidSession.store(TargidConstants.NEW_ENTRY_POINT, {
+                view: (<any>this.desc).viewId,
+                options: o
+              });
+
+              // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+              this.targid.graphManager.newGraph();
+            } else {
+              console.error('no targid object given to push new view');
+            }
+          });
+      });
+    }
+
+    $hint.append('button').attr('class', 'btn btn-default btn-xs').text('Check again').on('click', update);
+
+    update();
+  }
+}
+
+
+export function createLoadStartFactory(parent: HTMLElement, desc: IPluginDesc, options:any) {
+  return new StoredLineUpStartList(parent, desc, options);
 }
 
 

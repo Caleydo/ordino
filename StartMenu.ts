@@ -13,29 +13,42 @@ export class StartMenu {
 
   protected $node;
 
+  protected $sections;
+
   private targid:Targid;
 
-  private entryPoints:IEntryPointList[] = [];
+  private sectionEntries:IStartMenuSection[] = [
+    {
+      id: 'targidStartEntryPoint',
+      name: 'Entry Points',
+      cssClass: 'entryPoints',
+      showViewName: true
+    },
+    {
+      id: 'targidStartLineUp',
+      name: 'LineUp Data Sets',
+      cssClass: 'lineUpData',
+      showViewName: false
+    },
+    {
+      id: 'targidStartSession',
+      name: 'Sessions',
+      cssClass: 'targidSessionData',
+      showViewName: false
+    }
+  ];
+
+
+  private entryPoints:IStartMenuSectionEntry[] = [];
+
+  private entryPointLists:IEntryPointList[] = [];
 
   private template = `
     <button class="closeButton">
       <i class="fa fa-times" aria-hidden="true"></i>
       <span class="sr-only">Close</span>
     </button>
-    <div class="menu">
-      <section class="entryPoints">
-        <header><h1>Entry Points</h1></header>
-        <main></main>
-      </section>
-      <section class="lineUpData">
-        <header><h1>LineUp Data Sets</h1></header>
-        <main></main>
-      </section>
-      <section class="targidSessionData">
-        <header><h1>Sessions</h1></header>
-        <main></main>
-       </section>
-    </div>
+    <div class="menu"></div>
   `;
 
   /**
@@ -61,6 +74,8 @@ export class StartMenu {
       }
     };
     this.$node.classed('open', true);
+
+    this.updateSections();
   }
 
   /**
@@ -71,8 +86,13 @@ export class StartMenu {
     this.$node.classed('open', false);
   }
 
-  public updateEntryPoint(idType: idtypes.IDType | string, namedSet: INamedSet) {
-    this.entryPoints
+  /**
+   * Update entry point list for a given idType and an additional namedSet that should be appended
+   * @param idType
+   * @param namedSet
+   */
+  public updateEntryPointList(idType: idtypes.IDType | string, namedSet: INamedSet) {
+    this.entryPointLists
       .filter((d) => d.getIdType() === idtypes.resolve(idType).id)
       .forEach((d) => {
         d.addNamedSet(namedSet);
@@ -83,6 +103,8 @@ export class StartMenu {
    * Build multiple sections with entries grouped by database
    */
   private build() {
+    const that = this;
+
     this.$node.html(this.template);
 
     this.$node.on('click', () => {
@@ -98,46 +120,90 @@ export class StartMenu {
       this.close();
     });
 
-    this.createSection('targidStartEntryPoint', this.$node.select('.entryPoints main'), true);
+    this.$sections = this.$node.select('.menu').selectAll('section').data(this.sectionEntries);
 
-    this.createSection('targidStartLineUp', this.$node.select('.lineUpData main'));
+    this.$sections.enter()
+      .append('section')
+      .classed((d) => d.cssClass, true)
+      .each(function(d) {
+        that.createSection(d, d3.select(this));
+      });
 
-    this.createSection('targidStartSession', this.$node.select('.targidSessionData main'));
+    // do not update here --> will be done on first call of open()
+    //this.updateSections();
   }
 
-  private createSection(viewType, $sectionNode, showViewName = false) {
-    const that = this;
-
+  /**
+   * Create basic DOM elements for each section and
+   * @param sectionDesc
+   * @param $sectionNode
+   */
+  private createSection(sectionDesc:IStartMenuSection, $sectionNode) {
     // get start views for entry points and sort them by name ASC
-    const views = findViewCreators(viewType).sort((a,b) => {
+    const views = findViewCreators(sectionDesc.id).sort((a,b) => {
       let x = a.name.toLowerCase();
       let y = b.name.toLowerCase();
       return x === y ? 0 : (x < y ? -1 : 1);
     });
 
-    const $items = $sectionNode.selectAll('.item').data(views);
+    const $main = $sectionNode.html(`
+        <header><h1>${sectionDesc.name}</h1></header>
+        <main></main>
+      `)
+      .select('main');
+
+    const $items = $main.selectAll('.item').data(views);
     const $enter = $items.enter().append('div').classed('item', true);
 
-    if(showViewName) {
+    // relevant for multiple entry points
+    if(sectionDesc.showViewName) {
       $enter.append('div').classed('header', true).text((d) => d.name);
     }
 
+    // append initial loading icon --> must be removed by each entry point individually
     $enter.append('div').classed('body', true)
       .html(`
         <div class="loading">
           <i class="fa fa-spinner fa-pulse fa-fw"></i>
           <span class="sr-only">Loading...</span>
         </div>
-      `)
-      .each(function(d:any) {
-        // provide targid object as option object
-        d.build(this, {targid: that.targid})
-          .then((entryPoint:IEntryPointList) => {
-            if(viewType === 'targidStartEntryPoint' && entryPoint !== undefined) {
+      `);
+  }
+
+  /**
+   * Loops through all sections and updates them (or the entry points) if necessary
+   */
+  private updateSections() {
+    const that = this;
+
+    this.$sections.each(function(section) {
+
+      // reload the entry points every time the
+      d3.select(this).selectAll('div.body')
+        .each(function(entryPointDesc:any) {
+
+          // do not load entry point again, if already loaded
+          if(that.entryPoints.filter((ep) => ep.desc.id === entryPointDesc.p.id).length > 0) {
+            return;
+          }
+
+          // provide targid object as option object
+          entryPointDesc.build(this, {targid: that.targid})
+            .then((entryPoint) => {
+              // prevent adding the entryPoint if already in list or undefined
+              if(entryPoint === undefined || that.entryPoints.filter((ep) => ep.desc.id === entryPointDesc.p.id).length > 0) {
+                return;
+              }
+
               that.entryPoints.push(entryPoint);
-            }
-          });
-      });
+
+              // store IEntryPointLists separately to allow a dynamic update
+              if(section.id === 'targidStartEntryPoint') {
+                that.entryPointLists.push(<IEntryPointList>entryPoint);
+              }
+            });
+        });
+    });
   }
 
 }
@@ -192,6 +258,19 @@ export function findViewCreators(type): IStartFactory[] {
 }
 
 
+interface IStartMenuSection {
+  id:string;
+
+  name:string;
+
+  cssClass:string;
+
+  showViewName: boolean;
+}
+
+export interface IStartMenuSectionEntry {
+  desc:IPluginDesc;
+}
 
 
 export interface IEntryPointList {
@@ -202,7 +281,7 @@ export interface IEntryPointList {
 /**
  * Abstract entry point list
  */
-export class AEntryPointList implements IEntryPointList {
+export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry {
 
   protected idType = 'Ensembl';
 
@@ -210,7 +289,7 @@ export class AEntryPointList implements IEntryPointList {
 
   protected data:any[] = [];
 
-  constructor(protected parent: HTMLElement, protected desc: IPluginDesc, protected options:any) {
+  constructor(protected parent: HTMLElement, public desc: IPluginDesc, protected options:any) {
     this.$node = d3.select(parent);
   }
 

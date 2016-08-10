@@ -844,7 +844,7 @@ export class ProxyView extends AView {
         this.setBusy(false);
         this.$selectType.selectAll('option').data();
         this.$node.html(`<p>Cannot map selected gene to ${this.options.idtype}.</p>`);
-        this.$params.classed('hidden', true);
+        this.$formGroup.classed('hidden', true);
         this.fire(ProxyView.EVENT_LOADING_FINISHED);
         return;
       }
@@ -858,11 +858,11 @@ export class ProxyView extends AView {
       this.loadProxyPage(selection);
 
       if (allNames.length === 1) {
-        this.$params.classed('hidden', true);
+        this.$formGroup.classed('hidden', true);
         return;
       }
 
-      this.$params.classed('hidden', false);
+      this.$formGroup.classed('hidden', false);
       this.$selectType.on('change', () => {
         this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
         this.loadProxyPage(selection);

@@ -311,8 +311,6 @@ div.targid {
 
       }
 
-
-
       > .parameters:not(.hidden) ~ .inner {
         border-top: 1px solid $core_border;
         padding-top: 10px;
@@ -367,6 +365,12 @@ div.targid {
       text-align: center;
       position: relative;
       padding: 8px 0;
+
+      .category:not(:first-child) {
+        border-top: 1px solid $core_border;
+        margin-top: 4px;
+        padding-top: 8px;
+      }
 
       button {
         width: 90%;

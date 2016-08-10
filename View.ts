@@ -727,12 +727,16 @@ export class ViewWrapper extends EventHandler {
     this.$chooser.classed('hidden', range.isNone);
 
     findViews(idtype, range).then((views) => {
+      const data = [];
+      data[0] = views.filter((d:any) => d.v.category === undefined || d.v.category !== 'static');
+      data[1] = views.filter((d:any) => d.v.category !== undefined && d.v.category === 'static');
 
-      const dataViews = views.filter((d) => d.v.name.indexOf('Gene') === -1);
-      const geneViews = views.filter((d) => d.v.name.indexOf('Gene') !== -1);
-      views = dataViews.concat(geneViews);
+      const $categories = this.$chooser.selectAll('div.category').data(data);
 
-      const $buttons = this.$chooser.selectAll('button').data(views);
+      $categories.enter().append('div').classed('category', true);
+      $categories.exit().remove();
+
+      const $buttons = $categories.selectAll('button').data((d:{enabled: boolean, v: IViewPluginDesc}[]) => d);
 
       $buttons.enter().append('button')
         .classed('btn', true)

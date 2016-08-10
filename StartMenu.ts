@@ -4,15 +4,14 @@
 
 import session = require('../targid2/TargidSession');
 import idtypes = require('../caleydo_core/idtype');
-import {findViewCreators, IView} from './View';
-import {Targid, TargidConstants} from './Targid';
+import {Targid, TargidConstants} from '../targid2/Targid';
 import {listNamedSets, INamedSet} from '../targid2/storage';
-import {IPluginDesc} from '../caleydo_core/plugin';
+import {IPluginDesc, list as listPlugins} from '../caleydo_core/plugin';
 
 
 export class StartMenu {
 
-  protected $node:d3.Selection<IView>;
+  protected $node;
 
   private targid:Targid;
 
@@ -146,6 +145,53 @@ export class StartMenu {
 export function create(parent:Element, options?) {
   return new StartMenu(parent, options);
 }
+
+
+
+
+export interface IStartFactory {
+  name: string;
+  build(element : HTMLElement);
+  options(): Promise<{ viewId: string; options: any }>;
+}
+
+class StartFactory implements IStartFactory {
+  private builder: Promise<() => any> = null;
+
+  constructor(private p : IPluginDesc) {
+
+  }
+
+  get name() {
+    return this.p.name;
+  }
+
+  build(element: HTMLElement, options = {}) {
+    return this.builder = this.p.load().then((i) => {
+      if(i.factory) {
+        return i.factory(element, this.p, options);
+      } else {
+        console.log(`No viewId and/or factory method found for '${i.desc.id}'`);
+        return null;
+      }
+    });
+  }
+
+  options() {
+    return this.builder.then((i) => ({ viewId: (<any>this.p).viewId, options: i() }));
+  }
+}
+
+
+export function findViewCreators(type): IStartFactory[] {
+  const plugins = listPlugins(type).sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
+  var factories = plugins.map((p: IPluginDesc): IStartFactory => {
+    return new StartFactory(p);
+  });
+  return factories;
+}
+
+
 
 
 export interface IEntryPointList {

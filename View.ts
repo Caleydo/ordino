@@ -10,7 +10,6 @@ import C = require('../caleydo_core/main');
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import d3 = require('d3');
-import session = require('../caleydo_core/session');
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';

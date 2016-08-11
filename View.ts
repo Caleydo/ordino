@@ -103,6 +103,8 @@ export interface IView extends IEventHandler {
   node: Element;
   context:IViewContext;
 
+  init();
+
   changeSelection(selection: ISelection);
 
   setItemSelection(selection: ISelection);
@@ -143,15 +145,19 @@ export class AView extends EventHandler implements IView {
     this.$node.select('div.busy').style('display',busy ? 'block': null);
   }
 
+  init() {
+    // hook
+  }
+
   changeSelection(selection: ISelection) {
-    //hook
+    // hook
   }
 
   setItemSelection(selection: ISelection) {
     if (isSameSelection(this.itemSelection, selection)) {
       return;
     }
-    //propagate
+    // propagate
     if (selection.idtype) {
       if (selection.range.isNone) {
         selection.idtype.clear(idtypes.defaultSelectionType);
@@ -167,10 +173,10 @@ export class AView extends EventHandler implements IView {
   }
 
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
-    //hook
+    // hook
   }
 
-  protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], customOnChange?) {
+  protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], selectedIndex = 0, customOnChange?) {
     const $group = $parent.append('div').classed('form-group', true);
 
     $group.append('label')
@@ -187,7 +193,7 @@ export class AView extends EventHandler implements IView {
         }
         onChange(elementName, allElements[this.selectedIndex]);
         // store new values also to session for other views
-        session.store(elementName, allElements[this.selectedIndex]);
+        //session.store(elementName, allElements[this.selectedIndex]);
       });
 
     // create options
@@ -197,7 +203,7 @@ export class AView extends EventHandler implements IView {
     $options.exit().remove();
 
     // select first element by default
-    $selectType.property('selectedIndex', 0);
+    $selectType.property('selectedIndex', selectedIndex);
 
     return $selectType;
   }
@@ -207,43 +213,43 @@ export class AView extends EventHandler implements IView {
   }
 
   setParameter(name: string, value: any) {
-    //hook
+    // hook
     return null;
   }
 
   modeChanged(mode:EViewMode) {
-    //hook
+    // hook
   }
 
   protected resolveIdToNames(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string[][]> {
     const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
     if (from_idtype.id === target.id) {
-      //same just unmap to name
+      // same just unmap to name
       return from_idtype.unmap([id]).then((names) => [names]);
     }
 
-    //assume mappable
+    // assume mappable
     return from_idtype.mapToName([id], target).then((names) => names);
   }
 
   protected resolveId(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string> {
     const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
     if (from_idtype.id === target.id) {
-      //same just unmap to name
+      // same just unmap to name
       return from_idtype.unmap([id]).then((names) => names[0]);
     }
 
-    //assume mappable
+    // assume mappable
     return from_idtype.mapToFirstName([id], target).then((names) => names[0]);
   }
 
   protected resolveIds(from_idtype: idtypes.IDType, ids: ranges.Range|number[], to_idtype : idtypes.IDType|string = null): Promise<string[]> {
     const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
     if (from_idtype.id === target.id) {
-      //same just unmap to name
+      // same just unmap to name
       return from_idtype.unmap(ids);
     }
-    //assume mappable
+    // assume mappable
     return from_idtype.mapToFirstName(ids, target);
   }
 
@@ -295,7 +301,7 @@ export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
   });
 }
 export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
-  //assert view
+  // assert view
   return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
@@ -303,7 +309,7 @@ export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.
 }
 
 export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
-  //assert view
+  // assert view
   return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
@@ -498,16 +504,19 @@ export class ViewWrapper extends EventHandler {
       this.instance = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
       (<ASmallMultipleView>this.instance).setAllSelections(selection);
       this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
+      this.instance.init();
 
       ids.forEach((id) => {
         //create new small muliple instance
         const smallMultiple = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options);
         (<ASmallMultipleView>smallMultiple).setSmallMultipleParent(this.instance);
+        smallMultiple.init();
         this.sm_instances.push(smallMultiple);
       });
     } else {
       this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
       this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
+      this.instance.init();
     }
 
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);

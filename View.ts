@@ -271,6 +271,10 @@ export abstract class ASmallMultipleView extends AView {
   constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
     super(context, parent, options);
   }
+
+  init() {
+    this.$node.classed('multiple', true);
+  }
 }
 
 

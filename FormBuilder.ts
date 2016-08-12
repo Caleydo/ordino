@@ -190,6 +190,12 @@ export class FormSelect extends EventHandler implements IFormElement {
   }
 
   set value(v:string) {
+    // if value is undefined or null, set to first index
+    if(!v) {
+      this.$select.property('selectedIndex', 0);
+      return;
+    }
+
     this.$select.selectAll('option').data().forEach((d, i) => {
       if(d.value === v) {
         this.$select.property('selectedIndex', i);

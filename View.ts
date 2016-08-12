@@ -121,7 +121,7 @@ export interface IView extends IEventHandler {
   destroy();
 }
 
-export class AView extends EventHandler implements IView {
+export abstract class AView extends EventHandler implements IView {
   /**
    * event when one or more elements are selected for the next level
    * @type {string}
@@ -176,7 +176,8 @@ export class AView extends EventHandler implements IView {
   }
 
   protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], selectedIndex = 0, customOnChange?) {
-    const $group = $parent.append('div').classed('form-group', true);
+    console.error('createParameterSelectionUI is deprecated, use the FormBuilder instead!');
+    /*const $group = $parent.append('div').classed('form-group', true);
 
     $group.append('label')
       .attr('for', elementName+'_' + id)
@@ -204,7 +205,7 @@ export class AView extends EventHandler implements IView {
     // select first element by default
     $selectType.property('selectedIndex', selectedIndex);
 
-    return $selectType;
+    return $selectType;*/
   }
 
   getParameter(name: string): any {
@@ -258,6 +259,17 @@ export class AView extends EventHandler implements IView {
 
   get node() {
     return <Element>this.$node.node();
+  }
+}
+
+export abstract class ASmallMultipleView extends AView {
+
+  protected margin = {top: 40, right: 5, bottom: 50, left: 50};
+  protected width = 280 - this.margin.left - this.margin.right;
+  protected height = 320 - this.margin.top - this.margin.bottom;
+
+  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
+    super(context, parent, options);
   }
 }
 
@@ -388,7 +400,6 @@ export class ViewWrapper extends EventHandler {
   private mode_:EViewMode = null;
 
   private instance:IView = null;
-  private sm_instances:IView[] = [];
 
   /**
    * Listens to the AView.EVENT_ITEM_SELECT event and decided if the chooser should be visible.
@@ -496,27 +507,9 @@ export class ViewWrapper extends EventHandler {
     const $inner = this.$node.append('div')
       .classed('inner', true);
 
-    if(showAsSmallMultiple(this.desc)) {
-      const ids = selection.range.dim(0).asList();
-      $inner.classed('multiple', ids.length > 1);
-
-      this.instance = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(ids.shift())}, <Element>$inner.node(), options);
-      (<ASmallMultipleView>this.instance).setAllSelections(selection);
-      this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
-      this.instance.init();
-
-      ids.forEach((id) => {
-        //create new small muliple instance
-        const smallMultiple = plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>$inner.node(), options);
-        (<ASmallMultipleView>smallMultiple).setSmallMultipleParent(this.instance);
-        smallMultiple.init();
-        this.sm_instances.push(smallMultiple);
-      });
-    } else {
-      this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
-      this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
-      this.instance.init();
-    }
+    this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
+    this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
+    this.instance.init();
 
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
     this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
@@ -574,9 +567,6 @@ export class ViewWrapper extends EventHandler {
     return this.instance;
   }
 
-  getSmallMultipleInstances() {
-    return this.sm_instances;
-  }
 
   private onParameterChange(name: string, value: any) {
     return this.context.graph.push(setParameter(this.ref, name, value));
@@ -587,7 +577,6 @@ export class ViewWrapper extends EventHandler {
   }
 
   setParameterImpl(name: string, value: any) {
-    this.sm_instances.forEach((d) => d.setParameter(name, value));
     return this.instance.setParameter(name, value);
   }
 
@@ -598,8 +587,6 @@ export class ViewWrapper extends EventHandler {
   setItemSelection(sel: ISelection) {
     // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
-
-    this.sm_instances.forEach((d) => d.setItemSelection(sel));
 
     this.instance.setItemSelection(sel);
 
@@ -614,28 +601,7 @@ export class ViewWrapper extends EventHandler {
       return;
     }
 
-    if(showAsSmallMultiple(this.desc)) {
-      const ids = selection.range.dim(0).asList();
-      this.$node.select('div.inner').classed('multiple', ids.length > 1);
-      //first
-      (<ASmallMultipleView>this.instance).setAllSelections(selection);
-      this.instance.changeSelection({idtype: selection.idtype, range: ranges.list(ids.shift())});
-      //create a matching
-      this.sm_instances.splice(ids.length).forEach((v) => {
-        v.destroy();
-      });
-      this.sm_instances.forEach((v) => {
-        v.changeSelection({idtype: selection.idtype, range: ranges.list(ids.shift())});
-      });
-      ids.forEach((id) => {
-        //create new small muliple instance
-        const smallMultiple = this.plugin.factory(this.context, {idtype: selection.idtype, range: ranges.list(id)}, <Element>this.$node.select('div.inner').node(), this.options);
-        (<ASmallMultipleView>smallMultiple).setSmallMultipleParent(this.instance);
-        this.sm_instances.push(smallMultiple);
-      });
-    } else {
-      this.instance.changeSelection(selection);
-    }
+    this.instance.changeSelection(selection);
   }
 
   getParameterSelection() {
@@ -666,7 +632,6 @@ export class ViewWrapper extends EventHandler {
       .classed('t-hide', mode === EViewMode.HIDDEN);
 
     // trigger modeChanged
-    this.sm_instances.forEach((d) => d.modeChanged(mode));
     this.instance.modeChanged(mode);
 
     // on focus view scroll into view
@@ -774,11 +739,6 @@ export function replaceViewWrapper(existingView:ViewWrapper, selection: ISelecti
     return Promise.resolve(existingView.replaceView(selection, pluginDesc, options));
   }
   return plugin.load().then((p) => existingView.replaceView(selection, p, options));
-}
-
-export interface IStartViewFactory {
-  //constructor($parent: Element)
-  create(): { viewId: string, options: any };
 }
 
 
@@ -918,27 +878,5 @@ export class ProxyView extends AView {
 
   modeChanged(mode:EViewMode) {
     super.modeChanged(mode);
-  }
-}
-
-export abstract class ASmallMultipleView extends AView {
-
-  protected margin = {top: 40, right: 5, bottom: 50, left: 50};
-  protected width = 280 - this.margin.left - this.margin.right;
-  protected height = 320 - this.margin.top - this.margin.bottom;
-
-  protected smallMultipleParent: IView;
-  protected allSelections : ISelection;
-
-  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
-    super(context, parent, options);
-  }
-
-  setSmallMultipleParent(smallMultipleParent : IView) {
-    this.smallMultipleParent = smallMultipleParent;
-  }
-
-  setAllSelections(allSelections : ISelection) {
-    this.allSelections = allSelections;
   }
 }

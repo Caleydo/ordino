@@ -75,6 +75,30 @@ export class FormBuilder {
     return this.elements.get(id);
   }
 
+  /**
+   * Returns an object with the form element id as key and the current data as value
+   * @returns {{}}
+   */
+  getElementData():any {
+    var r = {};
+    this.elements.forEach((key, el) => {
+      r[key] = el.value.data;
+    });
+    return r;
+  }
+
+  /**
+   * Returns an object with the form element id as key and the current form element value
+   * @returns {{}}
+   */
+  getElementValues():any {
+    var r = {};
+    this.elements.forEach((key, el) => {
+      r[key] = el.value.value;
+    });
+    return r;
+  }
+
 }
 
 /**

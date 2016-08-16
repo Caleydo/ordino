@@ -150,12 +150,12 @@ export interface IFormElementDesc {
   /**
    * Id of a different form element where an on change listener is attached to
    */
-  dependsOn?: string;
+  dependsOn?: string[];
 
   /**
    *
    */
-  showIf?:(dependantValue) => boolean;
+  showIf?:(dependantValue:any[]) => boolean;
 
   /**
    * Whether to store the value in a session or not
@@ -230,18 +230,17 @@ abstract class AFormElement extends EventHandler implements IFormElement {
       return;
     }
 
-    const dependElement = this.formBuilder.getElementById(this.desc.dependsOn);
+    const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
 
-    if(!dependElement) {
-      console.warn(`FormElement "${this.id}" depends on FormElement "${this.desc.dependsOn}" that does not exists or might be defined later`);
-      return;
-    }
-
-    dependElement.on('change', (evt, value) => {
-      this.$node.classed('hidden', !this.desc.showIf(value));
+    dependElements.forEach((depElem) => {
+      depElem.on('change', (evt, value) => {
+        const values = dependElements.map((d) => d.value);
+        return this.$node.classed('hidden', !this.desc.showIf(values));
+      });
     });
 
-    this.$node.classed('hidden', !this.desc.showIf(dependElement.value));
+    const values = dependElements.map((d) => d.value);
+    this.$node.classed('hidden', !this.desc.showIf(values));
   }
 
   /**
@@ -364,22 +363,21 @@ class FormSelect extends AFormElement implements IFormSelectElement {
     var optionsData = options.optionsData;
 
     if(this.desc.dependsOn && options.optionsFnc) {
-      const dependElement = this.formBuilder.getElementById(this.desc.dependsOn);
+      const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
 
-      if(!dependElement) {
-        console.warn(`FormElement "${this.id}" depends on FormElement "${this.desc.dependsOn}" that does not exists or might be defined later`);
+      dependElements.forEach((depElem) => {
+        const values = dependElements.map((d) => d.value);
+        optionsData = options.optionsFnc(values);
 
-      } else {
-        optionsData = options.optionsFnc(dependElement.value);
-
-        dependElement.on('change', (evt, value) => {
-          this.updateOptionElements(options.optionsFnc(value));
+        depElem.on('change', (evt, value) => {
+          const values = dependElements.map((d) => d.value);
+          this.updateOptionElements(options.optionsFnc(values));
           $select.property('selectedIndex', options.selectedIndex || 0);
 
           // propagate that options has changed
           this.fire('change', this.value, $select);
         });
-      }
+      });
     }
 
     var defaultSelectedIndex = 0;

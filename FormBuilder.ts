@@ -62,7 +62,11 @@ export class FormBuilder {
 
     switch (elementDesc.type) {
       case FormElementType.SELECT:
-        this.elements.set(elementDesc.id, new FormSelect(this, this.$node, elementDesc.id, elementDesc.label, elementDesc.attributes, elementDesc.options));
+        this.elements.set(elementDesc.id, new FormSelect(this, this.$node, elementDesc));
+        break;
+      case FormElementType.INPUT_TEXT:
+        this.elements.set(elementDesc.id, new FormInputText(this, this.$node, elementDesc));
+        break;
     }
   }
 
@@ -82,7 +86,7 @@ export class FormBuilder {
   getElementData():any {
     var r = {};
     this.elements.forEach((key, el) => {
-      r[key] = el.value.data;
+      r[key] = el.value.data || el.value;
     });
     return r;
   }
@@ -94,7 +98,7 @@ export class FormBuilder {
   getElementValues():any {
     var r = {};
     this.elements.forEach((key, el) => {
-      r[key] = el.value.value;
+      r[key] = el.value.value || el.value;
     });
     return r;
   }
@@ -106,7 +110,8 @@ export class FormBuilder {
  * @see FormBuilder.appendElement()
  */
 export enum FormElementType {
-  SELECT
+  SELECT,
+  INPUT_TEXT
 }
 
 /**
@@ -143,6 +148,21 @@ export interface IFormElementDesc {
   };
 
   /**
+   * Id of a different form element where an on change listener is attached to
+   */
+  dependsOn?: string;
+
+  /**
+   *
+   */
+  showIf?:(dependantValue) => boolean;
+
+  /**
+   * Whether to store the value in a session or not
+   */
+  useSession?: boolean;
+
+  /**
    * Form element specific options
    */
   options?: {};
@@ -168,17 +188,20 @@ interface IFormElement extends IEventHandler {
  */
 abstract class AFormElement extends EventHandler implements IFormElement {
 
+  public id;
+
+  protected $node;
+
   /**
    * Constructor
    * @param formBuilder
    * @param $parent
-   * @param id
-   * @param label
-   * @param attributes
-   * @param options
+   * @param desc
    */
-  constructor(public formBuilder:FormBuilder, $parent, public id, protected label, protected attributes, protected options) {
+  constructor(public formBuilder:FormBuilder, $parent, protected desc:IFormElementDesc) {
     super();
+
+    this.id = desc.id;
   }
 
   /**
@@ -200,6 +223,25 @@ abstract class AFormElement extends EventHandler implements IFormElement {
 
       $node.attr((key === 'clazz') ? 'class' : key, attributes[key]);
     }
+  }
+
+  protected handleShowIf() {
+    if(!this.desc.dependsOn || !this.desc.showIf) {
+      return;
+    }
+
+    const dependElement = this.formBuilder.getElementById(this.desc.dependsOn);
+
+    if(!dependElement) {
+      console.warn(`FormElement "${this.id}" depends on FormElement "${this.desc.dependsOn}" that does not exists or might be defined later`);
+      return;
+    }
+
+    dependElement.on('change', (evt, value) => {
+      this.$node.classed('hidden', !this.desc.showIf(value));
+    });
+
+    this.$node.classed('hidden', !this.desc.showIf(dependElement.value));
   }
 
   /**
@@ -240,10 +282,6 @@ export interface IFormSelectDesc extends IFormElementDesc {
      */
     optionsData?: string[]|{name: string, value: string, data: any}[],
     /**
-     * Id of a different form element where an on change listener is attached to
-     */
-    dependsOn?: string,
-    /**
      * Function to generate dynamic options based on the selection of the depending form element
      * @param selection selection of the depending form element (see `dependsOn` property)
      */
@@ -251,12 +289,7 @@ export interface IFormSelectDesc extends IFormElementDesc {
     /**
      * Index of the selected option; this option overrides the selected index from the `useSession` property
      */
-    selectedIndex?: number,
-    /**
-     * Whether to store the selected index in a session or not
-     * The selected index can be overriden from the `selectedIndex` property
-     */
-    useSession?: boolean
+    selectedIndex?: number
   };
 }
 
@@ -275,22 +308,18 @@ export interface IFormSelectElement extends IFormElement {
  * Select form element instance
  * Propagates the changes from the DOM select element using the internal `change` event
  */
-export class FormSelect extends AFormElement implements IFormSelectElement {
+class FormSelect extends AFormElement implements IFormSelectElement {
 
-  private $node;
   private $select;
 
   /**
    * Constructor
    * @param formBuilder
    * @param $parent
-   * @param id
-   * @param label
-   * @param attributes
-   * @param options
+   * @param desc
    */
-  constructor(public formBuilder:FormBuilder, $parent, public id, protected label, protected attributes, protected options) {
-    super(formBuilder, $parent, id, label, attributes, options);
+  constructor(public formBuilder:FormBuilder, $parent, protected desc:IFormSelectDesc) {
+    super(formBuilder, $parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
 
@@ -302,11 +331,12 @@ export class FormSelect extends AFormElement implements IFormSelectElement {
    * Bind the change listener and propagate the selection by firing a change event
    */
   private build() {
-    this.$node.append('label').attr('for', this.id).text(this.label);
+    this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
 
     this.$select = this.$node.append('select');
-    this.setAttributes(this.$select, this.attributes);
-    this.handleOptions(this.$select, this.options);
+    this.setAttributes(this.$select, this.desc.attributes);
+    this.handleOptions(this.$select, this.desc.options);
+    this.handleShowIf();
 
     // propagate change action with the data of the selected option
     this.$select.on('change.propagate', () => {
@@ -333,14 +363,11 @@ export class FormSelect extends AFormElement implements IFormSelectElement {
 
     var optionsData = options.optionsData;
 
-    if(options.dependsOn) {
-      const dependElement = this.formBuilder.getElementById(options.dependsOn);
+    if(this.desc.dependsOn && options.optionsFnc) {
+      const dependElement = this.formBuilder.getElementById(this.desc.dependsOn);
 
       if(!dependElement) {
-        console.warn(`FormElement "${this.id}" depends on FormElement "${options.dependsOn}" that does not exists or might be defined later`);
-
-      } else if(!options.optionsFnc) {
-        console.warn(`FormElement "${this.id}" depends on FormElement "${options.dependsOn}", but the property "optionFnc" is not defined`);
+        console.warn(`FormElement "${this.id}" depends on FormElement "${this.desc.dependsOn}" that does not exists or might be defined later`);
 
       } else {
         optionsData = options.optionsFnc(dependElement.value);
@@ -356,7 +383,7 @@ export class FormSelect extends AFormElement implements IFormSelectElement {
     }
 
     var defaultSelectedIndex = 0;
-    if(options.useSession) {
+    if(this.desc.useSession) {
       defaultSelectedIndex = session.retrieve(this.id + '_selectedIndex', defaultSelectedIndex);
       $select.on('change.storeInSession', () => {
         session.store(this.id + '_selectedIndex', $select.node().selectedIndex);
@@ -386,7 +413,7 @@ export class FormSelect extends AFormElement implements IFormSelectElement {
 
     $options
       .attr('value', (d) => d.value)
-      .text((d) => d.name);
+      .html((d) => d.name);
 
     $options.exit().remove();
   }
@@ -418,4 +445,77 @@ export class FormSelect extends AFormElement implements IFormSelectElement {
     });
   }
 
+}
+
+/**
+ * Add specific options for input form elements
+ */
+export interface IFormInputTextDesc extends IFormElementDesc {
+  /**
+   * Additional options
+   */
+  options?: {};
+}
+
+/**
+ * Add specific functions for input form element
+ */
+export interface IFormInputTextElement extends IFormElement {
+
+}
+
+/**
+ * Input text field element instance
+ * Propagates the changes from the DOM select element using the internal `change` event
+ */
+class FormInputText extends AFormElement implements IFormInputTextElement {
+
+  private $input;
+
+  /**
+   * Constructor
+   * @param formBuilder
+   * @param $parent
+   * @param desc
+   */
+  constructor(public formBuilder: FormBuilder, $parent, protected desc:IFormInputTextDesc) {
+    super(formBuilder, $parent, desc);
+
+    this.$node = $parent.append('div').classed('form-group', true);
+
+    this.build();
+  }
+
+  /**
+   * Build the label and input element
+   * Bind the change listener and propagate the selection by firing a change event
+   */
+  private build() {
+    this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+
+    this.$input = this.$node.append('input').attr('type', 'text');
+    this.setAttributes(this.$input, this.desc.attributes);
+    this.handleShowIf();
+
+    // propagate change action with the data of the selected option
+    this.$input.on('change.propagate', () => {
+      this.fire('change', this.value, this.$input);
+    });
+  }
+
+  /**
+   * Returns the value
+   * @returns {string}
+   */
+  get value() {
+    return this.$input.node().value;
+  }
+
+  /**
+   * Sets the value
+   * @param v
+   */
+  set value(v:string) {
+    this.$input.node().value = v;
+  }
 }

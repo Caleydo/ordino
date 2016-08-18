@@ -429,7 +429,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * Select the option by value. If no value found, then the first option is selected.
    * @param v If string then compares to the option value property. Otherwise compares the object reference.
    */
-  set value(v:string) {
+  set value(v:any) {
     // if value is undefined or null, set to first index
     if(!v) {
       this.$select.property('selectedIndex', 0);
@@ -437,7 +437,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
     }
 
     this.$select.selectAll('option').data().forEach((d, i) => {
-      if(d === v || d.value === v) {
+      if((v.value && d.value === v.value) || d.value === v || d === v) {
         this.$select.property('selectedIndex', i);
       }
     });

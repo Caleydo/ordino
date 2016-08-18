@@ -57,10 +57,16 @@
     width: 10em;
     text-align: left;
 
-    span {
+    .ensg {
       display: block;
       font-size: 12px;
       color: #ccc;
+    }
+
+    .alterationFreq {
+      float: right;
+      margin-right: 5px;
+      margin-top: 10px;
     }
   }
 

@@ -27,10 +27,11 @@ export function showErrorModalDialog(xhr:any) {
     const $body = d3.select(dialog.body);
 
     switch(xhr.status) {
-      //case 404:
-      //   break;
+      case 400:
+        $body.html(`${xhr.responseText}`);
+         break;
       default:
-        $body.html(`${xhr.response}<hr>
+        $body.html(`${xhr.responseText}<hr>
         The requested URL was:<br><a href="${xhr.responseURL}" target="_blank">${xhr.responseURL}</a>`);
     }
 

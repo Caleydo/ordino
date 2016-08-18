@@ -195,21 +195,29 @@ export class ALineUpView extends AView {
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
     columns.push(lineup.model.createStackDesc());
-    $ul.selectAll('li.col').data(columns).enter().append('li').classed('col', true).append('a').attr('href', '#').text((d:any) => d.label).on('click', (d) => {
-      const ranking = this.lineup.data.getLastRanking();
-      this.lineup.data.push(ranking, d);
-      (<Event>d3.event).preventDefault();
-    });
+    $ul.selectAll('li.col').data(columns)
+      .enter()
+      .append('li').classed('col', true)
+      .append('a').attr('href', '#').text((d:any) => d.label)
+      .on('click', (d) => {
+        const ranking = this.lineup.data.getLastRanking();
+        this.lineup.data.push(ranking, d);
+        (<Event>d3.event).preventDefault();
+      });
 
     $ul.append('li').classed('divider', true);
 
     const scores = plugins.list('targidScore').filter((d:any) => d.idtype === this.idType.id);
-    $ul.selectAll('li.score').data(scores).enter().append('li').classed('score', true).append('a').attr('href', '#').text((d) => d.name).on('click', (d) => {
-      d.load().then((p) => {
-        this.pushScore(p);
+    $ul.selectAll('li.score').data(scores)
+      .enter()
+      .append('li').classed('score', true)
+      .append('a').attr('href', '#').text((d) => d.name)
+      .on('click', (d) => {
+        d.load().then((p) => {
+          this.pushScore(p);
+        });
+        (<Event>d3.event).preventDefault();
       });
-      (<Event>d3.event).preventDefault();
-    });
 
   }
 
@@ -372,21 +380,59 @@ export class ALineUpView extends AView {
   }
 
   pushScore(score:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+    const that = this;
+
     //TODO clueify
-    Promise.resolve(score.factory(score.desc)).then((scoreImpl) => {
-      const desc = scoreImpl.createDesc();
-      desc._score = score;
-      desc.accessor = this.scoreAccessor;
-      this.lineup.data.pushDesc(desc);
-      const col = this.lineup.data.push(ranking, desc);
-      return scoreImpl.compute([], this.idType).then((scores) => {
-        desc.scores = scores;
-        if (desc.type === 'number' && !(desc.constantDomain)) {
-          col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>(d3.values(scores)))));
+    Promise.resolve(score.factory(score.desc)) // open modal dialog
+      .then((scoreImpl) => { // modal dialog is closed and score created
+        const desc = scoreImpl.createDesc();
+        desc._score = score;
+        desc.accessor = this.scoreAccessor;
+        this.lineup.data.pushDesc(desc);
+        const col = this.lineup.data.push(ranking, desc);
+
+        // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
+        const order = that.lineup.data.getLastRanking().getOrder().slice(0).reverse();
+        const sinus = Array.apply(null, Array(20)) // create 20 fields
+          .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
+          .map(v => Math.sin(v*Math.PI)); // convert to sinus
+
+        // set column mapping to sinus domain = [-1, 1]
+        col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+
+        var timerId = 0;
+        var numAnimationCycle = 0;
+
+        const animateBars = function() {
+          const scores = {}; // must be an object!
+          order.forEach((id, index) => {
+            scores[id] = sinus[(index+numAnimationCycle) % sinus.length];
+          });
+          desc.scores = scores;
+          that.lineup.update();
+
+          // on next animation jump by 5 items
+          numAnimationCycle += 5;
+
+          // replay animation
+          clearTimeout(timerId);
+          timerId = window.setTimeout(function() { animateBars(); }, 1000);
+        };
+
+        if(desc.type === 'number') {
+          animateBars(); // start animation
         }
-        this.lineup.update();
+
+        return scoreImpl.compute([], this.idType).then((scores) => {
+          clearTimeout(timerId); // stop animation
+          desc.scores = scores;
+          if (desc.type === 'number' && !(desc.constantDomain)) {
+            desc.domain = d3.extent(<number[]>(d3.values(scores)));
+            col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
+          }
+          this.lineup.update();
+        });
       });
-    });
   }
 
   saveRanking(order:number[]) {

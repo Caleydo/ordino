@@ -175,39 +175,6 @@ export abstract class AView extends EventHandler implements IView {
     // hook
   }
 
-  protected createParameterSelectionUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>, id:string, label:string, elementName:string, allElements:any, allNames:string[], selectedIndex = 0, customOnChange?) {
-    console.error('createParameterSelectionUI is deprecated, use the FormBuilder instead!');
-    /*const $group = $parent.append('div').classed('form-group', true);
-
-    $group.append('label')
-      .attr('for', elementName+'_' + id)
-      .text(label);
-
-    const $selectType = $group.append('select')
-      .classed('form-control', true)
-      .attr('id', elementName+'_' + id)
-      .attr('required', 'required')
-      .on('change', function () {
-        if (customOnChange) {
-          customOnChange();
-        }
-        onChange(elementName, allElements[this.selectedIndex]);
-        // store new values also to session for other views
-        //session.store(elementName, allElements[this.selectedIndex]);
-      });
-
-    // create options
-    const $options = $selectType.selectAll('option').data(allNames);
-    $options.enter().append('option');
-    $options.text((d)=>d).attr('value', (d)=>d);
-    $options.exit().remove();
-
-    // select first element by default
-    $selectType.property('selectedIndex', selectedIndex);
-
-    return $selectType;*/
-  }
-
   getParameter(name: string): any {
     return null;
   }

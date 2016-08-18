@@ -629,6 +629,10 @@ export class ViewWrapper extends EventHandler {
     // show chooser if selection available
     this.$chooser.classed('hidden', range.isNone);
 
+    if(range.isNone) {
+      this.$chooser.selectAll('button').classed('active', false);
+    }
+
     findViews(idtype, range).then((views) => {
       const data = [];
       data[0] = views.filter((d:any) => d.v.category === undefined || d.v.category !== 'static');

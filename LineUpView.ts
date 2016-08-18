@@ -13,7 +13,7 @@ import plugins = require('../caleydo_core/plugin');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import cmds = require('./LineUpCommands');
 import {saveNamedSet} from './storage';
-import {showErrorModalDialog} from "./Dialogs";
+import {showErrorModalDialog} from './Dialogs';
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {

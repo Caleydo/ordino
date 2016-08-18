@@ -24,8 +24,15 @@ import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 export function showErrorModalDialog(xhr:any) {
   return new Promise((resolve) => {
     const dialog = dialogs.generateDialog(`Error ${xhr.status} (${xhr.statusText})`, 'Dismiss');
+    const $body = d3.select(dialog.body);
 
-    d3.select(dialog.body).html(xhr.response);
+    switch(xhr.status) {
+      //case 404:
+      //   break;
+      default:
+        $body.html(`${xhr.response}<hr>
+        The requested URL was:<br><a href="${xhr.responseURL}" target="_blank">${xhr.responseURL}</a>`);
+    }
 
     dialog.onSubmit(() => {
       dialog.hide();

@@ -7,6 +7,7 @@ import idtypes = require('../caleydo_core/idtype');
 import {Targid, TargidConstants} from '../targid2/Targid';
 import {listNamedSets, INamedSet} from '../targid2/storage';
 import {IPluginDesc, list as listPlugins} from '../caleydo_core/plugin';
+import {showErrorModalDialog} from './Dialogs';
 
 
 export class StartMenu {
@@ -201,7 +202,8 @@ export class StartMenu {
               if(section.id === 'targidStartEntryPoint') {
                 that.entryPointLists.push(<IEntryPointList>entryPoint);
               }
-            });
+            })
+            .catch(showErrorModalDialog);
         });
     });
   }
@@ -308,17 +310,27 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
 
   protected build():Promise<INamedSet[]> {
     // load named sets (stored LineUp sessions)
-    return listNamedSets(this.idType).then((namedSets: INamedSet[]) => {
-      this.$node.html(''); // remove loading element or previous data
+    const promise = listNamedSets(this.idType)
+      // on success
+      .then((namedSets: INamedSet[]) => {
+        this.$node.html(''); // remove loading element or previous data
 
-      // convert to data format and append to species data
-      this.data.push.apply(this.data, namedSets.map((d) => this.convertNamedSet(d)));
+        // convert to data format and append to species data
+        this.data.push.apply(this.data, namedSets.map((d) => this.convertNamedSet(d)));
 
-      this.$node.append('ul');
-      this.updateList(this.data);
+        this.$node.append('ul');
+        this.updateList(this.data);
 
-      return namedSets;
-    });
+        return namedSets;
+      });
+
+    // on error
+    promise.catch(showErrorModalDialog)
+      .then((error) => {
+        console.error(error);
+      });
+
+    return promise;
   }
 
   /**

@@ -13,6 +13,7 @@ import plugins = require('../caleydo_core/plugin');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import cmds = require('./LineUpCommands');
 import {saveNamedSet} from './storage';
+import {showErrorModalDialog} from "./Dialogs";
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {
@@ -429,15 +430,20 @@ export class ALineUpView extends AView {
           animateBars(); // start animation
         }
 
-        return scoreImpl.compute([], this.idType).then((scores) => {
-          clearTimeout(timerId); // stop animation
-          desc.scores = scores;
-          if (desc.type === 'number' && !(desc.constantDomain)) {
-            desc.domain = d3.extent(<number[]>(d3.values(scores)));
-            col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
-          }
-          this.lineup.update();
-        });
+        return scoreImpl.compute([], this.idType)
+          .then((scores) => {
+            clearTimeout(timerId); // stop animation
+            desc.scores = scores;
+            if (desc.type === 'number' && !(desc.constantDomain)) {
+              desc.domain = d3.extent(<number[]>(d3.values(scores)));
+              col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
+            }
+            this.lineup.update();
+          })
+          .catch(showErrorModalDialog)
+          .then((xhr) => {
+            ranking.remove(col);
+          });
       });
   }
 

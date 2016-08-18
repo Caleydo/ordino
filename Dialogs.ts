@@ -22,7 +22,7 @@ import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
  * @returns {Promise<any>|Promise}
  */
 export function showErrorModalDialog(xhr:any) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const dialog = dialogs.generateDialog(`Error ${xhr.status} (${xhr.statusText})`, 'Dismiss');
     const $body = d3.select(dialog.body);
 
@@ -40,7 +40,7 @@ export function showErrorModalDialog(xhr:any) {
     });
 
     dialog.onHide(() => {
-      resolve(xhr);
+      reject(xhr);
       dialog.destroy();
     });
 

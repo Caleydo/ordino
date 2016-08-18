@@ -441,7 +441,7 @@ export class ALineUpView extends AView {
             this.lineup.update();
           })
           .catch(showErrorModalDialog)
-          .then((xhr) => {
+          .catch((xhr) => {
             ranking.remove(col);
           });
       });

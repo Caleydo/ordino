@@ -326,7 +326,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
 
     // on error
     promise.catch(showErrorModalDialog)
-      .then((error) => {
+      .catch((error) => {
         console.error(error);
       });
 

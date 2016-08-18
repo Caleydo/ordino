@@ -137,11 +137,11 @@ export abstract class AView extends EventHandler implements IView {
   constructor(public context:IViewContext, parent:Element, options?) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
-    this.$node.append('div').classed('busy', true);
+    this.$node.append('div').classed('busy', true).classed('hidden', true);
   }
 
   protected setBusy(busy: boolean) {
-    this.$node.select('div.busy').style('display',busy ? 'block': null);
+    this.$node.select('div.busy').classed('hidden', !busy);
   }
 
   init() {
@@ -240,6 +240,7 @@ export abstract class ASmallMultipleView extends AView {
   }
 
   init() {
+    super.init();
     this.$node.classed('multiple', true);
   }
 }

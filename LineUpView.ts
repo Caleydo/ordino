@@ -138,6 +138,7 @@ export class ALineUpView extends AView {
   private idType:idtypes.IDType;
   private selectionHelper = {
     id2index: d3.map<number>(),
+    index2id: d3.map<number>(),
     rows: [],
     idAccessor: (x) => x
   };
@@ -309,6 +310,7 @@ export class ALineUpView extends AView {
     //create lookup cache
     rows.forEach((row, i) => {
       this.selectionHelper.id2index.set(String(idAccessor(row)), i);
+      this.selectionHelper.index2id.set(String(i), idAccessor(row));
     });
 
     this.updateLineUpStats();
@@ -372,10 +374,12 @@ export class ALineUpView extends AView {
 
   private updateSelection(rows:any[]) {
     this.selectionHelper.id2index = d3.map<number>();
+    this.selectionHelper.index2id = d3.map<number>();
     this.selectionHelper.rows = rows;
     //create lookup cache
     rows.forEach((row, i) => {
       this.selectionHelper.id2index.set(String(this.selectionHelper.idAccessor(row)), i);
+      this.selectionHelper.index2id.set(String(i), this.selectionHelper.idAccessor(row));
     });
   }
 
@@ -392,7 +396,7 @@ export class ALineUpView extends AView {
         const col = this.lineup.data.push(ranking, desc);
 
         // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
-        const order = that.lineup.data.getLastRanking().getOrder().slice(0).reverse();
+        const order = ranking.getOrder().slice(0).reverse();
         const sinus = Array.apply(null, Array(20)) // create 20 fields
           .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
           .map(v => Math.sin(v*Math.PI)); // convert to sinus
@@ -402,11 +406,13 @@ export class ALineUpView extends AView {
 
         var timerId = 0;
         var numAnimationCycle = 0;
+        var rowId = 0;
 
         const animateBars = function() {
           const scores = {}; // must be an object!
-          order.forEach((id, index) => {
-            scores[id] = sinus[(index+numAnimationCycle) % sinus.length];
+          order.forEach((rowIndex, index) => {
+            rowId = that.selectionHelper.index2id.get(rowIndex);
+            scores[rowId] = sinus[(index+numAnimationCycle) % sinus.length];
           });
           desc.scores = scores;
           that.lineup.update();

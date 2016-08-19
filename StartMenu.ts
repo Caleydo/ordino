@@ -378,7 +378,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
           });
 
           // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-          this.options.targid.graphManager.newGraph();
+          this.options.targid.graphManager.newRemoteGraph();
         } else {
           console.error('no targid object given to push new view');
         }

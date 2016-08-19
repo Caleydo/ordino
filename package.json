@@ -30,6 +30,15 @@
           "selection": "none"
         },
         {
+          "id": "login_first",
+          "name": "Login First",
+          "type": "targidView",
+          "file": "LoginFirstView",
+          "factory": "create",
+          "idtype": "none",
+          "selection": "none"
+        },
+        {
           "id": "welcome",
           "name": "Welcome",
           "type": "targidView",

@@ -8,7 +8,8 @@ import plugins = require('../caleydo_core/plugin');
 import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
-import session = require('TargidSession');
+import targidSession = require('TargidSession');
+import caleydoSession = require('../caleydo_core/session');
 import d3 = require('d3');
 import {
   ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
@@ -301,12 +302,60 @@ export class Targid {
     // add TargId app as (first) object to provenance graph
     this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
 
+    // event is triggered in caleydo_clue/template.ts -> createLogin()
+    events.on('USER_LOGGED_IN', () => {
+      this.checkForLoggedIn(parent);
+    });
+
+    // event is triggered in caleydo_clue/template.ts -> createLogin()
+    events.on('USER_LOGGED_OUT', () => {
+      this.checkForLoggedIn(parent);
+    });
+
+    // check once initially
+    this.checkForLoggedIn(parent);
+  }
+
+  /**
+   * Checks whether a user is logged in or not and shows either the login view or the application
+   * @param parent
+   */
+  private checkForLoggedIn(parent) {
+    // user is already logged in --> build targid
+    if(caleydoSession.retrieve('logged_in', false) === true) {
+      this.buildTargid(parent);
+      return;
+    }
+
+    this.buildLogin(parent);
+  }
+
+  /**
+   * Builds the login first view and opens the login modal dialog
+   * @param parent
+   */
+  private buildLogin(parent) {
+    // otherwise show login
+    plugins.get(TargidConstants.VIEW, 'login_first').load().then((p) => {
+      p.factory(parent, {});
+    });
+
+    const $loginDialog = (<any>$('#loginDialog'));
+    $loginDialog.find('.modal-header .close').addClass('hidden'); // disable closing the dialog
+    $loginDialog.modal('show');
+  }
+
+  /**
+   * Builds the DOM nodes for the Targid application
+   * @param parent
+   */
+  private buildTargid(parent) {
     this.$startMenu = d3.select(parent).append('div').classed('startMenu', true);
     this.startMenu = plugins.get(TargidConstants.VIEW, 'startMenu').load().then((p) => {
       return p.factory(this.$startMenu.node(), { targid: this });
     });
 
-    if(graph.isEmpty && session.has(TargidConstants.NEW_ENTRY_POINT) === false) {
+    if(this.graph.isEmpty && targidSession.has(TargidConstants.NEW_ENTRY_POINT) === false) {
       this.openStartMenu();
     }
 
@@ -336,17 +385,19 @@ export class Targid {
    * Checks if a new entry point was selected (and stored in the session) and if so, creates a new view.
    */
   private checkForNewEntryPoint() {
-    if(session.has(TargidConstants.NEW_ENTRY_POINT)) {
-      const entryPoint:any = session.retrieve(TargidConstants.NEW_ENTRY_POINT);
+    if(targidSession.has(TargidConstants.NEW_ENTRY_POINT)) {
+      const entryPoint:any = targidSession.retrieve(TargidConstants.NEW_ENTRY_POINT);
       this.push(entryPoint.view, null, null, entryPoint.options);
-      session.remove(TargidConstants.NEW_ENTRY_POINT);
+      targidSession.remove(TargidConstants.NEW_ENTRY_POINT);
     }
   }
 
   openStartMenu() {
-    this.startMenu.then((startMenu) => {
-      startMenu.open();
-    });
+    if(this.startMenu) {
+      this.startMenu.then((startMenu) => {
+        startMenu.open();
+      });
+    }
   }
 
   get node() {

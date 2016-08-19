@@ -1,19 +1,19 @@
 /**
- * Created by Holger Stitz on 25.05.2016.
+ * Created by Holger Stitz on 19.08.2016
  */
 
 /// <amd-dependency path='css!./style' />
 
 import {IView} from './View';
 
-class WelcomeView {
+class LoginFirstView {
 
   protected $node:d3.Selection<IView>;
 
   private template = `
-  <div class="welcomeView">
-    <img src="/targid2/images/welcome-view-arrow.svg">
-    <h1>Start here</h1>
+  <div class="loginFirstView">
+    <!--<img src="/targid2/images/welcome-view-arrow.svg">
+    <h1>Login first</h1>-->
   </div>`;
 
 
@@ -29,5 +29,5 @@ class WelcomeView {
 
 
 export function create(parent:Element, options?) {
-  return new WelcomeView(parent, options);
+  return new LoginFirstView(parent, options);
 }

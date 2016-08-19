@@ -32,7 +32,7 @@ const elems = template.create(document.body, {
     targidInstance.openStartMenu();
     return false;
   }),
-  application: '/targid2', // URL
+  application: 'TargID 2',
   id: 'targid2',
   recordSelectionTypes: null, // no automatic selection recording
   provVisCollapsed: true,

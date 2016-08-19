@@ -64,6 +64,7 @@ class StoredLineUpStartList implements IStartMenuSectionEntry {
   }
 
   private build() {
+    const that = this;
     const $parent = d3.select(this.parent);
 
     $parent.html(''); // remove loading element
@@ -97,18 +98,18 @@ class StoredLineUpStartList implements IStartMenuSectionEntry {
             (<Event>d3.event).preventDefault();
 
             // if targid object is available
-            if(this.targid) {
+            if(that.targid) {
               // create options for new view
               let o = { dataId: d.desc.id };
 
               // store state to session before creating a new graph
               targidSession.store(TargidConstants.NEW_ENTRY_POINT, {
-                view: (<any>this.desc).viewId,
+                view: (<any>that.desc).viewId,
                 options: o
               });
 
               // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-              this.targid.graphManager.newGraph();
+              that.targid.graphManager.newGraph();
             } else {
               console.error('no targid object given to push new view');
             }

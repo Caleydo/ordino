@@ -9,7 +9,9 @@
   },
   "peerDependencies": {
     "caleydo_clue": "*",
-    "caleydo_vis_lineup": "*"
+    "caleydo_vis_lineup": "*",
+    "caleydo_data_mongo": "*",
+    "caleydo_data_redis": "*"
   },
   "caleydo": {
     "plugins": {
@@ -142,7 +144,9 @@
         "app": "targid2",
         "plugins": [
           "targid2",
-          "caleydo_server"
+          "caleydo_server",
+          "caleydo_data_mongo",
+          "caleydo_data_redis"
         ]
       }
     ]

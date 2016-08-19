@@ -134,6 +134,11 @@ export interface IFormElementDesc {
   label: string;
 
   /**
+   * Show or hide form element
+   */
+  visible?: boolean;
+
+  /**
    * Attributes that are applied to the DOM element
    */
   attributes?: {
@@ -330,6 +335,10 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * Bind the change listener and propagate the selection by firing a change event
    */
   private build() {
+    if(this.desc.visible === false) {
+      this.$node.classed('hidden', true);
+    }
+
     this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
 
     this.$select = this.$node.append('select');
@@ -495,6 +504,10 @@ class FormInputText extends AFormElement implements IFormInputTextElement {
    * Bind the change listener and propagate the selection by firing a change event
    */
   private build() {
+    if(this.desc.visible === false) {
+      this.$node.classed('hidden', true);
+    }
+
     this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
 
     this.$input = this.$node.append('input').attr('type', 'text');

@@ -383,6 +383,12 @@ class FormSelect extends AFormElement implements IFormSelectElement {
     var defaultSelectedIndex = 0;
     if(this.desc.useSession) {
       defaultSelectedIndex = session.retrieve(this.id + '_selectedIndex', defaultSelectedIndex);
+
+      // old selected index is out of bounce for current number of options -> set to 0
+      if(optionsData.length <= defaultSelectedIndex) {
+        defaultSelectedIndex = 0;
+      }
+
       $select.on('change.storeInSession', () => {
         session.store(this.id + '_selectedIndex', $select.node().selectedIndex);
       });

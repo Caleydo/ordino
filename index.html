@@ -9,7 +9,6 @@
     <link href="//fonts.googleapis.com/css?family=Yantramanav:500,400,300" rel="stylesheet" type="text/css">
     <link type="text/css" rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
     <link type="text/css" rel="stylesheet" href="style.css">
-    <script src="/caleydo_web.js"></script>
 </head>
 <body>
 
@@ -19,6 +18,17 @@
 <!-- These nodes (including siblings) are copied to the CLUE template in main.ts -->
 <div id="app" style="display: none"></div>
 <div id="extras"></div>
+
+
+<script>
+  (function() {
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    if (!isChrome) {
+      alert('This application was designed to be used in Google Chrome.\nRunning the application in other browsers might result in performance issues or other misbehavior.');
+    }
+  })();
+</script>
+<script src="/caleydo_web.js"></script>
 
 </body>
 </html>

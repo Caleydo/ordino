@@ -9,7 +9,6 @@
 
 /// <amd-dependency path="font-awesome" />
 /// <amd-dependency path="css!../caleydo_bootstrap_fontawesome/style.css" />
-/// <amd-dependency path="css!../caleydo_clue/style.css" />
 /// <amd-dependency path="css!./style.css"/>
 
 import template = require('../caleydo_clue/template');

@@ -35,7 +35,10 @@ const elems = template.create(document.body, {
   id: 'targid2',
   recordSelectionTypes: null, // no automatic selection recording
   provVisCollapsed: true,
-  thumbnails: false
+  thumbnails: false,
+  headerOptions: {
+    showReportBugLink: false
+  }
 });
 
 // copy nodes from original document to new document (template)

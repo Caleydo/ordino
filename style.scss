@@ -1,13 +1,16 @@
-// include TargID vars instead of CLUE vars
-@import "styles/vars";
+// include TargID colors instead of CLUE colors
+@import "styles/colors";
 
-// use original CLUE styles as foundation
+// first: do not import the whole CLUE style, because we want do not want to the colored CLUE header
+//@import "../caleydo_clue/style.scss";
+
+// instead: import the CLUE styles separately
 @import "../caleydo_clue/styles/base";
 @import "../caleydo_clue/styles/annotation";
 @import "../caleydo_clue/styles/provvis";
 @import "../caleydo_clue/styles/storyvis";
 
-// override CLUE specific rules
+// then: override CLUE specific rules
 @import "styles/clue_override";
 
 // extend with TargID specific rules

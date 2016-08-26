@@ -7,20 +7,6 @@
 body {
   font-family: Yantramanav, 'Helvetica Neue', Helvetica, sans-serif;
   font-weight: 400;
-
-  .navbar-nav > li > a, a.navbar-brand {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    height: auto !important;
-  }
-
-  nav.navbar {
-    margin: 0;
-    background-color: $core_colour;
-    border-radius: 0;
-    border: none;
-    border-bottom: 2px solid $core_border;
-  }
 }
 
 // overrides caleydo_clue/styles/base
@@ -56,8 +42,8 @@ aside {
 label {
 
   &.clue-E, &.clue-A, &.clue-P {
-    padding: 7px 10px;
-    border-radius: 0px !important;
+    padding: 5px 10px;
+    border-radius: 0 !important;
     border: none;
     border-left: 1px solid $header-menu-bg-color;
     border-right: 1px solid $header-menu-bg-color;

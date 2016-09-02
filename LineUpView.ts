@@ -287,6 +287,7 @@ export class ALineUpView extends AView {
     //useNamedFilter(this.options, this.lineup);
     this.updateRef(this.lineup.data);
     cmds.clueify(this.context.ref, this.context.graph);
+    this.updateLineUpStats();
   }
 
   protected withoutTracking(f: (lineup: any)=>void) {
@@ -531,10 +532,12 @@ export class ALineUpView extends AView {
      */
     const showStats = (total, selected = 0, shown = 0) => {
       var str = 'Showing ';
-      if(shown > 0 && total !== shown) {
-        str += ` ${shown} of `;
+
+      str += `${shown} `;
+      if (total !== 0) {
+        str += `of ${total} `;
       }
-      str += `${total} ${this.getItemName(total)}`;
+      str += this.getItemName(total);
       if(selected > 0) {
         str += `; ${selected} selected`;
       }

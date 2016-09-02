@@ -384,66 +384,76 @@ export class ALineUpView extends AView {
     });
   }
 
-  pushScore(score:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+  pushScore(scorePlugin:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+    //TODO clueify
+    Promise.resolve(scorePlugin.factory(scorePlugin.desc)) // open modal dialog
+      .then((scoreImpl) => { // modal dialog is closed and score created
+        this.startScoreComputation(scoreImpl, scorePlugin, ranking);
+      });
+  }
+
+  /**
+   *
+   * @param scoreImpl
+   * @param scorePlugin
+   * @param ranking
+   */
+  protected startScoreComputation(scoreImpl:IScore<number>, scorePlugin:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
     const that = this;
 
-    //TODO clueify
-    Promise.resolve(score.factory(score.desc)) // open modal dialog
-      .then((scoreImpl) => { // modal dialog is closed and score created
-        const desc = scoreImpl.createDesc();
-        desc._score = score;
-        desc.accessor = this.scoreAccessor;
-        this.lineup.data.pushDesc(desc);
-        const col = this.lineup.data.push(ranking, desc);
+    const desc = scoreImpl.createDesc();
+    desc._score = scorePlugin;
+    desc.accessor = this.scoreAccessor;
+    this.lineup.data.pushDesc(desc);
+    const col = this.lineup.data.push(ranking, desc);
 
-        // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
-        const order = ranking.getOrder().slice(0).reverse();
-        const sinus = Array.apply(null, Array(20)) // create 20 fields
-          .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
-          .map(v => Math.sin(v*Math.PI)); // convert to sinus
+    // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
+    const order = ranking.getOrder().slice(0).reverse();
+    const sinus = Array.apply(null, Array(20)) // create 20 fields
+      .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
+      .map(v => Math.sin(v*Math.PI)); // convert to sinus
 
-        // set column mapping to sinus domain = [-1, 1]
-        col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+    // set column mapping to sinus domain = [-1, 1]
+    col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
 
-        var timerId = 0;
-        var numAnimationCycle = 0;
-        var rowId = 0;
+    var timerId = 0;
+    var numAnimationCycle = 0;
+    var rowId = 0;
 
-        const animateBars = function() {
-          const scores = {}; // must be an object!
-          order.forEach((rowIndex, index) => {
-            rowId = that.selectionHelper.index2id.get(rowIndex);
-            scores[rowId] = sinus[(index+numAnimationCycle) % sinus.length];
-          });
-          desc.scores = scores;
-          that.lineup.update();
+    const animateBars = function() {
+      const scores = {}; // must be an object!
+      order.forEach((rowIndex, index) => {
+        rowId = that.selectionHelper.index2id.get(rowIndex);
+        scores[rowId] = sinus[(index+numAnimationCycle) % sinus.length];
+      });
+      desc.scores = scores;
+      that.lineup.update();
 
-          // on next animation jump by 5 items
-          numAnimationCycle += 5;
+      // on next animation jump by 5 items
+      numAnimationCycle += 5;
 
-          // replay animation
-          clearTimeout(timerId);
-          timerId = window.setTimeout(function() { animateBars(); }, 1000);
-        };
+      // replay animation
+      clearTimeout(timerId);
+      timerId = window.setTimeout(function() { animateBars(); }, 1000);
+    };
 
-        if(desc.type === 'number') {
-          animateBars(); // start animation
+    if(desc.type === 'number') {
+      animateBars(); // start animation
+    }
+
+    scoreImpl.compute([], this.idType)
+      .then((scores) => {
+        clearTimeout(timerId); // stop animation
+        desc.scores = scores;
+        if (desc.type === 'number' && !(desc.constantDomain)) {
+          desc.domain = d3.extent(<number[]>(d3.values(scores)));
+          col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
         }
-
-        return scoreImpl.compute([], this.idType)
-          .then((scores) => {
-            clearTimeout(timerId); // stop animation
-            desc.scores = scores;
-            if (desc.type === 'number' && !(desc.constantDomain)) {
-              desc.domain = d3.extent(<number[]>(d3.values(scores)));
-              col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
-            }
-            this.lineup.update();
-          })
-          .catch(showErrorModalDialog)
-          .catch((xhr) => {
-            ranking.remove(col);
-          });
+        this.lineup.update();
+      })
+      .catch(showErrorModalDialog)
+      .catch((xhr) => {
+        ranking.remove(col);
       });
   }
 

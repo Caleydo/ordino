@@ -289,7 +289,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
 
   protected $node;
 
-  protected data:any[] = [];
+  protected data:INamedSet[] = [];
 
   constructor(protected parent: HTMLElement, public desc: IPluginDesc, protected options:any) {
     this.$node = d3.select(parent);
@@ -304,7 +304,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
    * @param namedSet
    */
   public addNamedSet(namedSet:INamedSet) {
-    this.data.push(this.convertNamedSet(namedSet));
+    this.data.push(namedSet);
     this.updateList(this.data);
   }
 
@@ -316,7 +316,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
         this.$node.html(''); // remove loading element or previous data
 
         // convert to data format and append to species data
-        this.data.push.apply(this.data, namedSets.map((d) => this.convertNamedSet(d)));
+        this.data.push.apply(this.data, namedSets);
 
         this.$node.append('ul');
         this.updateList(this.data);
@@ -334,20 +334,11 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
   }
 
   /**
-   * Convert a given INamedSet into the d3 updateList function
-   * @param d
-   * @returns {{type: string, v: string, ids: string}}
-   */
-  private convertNamedSet(d:INamedSet) {
-    return { type: 'set', v: d.name, ids: d.ids};
-  }
-
-  /**
    * Update the HTML list for this entry point.
    * Also binds the click listener that saves the selection to the session, before reloading the page
    * @param data
    */
-  private updateList(data) {
+  private updateList(data:INamedSet[]) {
     // append the list items
     const $ul = this.$node.select('ul');
     const $options = $ul.selectAll('li').data(data);
@@ -356,25 +347,19 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
       //.classed('selected', (d,i) => (i === 0))
       .append('a')
       .attr('href', '#')
-      .text((d:any) => d.v.charAt(0).toUpperCase() + d.v.slice(1))
-      .on('click', (d:any) => {
+      .text((d:any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
+      .on('click', (namedSet:INamedSet) => {
         // prevent changing the hash (href)
         (<Event>d3.event).preventDefault();
 
         // if targid object is available
         if(this.options.targid) {
-          // create options for new view
-          let o = {};
-          if(d.type === 'species') {
-            o = { species: d.v};
-          } else if(d.type === 'set') {
-            o = { filterName: d.name, filter: d.ids};
-          }
-
           // store state to session before creating a new graph
           session.store(TargidConstants.NEW_ENTRY_POINT, {
             view: (<any>this.desc).viewId,
-            options: o
+            options: {
+              namedSet: namedSet
+            }
           });
 
           // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())

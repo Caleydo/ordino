@@ -26,7 +26,9 @@ def get_namedsets():
     id_type = request.values.get('idType','')
     ids = ranges.parse(request.values.get('ids', ''))[0].tolist()
     description = request.values.get('description', '')
-    entry = dict(name=name,creator=creator,ids=ids,idType=id_type,description=description)
+    subTypeKey = request.values.get('subTypeKey', '')
+    subTypeValue = request.values.get('subTypeValue', '')
+    entry = dict(name=name,creator=creator,ids=ids,idType=id_type,description=description,subTypeKey=subTypeKey,subTypeValue=subTypeValue)
     db.namedsets.insert_one(entry)
     return jsonify(entry)
 

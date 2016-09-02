@@ -103,14 +103,12 @@ export function deriveCol(col:tables.IVector) {
   return r;
 }
 
-function handleNamedFilter(options:any, columns, rows) {
-  const filter = (options && options.filter ? ranges.parse(options.filter) : ranges.none()).dim(0);
-  if (!filter.isNone && !filter.isAll) {
-    columns.splice(1, 0, booleanCol('_checked', options && options.filterName ? options.filterName : 'F'));
-    rows.forEach((row) => row._checked = filter.contains(row._id));
-  }
-}
-function useNamedFilter(options, lineup) {
+/**
+ * Filter an already initialized LineUp
+ * @see Usage in ALineUpView.initializedLineUp()
+ * @deprecated use ALineUpView.filterRowsByIds() instead
+ */
+/*function useNamedFilter(options, lineup) {
   if (options && options.filter) {
     //activate the filter to be just the checked ones
     const f = lineup.data.find((col) => col.desc.type === 'boolean' && col.desc.column === '_checked');
@@ -118,7 +116,7 @@ function useNamedFilter(options, lineup) {
       f.setFilter(true);
     }
   }
-}
+}*/
 
 export class ALineUpView extends AView {
   private config = {
@@ -169,6 +167,20 @@ export class ALineUpView extends AView {
       .text('No data found for selection and parameter.');
   }
 
+  /**
+   * Filter a given list of rows by a given list of ids
+   * At the end the rows match the filteredIds list
+   * @param rows
+   * @param filteredIds
+   * @returns {any}
+   */
+  protected filterRowsByIds(rows, filteredIds:any = []) {
+    const filter = (filteredIds ? ranges.parse(filteredIds) : ranges.none()).dim(0);
+    if (!filter.isNone && !filter.isAll) {
+      rows = rows.filter((row) => filter.contains(row._id));
+    }
+    return rows;
+  }
 
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
     this.$params = $parent.append('div').classed('form-group', true).append('p');
@@ -223,13 +235,12 @@ export class ALineUpView extends AView {
 
   }
 
-  protected buildLineUpFromTable(table:tables.ITable) {
+  protected buildLineUpFromTable(table:tables.ITable, filteredIds = []) {
     const columns = table.cols().map(deriveCol);
     lineup.deriveColors(columns);
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args:any) => {
-      const rows:any[] = args[0];
+      var rows:any[] = args[0];
       const rowIds:ranges.Range = args[1];
-      handleNamedFilter(this.options, columns, rows);
 
       const storage = lineup.createLocalStorage(rows, columns);
       this.idType = table.idtypes[0];
@@ -259,7 +270,6 @@ export class ALineUpView extends AView {
   }
 
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
-    handleNamedFilter(this.options, columns, rows);
     lineup.deriveColors(columns);
     const storage = lineup.createLocalStorage(rows, columns);
     this.idType = idtype;
@@ -274,7 +284,7 @@ export class ALineUpView extends AView {
   }
 
   protected initializedLineUp() {
-    useNamedFilter(this.options, this.lineup);
+    //useNamedFilter(this.options, this.lineup);
     this.updateRef(this.lineup.data);
     cmds.clueify(this.context.ref, this.context.graph);
   }
@@ -479,7 +489,7 @@ export class ALineUpView extends AView {
     form.onsubmit = () => {
       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
-      saveNamedSet(name, this.idType, ids, description).then((d) => {
+      saveNamedSet(name, this.idType, ids, this.getSubType(), description).then((d) => {
         console.log('saved', d);
         this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
       });
@@ -494,6 +504,17 @@ export class ALineUpView extends AView {
     });
 
     dialog.show();
+  }
+
+  /**
+   * Get sub type for named sets
+   * @returns {{key: string, value: string}}
+   */
+  protected getSubType() {
+    return {
+      key: '',
+      value: ''
+    };
   }
 
   /**

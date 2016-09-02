@@ -510,8 +510,17 @@ export class ALineUpView extends AView {
       return str;
     };
 
-    const selected = this.lineup.data.getSelection().length;
-    const total = this.lineup.data.data.length;
+    var selected = 0;
+    var total = 0;
+
+    // this.lineup not available
+    if(!this.lineup) {
+      this.$params.html(showStats(total, selected));
+      return;
+    }
+
+    selected = this.lineup.data.getSelection().length;
+    total = this.lineup.data.data.length;
 
     const r = this.lineup.data.getRankings()[0];
     if(r) {

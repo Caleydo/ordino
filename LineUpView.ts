@@ -139,7 +139,9 @@ export class ALineUpView extends AView {
     id2index: d3.map<number>(),
     index2id: d3.map<number>(),
     rows: [],
-    idAccessor: (x) => x
+    idAccessor: (x) => x,
+    id2UnderscoreId: d3.map<number>(), // key: id (e.g., Ensembl), value: _id (Caleydo Mapping Id from Redis DB)
+    underscoreIdAccessor: (id:string) => this.selectionHelper.id2UnderscoreId.get(id) // returns the _id for a `id`
   };
   private scoreAccessor = (row:any, id:string, desc:any) => {
     const row_id = this.selectionHelper.idAccessor(row);
@@ -279,6 +281,10 @@ export class ALineUpView extends AView {
     if (idAccessor) {
       this.initSelection(rows, idAccessor, idtype);
     }
+
+    rows.forEach((r) => {
+      this.selectionHelper.id2UnderscoreId.set(r.id, r._id);
+    });
 
     return this.lineup;
   }
@@ -452,7 +458,7 @@ export class ALineUpView extends AView {
       animateBars(); // start animation
     }
 
-    scoreImpl.compute([], this.idType)
+    scoreImpl.compute([], this.idType, this.selectionHelper.underscoreIdAccessor)
       .then((scores) => {
         clearTimeout(timerId); // stop animation
         desc.scores = scores;
@@ -621,7 +627,13 @@ export class ALineUpView extends AView {
 
 export interface IScore<T> {
   createDesc():any;
-  compute(ids:ranges.Range|number[], idtype:idtypes.IDType):Promise<{ [id:string]:T }>;
+  /**
+   * Start the computation of the score for the given ids
+   * @param ids
+   * @param idtype
+   * @param idMapper maps the id (e.g., Ensembl) to the Caleydo ID (stored in Redis DB)
+   */
+  compute(ids:ranges.Range|number[], idtype:idtypes.IDType, idMapper:(id:string) => number):Promise<{ [id:string]:T }>;
 }
 
 

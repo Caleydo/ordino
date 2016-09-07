@@ -342,7 +342,10 @@ export class Targid {
 
     const $loginDialog = (<any>$('#loginDialog'));
     $loginDialog.find('.modal-header .close').addClass('hidden'); // disable closing the dialog
-    $loginDialog.modal('show');
+    $loginDialog.modal('show')
+      .on('shown.bs.modal', function () {
+        (<any>$('#login_username', $loginDialog)).focus();
+      });
   }
 
   /**

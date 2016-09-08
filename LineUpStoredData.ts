@@ -33,10 +33,10 @@ class StoredLineUp extends ALineUpView {
       datas.get(this.dataId).then((d:any) => {
         return d.data().then((data) => {
           //const colId = data.columns[0].column;
-          const l = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
-          useDefaultLayout(l);
+          const lineup = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
+          useDefaultLayout(lineup);
+          lineup.update();
           this.initializedLineUp();
-          this.setBusy(false);
         });
       });
     }

@@ -276,7 +276,16 @@ export class ALineUpView extends AView {
     const storage = lineup.createLocalStorage(rows, columns);
     this.idType = idtype;
     this.lineup = lineup.create(storage, this.node, this.config);
-    this.lineup.update();
+
+    this.lineup.on('updateStart', () => {
+      this.setBusy(true);
+    });
+
+    this.lineup.on('updateFinished', () => {
+      this.setBusy(false);
+    });
+
+    //this.lineup.update();
 
     if (idAccessor) {
       this.initSelection(rows, idAccessor, idtype);
@@ -583,7 +592,8 @@ export class ALineUpView extends AView {
   }
 
   destroy() {
-    // nothing to do
+    this.lineup.off('updateStart', null);
+    this.lineup.off('updateFinished', null);
   }
 
   modeChanged(mode:EViewMode) {

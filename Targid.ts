@@ -3,7 +3,7 @@
  */
 
 import C = require('../caleydo_core/main');
-import prov = require('../caleydo_clue/prov');
+import prov = require('../caleydo_core/provenance');
 import plugins = require('../caleydo_core/plugin');
 import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
@@ -15,7 +15,7 @@ import {
   ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
   replaceViewWrapper
 } from './View';
-import {ICmdResult, IAction} from '../caleydo_clue/prov';
+import {ICmdResult, IAction} from '../caleydo_core/provenance';
 import {CLUEGraphManager} from '../caleydo_clue/template';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';

@@ -3,7 +3,7 @@
  */
 
 
-import prov = require('../caleydo_clue/prov');
+import prov = require('../caleydo_core/provenance');
 import lineupjs = require('lineupjs');
 import {ALineUpView} from './LineUpView';
 

@@ -4,7 +4,7 @@
 
 /// <amd-dependency path="scrollTo" />
 
-import prov = require('../caleydo_clue/prov');
+import prov = require('../caleydo_core/provenance');
 import ajax = require('../caleydo_core/ajax');
 import C = require('../caleydo_core/main');
 import idtypes = require('../caleydo_core/idtype');

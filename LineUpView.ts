@@ -592,8 +592,10 @@ export class ALineUpView extends AView {
   }
 
   destroy() {
-    this.lineup.on('updateStart', null);
-    this.lineup.on('updateFinished', null);
+    if(this.lineup) {
+      this.lineup.on('updateStart', null);
+      this.lineup.on('updateFinished', null);
+    }
   }
 
   modeChanged(mode:EViewMode) {

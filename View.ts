@@ -5,16 +5,14 @@
 /// <amd-dependency path="scrollTo" />
 
 import prov = require('../caleydo_core/provenance');
-import ajax = require('../caleydo_core/ajax');
-import C = require('../caleydo_core/main');
 import idtypes = require('../caleydo_core/idtype');
 import ranges = require('../caleydo_core/range');
 import d3 = require('d3');
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
-import {random_id} from '../caleydo_core/main';
 import {INamedSet} from './storage';
+import {ProxyView} from '../targid_common/ProxyView';
 
 
 export enum EViewMode {
@@ -389,7 +387,7 @@ export class ViewWrapper extends EventHandler {
    * Forward event from view to Targid instance
    * @param event
    * @param idtype
-   * @param INamedSet
+   * @param namedSet
    */
   private listenerUpdateEntryPoint = (event: any, idtype: idtypes.IDType | string, namedSet: INamedSet) => {
     this.fire(AView.EVENT_UPDATE_ENTRY_POINT, idtype, namedSet);
@@ -479,7 +477,7 @@ export class ViewWrapper extends EventHandler {
     const $inner = this.$node.append('div')
       .classed('inner', true);
 
-    this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options);
+    this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
     this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
     this.instance.init();
 
@@ -694,165 +692,9 @@ export function createContext(graph:prov.ProvenanceGraph, desc: IPluginDesc, ref
 }
 
 export function createViewWrapper(graph: prov.ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
-  // do not load proxy view via require (since they are available in this file), instead instantiate them immediately
-  if ((<any>plugin).proxy || (<any>plugin).site) {
-    const pluginDesc = {
-      desc: plugin,
-      factory: (context, selection, node, options) => new ProxyView(context, selection, node, plugin, options)
-    };
-    return Promise.resolve(new ViewWrapper(graph, selection, parent, pluginDesc, options));
-  }
   return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
 }
 
 export function replaceViewWrapper(existingView:ViewWrapper, selection: ISelection, plugin:IPluginDesc, options?) {
-  // do not load proxy view via require (since they are available in this file), instead instantiate them immediately
-  if ((<any>plugin).proxy || (<any>plugin).site) {
-    const pluginDesc = {
-      desc: plugin,
-      factory: (context, selection, node, options) => new ProxyView(context, selection, node, plugin, options)
-    };
-    return Promise.resolve(existingView.replaceView(selection, pluginDesc, options));
-  }
   return plugin.load().then((p) => existingView.replaceView(selection, p, options));
-}
-
-
-export class ProxyView extends AView {
-  /**
-   * event is fired when the loading of the iframe has finished
-   * @type {string}
-   * @argument selection {ISelection}
-   */
-  static EVENT_LOADING_FINISHED = 'loadingFinished';
-
-  private $params;
-  private lastSelectedID;
-  private $selectType;
-  private $formGroup;
-
-  private options = {
-    proxy: null,
-    site: null,
-    argument: 'gene',
-    idtype: null,
-    extra: {}
-  };
-
-  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
-    super(context, parent, options);
-    C.mixin(this.options, plugin, options);
-
-    this.$node.classed('proxy_view', true);
-    this.changeSelection(selection);
-  }
-
-  protected createUrl(args: any) {
-    if (this.options.proxy) {
-      return ajax.api2absURL('/targid/proxy/' + this.options.proxy, args);
-    }
-    if (this.options.site) {
-      return this.options.site.replace(/\{([^}]+)\}/gi, (match, variable) => args[variable]);
-    }
-    return null;
-  }
-
-  buildParameterUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>) {
-    const id = random_id();
-
-    this.$formGroup = $parent.append('div').classed('form-group', true);
-    this.$selectType = this.$formGroup.select('select');
-    this.$params = $parent;
-
-    const elementName = 'element';
-
-    this.$formGroup.append('label')
-     .attr('for', elementName+'_' + id)
-      .text(this.options.idtype + ' ID:');
-
-     this.$selectType = this.$formGroup.append('select')
-      .classed('form-control', true)
-      .attr('id', elementName+'_' + id)
-      .attr('required', 'required');
-  }
-
-  changeSelection(selection: ISelection) {
-    const id = selection.range.last;
-    const idtype = selection.idtype;
-
-    this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
-
-      var allNames = names[0];
-      console.log(allNames);
-      if (!allNames) {
-        this.setBusy(false);
-        this.$selectType.selectAll('option').data();
-        this.$node.html(`<p>Cannot map selected gene to ${this.options.idtype}.</p>`);
-        this.$formGroup.classed('hidden', true);
-        this.fire(ProxyView.EVENT_LOADING_FINISHED);
-        return;
-      }
-
-      this.build();
-
-      //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
-      allNames = allNames.filter(d => d.indexOf('A0') !== 0);
-
-      this.lastSelectedID = allNames[0];
-      this.loadProxyPage(selection);
-
-      if (allNames.length === 1) {
-        this.$formGroup.classed('hidden', true);
-        return;
-      }
-
-      this.$formGroup.classed('hidden', false);
-      this.$selectType.on('change', () => {
-        this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
-        this.loadProxyPage(selection);
-      });
-
-      // create options
-      const $options = this.$selectType.selectAll('option').data(allNames);
-      $options.enter().append('option');
-      $options.text((d)=>d).attr('value', (d)=>d);
-      $options.exit().remove();
-
-      // select first element by default
-      this.$selectType.property('selectedIndex', 0);
-    });
-  }
-
-  protected loadProxyPage(selection: ISelection) {
-     this.setBusy(true);
-
-      if (this.lastSelectedID != null) {
-        var args = C.mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
-        const url = this.createUrl(args);
-        //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
-        this.$node.select('iframe')
-          .attr('src', url)
-          .on('load', () => {
-            this.setBusy(false);
-            //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
-            this.fire(ProxyView.EVENT_LOADING_FINISHED);
-          });
-      } else {
-        this.setBusy(false);
-        this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
-        this.fire(ProxyView.EVENT_LOADING_FINISHED);
-      }
-  }
-
-  private build() {
-
-    //remove old mapping error notice if any exists
-    this.$node.selectAll('p').remove();
-
-    this.$node.append('iframe').attr('src', null);
-  }
-
-  modeChanged(mode:EViewMode) {
-    super.modeChanged(mode);
-  }
 }

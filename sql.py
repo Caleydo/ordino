@@ -1,14 +1,17 @@
 __author__ = 'Samuel Gratzl'
 
+from pymongo import MongoClient
 from flask import Flask, request, abort
 from caleydo_server.config import view as configview
-import caleydo_server.plugin
 import itertools
 from caleydo_server.util import jsonify
 import sqlalchemy
 
 import logging
 _log = logging.getLogger(__name__)
+
+import caleydo_server.config
+c = caleydo_server.config.view('targid2')
 
 app = Flask(__name__)
 
@@ -78,6 +81,19 @@ def get_data(database, viewName):
 def get_score_data(database, viewName):
   r, view = _get_data(database, viewName)
   #r = assign_ids(r, view['idType'])
+  return jsonify(r)
+
+@app.route('/<database>/<viewName>/namedset/<namedsetId>')
+def get_namedset_data(database, viewName, namedsetId):
+  import storage
+  namedset = storage.get_namedsetById(namedsetId)
+
+  r, view = _get_data(database, viewName)
+  r = assign_ids(r, view['idType']) # we need the assigned ids for filtering!
+
+  # filter results by ids in the named set
+  r = [x for x in r if x['_id'] in namedset['ids']]
+
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/raw')

@@ -21,6 +21,7 @@ def get_namedsets():
     q = dict(idType=request.args['idType']) if 'idType' in request.args else {}
     return jsonify(list(db.namedsets.find(q, { '_id': 0})))
   if request.method == 'POST':
+    id = _generate_id()
     name = request.values.get('name', 'NoName')
     creator = request.values.get('creator', security.current_username())
     id_type = request.values.get('idType','')
@@ -28,9 +29,26 @@ def get_namedsets():
     description = request.values.get('description', '')
     subTypeKey = request.values.get('subTypeKey', '')
     subTypeValue = request.values.get('subTypeValue', '')
-    entry = dict(name=name,creator=creator,ids=ids,idType=id_type,description=description,subTypeKey=subTypeKey,subTypeValue=subTypeValue)
+    entry = dict(id=id,name=name,creator=creator,ids=ids,idType=id_type,description=description,subTypeKey=subTypeKey,subTypeValue=subTypeValue)
     db.namedsets.insert_one(entry)
     return jsonify(entry)
+
+@app.route('/namedset/<namedsetId>', methods=['GET'])
+def get_namedset(namedsetId):
+  return jsonify(get_namedsetById(namedsetId))
+
+def get_namedsetById(namedsetId):
+  db = MongoClient(c.host, c.port)[c.database]
+  q = dict(id=namedsetId)
+  result = list(db.namedsets.find(q, {'_id': 0}))
+  if len(result) == 0:
+    return {}
+  else:
+    return result[0]
+
+def _generate_id():
+  import caleydo_server.util
+  return caleydo_server.util.fix_id(caleydo_server.util.random_id(10))
 
 def create():
   """

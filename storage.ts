@@ -9,6 +9,11 @@ import session = require('../caleydo_core/session');
 
 export interface INamedSet {
   /**
+   * Id with random characters (generated when storing it on the server)
+   */
+  id?: string;
+
+  /**
    * Filter name
    */
   name: string;

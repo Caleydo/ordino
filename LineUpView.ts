@@ -427,7 +427,15 @@ export class ALineUpView extends AView {
   protected startScoreComputation(scoreImpl:IScore<number>, scorePlugin:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
     const that = this;
 
+    const colors = d3.scale.category10().range().slice();
+    // remove colors that are already in use from the list
+    ranking.flatColumns.map((d) => {
+      colors.splice(colors.indexOf(d.color), 1);
+      return d;
+    });
+
     const desc = scoreImpl.createDesc();
+    desc.color = colors.shift(); // get and remove color from list
     desc._score = scorePlugin;
     desc.accessor = this.scoreAccessor;
     this.lineup.data.pushDesc(desc);

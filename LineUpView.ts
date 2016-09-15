@@ -429,9 +429,11 @@ export class ALineUpView extends AView {
 
     const colors = d3.scale.category10().range().slice();
     // remove colors that are already in use from the list
-    ranking.flatColumns.map((d) => {
-      colors.splice(colors.indexOf(d.color), 1);
-      return d;
+    ranking.flatColumns.forEach((d) => {
+      const i = colors.indexOf(d.color);
+      if(i > -1) {
+        colors.splice(i, 1);
+      }
     });
 
     const desc = scoreImpl.createDesc();

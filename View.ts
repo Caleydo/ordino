@@ -79,7 +79,7 @@ export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promi
     function bySelection(p: any) {
       return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
     }
-    return listPlugins(TargidConstants.VIEW).filter(byType).sort((a,b) => d3.ascending(a.name, b.name)).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
+    return listPlugins(TargidConstants.VIEW).filter(byType).sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase())).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
   });
 }
 

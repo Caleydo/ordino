@@ -92,21 +92,14 @@
       list-style: none;
 
       li {
+        display: flex;
+
         margin: 0;
         padding: 0;
 
         > a {
-          display: block;
           padding: 5px;
           text-decoration: none;
-          font-weight: 500;
-          width: 100%;
-
-          &:before {
-            margin-right: 8px;
-            content: "\f105";
-            font-family: "FontAwesome", serif;
-          }
 
           &:active,
           &:hover,
@@ -114,7 +107,43 @@
             background: $core_colour;
           }
         }
+
+        > a.goto {
+          flex-grow: 10;
+          font-weight: 500;
+
+          &:before {
+            margin-right: 8px;
+            content: "\f105";
+            font-family: "FontAwesome", serif;
+          }
+        }
+
+        > a.delete {
+          visibility: hidden;
+          opacity: 0;
+          transition: background ease .2s, color ease .2s, opacity ease .4s;
+
+          &:active,
+          &:hover,
+          &:focus {
+            background: $anchor_color;
+            color: $core_colour;
+          }
+        }
+
+        &:active,
+        &:hover,
+        &:focus {
+          > a.delete {
+            visibility: visible;
+            opacity: 1;
+          }
+        }
+
       }
+
+
     }
 
     .body.menuTable {

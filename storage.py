@@ -17,9 +17,11 @@ app = Flask(__name__)
 @app.route('/namedsets/', methods=['GET', 'POST'])
 def get_namedsets():
   db = MongoClient(c.host, c.port)[c.database]
+
   if request.method == 'GET':
     q = dict(idType=request.args['idType']) if 'idType' in request.args else {}
     return jsonify(list(db.namedsets.find(q, { '_id': 0})))
+
   if request.method == 'POST':
     id = _generate_id()
     name = request.values.get('name', 'NoName')
@@ -33,9 +35,19 @@ def get_namedsets():
     db.namedsets.insert_one(entry)
     return jsonify(entry)
 
-@app.route('/namedset/<namedsetId>', methods=['GET'])
+
+@app.route('/namedset/<namedsetId>', methods=['GET', 'DELETE'])
 def get_namedset(namedsetId):
-  return jsonify(get_namedsetById(namedsetId))
+
+  if request.method == 'GET':
+    return jsonify(get_namedsetById(namedsetId))
+
+  if request.method == 'DELETE':
+    db = MongoClient(c.host, c.port)[c.database]
+    q = dict(id=namedsetId)
+    result = db.namedsets.remove(q)
+    return jsonify(result['n']) # number of deleted documents
+
 
 def get_namedsetById(namedsetId):
   db = MongoClient(c.host, c.port)[c.database]

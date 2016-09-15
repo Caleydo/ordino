@@ -4,8 +4,9 @@
 
 import session = require('../targid2/TargidSession');
 import idtypes = require('../caleydo_core/idtype');
+import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import {Targid, TargidConstants} from '../targid2/Targid';
-import {listNamedSets, INamedSet} from '../targid2/storage';
+import {listNamedSets, INamedSet, deleteNamedSet} from '../targid2/storage';
 import {IPluginDesc, list as listPlugins} from '../caleydo_core/plugin';
 import {showErrorModalDialog} from './Dialogs';
 
@@ -308,6 +309,11 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
     this.updateList(this.data);
   }
 
+  public removeNamedSet(namedSet:INamedSet) {
+    this.data.splice(this.data.indexOf(namedSet), 1);
+    this.updateList(this.data);
+  }
+
   protected build():Promise<INamedSet[]> {
     // load named sets (stored LineUp sessions)
     const promise = listNamedSets(this.idType)
@@ -339,34 +345,72 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
    * @param data
    */
   private updateList(data:INamedSet[]) {
+    const that = this;
+
     // append the list items
     const $ul = this.$node.select('ul');
     const $options = $ul.selectAll('li').data(data);
-    $options.enter()
-      .append('li')
+    const enter = $options.enter()
+      .append('li');
       //.classed('selected', (d,i) => (i === 0))
-      .append('a')
+
+    enter.append('a')
+      .classed('goto', true)
+      .attr('href', '#');
+
+    enter.append('a')
+      .classed('delete', true)
       .attr('href', '#')
-      .text((d:any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
-      .on('click', (namedSet:INamedSet) => {
-        // prevent changing the hash (href)
-        (<Event>d3.event).preventDefault();
+      .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
+      .attr('title', 'Delete');
 
-        // if targid object is available
-        if(this.options.targid) {
-          // store state to session before creating a new graph
-          session.store(TargidConstants.NEW_ENTRY_POINT, {
-            view: (<any>this.desc).viewId,
-            options: {
-              namedSet: namedSet
-            }
-          });
+    $options.each(function(d) {
+      const $this = d3.select(this);
+      $this.select('a.goto')
+        .text((d:any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
+        .on('click', (namedSet:INamedSet) => {
+          // prevent changing the hash (href)
+          (<Event>d3.event).preventDefault();
 
-          // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-          this.options.targid.graphManager.newRemoteGraph();
-        } else {
-          console.error('no targid object given to push new view');
-        }
-      });
+          // if targid object is available
+          if(that.options.targid) {
+            // store state to session before creating a new graph
+            session.store(TargidConstants.NEW_ENTRY_POINT, {
+              view: (<any>that.desc).viewId,
+              options: {
+                namedSet: namedSet
+              }
+            });
+
+            // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+            that.options.targid.graphManager.newRemoteGraph();
+          } else {
+            console.error('no targid object given to push new view');
+          }
+        });
+
+      $this.select('a.delete')
+        .classed('hidden', (d) => d.id === undefined)
+        .on('click', (namedSet:INamedSet) => {
+          // prevent changing the hash (href)
+          (<Event>d3.event).preventDefault();
+
+          dialogs.areyousure(
+            `The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
+            {title: `Delete named set`}
+          )
+            .then((deleteIt) => {
+              if (deleteIt) {
+                deleteNamedSet(namedSet.id)
+                  .then(() => {
+                    that.removeNamedSet(namedSet);
+                  });
+              }
+            });
+
+        });
+    });
+
+    $options.exit().remove();
   }
 }

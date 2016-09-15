@@ -66,3 +66,7 @@ export function saveNamedSet(name: string, idType: idtypes.IDType|string, ids: r
   };
   return ajax.sendAPI('/targid/storage/namedsets/', data, 'POST');
 }
+
+export function deleteNamedSet(id:string) {
+  return ajax.sendAPI(`/targid/storage/namedset/${id}`, {}, 'DELETE');
+}

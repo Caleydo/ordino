@@ -29,8 +29,8 @@ $core_color_almost_black: black;
 $annotation_color: #009ACD;
 $annotation_color_hover: #006b90;
 
-$anchor_color: red;
-$anchor_color_hover: darkred;
+$anchor_color: #EE2329;
+$anchor_color_hover: darken($anchor_color, 20%);
 
 $select-data-color: orange;
 $hover-data-color: #ffc46b;

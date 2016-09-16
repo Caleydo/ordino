@@ -63,11 +63,11 @@ def _generate_id():
   return caleydo_server.util.fix_id(caleydo_server.util.random_id(10))
 
 
-@app.route('/delete_legacy_namedsets/', methods=['GET'])
-def delete_legacy_namedsets():
-  db = MongoClient(c.host, c.port)[c.database]
-  result = db.namedsets.remove({'id': {'$exists': False}}) # find all entries without id
-  return jsonify(result['n'])  # number of deleted documents
+#@app.route('/delete_legacy_namedsets/', methods=['GET'])
+#def delete_legacy_namedsets():
+#  db = MongoClient(c.host, c.port)[c.database]
+#  result = db.namedsets.remove({'id': {'$exists': False}}) # find all entries without id
+#  return jsonify(result['n'])  # number of deleted documents
 
 
 def create():

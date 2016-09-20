@@ -139,11 +139,29 @@
       "web": {
         "d3": "~3.5.5",
         "lineupjs": "https://github.com/Caleydo/lineup.js.git",
-        "scrollTo": "https://github.com/flesler/jquery.scrollTo.git"
+        "scrollTo": "https://github.com/flesler/jquery.scrollTo.git",
+        "select2": "~4.0.3",
+        "select2-bootstrap-theme": "0.1.0-beta.9"
       },
       "python": {
         "requests": "==2.2.1",
         "SQLAlchemy": "==1.0.12"
+      },
+      "tsd": {
+        "select2": "f4efd4"
+      }
+    },
+    "requirejs-config": {
+      "paths": {
+        "select2": "${baseUrl}/bootstrap/dist/js/select2.full.min"
+      },
+      "shim": {
+        "select2": [
+          "jquery",
+          "bootstrap",
+          "css!${baseUrl}/select2/dist/css/select2.min.css",
+          "css!${baseUrl}/select2-bootstrap-theme/dist/select2-bootstrap.min.css"
+        ]
       }
     },
     "products": [

@@ -189,16 +189,53 @@ def search(database, viewName):
 
 @app.route('/<database>/<viewName>/match')
 def match(database, viewName):
-  config, engine = _resolve(database)
-  db = engine.connect()
-  view = config.view('views.' + viewName)
-  query = '%' + request.args['query'] + '%'
-  column = _check_column(request.args['column'], view)
-  r = _run_to_index(db, _concat(view['querySearch']) % (column,), query=query)
-  return jsonify(r)
+  return search(database, viewName)
 
  # 'row_number() over(order by x) as index'
  # 'rowid'
+
+@app.route('/<database>/<viewName>/lookup')
+def lookup(database, viewName):
+  """
+  Does the same job as search, but paginates the result set
+  This function is used in conjunction with Select2 form elements
+  """
+  config, engine = _resolve(database)
+  db = engine.connect()
+  view = config.view('views.' + viewName)
+
+  if view['query'] is None or view['count'] is None:
+    r = dict(total_count=0, items=[])
+    return jsonify(r)
+
+  page = request.args.get('page', None)
+  limit = 30 #or 'all'
+  offset = 0
+  if page is not None:
+    try:
+      page = int(page)
+      if isinstance(page, int) and page > 0:
+        offset = (page-1) * limit
+    except:
+      pass
+
+  arguments = {
+    #'query': '%' + request.args['query'] + '%'
+    'query': str(request.args['query']).lower() + '%'
+  }
+
+  replacements = dict(column = request.args['column'], limit = limit, offset = offset)
+
+  replace = {}
+  if view['replacements'] is not None:
+    replace = { arg: replacements[arg] for arg in view['replacements'] }
+
+  r_items = _run(db, _concat(view['query']) % replace, **arguments)
+  r_total_count = _run(db, _concat(view['count']) % replace, **arguments)
+
+  r = dict(total_count=r_total_count[0]['total_count'], items=r_items, items_per_page=limit)
+  return jsonify(r)
+
 
 def create():
   """

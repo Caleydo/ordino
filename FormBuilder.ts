@@ -578,7 +578,7 @@ class FormSelect2 extends AFormElement {
               more: (params.page * data.items_per_page) < data.total_count
             }
           };
-        },
+        }
       },
       escapeMarkup: (markup) => markup,
       templateResult: (item:any) => item.text,

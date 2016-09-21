@@ -221,14 +221,17 @@ def lookup(database, viewName):
 
   arguments = {
     #'query': '%' + request.args['query'] + '%'
-    'query': str(request.args['query']).lower() + '%'
+    'query': str(request.args.get('query', '')).lower() + '%'
   }
-
-  replacements = dict(column = request.args['column'], limit = limit, offset = offset)
 
   replace = {}
   if view['replacements'] is not None:
-    replace = { arg: replacements[arg] for arg in view['replacements'] }
+    replace = { arg: request.args.get(arg, '') for arg in view['replacements'] }
+
+  replace['limit'] = limit
+  replace['offset'] = offset
+
+  print replace
 
   r_items = _run(db, _concat(view['query']) % replace, **arguments)
   r_total_count = _run(db, _concat(view['count']) % replace, **arguments)

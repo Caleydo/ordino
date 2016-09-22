@@ -1,0 +1,9 @@
+/**
+ * Additional jQuery select2 styles
+ */
+
+.select2-results__option .ensg,
+.select2-selection__rendered .ensg {
+  font-size: 12px;
+  color: #ccc;
+}

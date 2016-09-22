@@ -443,37 +443,37 @@ export class ALineUpView extends AView {
     this.lineup.data.pushDesc(desc);
     const col = this.lineup.data.push(ranking, desc);
 
-    // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
-    const order = ranking.getOrder().slice(0).reverse();
-    const sinus = Array.apply(null, Array(20)) // create 20 fields
-      .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
-      .map(v => Math.sin(v*Math.PI)); // convert to sinus
-
-    // set column mapping to sinus domain = [-1, 1]
-    col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
-
-    var timerId = 0;
-    var numAnimationCycle = 0;
-    var rowId = 0;
-
-    const animateBars = function() {
-      const scores = {}; // must be an object!
-      order.forEach((rowIndex, index) => {
-        rowId = that.selectionHelper.index2id.get(rowIndex);
-        scores[rowId] = sinus[(index+numAnimationCycle) % sinus.length];
-      });
-      desc.scores = scores;
-      that.lineup.update();
-
-      // on next animation jump by 5 items
-      numAnimationCycle += 5;
-
-      // replay animation
-      clearTimeout(timerId);
-      timerId = window.setTimeout(function() { animateBars(); }, 1000);
-    };
-
     if(desc.type === 'number') {
+      // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
+      const order = ranking.getOrder().slice(0).reverse();
+      const sinus = Array.apply(null, Array(20)) // create 20 fields
+        .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
+        .map(v => Math.sin(v*Math.PI)); // convert to sinus
+
+      // set column mapping to sinus domain = [-1, 1]
+      col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+
+      var timerId = 0;
+      var numAnimationCycle = 0;
+      var rowId = 0;
+
+      const animateBars = function() {
+        const scores = {}; // must be an object!
+        order.forEach((rowIndex, index) => {
+          rowId = that.selectionHelper.index2id.get(rowIndex);
+          scores[rowId] = sinus[(index+numAnimationCycle) % sinus.length];
+        });
+        desc.scores = scores;
+        that.lineup.update();
+
+        // on next animation jump by 5 items
+        numAnimationCycle += 5;
+
+        // replay animation
+        clearTimeout(timerId);
+        timerId = window.setTimeout(function() { animateBars(); }, 1000);
+      };
+
       animateBars(); // start animation
     }
 

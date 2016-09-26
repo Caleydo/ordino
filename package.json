@@ -132,6 +132,17 @@
           "id": "targid_storage",
           "file": "storage",
           "namespace": "/api/targid/storage"
+        },
+        {
+          "type": "namespace",
+          "id": "processing",
+          "file": "processing",
+          "namespace": "/api/targid/processing"
+        },
+        {
+          "type": "processing-task",
+          "id": "targid_tasks",
+          "file": "tasks"
         }
       ]
     },

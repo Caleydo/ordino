@@ -74,7 +74,7 @@ def _get_data(database, viewName):
 @app.route('/<database>/<viewName>')
 def get_data(database, viewName):
   r, view = _get_data(database, viewName)
-  r = assign_ids(r, view['idType'])
+  #r = assign_ids(r, view['idType'])
   return jsonify(r)
 
 @app.route('/<database>/no_assigner/<viewName>')

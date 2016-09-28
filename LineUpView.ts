@@ -14,6 +14,7 @@ import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import cmds = require('./LineUpCommands');
 import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
+import {IDType} from '../caleydo_core/idtype';
 
 export function numberCol(col:string, rows:any[], label = col) {
   return {
@@ -644,6 +645,21 @@ export class ALineUpView extends AView {
         });
       }
     }
+  }
+
+  /**
+   * Fill the idType map cache
+   * The goal is to avoid further mapping request from the id resolver to the server
+   * @param idtype
+   * @param rows
+   */
+  fillIDTypeMapCache(idtype:IDType, rows:{_id:number, id:string}[]) {
+    var ids = [], names = [];
+    rows.forEach((r, i) => {
+      ids[i] = r._id;
+      names[i] = r.id;
+    });
+    idtype.fillMapCache(ids, names);
   }
 }
 

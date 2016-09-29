@@ -49,7 +49,7 @@ def _concat(v):
     return '\n'.join(v)
   return v
 
-def _get_data(database, viewName):
+def _get_data(database, viewName, replace={}):
   config, engine = _resolve(database)
   # convert to index lookup
   # row id start with 1
@@ -58,9 +58,13 @@ def _get_data(database, viewName):
   if view['arguments'] is not None:
     for arg in view['arguments']:
       kwargs[arg] = request.args[arg]
-  replace = {}
+
+  #replace = {}
   if view['replacements'] is not None:
-    replace = { arg: request.args[arg] for arg in view['replacements'] }
+    for arg in view['replacements']:
+      if replace[arg] is None:
+        replace[arg] = request.args.get(arg, '')
+
   db = engine.connect()
   if 'i' in request.args:
     kwargs['query'] = request.args['i']

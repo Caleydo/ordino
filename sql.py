@@ -84,21 +84,14 @@ def get_data(database, viewName):
 @app.route('/<database>/<viewName>/namedset/<namedsetId>')
 def get_namedset_data(database, viewName, namedsetId):
   import storage
-  import caleydo_server.plugin
   namedset = storage.get_namedsetById(namedsetId)
 
-  manager = caleydo_server.plugin.lookup('idmanager')
-  names = manager.unmap(namedset['ids'], namedset['idType'])
+  replace = {
+    'ids': ','.join(str(id) for id in namedset['ids'])
+  }
+  viewNameNamedset = viewName + '_namedset'
 
-  r, view = _get_data(database, viewName)
-
-  # filter results by ids in the named set
-  r = [x for x in r if str(x['id']) in names]
-
-  # add _id from the namedset to each row
-  for _id, row in itertools.izip(namedset['ids'], r):
-    row['_id'] = _id
-
+  r, view = _get_data(database, viewNameNamedset, replace)
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/raw')

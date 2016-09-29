@@ -77,12 +77,6 @@ def get_data(database, viewName):
   #r = assign_ids(r, view['idType'])
   return jsonify(r)
 
-@app.route('/<database>/no_assigner/<viewName>')
-def get_score_data(database, viewName):
-  r, view = _get_data(database, viewName)
-  #r = assign_ids(r, view['idType'])
-  return jsonify(r)
-
 @app.route('/<database>/<viewName>/namedset/<namedsetId>')
 def get_namedset_data(database, viewName, namedsetId):
   import storage

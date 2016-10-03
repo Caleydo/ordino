@@ -62,7 +62,7 @@ def _get_data(database, viewName, replace={}):
   #replace = {}
   if view['replacements'] is not None:
     for arg in view['replacements']:
-      if hasattr(replace, arg) is False:
+      if arg not in replace:
         replace[arg] = request.args.get(arg, '')
 
   db = engine.connect()

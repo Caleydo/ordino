@@ -602,6 +602,16 @@ export class ALineUpView extends AView {
     return (count === 1) ? 'item' : 'items';
   }
 
+  /**
+   * Destroy LineUp instance
+   */
+  destroyLineUp() {
+    if(this.lineup) {
+      this.lineup.destroy();
+    }
+  }
+
+  // destroy targid view
   destroy() {
     if(this.lineup) {
       this.lineup.on('updateStart', null);

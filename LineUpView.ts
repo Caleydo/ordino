@@ -319,6 +319,7 @@ export class ALineUpView extends AView {
   }
 
   protected updateMapping(column:string, rows:any[]) {
+    //TODO this is the reason for the 'reset' bug, we are setting a mapping manually
     const col = this.lineup.data.find((d) => d.desc.type === 'number' && d.desc.column === column);
     if (col) {
       col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(rows, (d) => d[column])));

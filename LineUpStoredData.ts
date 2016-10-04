@@ -13,6 +13,9 @@ import {ALineUpView, useDefaultLayout,} from '../targid2/LineUpView';
 import {IPluginDesc} from '../caleydo_core/plugin';
 import {TargidConstants, Targid} from '../targid2/Targid';
 import {IStartMenuSectionEntry} from './StartMenu';
+import {create as createImporter} from '../lineup4bi/uploader';
+import {upload as uploadData} from '../caleydo_core/data';
+import {showErrorModalDialog} from './Dialogs';
 
 class StoredLineUp extends ALineUpView {
   private dataId: string;
@@ -21,7 +24,7 @@ class StoredLineUp extends ALineUpView {
   constructor(context:IViewContext, selection: ISelection, parent:Element, options?) {
     super(context, parent, options);
     this.dataId = options && (typeof options.dataId !== 'undefined') ? options.dataId : null;
-    this.dataIDType = options && options.dataIDType ? options.dataId : 'custom';
+    this.dataIDType = options && options.dataIDType ? options.dataIDType : null;
     //TODO
     this.build();
   }
@@ -31,9 +34,16 @@ class StoredLineUp extends ALineUpView {
       //generate random data
       this.setBusy(true);
       datas.get(this.dataId).then((d:any) => {
+        const idType = d.desc.idType || this.dataIDType || 'Custom';
         return d.data().then((data) => {
           //const colId = data.columns[0].column;
-          const lineup = this.buildLineUp(data.data, data.columns, idtypes.resolve(this.dataIDType), null);
+          var accessor = null;
+          if (data.ids) {
+            //we have the ids, merge them into the data
+            data.data.forEach((d: any,i) => d._id = data.ids[i]);
+            accessor = (d) => d._id;
+          }
+          const lineup = this.buildLineUp(data.data, data.columns, idtypes.resolve(idType), accessor);
           useDefaultLayout(lineup);
           lineup.update();
           this.initializedLineUp();
@@ -63,11 +73,31 @@ class StoredLineUpStartList implements IStartMenuSectionEntry {
     this.build();
   }
 
+  private selectFile(d: any) {
+    // if targid object is available
+    if(this.targid) {
+      // create options for new view
+      let o = { dataId: d.desc.id };
+
+      // store state to session before creating a new graph
+      targidSession.store(TargidConstants.NEW_ENTRY_POINT, {
+        view: (<any>this.desc).viewId,
+        options: o
+      });
+
+      // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+      this.targid.graphManager.newGraph();
+    } else {
+      console.error('no targid object given to push new view');
+    }
+  }
+
   private build() {
     const that = this;
     const $parent = d3.select(this.parent);
 
     $parent.html(''); // remove loading element
+    createImporter(<Element>($parent.append('div').classed('uploader',true).node()), upload);
 
     const $ul = $parent.append('ul');
     const $hint = $parent.append('div');//.attr('style', 'margin-top: 25px; margin-bottom: -10px;');
@@ -80,7 +110,6 @@ class StoredLineUpStartList implements IStartMenuSectionEntry {
       } else if($hint.selectAll('p').size() === 0) {
         $hint.insert('p', ':first-child').text('Please login first.');
         $hint.select('button').text('Check again');
-
       }
 
       // load named sets (stored LineUp sessions)
@@ -96,24 +125,26 @@ class StoredLineUpStartList implements IStartMenuSectionEntry {
           .on('click', (d:any) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
-
-            // if targid object is available
-            if(that.targid) {
-              // create options for new view
-              let o = { dataId: d.desc.id };
-
-              // store state to session before creating a new graph
-              targidSession.store(TargidConstants.NEW_ENTRY_POINT, {
-                view: (<any>that.desc).viewId,
-                options: o
-              });
-
-              // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-              that.targid.graphManager.newGraph();
-            } else {
-              console.error('no targid object given to push new view');
-            }
+            that.selectFile(d);
           });
+      });
+    }
+
+    function upload(desc: any, rows: any[][]) {
+      var cols = desc.columns;
+      delete desc.columns;
+      var s = {
+        type: 'lineup_data_v2',
+        desc: desc,
+        columns: cols,
+        data: rows
+      };
+      uploadData(s).then(function (dataset) {
+        that.selectFile(dataset);
+        update();
+      }).catch(showErrorModalDialog)
+        .catch(function (req) {
+        //TODO
       });
     }
 

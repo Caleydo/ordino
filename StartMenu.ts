@@ -126,7 +126,7 @@ export class StartMenu {
 
     this.$sections.enter()
       .append('section')
-      .classed((d) => d.cssClass, true)
+      .attr('class', (d) => d.cssClass)
       .each(function(d) {
         that.createSection(d, d3.select(this));
       });

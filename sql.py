@@ -26,6 +26,13 @@ configs = { p.id : _to_config(p) for p in caleydo_server.plugin.list('targid-sql
 def _resolve(database):
   return configs[database]
 
+
+def load_ids(idtype, mapping):
+  import caleydo_server.plugin
+
+  manager = caleydo_server.plugin.lookup('idmanager')
+  manager.load(idtype, mapping)
+
 def assign_ids(rows, idtype):
   import caleydo_server.plugin
 
@@ -70,6 +77,26 @@ def _get_data(database, viewName):
   else:
     r = _run(db, _concat(view['query']) % replace, **kwargs)
   return r, view
+
+
+@app.route('/_loadmappings')
+def load_mappings():
+  """
+  load all given mappings in the id assigner upon request - HACK
+  :return:
+  """
+  summary = {}
+  for config, engine in configs.values():
+    for idtype, query in config.get('mappings').items():
+      _log.info('load mappings of %s using: %s',idtype, sqlalchemy.sql.text(query))
+      result = engine.execute(sqlalchemy.sql.text(query))
+      mapping = [(r['id'], r['_id']) for r in result]
+      _log.info('loading %d mappings', len(mapping))
+      load_ids(idtype, mapping)
+      _log.info('loaded %d mappings', len(mapping))
+      summary[idtype] = len(mapping)
+
+  return jsonify(summary)
 
 @app.route('/<database>/<viewName>')
 def get_data(database, viewName):

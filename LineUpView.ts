@@ -104,20 +104,6 @@ export function deriveCol(col:tables.IVector) {
   return r;
 }
 
-/**
- * Filter an already initialized LineUp
- * @see Usage in ALineUpView.initializedLineUp()
- * @deprecated use ALineUpView.filterRowsByIds() instead
- */
-/*function useNamedFilter(options, lineup) {
-  if (options && options.filter) {
-    //activate the filter to be just the checked ones
-    const f = lineup.data.find((col) => col.desc.type === 'boolean' && col.desc.column === '_checked');
-    if (f) {
-      f.setFilter(true);
-    }
-  }
-}*/
 
 export class ALineUpView extends AView {
   private config = {
@@ -168,21 +154,6 @@ export class ALineUpView extends AView {
       .classed('nodata', true)
       .classed('hidden', true)
       .text('No data found for selection and parameter.');
-  }
-
-  /**
-   * Filter a given list of rows by a given list of ids
-   * At the end the rows match the filteredIds list
-   * @param rows
-   * @param filteredIds
-   * @returns {any}
-   */
-  protected filterRowsByIds(rows, filteredIds:any = []) {
-    const filter = (filteredIds ? ranges.parse(filteredIds) : ranges.none()).dim(0);
-    if (!filter.isNone && !filter.isAll) {
-      rows = rows.filter((row) => filter.contains(row._id));
-    }
-    return rows;
   }
 
   buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
@@ -300,7 +271,6 @@ export class ALineUpView extends AView {
   }
 
   protected initializedLineUp() {
-    //useNamedFilter(this.options, this.lineup);
     this.updateRef(this.lineup.data);
     cmds.clueify(this.context.ref, this.context.graph);
     this.updateLineUpStats();

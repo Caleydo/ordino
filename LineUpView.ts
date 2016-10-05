@@ -482,8 +482,10 @@ export class ALineUpView extends AView {
       .then((scores) => {
         clearTimeout(timerId); // stop animation
         desc.scores = scores;
-        if (desc.type === 'number' && !(desc.constantDomain)) {
-          desc.domain = d3.extent(<number[]>(d3.values(scores)));
+        if (desc.type === 'number') {
+          if (!(desc.constantDomain)) {
+            desc.domain = d3.extent(<number[]>(d3.values(scores)));
+          }
           col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
         }
         this.lineup.update();

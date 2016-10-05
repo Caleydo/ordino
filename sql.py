@@ -59,7 +59,7 @@ def _concat(v):
     return '\n'.join(v)
   return v
 
-def _get_data(database, viewName):
+def _get_data(database, viewName, replacements={}):
   config, engine = _resolve(database)
   # convert to index lookup
   # row id start with 1
@@ -68,9 +68,15 @@ def _get_data(database, viewName):
   if view['arguments'] is not None:
     for arg in view['arguments']:
       kwargs[arg] = request.args[arg]
+
   replace = {}
   if view['replacements'] is not None:
-    replace = { arg: request.args[arg] for arg in view['replacements'] }
+    for arg in view['replacements']:
+      if arg in replacements:
+        replace[arg] = replacements[arg]
+      else:
+        replace[arg] = request.args.get(arg, '')
+
   db = engine.connect()
   if 'i' in request.args:
     kwargs['query'] = request.args['i']
@@ -104,33 +110,20 @@ def load_mappings():
 @app.route('/<database>/<viewName>')
 def get_data(database, viewName):
   r, view = _get_data(database, viewName)
-  r = assign_ids(r, view['idType'])
-  return jsonify(r)
-
-@app.route('/<database>/no_assigner/<viewName>')
-def get_score_data(database, viewName):
-  r, view = _get_data(database, viewName)
   #r = assign_ids(r, view['idType'])
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/namedset/<namedsetId>')
 def get_namedset_data(database, viewName, namedsetId):
   import storage
-  import caleydo_server.plugin
   namedset = storage.get_namedsetById(namedsetId)
 
-  manager = caleydo_server.plugin.lookup('idmanager')
-  names = manager.unmap(namedset['ids'], namedset['idType'])
+  replace = {
+    'ids': ','.join(str(id) for id in namedset['ids'])
+  }
+  viewNameNamedset = viewName + '_namedset'
 
-  r, view = _get_data(database, viewName)
-
-  # filter results by ids in the named set
-  r = [x for x in r if str(x['id']) in names]
-
-  # add _id from the namedset to each row
-  for _id, row in itertools.izip(namedset['ids'], r):
-    row['_id'] = _id
-
+  r, view = _get_data(database, viewNameNamedset, replace)
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/raw')

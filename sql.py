@@ -1,6 +1,5 @@
 __author__ = 'Samuel Gratzl'
 
-from pymongo import MongoClient
 from flask import Flask, request, abort
 from caleydo_server.config import view as configview
 import itertools

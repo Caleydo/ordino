@@ -87,25 +87,6 @@
           "matches": "(targidSetSelection)"
         },
         {
-          "id": "targid_start_loaded",
-          "name": "Stored LineUp",
-          "type": "targidView",
-          "file": "LineUpStoredData",
-          "idtype": "Custom",
-          "selection": "none"
-        },
-        {
-          "id": "targid_start_loaded",
-          "name": "Load Stored LineUp4BI",
-          "type": "targidStartLineUp",
-          "file": "LineUpStoredData",
-          "factory": "createLoadStartFactory",
-          "viewId": "targid_start_loaded",
-          "idtype": "Custom",
-          "priority": 100,
-          "fa-icon": "fa-sort-amount-desc"
-        },
-        {
           "id": "targid_session_start",
           "name": "Last Sessions",
           "type": "targidStartSession",

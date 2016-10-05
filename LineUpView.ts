@@ -234,7 +234,6 @@ export class ALineUpView extends AView {
         });
         (<Event>d3.event).preventDefault();
       });
-
   }
 
   protected buildLineUpFromTable(table:tables.ITable, filteredIds = []) {

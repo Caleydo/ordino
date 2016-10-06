@@ -7,8 +7,8 @@ from caleydo_server.util import jsonify
 import sqlalchemy
 
 #patch sqlalchemy for better parallelism using gevent
-import sqlalchemy_gevent
-sqlalchemy_gevent.patch_all()
+#import sqlalchemy_gevent
+#sqlalchemy_gevent.patch_all()
 
 import logging
 _log = logging.getLogger(__name__)

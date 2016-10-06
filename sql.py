@@ -88,6 +88,9 @@ def get_namedset_data(database, viewName, namedsetId):
   import storage
   namedset = storage.get_namedsetById(namedsetId)
 
+  if len(namedset['ids']) == 0:
+    return jsonify([])
+
   replace = {
     'ids': ','.join(str(id) for id in namedset['ids'])
   }

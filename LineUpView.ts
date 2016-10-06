@@ -915,7 +915,6 @@ export class ALineUpView extends AView {
         });
         (<Event>d3.event).preventDefault();
       });
-
   }
 
   protected buildLineUpFromTable(table:tables.ITable, filteredIds = []) {
@@ -999,6 +998,7 @@ export class ALineUpView extends AView {
   }
 
   protected updateMapping(column:string, rows:any[]) {
+    //TODO this is the reason for the 'reset' bug, we are setting a mapping manually
     const col = this.lineup.data.find((d) => d.desc.type === 'number' && d.desc.column === column);
     if (col) {
       col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(rows, (d) => d[column])));
@@ -1161,8 +1161,10 @@ export class ALineUpView extends AView {
       .then((scores) => {
         clearTimeout(timerId); // stop animation
         desc.scores = scores;
-        if (desc.type === 'number' && !(desc.constantDomain)) {
-          desc.domain = d3.extent(<number[]>(d3.values(scores)));
+        if (desc.type === 'number') {
+          if (!(desc.constantDomain)) {
+            desc.domain = d3.extent(<number[]>(d3.values(scores)));
+          }
           col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
         }
         this.lineup.update();

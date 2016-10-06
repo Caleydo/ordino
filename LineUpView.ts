@@ -15,54 +15,66 @@ import cmds = require('./LineUpCommands');
 import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
 import {IDType} from '../caleydo_core/idtype';
+import {EventHandler} from '../caleydo_core/event';
+import {IDataSourceConfig} from '../targid_common/Common';
 
-export function numberCol(col:string, rows:any[], label = col) {
+export function numberCol(col:string, rows:any[], label = col, visible = true, width = -1) {
   return {
     type: 'number',
     column: col,
     label: label,
     domain: d3.extent(rows, (d) => d[col]),
-    color: ''
+    color: '',
+    visible: visible,
+    width: width
   };
 }
 
-export function numberCol2(col:string, min:number, max:number, label = col) {
+export function numberCol2(col:string, min:number, max:number, label = col, visible = true, width = -1) {
   return {
     type: 'number',
     column: col,
     label: label,
     domain: [min, max],
-    color: ''
+    color: '',
+    visible: visible,
+    width: width
   };
 }
 
 
-export function categoricalCol(col:string, categories:string[], label = col) {
+export function categoricalCol(col:string, categories:string[], label = col, visible = true, width = -1) {
   return {
     type: 'categorical',
     column: col,
     label: label,
     categories: categories,
-    color: ''
+    color: '',
+    visible: visible,
+    width: width
   };
 }
 
 
-export function stringCol(col:string, label = col) {
+export function stringCol(col:string, label = col, visible = true, width = -1) {
   return {
     type: 'string',
     column: col,
     label: label,
-    color: ''
+    color: '',
+    visible: visible,
+    width: width
   };
 }
 
-export function booleanCol(col:string, label = col) {
+export function booleanCol(col:string, label = col, visible = true, width = -1) {
   return {
     type: 'boolean',
     column: col,
     label: label,
-    color: ''
+    color: '',
+    visible: visible,
+    width: width
   };
 }
 
@@ -102,6 +114,703 @@ export function deriveCol(col:tables.IVector) {
       break;
   }
   return r;
+}
+
+
+export abstract class ALineUpView2 extends AView {
+
+  resolver:(d:any) => void;
+
+  protected lineup:any;
+
+  protected dataSource:IDataSourceConfig;
+
+  private config = {
+    renderingOptions: {
+      histograms: true
+    },
+    header: {
+      rankingButtons: ($node:d3.Selection<any>) => {
+        const rb = new LineUpRankingButtons(this.lineup, $node, this.idType, this.dataSource);
+        rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description) => {
+          this.saveNamedSet(order, name, description);
+        });
+        rb.on(LineUpRankingButtons.ADD_SCORE_COLUMN, (event, scoreImpl, scorePlugin, ranking) => {
+          this.addScoreColumn(scoreImpl, scorePlugin, ranking);
+        });
+        return rb;
+      }
+    },
+    body: {}
+  };
+
+  protected idType:idtypes.IDType;
+
+  /**
+   * Stores the ranking data when collapsing columns on modeChange()
+   * @type {any}
+   */
+  private dump:any = null;
+
+  /**
+   * DOM element with message when no data is available
+   */
+  protected $nodata;
+
+  /**
+   * DOM element for LineUp stats in parameter UI
+   */
+  private $params:d3.Selection<ViewWrapper>;
+
+  private selectionHelper:LineUpSelectionHelper;
+
+  protected idAccessor = (d) => d._id;
+
+  private scoreAccessor = (row:any, id:string, desc:any) => {
+    const row_id = this.idAccessor(row);
+    return (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+  };
+
+  constructor(context:IViewContext, parent:Element, private options?) {
+    super(context, parent, options);
+
+    this.$node.classed('lineup', true);
+
+    this.context.ref.value.data = new Promise((resolve) => {
+      this.resolver = resolve;
+    });
+    //context.graph.findOrAddObject()
+
+    this.$nodata = this.$node.append('p')
+      .classed('nodata', true)
+      .classed('hidden', true)
+      .text('No data found for selection and parameter.');
+  }
+
+  init() {
+    super.init();
+    //this.build(); // will be called from update()
+    this.update();
+  }
+
+  private initSelectionHelper() {
+    this.selectionHelper = new LineUpSelectionHelper(this.lineup, this.idType, this.idAccessor);
+    this.selectionHelper.on(LineUpSelectionHelper.SET_ITEM_SELECTION, (event, selection) => {
+      this.setItemSelection(selection);
+    });
+    this.selectionHelper.init();
+    this.updateLineUpStats();
+  }
+
+  changeSelection(selection:ISelection) {
+    super.changeSelection(selection);
+  }
+
+  setItemSelection(selection:ISelection) {
+    this.selectionHelper.setItemSelection(selection);
+    this.updateLineUpStats();
+    super.setItemSelection(selection);
+  }
+
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
+    super.buildParameterUI($parent, onChange);
+
+    // used for LineUp stats
+    this.$params = $parent.append('div')
+      .classed('form-group', true)
+      .append('p');
+  }
+
+  getParameter(name: string):any {
+    return super.getParameter(name);
+  }
+
+  setParameter(name: string, value: any) {
+    return super.setParameter(name, value);
+  }
+
+  /**
+   * Expand/collapse certain columns on mode change.
+   * Expand = focus view
+   * Collapse = context view
+   * @param mode
+   */
+  modeChanged(mode:EViewMode) {
+    super.modeChanged(mode);
+    if (!this.lineup) {
+      return;
+    }
+
+    // collapse all columns
+    const data = this.lineup.data;
+
+    if (mode === EViewMode.FOCUS) {
+      if (this.dump) {
+        const r = data.getRankings()[0];
+        r.children.forEach((c) => {
+          if (c.id in this.dump) {
+            c.setWidth(this.dump[c.id]);
+          }
+        });
+      }
+      this.dump = null;
+
+    } else if (this.dump === null) {
+      const r = data.getRankings()[0];
+      const s = r.getSortCriteria();
+      const labelColumn = r.children.filter((c) => c.desc.type === 'string')[0];
+
+      this.dump = {};
+      r.children.forEach((c) => {
+        if (c === labelColumn ||
+            c === s.col ||
+            c.desc.type === 'rank' ||
+            c.desc.type === 'selection' ||
+            c.desc.column === 'id' // = Ensembl column
+        ) {
+          // keep these columns
+        } else {
+          this.dump[c.id] = c.getWidth();
+          c.setWidth(0);
+        }
+      });
+    }
+  }
+
+  /**
+   * Get sub type for named sets
+   * @returns {{key: string, value: string}}
+   */
+  protected getSubType() {
+    return {
+      key: '',
+      value: ''
+    };
+  }
+
+  private saveNamedSet(order, name, description) {
+    const r = this.selectionHelper.rows;
+    const ids = ranges.list(order.map((i) => this.idAccessor(r[i])).sort(d3.ascending));
+    saveNamedSet(name, this.idType, ids, this.getSubType(), description).then((d) => {
+      console.log('saved', d);
+      this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
+    });
+  }
+
+  /**
+   *
+   * @param scoreImpl
+   * @param scorePlugin
+   * @param ranking
+   */
+  protected addScoreColumn(scoreImpl:IScore<number>, scorePlugin:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+    const that = this;
+
+    const colors = d3.scale.category10().range().slice();
+    // remove colors that are already in use from the list
+    ranking.flatColumns.forEach((d) => {
+      const i = colors.indexOf(d.color);
+      if(i > -1) {
+        colors.splice(i, 1);
+      }
+    });
+
+    const desc = scoreImpl.createDesc();
+    desc.color = colors.shift(); // get and remove color from list
+    desc._score = scorePlugin;
+    desc.accessor = this.scoreAccessor;
+    this.lineup.data.pushDesc(desc);
+    const col = this.lineup.data.push(ranking, desc);
+
+    var intervalId = 0;
+    if(desc.type === 'number') {
+      const sinus = Array.apply(null, Array(20)) // create 20 fields
+        .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
+        .map(v => Math.sin(v*Math.PI)); // convert to sinus
+
+      // set column mapping to sinus domain = [-1, 1]
+      col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+
+      const order = ranking.getOrder();
+      var numAnimationCycle = 0;
+
+      const animateBars = function() {
+        const scores = {}; // must be an object!
+        // retrieve only the visible rows
+        const range = that.lineup.slice(0, order.length, (i) => i * that.lineup.config.body.rowHeight);
+        order
+          .slice(range.from, range.to) // copy only visible rows
+          .reverse() // reverse will animate the sinus curve in the opposite direction
+          .forEach((rowIndex, index) => {
+            let rowId = that.selectionHelper.index2id.get(rowIndex);
+            scores[rowId] = sinus[(index + range.from + numAnimationCycle) % sinus.length];
+          });
+
+        desc.scores = scores;
+        that.lineup.update();
+
+        // on next animation jump by 5 items
+        numAnimationCycle += 5;
+      };
+
+      animateBars(); // start animation
+      intervalId = window.setInterval(animateBars, 1000);
+    }
+
+    scoreImpl.compute([], this.idType, this.selectionHelper.underscoreIdAccessor)
+      .then((scores) => {
+        clearTimeout(intervalId); // stop animation
+        desc.scores = scores;
+        if (desc.type === 'number' && !(desc.constantDomain)) {
+          desc.domain = d3.extent(<number[]>(d3.values(scores)));
+          col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
+        }
+        this.lineup.update();
+      })
+      .catch(showErrorModalDialog)
+      .catch((xhr) => {
+        clearTimeout(intervalId); // stop animation
+        ranking.remove(col);
+      });
+  }
+
+  destroy() {
+    if(this.lineup) {
+      this.lineup.on('updateStart', null);
+      this.lineup.on('updateFinished', null);
+    }
+    super.destroy();
+  }
+
+  protected build(rows:any[] = [], columns:any[] = []) {
+    // prevent re-initialization
+    if(this.lineup) {
+      return;
+    }
+
+    lineup.deriveColors(columns);
+
+    const storage = lineup.createLocalStorage(rows, columns);
+    this.lineup = lineup.create(storage, this.node, this.config);
+    this.initSelectionHelper();
+
+    //this.lineup.on('updateStart', () => { this.setBusy(true); });
+    //this.lineup.on('updateFinished', () => { this.setBusy(false); });
+
+    const ranking = this.lineup.data.pushRanking();
+
+    columns.forEach((d,i) => {
+      // add visible columns
+      if(d.visible) {
+        this.lineup.data.push(ranking, d);
+      }
+
+      // set initial column width
+      if(d.width > -1) {
+        ranking.columns[i+1].setWidth(d.width); // i+1 because first column == rank
+      }
+    });
+
+    // add selection column
+    useDefaultLayout(this.lineup);
+    this.lineup.update();
+  }
+
+  protected update() {
+    this.setBusy(true);
+
+    this.loadColumnDesc()
+      .then((desc:{idType:string, columns:any[]}) => {
+        this.initColumns(desc);
+        return this.loadRows();
+      })
+      .then((rows:any[]) => {
+        this.initRows(rows);
+      })
+      .then(() => {
+        this.initializedLineUp();
+        this.setBusy(false);
+      });
+  }
+
+  protected loadColumnDesc() {
+    // hook
+    return new Promise((resolve) => {
+      const r = {
+        idType: undefined,
+        columns: []
+      };
+      resolve(r);
+    });
+  }
+
+  protected initColumns(desc) {
+    this.idType = idtypes.resolve(desc.idType);
+  }
+
+  protected loadRows() {
+    return new Promise((resolve, reject) => {
+      const r = [];
+      resolve(r);
+    });
+  }
+
+  protected initRows(rows:any[]) {
+    this.$nodata.classed('hidden', (rows.length > 0));
+    // no data available
+    if(rows.length === 0) {
+      return [];
+    }
+
+    this.fillIDTypeMapCache(this.idType, rows);
+    this.lineup.data.setData(rows);
+    this.selectionHelper.rows = rows;
+    return rows;
+  }
+
+  private updateRef(storage) {
+    if (this.resolver) {
+      this.resolver(storage);
+      this.resolver = null;
+    }
+    this.context.ref.value.data = Promise.resolve(storage);
+  }
+
+  protected initializedLineUp() {
+    this.updateRef(this.lineup.data);
+    cmds.clueify(this.context.ref, this.context.graph);
+    this.updateLineUpStats();
+  }
+
+  protected withoutTracking(f: (lineup: any)=>void) {
+    cmds.untrack(this.context.ref)
+      .then(f.bind(this, this.lineup))
+      .then(cmds.clueify.bind(cmds, this.context.ref, this.context.graph));
+  }
+
+  /**
+   * Fill the idType map cache
+   * The goal is to avoid further mapping request from the id resolver to the server
+   * @param idtype
+   * @param rows
+   */
+  protected fillIDTypeMapCache(idtype:IDType, rows:{_id:number, id:string}[]) {
+    var ids = [], names = [];
+    rows.forEach((r, i) => {
+      ids[i] = r._id;
+      names[i] = r.id;
+    });
+    idtype.fillMapCache(ids, names);
+  }
+
+  /**
+   * Writes the number of total, selected and shown items in the parameter area
+   */
+  updateLineUpStats() {
+
+    /**
+     * Builds the stats string
+     * @param total
+     * @param selected
+     * @param shown
+     * @returns {string}
+     */
+    const showStats = (total, selected = 0, shown = 0) => {
+      var str = 'Showing ';
+
+      str += `${shown} `;
+      if (total !== 0) {
+        str += `of ${total} `;
+      }
+      str += this.getItemName(total);
+      if(selected > 0) {
+        str += `; ${selected} selected`;
+      }
+      return str;
+    };
+
+    var selected = 0;
+    var total = 0;
+
+    // this.lineup not available
+    if(!this.lineup) {
+      this.$params.html(showStats(total, selected));
+      return;
+    }
+
+    selected = this.lineup.data.getSelection().length;
+    total = this.lineup.data.data.length;
+
+    const r = this.lineup.data.getRankings()[0];
+    if(r) {
+      // needs a setTimeout, because LineUp needs time to filter the rows
+      const id = setTimeout(() => {
+        clearTimeout(id);
+        this.lineup.data.view(r.getOrder()).then((data) => {
+          const shown = data.length;
+          this.$params.html(showStats(total, selected, shown));
+        });
+      }, 150); // adjust the time depending on the number of rows(?)
+
+    } else {
+      this.$params.html(showStats(total, selected));
+    }
+  }
+
+  protected getItemName(count: number) {
+    return (count === 1) ? 'item' : 'items';
+  }
+
+  /**
+   * Destroy LineUp instance
+   */
+  protected clear() {
+    if(this.lineup) {
+      this.lineup.destroy();
+      this.lineup = undefined; // delete ref to call this.build() again
+
+      this.selectionHelper.destroy();
+      this.selectionHelper = undefined;
+    }
+  }
+
+}
+
+class LineUpRankingButtons extends EventHandler {
+
+  public static SAVE_NAMED_SET = 'saveNamedSet';
+  public static ADD_SCORE_COLUMN = 'addScoreColumn';
+
+  constructor(private lineup, private $node:d3.Selection<any>, private idType:IDType, private dataSource:IDataSourceConfig) {
+    super();
+
+    this.appendDownload();
+    this.appendSaveRanking();
+    this.appendMoreColumns();
+  }
+
+  private appendDownload() {
+    this.$node.append('button')
+      .attr('class', 'fa fa-download')
+      .on('click', (ranking) => {
+        this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
+          var downloadLink = document.createElement('a');
+          var blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
+          downloadLink.href = URL.createObjectURL(blob);
+          (<any>downloadLink).download = 'export.csv';
+
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+        });
+      });
+  }
+
+  private appendSaveRanking() {
+    this.$node.append('button')
+      .attr('class', 'fa fa-save')
+      .on('click', (ranking) => {
+        this.saveRankingDialog(ranking.getOrder());
+      });
+  }
+
+  private saveRankingDialog(order:number[]) {
+    const dialog = dialogs.generateDialog('Save Named Set');
+    dialog.body.innerHTML = `
+      <form id="namedset_form">
+        <div class="form-group">
+          <label for="namedset_name">Name</label>
+          <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required">
+        </div>
+        <div class="form-group">
+          <label for="namedset_description">Description</label>
+          <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
+        </div>
+      </form>`;
+
+    const form = <HTMLFormElement>dialog.body.querySelector('#namedset_form');
+
+    form.onsubmit = () => {
+      const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
+      const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
+
+      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description);
+
+      dialog.hide();
+      return false;
+    };
+
+    dialog.footer.innerHTML = `<button type="submit" form="namedset_form" class="btn btn-default btn-primary">Save</button>`;
+
+    dialog.onHide(() => {
+      dialog.destroy();
+    });
+
+    dialog.show();
+  }
+
+  private appendMoreColumns() {
+    const $div = this.$node.append('div');
+
+    $div.append('button')
+      .attr('class', 'fa fa-plus dropdown-toggle')
+      .attr('data-toggle', 'dropdown');
+
+    const $ul = $div.append('ul').attr('class', 'dropdown-menu');
+
+    const columns = this.lineup.data.getColumns().filter((d) => !d._score);
+    columns.push(lineup.model.createStackDesc());
+    $ul.selectAll('li.col').data(columns)
+      .enter()
+      .append('li').classed('col', true)
+      .append('a').attr('href', '#').text((d:any) => d.label)
+      .on('click', (d) => {
+        const ranking = this.lineup.data.getLastRanking();
+        this.lineup.data.push(ranking, d);
+        (<Event>d3.event).preventDefault();
+      });
+
+    $ul.append('li').classed('divider', true);
+
+    const scores = plugins.list('targidScore').filter((d:any) => d.idtype === this.idType.id);
+    $ul.selectAll('li.score').data(scores)
+      .enter()
+      .append('li').classed('score', true)
+      .append('a').attr('href', '#').text((d) => d.name)
+      .on('click', (d) => {
+        d.load().then((p) => {
+          this.scoreColumnDialog(p);
+        });
+        (<Event>d3.event).preventDefault();
+      });
+  }
+
+  private scoreColumnDialog(scorePlugin:plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+    //TODO clueify
+    // pass dataSource into InvertedAggregatedScore factory method
+    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.dataSource)) // open modal dialog
+      .then((scoreImpl) => { // modal dialog is closed and score created
+        this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin, ranking);
+      });
+  }
+}
+
+class LineUpSelectionHelper extends EventHandler {
+
+  public static SET_ITEM_SELECTION = 'setItemSelection';
+
+  private _rows: any[] = [];
+
+  private orderedSelectionIndicies:number[] = [];
+
+  private id2index = d3.map<number>();
+  public index2id = d3.map<number>();
+
+  // key: id (e.g., Ensembl), value: _id (Caleydo Mapping Id from Redis DB)
+  private id2UnderscoreId = d3.map<number>();
+
+  // Returns the _id for a given `id`
+  public underscoreIdAccessor = (id:string) => this.id2UnderscoreId.get(id);
+
+  constructor(private lineup, private idType:IDType, private idAccessor) {
+    super();
+  }
+
+  init() {
+    this.buildCache();
+    this.addEventListener();
+  }
+
+  private buildCache() {
+    // create lookup cache
+    this._rows.forEach((row, i) => {
+      this.id2index.set(String(this.idAccessor(row)), i);
+      this.index2id.set(String(i), this.idAccessor(row));
+      this.id2UnderscoreId.set(row.id, row._id);
+    });
+  }
+
+  private addEventListener() {
+    this.lineup.on('multiSelectionChanged', (data_indices) => {
+      this.onMultiSelectionChanged(data_indices);
+    });
+  }
+
+  private removeEventListener() {
+    this.lineup.on('multiSelectionChanged', null);
+  }
+
+  private onMultiSelectionChanged(data_indices) {
+    // compute the difference
+    const diffAdded = this.array_diff(data_indices, this.orderedSelectionIndicies);
+    const diffRemoved = this.array_diff(this.orderedSelectionIndicies, data_indices);
+
+    // add new element to the end
+    if(diffAdded.length > 0) {
+      diffAdded.forEach((d) => {
+        this.orderedSelectionIndicies.push(d);
+      });
+    }
+
+    // remove elements within, but preserve order
+    if(diffRemoved.length > 0) {
+      diffRemoved.forEach((d) => {
+        this.orderedSelectionIndicies.splice(this.orderedSelectionIndicies.indexOf(d), 1);
+      });
+    }
+
+    const ids = ranges.list(this.orderedSelectionIndicies.map((i) => this.idAccessor(this._rows[i])));
+    //console.log(this.orderedSelectionIndicies, ids.toString(), diffAdded, diffRemoved);
+
+    const selection:ISelection = {idtype: this.idType, range: ids};
+    // Note: listener of that event calls LineUpSelectionHelper.setItemSelection()
+    this.fire(LineUpSelectionHelper.SET_ITEM_SELECTION, selection);
+  }
+
+  /**
+   * Returns the all items that are not in the given two arrays
+   * TODO improve performance of diff algorithm
+   * @param array1
+   * @param array2
+   * @returns {any}
+   */
+  private array_diff(array1, array2) {
+    return array1.filter(function(elm) {
+      return array2.indexOf(elm) === -1;
+    });
+  }
+
+  set rows(rows:any[]) {
+    this._rows = rows;
+    this.buildCache();
+  }
+
+  get rows():any[] {
+    return this._rows;
+  }
+
+  setItemSelection(sel:ISelection) {
+    if (!this.lineup) {
+      return;
+    }
+
+    var indices:number[] = [];
+    sel.range.dim(0).forEach((id) => {
+      const index = this.id2index.get(String(id));
+      if (typeof index === 'number') {
+        indices.push(index);
+      }
+    });
+
+    this.removeEventListener();
+    this.lineup.data.setSelection(indices);
+    this.addEventListener();
+  }
+
+  destroy() {
+    this.removeEventListener();
+  }
+
 }
 
 

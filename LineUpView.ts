@@ -430,6 +430,9 @@ export abstract class ALineUpView2 extends AView {
       .then(() => {
         this.initializedLineUp();
         this.setBusy(false);
+      })
+      .catch(() => {
+        this.setBusy(false);
       });
   }
 
@@ -437,7 +440,7 @@ export abstract class ALineUpView2 extends AView {
     // hook
     return new Promise((resolve) => {
       const r = {
-        idType: undefined,
+        idType: '',
         columns: []
       };
       resolve(r);
@@ -462,9 +465,16 @@ export abstract class ALineUpView2 extends AView {
       return [];
     }
 
+    rows = this.mapRows(rows);
+
     this.fillIDTypeMapCache(this.idType, rows);
     this.lineup.data.setData(rows);
     this.selectionHelper.rows = rows;
+    return rows;
+  }
+
+  protected mapRows(rows:any[]) {
+    // hook
     return rows;
   }
 

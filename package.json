@@ -137,8 +137,7 @@
       },
       "python": {
         "requests": "==2.2.1",
-        "SQLAlchemy": "==1.0.12",
-        "sqlalchemy-gevent": "==0.2"
+        "SQLAlchemy": "==1.0.12"
       },
       "tsd": {
         "select2": "f4efd4"

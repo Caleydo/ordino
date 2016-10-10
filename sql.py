@@ -6,9 +6,8 @@ import itertools
 from caleydo_server.util import jsonify
 import sqlalchemy
 
-#patch sqlalchemy for better parallelism using gevent
-#import sqlalchemy_gevent
-#sqlalchemy_gevent.patch_all()
+#import such that it the sql driver uses gevent
+import sql_use_gevent
 
 import logging
 _log = logging.getLogger(__name__)
@@ -22,6 +21,14 @@ def _to_config(p):
   config =  configview(p.configKey)
   _log.info(config['dburl'])
   engine = sqlalchemy.create_engine(config['dburl'])
+  # Assuming that gevent monkey patched the builtin
+  # threading library, we're likely good to use
+  # SQLAlchemy's QueuePool, which is the default
+  # pool class.  However, we need to make it use
+  # threadlocal connections
+  # https://github.com/kljensen/async-flask-sqlalchemy-example/blob/master/server.py
+  engine.pool._use_threadlocal = True
+
   return config, engine
 
 configs = { p.id : _to_config(p) for p in caleydo_server.plugin.list('targid-sql-database-definition') }

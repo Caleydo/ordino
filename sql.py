@@ -173,12 +173,12 @@ def get_desc(database, viewName):
       categorical_columns.append(k)
 
   if len(number_columns) > 0:
-    row = next(iter(db.execute(sqlalchemy.sql.text(view['queryStats']))))
+    row = next(iter(db.execute(sqlalchemy.sql.text(_concat(view['queryStats'])))))
     for num_col in number_columns:
       infos[num_col]['min'] = row[num_col + '_min']
       infos[num_col]['max'] = row[num_col+'_max']
   for cat_col in categorical_columns:
-    cats = [ r['cat'] for r in db.execute(sqlalchemy.sql.text(view['queryCategories'] % dict(col=cat_col)))]
+    cats = [ r['cat'] for r in db.execute(sqlalchemy.sql.text(_concat(view['queryCategories']) % dict(col=cat_col)))]
     infos[view['columns'][cat_col]['label']]['categories'] = cats
 
   r = dict(idType=view['idType'],

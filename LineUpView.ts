@@ -418,8 +418,10 @@ export abstract class ALineUpView2 extends AView {
       .then((scores:{ [id:string]:number }) => {
         clearTimeout(intervalId); // stop animation
         colDesc.scores = scores;
-        if (colDesc.type === 'number' && !(colDesc.constantDomain)) {
-          colDesc.domain = d3.extent(<number[]>(d3.values(scores)));
+        if (colDesc.type === 'number') {
+          if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
+            colDesc.domain = d3.extent(<number[]>(d3.values(scores)));
+          }
           col.setMapping(new lineup.model.ScaleMappingFunction(colDesc.domain));
         }
         this.lineup.update();

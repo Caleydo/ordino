@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import session = require('../targid2/TargidSession');
+import session = require('../caleydo_core/session');
 import idtypes = require('../caleydo_core/idtype');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import {Targid, TargidConstants} from '../targid2/Targid';

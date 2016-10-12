@@ -8,8 +8,7 @@ import plugins = require('../caleydo_core/plugin');
 import events = require('../caleydo_core/event');
 import ranges = require('../caleydo_core/range');
 import idtypes = require('../caleydo_core/idtype');
-import targidSession = require('TargidSession');
-import caleydoSession = require('../caleydo_core/session');
+import session = require('../caleydo_core/session');
 import d3 = require('d3');
 import {
   ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
@@ -322,7 +321,7 @@ export class Targid {
    */
   private checkForLoggedIn(parent) {
     // user is already logged in --> build targid
-    if(caleydoSession.retrieve('logged_in', false) === true) {
+    if(session.retrieve('logged_in', false) === true) {
       this.buildTargid(parent);
       return;
     }
@@ -358,7 +357,7 @@ export class Targid {
       return p.factory(this.$startMenu.node(), { targid: this });
     });
 
-    if(this.graph.isEmpty && targidSession.has(TargidConstants.NEW_ENTRY_POINT) === false) {
+    if(this.graph.isEmpty && session.has(TargidConstants.NEW_ENTRY_POINT) === false) {
       this.openStartMenu();
     }
 
@@ -388,10 +387,10 @@ export class Targid {
    * Checks if a new entry point was selected (and stored in the session) and if so, creates a new view.
    */
   private checkForNewEntryPoint() {
-    if(targidSession.has(TargidConstants.NEW_ENTRY_POINT)) {
-      const entryPoint:any = targidSession.retrieve(TargidConstants.NEW_ENTRY_POINT);
+    if(session.has(TargidConstants.NEW_ENTRY_POINT)) {
+      const entryPoint:any = session.retrieve(TargidConstants.NEW_ENTRY_POINT);
       this.push(entryPoint.view, null, null, entryPoint.options);
-      targidSession.remove(TargidConstants.NEW_ENTRY_POINT);
+      session.remove(TargidConstants.NEW_ENTRY_POINT);
     }
   }
 

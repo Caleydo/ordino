@@ -377,7 +377,7 @@ export abstract class ALineUpView2 extends AView {
       });
   }
 
-  protected addColumn(colDesc, loadColumnData: (id) => Promise<any>, id = -1) {
+  protected addColumn(colDesc, loadColumnData: (id) => Promise<IScoreRow<any>[]>, id = -1) {
     const ranking = this.lineup.data.getLastRanking();
     const colors = this.getAvailableColumnColors(ranking);
 
@@ -393,7 +393,7 @@ export abstract class ALineUpView2 extends AView {
     // error handling
     loadPromise
       .catch(showErrorModalDialog)
-      .catch((xhr) => {
+      .catch(() => {
         clearTimeout(intervalId); // stop animation
         ranking.remove(col);
       });
@@ -401,21 +401,21 @@ export abstract class ALineUpView2 extends AView {
     // success
     loadPromise
       // map selection rows
-      .then((rows) => {
+      .then((rows: IScoreRow<any>[]) => {
         if(id !== -1) {
           return this.mapSelectionRows(rows);
         }
         return rows;
       })
       // convert to score array to object to use in LineUp
-      .then((rows) => {
+      .then((rows: IScoreRow<any>[]) => {
         const r:{ [id:string]:number } = {};
         rows.forEach((row) => {
           r[this.selectionHelper.underscoreIdAccessor(row.id)] = row.score;
         });
         return r;
       })
-      .then((scores) => {
+      .then((scores:{ [id:string]:number }) => {
         clearTimeout(intervalId); // stop animation
         colDesc.scores = scores;
         if (colDesc.type === 'number' && !(colDesc.constantDomain)) {
@@ -428,7 +428,7 @@ export abstract class ALineUpView2 extends AView {
     return col;
   }
 
-  protected mapSelectionRows(rows:any[]) {
+  protected mapSelectionRows(rows:IScoreRow<any>[]) {
     // hook
     return rows;
   }
@@ -447,50 +447,48 @@ export abstract class ALineUpView2 extends AView {
 
   protected addColumnLoadAnimation(column, columnDesc, ranking) {
     const that = this;
-    var intervalId = 0;
-    if(columnDesc.type === 'number') {
-      const sinus = Array.apply(null, Array(20)) // create 20 fields
-        .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
-        .map(v => Math.sin(v*Math.PI)); // convert to sinus
 
-      // set column mapping to sinus domain = [-1, 1]
-      column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
-
-      const order = ranking.getOrder();
-      var numAnimationCycle = 0;
-
-      const animateBars = function() {
-        const scores = {}; // must be an object!
-        // retrieve only the visible rows
-        const range = that.lineup.slice(0, order.length, (i) => i * that.lineup.config.body.rowHeight);
-        order
-          .slice(range.from, range.to) // copy only visible rows
-          .reverse() // reverse will animate the sinus curve in the opposite direction
-          .forEach((rowIndex, index) => {
-            let rowId = that.selectionHelper.index2id.get(rowIndex);
-            scores[rowId] = sinus[(index + range.from + numAnimationCycle) % sinus.length];
-          });
-
-        columnDesc.scores = scores;
-        that.lineup.update();
-
-        // on next animation jump by 5 items
-        numAnimationCycle += 5;
-      };
-
-      animateBars(); // start animation
-      intervalId = window.setInterval(animateBars, 1000);
+    if(columnDesc.type !== 'number') {
+      return 0;
     }
 
-    return intervalId;
+    const sinus = Array.apply(null, Array(20)) // create 20 fields
+      .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
+      .map(v => Math.sin(v*Math.PI)); // convert to sinus
+
+    // set column mapping to sinus domain = [-1, 1]
+    column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+
+    const order = ranking.getOrder();
+    var numAnimationCycle = 0;
+
+    const animateBars = function() {
+      const scores = {}; // must be an object!
+      // retrieve only the visible rows
+      const range = that.lineup.slice(0, order.length, (i) => i * that.lineup.config.body.rowHeight);
+      order
+        .slice(range.from, range.to) // copy only visible rows
+        .reverse() // reverse will animate the sinus curve in the opposite direction
+        .forEach((rowIndex, index) => {
+          let rowId = that.selectionHelper.index2id.get(rowIndex);
+          scores[rowId] = sinus[(index + range.from + numAnimationCycle) % sinus.length];
+        });
+
+      columnDesc.scores = scores;
+      that.lineup.update();
+
+      // on next animation jump by 5 items
+      numAnimationCycle += 5;
+    };
+
+    animateBars(); // start animation
+
+    return window.setInterval(animateBars, 1000);
   }
 
-  protected loadSelectionColumnData(id) {
+  protected loadSelectionColumnData(id): Promise<IScoreRow<any>[]> {
     // hook
-    return new Promise((resolve, reject) => {
-      const r = {};
-      resolve(r);
-    });
+    return Promise.resolve([]);
   }
 
   /**
@@ -498,7 +496,7 @@ export abstract class ALineUpView2 extends AView {
    * @param scoreImpl
    * @param scorePlugin
    */
-  protected addScoreColumn(scoreImpl:IScore<number>, scorePlugin:plugins.IPlugin) {
+  protected addScoreColumn(scoreImpl:IScore<any>, scorePlugin:plugins.IPlugin) {
     const colDesc = scoreImpl.createDesc();
     colDesc._score = scorePlugin;
 
@@ -1292,6 +1290,14 @@ export class ALineUpView extends AView {
     }
 
     scoreImpl.compute([], this.idType)
+      // convert to score array to object to use in LineUp
+      .then((rows: IScoreRow<any>[]) => {
+        const r:{ [id:string]:number } = {};
+        rows.forEach((row) => {
+          r[this.selectionHelper.underscoreIdAccessor(row.id)] = row.score;
+        });
+        return r;
+      })
       .then((scores) => {
         clearTimeout(timerId); // stop animation
         desc.scores = scores;
@@ -1488,6 +1494,11 @@ export class ALineUpView extends AView {
   }
 }
 
+export interface IScoreRow<T> {
+  id: string;
+  score: T;
+}
+
 export interface IScore<T> {
   createDesc():any;
   /**
@@ -1495,7 +1506,7 @@ export interface IScore<T> {
    * @param ids
    * @param idtype
    */
-  compute(ids:ranges.Range|number[], idtype:idtypes.IDType):Promise<any[]>;
+  compute(ids:ranges.RangeLike, idtype:idtypes.IDType):Promise<IScoreRow<T>[]>;
 }
 
 

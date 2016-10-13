@@ -31,13 +31,13 @@ export class StartMenu {
       name: 'LineUp Data Sets',
       cssClass: 'lineUpData',
       showViewName: false
-    },
+    }/*,
     {
       id: 'targidStartSession',
       name: 'Sessions',
       cssClass: 'targidSessionData',
       showViewName: false
-    }
+    }*/
   ];
 
 

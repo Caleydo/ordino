@@ -46,6 +46,13 @@ main.targid {
   }
 }
 
+/**
+ * Hide provenance graph list from header navigation
+ */
+ul[data-clue='provenanceGraphList'] {
+  display: none;
+}
+
 nav.mainNavi {
   display: flex;
   flex-direction: column;

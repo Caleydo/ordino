@@ -49,6 +49,10 @@ class SessionList implements IStartMenuSectionEntry {
       </div>`);
 
     this.targid.graphManager.list().then((list:any[]) => {
+
+      // filter local workspaces, since we are using remote storage
+      list = list.filter((d) => d.local === false || d.local === undefined);
+
       const $table = $parent.html(this.template);
       const $list = $table.select('tbody')
         .classed('loading', false)

@@ -21,6 +21,12 @@ export class StartMenu {
 
   private sectionEntries:IStartMenuSection[] = [
     {
+      id: 'targidStartSpecies',
+      name: 'Species',
+      cssClass: 'speciesSelector',
+      showViewName: false
+    },
+    {
       id: 'targidStartEntryPoint',
       name: 'Entry Points',
       cssClass: 'entryPoints',

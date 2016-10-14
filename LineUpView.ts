@@ -458,8 +458,11 @@ export abstract class ALineUpView2 extends AView {
       .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
       .map(v => Math.sin(v*Math.PI)); // convert to sinus
 
-    // set column mapping to sinus domain = [-1, 1]
-    column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+    // avoid tracking
+    this.withoutTracking(() => {
+      // set column mapping to sinus domain = [-1, 1]
+      column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+    });
 
     const order = ranking.getOrder();
     var numAnimationCycle = 0;

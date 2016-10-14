@@ -128,6 +128,10 @@
         transition: all 0.2s ease-in-out;
       }
 
+      &:active:after,
+      &:active:before,
+      &:focus:after,
+      &:focus:before,
       &:hover:after,
       &:hover:before{
         visibility: visible;

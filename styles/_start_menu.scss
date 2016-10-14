@@ -167,6 +167,36 @@
     .body {
       display: flex;
 
+      .species-group {
+        position: relative;
+
+        &.active:before {
+          position: absolute;
+          width: 0;
+          height: 0;
+          bottom: -22%;
+          left: 25%;
+          content: "";
+          border-style: solid;
+          border-width: 0 13px 13.7px 13px;
+          border-color: transparent transparent $header-menu-bg-color transparent;
+          pointer-events: none;
+        }
+
+        &.active:after {
+          position: absolute;
+          width: 0;
+          height: 0;
+          bottom: -23%;
+          left: 26%;
+          content: "";
+          border-style: solid;
+          border-width: 0 12px 12.7px 12px;
+          border-color: transparent transparent #fff transparent;
+          pointer-events: none;
+        }
+      }
+
       label {
         cursor: pointer;
         margin-right: 1em;
@@ -231,7 +261,7 @@
       label:hover,
       input[type=radio]:checked + label {
         color: $core_colour_text;
-        background: $core_border;
+        border-color: $core_colour_text;
       }
 
       input[type=radio] {

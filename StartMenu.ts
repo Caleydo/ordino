@@ -28,7 +28,7 @@ export class StartMenu {
     },
     {
       id: 'targidStartEntryPoint',
-      name: 'Entry Points',
+      name: '',
       cssClass: 'entryPoints',
       showViewName: true
     },

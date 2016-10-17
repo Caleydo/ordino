@@ -256,7 +256,8 @@ def lookup(database, viewName):
 
   arguments = {
     #'query': '%' + request.args['query'] + '%'
-    'query': str(request.args.get('query', '')).lower() + '%'
+    'query': str(request.args.get('query', '')).lower() + '%',
+    'species': str(request.args.get('species', ''))
   }
 
   replace = {}

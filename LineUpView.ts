@@ -341,17 +341,21 @@ export abstract class ALineUpView2 extends AView {
       diffAdded.forEach((id) => {
         this.getSelectionColumnDesc(id)
           .then((columnDesc) => {
-            this.addColumn(columnDesc, this.loadSelectionColumnData.bind(this), id);
+            this.withoutTracking(() => {
+              this.addColumn(columnDesc, this.loadSelectionColumnData.bind(this), id, true); // true == withoutTracking
+            });
           });
       });
     }
 
     // remove deselected columns
     if(diffRemoved.length > 0) {
-      //console.log('remove columns', diffRemoved);
-      diffRemoved.forEach((id) => {
-        let col = usedCols.filter((d) => d.desc.selectedId === id)[0];
-        ranking.remove(col);
+      this.withoutTracking(() => {
+        //console.log('remove columns', diffRemoved);
+        diffRemoved.forEach((id) => {
+          let col = usedCols.filter((d) => d.desc.selectedId === id)[0];
+          ranking.remove(col);
+        });
       });
     }
   }
@@ -376,7 +380,7 @@ export abstract class ALineUpView2 extends AView {
       });
   }
 
-  protected addColumn(colDesc, loadColumnData: (id) => Promise<IScoreRow<any>[]>, id = -1) {
+  protected addColumn(colDesc, loadColumnData: (id) => Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false) {
     const ranking = this.lineup.data.getLastRanking();
     const colors = this.getAvailableColumnColors(ranking);
 
@@ -421,7 +425,15 @@ export abstract class ALineUpView2 extends AView {
           if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
             colDesc.domain = d3.extent(<number[]>(d3.values(scores)));
           }
-          col.setMapping(new lineup.model.ScaleMappingFunction(colDesc.domain));
+          // add selection columns wihtout tracking changes
+          if(withoutTracking) {
+            this.withoutTracking(() => {
+              col.setMapping(new lineup.model.ScaleMappingFunction(colDesc.domain));
+            });
+          // however, track changes in score columns
+          } else {
+            col.setMapping(new lineup.model.ScaleMappingFunction(colDesc.domain));
+          }
         }
         this.lineup.update();
       });
@@ -457,8 +469,11 @@ export abstract class ALineUpView2 extends AView {
       .map((d, i) => i*0.1) // [0, 0.1, 0.2, ...]
       .map(v => Math.sin(v*Math.PI)); // convert to sinus
 
-    // set column mapping to sinus domain = [-1, 1]
-    column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+    // avoid tracking
+    this.withoutTracking(() => {
+      // set column mapping to sinus domain = [-1, 1]
+      column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+    });
 
     const order = ranking.getOrder();
     var numAnimationCycle = 0;

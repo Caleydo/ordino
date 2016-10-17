@@ -47,6 +47,11 @@ export interface INamedSet {
    * Value of the categorical column (e.g., "Homo_sapiens" as value for species)
    */
   subTypeValue: string;
+
+  /**
+   * Use the subType value for the given key from the session
+   */
+  subTypeFromSession?: boolean;
 }
 
 export function listNamedSets(idType : idtypes.IDType | string = null):Promise<INamedSet[]> {

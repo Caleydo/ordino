@@ -7,7 +7,9 @@ import {random_id, mixin} from '../caleydo_core/main';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from '../caleydo_core/plugin';
 
-
+/**
+ * helper view for proxing an existing external website
+ */
 export class ProxyView extends AView {
 
   private $params;
@@ -16,9 +18,21 @@ export class ProxyView extends AView {
   private $formGroup;
 
   private options = {
+    /**
+     * proxy key - will be redirected through a local server proxy
+     */
     proxy: null,
+    /**
+     * direct loading of an iframe site
+     */
     site: null,
+    /**
+     * within the url {argument} will be replaced with the current selected id
+     */
     argument: 'gene',
+    /**
+     * idtype of the argument
+     */
     idtype: null,
     extra: {}
   };
@@ -32,6 +46,7 @@ export class ProxyView extends AView {
   }
 
   protected createUrl(args: any) {
+    //use internal proxy
     if (this.options.proxy) {
       return api2absURL('/targid/proxy/' + this.options.proxy, args);
     }
@@ -100,7 +115,7 @@ export class ProxyView extends AView {
       // create options
       const $options = this.$selectType.selectAll('option').data(allNames);
       $options.enter().append('option');
-      $options.text((d)=>d).attr('value', (d)=>d);
+      $options.text(String).attr('value', String);
       $options.exit().remove();
 
       // select first element by default

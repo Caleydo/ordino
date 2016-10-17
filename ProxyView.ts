@@ -2,8 +2,8 @@
  * Created by Holger Stitz on 07.09.2016.
  */
 
-import ajax = require('../caleydo_core/ajax');
-import C = require('../caleydo_core/main');
+import {api2absURL} from '../caleydo_core/ajax';
+import {random_id, mixin} from '../caleydo_core/main';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from '../caleydo_core/plugin';
 
@@ -25,7 +25,7 @@ export class ProxyView extends AView {
 
   constructor(context:IViewContext, selection: ISelection, parent:Element, options:any, plugin: IPluginDesc) {
     super(context, parent, options);
-    C.mixin(this.options, plugin, options);
+    mixin(this.options, plugin, options);
 
     this.$node.classed('proxy_view', true);
     this.changeSelection(selection);
@@ -33,7 +33,7 @@ export class ProxyView extends AView {
 
   protected createUrl(args: any) {
     if (this.options.proxy) {
-      return ajax.api2absURL('/targid/proxy/' + this.options.proxy, args);
+      return api2absURL('/targid/proxy/' + this.options.proxy, args);
     }
     if (this.options.site) {
       return this.options.site.replace(/\{([^}]+)\}/gi, (match, variable) => args[variable]);
@@ -42,7 +42,7 @@ export class ProxyView extends AView {
   }
 
   buildParameterUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>) {
-    const id = C.random_id();
+    const id = random_id();
 
     this.$formGroup = $parent.append('div').classed('form-group', true);
     this.$selectType = this.$formGroup.select('select');
@@ -112,7 +112,7 @@ export class ProxyView extends AView {
      this.setBusy(true);
 
       if (this.lastSelectedID != null) {
-        var args = C.mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
+        var args = mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
         const url = this.createUrl(args);
         //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
         this.$node.select('iframe')

@@ -11,7 +11,8 @@
     "caleydo_clue": "*",
     "caleydo_vis_lineup": "*",
     "caleydo_data_mongo": "*",
-    "caleydo_data_redis": "*"
+    "caleydo_data_redis": "*",
+    "caleydo_processing_queue": "*"
   },
   "caleydo": {
     "plugins": {

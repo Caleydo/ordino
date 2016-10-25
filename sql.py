@@ -1,8 +1,7 @@
 __author__ = 'Samuel Gratzl'
 
 from flask import Flask, request, abort
-import db
-import itertools
+from targid2 import db
 from caleydo_server.util import jsonify
 import logging
 
@@ -43,6 +42,13 @@ def load_mappings():
 
 def _get_data(database, view_name, replacements = None):
   return db.get_data(database, view_name, replacements, request.args)
+
+@app.route('/p/<database>/<view_name>')
+def processing_test(database, view_name):
+  from targid2.tasks import sql_get_data
+  #r = assign_ids(r, view['idType'])
+  return sql_get_data.delay(database, view_name, request.args).id
+
 
 @app.route('/<database>/<viewName>')
 def get_data_api(database, viewName):

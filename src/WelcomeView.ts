@@ -3,6 +3,7 @@
  */
 
 import './style.scss';
+import * as welcomeArrow from 'url!./images/welcome-view-arrow.svg';
 import {IView} from './View';
 import {select, Selection} from 'd3';
 
@@ -12,7 +13,7 @@ class WelcomeView {
 
   private template = `
   <div class="welcomeView">
-    <img src="/targid2/images/welcome-view-arrow.svg">
+    <img src="${welcomeArrow}">
     <h1>Start here</h1>
   </div>`;
 

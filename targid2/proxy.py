@@ -1,9 +1,10 @@
-__author__ = 'Samuel Gratzl'
-
 from phovea_server.ns import Namespace, Response, request, abort
 import requests
 
+__author__ = 'Samuel Gratzl'
+
 app = Namespace(__name__)
+
 
 def _to_site_url(site):
   import phovea_server.plugin
@@ -12,8 +13,9 @@ def _to_site_url(site):
   for p in proxy_defs:
     if p.id == site:
       return p.url.format(**request.args.to_dict())
-  #none matching found
+  # none matching found
   return None
+
 
 @app.route('/<site>')
 def get_details(site):
@@ -29,8 +31,10 @@ def get_details(site):
     return Response(r.text, status=r.status_code, content_type=r.headers['content-type'])
   abort(404)
 
+
 def create():
   return app
+
 
 if __name__ == '__main__':
   app.debug = True

@@ -1,9 +1,8 @@
-__author__ = 'Holger Stitz'
-
 from phovea_server.ns import Namespace, request, abort
-
-
 import logging
+
+
+__author__ = 'Holger Stitz'
 _log = logging.getLogger(__name__)
 
 app = Namespace(__name__)
@@ -13,7 +12,6 @@ def add(x, y):
   import tasks
   res = tasks.sub.apply_async((x, y))
   return "<a href=\"/api/processing/res/" + res.id + "\">" + res.id + "</a>"
-
 
 
 def create():

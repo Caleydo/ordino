@@ -8,7 +8,8 @@
       "phovea_clue",
       "phovea_vis_lineup",
       "phovea_data_mongo",
-      "phovea_data_redis"
+      "phovea_data_redis",
+      "phovea_processing_queue"
     ],
     "extensions": [
       {

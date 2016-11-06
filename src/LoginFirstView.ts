@@ -3,12 +3,12 @@
  */
 
 import './style.scss';
-
 import {IView} from './View';
+import {select, Selection} from 'd3';
 
 class LoginFirstView {
 
-  protected $node:d3.Selection<IView>;
+  protected $node:Selection<IView>;
 
   private template = `
   <div class="loginFirstView">
@@ -18,7 +18,7 @@ class LoginFirstView {
 
 
   constructor(parent:Element, options?) {
-    this.$node = d3.select(parent);
+    this.$node = select(parent);
     this.build();
   }
 

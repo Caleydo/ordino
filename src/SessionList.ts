@@ -7,6 +7,7 @@ import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry} from './StartMenu';
 import {Targid} from './Targid';
+import {select} from 'd3';
 
 class SessionList implements IStartMenuSectionEntry {
 
@@ -42,7 +43,7 @@ class SessionList implements IStartMenuSectionEntry {
   }
 
   private build() {
-    const $parent = d3.select(this.parent).classed('menuTable', true).html(`
+    const $parent = select(this.parent).classed('menuTable', true).html(`
       <div class="loading">
         <i class="fa fa-spinner fa-pulse fa-fw"></i>
         <span class="sr-only">Loading...</span>

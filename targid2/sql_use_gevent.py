@@ -2,11 +2,11 @@
 based on http://www.jasonamyers.com/gevent-postgres-sqlalchemy
 try to parallelize psycopg2 for gevent
 """
-__author__ = 'Samuel Gratzl'
-
-
 import logging
+
+__author__ = 'Samuel Gratzl'
 _log = logging.getLogger(__name__)
+
 
 def make_psycopg_green():
   """Configure Psycopg to be used with gevent in non-blocking way."""
@@ -32,6 +32,7 @@ def gevent_wait_callback(conn, timeout=None):
       raise psycopg2.OperationalError(
         'Bad result from poll: %r' % state)
 
+
 try:
   import psycopg2
   from psycopg2 import extensions
@@ -41,4 +42,4 @@ try:
   _log.info('patching psycopg2 to be green')
   make_psycopg_green()
 except ImportError:
-  pass #nothing to do
+  pass  # nothing to do

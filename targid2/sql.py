@@ -1,24 +1,22 @@
-__author__ = 'Samuel Gratzl'
-
 from phovea_server.ns import Namespace, request, abort
 from phovea_server.config import view as configview
 import itertools
 from phovea_server.util import jsonify
 import sqlalchemy
-
-#import such that it the sql driver uses gevent
+# import such that it the sql driver uses gevent
 import sql_use_gevent
-
 import logging
-_log = logging.getLogger(__name__)
-
 import phovea_server.config
+
+__author__ = 'Samuel Gratzl'
+_log = logging.getLogger(__name__)
 c = phovea_server.config.view('targid2')
 
 app = Namespace(__name__)
 
+
 def _to_config(p):
-  config =  configview(p.configKey)
+  config = configview(p.configKey)
   _log.info(config['dburl'])
   engine = sqlalchemy.create_engine(config['dburl'])
   # Assuming that gevent monkey patched the builtin
@@ -31,7 +29,9 @@ def _to_config(p):
 
   return config, engine
 
-configs = { p.id : _to_config(p) for p in phovea_server.plugin.list('targid-sql-database-definition') }
+
+configs = {p.id: _to_config(p) for p in phovea_server.plugin.list('targid-sql-database-definition')}
+
 
 def _resolve(database):
   return configs[database]
@@ -43,6 +43,7 @@ def load_ids(idtype, mapping):
   manager = phovea_server.plugin.lookup('idmanager')
   manager.load(idtype, mapping)
 
+
 def assign_ids(rows, idtype):
   import phovea_server.plugin
 
@@ -51,20 +52,24 @@ def assign_ids(rows, idtype):
     row['_id'] = _id
   return rows
 
-def _run(db ,sql, **kwargs):
+
+def _run(db, sql, **kwargs):
   _log.info(sqlalchemy.sql.text(sql))
-  result = db.execute(sqlalchemy.sql.text(sql),**kwargs)
+  result = db.execute(sqlalchemy.sql.text(sql), **kwargs)
   columns = result.keys()
   return [{c: r[c] for c in columns} for r in result]
 
+
 def _run_to_index(db, sql, **kwargs):
-  result = db.execute(sqlalchemy.sql.text(sql),**kwargs)
+  result = db.execute(sqlalchemy.sql.text(sql), **kwargs)
   return [r['_index'] for r in result]
+
 
 def _concat(v):
   if type(v) is list:
     return '\n'.join(v)
   return v
+
 
 def _get_data(database, viewName, replacements={}):
   config, engine = _resolve(database)
@@ -104,7 +109,7 @@ def load_mappings():
   summary = {}
   for config, engine in configs.values():
     for idtype, query in config.get('mappings').items():
-      _log.info('load mappings of %s using: %s',idtype, sqlalchemy.sql.text(query))
+      _log.info('load mappings of %s using: %s', idtype, sqlalchemy.sql.text(query))
       result = engine.execute(sqlalchemy.sql.text(query))
       mapping = [(r['id'], r['_id']) for r in result]
       _log.info('loading %d mappings', len(mapping))
@@ -114,11 +119,13 @@ def load_mappings():
 
   return jsonify(summary)
 
+
 @app.route('/<database>/<viewName>')
 def get_data(database, viewName):
   r, view = _get_data(database, viewName)
-  #r = assign_ids(r, view['idType'])
+  # r = assign_ids(r, view['idType'])
   return jsonify(r)
+
 
 @app.route('/<database>/<viewName>/namedset/<namedsetId>')
 def get_namedset_data(database, viewName, namedsetId):
@@ -136,35 +143,39 @@ def get_namedset_data(database, viewName, namedsetId):
   r, view = _get_data(database, viewNameNamedset, replace)
   return jsonify(r)
 
+
 @app.route('/<database>/<viewName>/raw')
 def get_raw_data(database, viewName):
   r, _ = _get_data(database, viewName)
   return jsonify(r)
 
+
 @app.route('/<database>/<viewName>/raw/<col>')
 def get_raw_col_data(database, viewName, col):
   r, _ = _get_data(database, viewName)
-  return jsonify([ e[col] for e in r])
+  return jsonify([e[col] for e in r])
+
 
 def _check_column(col, view):
   cols = view.columns
   if col in cols:
     return cols[col]['label']
-  #bad request
+  # bad request
   abort(400)
+
 
 @app.route('/<database>/<viewName>/desc')
 def get_desc(database, viewName):
   config, engine = _resolve(database)
-  #convert to index lookup
-  #row id start with 1
+  # convert to index lookup
+  # row id start with 1
   db = engine.connect()
-  view = config.view('views.'+viewName)
+  view = config.view('views.' + viewName)
 
   number_columns = []
   categorical_columns = []
   infos = {}
-  for k,v in view['columns'].items():
+  for k, v in view['columns'].items():
     ttype = v['type']
     infos[v['label']] = v.copy()
     if ttype == 'number':
@@ -176,56 +187,62 @@ def get_desc(database, viewName):
     row = next(iter(db.execute(sqlalchemy.sql.text(_concat(view['queryStats'])))))
     for num_col in number_columns:
       infos[num_col]['min'] = row[num_col + '_min']
-      infos[num_col]['max'] = row[num_col+'_max']
+      infos[num_col]['max'] = row[num_col + '_max']
   for cat_col in categorical_columns:
-    cats = [ r['cat'] for r in db.execute(sqlalchemy.sql.text(_concat(view['queryCategories']) % dict(col=cat_col)))]
+    cats = [r['cat'] for r in db.execute(sqlalchemy.sql.text(_concat(view['queryCategories']) % dict(col=cat_col)))]
     infos[view['columns'][cat_col]['label']]['categories'] = cats
 
   r = dict(idType=view['idType'],
            columns=infos)
   return jsonify(r)
 
+
 @app.route('/<database>/<viewName>/sample')
 def get_sample(database, viewName):
   config, engine = _resolve(database)
   db = engine.connect()
-  view = config.view('views.'+viewName)
+  view = config.view('views.' + viewName)
 
-  l = int(request.args.get('length',100))
-  r = _run_to_index(db, _concat(view['querySample']) % (l, ))
+  l = int(request.args.get('length', 100))
+  r = _run_to_index(db, _concat(view['querySample']) % (l,))
   return jsonify(r)
+
 
 @app.route('/<database>/<viewName>/sort')
 def sort(database, viewName):
   config, engine = _resolve(database)
   db = engine.connect()
   view = config.view('views.' + viewName)
-  asc = 'asc' if request.args.get('_asc','false') == 'true' else 'desc'
+  asc = 'asc' if request.args.get('_asc', 'false') == 'true' else 'desc'
   if '_column' in request.args:
-    query = view['querySort'] % (_check_column(request.args['_column'],view), asc)
+    query = view['querySort'] % (_check_column(request.args['_column'], view), asc)
   else:
-    #multi criteria -> create a computed score field
-    score = ' + '.join(('( {} * {} )'.format(_check_column(k,view),float(v)) for k,v in request.args.items() if not k.startswith('_')))
+    # multi criteria -> create a computed score field
+    score = ' + '.join(('( {} * {} )'.format(_check_column(k, view), float(v)) for k, v in request.args.items() if
+                        not k.startswith('_')))
     query = _concat(view['querySort']) % (score, asc)
   r = _run_to_index(db, query)
   return jsonify(r)
+
 
 @app.route('/<database>/<viewName>/search')
 def search(database, viewName):
   config, engine = _resolve(database)
   db = engine.connect()
   view = config.view('views.' + viewName)
-  query = '%'+request.args['query']+'%'
+  query = '%' + request.args['query'] + '%'
   column = _check_column(request.args['column'], view)
-  r = _run_to_index(db, _concat(view['querySearch']) % (column, ),query=query)
+  r = _run_to_index(db, _concat(view['querySearch']) % (column,), query=query)
   return jsonify(r)
+
 
 @app.route('/<database>/<viewName>/match')
 def match(database, viewName):
   return search(database, viewName)
 
- # 'row_number() over(order by x) as index'
- # 'rowid'
+  # 'row_number() over(order by x) as index'
+  # 'rowid'
+
 
 @app.route('/<database>/<viewName>/lookup')
 def lookup(database, viewName):
@@ -242,25 +259,25 @@ def lookup(database, viewName):
     return jsonify(r)
 
   page = request.args.get('page', None)
-  limit = 30 #or 'all'
+  limit = 30  # or 'all'
   offset = 0
   if page is not None:
     try:
       page = int(page)
       if isinstance(page, int) and page > 0:
-        offset = (page-1) * limit
+        offset = (page - 1) * limit
     except:
       pass
 
   arguments = {
-    #'query': '%' + request.args['query'] + '%'
+    # 'query': '%' + request.args['query'] + '%'
     'query': str(request.args.get('query', '')).lower() + '%',
     'species': str(request.args.get('species', ''))
   }
 
   replace = {}
   if view['replacements'] is not None:
-    replace = { arg: request.args.get(arg, '') for arg in view['replacements'] }
+    replace = {arg: request.args.get(arg, '') for arg in view['replacements']}
 
   replace['limit'] = limit
   replace['offset'] = offset

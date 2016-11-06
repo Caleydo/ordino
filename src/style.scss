@@ -4,6 +4,8 @@
 // first: do not import the whole CLUE style, because we want do not want to the colored CLUE header
 //@import "../caleydo_clue/style.scss";
 
+
+$boostrapAssetDir: '~phovea_bootstrap_fontawesome/src/assets';
 // instead: import the CLUE styles separately
 @import "~phovea_clue/src/styles/base";
 @import "~phovea_clue/src/styles/annotation";

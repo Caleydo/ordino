@@ -1,21 +1,21 @@
+from phovea_server.config import view as configview
+import itertools
+from phovea_server.plugin import list as list_plugins
+import sqlalchemy
+# import such that it the sql driver uses gevent
+import sql_use_gevent  # noqa
+import logging
+import phovea_server.config
+
+
 __author__ = 'Samuel Gratzl'
 
-from caleydo_server.config import view as configview
-import itertools
-from caleydo_server.plugin import list as list_plugins
-import sqlalchemy
-
-#import such that it the sql driver uses gevent
-import sql_use_gevent
-
-import logging
 _log = logging.getLogger(__name__)
+c = phovea_server.config.view('targid2')
 
-import caleydo_server.config
-c = caleydo_server.config.view('targid2')
 
 def _to_config(p):
-  config =  configview(p.configKey)
+  config = configview(p.configKey)
   _log.info(config['dburl'])
   engine = sqlalchemy.create_engine(config['dburl'])
   # Assuming that gevent monkey patched the builtin
@@ -28,26 +28,32 @@ def _to_config(p):
 
   return config, engine
 
-configs = { p.id : _to_config(p) for p in list_plugins('targid-sql-database-definition') }
+
+configs = {p.id: _to_config(p) for p in list_plugins('targid-sql-database-definition')}
+
 
 def resolve(database):
   return configs[database]
 
-def assign_ids(rows, idtype):
-  import caleydo_server.plugin
 
-  manager = caleydo_server.plugin.lookup('idmanager')
+def assign_ids(rows, idtype):
+  import phovea_server.plugin
+
+  manager = phovea_server.plugin.lookup('idmanager')
   for _id, row in itertools.izip(manager((r['id'] for r in rows), idtype), rows):
     row['_id'] = _id
   return rows
+
 
 def _concat(v):
   if type(v) is list:
     return '\n'.join(v)
   return v
 
+
 def to_query(q):
   return sqlalchemy.sql.text(_concat(q))
+
 
 class WrappedSession(object):
   def __init__(self, engine):
@@ -76,11 +82,12 @@ class WrappedSession(object):
   def __exit__(self, exc_type, exc_val, exc_tb):
     self._session = None
 
+
 def session(engine):
   return WrappedSession(engine)
 
 
-def get_data(database, view_name, replacements=None, arguments = None):
+def get_data(database, view_name, replacements=None, arguments=None):
   replacements = replacements or {}
   arguments = arguments or {}
   config, engine = resolve(database)
@@ -109,4 +116,3 @@ def get_data(database, view_name, replacements=None, arguments = None):
     else:
       r = sess.run(_concat(view['query']) % replace, **kwargs)
   return r, view
-

@@ -1,6 +1,6 @@
 import phovea_server.config
 from pymongo import MongoClient
-from phovea_server.ns import Namespace, request, abort
+from phovea_server.ns import Namespace, request
 from phovea_server.util import jsonify
 import phovea_server.security as security
 import phovea_server.range as ranges
@@ -28,29 +28,29 @@ def get_namedsets():
     id_type = request.values.get('idType', '')
     ids = ranges.parse(request.values.get('ids', ''))[0].tolist()
     description = request.values.get('description', '')
-    subTypeKey = request.values.get('subTypeKey', '')
-    subTypeValue = request.values.get('subTypeValue', '')
+    sub_type_key = request.values.get('subTypeKey', '')
+    sub_type_value = request.values.get('subTypeValue', '')
     entry = dict(id=id, name=name, creator=creator, ids=ids, idType=id_type, description=description,
-                 subTypeKey=subTypeKey, subTypeValue=subTypeValue)
+                 subTypeKey=sub_type_key, subTypeValue=sub_type_value)
     db.namedsets.insert_one(entry)
     return jsonify(entry)
 
 
-@app.route('/namedset/<namedsetId>', methods=['GET', 'DELETE'])
-def get_namedset(namedsetId):
+@app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE'])
+def get_namedset(namedset_id):
   if request.method == 'GET':
-    return jsonify(get_namedsetById(namedsetId))
+    return jsonify(get_namedset_by_id(namedset_id))
 
   if request.method == 'DELETE':
     db = MongoClient(c.host, c.port)[c.database]
-    q = dict(id=namedsetId)
+    q = dict(id=namedset_id)
     result = db.namedsets.remove(q)
     return jsonify(result['n'])  # number of deleted documents
 
 
-def get_namedsetById(namedsetId):
+def get_namedset_by_id(namedset_id):
   db = MongoClient(c.host, c.port)[c.database]
-  q = dict(id=namedsetId)
+  q = dict(id=namedset_id)
   result = list(db.namedsets.find(q, {'_id': 0}))
   if len(result) == 0:
     return {}

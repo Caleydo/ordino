@@ -53,39 +53,39 @@ def processing_test(database, view_name):
   return sql_get_data.delay(database, view_name, request.args).id
 
 
-@app.route('/<database>/<viewName>')
-def get_data_api(database, viewName):
-  r, view = _get_data(database, viewName)
+@app.route('/<database>/<view_name>')
+def get_data_api(database, view_name):
+  r, view = _get_data(database, view_name)
   # r = assign_ids(r, view['idType'])
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/namedset/<namedsetId>')
-def get_namedset_data(database, viewName, namedsetId):
+@app.route('/<database>/<view_name>/namedset/<namedset_id>')
+def get_namedset_data(database, view_name, namedset_id):
   import storage
-  namedset = storage.get_namedsetById(namedsetId)
+  namedset = storage.get_namedset_by_id(namedset_id)
 
   if len(namedset['ids']) == 0:
     return jsonify([])
 
   replace = {
-    'ids': ','.join(str(id) for id in namedset['ids'])
+      'ids': ','.join(str(id) for id in namedset['ids'])
   }
-  viewNameNamedset = viewName + '_namedset'
+  view_name_namedset = view_name + '_namedset'
 
-  r, view = _get_data(database, viewNameNamedset, replace)
+  r, view = _get_data(database, view_name_namedset, replace)
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/raw')
-def get_raw_data(database, viewName):
-  r, _ = _get_data(database, viewName)
+@app.route('/<database>/<view_name>/raw')
+def get_raw_data(database, view_name):
+  r, _ = _get_data(database, view_name)
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/raw/<col>')
-def get_raw_col_data(database, viewName, col):
-  r, _ = _get_data(database, viewName)
+@app.route('/<database>/<view_name>/raw/<col>')
+def get_raw_col_data(database, view_name, col):
+  r, _ = _get_data(database, view_name)
   return jsonify([e[col] for e in r])
 
 
@@ -97,12 +97,12 @@ def _check_column(col, view):
   abort(400)
 
 
-@app.route('/<database>/<viewName>/desc')
-def get_desc(database, viewName):
+@app.route('/<database>/<view_name>/desc')
+def get_desc(database, view_name):
   config, engine = db.resolve(database)
   # convert to index lookup
   # row id start with 1
-  view = config.view('views.' + viewName)
+  view = config.view('views.' + view_name)
 
   number_columns = []
   categorical_columns = []
@@ -130,10 +130,10 @@ def get_desc(database, viewName):
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/sample')
-def get_sample(database, viewName):
+@app.route('/<database>/<view_name>/sample')
+def get_sample(database, view_name):
   config, engine = db.resolve(database)
-  view = config.view('views.' + viewName)
+  view = config.view('views.' + view_name)
 
   l = int(request.args.get('length', 100))
   with db.session(engine) as session:
@@ -141,10 +141,10 @@ def get_sample(database, viewName):
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/sort')
-def sort(database, viewName):
+@app.route('/<database>/<view_name>/sort')
+def sort(database, view_name):
   config, engine = db.resolve(database)
-  view = config.view('views.' + viewName)
+  view = config.view('views.' + view_name)
   asc = 'asc' if request.args.get('_asc', 'false') == 'true' else 'desc'
   if '_column' in request.args:
     query = view['querySort'] % (_check_column(request.args['_column'], view), asc)
@@ -158,10 +158,10 @@ def sort(database, viewName):
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/search')
-def search(database, viewName):
+@app.route('/<database>/<view_name>/search')
+def search(database, view_name):
   config, engine = db.resolve(database)
-  view = config.view('views.' + viewName)
+  view = config.view('views.' + view_name)
   query = '%' + request.args['query'] + '%'
   column = _check_column(request.args['column'], view)
   with db.session(engine) as session:
@@ -169,22 +169,22 @@ def search(database, viewName):
   return jsonify(r)
 
 
-@app.route('/<database>/<viewName>/match')
-def match(database, viewName):
-  return search(database, viewName)
+@app.route('/<database>/<view_name>/match')
+def match(database, view_name):
+  return search(database, view_name)
 
   # 'row_number() over(order by x) as index'
   # 'rowid'
 
 
-@app.route('/<database>/<viewName>/lookup')
-def lookup(database, viewName):
+@app.route('/<database>/<view_name>/lookup')
+def lookup(database, view_name):
   """
   Does the same job as search, but paginates the result set
   This function is used in conjunction with Select2 form elements
   """
   config, engine = db.resolve(database)
-  view = config.view('views.' + viewName)
+  view = config.view('views.' + view_name)
 
   if view['query'] is None or view['count'] is None:
     r = dict(total_count=0, items=[])
@@ -201,10 +201,10 @@ def lookup(database, viewName):
     except:
       pass
 
+  # 'query': '%' + request.args['query'] + '%'
   arguments = {
-    # 'query': '%' + request.args['query'] + '%'
-    'query': str(request.args.get('query', '')).lower() + '%',
-    'species': str(request.args.get('species', ''))
+      'query': str(request.args.get('query', '')).lower() + '%',
+      'species': str(request.args.get('species', ''))
   }
 
   replace = {}

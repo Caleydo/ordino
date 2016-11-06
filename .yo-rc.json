@@ -179,7 +179,7 @@
     },
     "libraryAliases": {
       "d3": "d3/d3",
-      "scrollTo": "jquery.scrollto"
+      "scrollTo": "jquery.scrollto/jquery.scrollTo.js"
     },
     "libraryExternals": [
       "d3",

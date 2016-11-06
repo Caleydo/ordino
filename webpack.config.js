@@ -111,7 +111,7 @@ function generateWebpack(options) {
     entry: injectRegistry(options.entries),
     output: {
       path: resolve(__dirname, 'build'),
-      filename: (options.name || (pkg.name + (options.bundle ? '_bundle' : ''))) + (options.min ? '.min' : '') + '.js',
+      filename: (options.name || (pkg.name + (options.bundle ? '_bundle' : ''))) + (options.min && !options.nosuffix ? '.min' : '') + '.js',
       publicPath: '' //no public path = relative
     },
     resolve: {
@@ -261,7 +261,8 @@ function generateWebpackConfig(env) {
     return generateWebpack(base);
   } else if (type === 'app') { //isProduction app
     return generateWebpack(Object.assign({}, base, {
-        min: true
+        min: true,
+        nosuffix: true,
       }));
   } else { //isProduction
     return [

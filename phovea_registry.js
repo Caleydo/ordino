@@ -12,7 +12,6 @@ import {register} from 'phovea_core/src/plugin';
 //other modules
 import 'phovea_clue/phovea_registry.js';
 import 'phovea_vis_lineup/phovea_registry.js';
-import 'phovea_data_mongo/phovea_registry.js';
-import 'phovea_data_redis/phovea_registry.js';
+import 'phovea_processing_queue/phovea_registry.js';
 //self
 register('targid2',require('./phovea.js'));

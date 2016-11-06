@@ -15,9 +15,11 @@ def read_it(name):
   with open(path.join(here, name), encoding='utf-8') as f:
     return f.read()
 
+
 # read package.json information
 with open(path.join(here, 'package.json'), encoding='utf-8') as json_data:
   import json
+
   pkg = json.load(json_data)
 
 
@@ -26,6 +28,7 @@ def packaged(*files):
   global pkg
   r[pkg['name'].encode('ascii')] = list(files)
   return r
+
 
 setup(
   name=pkg['name'],
@@ -62,7 +65,7 @@ setup(
   # your project is installed. For an analysis of "install_requires" vs pip's
   # requirements files see:
   # https://packaging.python.org/en/latest/requirements.html
-  install_requires=read_it('requirements.txt').split('\n'),
+  install_requires=[r for r in read_it('requirements.txt').split('\n') if not r.startswith('-e git+https://')],
   tests_require=read_it('requirements_dev.txt').split('\n'),
 
   # If there are data files included in your packages that need to be

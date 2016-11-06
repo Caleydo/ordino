@@ -5,10 +5,10 @@
 //@import "../caleydo_clue/style.scss";
 
 // instead: import the CLUE styles separately
-@import "../caleydo_clue/styles/base";
-@import "../caleydo_clue/styles/annotation";
-@import "../caleydo_clue/styles/provvis";
-@import "../caleydo_clue/styles/storyvis";
+@import "~phovea_clue/src/styles/base";
+@import "~phovea_clue/src/styles/annotation";
+@import "~phovea_clue/src/styles/provvis";
+@import "~phovea_clue/src/styles/storyvis";
 
 // then: override CLUE specific rules
 @import "styles/clue_override";

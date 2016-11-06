@@ -4,8 +4,8 @@
 
 /// <amd-dependency path="select2" />
 
-import * as C from 'phovea_core/src/index';
-import {random_id} from 'phovea_core/src/index';
+import {api2absURL} from '../caleydo_core/ajax';
+import {random_id, mixin} from 'phovea_core/src/index';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import * as session from 'phovea_core/src/session';
 import {api2absURL} from 'phovea_core/src/ajax';
@@ -585,7 +585,7 @@ class FormSelect2 extends AFormElement {
       templateSelection: (item:any) => item.text
     };
 
-    C.mixin(defaultOptions, options);
+    mixin(defaultOptions, options);
     //console.log(defaultOptions);
 
     return $($select.node()).select2(defaultOptions).trigger('change');

@@ -3,7 +3,7 @@
  */
 
 import 'select2';
-import {api2absURL} from '../caleydo_core/ajax';
+import * as d3 from 'd3';
 import {random_id, mixin} from 'phovea_core/src/index';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import * as session from 'phovea_core/src/session';
@@ -587,7 +587,7 @@ class FormSelect2 extends AFormElement {
     mixin(defaultOptions, options);
     //console.log(defaultOptions);
 
-    return $($select.node()).select2(defaultOptions).trigger('change');
+    return (<any>$($select.node())).select2(defaultOptions).trigger('change');
   }
 
   /**

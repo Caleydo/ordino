@@ -1,10 +1,11 @@
 /**
  * Created by Samuel Gratzl on 29.01.2016.
  */
-/// <reference path="./tsd.d.ts" />
-
 import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
-import * as lineup from 'lineupjs';
+import LineUp from 'lineupjs/src/lineup';
+import {deriveColors} from 'lineupjs/src/';
+import {createSelectionDesc, createStackDesc, ScaleMappingFunction, ScriptMappingFunction} from 'lineupjs/src/model';
+import {LocalDataProvider} from 'lineupjs/src/provider';
 import * as d3 from 'd3';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as tables from 'phovea_core/src/table';
@@ -97,7 +98,7 @@ function array_diff(array1, array2) {
 export function useDefaultLayout(instance:any) {
   instance.data.deriveDefault();
   //insert selection column
-  instance.data.insert(instance.data.getRankings()[0], 1, lineup.model.createSelectionDesc());
+  instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
 }
 
 export function deriveCol(col:tables.IVector) {
@@ -428,11 +429,11 @@ export abstract class ALineUpView2 extends AView {
           // add selection columns wihtout tracking changes
           if(withoutTracking) {
             this.withoutTracking(() => {
-              col.setMapping(new lineup.model.ScaleMappingFunction(colDesc.domain));
+              col.setMapping(new ScaleMappingFunction(colDesc.domain));
             });
           // however, track changes in score columns
           } else {
-            col.setMapping(new lineup.model.ScaleMappingFunction(colDesc.domain));
+            col.setMapping(new ScaleMappingFunction(colDesc.domain));
           }
         }
         this.lineup.update();
@@ -472,7 +473,7 @@ export abstract class ALineUpView2 extends AView {
     // avoid tracking
     this.withoutTracking(() => {
       // set column mapping to sinus domain = [-1, 1]
-      column.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+      column.setMapping(new ScaleMappingFunction(d3.extent(<number[]>sinus)));
     });
 
     const order = ranking.getOrder();
@@ -537,10 +538,10 @@ export abstract class ALineUpView2 extends AView {
       return;
     }
 
-    lineup.deriveColors(columns);
+    deriveColors(columns);
 
-    const storage = lineup.createLocalStorage(rows, columns);
-    this.lineup = lineup.create(storage, this.node, this.config);
+    const storage = new LocalDataProvider(rows, columns);
+    this.lineup = new LineUp(this.node, storage, this.config);
     this.initSelectionHelper();
 
     //this.lineup.on('updateStart', () => { this.setBusy(true); });
@@ -818,7 +819,7 @@ class LineUpRankingButtons extends EventHandler {
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
-    columns.push(lineup.model.createStackDesc());
+    columns.push(createStackDesc());
     $ul.selectAll('li.col').data(columns)
       .enter()
       .append('li').classed('col', true)
@@ -1039,7 +1040,7 @@ export class ALineUpView extends AView {
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
-    columns.push(lineup.model.createStackDesc());
+    columns.push(createStackDesc());
     $ul.selectAll('li.col').data(columns)
       .enter()
       .append('li').classed('col', true)
@@ -1067,14 +1068,14 @@ export class ALineUpView extends AView {
 
   protected buildLineUpFromTable(table:tables.ITable, filteredIds = []) {
     const columns = table.cols().map(deriveCol);
-    lineup.deriveColors(columns);
+    deriveColors(columns);
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args:any) => {
       var rows:any[] = args[0];
       const rowIds:ranges.Range = args[1];
 
-      const storage = lineup.createLocalStorage(rows, columns);
+      const storage = new LocalDataProvider(rows, columns);
       this.idType = table.idtypes[0];
-      this.lineup = lineup.create(storage, this.node, this.config);
+      this.lineup = new LineUp(this.node, storage, this.config);
       this.lineup.update();
       this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
       return this.lineup;
@@ -1100,10 +1101,10 @@ export class ALineUpView extends AView {
   }
 
   protected buildLineUp(rows:any[], columns:any[], idtype:idtypes.IDType, idAccessor:(row:any) => number) {
-    lineup.deriveColors(columns);
-    const storage = lineup.createLocalStorage(rows, columns);
+    deriveColors(columns);
+    const storage = new LocalDataProvider(rows, columns);
     this.idType = idtype;
-    this.lineup = lineup.create(storage, this.node, this.config);
+    this.lineup = new LineUp(this.node, storage, this.config);
 
     this.lineup.on('updateStart', () => {
       this.setBusy(true);
@@ -1149,7 +1150,7 @@ export class ALineUpView extends AView {
     //TODO this is the reason for the 'reset' bug, we are setting a mapping manually
     const col = this.lineup.data.find((d) => d.desc.type === 'number' && d.desc.column === column);
     if (col) {
-      col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(rows, (d) => d[column])));
+      col.setMapping(new ScaleMappingFunction(d3.extent(rows, (d) => d[column])));
     }
   }
 
@@ -1279,7 +1280,7 @@ export class ALineUpView extends AView {
         .map(v => Math.sin(v*Math.PI)); // convert to sinus
 
       // set column mapping to sinus domain = [-1, 1]
-      col.setMapping(new lineup.model.ScaleMappingFunction(d3.extent(<number[]>sinus)));
+      col.setMapping(new ScaleMappingFunction(d3.extent(<number[]>sinus)));
 
       var timerId = 0;
       var numAnimationCycle = 0;
@@ -1321,7 +1322,7 @@ export class ALineUpView extends AView {
           if (!(desc.constantDomain)) {
             desc.domain = d3.extent(<number[]>(d3.values(scores)));
           }
-          col.setMapping(new lineup.model.ScaleMappingFunction(desc.domain));
+          col.setMapping(new ScaleMappingFunction(desc.domain));
         }
         this.lineup.update();
       })
@@ -1545,7 +1546,7 @@ export class LineUpView extends ALineUpView {
     const l = this.buildLineUp(rows, columns, idtypes.resolve('DummyRow'), (r) => r.id);
     const r = l.data.pushRanking();
     l.data.push(r, columns[0]).setWidth(130);
-    const stack = l.data.push(r, lineup.model.createStackDesc('Combined'));
+    const stack = l.data.push(r, createStackDesc('Combined'));
     stack.push(l.data.create(columns[1]));
     stack.push(l.data.create(columns[2]));
     l.update();

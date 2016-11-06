@@ -4,7 +4,7 @@
 
 
 import * as prov from 'phovea_core/src/provenance';
-import * as lineupjs from 'lineupjs';
+import {NumberColumn, createMappingFunction, Column, Ranking, CompositeColumn, StackColumn, ScriptColumn, LinkColumn, CategoricalNumberColumn} from 'lineupjs/src/model';
 import {ALineUpView} from './LineUpView';
 
 //TODO better solution
@@ -71,9 +71,9 @@ function setColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
       source = ranking.findByPath(parameter.path);
     }
     ignoreNext = parameter.prop + 'Changed';
-    if (parameter.prop === 'mapping' && source instanceof lineupjs.model.NumberColumn) {
+    if (parameter.prop === 'mapping' && source instanceof NumberColumn) {
       bak = source.getMapping().dump();
-      source.setMapping(lineupjs.model.createMappingFunction(parameter.value));
+      source.setMapping(createMappingFunction(parameter.value));
     } else {
       bak = source['get' + prop]();
       source['set' + prop].call(source, parameter.value);
@@ -175,7 +175,7 @@ function recordPropertyChange(source:any, provider:any, lineupViewWrapper:prov.I
       return;
     }
     console.log(source, property, old, new_);
-    if (source instanceof lineupjs.model.Column) {
+    if (source instanceof Column) {
       // assert ALineUpView and update the stats
       (<ALineUpView>lineupViewWrapper.value.getInstance()).updateLineUpStats();
 
@@ -184,7 +184,7 @@ function recordPropertyChange(source:any, provider:any, lineupViewWrapper:prov.I
       graph.pushWithResult(setColumn(lineupViewWrapper, rid, path, property, new_), {
         inverse: setColumn(lineupViewWrapper, rid, path, property, old)
       });
-    } else if (source instanceof lineupjs.model.Ranking) {
+    } else if (source instanceof Ranking) {
       const rid = rankingId(provider, source);
       graph.pushWithResult(setColumn(lineupViewWrapper, rid, null, property, new_), {
         inverse: setColumn(lineupViewWrapper, rid, null, property, old)
@@ -199,7 +199,7 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
   recordPropertyChange(col, provider, lineup, graph, 'filter');
   //recordPropertyChange(col, provider, lineup, graph, 'width', 100);
 
-  if (col instanceof lineupjs.model.CompositeColumn) {
+  if (col instanceof CompositeColumn) {
     col.on('addColumn.track', (column, index:number) => {
       trackColumn(provider, lineup, graph, column);
       if (ignoreNext === 'addColumn') {
@@ -230,10 +230,10 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
     });
     col.children.forEach(trackColumn.bind(this, provider, lineup, graph));
 
-    if (col instanceof lineupjs.model.StackColumn) {
+    if (col instanceof StackColumn) {
       recordPropertyChange(col, provider, lineup, graph, 'weights', 100);
     }
-  } else if (col instanceof lineupjs.model.NumberColumn) {
+  } else if (col instanceof NumberColumn) {
     col.on('mappingChanged.track', (old, new_) => {
       if (ignoreNext === 'mappingChanged') {
         ignoreNext = null;
@@ -246,11 +246,11 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
         inverse: setColumn(lineup, rid, path, 'mapping', old.dump())
       });
     });
-  } else if (col instanceof lineupjs.model.ScriptColumn) {
+  } else if (col instanceof ScriptColumn) {
     recordPropertyChange(col, provider, lineup, graph, 'script');
-  } else if (col instanceof lineupjs.model.LinkColumn) {
+  } else if (col instanceof LinkColumn) {
     recordPropertyChange(col, provider, lineup, graph, 'link');
-  } else if (col instanceof lineupjs.model.CategoricalNumberColumn) {
+  } else if (col instanceof CategoricalNumberColumn) {
     recordPropertyChange(col, provider, lineup, graph, 'mapping');
   }
 }
@@ -259,14 +259,14 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
 function untrackColumn(col) {
   col.on(['metaDataChanged.filter', 'filterChanged.track', 'widthChanged.track'], null);
 
-  if (col instanceof lineupjs.model.CompositeColumn) {
+  if (col instanceof CompositeColumn) {
     col.on(['addColumn.track', 'removeColumn.track'], null);
     col.children.forEach(untrackColumn);
-  } else if (col instanceof lineupjs.model.NumberColumn) {
+  } else if (col instanceof NumberColumn) {
     col.on('mappingChanged.track', null);
-  } else if (col instanceof lineupjs.model.ScriptColumn) {
+  } else if (col instanceof ScriptColumn) {
     col.on('scriptChanged.track', null);
-  } else if (col instanceof lineupjs.model.LinkColumn) {
+  } else if (col instanceof LinkColumn) {
     col.on('linkChanged.track', null);
   }
 }

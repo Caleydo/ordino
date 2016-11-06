@@ -149,6 +149,18 @@ function generateWebpack(options) {
         '/api/*': {
           target: 'http://localhost:9000',
           secure: false
+        },
+        '/login': {
+          target: 'http://localhost:9000',
+          secure: false
+        },
+        '/logout': {
+          target: 'http://localhost:9000',
+          secure: false
+        },
+        '/loggedinas': {
+          target: 'http://localhost:9000',
+          secure: false
         }
       },
       contentBase: resolve(__dirname, 'build')

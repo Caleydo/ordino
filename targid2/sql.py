@@ -56,7 +56,9 @@ def processing_test(database, view_name):
 @app.route('/<database>/<view_name>')
 def get_data_api(database, view_name):
   r, view = _get_data(database, view_name)
-  # r = assign_ids(r, view['idType'])
+
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, view['idType'])
   return jsonify(r)
 
 

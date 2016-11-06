@@ -7,6 +7,7 @@ import * as prov from 'phovea_core/src/provenance';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as ranges from 'phovea_core/src/range';
 import * as d3 from 'd3';
+import * as $ from 'jquery';
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';

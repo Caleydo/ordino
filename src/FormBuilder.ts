@@ -2,8 +2,7 @@
  * Created by Holger Stitz on 11.08.2016.
  */
 
-/// <amd-dependency path="select2" />
-
+import 'select2';
 import {api2absURL} from '../caleydo_core/ajax';
 import {random_id, mixin} from 'phovea_core/src/index';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';

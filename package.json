@@ -48,11 +48,15 @@
     "iojs": ">= 3"
   },
   "dependencies": {
-    "phovea_vis_lineup": "github:phovea/phovea_vis_lineup",
     "@types/d3": "^3.5.36",
+    "@types/jquery.scrollto": "^1.4.27",
+    "@types/select2": "^4.0.30",
     "d3": "^3.5.17",
+    "jquery.scrollto": "^2.1.2",
     "lineupjs": "github:Caleydo/lineup.js#feature_146_react",
-    "phovea_clue": "github:phovea/phovea_processing_queue"
+    "phovea_clue": "github:phovea/phovea_processing_queue",
+    "phovea_vis_lineup": "github:phovea/phovea_vis_lineup",
+    "select2": "^4.0.3"
   },
   "name": "targid2",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",

@@ -161,7 +161,9 @@
     ],
     "libraries": [
       "d3",
-      "lineupjs"
+      "lineupjs",
+      "select2",
+      "scrollTo"
     ],
     "unknown": {
       "requirements": [
@@ -176,11 +178,14 @@
       "app": "./src/index.ts"
     },
     "libraryAliases": {
-      "d3": "d3/d3"
+      "d3": "d3/d3",
+      "scrollTo": "jquery.scrollto"
     },
     "libraryExternals": [
       "d3",
       "lineupjs",
+      "select2",
+      "scrollTo",
       "marked",
       "marked",
       "lineupjs",

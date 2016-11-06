@@ -2,8 +2,7 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-/// <amd-dependency path="scrollTo" />
-
+import 'scrollTo';
 import * as prov from 'phovea_core/src/provenance';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as ranges from 'phovea_core/src/range';

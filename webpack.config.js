@@ -243,7 +243,7 @@ function generateWebpackConfig(env) {
     }));
   }
 
-  if (type === 'app') {
+  if (type.startsWith('app')) {
     base.bundle = true; //bundle everything together
     base.name = '[name]'; //multiple entries case
     base.commons = true; //extract commons module
@@ -262,7 +262,7 @@ function generateWebpackConfig(env) {
   } else if (type === 'app') { //isProduction app
     return generateWebpack(Object.assign({}, base, {
         min: true,
-        nosuffix: true,
+        nosuffix: true
       }));
   } else { //isProduction
     return [

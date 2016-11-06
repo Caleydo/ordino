@@ -10,6 +10,7 @@ import * as ranges from 'phovea_core/src/range';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as session from 'phovea_core/src/session';
 import * as d3 from 'd3';
+import * as $ from 'jquery';
 import {
   ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
   replaceViewWrapper

@@ -1,163 +1,104 @@
 {
-  "name": "targid2",
-  "title": "Target Discovery Platform",
-  "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "version": "0.0.1",
-  "license": "SEE LICENSE IN LICENSE",
-  "repository": "Caleydo/targid2",
+  "files": [
+    "src",
+    "index.js",
+    "phovea.js",
+    "phovea_registry.js",
+    "build",
+    "targid2",
+    "__init__.py",
+    "__main__.py",
+    "requirements.txt",
+    "requirements_dev.txt",
+    "debian_packages.txt",
+    "redhat_packages.txt"
+  ],
+  "scripts": {
+    "check": "flake8",
+    "pretest": "echo hybrid",
+    "test": "npm run test:web && npm run test:python",
+    "predist": "echo hybrid",
+    "dist": "npm run dist:web && npm run dist:web",
+    "compile": "tsc",
+    "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
+    "docs": "typedoc --options typedoc.json src/**.ts",
+    "prebuild": "npm run test",
+    "posttest": "echo hybrid",
+    "test:watch": "karma start --autoWatch=true --singleRun=false",
+    "build:dev": "webpack",
+    "build": "webpack --env prod",
+    "start": "webpack-dev-server --inline",
+    "start:hot": "webpack-dev-server --inline --hot",
+    "watch": "webpack --watch",
+    "release:major": "npm version major && npm publish && git push --follow-tags",
+    "release:minor": "npm version minor && npm publish && git push --follow-tags",
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "pretest:web": "npm run compile",
+    "pretest:python": "npm run check",
+    "posttest:web": "npm run lint",
+    "test:web": "karma start",
+    "test:python": "python setup.py test",
+    "predist:web": "npm run build",
+    "dist:web": "mkdirp dist && cd build && tar cvzf ../dist/targid2.tar.gz *",
+    "dist:python": "python setup.py bdist_egg"
+  },
+  "main": "build/targid2.js",
+  "engines": {
+    "npm": ">= 3",
+    "node": ">= 6",
+    "iojs": ">= 3"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.35",
+    "awesome-typescript-loader": "^2.2.4",
+    "css-loader": "^0.25.0",
+    "extract-text-webpack-plugin": "^2.0.0-beta.4",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.4",
+    "imports-loader": "^0.6.5",
+    "jasmine": "^2.5.2",
+    "json-loader": "^0.5.4",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-jasmine": "^1.0.2",
+    "karma-junit-reporter": "^1.1.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.8.0",
+    "mkdirp": "^0.5.1",
+    "node-sass": "^3.10.0",
+    "null-loader": "^0.1.1",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
+    "tslint": "^3.15.1",
+    "typedoc": "^0.5.1",
+    "typescript": "^2.0.6",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.1.0-beta.25",
+    "webpack-dev-server": "^2.1.0-beta.10"
+  },
   "dependencies": {
+    "phovea_vis_lineup": "github:phovea/phovea_vis_lineup",
+    "@types/d3": "^3.5.36",
+    "d3": "^3.5.17",
+    "lineupjs": "github:Caleydo/lineup.js#feature_146_react"
   },
-  "peerDependencies": {
-    "caleydo_clue": "*",
-    "caleydo_vis_lineup": "*",
-    "caleydo_data_mongo": "*",
-    "caleydo_data_redis": "*"
+  "name": "targid2",
+  "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
+  "homepage": "https://phovea.caleydo.org",
+  "version": "0.0.1",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
   },
-  "caleydo": {
-    "plugins": {
-      "web": [
-        {
-          "type": "application",
-          "name": "Target Discovery Platform"
-        },
-        {
-          "id": "startMenu",
-          "name": "startMenu",
-          "type": "targidView",
-          "file": "StartMenu",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        },
-        {
-          "id": "login_first",
-          "name": "Login First",
-          "type": "targidView",
-          "file": "LoginFirstView",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        },
-        {
-          "id": "welcome",
-          "name": "Welcome",
-          "type": "targidView",
-          "file": "WelcomeView",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        },
-        {
-          "type": "actionFactory",
-          "file": "Targid",
-          "factory": "createCmd",
-          "creates": "(targidCreateView|targidRemoveView|targidReplaceView)"
-        },
-        {
-          "type": "actionFactory",
-          "file": "LineUpCommands",
-          "factory": "createCmd",
-          "creates": "(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidCreateRemoveCompressor",
-          "file": "Targid",
-          "factory": "compressCreateRemove",
-          "matches": "(targidCreateView|targidRemoveView|targidReplaceView)"
-        },
-        {
-          "type": "actionFactory",
-          "file": "View",
-          "factory": "createCmd",
-          "creates": "(targidSetParameter|targidSetSelection)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidCompressSetParameter",
-          "file": "View",
-          "factory": "compressSetParameter",
-          "matches": "(targidSetParameter)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidCompressSetSelection",
-          "file": "View",
-          "factory": "compressSetSelection",
-          "matches": "(targidSetSelection)"
-        },
-        {
-          "id": "targid_session_start",
-          "name": "Last Sessions",
-          "type": "targidStartSession",
-          "file": "SessionList",
-          "factory": "createStartFactory",
-          "idtype": "none",
-          "selection": "none"
-        }
-      ],
-      "python": [
-        {
-          "type": "namespace",
-          "file": "proxy",
-          "namespace": "/api/targid/proxy"
-        },
-        {
-          "type": "namespace",
-          "id": "db_connector",
-          "file": "sql",
-          "namespace": "/api/targid/db"
-        },
-        {
-          "type": "namespace",
-          "id": "targid_storage",
-          "file": "storage",
-          "namespace": "/api/targid/storage"
-        },
-        {
-          "type": "namespace",
-          "id": "processing",
-          "file": "processing",
-          "namespace": "/api/targid/processing"
-        },
-        {
-          "type": "processing-task",
-          "id": "targid_tasks",
-          "file": "tasks"
-        }
-      ]
-    },
-    "dependencies": {
-      "web": {
-        "d3": "~3.5.5",
-        "lineupjs": "https://github.com/Caleydo/lineup.js.git",
-        "scrollTo": "https://github.com/flesler/jquery.scrollTo.git",
-        "select2": "~4.0.3",
-        "select2-bootstrap-theme": "0.1.0-beta.9"
-      },
-      "python": {
-        "requests": "==2.2.1",
-        "SQLAlchemy": "==1.0.12"
-      },
-      "tsd": {
-        "select2": "f4efd4"
-      }
-    },
-    "requirejs-config": {
-      "paths": {
-        "select2": "${baseUrl}/bootstrap/dist/js/select2.full.min"
-      },
-      "shim": {
-        "select2": [
-          "jquery",
-          "bootstrap",
-          "css!${baseUrl}/select2/dist/css/select2.min.css",
-          "css!${baseUrl}/select2-bootstrap-theme/dist/select2-bootstrap.min.css"
-        ]
-      }
-    }
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/phovea/targid2/issues"
   },
-  "publishConfig": {
-    "registry": "http://registry.caleydo.org/"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phovea/targid2.git"
   }
 }

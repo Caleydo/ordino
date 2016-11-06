@@ -1,0 +1,4 @@
+flake8==3.0.4
+pep8-naming==0.4.1
+pytest==3.0.3
+pytest-runner==2.9

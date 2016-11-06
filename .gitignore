@@ -1,9 +1,10 @@
-
-*.log
-*.pot
-*.pyc
-*.swp
-*.lock
+/.tscache
+/.idea
+/build/
+/dist/
+node_modules/
+/src/**/*.js
+/tests/**/*.js
 *.map
 *.css
-*.js
+*.log

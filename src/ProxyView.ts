@@ -2,10 +2,10 @@
  * Created by Holger Stitz on 07.09.2016.
  */
 
-import {api2absURL} from '../caleydo_core/ajax';
-import {random_id, mixin} from '../caleydo_core/main';
+import {api2absURL} from 'phovea_core/src/ajax';
+import {random_id, mixin} from 'phovea_core/src/index';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
-import {IPluginDesc} from '../caleydo_core/plugin';
+import {IPluginDesc} from 'phovea_core/src/plugin';
 
 /**
  * helper view for proxing an existing external website

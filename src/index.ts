@@ -8,12 +8,12 @@
 /// <amd-dependency path="css!/bower_components/bootstrap/dist/css/bootstrap" />
 
 /// <amd-dependency path="font-awesome" />
-/// <amd-dependency path="css!../caleydo_bootstrap_fontawesome/style.css" />
+/// <amd-dependency path="css!phovea_bootstrap_fontawesome/style.css" /src/>
 /// <amd-dependency path="css!./style.css"/>
 
-import template = require('../caleydo_clue/template');
-import header = require('../caleydo_bootstrap_fontawesome/header');
-import targid = require('./Targid');
+import * as template from 'phovea_clue/src/template';
+import * as header from 'phovea_bootstrap_fontawesome/src/header';
+import * as targid from './Targid';
 
 // cache the nodes from the targid2/index.html before the TargID app is created
 // NOTE: the template (see next line) replaces the content of the document.body (but not document.head)

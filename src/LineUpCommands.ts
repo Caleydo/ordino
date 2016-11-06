@@ -3,8 +3,8 @@
  */
 
 
-import prov = require('../caleydo_core/provenance');
-import lineupjs = require('lineupjs');
+import * as prov from 'phovea_core/src/provenance';
+import * as lineupjs from 'lineupjs';
 import {ALineUpView} from './LineUpView';
 
 //TODO better solution

@@ -4,13 +4,13 @@
 
 /// <amd-dependency path="scrollTo" />
 
-import prov = require('../caleydo_core/provenance');
-import idtypes = require('../caleydo_core/idtype');
-import ranges = require('../caleydo_core/range');
-import d3 = require('d3');
+import * as prov from 'phovea_core/src/provenance';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as ranges from 'phovea_core/src/range';
+import * as d3 from 'd3';
 import {TargidConstants} from './Targid';
-import {EventHandler, IEventHandler} from '../caleydo_core/event';
-import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
+import {EventHandler, IEventHandler} from 'phovea_core/src/event';
+import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
 import {ProxyView} from '../targid_common/ProxyView';
 

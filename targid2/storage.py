@@ -1,18 +1,18 @@
 __author__ = 'Samuel Gratzl'
 
-import caleydo_server.config
-c = caleydo_server.config.view('targid2')
+import phovea_server.config
+c = phovea_server.config.view('targid2')
 
 from pymongo import MongoClient
-from flask import Flask, request, abort
-from caleydo_server.util import jsonify
-import caleydo_server.security as security
-import caleydo_server.range as ranges
+from phovea_server.ns import Namespace, request, abort
+from phovea_server.util import jsonify
+import phovea_server.security as security
+import phovea_server.range as ranges
 
 import logging
 _log = logging.getLogger(__name__)
 
-app = Flask(__name__)
+app = Namespace(__name__)
 
 @app.route('/namedsets/', methods=['GET', 'POST'])
 def get_namedsets():
@@ -59,8 +59,8 @@ def get_namedsetById(namedsetId):
     return result[0]
 
 def _generate_id():
-  import caleydo_server.util
-  return caleydo_server.util.fix_id(caleydo_server.util.random_id(10))
+  import phovea_server.util
+  return phovea_server.util.fix_id(phovea_server.util.random_id(10))
 
 
 #@app.route('/delete_legacy_namedsets/', methods=['GET'])

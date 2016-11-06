@@ -4,18 +4,18 @@
 /// <reference path="./tsd.d.ts" />
 
 import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
-import lineup = require('lineupjs');
-import d3 = require('d3');
-import idtypes = require('../caleydo_core/idtype');
-import tables = require('../caleydo_core/table');
-import ranges = require('../caleydo_core/range');
-import plugins = require('../caleydo_core/plugin');
-import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
-import cmds = require('./LineUpCommands');
+import * as lineup from 'lineupjs';
+import * as d3 from 'd3';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as tables from 'phovea_core/src/table';
+import * as ranges from 'phovea_core/src/range';
+import * as plugins from 'phovea_core/src/plugin';
+import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
+import * as cmds from './LineUpCommands';
 import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
-import {IDType} from '../caleydo_core/idtype';
-import {EventHandler} from '../caleydo_core/event';
+import {IDType} from 'phovea_core/src/idtype';
+import {EventHandler} from 'phovea_core/src/event';
 import {IDataSourceConfig} from '../targid_common/Common';
 
 export function numberCol(col:string, rows:any[], label = col, visible = true, width = -1, selectedId = -1) {

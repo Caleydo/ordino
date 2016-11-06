@@ -1,9 +1,9 @@
 __author__ = 'Samuel Gratzl'
 
-from flask import Flask, request, abort
-from caleydo_server.config import view as configview
+from phovea_server.ns import Namespace, request, abort
+from phovea_server.config import view as configview
 import itertools
-from caleydo_server.util import jsonify
+from phovea_server.util import jsonify
 import sqlalchemy
 
 #import such that it the sql driver uses gevent
@@ -12,10 +12,10 @@ import sql_use_gevent
 import logging
 _log = logging.getLogger(__name__)
 
-import caleydo_server.config
-c = caleydo_server.config.view('targid2')
+import phovea_server.config
+c = phovea_server.config.view('targid2')
 
-app = Flask(__name__)
+app = Namespace(__name__)
 
 def _to_config(p):
   config =  configview(p.configKey)
@@ -31,22 +31,22 @@ def _to_config(p):
 
   return config, engine
 
-configs = { p.id : _to_config(p) for p in caleydo_server.plugin.list('targid-sql-database-definition') }
+configs = { p.id : _to_config(p) for p in phovea_server.plugin.list('targid-sql-database-definition') }
 
 def _resolve(database):
   return configs[database]
 
 
 def load_ids(idtype, mapping):
-  import caleydo_server.plugin
+  import phovea_server.plugin
 
-  manager = caleydo_server.plugin.lookup('idmanager')
+  manager = phovea_server.plugin.lookup('idmanager')
   manager.load(idtype, mapping)
 
 def assign_ids(rows, idtype):
-  import caleydo_server.plugin
+  import phovea_server.plugin
 
-  manager = caleydo_server.plugin.lookup('idmanager')
+  manager = phovea_server.plugin.lookup('idmanager')
   for _id, row in itertools.izip(manager((r['id'] for r in rows), idtype), rows):
     row['_id'] = _id
   return rows

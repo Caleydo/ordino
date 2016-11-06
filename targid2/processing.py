@@ -1,12 +1,12 @@
 __author__ = 'Holger Stitz'
 
-from flask import Flask, request, abort
+from phovea_server.ns import Namespace, request, abort
 
 
 import logging
 _log = logging.getLogger(__name__)
 
-app = Flask(__name__)
+app = Namespace(__name__)
 
 @app.route('/sub/<x>/<y>', methods=['GET'])
 def add(x, y):

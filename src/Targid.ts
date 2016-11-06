@@ -2,20 +2,20 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-import C = require('../caleydo_core/main');
-import prov = require('../caleydo_core/provenance');
-import plugins = require('../caleydo_core/plugin');
-import events = require('../caleydo_core/event');
-import ranges = require('../caleydo_core/range');
-import idtypes = require('../caleydo_core/idtype');
-import session = require('../caleydo_core/session');
-import d3 = require('d3');
+import * as C from 'phovea_core/src/index';
+import * as prov from 'phovea_core/src/provenance';
+import * as plugins from 'phovea_core/src/plugin';
+import * as events from 'phovea_core/src/event';
+import * as ranges from 'phovea_core/src/range';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as session from 'phovea_core/src/session';
+import * as d3 from 'd3';
 import {
   ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
   replaceViewWrapper
 } from './View';
-import {ICmdResult, IAction} from '../caleydo_core/provenance';
-import {CLUEGraphManager} from '../caleydo_clue/template';
+import {ICmdResult, IAction} from 'phovea_core/src/provenance';
+import {CLUEGraphManager} from 'phovea_clue/src/template';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';
 

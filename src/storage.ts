@@ -2,10 +2,10 @@
  * Created by Samuel Gratzl on 11.05.2016.
  */
 
-import ajax = require('../caleydo_core/ajax');
-import idtypes = require('../caleydo_core/idtype');
-import ranges = require('../caleydo_core/range');
-import session = require('../caleydo_core/session');
+import * as ajax from 'phovea_core/src/ajax';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as ranges from 'phovea_core/src/range';
+import * as session from 'phovea_core/src/session';
 
 export interface INamedSet {
   /**

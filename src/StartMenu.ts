@@ -2,12 +2,12 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import session = require('../caleydo_core/session');
-import idtypes = require('../caleydo_core/idtype');
-import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
+import * as session from 'phovea_core/src/session';
+import * as idtypes from 'phovea_core/src/idtype';
+import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
 import {Targid, TargidConstants} from '../targid2/Targid';
 import {listNamedSets, INamedSet, deleteNamedSet} from '../targid2/storage';
-import {IPluginDesc, list as listPlugins} from '../caleydo_core/plugin';
+import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 
 
@@ -156,7 +156,7 @@ export class StartMenu {
 
     const $main = $sectionNode.html(`
         <header><h1>${sectionDesc.name}</h1></header>
-        <main></main>
+        <main></index>
       `)
       .select('main');
 

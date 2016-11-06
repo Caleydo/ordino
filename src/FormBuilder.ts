@@ -4,11 +4,11 @@
 
 /// <amd-dependency path="select2" />
 
-import C = require('../caleydo_core/main');
-import {random_id} from '../caleydo_core/main';
-import {EventHandler, IEventHandler} from '../caleydo_core/event';
-import session = require('../caleydo_core/session');
-import {api2absURL} from '../caleydo_core/ajax';
+import * as C from 'phovea_core/src/index';
+import {random_id} from 'phovea_core/src/index';
+import {EventHandler, IEventHandler} from 'phovea_core/src/event';
+import * as session from 'phovea_core/src/session';
+import {api2absURL} from 'phovea_core/src/ajax';
 
 /**
  * Builds a form from a given collection of form elements

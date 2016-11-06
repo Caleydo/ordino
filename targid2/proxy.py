@@ -1,14 +1,14 @@
 __author__ = 'Samuel Gratzl'
 
-from flask import Flask, Response, request, abort
+from phovea_server.ns import Namespace, Response, request, abort
 import requests
 
-app = Flask(__name__)
+app = Namespace(__name__)
 
 def _to_site_url(site):
-  import caleydo_server.plugin
+  import phovea_server.plugin
 
-  proxy_defs = caleydo_server.plugin.list('targid_proxy')
+  proxy_defs = phovea_server.plugin.list('targid_proxy')
   for p in proxy_defs:
     if p.id == site:
       return p.url.format(**request.args.to_dict())

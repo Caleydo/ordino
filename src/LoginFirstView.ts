@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 19.08.2016
  */
 
-/// <amd-dependency path='css!./style' />
+import './style.scss';
 
 import {IView} from './View';
 

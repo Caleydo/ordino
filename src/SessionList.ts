@@ -2,9 +2,9 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import session = require('../caleydo_core/session');
-import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
-import {IPluginDesc} from '../caleydo_core/plugin';
+import * as session from 'phovea_core/src/session';
+import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
+import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry} from './StartMenu';
 import {Targid} from './Targid';
 

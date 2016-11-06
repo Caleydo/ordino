@@ -1,6 +1,4 @@
 from __future__ import absolute_import
-from phovea_processing_queue.app import app as celery_app
-
 from phovea_processing_queue.task_definition import task
 from targid2 import db
 

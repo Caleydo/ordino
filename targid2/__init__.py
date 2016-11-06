@@ -11,21 +11,25 @@ def phovea(registry):
   :param registry:
   """
   # generator-phovea:begin
-  registry.append('namespace', 'targid2', 'targid2.proxy', {
-   'namespace': '/api/targid/proxy'
-  })
+  registry.append('namespace', 'targid2', 'targid2.proxy',
+                  {
+                      'namespace': '/api/targid/proxy'
+                  })
 
-  registry.append('namespace', 'db_connector', 'targid2.sql', {
-   'namespace': '/api/targid/db'
-  })
+  registry.append('namespace', 'db_connector', 'targid2.sql',
+                  {
+                      'namespace': '/api/targid/db'
+                  })
 
-  registry.append('namespace', 'targid_storage', 'targid2.storage', {
-   'namespace': '/api/targid/storage'
-  })
+  registry.append('namespace', 'targid_storage', 'targid2.storage',
+                  {
+                      'namespace': '/api/targid/storage'
+                  })
 
-  registry.append('namespace', 'processing', 'targid2.processing', {
-   'namespace': '/api/targid/processing'
-  })
+  registry.append('namespace', 'processing', 'targid2.processing',
+                  {
+                      'namespace': '/api/targid/processing'
+                  })
 
   registry.append('processing-task', 'targid_tasks', 'targid2.tasks', {})
   # generator-phovea:end

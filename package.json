@@ -69,11 +69,11 @@
   },
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/phovea/targid2/issues"
+    "url": "https://github.com/caleydo/targid2/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/phovea/targid2.git"
+    "url": "https://github.com/caleydo/targid2.git"
   },
   "main": "build/targid2.js",
   "devDependencies": {
@@ -81,6 +81,7 @@
     "awesome-typescript-loader": "^2.2.4",
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^2.0.0-beta.4",
+    "extract-loader": "0.0.2",
     "file-loader": "^0.9.0",
     "html-loader": "^0.4.4",
     "imports-loader": "^0.6.5",

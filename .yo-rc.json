@@ -1,9 +1,9 @@
 {
   "generator-phovea": {
-    "type": "app-server",
+    "type": "app-slib",
     "name": "targid2",
     "author": "The Caleydo Team",
-    "githubAccount": "phovea",
+    "githubAccount": "caleydo",
     "modules": [
       "phovea_clue",
       "phovea_vis_lineup",

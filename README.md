@@ -7,7 +7,7 @@ Installation
 ------------
 
 ```
-git clone https://github.com/phovea/targid2.git
+git clone https://github.com/caleydo/targid2.git
 cd targid2
 npm install
 ```
@@ -38,7 +38,7 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [phovea-url]: https://phovea.caleydo.org
 [npm-image]: https://badge.fury.io/js/targid2.svg
 [npm-url]: https://npmjs.org/package/targid2
-[travis-image]: https://travis-ci.org/phovea/targid2.svg?branch=master
-[travis-url]: https://travis-ci.org/phovea/targid2
-[daviddm-image]: https://david-dm.org/phovea/targid2.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/phovea/targid2
+[travis-image]: https://travis-ci.org/caleydo/targid2.svg?branch=master
+[travis-url]: https://travis-ci.org/caleydo/targid2
+[daviddm-image]: https://david-dm.org/caleydo/targid2.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/caleydo/targid2

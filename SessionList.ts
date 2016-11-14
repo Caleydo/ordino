@@ -52,6 +52,8 @@ class SessionList implements IStartMenuSectionEntry {
 
       // filter local workspaces, since we are using remote storage
       list = list.filter((d) => d.local === false || d.local === undefined);
+      //sort by date desc
+      list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));
 
       const $table = $parent.html(this.template);
       const $list = $table.select('tbody')

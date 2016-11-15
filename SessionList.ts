@@ -13,7 +13,7 @@ class SessionList implements IStartMenuSectionEntry {
   private targid:Targid;
   //private format = d3.time.format.utc('%Y-%m-%d %H:%M');
 
-  private template = `<table class="table table-striped table-hover table-bordered">
+  private static TEMPLATE = `<table class="table table-striped table-hover table-bordered table-condensed">
     <thead>
       <tr>
         <!--<th>Entity Type</th>-->
@@ -55,7 +55,7 @@ class SessionList implements IStartMenuSectionEntry {
       //sort by date desc
       list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));
 
-      const $table = $parent.html(this.template);
+      const $table = $parent.html(SessionList.TEMPLATE);
       const $list = $table.select('tbody')
         .classed('loading', false)
         .selectAll('tr').data(list);
@@ -68,9 +68,9 @@ class SessionList implements IStartMenuSectionEntry {
       $tr_enter.append('td').text((d) => d.creator);
       //$tr_enter.append('td').text((d) => `${d.size[0]} / ${d.size[1]}`);
       $tr_enter.append('td').html((d) => {
-        return `<button class="btn btn-sm btn-default" data-action="select" ${session.retrieve('logged_in', false) !== true && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
-        <button class="btn btn-sm btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
-        <button class="btn btn-sm btn-default" data-action="delete" ${session.retrieve('logged_in', false) !== true && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
+        return `<button class="btn btn-xs btn-default" data-action="select" ${session.retrieve('logged_in', false) !== true && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
+        <button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
+        <button class="btn btn-xs btn-default" data-action="delete" ${session.retrieve('logged_in', false) !== true && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
       });
 
       $tr_enter.select('button[data-action="delete"]').on('click', (d) => {

@@ -66,11 +66,40 @@ def _concat(v):
     return '\n'.join(v)
   return v
 
+
+def _handle_aggregated_score(config, replacements={}):
+  """
+  Handle aggregation for aggregated (and inverted aggregated) score queries
+  :param replacements:
+  :return replacements:
+  """
+  view = config.view('agg_score')
+
+  if request.args.get('agg', '') == '' or view.query is None:
+    return replacements
+
+  query = view.query
+  if view.query_median is not None and request.args.get('agg', '') == 'median':
+    query = view.query_median
+
+  replace = {}
+  if view['replacements'] is not None:
+    for arg in view['replacements']:
+      replace[arg] = request.args.get(arg, '')
+
+  replacements['agg_score'] = query % replace
+
+  return replacements
+
+
 def _get_data(database, viewName, replacements={}):
   config, engine = _resolve(database)
   # convert to index lookup
   # row id start with 1
   view = config.view('views.' + viewName)
+
+  replacements = _handle_aggregated_score(config, replacements)
+
   kwargs = {}
   if view['arguments'] is not None:
     for arg in view['arguments']:

@@ -16,7 +16,6 @@ import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
 import {IDType} from '../caleydo_core/idtype';
 import {EventHandler} from '../caleydo_core/event';
-import {IDataSourceConfig} from '../targid_common/Common';
 
 export function numberCol(col:string, rows:any[], label = col, visible = true, width = -1, selectedId = -1) {
   return {
@@ -139,7 +138,7 @@ export abstract class ALineUpView2 extends AView {
 
   protected lineup:any;
 
-  protected dataSource:IDataSourceConfig;
+  protected additionalScoreParameter: any = null;
 
   private initLineUpPromise;
 
@@ -149,7 +148,7 @@ export abstract class ALineUpView2 extends AView {
     },
     header: {
       rankingButtons: ($node:d3.Selection<any>) => {
-        const rb = new LineUpRankingButtons(this.lineup, $node, this.idType, this.dataSource);
+        const rb = new LineUpRankingButtons(this.lineup, $node, this.idType, this.additionalScoreParameter);
         rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description) => {
           this.saveNamedSet(order, name, description);
         });
@@ -741,7 +740,7 @@ class LineUpRankingButtons extends EventHandler {
   public static SAVE_NAMED_SET = 'saveNamedSet';
   public static ADD_SCORE_COLUMN = 'addScoreColumn';
 
-  constructor(private lineup, private $node:d3.Selection<any>, private idType:IDType, private dataSource:IDataSourceConfig) {
+  constructor(private lineup, private $node:d3.Selection<any>, private idType:IDType, private extraArgs:any) {
     super();
 
     this.appendDownload();
@@ -848,7 +847,7 @@ class LineUpRankingButtons extends EventHandler {
   private scoreColumnDialog(scorePlugin:plugins.IPlugin) {
     //TODO clueify
     // pass dataSource into InvertedAggregatedScore factory method
-    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.dataSource)) // open modal dialog
+    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.extraArgs)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
         this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
       });

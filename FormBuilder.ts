@@ -4,8 +4,7 @@
 
 /// <amd-dependency path="select2" />
 
-import C = require('../caleydo_core/main');
-import {random_id} from '../caleydo_core/main';
+import {mixin, random_id} from '../caleydo_core/main';
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import session = require('../caleydo_core/session');
 import {api2absURL} from '../caleydo_core/ajax';
@@ -585,7 +584,7 @@ class FormSelect2 extends AFormElement {
       templateSelection: (item:any) => item.text
     };
 
-    C.mixin(defaultOptions, options);
+    mixin(defaultOptions, options);
     //console.log(defaultOptions);
 
     return $($select.node()).select2(defaultOptions).trigger('change');

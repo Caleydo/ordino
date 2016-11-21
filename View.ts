@@ -12,7 +12,6 @@ import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from '../caleydo_core/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from '../caleydo_core/plugin';
 import {INamedSet} from './storage';
-import {ProxyView} from '../targid_common/ProxyView';
 
 
 export enum EViewMode {
@@ -128,6 +127,12 @@ export abstract class AView extends EventHandler implements IView {
   static EVENT_ITEM_SELECT = 'select';
 
   static EVENT_UPDATE_ENTRY_POINT = 'update_entry_point';
+  /**
+   * event is fired when the loading of the iframe has finished
+   * @type {string}
+   * @argument selection {ISelection}
+   */
+  static EVENT_LOADING_FINISHED = 'loadingFinished';
 
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: ranges.none() };
@@ -484,10 +489,7 @@ export class ViewWrapper extends EventHandler {
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
     this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
 
-    // register listener only for ProxyViews
-    if(this.instance instanceof ProxyView) {
-      this.instance.on(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
-    }
+    this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
   }
 
   /**
@@ -513,10 +515,7 @@ export class ViewWrapper extends EventHandler {
    */
   private destroyView() {
     // un/register listener only for ProxyViews
-    if(this.instance instanceof ProxyView) {
-      this.instance.off(ProxyView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
-    }
-
+    this.instance.off(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
     this.instance.off(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
     this.instance.destroy();

@@ -117,7 +117,9 @@ def load_mappings():
 @app.route('/<database>/<viewName>')
 def get_data(database, viewName):
   r, view = _get_data(database, viewName)
-  #r = assign_ids(r, view['idType'])
+  if request.args.get('_assignids', False):
+    r = assign_ids(r, view['idType'])
+
   return jsonify(r)
 
 @app.route('/<database>/<viewName>/namedset/<namedsetId>')

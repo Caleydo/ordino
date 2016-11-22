@@ -44,7 +44,7 @@ export function numberCol2(col:string, min:number, max:number, label = col, visi
 }
 
 
-export function categoricalCol(col:string, categories:string[], label = col, visible = true, width = -1, selectedId = -1) {
+export function categoricalCol(col:string, categories:(string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1) {
   return {
     type: 'categorical',
     column: col,
@@ -185,7 +185,11 @@ export abstract class ALineUpView2 extends AView {
 
   private scoreAccessor = (row:any, id:string, desc:any) => {
     const row_id = this.idAccessor(row);
-    return (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+    var r = (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+    if (desc.type === 'categorical') {
+      r = String(r); //even null values
+    }
+    return r;
   };
 
   constructor(context:IViewContext, protected selection: ISelection, parent:Element, private options?) {

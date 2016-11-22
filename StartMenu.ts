@@ -34,7 +34,7 @@ export class StartMenu {
     },
     {
       id: 'targidStartLineUp',
-      name: 'LineUp Data Sets',
+      name: 'Uploaded Datasets',
       cssClass: 'lineUpData',
       showViewName: false
     },

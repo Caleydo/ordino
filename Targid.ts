@@ -15,7 +15,7 @@ import {
   replaceViewWrapper
 } from './View';
 import {ICmdResult, IAction} from '../caleydo_core/provenance';
-import {CLUEGraphManager} from '../caleydo_clue/template';
+import {CLUEGraphManager, CLUEWrapper} from '../caleydo_clue/template';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';
 
@@ -296,7 +296,7 @@ export class Targid {
   private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
   private updateStartMenu = (event:events.IEvent, idtype: idtypes.IDType | string, namedSet: INamedSet) => this.startMenu.then((menu) => menu.updateEntryPointList(idtype, namedSet));
 
-  constructor(public graph:prov.ProvenanceGraph, public graphManager:CLUEGraphManager, parent:Element) {
+  constructor(public graph:prov.ProvenanceGraph, public graphManager:CLUEGraphManager, parent:Element, private clueWrapper: CLUEWrapper) {
 
     // add TargId app as (first) object to provenance graph
     this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
@@ -323,6 +323,7 @@ export class Targid {
     // user is already logged in --> build targid
     if(session.retrieve('logged_in', false) === true) {
       this.buildTargid(parent);
+      this.initSession();
       return;
     }
 
@@ -357,10 +358,6 @@ export class Targid {
       return p.factory(this.$startMenu.node(), { targid: this });
     });
 
-    if(this.graph.isEmpty && session.has(TargidConstants.NEW_ENTRY_POINT) === false) {
-      this.openStartMenu();
-    }
-
     this.$history = d3.select(parent).append('ul').classed('history', true);
     this.$history.append('li').classed('homeButton', true)
       .html(`<a href="#">
@@ -379,18 +376,23 @@ export class Targid {
     plugins.get(TargidConstants.VIEW, 'welcome').load().then((p) => {
       p.factory(this.$node.node(), {});
     });
-
-    this.checkForNewEntryPoint();
   }
 
   /**
-   * Checks if a new entry point was selected (and stored in the session) and if so, creates a new view.
+   * initializes the targid session
    */
-  private checkForNewEntryPoint() {
-    if(session.has(TargidConstants.NEW_ENTRY_POINT)) {
+  private initSession() {
+    const hasInitScript = session.has(TargidConstants.NEW_ENTRY_POINT);
+
+    if(this.graph.isEmpty && !hasInitScript) {
+      this.openStartMenu();
+    } else if (hasInitScript) {
       const entryPoint:any = session.retrieve(TargidConstants.NEW_ENTRY_POINT);
       this.push(entryPoint.view, null, null, entryPoint.options);
       session.remove(TargidConstants.NEW_ENTRY_POINT);
+    } else {
+      //just if no other option applies jump to the stored state
+      this.clueWrapper.jumpToStoredOrLastState();
     }
   }
 
@@ -708,6 +710,6 @@ function isCreateView(stateNode: prov.StateNode) {
  * @param parent
  * @returns {Targid}
  */
-export function create(graph:prov.ProvenanceGraph, graphManager:CLUEGraphManager, parent:Element) {
-  return new Targid(graph, graphManager, parent);
+export function create(graph:prov.ProvenanceGraph, graphManager:CLUEGraphManager, parent:Element, clueWrapper: CLUEWrapper) {
+  return new Targid(graph, graphManager, parent, clueWrapper);
 }

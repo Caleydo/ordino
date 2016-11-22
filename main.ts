@@ -57,4 +57,4 @@ elems.graph.then((graph) => {
 });
 
 // jump to last stored state
-elems.jumpToStoredOrLastState();
+elems.jumpToStored();

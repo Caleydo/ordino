@@ -6,7 +6,7 @@ import session = require('../caleydo_core/session');
 import idtypes = require('../caleydo_core/idtype');
 import dialogs = require('../caleydo_bootstrap_fontawesome/dialogs');
 import {Targid, TargidConstants} from '../targid2/Targid';
-import {listNamedSets, INamedSet, deleteNamedSet} from '../targid2/storage';
+import {listNamedSets, INamedSet, deleteNamedSet, ENamedSetType} from '../targid2/storage';
 import {IPluginDesc, list as listPlugins} from '../caleydo_core/plugin';
 import {showErrorModalDialog} from './Dialogs';
 
@@ -320,15 +320,19 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
     this.updateList(this.data);
   }
 
+  protected getNamedSets(): Promise<INamedSet[]> {
+    return listNamedSets(this.idType);
+  }
+
   protected build():Promise<INamedSet[]> {
     // load named sets (stored LineUp sessions)
-    const promise = listNamedSets(this.idType)
+    const promise = this.getNamedSets()
       // on success
       .then((namedSets: INamedSet[]) => {
         this.$node.html(''); // remove loading element or previous data
 
         // convert to data format and append to species data
-        this.data.push.apply(this.data, namedSets);
+        this.data.push(...namedSets);
 
         this.$node.append('ul');
         this.updateList(this.data);
@@ -396,7 +400,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
         });
 
       $this.select('a.delete')
-        .classed('hidden', (d) => d.id === undefined)
+        .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
         .on('click', (namedSet:INamedSet) => {
           // prevent changing the hash (href)
           (<Event>d3.event).preventDefault();

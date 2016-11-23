@@ -118,6 +118,10 @@ export interface IView extends IEventHandler {
   destroy();
 }
 
+export interface IAViewOptions {
+
+}
+
 export abstract class AView extends EventHandler implements IView {
   /**
    * event when one or more elements are selected for the next level
@@ -137,7 +141,7 @@ export abstract class AView extends EventHandler implements IView {
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: ranges.none() };
 
-  constructor(public context:IViewContext, parent:Element, options?) {
+  constructor(public context:IViewContext, parent:Element, options?: IAViewOptions) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
     this.$node.append('div').classed('busy', true).classed('hidden', true);
@@ -238,7 +242,7 @@ export abstract class ASmallMultipleView extends AView {
   protected width = 280 - this.margin.left - this.margin.right;
   protected height = 320 - this.margin.top - this.margin.bottom;
 
-  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?) {
+  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?: IAViewOptions) {
     super(context, parent, options);
   }
 

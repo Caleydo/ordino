@@ -3,7 +3,7 @@
  */
 /// <reference path="./tsd.d.ts" />
 
-import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
+import {AView, EViewMode, IViewContext, ISelection, ViewWrapper, IAViewOptions} from './View';
 import lineup = require('lineupjs');
 import d3 = require('d3');
 import idtypes = require('../caleydo_core/idtype');
@@ -192,7 +192,7 @@ export abstract class ALineUpView2 extends AView {
     return r;
   };
 
-  constructor(context:IViewContext, protected selection: ISelection, parent:Element, private options?) {
+  constructor(context:IViewContext, protected selection: ISelection, parent:Element, private options?: IAViewOptions) {
     super(context, parent, options);
 
     this.$node.classed('lineup', true);
@@ -1566,6 +1566,6 @@ export class LineUpView extends ALineUpView {
  * @param options
  * @returns {LineUpView}
  */
-export function create(context:IViewContext, selection:ISelection, parent:Element, options?) {
+export function create(context:IViewContext, selection:ISelection, parent:Element, options?: IAViewOptions) {
   return new LineUpView(context, selection, parent, options);
 }

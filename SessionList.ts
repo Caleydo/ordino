@@ -50,8 +50,12 @@ class SessionList implements IStartMenuSectionEntry {
 
     this.targid.graphManager.list().then((list:any[]) => {
 
-      // filter local workspaces, since we are using remote storage
-      list = list.filter((d) => d.local === false || d.local === undefined);
+      list = list
+        // filter local workspaces, since we are using remote storage
+        .filter((d) => d.local === false || d.local === undefined)
+        // filter list by username
+        .filter((d) => d.creator === session.retrieve('username'));
+
       //sort by date desc
       list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));
 

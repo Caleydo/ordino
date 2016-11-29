@@ -67,6 +67,7 @@ export function listNamedSets(idType : idtypes.IDType | string = null):Promise<I
   const args = idType ? { idType : idtypes.resolve(idType).id} : {};
   return ajax.getAPIJSON('/targid/storage/namedsets/', args).then((sets: INamedSet[]) => {
     sets.forEach((s) => s.type = s.type || ENamedSetType.NAMEDSET);
+    sets = sets.filter((d) => d.creator === session.retrieve('username'));
     return sets;
   });
 }

@@ -361,8 +361,8 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
     const $ul = this.$node.select('ul');
     const $options = $ul.selectAll('li').data(data);
     const enter = $options.enter()
-      .append('li');
-      //.classed('selected', (d,i) => (i === 0))
+      .append('li')
+      .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
 
     enter.append('a')
       .classed('goto', true)

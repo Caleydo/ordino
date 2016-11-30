@@ -286,6 +286,7 @@ export interface IStartMenuSectionEntry {
 export interface IEntryPointList {
   getIdType():idtypes.IDType | string;
   addNamedSet(namedSet:INamedSet);
+  removeNamedSet(namedSet:INamedSet);
 }
 
 /**

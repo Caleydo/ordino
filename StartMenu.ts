@@ -133,8 +133,8 @@ export class StartMenu {
     this.$sections.enter()
       .append('section')
       .attr('class', (d) => d.cssClass)
-      .each(function(d) {
-        that.createSection(d, d3.select(this));
+      .each(function(d, i) {
+        that.createSection(d, d3.select(this), i);
       });
 
     // do not update here --> will be done on first call of open()
@@ -146,7 +146,7 @@ export class StartMenu {
    * @param sectionDesc
    * @param $sectionNode
    */
-  private createSection(sectionDesc:IStartMenuSection, $sectionNode) {
+  private createSection(sectionDesc:IStartMenuSection, $sectionNode, i) {
     // get start views for entry points and sort them by name ASC
     const views = findViewCreators(sectionDesc.id).sort((a,b) => {
       let x = a.name.toLowerCase();
@@ -154,13 +154,14 @@ export class StartMenu {
       return x === y ? 0 : (x < y ? -1 : 1);
     });
 
-    const $main = $sectionNode.html(`
-        <header><h1>${sectionDesc.name}</h1></header>
+    const $template = $sectionNode.html(`
+        <header><h1><label for="${sectionDesc.cssClass}Toggle">${sectionDesc.name}+</label></h1></header>
+        <input id="${sectionDesc.cssClass}Toggle" class="toggle" type="radio" name="toggle" />
         <main></main>
-      `)
-      .select('main');
+      `);
+    $template.select('input').attr('checked', (i === 0) ? 'checked' : null);
 
-    const $items = $main.selectAll('.item').data(views);
+    const $items = $template.select('main').selectAll('.item').data(views);
     const $enter = $items.enter().append('div').classed('item', true);
 
     // relevant for multiple entry points

@@ -67,6 +67,9 @@
 
     main {
       display: flex;
+      height: 0;
+      transition: .3s all;
+      overflow: hidden;
 
       .item {
         margin-right: 30px;
@@ -85,11 +88,23 @@
       }
     }
 
+    // Visually hide radio buttons
+    input.toggle {
+      position: absolute;
+      opacity: 0;
+
+      &:checked ~ main {
+        height: 30vh; // or use `auto` to disable the animation
+      }
+    }
+
     ul {
       min-width: 150px;
       margin: 0;
       padding: 0;
       list-style: none;
+      max-height: 27vh;
+      overflow-y: auto;
 
       li {
         display: flex;
@@ -147,7 +162,7 @@
     }
 
     .menuTable {
-      max-height: 20vh;
+      max-height: 30vh;
       overflow-y: auto;
       margin-bottom: 15px;
 

@@ -53,10 +53,14 @@
     }
 
     section header h1 {
-      margin: 15px 0 5px 0;
+      margin: 0 0 5px 0;
       padding-top: 15px;
       font-size: 1.3em;
       border-top: 1px solid $header-menu-bg-color;
+
+      label {
+        cursor: pointer;
+      }
     }
 
     section:first-child header h1 {
@@ -94,7 +98,9 @@
       opacity: 0;
 
       &:checked ~ main {
-        height: 30vh; // or use `auto` to disable the animation
+        height: 40vh; // or use `auto` to disable the animation
+        overflow-y: auto;
+        margin-bottom: 15px;
       }
     }
 
@@ -103,7 +109,6 @@
       margin: 0;
       padding: 0;
       list-style: none;
-      max-height: 27vh;
       overflow-y: auto;
 
       li {
@@ -162,10 +167,6 @@
     }
 
     .menuTable {
-      max-height: 30vh;
-      overflow-y: auto;
-      margin-bottom: 15px;
-
       table {
         margin-bottom: 0;
       }
@@ -180,7 +181,16 @@
 
   .speciesSelector {
     .body {
-      display: flex;
+      .species-wrapper {
+        display: flex;
+        padding-bottom: 15px;
+        border-bottom: 1px solid $core_border;
+      }
+
+      .entry-points-wrapper {
+        display: flex;
+        margin-top: 15px;
+      }
 
       .species-group {
         position: relative;
@@ -227,7 +237,7 @@
           display: block;
           visibility: hidden;
           position: absolute;
-          top: -55%;
+          bottom: -67%;
           left: 4%;
           opacity: 0;
           content: attr(data-title);
@@ -249,13 +259,13 @@
           visibility: hidden;
           width: 0;
           height: 0;
-          top: -3%;
+          bottom: -16%;
           left: 42%;
           opacity: 0;
           content: "";
           border-style: solid;
-          border-width: 8.7px 5px 0 5px;
-          border-color: rgba(0,0,0,1) transparent transparent transparent;
+          border-width: 0 5px 8.7px 5px;
+          border-color: transparent transparent rgba(0,0,0,1) transparent;
           pointer-events: none;
           transition: all 0.2s ease-in-out;
         }

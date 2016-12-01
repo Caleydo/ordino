@@ -27,12 +27,6 @@ export class StartMenu {
       showViewName: false
     },
     {
-      id: 'targidStartEntryPoint',
-      name: '',
-      cssClass: 'entryPoints',
-      showViewName: true
-    },
-    {
       id: 'targidStartLineUp',
       name: 'Uploaded Datasets',
       cssClass: 'lineUpData',
@@ -155,7 +149,7 @@ export class StartMenu {
     });
 
     const $template = $sectionNode.html(`
-        <header><h1><label for="${sectionDesc.cssClass}Toggle">${sectionDesc.name}+</label></h1></header>
+        <header><h1><label for="${sectionDesc.cssClass}Toggle">${sectionDesc.name}</label></h1></header>
         <input id="${sectionDesc.cssClass}Toggle" class="toggle" type="radio" name="toggle" />
         <main></main>
       `);
@@ -292,7 +286,7 @@ export interface IEntryPointList {
 /**
  * Abstract entry point list
  */
-export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry {
+export class AEntryPointList implements IEntryPointList {
 
   protected idType = 'Ensembl';
 

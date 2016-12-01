@@ -41,6 +41,10 @@ class SessionList implements IStartMenuSectionEntry {
     this.build();
   }
 
+  public getEntryPointLists() {
+    return [];
+  }
+
   private build() {
     const $parent = d3.select(this.parent).classed('menuTable', true).html(`
       <div class="loading">

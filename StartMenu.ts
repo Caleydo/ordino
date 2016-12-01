@@ -43,8 +43,6 @@ export class StartMenu {
 
   private entryPoints:IStartMenuSectionEntry[] = [];
 
-  private entryPointLists:IEntryPointList[] = [];
-
   private template = `
     <button class="closeButton">
       <i class="fa fa-times" aria-hidden="true"></i>
@@ -94,7 +92,10 @@ export class StartMenu {
    * @param namedSet
    */
   public updateEntryPointList(idType: idtypes.IDType | string, namedSet: INamedSet) {
-    this.entryPointLists
+    this.entryPoints
+      .map((d) => d.getEntryPointLists())
+      .filter((d) => d !== null && d !== undefined)
+      .reduce((a,b) => a.concat(b), []) // [[0, 1], [2, 3], [4, 5]] -> [0, 1, 2, 3, 4, 5]
       .filter((d) => d.getIdType() === idtypes.resolve(idType).id)
       .forEach((d) => {
         d.addNamedSet(namedSet);
@@ -199,11 +200,6 @@ export class StartMenu {
               }
 
               that.entryPoints.push(entryPoint);
-
-              // store IEntryPointLists separately to allow a dynamic update
-              if(section.id === 'targidStartEntryPoint') {
-                that.entryPointLists.push(<IEntryPointList>entryPoint);
-              }
             })
             .catch(showErrorModalDialog);
         });
@@ -274,6 +270,7 @@ interface IStartMenuSection {
 
 export interface IStartMenuSectionEntry {
   desc:IPluginDesc;
+  getEntryPointLists():IEntryPointList[];
 }
 
 

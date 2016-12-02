@@ -183,7 +183,7 @@ export abstract class ALineUpView2 extends AView {
 
   protected idAccessor = (d) => d._id;
 
-  private scoreAccessor = (row:any, id:string, desc:any) => {
+  private scoreAccessor = (row:any, index:number, id:string, desc:any) => {
     const row_id = this.idAccessor(row);
     let r = (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
     if (desc.type === 'categorical') {

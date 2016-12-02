@@ -101,7 +101,7 @@ export function useDefaultLayout(instance:any) {
 }
 
 export function deriveCol(col:tables.IVector) {
-  var r:any = {
+  let r:any = {
     column: col.desc.name
   };
   const desc = <any>col.desc;
@@ -110,7 +110,7 @@ export function deriveCol(col:tables.IVector) {
   } else if (desc.cssClass) {
     r.cssClass = desc.cssClass;
   }
-  var val = desc.value;
+  let val = desc.value;
   switch (val.type) {
     case 'string':
       r.type = 'string';
@@ -185,7 +185,7 @@ export abstract class ALineUpView2 extends AView {
 
   private scoreAccessor = (row:any, id:string, desc:any) => {
     const row_id = this.idAccessor(row);
-    var r = (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+    let r = (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
     if (desc.type === 'categorical') {
       r = String(r); //even null values
     }
@@ -480,7 +480,7 @@ export abstract class ALineUpView2 extends AView {
     });
 
     const order = ranking.getOrder();
-    var numAnimationCycle = 0;
+    let numAnimationCycle = 0;
 
     const animateBars = function() {
       const scores = {}; // must be an object!

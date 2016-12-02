@@ -13,7 +13,7 @@ var ignoreNext:string = null;
 function addRankingImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
     let index = parameter.index;
-    var ranking;
+    let ranking;
     if (parameter.dump) { //add
       ignoreNext = 'addRanking';
       p.insertRanking(p.restoreRanking(parameter.dump), index);
@@ -65,13 +65,13 @@ function setColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
     let ranking = p.getRankings()[parameter.rid];
     let prop = parameter.prop[0].toUpperCase() + parameter.prop.slice(1);
 
-    var bak;
-    var source = ranking;
+    let bak;
+    let source = ranking;
     if (parameter.path) {
       source = ranking.findByPath(parameter.path);
     }
     ignoreNext = parameter.prop + 'Changed';
-    if (parameter.prop === 'mapping' && source instanceof lineupjs.model.NumberColumn) {
+    if (parameter.prop === 'mapping' && source instanceof lineupjs.model.models().number) {
       bak = source.getMapping().dump();
       source.setMapping(lineupjs.model.createMappingFunction(parameter.value));
     } else {
@@ -98,10 +98,10 @@ export function setColumn(provider:prov.IObjectRef<any>, rid:number, path:string
 
 function addColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
-    var ranking = p.getRankings()[parameter.rid];
+    let ranking = p.getRankings()[parameter.rid];
 
     let index = parameter.index;
-    var bak;
+    let bak;
     if (parameter.path) {
       ranking = ranking.findByPath(parameter.path);
     }
@@ -143,8 +143,8 @@ export function createCmd(id):prov.ICmdFunction {
 }
 
 function delayedCall(callback:(old:any, new_:any) => void, timeToDelay = 100, thisCallback = this) {
-  var tm = -1;
-  var oldest = null;
+  let tm = -1;
+  let oldest = null;
 
   function callbackImpl(new_) {
     callback.call(thisCallback, oldest, new_);
@@ -230,10 +230,10 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
     });
     col.children.forEach(trackColumn.bind(this, provider, lineup, graph));
 
-    if (col instanceof lineupjs.model.StackColumn) {
+    if (col instanceof lineupjs.model.models().stack) {
       recordPropertyChange(col, provider, lineup, graph, 'weights', 100);
     }
-  } else if (col instanceof lineupjs.model.NumberColumn) {
+  } else if (col instanceof lineupjs.model.models().number) {
     col.on('mappingChanged.track', (old, new_) => {
       if (ignoreNext === 'mappingChanged') {
         ignoreNext = null;
@@ -246,11 +246,11 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
         inverse: setColumn(lineup, rid, path, 'mapping', old.dump())
       });
     });
-  } else if (col instanceof lineupjs.model.ScriptColumn) {
+  } else if (col instanceof lineupjs.model.models().script) {
     recordPropertyChange(col, provider, lineup, graph, 'script');
-  } else if (col instanceof lineupjs.model.LinkColumn) {
+  } else if (col instanceof lineupjs.model.models().link) {
     recordPropertyChange(col, provider, lineup, graph, 'link');
-  } else if (col instanceof lineupjs.model.CategoricalNumberColumn) {
+  } else if (col instanceof lineupjs.model.models().ordinal) {
     recordPropertyChange(col, provider, lineup, graph, 'mapping');
   }
 }
@@ -262,11 +262,11 @@ function untrackColumn(col) {
   if (col instanceof lineupjs.model.CompositeColumn) {
     col.on(['addColumn.track', 'removeColumn.track'], null);
     col.children.forEach(untrackColumn);
-  } else if (col instanceof lineupjs.model.NumberColumn) {
+  } else if (col instanceof lineupjs.model.models().number) {
     col.on('mappingChanged.track', null);
-  } else if (col instanceof lineupjs.model.ScriptColumn) {
+  } else if (col instanceof lineupjs.model.models().script) {
     col.on('scriptChanged.track', null);
-  } else if (col instanceof lineupjs.model.LinkColumn) {
+  } else if (col instanceof lineupjs.model.models().link) {
     col.on('linkChanged.track', null);
   }
 }

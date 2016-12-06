@@ -139,8 +139,9 @@ export class ProxyView extends AView {
    * @returns {string[]}
    */
   protected filterSelectedNames(names:string[]):string[] {
-    // hook
-    return names;
+    //FIXME HACK for UnitProt
+    //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
+    return names.filter(d => d !== null && d.indexOf('A0') !== 0);
   }
 
   protected loadProxyPage(selection:ISelection, lastSelectedID) {

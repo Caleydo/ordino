@@ -79,7 +79,9 @@ export class ProxyView extends AView {
     const ids = selection.range.dim(0).asList();
     const idtype = selection.idtype;
 
-    this.resolveIds(idtype, ids, this.options.idtype).then((allNames) => {
+    this.resolveIds(idtype, ids, this.options.idtype).then((names) => {
+      let allNames = this.filterSelectedNames(names);
+
       let selectedIndex = allNames.length-1;
 
       if (allNames[selectedIndex] === null) {
@@ -93,17 +95,12 @@ export class ProxyView extends AView {
 
       this.build();
 
-      //FIXME HACK for UnitProt
-      //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
-      allNames = allNames.filter(d => d.indexOf('A0') !== 0);
-
       this.lastSelectedID = allNames[selectedIndex];
       this.loadProxyPage(selection);
 
       this.$formGroup.classed('hidden', false);
       this.$selectType.on('change', () => {
         this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
-        console.log(this.lastSelectedID);
         this.loadProxyPage(selection);
       });
 
@@ -116,6 +113,15 @@ export class ProxyView extends AView {
       // select first element by default
       this.$selectType.property('selectedIndex', selectedIndex);
     });
+  }
+
+  /**
+   * Override to filter names by specific rules
+   * @param names
+   * @returns {string[]}
+   */
+  protected filterSelectedNames(names:string[]):string[] {
+    return names;
   }
 
   protected loadProxyPage(selection: ISelection) {

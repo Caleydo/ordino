@@ -8,7 +8,7 @@ import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from '../caleydo_core/plugin';
 
 /**
- * helper view for proxing an existing external website
+ * helper view for proxying an existing external website
  */
 export class ProxyView extends AView {
 
@@ -76,14 +76,13 @@ export class ProxyView extends AView {
   }
 
   changeSelection(selection: ISelection) {
-    const id = selection.range.last;
+    const ids = selection.range.dim(0).asList();
     const idtype = selection.idtype;
 
-    this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
+    this.resolveIds(idtype, ids, this.options.idtype).then((allNames) => {
+      let selectedIndex = allNames.length-1;
 
-      var allNames = names[0];
-      console.log(allNames);
-      if (!allNames) {
+      if (allNames[selectedIndex] === null) {
         this.setBusy(false);
         this.$selectType.selectAll('option').data();
         this.$node.html(`<p>Cannot map selected item to ${this.options.idtype}.</p>`);
@@ -98,17 +97,13 @@ export class ProxyView extends AView {
       //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
       allNames = allNames.filter(d => d.indexOf('A0') !== 0);
 
-      this.lastSelectedID = allNames[0];
+      this.lastSelectedID = allNames[selectedIndex];
       this.loadProxyPage(selection);
-
-      if (allNames.length === 1) {
-        this.$formGroup.classed('hidden', true);
-        return;
-      }
 
       this.$formGroup.classed('hidden', false);
       this.$selectType.on('change', () => {
         this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
+        console.log(this.lastSelectedID);
         this.loadProxyPage(selection);
       });
 
@@ -119,29 +114,29 @@ export class ProxyView extends AView {
       $options.exit().remove();
 
       // select first element by default
-      this.$selectType.property('selectedIndex', 0);
+      this.$selectType.property('selectedIndex', selectedIndex);
     });
   }
 
   protected loadProxyPage(selection: ISelection) {
-     this.setBusy(true);
+    this.setBusy(true);
 
-      if (this.lastSelectedID != null) {
-        var args = mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
-        const url = this.createUrl(args);
-        //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
-        this.$node.select('iframe')
-          .attr('src', url)
-          .on('load', () => {
-            this.setBusy(false);
-            //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
-            this.fire(AView.EVENT_LOADING_FINISHED);
-          });
-      } else {
-        this.setBusy(false);
-        this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
-        this.fire(AView.EVENT_LOADING_FINISHED);
-      }
+    if (this.lastSelectedID != null) {
+      let args = mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
+      const url = this.createUrl(args);
+      //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
+      this.$node.select('iframe')
+        .attr('src', url)
+        .on('load', () => {
+          this.setBusy(false);
+          //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
+          this.fire(AView.EVENT_LOADING_FINISHED);
+        });
+    } else {
+      this.setBusy(false);
+      this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
+      this.fire(AView.EVENT_LOADING_FINISHED);
+    }
   }
 
   private build() {

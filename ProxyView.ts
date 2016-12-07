@@ -76,39 +76,40 @@ export class ProxyView extends AView {
 
   changeSelection(selection:ISelection) {
     const ids = selection.range.dim(0).asList();
+    const selectedIndex = ids.indexOf(selection.range.last);
+    let selectedId;
     const idtype = selection.idtype;
 
     this.resolveIds(idtype, ids, this.options.idtype)
       .then((names) => this.filterSelectedNames(names))
       .then((names) => {
-        let lastSelectedID = names[names.length-1];
+        selectedId = names[selectedIndex];
 
         // prevent loading the page if item is null
-        if (lastSelectedID === null) {
+        if (selectedId === null) {
           return names;
         }
 
         this.build();
-        this.loadProxyPage(selection, lastSelectedID);
+        this.loadProxyPage(selection, selectedId);
 
         return names;
       })
-      .then((names) => Promise.all([names, this.getSelectionDropDownLabels(names)]))
-      .then((args) => {
-        this.updateSelectionDropDown(selection, args[0], args[1]);
+      .then((names) => this.getSelectionDropDownLabels(names))
+      .then((idsAndLabels) => {
+        this.updateSelectionDropDown(selection, selectedId, idsAndLabels);
       });
   }
 
-  protected getSelectionDropDownLabels(names:string[]):Promise<string[]> {
+  protected getSelectionDropDownLabels(names:string[]):Promise<{id:string, label:string}[]> {
     // hook
-    return Promise.resolve(names);
+    return Promise.resolve(names.map((d:string) => {
+      return {id: d, label: d};
+    }));
   }
 
-  protected updateSelectionDropDown(selection:ISelection, names:string[], labels:string[]) {
-    let selectedIndex = names.length-1;
-    let lastSelectedID = names[selectedIndex];
-
-    if (lastSelectedID === null) {
+  protected updateSelectionDropDown(selection:ISelection, selectedId, idsAndLabels:{id:string, label:string}[]) {
+    if (selectedId === null) {
       this.setBusy(false);
       this.$selectType.selectAll('option').data();
       this.$node.html(`<p>Cannot map selected item to ${this.options.idtype}.</p>`);
@@ -119,18 +120,18 @@ export class ProxyView extends AView {
 
     this.$formGroup.classed('hidden', false);
     this.$selectType.on('change', () => {
-      lastSelectedID = names[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
-      this.loadProxyPage(selection, lastSelectedID);
+      selectedId = idsAndLabels[(<HTMLSelectElement>this.$selectType.node()).selectedIndex].id;
+      this.loadProxyPage(selection, selectedId);
     });
 
     // create options
-    const $options = this.$selectType.selectAll('option').data(names);
+    const $options = this.$selectType.selectAll('option').data(idsAndLabels);
     $options.enter().append('option');
-    $options.text((d,i) => labels[i]).attr('value', String);
+    $options.text((d) => d.label).attr('value', (d) => d.id);
     $options.exit().remove();
 
     // select first element by default
-    this.$selectType.property('selectedIndex', selectedIndex);
+    this.$selectType.property('selectedIndex', (<any>idsAndLabels).findIndex((d) => d.id === selectedId));
   }
 
   /**

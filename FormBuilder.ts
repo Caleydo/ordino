@@ -197,6 +197,12 @@ interface IFormElement extends IEventHandler {
    * Form element value
    */
   value: any;
+
+  /**
+   * Set the visibility of an form element
+   * @param visible
+   */
+  setVisible(visible:boolean);
 }
 
 /**
@@ -218,6 +224,14 @@ abstract class AFormElement extends EventHandler implements IFormElement {
     super();
 
     this.id = desc.id;
+  }
+
+  /**
+   * Set the visibility of an form element
+   * @param visible
+   */
+  public setVisible(visible:boolean) {
+    this.$node.classed('hidden', !visible);
   }
 
   /**

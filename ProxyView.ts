@@ -3,21 +3,19 @@
  */
 
 import {api2absURL} from '../caleydo_core/ajax';
-import {random_id, mixin} from '../caleydo_core/main';
+import {mixin} from '../caleydo_core/main';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from '../caleydo_core/plugin';
+import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement} from './FormBuilder';
 
 /**
- * helper view for proxing an existing external website
+ * helper view for proxying an existing external website
  */
 export class ProxyView extends AView {
 
-  private $params;
-  private lastSelectedID;
-  private $selectType;
-  private $formGroup;
+  protected static SELECTED_ITEM = 'externalItem';
 
-  private options = {
+  protected options = {
     /**
      * proxy key - will be redirected through a local server proxy
      */
@@ -37,12 +35,23 @@ export class ProxyView extends AView {
     extra: {}
   };
 
-  constructor(context:IViewContext, selection: ISelection, parent:Element, options:any, plugin: IPluginDesc) {
+  protected paramForm:FormBuilder;
+
+  constructor(context:IViewContext, protected selection: ISelection, parent:Element, options:any, plugin: IPluginDesc) {
     super(context, parent, options);
     mixin(this.options, plugin, options);
+  }
+
+  init() {
+    super.init();
 
     this.$node.classed('proxy_view', true);
-    this.changeSelection(selection);
+
+    // update the selection first, then update the proxy view
+    this.updateSelectedItemSelect()
+      .then(() => {
+        this.updateProxyView();
+      });
   }
 
   protected createUrl(args: any) {
@@ -56,100 +65,125 @@ export class ProxyView extends AView {
     return null;
   }
 
-  buildParameterUI($parent:d3.Selection<any>, onChange:(name:string, value:any)=>Promise<any>) {
-    const id = random_id();
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
+    this.paramForm = new FormBuilder($parent);
 
-    this.$formGroup = $parent.append('div').classed('form-group', true);
-    this.$selectType = this.$formGroup.select('select');
-    this.$params = $parent;
-
-    const elementName = 'element';
-
-    this.$formGroup.append('label')
-     .attr('for', elementName+'_' + id)
-      .text(this.options.idtype + ' ID:');
-
-     this.$selectType = this.$formGroup.append('select')
-      .classed('form-control', true)
-      .attr('id', elementName+'_' + id)
-      .attr('required', 'required');
-  }
-
-  changeSelection(selection: ISelection) {
-    const id = selection.range.last;
-    const idtype = selection.idtype;
-
-    this.resolveIdToNames(idtype, id, this.options.idtype).then((names) => {
-
-      var allNames = names[0];
-      console.log(allNames);
-      if (!allNames) {
-        this.setBusy(false);
-        this.$selectType.selectAll('option').data();
-        this.$node.html(`<p>Cannot map selected item to ${this.options.idtype}.</p>`);
-        this.$formGroup.classed('hidden', true);
-        this.fire(AView.EVENT_LOADING_FINISHED);
-        return;
+    const paramDesc:IFormSelectDesc[] = [
+      {
+        type: FormElementType.SELECT,
+        label: 'Show',
+        id: ProxyView.SELECTED_ITEM,
+        options: {
+          optionsData: [],
+        },
+        useSession: true
       }
+    ];
 
-      this.build();
-
-      //FIXME HACK for UnitProt
-      //filter 'AO*' UnitPort IDs that are not valid for external canSAR database
-      allNames = allNames.filter(d => d.indexOf('A0') !== 0);
-
-      this.lastSelectedID = allNames[0];
-      this.loadProxyPage(selection);
-
-      if (allNames.length === 1) {
-        this.$formGroup.classed('hidden', true);
-        return;
-      }
-
-      this.$formGroup.classed('hidden', false);
-      this.$selectType.on('change', () => {
-        this.lastSelectedID = allNames[(<HTMLSelectElement>this.$selectType.node()).selectedIndex];
-        this.loadProxyPage(selection);
-      });
-
-      // create options
-      const $options = this.$selectType.selectAll('option').data(allNames);
-      $options.enter().append('option');
-      $options.text(String).attr('value', String);
-      $options.exit().remove();
-
-      // select first element by default
-      this.$selectType.property('selectedIndex', 0);
+    // map FormElement change function to provenance graph onChange function
+    paramDesc.forEach((p) => {
+      p.options.onChange = (selection, formElement) => onChange(formElement.id, selection.value);
     });
+
+    this.paramForm.build(paramDesc);
+
+    // add other fields
+    super.buildParameterUI($parent, onChange);
   }
 
-  protected loadProxyPage(selection: ISelection) {
-     this.setBusy(true);
+  getParameter(name: string): any {
+    if(this.paramForm.getElementById(name).value === null) {
+      return '';
+    }
 
-      if (this.lastSelectedID != null) {
-        var args = mixin(this.options.extra, {[this.options.argument]: this.lastSelectedID});
-        const url = this.createUrl(args);
-        //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
-        this.$node.select('iframe')
-          .attr('src', url)
-          .on('load', () => {
-            this.setBusy(false);
-            //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
-            this.fire(AView.EVENT_LOADING_FINISHED);
-          });
-      } else {
-        this.setBusy(false);
-        this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${this.lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
-        this.fire(AView.EVENT_LOADING_FINISHED);
-      }
+    return this.paramForm.getElementById(name).value.data;
   }
 
-  private build() {
+  setParameter(name: string, value: any) {
+    this.paramForm.getElementById(name).value = value;
+    this.updateProxyView();
+  }
+
+  changeSelection(selection:ISelection) {
+    this.selection = selection;
+
+    // update the selection first, then update the proxy view
+    this.updateSelectedItemSelect(true) // true = force use last selection
+      .then(() => {
+        this.updateProxyView();
+      });
+  }
+
+  protected updateSelectedItemSelect(forceUseLastSelection = false) {
+    return this.resolveIds(this.selection.idtype, this.selection.range)
+      .then((names) => Promise.all<any>([names, this.getSelectionSelectData(names)]))
+      .then((args) => {
+        const names = args[0]; // use names to get the last selected element
+        const data = args[1];
+        const selectedItemSelect = this.paramForm.getElementById(ProxyView.SELECTED_ITEM);
+
+        // backup entry and restore the selectedIndex by value afterwards again,
+        // because the position of the selected element might change
+        const bak = selectedItemSelect.value || data[(<IFormSelectElement>selectedItemSelect).getSelectedIndex()];
+        (<IFormSelectElement>selectedItemSelect).updateOptionElements(data);
+
+        // select last item from incoming `selection.range`
+        if(forceUseLastSelection) {
+          selectedItemSelect.value = data.filter((d) => d.value === names[names.length-1])[0];
+
+        // otherwise try to restore the backup
+        } else if(bak !== null) {
+          selectedItemSelect.value = bak;
+        }
+      });
+  }
+
+  protected getSelectionSelectData(names:string[]):Promise<{value:string, name:string, data:any}[]> {
+    if(names === null) {
+      return Promise.resolve([]);
+    }
+
+    // hook
+    return Promise.resolve(names.map((d:string) => {
+      return {value: d, name: d, data: d};
+    }));
+  }
+
+  protected updateProxyView() {
+    const selectedItemId = this.getParameter(ProxyView.SELECTED_ITEM).id;
+    this.loadProxyPage(selectedItemId);
+  }
+
+  protected loadProxyPage(selectedItemId) {
+    if (selectedItemId === null) {
+      this.showErrorMessage(selectedItemId);
+      return;
+    }
 
     //remove old mapping error notice if any exists
     this.$node.selectAll('p').remove();
+    this.$node.selectAll('iframe').remove();
 
     this.$node.append('iframe').attr('src', null);
+
+    this.setBusy(true);
+
+    let args = mixin(this.options.extra, {[this.options.argument]: selectedItemId});
+    const url = this.createUrl(args);
+    //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
+    this.$node.select('iframe')
+      .attr('src', url)
+      .on('load', () => {
+        this.setBusy(false);
+        //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
+        this.fire(AView.EVENT_LOADING_FINISHED);
+      });
+  }
+
+  protected showErrorMessage(selectedItemId) {
+    this.setBusy(false);
+    this.$node.html(`<p>Cannot map <i>${this.selection.idtype.name}</i> ('${selectedItemId}') to <i>${this.options.idtype}</i>.</p>`);
+    this.fire(AView.EVENT_LOADING_FINISHED);
   }
 
   modeChanged(mode:EViewMode) {
@@ -157,7 +191,7 @@ export class ProxyView extends AView {
   }
 }
 
-export function create(context:IViewContext, selection: ISelection, parent:Element, options, plugin: IPluginDesc) {
+export function create(context:IViewContext, selection:ISelection, parent:Element, options, plugin: IPluginDesc) {
   return new ProxyView(context, selection, parent, options, plugin);
 }
 

@@ -13,9 +13,9 @@ import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement} from 
  */
 export class ProxyView extends AView {
 
-  protected static SELECTED_ITEM = 'selectedItem';
+  protected static SELECTED_ITEM = 'externalItem';
 
-  private options = {
+  protected options = {
     /**
      * proxy key - will be redirected through a local server proxy
      */
@@ -36,6 +36,8 @@ export class ProxyView extends AView {
   };
 
   protected paramForm:FormBuilder;
+
+  protected selection;
 
   constructor(context:IViewContext, selection: ISelection, parent:Element, options:any, plugin: IPluginDesc) {
     super(context, parent, options);
@@ -96,6 +98,8 @@ export class ProxyView extends AView {
   }
 
   changeSelection(selection:ISelection) {
+    this.selection = selection;
+
     // update the selection first, then update the proxy view
     this.updateSelectedItemSelect(selection)
       .then(() => {
@@ -103,7 +107,7 @@ export class ProxyView extends AView {
       });
   }
 
-  private updateSelectedItemSelect(selection) {
+  protected updateSelectedItemSelect(selection) {
     return this.resolveIds(selection.idtype, selection.range)
       .then((names) => Promise.all<any>([names, this.getSelectionDropDownLabels(names)]))
       .then((args) => {
@@ -126,11 +130,16 @@ export class ProxyView extends AView {
   }
 
   protected updateProxyView() {
-    const selection = null; // todo resolve
-    this.loadProxyPage(selection, this.paramForm.getElementById(ProxyView.SELECTED_ITEM).value.value);
+    const selectedItemId = this.getParameter(ProxyView.SELECTED_ITEM).id;
+    this.loadProxyPage(selectedItemId);
   }
 
-  protected loadProxyPage(selection:ISelection, lastSelectedID) {
+  protected loadProxyPage(selectedItemId) {
+    if (selectedItemId === null) {
+      this.showErrorMessage(selectedItemId);
+      return;
+    }
+
     //remove old mapping error notice if any exists
     this.$node.selectAll('p').remove();
     this.$node.selectAll('iframe').remove();
@@ -139,22 +148,22 @@ export class ProxyView extends AView {
 
     this.setBusy(true);
 
-    if (lastSelectedID != null) {
-      let args = mixin(this.options.extra, {[this.options.argument]: lastSelectedID});
-      const url = this.createUrl(args);
-      //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
-      this.$node.select('iframe')
-        .attr('src', url)
-        .on('load', () => {
-          this.setBusy(false);
-          //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
-          this.fire(AView.EVENT_LOADING_FINISHED);
-        });
-    } else {
-      this.setBusy(false);
-      this.$node.html(`<p>Cannot map <i>${selection.idtype.name}</i> ('${lastSelectedID}') to <i>${this.options.idtype}</i>.</p>`);
-      this.fire(AView.EVENT_LOADING_FINISHED);
-    }
+    let args = mixin(this.options.extra, {[this.options.argument]: selectedItemId});
+    const url = this.createUrl(args);
+    //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
+    this.$node.select('iframe')
+      .attr('src', url)
+      .on('load', () => {
+        this.setBusy(false);
+        //console.log('finished loading', this.$node.select('iframe').node().getBoundingClientRect());
+        this.fire(AView.EVENT_LOADING_FINISHED);
+      });
+  }
+
+  protected showErrorMessage(selectedItemId) {
+    this.setBusy(false);
+    this.$node.html(`<p>Cannot map <i>${this.selection.idtype.name}</i> ('${selectedItemId}') to <i>${this.options.idtype}</i>.</p>`);
+    this.fire(AView.EVENT_LOADING_FINISHED);
   }
 
   modeChanged(mode:EViewMode) {

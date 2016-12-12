@@ -37,14 +37,21 @@ export class ProxyView extends AView {
 
   protected paramForm:FormBuilder;
 
-  protected selection;
-
-  constructor(context:IViewContext, selection: ISelection, parent:Element, options:any, plugin: IPluginDesc) {
+  constructor(context:IViewContext, protected selection: ISelection, parent:Element, options:any, plugin: IPluginDesc) {
     super(context, parent, options);
     mixin(this.options, plugin, options);
+  }
+
+  init() {
+    super.init();
 
     this.$node.classed('proxy_view', true);
-    this.changeSelection(selection);
+
+    // update the selection first, then update the proxy view
+    this.updateSelectedItemSelect()
+      .then(() => {
+        this.updateProxyView();
+      });
   }
 
   protected createUrl(args: any) {
@@ -69,7 +76,7 @@ export class ProxyView extends AView {
         options: {
           optionsData: [],
         },
-        useSession: false
+        useSession: true
       }
     ];
 
@@ -101,24 +108,33 @@ export class ProxyView extends AView {
     this.selection = selection;
 
     // update the selection first, then update the proxy view
-    this.updateSelectedItemSelect(selection)
+    this.updateSelectedItemSelect(true) // true = force use last selection
       .then(() => {
         this.updateProxyView();
       });
   }
 
-  protected updateSelectedItemSelect(selection) {
-    return this.resolveIds(selection.idtype, selection.range)
+  protected updateSelectedItemSelect(forceUseLastSelection = false) {
+    return this.resolveIds(this.selection.idtype, this.selection.range)
       .then((names) => Promise.all<any>([names, this.getSelectionSelectData(names)]))
       .then((args) => {
         const names = args[0]; // use names to get the last selected element
         const data = args[1];
         const selectedItemSelect = this.paramForm.getElementById(ProxyView.SELECTED_ITEM);
 
+        // backup entry and restore the selectedIndex by value afterwards again,
+        // because the position of the selected element might change
+        const bak = selectedItemSelect.value || data[(<IFormSelectElement>selectedItemSelect).getSelectedIndex()];
         (<IFormSelectElement>selectedItemSelect).updateOptionElements(data);
 
         // select last item from incoming `selection.range`
-        selectedItemSelect.value = data.filter((d) => d.value === names[names.length-1])[0];
+        if(forceUseLastSelection) {
+          selectedItemSelect.value = data.filter((d) => d.value === names[names.length-1])[0];
+
+        // otherwise try to restore the backup
+        } else if(bak !== null) {
+          selectedItemSelect.value = bak;
+        }
       });
   }
 

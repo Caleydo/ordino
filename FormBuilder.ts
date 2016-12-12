@@ -90,7 +90,7 @@ export class FormBuilder {
    * @returns {{}}
    */
   getElementData():any {
-    var r = {};
+    const r = {};
     this.elements.forEach((key, el) => {
       r[key] = el.value.data || el.value;
     });
@@ -102,7 +102,7 @@ export class FormBuilder {
    * @returns {{}}
    */
   getElementValues():any {
-    var r = {};
+    const r = {};
     this.elements.forEach((key, el) => {
       r[key] = el.value.value || el.value;
     });
@@ -317,6 +317,12 @@ export interface IFormSelectElement extends IFormElement {
    * @param data
    */
   updateOptionElements(data:string[]|{name: string, value: string, data: any}[]):void;
+
+  /**
+   * Returns the selectedIndex. If the option `useSession` is enabled,
+   * the index from the session will be used as fallback
+   */
+  getSelectedIndex():number;
 }
 
 /**
@@ -380,7 +386,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
       });
     }
 
-    var optionsData = options.optionsData;
+    let optionsData = options.optionsData;
 
     if(this.desc.dependsOn && options.optionsFnc) {
       const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
@@ -400,7 +406,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
       });
     }
 
-    var defaultSelectedIndex = 0;
+    let defaultSelectedIndex = 0;
     if(this.desc.useSession) {
       defaultSelectedIndex = session.retrieve(this.id + '_selectedIndex', defaultSelectedIndex);
 
@@ -417,6 +423,21 @@ class FormSelect extends AFormElement implements IFormSelectElement {
     this.updateOptionElements(optionsData);
 
     $select.property('selectedIndex', options.selectedIndex || defaultSelectedIndex);
+  }
+
+  /**
+   * Returns the selectedIndex. If the option `useSession` is enabled,
+   * the index from the session will be used as fallback
+   */
+  getSelectedIndex() {
+    let defaultSelectedIndex = 0;
+    const currentSelectedIndex = this.$select.property('selectedIndex');
+
+    if(this.desc.useSession) {
+      defaultSelectedIndex = session.retrieve(this.id + '_selectedIndex', defaultSelectedIndex);
+    }
+
+    return (currentSelectedIndex === -1) ? defaultSelectedIndex : currentSelectedIndex;
   }
 
   /**
@@ -544,7 +565,7 @@ class FormSelect2 extends AFormElement {
       return;
     }
 
-    var defaultData = [];
+    let defaultData = [];
 
     if(this.desc.useSession) {
       const defaultVal:any = session.retrieve(this.id + '_defaultVal', '');
@@ -607,7 +628,7 @@ class FormSelect2 extends AFormElement {
       });
     }
 
-    var optionsData = options.optionsData;
+    let optionsData = options.optionsData;
 
     if(this.desc.dependsOn && options.optionsFnc) {
       const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
@@ -635,7 +656,7 @@ class FormSelect2 extends AFormElement {
    * @returns {string|{name: string, value: string, data: any}|null}
    */
   get value() {
-    var r = {id: '', text: ''}; // select2 default format
+    const r = {id: '', text: ''}; // select2 default format
 
     if(this.$select.val() !== null) {
       r.id = this.$select.select2('data')[0].id;
@@ -655,7 +676,7 @@ class FormSelect2 extends AFormElement {
       this.$select.trigger('clear');
     }
 
-    var r = {id: v, text: v};
+    const r = {id: v, text: v};
 
     if((v.name || v.text) && (v.value || v.id)) {
       r.id = v.value || v.id;

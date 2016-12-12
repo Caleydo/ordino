@@ -109,7 +109,7 @@ export class ProxyView extends AView {
 
   protected updateSelectedItemSelect(selection) {
     return this.resolveIds(selection.idtype, selection.range)
-      .then((names) => Promise.all<any>([names, this.getSelectionDropDownLabels(names)]))
+      .then((names) => Promise.all<any>([names, this.getSelectionSelectData(names)]))
       .then((args) => {
         const names = args[0]; // use names to get the last selected element
         const data = args[1];
@@ -122,7 +122,11 @@ export class ProxyView extends AView {
       });
   }
 
-  protected getSelectionDropDownLabels(names:string[]):Promise<{value:string, name:string, data:any}[]> {
+  protected getSelectionSelectData(names:string[]):Promise<{value:string, name:string, data:any}[]> {
+    if(names === null) {
+      return Promise.resolve([]);
+    }
+
     // hook
     return Promise.resolve(names.map((d:string) => {
       return {value: d, name: d, data: d};

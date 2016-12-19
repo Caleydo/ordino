@@ -96,7 +96,7 @@ export class ProxyView extends AView {
       return '';
     }
 
-    return this.paramForm.getElementById(name).value.data;
+    return this.paramForm.getElementById(name).value;
   }
 
   setParameter(name: string, value: any) {
@@ -150,8 +150,7 @@ export class ProxyView extends AView {
   }
 
   protected updateProxyView() {
-    const selectedItemId = this.getParameter(ProxyView.SELECTED_ITEM).id;
-    this.loadProxyPage(selectedItemId);
+    this.loadProxyPage(this.getParameter(ProxyView.SELECTED_ITEM).value);
   }
 
   protected loadProxyPage(selectedItemId) {

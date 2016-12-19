@@ -1109,14 +1109,6 @@ export class ALineUpView extends AView {
     this.idType = idtype;
     this.lineup = lineupjs.create(storage, this.node, this.config);
 
-    this.lineup.on('updateStart', () => {
-      this.setBusy(true);
-    });
-
-    this.lineup.on('updateFinished', () => {
-      this.setBusy(false);
-    });
-
     //this.lineup.update();
 
     if (idAccessor) {

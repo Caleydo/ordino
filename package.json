@@ -130,7 +130,7 @@
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
-        "lineupjs": "https://github.com/Caleydo/lineup.js.git#release_1.x",
+        "lineupjs": "~1.0.0",
         "scrollTo": "https://github.com/flesler/jquery.scrollTo.git",
         "select2": "~4.0.3",
         "select2-bootstrap-theme": "0.1.0-beta.9"

@@ -111,6 +111,7 @@ export function deriveCol(col:tables.IVector) {
     r.cssClass = desc.cssClass;
   }
   let val = desc.value;
+  console.log(val)
   switch (val.type) {
     case 'string':
       r.type = 'string';
@@ -124,6 +125,9 @@ export function deriveCol(col:tables.IVector) {
       r.type = 'number';
       r.domain = val.range;
       break;
+    case 'boxplot':
+      r.type='boxplot';
+          r.domain = val.range
     default:
       r.type = 'string';
       break;

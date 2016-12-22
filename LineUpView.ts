@@ -427,7 +427,6 @@ export abstract class ALineUpView2 extends AView {
         box_maxval = d3.max(<any>rows, function (d, i) {
           return (<any>d).score.max;
         });
-        console.log(box_maxval,box_minval)
 
 
         rows.forEach((row) => {
@@ -455,12 +454,9 @@ export abstract class ALineUpView2 extends AView {
             col.setMapping(new lineupjs.model.ScaleMappingFunction(colDesc.domain));
           }
         } else if (colDesc.type === 'boxplotcustom') {
-
-          console.log(scores);
           col.setDomain([box_minval, box_maxval]);
-          console.log(colDesc);
 
-                 }
+        }
 
         this.lineup.update();
       });
@@ -472,6 +468,8 @@ export abstract class ALineUpView2 extends AView {
     // hook
     return rows;
   }
+
+  s
 
   protected getAvailableColumnColors(ranking = this.lineup.data.getLastRanking()) {
     const colors = d3.scale.category10().range().slice();

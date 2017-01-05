@@ -62,8 +62,7 @@
     "lineupjs": "1.0.0",
     "phovea_clue": "github:phovea/phovea_clue#v0.0.5",
     "phovea_vis_lineup": "github:phovea/phovea_vis_lineup#v0.0.5",
-    "select2": "4.0.3",
-    "phovea_processing_queue": "github:phovea/phovea_processing_queue#v0.0.5"
+    "select2": "4.0.3"
   },
   "name": "targid2",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",

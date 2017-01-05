@@ -8,8 +8,7 @@
       "phovea_clue",
       "phovea_vis_lineup",
       "phovea_data_mongo",
-      "phovea_data_redis",
-      "phovea_processing_queue"
+      "phovea_data_redis"
     ],
     "extensions": [
       {
@@ -143,20 +142,6 @@
         "extras": {
           "namespace": "/api/targid/storage"
         }
-      },
-      {
-        "type": "namespace",
-        "id": "processing",
-        "module": "processing",
-        "extras": {
-          "namespace": "/api/targid/processing"
-        }
-      },
-      {
-        "type": "processing-task",
-        "id": "targid_tasks",
-        "module": "tasks",
-        "extras": {}
       }
     ],
     "libraries": [

@@ -1,6 +1,5 @@
 -e git+https://github.com/phovea/phovea_clue.git@v0.0.5#egg=phovea_clue
 -e git+https://github.com/phovea/phovea_data_mongo.git@v0.0.5#egg=phovea_data_mongo
 -e git+https://github.com/phovea/phovea_data_redis.git@v0.0.5#egg=phovea_data_redis
--e git+https://github.com/phovea/phovea_processing_queue.git@v0.0.5#egg=phovea_processing_queue
 requests==2.2.1
 SQLAlchemy==1.0.12

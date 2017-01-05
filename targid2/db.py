@@ -86,11 +86,37 @@ class WrappedSession(object):
 def session(engine):
   return WrappedSession(engine)
 
+def _handle_aggregated_score(config, replacements={}):
+  """
+  Handle aggregation for aggregated (and inverted aggregated) score queries
+  :param replacements:
+  :return replacements:
+  """
+  view = config.view('agg_score')
+
+  if request.args.get('agg', '') == '' or view.query is None:
+    return replacements
+
+  query = view.query
+  if view.query_median is not None and request.args.get('agg', '') == 'median':
+    query = view.query_median
+
+  replace = {}
+  if view['replacements'] is not None:
+    for arg in view['replacements']:
+      replace[arg] = request.args.get(arg, '')
+
+  replacements['agg_score'] = query % replace
+
+  return replacements
 
 def get_data(database, view_name, replacements=None, arguments=None):
   replacements = replacements or {}
   arguments = arguments or {}
   config, engine = resolve(database)
+
+  replacements = _handle_aggregated_score(config, replacements)
+
   # convert to index lookup
   # row id start with 1
   view = config.view('views.' + view_name)

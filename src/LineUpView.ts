@@ -1,7 +1,7 @@
 /**
  * Created by Samuel Gratzl on 29.01.2016.
  */
-import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
+import {AView, EViewMode, IViewContext, ISelection, ViewWrapper, IAViewOptions} from './View';
 import LineUp from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
 import {createSelectionDesc, createStackDesc, ScaleMappingFunction, ScriptMappingFunction} from 'lineupjs/src/model';
@@ -45,7 +45,7 @@ export function numberCol2(col:string, min:number, max:number, label = col, visi
 }
 
 
-export function categoricalCol(col:string, categories:string[], label = col, visible = true, width = -1, selectedId = -1) {
+export function categoricalCol(col:string, categories:(string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1) {
   return {
     type: 'categorical',
     column: col,
@@ -98,11 +98,11 @@ function array_diff(array1, array2) {
 export function useDefaultLayout(instance:any) {
   instance.data.deriveDefault();
   //insert selection column
-  instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
+  instance.data.insert(instance.data.getRankings()[0], 1, lineupjs.model.createSelectionDesc());
 }
 
 export function deriveCol(col:tables.IVector) {
-  var r:any = {
+  let r:any = {
     column: col.desc.name
   };
   const desc = <any>col.desc;
@@ -111,7 +111,7 @@ export function deriveCol(col:tables.IVector) {
   } else if (desc.cssClass) {
     r.cssClass = desc.cssClass;
   }
-  var val = desc.value;
+  let val = desc.value;
   switch (val.type) {
     case 'string':
       r.type = 'string';
@@ -184,12 +184,16 @@ export abstract class ALineUpView2 extends AView {
 
   protected idAccessor = (d) => d._id;
 
-  private scoreAccessor = (row:any, id:string, desc:any) => {
+  private scoreAccessor = (row:any, index:number, id:string, desc:any) => {
     const row_id = this.idAccessor(row);
-    return (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+    let r = (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+    if (desc.type === 'categorical') {
+      r = String(r); //even null values
+    }
+    return r;
   };
 
-  constructor(context:IViewContext, protected selection: ISelection, parent:Element, private options?) {
+  constructor(context:IViewContext, protected selection: ISelection, parent:Element, private options?: IAViewOptions) {
     super(context, parent, options);
 
     this.$node.classed('lineup', true);
@@ -477,7 +481,7 @@ export abstract class ALineUpView2 extends AView {
     });
 
     const order = ranking.getOrder();
-    var numAnimationCycle = 0;
+    let numAnimationCycle = 0;
 
     const animateBars = function() {
       const scores = {}; // must be an object!
@@ -1106,14 +1110,6 @@ export class ALineUpView extends AView {
     this.idType = idtype;
     this.lineup = new LineUp(this.node, storage, this.config);
 
-    this.lineup.on('updateStart', () => {
-      this.setBusy(true);
-    });
-
-    this.lineup.on('updateFinished', () => {
-      this.setBusy(false);
-    });
-
     //this.lineup.update();
 
     if (idAccessor) {
@@ -1563,6 +1559,6 @@ export class LineUpView extends ALineUpView {
  * @param options
  * @returns {LineUpView}
  */
-export function create(context:IViewContext, selection:ISelection, parent:Element, options?) {
+export function create(context:IViewContext, selection:ISelection, parent:Element, options?: IAViewOptions) {
   return new LineUpView(context, selection, parent, options);
 }

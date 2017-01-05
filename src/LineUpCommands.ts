@@ -13,7 +13,7 @@ var ignoreNext:string = null;
 function addRankingImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
     let index = parameter.index;
-    var ranking;
+    let ranking;
     if (parameter.dump) { //add
       ignoreNext = 'addRanking';
       p.insertRanking(p.restoreRanking(parameter.dump), index);
@@ -65,8 +65,8 @@ function setColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
     let ranking = p.getRankings()[parameter.rid];
     let prop = parameter.prop[0].toUpperCase() + parameter.prop.slice(1);
 
-    var bak;
-    var source = ranking;
+    let bak;
+    let source = ranking;
     if (parameter.path) {
       source = ranking.findByPath(parameter.path);
     }
@@ -98,10 +98,10 @@ export function setColumn(provider:prov.IObjectRef<any>, rid:number, path:string
 
 function addColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
-    var ranking = p.getRankings()[parameter.rid];
+    let ranking = p.getRankings()[parameter.rid];
 
     let index = parameter.index;
-    var bak;
+    let bak;
     if (parameter.path) {
       ranking = ranking.findByPath(parameter.path);
     }
@@ -143,8 +143,8 @@ export function createCmd(id):prov.ICmdFunction {
 }
 
 function delayedCall(callback:(old:any, new_:any) => void, timeToDelay = 100, thisCallback = this) {
-  var tm = -1;
-  var oldest = null;
+  let tm = -1;
+  let oldest = null;
 
   function callbackImpl(new_) {
     callback.call(thisCallback, oldest, new_);

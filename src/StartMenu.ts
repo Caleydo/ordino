@@ -28,29 +28,21 @@ export class StartMenu {
       showViewName: false
     },
     {
-      id: 'targidStartEntryPoint',
-      name: '',
-      cssClass: 'entryPoints',
-      showViewName: true
-    },
-    {
       id: 'targidStartLineUp',
-      name: 'LineUp Data Sets',
+      name: 'Uploaded Datasets',
       cssClass: 'lineUpData',
       showViewName: false
-    }/*,
+    },
     {
       id: 'targidStartSession',
       name: 'Sessions',
       cssClass: 'targidSessionData',
       showViewName: false
-    }*/
+    }
   ];
 
 
   private entryPoints:IStartMenuSectionEntry[] = [];
-
-  private entryPointLists:IEntryPointList[] = [];
 
   private template = `
     <button class="closeButton">
@@ -101,7 +93,10 @@ export class StartMenu {
    * @param namedSet
    */
   public updateEntryPointList(idType: idtypes.IDType | string, namedSet: INamedSet) {
-    this.entryPointLists
+    this.entryPoints
+      .map((d) => d.getEntryPointLists())
+      .filter((d) => d !== null && d !== undefined)
+      .reduce((a,b) => a.concat(b), []) // [[0, 1], [2, 3], [4, 5]] -> [0, 1, 2, 3, 4, 5]
       .filter((d) => d.getIdType() === idtypes.resolve(idType).id)
       .forEach((d) => {
         d.addNamedSet(namedSet);
@@ -134,8 +129,8 @@ export class StartMenu {
     this.$sections.enter()
       .append('section')
       .attr('class', (d) => d.cssClass)
-      .each(function(d) {
-        that.createSection(d, d3.select(this));
+      .each(function(d, i) {
+        that.createSection(d, d3.select(this), i);
       });
 
     // do not update here --> will be done on first call of open()
@@ -147,7 +142,7 @@ export class StartMenu {
    * @param sectionDesc
    * @param $sectionNode
    */
-  private createSection(sectionDesc:IStartMenuSection, $sectionNode) {
+  private createSection(sectionDesc:IStartMenuSection, $sectionNode, i) {
     // get start views for entry points and sort them by name ASC
     const views = findViewCreators(sectionDesc.id).sort((a,b) => {
       let x = a.name.toLowerCase();
@@ -155,13 +150,14 @@ export class StartMenu {
       return x === y ? 0 : (x < y ? -1 : 1);
     });
 
-    const $main = $sectionNode.html(`
-        <header><h1>${sectionDesc.name}</h1></header>
+    const $template = $sectionNode.html(`
+        <header><h1><label for="${sectionDesc.cssClass}Toggle">${sectionDesc.name}</label></h1></header>
+        <input id="${sectionDesc.cssClass}Toggle" class="toggle" type="radio" name="toggle" />
         <main></index>
-      `)
-      .select('main');
+      `);
+    $template.select('input').attr('checked', (i === 0) ? 'checked' : null);
 
-    const $items = $main.selectAll('.item').data(views);
+    const $items = $template.select('main').selectAll('.item').data(views);
     const $enter = $items.enter().append('div').classed('item', true);
 
     // relevant for multiple entry points
@@ -205,11 +201,6 @@ export class StartMenu {
               }
 
               that.entryPoints.push(entryPoint);
-
-              // store IEntryPointLists separately to allow a dynamic update
-              if(section.id === 'targidStartEntryPoint') {
-                that.entryPointLists.push(<IEntryPointList>entryPoint);
-              }
             })
             .catch(showErrorModalDialog);
         });
@@ -280,18 +271,20 @@ interface IStartMenuSection {
 
 export interface IStartMenuSectionEntry {
   desc:IPluginDesc;
+  getEntryPointLists():IEntryPointList[];
 }
 
 
 export interface IEntryPointList {
   getIdType():idtypes.IDType | string;
   addNamedSet(namedSet:INamedSet);
+  removeNamedSet(namedSet:INamedSet);
 }
 
 /**
  * Abstract entry point list
  */
-export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry {
+export class AEntryPointList implements IEntryPointList {
 
   protected idType = 'Ensembl';
 
@@ -321,15 +314,19 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
     this.updateList(this.data);
   }
 
+  protected getNamedSets(): Promise<INamedSet[]> {
+    return listNamedSets(this.idType);
+  }
+
   protected build():Promise<INamedSet[]> {
     // load named sets (stored LineUp sessions)
-    const promise = listNamedSets(this.idType)
+    const promise = this.getNamedSets()
       // on success
       .then((namedSets: INamedSet[]) => {
         this.$node.html(''); // remove loading element or previous data
 
         // convert to data format and append to species data
-        this.data.push.apply(this.data, namedSets);
+        this.data.push(...namedSets);
 
         this.$node.append('ul');
         this.updateList(this.data);
@@ -358,8 +355,8 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
     const $ul = this.$node.select('ul');
     const $options = $ul.selectAll('li').data(data);
     const enter = $options.enter()
-      .append('li');
-      //.classed('selected', (d,i) => (i === 0))
+      .append('li')
+      .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
 
     enter.append('a')
       .classed('goto', true)
@@ -397,7 +394,7 @@ export class AEntryPointList implements IEntryPointList, IStartMenuSectionEntry 
         });
 
       $this.select('a.delete')
-        .classed('hidden', (d) => d.id === undefined)
+        .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
         .on('click', (namedSet:INamedSet) => {
           // prevent changing the hash (href)
           (<Event>d3.event).preventDefault();

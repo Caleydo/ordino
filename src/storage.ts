@@ -7,11 +7,20 @@ import * as idtypes from 'phovea_core/src/idtype';
 import * as ranges from 'phovea_core/src/range';
 import * as session from 'phovea_core/src/session';
 
+export enum ENamedSetType {
+  NAMEDSET, CUSTOM, PANEL
+}
+
 export interface INamedSet {
   /**
    * Id with random characters (generated when storing it on the server)
    */
   id?: string;
+
+  /**
+   * type of the named set
+   */
+  type: ENamedSetType;
 
   /**
    * Filter name
@@ -56,12 +65,17 @@ export interface INamedSet {
 
 export function listNamedSets(idType : idtypes.IDType | string = null):Promise<INamedSet[]> {
   const args = idType ? { idType : idtypes.resolve(idType).id} : {};
-  return ajax.getAPIJSON('/targid/storage/namedsets/', args);
+  return ajax.getAPIJSON('/targid/storage/namedsets/', args).then((sets: INamedSet[]) => {
+    sets.forEach((s) => s.type = s.type || ENamedSetType.NAMEDSET);
+    sets = sets.filter((d) => d.creator === session.retrieve('username'));
+    return sets;
+  });
 }
 
 export function saveNamedSet(name: string, idType: idtypes.IDType|string, ids: ranges.RangeLike, subType: {key:string, value:string}, description = '') {
   const data:INamedSet = {
     name: name,
+    type: ENamedSetType.NAMEDSET,
     creator: session.retrieve('username', 'Anonymous'),
     idType: idtypes.resolve(idType).id,
     ids: ranges.parse(ids).toString(),

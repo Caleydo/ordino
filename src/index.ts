@@ -53,8 +53,5 @@ while (extrasNode.firstChild) {
 
 // create TargID app once the provenance graph is available
 elems.graph.then((graph) => {
-  targidInstance = targid.create(graph, elems.clueManager, mainNode);
+  targidInstance = targid.create(graph, elems.clueManager, mainNode, elems);
 });
-
-// jump to last stored state
-elems.jumpToStored();

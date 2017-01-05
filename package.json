@@ -1,4 +1,22 @@
 {
+  "name": "targid2",
+  "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
+  "homepage": "https://phovea.caleydo.org",
+  "version": "1.0.0",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
+  },
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/caleydo/targid2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caleydo/targid2.git"
+  },
+  "private": true,
   "files": [
     "src",
     "index.js",
@@ -13,6 +31,11 @@
     "docker_packages.txt",
     "redhat_packages.txt"
   ],
+  "engines": {
+    "npm": ">= 3",
+    "node": ">= 6",
+    "iojs": ">= 3"
+  },
   "scripts": {
     "check": "flake8",
     "pretest": "echo hybrid",
@@ -48,11 +71,6 @@
     "build:python": "python -c \"from distutils.dir_util import mkpath ; mkpath('./build/source')\" && (tar -c ./targid2 --exclude '*.pyc' | tar -xC build/source)",
     "build:web": "webpack --env prod"
   },
-  "engines": {
-    "npm": ">= 3",
-    "node": ">= 6",
-    "iojs": ">= 3"
-  },
   "dependencies": {
     "@types/d3": "3.5.36",
     "@types/jquery.scrollto": "1.4.27",
@@ -64,24 +82,6 @@
     "phovea_vis_lineup": "github:phovea/phovea_vis_lineup#v0.0.5",
     "select2": "4.0.3"
   },
-  "name": "targid2",
-  "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "homepage": "https://phovea.caleydo.org",
-  "version": "1.0.0",
-  "author": {
-    "name": "The Caleydo Team",
-    "email": "contact@caleydo.org",
-    "url": "https://caleydo.org"
-  },
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/caleydo/targid2/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/caleydo/targid2.git"
-  },
-  "private": true,
   "devDependencies": {
     "@types/jasmine": "2.5.35",
     "awesome-typescript-loader": "2.2.4",

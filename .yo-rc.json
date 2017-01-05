@@ -147,6 +147,7 @@
     "libraries": [
       "d3",
       "lineupjs",
+      "jquery",
       "select2",
       "scrollTo"
     ],
@@ -169,6 +170,7 @@
     "libraryExternals": [
       "d3",
       "lineupjs",
+      "jquery",
       "select2",
       "scrollTo",
       "marked",

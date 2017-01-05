@@ -251,7 +251,7 @@ class StartFactory implements IStartFactory {
 }
 
 
-export function findViewCreators(type): IStartFactory[] {
+export function findViewCreators(type: string): IStartFactory[] {
   const plugins = listPlugins(type).sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
   var factories = plugins.map((p: IPluginDesc): IStartFactory => {
     return new StartFactory(p);

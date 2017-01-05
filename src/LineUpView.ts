@@ -4,14 +4,14 @@
 import {AView, EViewMode, IViewContext, ISelection, ViewWrapper, IAViewOptions} from './View';
 import LineUp from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
-import {createSelectionDesc, createStackDesc, ScaleMappingFunction, ScriptMappingFunction} from 'lineupjs/src/model';
+import {createStackDesc, ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
 import {LocalDataProvider} from 'lineupjs/src/provider';
 import * as d3 from 'd3';
 import * as idtypes from 'phovea_core/src/idtype';
 import * as tables from 'phovea_core/src/table';
 import * as ranges from 'phovea_core/src/range';
 import * as plugins from 'phovea_core/src/plugin';
-import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
+import * as dialogs from 'phovea_ui/src/dialogs';
 import * as cmds from './LineUpCommands';
 import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
@@ -98,7 +98,7 @@ function array_diff(array1, array2) {
 export function useDefaultLayout(instance:any) {
   instance.data.deriveDefault();
   //insert selection column
-  instance.data.insert(instance.data.getRankings()[0], 1, lineupjs.model.createSelectionDesc());
+  instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
 }
 
 export function deriveCol(col:tables.IVector) {

@@ -4,11 +4,18 @@
 
 
 import * as prov from 'phovea_core/src/provenance';
-import {NumberColumn, createMappingFunction, Column, Ranking, CompositeColumn, StackColumn, ScriptColumn, LinkColumn, CategoricalNumberColumn} from 'lineupjs/src/model';
+import NumberColumn, {createMappingFunction} from 'lineupjs/src/model/NumberColumn';
+import StackColumn from 'lineupjs/src/model/StackColumn';
+import ScriptColumn from 'lineupjs/src/model/ScriptColumn';
+import LinkColumn from 'lineupjs/src/model/LinkColumn';
+import CategoricalNumberColumn from 'lineupjs/src/model/CategoricalNumberColumn';
+import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
+import Ranking from 'lineupjs/src/model/Ranking';
+import Column from 'lineupjs/src/model/Column';
 import {ALineUpView} from './LineUpView';
 
 //TODO better solution
-var ignoreNext:string = null;
+let ignoreNext:string = null;
 
 function addRankingImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {

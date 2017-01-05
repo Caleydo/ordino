@@ -3,7 +3,7 @@
  */
 
 import * as session from 'phovea_core/src/session';
-import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
+import * as dialogs from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry} from './StartMenu';
 import {Targid} from './Targid';

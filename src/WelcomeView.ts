@@ -3,7 +3,7 @@
  */
 
 import './style.scss';
-import * as welcomeArrow from 'url!./images/welcome-view-arrow.svg';
+import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
 import {IView} from './View';
 import {select, Selection} from 'd3';
 

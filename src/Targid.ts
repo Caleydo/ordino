@@ -16,7 +16,7 @@ import {
   replaceViewWrapper
 } from './View';
 import {ICmdResult, IAction} from 'phovea_core/src/provenance';
-import {CLUEGraphManager} from 'phovea_clue/src/template';
+import {CLUEGraphManager, CLUEWrapper} from 'phovea_clue/src/template';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';
 
@@ -393,7 +393,9 @@ export class Targid {
       session.remove(TargidConstants.NEW_ENTRY_POINT);
     } else {
       //just if no other option applies jump to the stored state
-      this.clueWrapper.jumpToStoredOrLastState();
+      // FIXME not part of phovea up to now:
+      // this.clueWrapper.jumpToStoredOrLastState();
+      this.clueWrapper.jumpToStored();
     }
   }
 

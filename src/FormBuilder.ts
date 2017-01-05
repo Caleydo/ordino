@@ -4,7 +4,7 @@
 
 import 'select2';
 import * as d3 from 'd3';
-import {random_id, mixin} from 'phovea_core/src/index';
+import {randomId, mixin} from 'phovea_core/src/index';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import * as session from 'phovea_core/src/session';
 import {api2absURL} from 'phovea_core/src/ajax';
@@ -23,7 +23,7 @@ export class FormBuilder {
    * Unique id for every form and all the form elements
    * @type {string}
    */
-  private formId = random_id();
+  private formId = randomId();
 
   /**
    * Map of all appended form elements with the element id as key

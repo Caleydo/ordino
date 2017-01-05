@@ -3,7 +3,7 @@
  */
 
 import {api2absURL} from 'phovea_core/src/ajax';
-import {random_id, mixin} from 'phovea_core/src/index';
+import {mixin} from 'phovea_core/src/index';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement} from './FormBuilder';

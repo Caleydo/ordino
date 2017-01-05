@@ -3,7 +3,7 @@
  */
 
 import * as d3 from 'd3';
-import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
+import * as dialogs from 'phovea_ui/src/dialogs';
 
 /**
  * Use this modal dialog to show errors that were catched when an XHR request in a promise fails.

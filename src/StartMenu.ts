@@ -4,7 +4,7 @@
 
 import * as session from 'phovea_core/src/session';
 import * as idtypes from 'phovea_core/src/idtype';
-import * as dialogs from 'phovea_bootstrap_fontawesome/src/dialogs';
+import * as dialogs from 'phovea_ui/src/dialogs';
 import {Targid, TargidConstants} from './Targid';
 import {listNamedSets, INamedSet, deleteNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';

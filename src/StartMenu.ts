@@ -10,6 +10,7 @@ import {listNamedSets, INamedSet, deleteNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
+import {ENamedSetType} from './storage';
 
 
 export class StartMenu {

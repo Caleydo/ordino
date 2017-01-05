@@ -187,12 +187,10 @@
       "select2",
       "scrollTo",
       "marked",
-      "marked",
-      "lineupjs",
-      "d3",
       "font-awesome"
     ],
     "ignores": [],
-    "today": "Sun, 06 Nov 2016 15:02:36 GMT"
+    "today": "Sun, 06 Nov 2016 15:02:36 GMT",
+    "clientOnly": false
   }
 }

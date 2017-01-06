@@ -1,0 +1,9 @@
+version: '2.0'
+services:
+  _host:
+    depends_on:
+    - db_mongo
+    links:
+    - db_mongo:mongo
+  db_mongo:
+    image: mongo:3.2

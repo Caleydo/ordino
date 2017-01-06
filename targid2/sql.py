@@ -1,5 +1,5 @@
 from phovea_server.ns import Namespace, request, abort
-from targid2 import db
+from . import db
 from phovea_server.util import jsonify
 import logging
 
@@ -44,14 +44,6 @@ def load_mappings():
 
 def _get_data(database, view_name, replacements=None):
   return db.get_data(database, view_name, replacements, request.args)
-
-
-@app.route('/p/<database>/<view_name>')
-def processing_test(database, view_name):
-  from targid2.tasks import sql_get_data
-  # r = assign_ids(r, view['idType'])
-  return sql_get_data.delay(database, view_name, request.args).id
-
 
 @app.route('/<database>/<view_name>')
 def get_data_api(database, view_name):

@@ -143,10 +143,11 @@
     ],
     "libraries": [
       "d3",
-      "lineupjs",
       "jquery",
+      "lineupjs",
       "select2",
-      "scrollTo"
+      "scrollTo",
+      "mongodb"
     ],
     "unknown": {
       "requirements": [
@@ -166,10 +167,11 @@
     },
     "libraryExternals": [
       "d3",
-      "lineupjs",
       "jquery",
+      "lineupjs",
       "select2",
       "scrollTo",
+      "mongodb",
       "marked"
     ],
     "ignores": [],

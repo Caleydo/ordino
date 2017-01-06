@@ -79,7 +79,6 @@
     "jquery.scrollto": "2.1.2",
     "lineupjs": "1.0.0",
     "phovea_clue": "github:phovea/phovea_clue#v0.0.5",
-    "phovea_vis_lineup": "github:phovea/phovea_vis_lineup#v0.0.5",
     "select2": "4.0.3",
     "@types/jquery": "2.0.33",
     "jquery": "3.1.1"

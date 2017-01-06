@@ -5,10 +5,7 @@
     "author": "The Caleydo Team",
     "githubAccount": "caleydo",
     "modules": [
-      "phovea_clue",
-      "phovea_vis_lineup",
-      "phovea_data_mongo",
-      "phovea_data_redis"
+      "phovea_clue"
     ],
     "extensions": [
       {
@@ -173,8 +170,7 @@
       "jquery",
       "select2",
       "scrollTo",
-      "marked",
-      "font-awesome"
+      "marked"
     ],
     "ignores": [],
     "today": "Sun, 06 Nov 2016 15:02:36 GMT",

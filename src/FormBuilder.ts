@@ -93,7 +93,7 @@ export class FormBuilder {
   getElementData():any {
     const r = {};
     this.elements.forEach((key, el) => {
-      r[key] = el.value.data || el.value;
+      r[key] = (el.value !== null && el.value.data !== undefined) ? el.value.data : el.value;
     });
     return r;
   }

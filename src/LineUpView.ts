@@ -5,6 +5,7 @@ import {AView, EViewMode, IViewContext, ISelection, ViewWrapper, IAViewOptions} 
 import LineUp from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
 import {createStackDesc, ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
+import {IBoxPlotData} from 'lineupjs/src/model/BoxPlotColumn';
 import {LocalDataProvider} from 'lineupjs/src/provider';
 import * as d3 from 'd3';
 import * as idtypes from 'phovea_core/src/idtype';
@@ -124,9 +125,6 @@ export function deriveCol(col: tables.IVector) {
     case 'int':
       r.type = 'number';
       r.domain = val.range;
-      break;
-    case 'boxplot':
-      r.type = 'boxplotcustom';
       break;
     default:
       r.type = 'string';
@@ -397,15 +395,11 @@ export abstract class ALineUpView2 extends AView {
     this.lineup.data.pushDesc(colDesc);
     const col = this.lineup.data.push(ranking, colDesc);
 
-    const intervalId = this.addColumnLoadAnimation(col, colDesc, ranking);
-
     const loadPromise = loadColumnData(id);
-    var box_minval, box_maxval;
     // error handling
     loadPromise
       .catch(showErrorModalDialog)
       .catch(() => {
-        clearTimeout(intervalId); // stop animation
         ranking.remove(col);
       });
 
@@ -422,12 +416,7 @@ export abstract class ALineUpView2 extends AView {
       .then((rows: IScoreRow<any>[]) => {
         const r: { [id: string]: number } = {};
 
-        box_minval = d3.min(<any>rows, function (d, i) {
-          return (<any>d).score.min;
-        });
-        box_maxval = d3.max(<any>rows, function (d, i) {
-          return (<any>d).score.max;
-        });
+
 
 
         rows.forEach((row) => {
@@ -436,16 +425,14 @@ export abstract class ALineUpView2 extends AView {
         });
         return r;
       })
-      .then((scores: { [id: string]: number }) => {
-        clearTimeout(intervalId); // stop animation
+      .then((scores: { [id: string]: any }) => {
         colDesc.scores = scores;
-
 
         if (colDesc.type === 'number') {
           if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
             colDesc.domain = d3.extent(<number[]>(d3.values(scores)));
           }
-          // add selection columns wihtout tracking changes
+          // add selection columns without tracking changes
           if (withoutTracking) {
             this.withoutTracking(() => {
               col.setMapping(new ScaleMappingFunction(colDesc.domain));
@@ -454,11 +441,15 @@ export abstract class ALineUpView2 extends AView {
           } else {
             col.setMapping(new ScaleMappingFunction(colDesc.domain));
           }
-        } else if (colDesc.type === 'boxplotcustom') {
-          col.setDomain([box_minval, box_maxval]);
-
+        } else if (colDesc.type === 'boxplot') {
+          const values = <IBoxPlotData[]>d3.values(scores);
+          //HACK we know that the domain of the description is just referenced, so we can update it by changing values!
+          if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
+            colDesc.domain[0] = d3.min(values, (d) => d.min);
+            colDesc.domain[1] = d3.max(values, (d) => d.max);
+          }
         }
-
+        col.setLoaded(true);
         this.lineup.update();
       });
 
@@ -470,8 +461,6 @@ export abstract class ALineUpView2 extends AView {
     return rows;
   }
 
-  s
-
   protected getAvailableColumnColors(ranking = this.lineup.data.getLastRanking()) {
     const colors = d3.scale.category10().range().slice();
     // remove colors that are already in use from the list
@@ -482,50 +471,6 @@ export abstract class ALineUpView2 extends AView {
       }
     });
     return colors;
-  }
-
-  protected addColumnLoadAnimation(column, columnDesc, ranking) {
-    const that = this;
-
-    if (columnDesc.type !== 'number') {
-      return 0;
-    }
-
-    const sinus = Array.apply(null, Array(20)) // create 20 fields
-      .map((d, i) => i * 0.1) // [0, 0.1, 0.2, ...]
-      .map(v => Math.sin(v * Math.PI)); // convert to sinus
-
-    // avoid tracking
-    this.withoutTracking(() => {
-      // set column mapping to sinus domain = [-1, 1]
-      column.setMapping(new ScaleMappingFunction(d3.extent(<number[]>sinus)));
-    });
-
-    const order = ranking.getOrder();
-    let numAnimationCycle = 0;
-
-    const animateBars = function () {
-      const scores = {}; // must be an object!
-      // retrieve only the visible rows
-      const range = that.lineup.slice(0, order.length, (i) => i * that.lineup.config.body.rowHeight);
-      order
-        .slice(range.from, range.to) // copy only visible rows
-        .reverse() // reverse will animate the sinus curve in the opposite direction
-        .forEach((rowIndex, index) => {
-          let rowId = that.selectionHelper.index2id.get(rowIndex);
-          scores[rowId] = sinus[(index + range.from + numAnimationCycle) % sinus.length];
-        });
-
-      columnDesc.scores = scores;
-      that.lineup.update();
-
-      // on next animation jump by 5 items
-      numAnimationCycle += 5;
-    };
-
-    animateBars(); // start animation
-
-    return window.setInterval(animateBars, 1000);
   }
 
   protected loadSelectionColumnData(id): Promise<IScoreRow<any>[]> {
@@ -1270,7 +1215,7 @@ export class ALineUpView extends AView {
    * @param scorePlugin
    * @param ranking
    */
-  protected startScoreComputation(scoreImpl: IScore<number>, scorePlugin: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+  protected startScoreComputation(scoreImpl: IScore<any>, scorePlugin: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
     const that = this;
 
     const colors = d3.scale.category10().range().slice();
@@ -1289,6 +1234,8 @@ export class ALineUpView extends AView {
     this.lineup.data.pushDesc(desc);
     const col = this.lineup.data.push(ranking, desc);
 
+    let timerId = 0;
+
     if (desc.type === 'number') {
       // get current row order make a copy to reverse it -> will animate the sinus curve in the opposite direction
       const order = ranking.getOrder().slice(0).reverse();
@@ -1299,9 +1246,8 @@ export class ALineUpView extends AView {
       // set column mapping to sinus domain = [-1, 1]
       col.setMapping(new ScaleMappingFunction(d3.extent(<number[]>sinus)));
 
-      var timerId = 0;
-      var numAnimationCycle = 0;
-      var rowId = 0;
+      let numAnimationCycle = 0;
+      let rowId = 0;
 
       const animateBars = function () {
         const scores = {}; // must be an object!

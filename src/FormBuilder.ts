@@ -2,6 +2,7 @@
  * Created by Holger Stitz on 11.08.2016.
  */
 
+import * as $ from 'jquery';
 import 'select2';
 import * as d3 from 'd3';
 import {randomId, mixin} from 'phovea_core/src/index';

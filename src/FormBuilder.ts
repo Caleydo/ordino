@@ -2,6 +2,7 @@
  * Created by Holger Stitz on 11.08.2016.
  */
 
+import * as $ from 'jquery';
 import 'select2';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
@@ -93,8 +94,7 @@ export class FormBuilder {
   getElementData():any {
     const r = {};
     this.elements.forEach((key, el) => {
-      const value = el.value;
-      r[key] = value === null ? null : (value.data || value);
+      r[key] = (el.value !== null && el.value.data !== undefined) ? el.value.data : el.value;
     });
     return r;
   }

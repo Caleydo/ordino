@@ -5,6 +5,7 @@
 import * as $ from 'jquery';
 import 'select2';
 import * as d3 from 'd3';
+import * as $ from 'jquery';
 import {randomId, mixin} from 'phovea_core/src/index';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import * as session from 'phovea_core/src/session';

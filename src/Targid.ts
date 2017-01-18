@@ -37,8 +37,8 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
 
   const view = plugins.get(TargidConstants.VIEW, viewId);
 
-  var viewWrapperInstance; // store instance
-  return createViewWrapper(graph, { idtype: idtype, range: selection }, targid.node, view, options)
+  let viewWrapperInstance; // store instance
+  return createViewWrapper(graph, { idtype, range: selection }, targid.node, view, options)
     .then((instance) => {
       viewWrapperInstance = instance;
       return targid.pushImpl(instance);
@@ -98,7 +98,7 @@ export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter:any):Pr
   // create new (inner) view
   const view = plugins.get(TargidConstants.VIEW, viewId);
 
-  return replaceViewWrapper(existingView, { idtype: idtype, range: selection }, view, options)
+  return replaceViewWrapper(existingView, { idtype, range: selection }, view, options)
     .then(() => {
       return (<ICmdResult>{
         created: [existingView.ref],
@@ -120,10 +120,10 @@ export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype
   const view = plugins.get(TargidConstants.VIEW, viewId);
   // assert view
   return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
-    viewId: viewId,
+    viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : ranges.none().toString(),
-    options: options
+    options
   });
 }
 
@@ -156,10 +156,10 @@ export function replaceView(targid:prov.IObjectRef<Targid>, existingView:prov.IO
   const view = plugins.get(TargidConstants.VIEW, viewId);
   // assert view
   return prov.action(prov.meta('Replace ' + existingView.name + ' with ' + view.name, prov.cat.visual, prov.op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
-    viewId: viewId,
+    viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : ranges.none().toString(),
-    options: options
+    options
   });
 }
 
@@ -189,11 +189,10 @@ export function createCmd(id):prov.ICmdFunction {
  * @returns {Array}
  */
 export function compressCreateRemove(path:prov.ActionNode[]) {
-  var r = [];
-  for (let i = 0; i < path.length; ++i) {
-    let p = path[i];
+  const r = [];
+  for (const p of path) {
     if (p.f_id === TargidConstants.CMD_REMOVE_VIEW && r.length > 0) {
-      let last = r[r.length - 1];
+      const last = r[r.length - 1];
       if (last.f_id === TargidConstants.CMD_CREATE_VIEW && p.parameter.viewId === last.parameter.viewId) {
         r.pop();
         continue;
@@ -294,7 +293,7 @@ export class Targid {
 
   private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private chooseNextView = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
-  private updateSelection = (event:events.IEvent, old: ISelection, new_: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, new_);
+  private updateSelection = (event:events.IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, newValue);
   private updateStartMenu = (event:events.IEvent, idtype: idtypes.IDType | string, namedSet: INamedSet) => this.startMenu.then((menu) => menu.updateEntryPointList(idtype, namedSet));
 
   constructor(public graph:prov.ProvenanceGraph, public graphManager:CLUEGraphManager, parent:Element, private clueWrapper: CLUEWrapper) {
@@ -322,7 +321,7 @@ export class Targid {
    */
   private checkForLoggedIn(parent) {
     // user is already logged in --> build targid
-    if(session.retrieve('logged_in', false) === true) {
+    if(session.retrieve('logged_in', <boolean>false) === true) {
       this.buildTargid(parent);
       this.initSession();
       return;
@@ -393,9 +392,7 @@ export class Targid {
       session.remove(TargidConstants.NEW_ENTRY_POINT);
     } else {
       //just if no other option applies jump to the stored state
-      // FIXME not part of phovea up to now:
-      // this.clueWrapper.jumpToStoredOrLastState();
-      this.clueWrapper.jumpToStored();
+      this.clueWrapper.jumpToStoredOrLastState();
     }
   }
 
@@ -452,14 +449,14 @@ export class Targid {
        * - Focus on view that triggered the open event --> jumps back in provenance graph
        * - Then branch the provenance graph with a new open view and set the old selection to the opener view
        */
-      case 0:
-        // first focus, then push the view
-        this.focus(viewWrapper).then(() => {
-          this.pushView(viewId, idtype, selection, options);
-          viewWrapper.setItemSelection({idtype:idtype, range:selection});
-        });
-
-        break;
+      // case 0:
+      //   // first focus, then push the view
+      //   this.focus(viewWrapper).then(() => {
+      //     this.pushView(viewId, idtype, selection, options);
+      //     viewWrapper.setItemSelection({idtype, range:selection});
+      //   });
+      //
+      //   break;
 
       /**
        * Linear history with remove and add action:
@@ -467,15 +464,15 @@ export class Targid {
        * - Add the new view --> new add action in provenance graph
        * - Branches are only created for non-focus/context views (that triggered the open event)
        */
-      case 1:
-        // remove old views first, if the opener is not the last view
-        if(this.lastView !== viewWrapper) {
-          this.remove(this.lastView);
-        }
-        // then push the new view
-        this.pushView(viewId, idtype, selection, options);
-
-        break;
+      // case 1:
+      //   // remove old views first, if the opener is not the last view
+      //   if(this.lastView !== viewWrapper) {
+      //     this.remove(this.lastView);
+      //   }
+      //   // then push the new view
+      //   this.pushView(viewId, idtype, selection, options);
+      //
+      //   break;
 
       /**
        * Linear history with replace action (instead of dedicated remove/add action):
@@ -490,7 +487,7 @@ export class Targid {
         }
 
         // find the next view
-        let index = this.views.lastIndexOf(viewWrapper);
+        const index = this.views.lastIndexOf(viewWrapper);
         if(index === -1) {
           console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
           return;
@@ -563,8 +560,8 @@ export class Targid {
    * Removes a view, and if there are multiple open (following) views, close them in reverse order.
    * @param viewWrapper
    */
-  remove(index_or_view:number|ViewWrapper) {
-    const viewWrapper = typeof index_or_view === 'number' ? this.views[<number>index_or_view] : <ViewWrapper>index_or_view;
+  remove(indexOrView:number|ViewWrapper) {
+    const viewWrapper = typeof indexOrView === 'number' ? this.views[<number>indexOrView] : <ViewWrapper>indexOrView;
     const index = this.views.indexOf(viewWrapper);
 
     this.views
@@ -572,12 +569,12 @@ export class Targid {
       .reverse() // remove them in reverse order
       .forEach((view) => {
         //this.remove(d);
-        const view_ref = this.graph.findObject(view);
-        if(view_ref === null) {
+        const viewRef = this.graph.findObject(view);
+        if(viewRef === null) {
           console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
           return;
         }
-        return this.graph.push(removeView(this.ref, view_ref));
+        return this.graph.push(removeView(this.ref, viewRef));
       });
 
     // no views available, then open start menu
@@ -657,12 +654,12 @@ export class Targid {
   }
 
   focusImpl(index:number) {
-    var old = -1;
+    let old = -1;
     this.views.forEach((v, i) => {
       if (v.mode === EViewMode.FOCUS) {
         old = i;
       }
-      var target = EViewMode.HIDDEN;
+      let target = EViewMode.HIDDEN;
       if (i === index) {
         target = EViewMode.FOCUS;
       } else if (i === (index - 1)) {

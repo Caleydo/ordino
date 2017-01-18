@@ -74,14 +74,14 @@ export function listNamedSets(idType : idtypes.IDType | string = null):Promise<I
 
 export function saveNamedSet(name: string, idType: idtypes.IDType|string, ids: ranges.RangeLike, subType: {key:string, value:string}, description = '') {
   const data:INamedSet = {
-    name: name,
+    name,
     type: ENamedSetType.NAMEDSET,
     creator: session.retrieve('username', 'Anonymous'),
     idType: idtypes.resolve(idType).id,
     ids: ranges.parse(ids).toString(),
     subTypeKey: subType.key,
     subTypeValue: subType.value,
-    description: description
+    description
   };
   return ajax.sendAPI('/targid/storage/namedsets/', data, 'POST');
 }

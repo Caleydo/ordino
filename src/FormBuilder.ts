@@ -2,7 +2,6 @@
  * Created by Holger Stitz on 11.08.2016.
  */
 
-import * as $ from 'jquery';
 import 'select2';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
@@ -247,7 +246,7 @@ abstract class AFormElement extends EventHandler implements IFormElement {
       return;
     }
 
-    for(let key in attributes) {
+    for(const key in attributes) {
       // skip loop if the property is from prototype
       if(!attributes.hasOwnProperty(key)) {
         continue;
@@ -484,7 +483,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * @returns {string|{name: string, value: string, data: any}|null}
    */
   get value() {
-    let option = d3.select(this.$select.node().selectedOptions[0]);
+    const option = d3.select(this.$select.node().selectedOptions[0]);
     return (option.size() > 0) ? option.datum() : null;
   }
 
@@ -719,9 +718,7 @@ export interface IFormInputTextDesc extends IFormElementDesc {
 /**
  * Add specific functions for input form element
  */
-export interface IFormInputTextElement extends IFormElement {
-
-}
+export declare type IFormInputTextElement = IFormElement;
 
 /**
  * Input text field element instance

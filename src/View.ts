@@ -25,7 +25,7 @@ export interface IViewPluginDesc extends IPluginDesc {
 }
 
 function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
-  var r : any = p;
+  const r : any = p;
   r.selection = r.selection || 'none';
   return r;
 }
@@ -118,10 +118,6 @@ export interface IView extends IEventHandler {
   destroy();
 }
 
-export interface IAViewOptions {
-
-}
-
 export abstract class AView extends EventHandler implements IView {
   /**
    * event when one or more elements are selected for the next level
@@ -141,7 +137,7 @@ export abstract class AView extends EventHandler implements IView {
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: ranges.none() };
 
-  constructor(public context:IViewContext, parent:Element, options?: IAViewOptions) {
+  constructor(public context:IViewContext, parent:Element, options?: {}) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
     this.$node.append('div').classed('busy', true).classed('hidden', true);
@@ -195,36 +191,36 @@ export abstract class AView extends EventHandler implements IView {
     // hook
   }
 
-  protected resolveIdToNames(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string[][]> {
-    const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
-    if (from_idtype.id === target.id) {
+  protected resolveIdToNames(fromIDType: idtypes.IDType, id: number, toIDType : idtypes.IDType|string = null): Promise<string[][]> {
+    const target = toIDType === null ? fromIDType: idtypes.resolve(toIDType);
+    if (fromIDType.id === target.id) {
       // same just unmap to name
-      return from_idtype.unmap([id]).then((names) => [names]);
+      return fromIDType.unmap([id]).then((names) => [names]);
     }
 
     // assume mappable
-    return from_idtype.mapToName([id], target).then((names) => names);
+    return fromIDType.mapToName([id], target).then((names) => names);
   }
 
-  protected resolveId(from_idtype: idtypes.IDType, id: number, to_idtype : idtypes.IDType|string = null): Promise<string> {
-    const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
-    if (from_idtype.id === target.id) {
+  protected resolveId(fromIDType: idtypes.IDType, id: number, toIDtype : idtypes.IDType|string = null): Promise<string> {
+    const target = toIDtype === null ? fromIDType: idtypes.resolve(toIDtype);
+    if (fromIDType.id === target.id) {
       // same just unmap to name
-      return from_idtype.unmap([id]).then((names) => names[0]);
+      return fromIDType.unmap([id]).then((names) => names[0]);
     }
 
     // assume mappable
-    return from_idtype.mapToFirstName([id], target).then((names) => names[0]);
+    return fromIDType.mapToFirstName([id], target).then((names) => names[0]);
   }
 
-  protected resolveIds(from_idtype: idtypes.IDType, ids: ranges.Range|number[], to_idtype : idtypes.IDType|string = null): Promise<string[]> {
-    const target = to_idtype === null ? from_idtype: idtypes.resolve(to_idtype);
-    if (from_idtype.id === target.id) {
+  protected resolveIds(fromIDType: idtypes.IDType, ids: ranges.Range|number[], toIDType : idtypes.IDType|string = null): Promise<string[]> {
+    const target = toIDType === null ? fromIDType: idtypes.resolve(toIDType);
+    if (fromIDType.id === target.id) {
       // same just unmap to name
-      return from_idtype.unmap(ids);
+      return fromIDType.unmap(ids);
     }
     // assume mappable
-    return from_idtype.mapToFirstName(ids, target);
+    return fromIDType.mapToFirstName(ids, target);
   }
 
   destroy() {
@@ -242,7 +238,7 @@ export abstract class ASmallMultipleView extends AView {
   protected width = 280 - this.margin.left - this.margin.right;
   protected height = 320 - this.margin.top - this.margin.bottom;
 
-  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?: IAViewOptions) {
+  constructor(context:IViewContext, selection: ISelection, parent:Element, plugin: IPluginDesc, options?: {}) {
     super(context, parent, options);
   }
 
@@ -268,8 +264,8 @@ export function setParameterImpl(inputs:prov.IObjectRef<any>[], parameter, graph
 export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, value: any) {
   //assert view
   return prov.action(prov.meta('Set Parameter "'+name+'"', prov.cat.visual, prov.op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
-    name: name,
-    value: value
+    name,
+    value
   });
 }
 
@@ -281,9 +277,9 @@ export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
     const range = ranges.parse(parameter.range);
 
     const bak = view.getItemSelection();
-    view.setItemSelection({ idtype: idtype, range: range});
+    view.setItemSelection({ idtype, range});
     if (target) {
-      target.setParameterSelection({ idtype: idtype, range: range});
+      target.setParameterSelection({ idtype, range});
     }
     return {
       inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range): setSelection(inputs[0], bak.idtype, bak.range)
@@ -363,7 +359,7 @@ export function compressSetSelection(path:prov.ActionNode[]) {
 }
 
 function generate_hash(desc: IPluginDesc, selection: ISelection, options : any = {}) {
-  var s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
+  const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
   return desc.id+'_'+s;
 }
 
@@ -376,7 +372,7 @@ export class ViewWrapper extends EventHandler {
   private $node:d3.Selection<ViewWrapper>;
   private $chooser:d3.Selection<ViewWrapper>;
 
-  private mode_:EViewMode = null;
+  private _mode:EViewMode = null;
 
   private instance:IView = null;
 
@@ -384,13 +380,13 @@ export class ViewWrapper extends EventHandler {
    * Listens to the AView.EVENT_ITEM_SELECT event and decided if the chooser should be visible.
    * Then dispatches the incoming event again (aka bubbles up).
    * @param event
-   * @param old
-   * @param new_
+   * @param oldSelection
+   * @param newSelection
    */
-  private listenerItemSelect = (event: any, old: ISelection, new_: ISelection) => {
-    this.chooseNextViews(new_.idtype, new_.range);
-    this.fire(AView.EVENT_ITEM_SELECT, old, new_);
-  };
+  private listenerItemSelect = (event: any, oldSelection: ISelection, newSelection: ISelection) => {
+    this.chooseNextViews(newSelection.idtype, newSelection.range);
+    this.fire(AView.EVENT_ITEM_SELECT, oldSelection, newSelection);
+  }
 
   /**
    * Forward event from view to Targid instance
@@ -400,7 +396,7 @@ export class ViewWrapper extends EventHandler {
    */
   private listenerUpdateEntryPoint = (event: any, idtype: idtypes.IDType | string, namedSet: INamedSet) => {
     this.fire(AView.EVENT_UPDATE_ENTRY_POINT, idtype, namedSet);
-  };
+  }
 
   /**
    * Wrapper function for event listener
@@ -408,7 +404,7 @@ export class ViewWrapper extends EventHandler {
    */
   private scrollIntoViewListener = (event:any) => {
     this.scrollIntoView();
-  };
+  }
 
   /**
    * Provenance graph reference of this object
@@ -586,12 +582,12 @@ export class ViewWrapper extends EventHandler {
   }
 
   set mode(mode:EViewMode) {
-    if (this.mode_ === mode) {
+    if (this._mode === mode) {
       return;
     }
-    const b = this.mode_;
+    const b = this._mode;
     this.modeChanged(mode);
-    this.fire('modeChanged', this.mode_ = mode, b);
+    this.fire('modeChanged', this._mode = mode, b);
   }
 
   protected modeChanged(mode:EViewMode) {
@@ -614,10 +610,10 @@ export class ViewWrapper extends EventHandler {
   }
 
   private scrollIntoView() {
-    let prev = (<any>this.$viewWrapper.node()).previousSibling;
-    let scrollToPos = prev ? prev.offsetLeft || 0 : 0;
-    let $jqTargid = $(this.$viewWrapper.node()).parent();
-    (<any>$jqTargid).scrollTo(scrollToPos, 500, {axis:'x'});
+    const prev = (<any>this.$viewWrapper.node()).previousSibling;
+    const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
+    const $targid = $(this.$viewWrapper.node()).parent();
+    (<any>$targid).scrollTo(scrollToPos, 500, {axis:'x'});
   }
 
   /**
@@ -669,7 +665,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   get mode() {
-    return this.mode_;
+    return this._mode;
   }
 
   get node() {
@@ -688,9 +684,9 @@ export class ViewWrapper extends EventHandler {
 
 export function createContext(graph:prov.ProvenanceGraph, desc: IPluginDesc, ref: prov.IObjectRef<any>):IViewContext {
   return {
-    graph: graph,
+    graph,
     desc: toViewPluginDesc(desc),
-    ref: ref
+    ref
   };
 }
 

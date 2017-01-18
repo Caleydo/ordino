@@ -9,6 +9,11 @@ import {IStartMenuSectionEntry} from './StartMenu';
 import {Targid} from './Targid';
 import {select} from 'd3';
 
+
+function isLoggedIn() {
+  return session.retrieve('logged_in', <boolean>false);
+}
+
 class SessionList implements IStartMenuSectionEntry {
 
   private targid:Targid;
@@ -69,20 +74,20 @@ class SessionList implements IStartMenuSectionEntry {
         .classed('loading', false)
         .selectAll('tr').data(list);
 
-      const $tr_enter = $list.enter().append('tr').attr('id',(d) => d.id);
+      const $trEnter = $list.enter().append('tr').attr('id',(d) => d.id);
       //$tr_enter.append('td').text((d) => 'Unknown');
-      $tr_enter.append('td').text((d) => d.name);
+      $trEnter.append('td').text((d) => d.name);
       //$tr_enter.append('td').html((d) => d.description ? d.description : '<i>(none)</i>');
-      $tr_enter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
-      $tr_enter.append('td').text((d) => d.creator);
+      $trEnter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+      $trEnter.append('td').text((d) => d.creator);
       //$tr_enter.append('td').text((d) => `${d.size[0]} / ${d.size[1]}`);
-      $tr_enter.append('td').html((d) => {
-        return `<button class="btn btn-xs btn-default" data-action="select" ${session.retrieve('logged_in', false) !== true && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
+      $trEnter.append('td').html((d) => {
+        return `<button class="btn btn-xs btn-default" data-action="select" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
         <button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
-        <button class="btn btn-xs btn-default" data-action="delete" ${session.retrieve('logged_in', false) !== true && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
+        <button class="btn btn-xs btn-default" data-action="delete" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
       });
 
-      $tr_enter.select('button[data-action="delete"]').on('click', (d) => {
+      $trEnter.select('button[data-action="delete"]').on('click', (d) => {
         dialogs.areyousure('Are you sure to delete: "' + d.name + '"').then((deleteIt) => {
           if (deleteIt) {
             this.targid.graphManager.delete(d);
@@ -90,11 +95,11 @@ class SessionList implements IStartMenuSectionEntry {
           }
         });
       });
-      $tr_enter.select('button[data-action="clone"]').on('click', (d) => {
+      $trEnter.select('button[data-action="clone"]').on('click', (d) => {
         this.targid.graphManager.loadOrClone(d, false);
         return false;
       });
-      $tr_enter.select('button[data-action="select"]').on('click', (d) => {
+      $trEnter.select('button[data-action="select"]').on('click', (d) => {
         this.targid.graphManager.loadOrClone(d, true);
         return false;
       });

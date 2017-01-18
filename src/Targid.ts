@@ -392,9 +392,7 @@ export class Targid {
       session.remove(TargidConstants.NEW_ENTRY_POINT);
     } else {
       //just if no other option applies jump to the stored state
-      // FIXME not part of phovea up to now:
-      // this.clueWrapper.jumpToStoredOrLastState();
-      this.clueWrapper.jumpToStored();
+      this.clueWrapper.jumpToStoredOrLastState();
     }
   }
 

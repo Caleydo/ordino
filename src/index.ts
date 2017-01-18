@@ -17,8 +17,8 @@ import * as targid from './Targid';
 
 // cache the nodes from the targid2/index.html before the TargID app is created
 // NOTE: the template (see next line) replaces the content of the document.body (but not document.head)
-let appNode = document.getElementById('app');
-let extrasNode = document.getElementById('extras');
+const appNode = document.getElementById('app');
+const extrasNode = document.getElementById('extras');
 
 // cache targid instance for logo app link
 let targidInstance;

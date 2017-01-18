@@ -117,9 +117,9 @@ export class ProxyView extends AView {
   protected updateSelectedItemSelect(forceUseLastSelection = false) {
     return this.resolveIds(this.selection.idtype, this.selection.range)
       .then((names) => Promise.all<any>([names, this.getSelectionSelectData(names)]))
-      .then((args) => {
-        const names = args[0]; // use names to get the last selected element
-        const data = args[1];
+      .then((args: any[]) => {
+        const names = <string[]>args[0]; // use names to get the last selected element
+        const data = <{value:string, name:string, data:any}[]>args[1];
         const selectedItemSelect = this.paramForm.getElementById(ProxyView.SELECTED_ITEM);
 
         // backup entry and restore the selectedIndex by value afterwards again,
@@ -167,7 +167,7 @@ export class ProxyView extends AView {
 
     this.setBusy(true);
 
-    let args = mixin(this.options.extra, {[this.options.argument]: selectedItemId});
+    const args = mixin(this.options.extra, {[this.options.argument]: selectedItemId});
     const url = this.createUrl(args);
     //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
     this.$node.select('iframe')

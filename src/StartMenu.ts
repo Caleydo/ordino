@@ -146,8 +146,8 @@ export class StartMenu {
   private createSection(sectionDesc:IStartMenuSection, $sectionNode, i) {
     // get start views for entry points and sort them by name ASC
     const views = findViewCreators(sectionDesc.id).sort((a,b) => {
-      let x = a.name.toLowerCase();
-      let y = b.name.toLowerCase();
+      const x = a.name.toLowerCase();
+      const y = b.name.toLowerCase();
       return x === y ? 0 : (x < y ? -1 : 1);
     });
 
@@ -253,7 +253,7 @@ class StartFactory implements IStartFactory {
 
 export function findViewCreators(type: string): IStartFactory[] {
   const plugins = listPlugins(type).sort((a: any,b: any) => (a.priority || 10) - (b.priority || 10));
-  var factories = plugins.map((p: IPluginDesc): IStartFactory => {
+  const factories = plugins.map((p: IPluginDesc): IStartFactory => {
     return new StartFactory(p);
   });
   return factories;
@@ -383,7 +383,7 @@ export class AEntryPointList implements IEntryPointList {
             session.store(TargidConstants.NEW_ENTRY_POINT, {
               view: (<any>that.desc).viewId,
               options: {
-                namedSet: namedSet
+                namedSet
               }
             });
 

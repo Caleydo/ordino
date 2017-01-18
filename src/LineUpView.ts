@@ -1,7 +1,7 @@
 /**
  * Created by Samuel Gratzl on 29.01.2016.
  */
-import {AView, EViewMode, IViewContext, ISelection, ViewWrapper, IAViewOptions} from './View';
+import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
 import LineUp from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
 import {createStackDesc, ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
@@ -9,7 +9,8 @@ import {IBoxPlotData} from 'lineupjs/src/model/BoxPlotColumn';
 import {LocalDataProvider} from 'lineupjs/src/provider';
 import * as d3 from 'd3';
 import * as idtypes from 'phovea_core/src/idtype';
-import * as tables from 'phovea_core/src/table';
+import {IAnyVector} from 'phovea_core/src/vector';
+import {ITable} from 'phovea_core/src/table';
 import * as ranges from 'phovea_core/src/range';
 import * as plugins from 'phovea_core/src/plugin';
 import * as dialogs from 'phovea_ui/src/dialogs';
@@ -18,17 +19,18 @@ import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
 import {IDType} from 'phovea_core/src/idtype';
 import {EventHandler} from 'phovea_core/src/event';
+import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_INT} from 'phovea_core/src/datatype';
 
 export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1) {
   return {
     type: 'number',
     column: col,
-    label: label,
+    label,
     domain: d3.extent(rows, (d) => d[col]),
     color: '',
-    visible: visible,
-    width: width,
-    selectedId: selectedId
+    visible,
+    width,
+    selectedId
   };
 }
 
@@ -36,12 +38,12 @@ export function numberCol2(col: string, min: number, max: number, label = col, v
   return {
     type: 'number',
     column: col,
-    label: label,
+    label,
     domain: [min, max],
     color: '',
-    visible: visible,
-    width: width,
-    selectedId: selectedId
+    visible,
+    width,
+    selectedId
   };
 }
 
@@ -50,12 +52,12 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
   return {
     type: 'categorical',
     column: col,
-    label: label,
-    categories: categories,
+    label,
+    categories,
     color: '',
-    visible: visible,
-    width: width,
-    selectedId: selectedId
+    visible,
+    width,
+    selectedId
   };
 }
 
@@ -64,11 +66,11 @@ export function stringCol(col: string, label = col, visible = true, width = -1, 
   return {
     type: 'string',
     column: col,
-    label: label,
+    label,
     color: '',
-    visible: visible,
-    width: width,
-    selectedId: selectedId
+    visible,
+    width,
+    selectedId
   };
 }
 
@@ -76,11 +78,11 @@ export function booleanCol(col: string, label = col, visible = true, width = -1,
   return {
     type: 'boolean',
     column: col,
-    label: label,
+    label,
     color: '',
-    visible: visible,
-    width: width,
-    selectedId: selectedId
+    visible,
+    width,
+    selectedId
   };
 }
 
@@ -102,8 +104,8 @@ export function useDefaultLayout(instance: any) {
   instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
 }
 
-export function deriveCol(col: tables.IVector) {
-  let r: any = {
+export function deriveCol(col: IAnyVector) {
+  const r: any = {
     column: col.desc.name
   };
   const desc = <any>col.desc;
@@ -112,17 +114,17 @@ export function deriveCol(col: tables.IVector) {
   } else if (desc.cssClass) {
     r.cssClass = desc.cssClass;
   }
-  let val = desc.value;
+  const val = desc.value;
   switch (val.type) {
-    case 'string':
+    case VALUE_TYPE_STRING:
       r.type = 'string';
       break;
-    case 'categorical':
+    case VALUE_TYPE_CATEGORICAL:
       r.type = 'categorical';
       r.categories = desc.categories;
       break;
-    case 'real':
-    case 'int':
+    case VALUE_TYPE_REAL:
+    case VALUE_TYPE_INT:
       r.type = 'number';
       r.domain = val.range;
       break;
@@ -186,15 +188,15 @@ export abstract class ALineUpView2 extends AView {
   protected idAccessor = (d) => d._id;
 
   private scoreAccessor = (row: any, index: number, id: string, desc: any) => {
-    const row_id = this.idAccessor(row);
-    let r = (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+    const rowId = this.idAccessor(row);
+    let r = (desc.scores && typeof desc.scores[rowId] !== 'undefined') ? desc.scores[rowId] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
     if (desc.type === 'categorical') {
       r = String(r); //even null values
     }
     return r;
-  };
+  }
 
-  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: IAViewOptions) {
+  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}) {
     super(context, parent, options);
 
     this.$node.classed('lineup', true);
@@ -359,7 +361,7 @@ export abstract class ALineUpView2 extends AView {
       this.withoutTracking(() => {
         //console.log('remove columns', diffRemoved);
         diffRemoved.forEach((id) => {
-          let col = usedCols.filter((d) => d.desc.selectedId === id)[0];
+          const col = usedCols.filter((d) => d.desc.selectedId === id)[0];
           ranking.remove(col);
         });
       });
@@ -473,7 +475,7 @@ export abstract class ALineUpView2 extends AView {
     return colors;
   }
 
-  protected loadSelectionColumnData(id): Promise<IScoreRow<any>[]> {
+  protected loadSelectionColumnData(id: number): Promise<IScoreRow<any>[]> {
     // hook
     return Promise.resolve([]);
   }
@@ -567,7 +569,7 @@ export abstract class ALineUpView2 extends AView {
     });
   }
 
-  protected initColumns(desc) {
+  protected initColumns(desc: { idType: string}) {
     this.idType = idtypes.resolve(desc.idType);
   }
 
@@ -625,7 +627,7 @@ export abstract class ALineUpView2 extends AView {
    * @param rows
    */
   protected fillIDTypeMapCache(idtype: IDType, rows: {_id: number, id: string}[]) {
-    var ids = [], names = [];
+    const ids = [], names = [];
     rows.forEach((r, i) => {
       ids[i] = r._id;
       names[i] = r.id;
@@ -646,7 +648,7 @@ export abstract class ALineUpView2 extends AView {
      * @returns {string}
      */
     const showStats = (total, selected = 0, shown = 0) => {
-      var str = 'Showing ';
+      let str = 'Showing ';
 
       str += `${shown} `;
       if (total !== 0) {
@@ -659,8 +661,8 @@ export abstract class ALineUpView2 extends AView {
       return str;
     };
 
-    var selected = 0;
-    var total = 0;
+    let selected = 0;
+    let total = 0;
 
     // this.lineup not available
     if (!this.lineup) {
@@ -687,7 +689,7 @@ export abstract class ALineUpView2 extends AView {
     }
   }
 
-  protected getItemName(count: number) {
+  protected getItemName(count: number): string {
     return (count === 1) ? 'item' : 'items';
   }
 
@@ -724,8 +726,8 @@ class LineUpRankingButtons extends EventHandler {
       .attr('class', 'fa fa-download')
       .on('click', (ranking) => {
         this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
-          var downloadLink = document.createElement('a');
-          var blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
+          const downloadLink = document.createElement('a');
+          const blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
           downloadLink.href = URL.createObjectURL(blob);
           (<any>downloadLink).download = 'export.csv';
 
@@ -861,8 +863,8 @@ class LineUpSelectionHelper extends EventHandler {
   }
 
   private addEventListener() {
-    this.lineup.on('multiSelectionChanged', (data_indices) => {
-      this.onMultiSelectionChanged(data_indices);
+    this.lineup.on('multiSelectionChanged', (indices) => {
+      this.onMultiSelectionChanged(indices);
     });
   }
 
@@ -870,10 +872,10 @@ class LineUpSelectionHelper extends EventHandler {
     this.lineup.on('multiSelectionChanged', null);
   }
 
-  private onMultiSelectionChanged(data_indices) {
+  private onMultiSelectionChanged(indices) {
     // compute the difference
-    const diffAdded = array_diff(data_indices, this.orderedSelectionIndicies);
-    const diffRemoved = array_diff(this.orderedSelectionIndicies, data_indices);
+    const diffAdded = array_diff(indices, this.orderedSelectionIndicies);
+    const diffRemoved = array_diff(this.orderedSelectionIndicies, indices);
 
     // add new element to the end
     if (diffAdded.length > 0) {
@@ -911,7 +913,7 @@ class LineUpSelectionHelper extends EventHandler {
       return;
     }
 
-    var indices: number[] = [];
+    const indices: number[] = [];
     sel.range.dim(0).forEach((id) => {
       const index = this.id2index.get(String(id));
       if (typeof index === 'number') {
@@ -959,9 +961,9 @@ export class ALineUpView extends AView {
     underscoreIdAccessor: (id: string) => this.selectionHelper.id2UnderscoreId.get(id) // returns the _id for a `id`
   };
   private scoreAccessor = (row: any, id: string, desc: any) => {
-    const row_id = this.selectionHelper.idAccessor(row);
-    return (desc.scores && typeof desc.scores[row_id] !== 'undefined') ? desc.scores[row_id] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
-  };
+    const rowId = this.selectionHelper.idAccessor(row);
+    return (desc.scores && typeof desc.scores[rowId] !== 'undefined') ? desc.scores[rowId] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
+  }
 
   private dump: any = null;
 
@@ -991,8 +993,8 @@ export class ALineUpView extends AView {
   private lineupRankingButtons($node: d3.Selection<any>) {
     $node.append('button').attr('class', 'fa fa-download').on('click', (ranking) => {
       this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
-        var downloadLink = document.createElement('a');
-        var blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
+        const downloadLink = document.createElement('a');
+        const blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
         downloadLink.href = URL.createObjectURL(blob);
         (<any>downloadLink).download = 'export.csv';
 
@@ -1036,11 +1038,11 @@ export class ALineUpView extends AView {
       });
   }
 
-  protected buildLineUpFromTable(table: tables.ITable, filteredIds = []) {
+  protected buildLineUpFromTable(table: ITable, filteredIds = []) {
     const columns = table.cols().map(deriveCol);
     deriveColors(columns);
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
-      var rows: any[] = args[0];
+      const rows: any[] = args[0];
       const rowIds: ranges.Range = args[1];
 
       const storage = new LocalDataProvider(rows, columns);
@@ -1060,7 +1062,7 @@ export class ALineUpView extends AView {
     this.context.ref.value.data = Promise.resolve(storage);
   }
 
-  protected replaceLineUpDataFromTable(table: tables.ITable) {
+  protected replaceLineUpDataFromTable(table: ITable) {
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
       const rows: any[] = args[0];
       const rowIds: ranges.Range = args[1];
@@ -1134,10 +1136,10 @@ export class ALineUpView extends AView {
     this.updateLineUpStats();
   }
 
-  private onChange = (data_indices) => {
+  private onChange = (indices) => {
     // compute the difference
-    const diffAdded = this.array_diff(data_indices, this.orderedSelectionIndicies);
-    const diffRemoved = this.array_diff(this.orderedSelectionIndicies, data_indices);
+    const diffAdded = this.array_diff(indices, this.orderedSelectionIndicies);
+    const diffRemoved = this.array_diff(this.orderedSelectionIndicies, indices);
 
     // add new element to the end
     if (diffAdded.length > 0) {
@@ -1157,7 +1159,7 @@ export class ALineUpView extends AView {
     //console.log(this.orderedSelectionIndicies, ids.toString(), diffAdded, diffRemoved);
 
     this.setItemSelection({idtype: this.idType, range: ids});
-  };
+  }
 
   /**
    * Returns the all items that are not in the given two arrays
@@ -1174,7 +1176,7 @@ export class ALineUpView extends AView {
 
   setItemSelection(sel: ISelection) {
     if (this.lineup) {
-      var indices: number[] = [];
+      const indices: number[] = [];
       sel.range.dim(0).forEach((id) => {
         const index = this.selectionHelper.id2index.get(String(id));
         if (typeof index === 'number') {
@@ -1241,7 +1243,7 @@ export class ALineUpView extends AView {
       const order = ranking.getOrder().slice(0).reverse();
       const sinus = Array.apply(null, Array(20)) // create 20 fields
         .map((d, i) => i * 0.1) // [0, 0.1, 0.2, ...]
-        .map(v => Math.sin(v * Math.PI)); // convert to sinus
+        .map((v) => Math.sin(v * Math.PI)); // convert to sinus
 
       // set column mapping to sinus domain = [-1, 1]
       col.setMapping(new ScaleMappingFunction(d3.extent(<number[]>sinus)));
@@ -1360,7 +1362,7 @@ export class ALineUpView extends AView {
      * @returns {string}
      */
     const showStats = (total, selected = 0, shown = 0) => {
-      var str = 'Showing ';
+      let str = 'Showing ';
 
       str += `${shown} `;
       if (total !== 0) {
@@ -1373,8 +1375,8 @@ export class ALineUpView extends AView {
       return str;
     };
 
-    var selected = 0;
-    var total = 0;
+    let selected = 0;
+    let total = 0;
 
     // this.lineup not available
     if (!this.lineup) {
@@ -1401,7 +1403,7 @@ export class ALineUpView extends AView {
     }
   }
 
-  getItemName(count: number) {
+  getItemName(count: number): string {
     return (count === 1) ? 'item' : 'items';
   }
 
@@ -1467,7 +1469,7 @@ export class ALineUpView extends AView {
    * @param rows
    */
   fillIDTypeMapCache(idtype: IDType, rows: {_id: number, id: string}[]) {
-    var ids = [], names = [];
+    const ids = [], names = [];
     rows.forEach((r, i) => {
       ids[i] = r._id;
       names[i] = r.id;
@@ -1528,6 +1530,6 @@ export class LineUpView extends ALineUpView {
  * @param options
  * @returns {LineUpView}
  */
-export function create(context: IViewContext, selection: ISelection, parent: Element, options?: IAViewOptions) {
+export function create(context: IViewContext, selection: ISelection, parent: Element, options?: {}) {
   return new LineUpView(context, selection, parent, options);
 }

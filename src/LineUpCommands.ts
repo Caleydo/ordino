@@ -19,7 +19,7 @@ let ignoreNext:string = null;
 
 function addRankingImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
-    let index = parameter.index;
+    const index = parameter.index;
     let ranking;
     if (parameter.dump) { //add
       ignoreNext = 'addRanking';
@@ -37,8 +37,8 @@ function addRankingImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
 
 export function addRanking(provider:prov.IObjectRef<any>, index:number, dump?:any) {
   return prov.action(prov.meta(dump ? 'Add Ranking' : 'Remove Ranking', prov.cat.layout, dump ? prov.op.create : prov.op.remove), 'lineupAddRanking', addRankingImpl, [provider], {
-    index: index,
-    dump: dump
+    index,
+    dump
   });
 }
 
@@ -48,7 +48,7 @@ function toSortObject(v) {
 
 function setRankingSortCriteriaImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
-    let ranking = p.getRankings()[parameter.rid];
+    const ranking = p.getRankings()[parameter.rid];
     const bak = toSortObject(ranking.getSortCriteria());
     ignoreNext = 'sortCriteriaChanged';
     ranking.sortBy(parameter.value.col ? ranking.findByPath(parameter.value.col) : null, parameter.value.asc);
@@ -62,15 +62,15 @@ function setRankingSortCriteriaImpl(inputs:prov.IObjectRef<any>[], parameter:any
 
 export function setRankingSortCriteria(provider:prov.IObjectRef<any>, rid:number, value:any) {
   return prov.action(prov.meta('Change Sort Criteria', prov.cat.layout, prov.op.update), 'lineupSetRankingSortCriteria', setRankingSortCriteriaImpl, [provider], {
-    rid: rid,
-    value: value
+    rid,
+    value
   });
 }
 
 function setColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
-    let ranking = p.getRankings()[parameter.rid];
-    let prop = parameter.prop[0].toUpperCase() + parameter.prop.slice(1);
+    const ranking = p.getRankings()[parameter.rid];
+    const prop = parameter.prop[0].toUpperCase() + parameter.prop.slice(1);
 
     let bak;
     let source = ranking;
@@ -96,10 +96,10 @@ export function setColumn(provider:prov.IObjectRef<any>, rid:number, path:string
   (<ALineUpView>provider.value.getInstance()).updateLineUpStats();
 
   return prov.action(prov.meta('Set Property ' + prop, prov.cat.layout, prov.op.update), 'lineupSetColumn', setColumnImpl, [provider], {
-    rid: rid,
-    path: path,
-    prop: prop,
-    value: value
+    rid,
+    path,
+    prop,
+    value
   });
 }
 
@@ -107,7 +107,7 @@ function addColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
   return inputs[0].v.then((value) => Promise.resolve(value.data)).then((p) => {
     let ranking = p.getRankings()[parameter.rid];
 
-    let index = parameter.index;
+    const index = parameter.index;
     let bak;
     if (parameter.path) {
       ranking = ranking.findByPath(parameter.path);
@@ -128,10 +128,10 @@ function addColumnImpl(inputs:prov.IObjectRef<any>[], parameter:any) {
 
 export function addColumn(provider:prov.IObjectRef<any>, rid:number, path:string, index:number, dump:any) {
   return prov.action(prov.meta(dump ? 'Add Column' : 'Remove Column', prov.cat.layout, dump ? prov.op.create : prov.op.remove), 'lineupAddColumn', addColumnImpl, [provider], {
-    rid: rid,
-    path: path,
-    index: index,
-    dump: dump
+    rid,
+    path,
+    index,
+    dump
   });
 }
 
@@ -149,24 +149,24 @@ export function createCmd(id):prov.ICmdFunction {
   return null;
 }
 
-function delayedCall(callback:(old:any, new_:any) => void, timeToDelay = 100, thisCallback = this) {
+function delayedCall(callback:(old:any, newValue:any) => void, timeToDelay = 100, thisCallback = this) {
   let tm = -1;
   let oldest = null;
 
-  function callbackImpl(new_) {
-    callback.call(thisCallback, oldest, new_);
+  function callbackImpl(newValue) {
+    callback.call(thisCallback, oldest, newValue);
     oldest = null;
     tm = -1;
   }
 
-  return (old:any, new_:any) => {
+  return (old:any, newValue:any) => {
     if (tm >= 0) {
       clearTimeout(tm);
       tm = -1;
     } else {
       oldest = old;
     }
-    tm = setTimeout(callbackImpl.bind(this, new_), timeToDelay);
+    tm = setTimeout(callbackImpl.bind(this, newValue), timeToDelay);
   };
 }
 
@@ -176,24 +176,24 @@ function rankingId(provider:any, ranking:any) {
 
 
 function recordPropertyChange(source:any, provider:any, lineupViewWrapper:prov.IObjectRef<any>, graph:prov.ProvenanceGraph, property:string, delayed = -1) {
-  const f = (old:any, new_:any) => {
+  const f = (old:any, newValue:any) => {
     if (ignoreNext === property + 'Changed') {
       ignoreNext = null;
       return;
     }
-    console.log(source, property, old, new_);
+    console.log(source, property, old, newValue);
     if (source instanceof Column) {
       // assert ALineUpView and update the stats
       (<ALineUpView>lineupViewWrapper.value.getInstance()).updateLineUpStats();
 
       const rid = rankingId(provider, source.findMyRanker());
       const path = source.fqpath;
-      graph.pushWithResult(setColumn(lineupViewWrapper, rid, path, property, new_), {
+      graph.pushWithResult(setColumn(lineupViewWrapper, rid, path, property, newValue), {
         inverse: setColumn(lineupViewWrapper, rid, path, property, old)
       });
     } else if (source instanceof Ranking) {
       const rid = rankingId(provider, source);
-      graph.pushWithResult(setColumn(lineupViewWrapper, rid, null, property, new_), {
+      graph.pushWithResult(setColumn(lineupViewWrapper, rid, null, property, newValue), {
         inverse: setColumn(lineupViewWrapper, rid, null, property, old)
       });
     }
@@ -241,15 +241,15 @@ function trackColumn(provider, lineup:prov.IObjectRef<any>, graph:prov.Provenanc
       recordPropertyChange(col, provider, lineup, graph, 'weights', 100);
     }
   } else if (col instanceof NumberColumn) {
-    col.on('mappingChanged.track', (old, new_) => {
+    col.on('mappingChanged.track', (old, newValue) => {
       if (ignoreNext === 'mappingChanged') {
         ignoreNext = null;
         return;
       }
-      console.log(col.fqpath, 'mapping', old.dump(), new_.dump());
+      console.log(col.fqpath, 'mapping', old.dump(), newValue.dump());
       const rid = rankingId(provider, col.findMyRanker());
       const path = col.fqpath;
-      graph.pushWithResult(setColumn(lineup, rid, path, 'mapping', new_.dump()), {
+      graph.pushWithResult(setColumn(lineup, rid, path, 'mapping', newValue.dump()), {
         inverse: setColumn(lineup, rid, path, 'mapping', old.dump())
       });
     });
@@ -279,14 +279,14 @@ function untrackColumn(col) {
 }
 
 function trackRanking(provider, lineup:prov.IObjectRef<any>, graph:prov.ProvenanceGraph, ranking) {
-  ranking.on('sortCriteriaChanged.track', (old, new_) => {
+  ranking.on('sortCriteriaChanged.track', (old, newValue) => {
     if (ignoreNext === 'sortCriteriaChanged') {
       ignoreNext = null;
       return;
     }
-    console.log(ranking.id, 'sortCriteriaChanged', old, new_);
+    console.log(ranking.id, 'sortCriteriaChanged', old, newValue);
     const rid = rankingId(provider, ranking);
-    graph.pushWithResult(setRankingSortCriteria(lineup, rid, toSortObject(new_)), {
+    graph.pushWithResult(setRankingSortCriteria(lineup, rid, toSortObject(newValue)), {
       inverse: setRankingSortCriteria(lineup, rid, toSortObject(old))
     });
   });

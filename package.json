@@ -59,9 +59,9 @@
     "pretest:web": "npm run compile",
     "pretest:python": "npm run check",
     "posttest:web": "npm run lint",
-    "test:web": "karma start",
+    "test:web": "test ! -d tests || karma start",
     "test:python": "test ! -d tests || python setup.py test",
-    "predist:web": "npm run build",
+    "predist:web": "npm run build:web && npm run docs:web",
     "dist:web": "mkdirp dist && cd build && tar cvzf ../dist/targid2.tar.gz *",
     "dist:python": "python setup.py bdist_egg",
     "predocker": "npm run build",
@@ -69,7 +69,8 @@
     "docs:web": "typedoc --options typedoc.json src/**.ts",
     "docs:python": "echo todo creating docs...",
     "build:python": "python -c \"from distutils.dir_util import mkpath ; mkpath('./build/source')\" && (tar -c ./targid2 --exclude '*.pyc' | tar -xC build/source)",
-    "build:web": "webpack --env prod"
+    "build:web": "webpack --env prod",
+    "predist:python": "npm run build:python && npm run docs:python"
   },
   "dependencies": {
     "@types/d3": "3.5.36",
@@ -77,8 +78,8 @@
     "@types/select2": "4.0.30",
     "d3": "3.5.17",
     "jquery.scrollto": "2.1.2",
-    "lineupjs": "github:Caleydo/lineupjs#master",
-    "phovea_clue": "github:phovea/phovea_clue#develop",
+    "lineupjs": "1.0.0",
+    "phovea_clue": "github:phovea/phovea_clue#v0.0.5",
     "select2": "4.0.3",
     "@types/jquery": "2.0.33",
     "jquery": "3.1.1"

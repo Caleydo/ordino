@@ -2,7 +2,7 @@
   "name": "targid2",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
   "homepage": "https://phovea.caleydo.org",
-  "version": "1.0.0",
+  "version": "1.0.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -78,8 +78,8 @@
     "@types/select2": "4.0.30",
     "d3": "3.5.17",
     "jquery.scrollto": "2.1.2",
-    "lineupjs": "1.0.0",
-    "phovea_clue": "github:phovea/phovea_clue#v0.0.5",
+    "lineupjs": "github:Caleydo/lineupjs#master",
+    "phovea_clue": "github:phovea/phovea_clue#develop",
     "select2": "4.0.3",
     "@types/jquery": "2.0.33",
     "jquery": "3.1.1"

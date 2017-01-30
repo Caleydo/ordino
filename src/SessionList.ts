@@ -5,7 +5,7 @@
 import * as session from 'phovea_core/src/session';
 import * as dialogs from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
-import {IStartMenuSectionEntry} from './StartMenu';
+import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {Targid} from './Targid';
 import {select} from 'd3';
 
@@ -16,7 +16,6 @@ function isLoggedIn() {
 
 class SessionList implements IStartMenuSectionEntry {
 
-  private targid:Targid;
   //private format = d3.time.format.utc('%Y-%m-%d %H:%M');
 
   private static TEMPLATE = `<table class="table table-striped table-hover table-bordered table-condensed">
@@ -36,18 +35,21 @@ class SessionList implements IStartMenuSectionEntry {
     </tbody>
   </table>`;
 
+
+  private readonly targid:Targid;
+
   /**
    * Set the idType and the default data and build the list
    * @param parent
    * @param desc
    * @param options
    */
-  constructor(protected parent: HTMLElement, public desc: IPluginDesc, protected options:any) {
+  constructor(private readonly parent: HTMLElement, public readonly desc: IPluginDesc, private readonly options:IStartMenuOptions) {
     this.targid = options.targid;
     this.build();
   }
 
-  public getEntryPointLists() {
+  getEntryPointLists() {
     return [];
   }
 
@@ -107,6 +109,6 @@ class SessionList implements IStartMenuSectionEntry {
   }
 }
 
-export function createStartFactory(parent: HTMLElement, desc: IPluginDesc, options:any) {
+export function create(parent: HTMLElement, desc: IPluginDesc, options:IStartMenuOptions) {
   return new SessionList(parent, desc, options);
 }

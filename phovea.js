@@ -63,11 +63,11 @@ module.exports = function(registry) {
   'matches': '(targidSetSelection)'
  });
 
-  registry.push('targidStartSession', 'targid_session_start', function() { return System.import('./src/SessionList'); }, {
-  'name': 'Last Sessions',
-  'factory': 'createStartFactory',
-  'idtype': 'none',
-  'selection': 'none'
+  registry.push('targidStartMenuSection', 'targid_session_start', function() { return System.import('./src/SessionList'); }, {
+  'name': 'Sessions',
+  'cssClass': 'targidSessionData',
+  'factory': 'create',
+  'priority': 10
  });
   // generator-phovea:end
 };

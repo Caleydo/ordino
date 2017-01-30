@@ -89,7 +89,7 @@ export class StartMenu {
    * @param idType
    * @param namedSet
    */
-  private updateEntryPointList(idType: idtypes.IDType | string, namedSet: INamedSet) {
+  updateEntryPointList(idType: idtypes.IDType | string, namedSet: INamedSet) {
     this.entryPoints
       .map((d) => d.getEntryPointLists())
       .filter((d) => d !== null && d !== undefined)
@@ -157,28 +157,30 @@ export class StartMenu {
   private updateSections() {
     const that = this;
 
-    this.$sections.each(function() {
+    this.$sections.each(function(section: IStartMenuSection) {
       // reload the entry points every time the
-      d3.select(this).selectAll('div.body')
-        .each(function (section: IStartMenuSection) {
+      const elem = <HTMLElement>d3.select(this).select('div.body').node();
 
-          // do not load entry point again, if already loaded
-          if (that.hasEntryPoint(section)) {
+      // do not load entry point again, if already loaded
+      if (that.hasEntryPoint(section)) {
+        return;
+      }
+
+      section.load()
+        .then((i) => {
+        return i.factory(elem, section, { targid: that.targid})
+        })
+        .then((entryPoint) => {
+          // prevent adding the entryPoint if already in list or undefined
+          if (entryPoint === undefined || that.hasEntryPoint(section)) {
             return;
           }
-
-          const elem = this;
-          section.load()
-            .then((i) => i.factory(elem, section, { targid: that.targid}))
-            .then((entryPoint) => {
-              // prevent adding the entryPoint if already in list or undefined
-              if (entryPoint === undefined || that.hasEntryPoint(section)) {
-                return;
-              }
-              that.entryPoints.push(entryPoint);
-            })
-            .catch(showErrorModalDialog);
-        });
+          that.entryPoints.push(entryPoint);
+        })
+        .catch((e) => {
+        console.error(e);
+        })
+        //.catch(showErrorModalDialog);
     });
   }
 

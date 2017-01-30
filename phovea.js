@@ -67,7 +67,7 @@ module.exports = function(registry) {
   'name': 'Sessions',
   'cssClass': 'targidSessionData',
   'factory': 'create',
-  'priority': 10
+  'priority': 100
  });
   // generator-phovea:end
 };

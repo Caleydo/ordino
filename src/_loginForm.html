@@ -1,0 +1,23 @@
+<form class="form-signin">
+    <div class="input-group">
+        <input type="text" class="form-control" id="login_username" placeholder="User name" required="required"
+               autofocus="autofocus"/>
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default" aria-label="Help" tabindex="-1" data-toggle="popover" data-trigger="hover"
+                    title="Domain"
+                    data-content="if you have a non-EU account, please prepend the user name with your user domain (e.g., AM\johndoe)"><span
+                    class="glyphicon glyphicon-question-sign"></span></button>
+        </div>
+    </div>
+
+    <input type="password" class="form-control" id="login_password" placeholder="Password" required="required"/>
+
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="remember-me" id="login_remember"> Remember me
+        </label>
+    </div>
+    <span class="help-block">In case of questions or suggestions, please contact <a
+            href="mailto:thomas.zichner@boehringer-ingelheim.com">Thomas Zichner</a></span>
+    <button class="btn btn btn-primary btn-block" type="submit">Login</button>
+</form>

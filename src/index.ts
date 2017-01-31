@@ -10,10 +10,12 @@ import 'file-loader?name=robots.txt!./robots.txt';
 import 'phovea_ui/src/_bootstrap';
 import 'phovea_ui/src/_font-awesome';
 import './style.scss';
+import * as loginForm from 'html-loader!./_loginForm.html';
 
 import * as template from 'phovea_clue/src/template';
 import * as header from 'phovea_ui/src/header';
 import * as targid from './Targid';
+import * as $ from 'jquery';
 
 // cache the nodes from the targid2/index.html before the TargID app is created
 // NOTE: the template (see next line) replaces the content of the document.body (but not document.head)
@@ -38,8 +40,13 @@ const elems = template.create(document.body, {
   thumbnails: false,
   headerOptions: {
     showReportBugLink: false
-  }
+  },
+  loginForm: String(loginForm)
 });
+
+// enable tooltips e.g. for login dialog
+$('[data-toggle="popover"]').popover();
+
 
 // copy nodes from original document to new document (template)
 const mainNode = <HTMLElement>elems.$main.node();

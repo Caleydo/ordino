@@ -1,4 +1,4 @@
--e git+https://github.com/phovea/phovea_clue.git@v0.0.5#egg=phovea_clue
+-e git+https://github.com/phovea/phovea_clue.git@develop#egg=phovea_clue
 pymongo==3.0.3
 requests==2.2.1
 SQLAlchemy==1.0.12

@@ -63,5 +63,5 @@ class DBViewBuilder(object):
 
 class DBConnector(object):
   def __init__(self, agg_score, views):
-    self.agg_score = agg_score,
+    self.agg_score = agg_score
     self.views = views

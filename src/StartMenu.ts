@@ -130,7 +130,7 @@ export class StartMenu {
       .attr('class', (d) => d.cssClass)
       .html((d, i) => `
         <header><h1><label for="${d.cssClass}Toggle">${d.name}</label></h1></header>
-        <input id="${d.cssClass}Toggle" class="toggle" type="radio" name="toggle" ${i === 0 ? 'checked="checked"': ''} />
+        <input id="${d.cssClass}Toggle" class="toggle" type="radio" name="toggle" ${i === 0 ? 'checked="checked"' : ''} />
         <main>
             <div class="item">
               <div class="body">
@@ -151,13 +151,14 @@ export class StartMenu {
     // do not load entry point again, if already loaded
     return this.entryPoints.find((ep) => ep.desc.id === section.id) != null;
   }
+
   /**
    * Loops through all sections and updates them (or the entry points) if necessary
    */
   private updateSections() {
     const that = this;
 
-    this.$sections.each(function(section: IStartMenuSection) {
+    this.$sections.each(function (section: IStartMenuSection) {
       // reload the entry points every time the
       const elem = <HTMLElement>d3.select(this).select('div.body').node();
 
@@ -168,7 +169,7 @@ export class StartMenu {
 
       section.load()
         .then((i) => {
-        return i.factory(elem, section, { targid: that.targid})
+          return i.factory(elem, section, {targid: that.targid});
         })
         .then((entryPoint) => {
           // prevent adding the entryPoint if already in list or undefined
@@ -178,9 +179,9 @@ export class StartMenu {
           that.entryPoints.push(entryPoint);
         })
         .catch((e) => {
-        console.error(e);
-        })
-        //.catch(showErrorModalDialog);
+          console.error(e);
+        });
+      //.catch(showErrorModalDialog);
     });
   }
 
@@ -212,7 +213,7 @@ class StartFactory implements IStartFactory {
     return this.p.name;
   }
 
-  build(element: HTMLElement, options :IEntryPointOptions = {}) {
+  build(element: HTMLElement, options: IEntryPointOptions = {}) {
     return this.builder = this.p.load().then((i) => {
       if (i.factory) {
         return i.factory(element, this.p, options);

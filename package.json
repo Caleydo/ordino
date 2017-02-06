@@ -1,5 +1,5 @@
 {
-  "name": "targid2",
+  "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
   "homepage": "https://phovea.caleydo.org",
   "version": "1.0.1-SNAPSHOT",
@@ -10,11 +10,11 @@
   },
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/caleydo/targid2/issues"
+    "url": "https://github.com/caleydo/ordino/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/caleydo/targid2.git"
+    "url": "https://github.com/caleydo/ordino.git"
   },
   "private": true,
   "files": [
@@ -23,7 +23,7 @@
     "phovea.js",
     "phovea_registry.js",
     "build",
-    "targid2",
+    "ordino",
     "__init__.py",
     "__main__.py",
     "requirements.txt",
@@ -62,13 +62,13 @@
     "test:web": "test ! -d tests || karma start",
     "test:python": "test ! -d tests || python setup.py test",
     "predist:web": "npm run build:web && npm run docs:web",
-    "dist:web": "mkdirp dist && cd build && tar cvzf ../dist/targid2.tar.gz *",
+    "dist:web": "mkdirp dist && cd build && tar cvzf ../dist/ordino.tar.gz *",
     "dist:python": "python setup.py bdist_egg",
     "predocker": "npm run build",
-    "docker": "docker build -t targid2 -f deploy/Dockerfile .",
+    "docker": "docker build -t ordino -f deploy/Dockerfile .",
     "docs:web": "typedoc --options typedoc.json src/**.ts",
     "docs:python": "echo todo creating docs...",
-    "build:python": "python -c \"from distutils.dir_util import mkpath ; mkpath('./build/source')\" && (tar -c ./targid2 --exclude '*.pyc' | tar -xC build/source)",
+    "build:python": "python -c \"from distutils.dir_util import mkpath ; mkpath('./build/source')\" && (tar -c ./ordino --exclude '*.pyc' | tar -xC build/source)",
     "build:web": "webpack --env prod",
     "predist:python": "npm run build:python && npm run docs:python",
     "prebuild:python": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test:python",

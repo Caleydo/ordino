@@ -11,7 +11,7 @@ import phovea_server.config
 __author__ = 'Samuel Gratzl'
 
 _log = logging.getLogger(__name__)
-c = phovea_server.config.view('targid2')
+c = phovea_server.config.view('ordino')
 
 
 def _to_config(p):

@@ -8,7 +8,7 @@
 module.exports = function(registry) {
   //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
   // generator-phovea:begin
-  registry.push('application', 'targid2', function() { return System.import('./src/'); }, {
+  registry.push('application', 'ordino', function() { return System.import('./src/'); }, {
   'name': 'Target Discovery Platform'
  });
 
@@ -33,12 +33,12 @@ module.exports = function(registry) {
   'selection': 'none'
  });
 
-  registry.push('actionFactory', 'targid2', function() { return System.import('./src/Targid'); }, {
+  registry.push('actionFactory', 'ordino', function() { return System.import('./src/Targid'); }, {
   'factory': 'createCmd',
   'creates': '(targidCreateView|targidRemoveView|targidReplaceView)'
  });
 
-  registry.push('actionFactory', 'targid2', function() { return System.import('./src/LineUpCommands'); }, {
+  registry.push('actionFactory', 'ordino', function() { return System.import('./src/LineUpCommands'); }, {
   'factory': 'createCmd',
   'creates': '(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)'
  });
@@ -48,7 +48,7 @@ module.exports = function(registry) {
   'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
  });
 
-  registry.push('actionFactory', 'targid2', function() { return System.import('./src/View'); }, {
+  registry.push('actionFactory', 'ordino', function() { return System.import('./src/View'); }, {
   'factory': 'createCmd',
   'creates': '(targidSetParameter|targidSetSelection)'
  });

@@ -17,7 +17,7 @@ import * as header from 'phovea_ui/src/header';
 import * as targid from './Targid';
 import * as $ from 'jquery';
 
-// cache the nodes from the targid2/index.html before the TargID app is created
+// cache the nodes from the ordino/index.html before the TargID app is created
 // NOTE: the template (see next line) replaces the content of the document.body (but not document.head)
 const appNode = document.getElementById('app');
 const extrasNode = document.getElementById('extras');
@@ -27,14 +27,14 @@ let targidInstance;
 
 // create TargID app from CLUE template
 const elems = template.create(document.body, {
-  app: 'TargID 2',
+  app: 'Ordino',
   appLink: new header.AppHeaderLink('Target Discovery Platform', (event) => {
     event.preventDefault();
     targidInstance.openStartMenu();
     return false;
   }),
-  application: 'TargID 2',
-  id: 'targid2',
+  application: 'Ordino',
+  id: 'ordino',
   recordSelectionTypes: null, // no automatic selection recording
   provVisCollapsed: true,
   thumbnails: false,

@@ -1,163 +1,121 @@
 {
   "name": "targid2",
-  "title": "Target Discovery Platform",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "version": "0.0.1",
-  "license": "SEE LICENSE IN LICENSE",
-  "repository": "Caleydo/targid2",
+  "homepage": "https://phovea.caleydo.org",
+  "version": "1.0.1-SNAPSHOT",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
+  },
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/caleydo/targid2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caleydo/targid2.git"
+  },
+  "private": true,
+  "files": [
+    "src",
+    "index.js",
+    "phovea.js",
+    "phovea_registry.js",
+    "build",
+    "targid2",
+    "__init__.py",
+    "__main__.py",
+    "requirements.txt",
+    "requirements_dev.txt",
+    "docker_packages.txt",
+    "redhat_packages.txt"
+  ],
+  "engines": {
+    "npm": ">= 3",
+    "node": ">= 6",
+    "iojs": ">= 3"
+  },
+  "scripts": {
+    "check": "flake8",
+    "pretest": "echo hybrid",
+    "test": "npm run test:web && npm run test:python",
+    "predist": "echo hybrid",
+    "dist": "npm run dist:web && npm run dist:python",
+    "compile": "tsc",
+    "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
+    "docs": "npm run docs:web && npm run docs:python",
+    "prebuild": "echo hybrid",
+    "posttest": "echo hybrid",
+    "test:watch": "karma start --autoWatch=true --singleRun=false",
+    "build:dev": "webpack",
+    "build": "npm run build:web && npm run build:python",
+    "start": "webpack-dev-server --inline",
+    "start:hot": "webpack-dev-server --inline --hot",
+    "watch": "webpack --watch",
+    "release:major": "npm version major && npm publish && git push --follow-tags",
+    "release:minor": "npm version minor && npm publish && git push --follow-tags",
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "pretest:web": "npm run compile",
+    "pretest:python": "npm run check",
+    "posttest:web": "npm run lint",
+    "test:web": "test ! -d tests || karma start",
+    "test:python": "test ! -d tests || python setup.py test",
+    "predist:web": "npm run build:web && npm run docs:web",
+    "dist:web": "mkdirp dist && cd build && tar cvzf ../dist/targid2.tar.gz *",
+    "dist:python": "python setup.py bdist_egg",
+    "predocker": "npm run build",
+    "docker": "docker build -t targid2 -f deploy/Dockerfile .",
+    "docs:web": "typedoc --options typedoc.json src/**.ts",
+    "docs:python": "echo todo creating docs...",
+    "build:python": "python -c \"from distutils.dir_util import mkpath ; mkpath('./build/source')\" && (tar -c ./targid2 --exclude '*.pyc' | tar -xC build/source)",
+    "build:web": "webpack --env prod",
+    "predist:python": "npm run build:python && npm run docs:python",
+    "prebuild:python": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test:python",
+    "prebuild:web": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test:web"
+  },
   "dependencies": {
+    "@types/d3": "3.5.36",
+    "@types/jquery.scrollto": "1.4.27",
+    "@types/select2": "4.0.30",
+    "d3": "3.5.17",
+    "jquery.scrollto": "2.1.2",
+    "lineupjs": "github:Caleydo/lineupjs#master",
+    "phovea_clue": "github:phovea/phovea_clue#develop",
+    "select2": "4.0.3",
+    "@types/jquery": "2.0.33",
+    "jquery": "3.1.1"
   },
-  "peerDependencies": {
-    "caleydo_clue": "*",
-    "caleydo_vis_lineup": "*",
-    "caleydo_data_mongo": "*",
-    "caleydo_data_redis": "*"
-  },
-  "caleydo": {
-    "plugins": {
-      "web": [
-        {
-          "type": "application",
-          "name": "Target Discovery Platform"
-        },
-        {
-          "id": "startMenu",
-          "name": "startMenu",
-          "type": "targidView",
-          "file": "StartMenu",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        },
-        {
-          "id": "login_first",
-          "name": "Login First",
-          "type": "targidView",
-          "file": "LoginFirstView",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        },
-        {
-          "id": "welcome",
-          "name": "Welcome",
-          "type": "targidView",
-          "file": "WelcomeView",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        },
-        {
-          "type": "actionFactory",
-          "file": "Targid",
-          "factory": "createCmd",
-          "creates": "(targidCreateView|targidRemoveView|targidReplaceView)"
-        },
-        {
-          "type": "actionFactory",
-          "file": "LineUpCommands",
-          "factory": "createCmd",
-          "creates": "(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidCreateRemoveCompressor",
-          "file": "Targid",
-          "factory": "compressCreateRemove",
-          "matches": "(targidCreateView|targidRemoveView|targidReplaceView)"
-        },
-        {
-          "type": "actionFactory",
-          "file": "View",
-          "factory": "createCmd",
-          "creates": "(targidSetParameter|targidSetSelection)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidCompressSetParameter",
-          "file": "View",
-          "factory": "compressSetParameter",
-          "matches": "(targidSetParameter)"
-        },
-        {
-          "type": "actionCompressor",
-          "id": "targidCompressSetSelection",
-          "file": "View",
-          "factory": "compressSetSelection",
-          "matches": "(targidSetSelection)"
-        },
-        {
-          "id": "targid_session_start",
-          "name": "Last Sessions",
-          "type": "targidStartSession",
-          "file": "SessionList",
-          "factory": "createStartFactory",
-          "idtype": "none",
-          "selection": "none"
-        }
-      ],
-      "python": [
-        {
-          "type": "namespace",
-          "file": "proxy",
-          "namespace": "/api/targid/proxy"
-        },
-        {
-          "type": "namespace",
-          "id": "db_connector",
-          "file": "sql",
-          "namespace": "/api/targid/db"
-        },
-        {
-          "type": "namespace",
-          "id": "targid_storage",
-          "file": "storage",
-          "namespace": "/api/targid/storage"
-        },
-        {
-          "type": "namespace",
-          "id": "processing",
-          "file": "processing",
-          "namespace": "/api/targid/processing"
-        },
-        {
-          "type": "processing-task",
-          "id": "targid_tasks",
-          "file": "tasks"
-        }
-      ]
-    },
-    "dependencies": {
-      "web": {
-        "d3": "~3.5.5",
-        "lineupjs": "~1.0.0",
-        "scrollTo": "https://github.com/flesler/jquery.scrollTo.git",
-        "select2": "~4.0.3",
-        "select2-bootstrap-theme": "0.1.0-beta.9"
-      },
-      "python": {
-        "requests": "==2.2.1",
-        "SQLAlchemy": "==1.0.12"
-      },
-      "tsd": {
-        "select2": "f4efd4"
-      }
-    },
-    "requirejs-config": {
-      "paths": {
-        "select2": "${baseUrl}/bootstrap/dist/js/select2.full.min"
-      },
-      "shim": {
-        "select2": [
-          "jquery",
-          "bootstrap",
-          "css!${baseUrl}/select2/dist/css/select2.min.css",
-          "css!${baseUrl}/select2-bootstrap-theme/dist/select2-bootstrap.min.css"
-        ]
-      }
-    }
-  },
-  "publishConfig": {
-    "registry": "http://registry.caleydo.org/"
+  "devDependencies": {
+    "@types/jasmine": "2.5.40",
+    "awesome-typescript-loader": "3.0.0-beta.18",
+    "css-loader": "0.26.1",
+    "extract-loader": "0.1.0",
+    "extract-text-webpack-plugin": "2.0.0-beta.5",
+    "file-loader": "0.9.0",
+    "html-loader": "0.4.4",
+    "imports-loader": "0.7.0",
+    "jasmine": "2.5.3",
+    "json-loader": "0.5.4",
+    "karma": "1.4.0",
+    "karma-chrome-launcher": "2.0.0",
+    "karma-firefox-launcher": "1.0.0",
+    "karma-jasmine": "1.1.0",
+    "karma-junit-reporter": "2.0.0",
+    "karma-sourcemap-loader": "0.3.7",
+    "karma-webpack": "2.0.1",
+    "mkdirp": "0.5.1",
+    "node-sass": "4.3.0",
+    "null-loader": "0.1.1",
+    "raw-loader": "0.5.1",
+    "sass-loader": "4.1.1",
+    "style-loader": "0.13.1",
+    "tslib": "1.5.0",
+    "tslint": "4.3.1",
+    "typedoc": "0.5.5",
+    "typescript": "2.1.5",
+    "url-loader": "0.5.7",
+    "webpack": "2.1.0-beta.28",
+    "webpack-dev-server": "2.1.0-beta.12"
   }
 }

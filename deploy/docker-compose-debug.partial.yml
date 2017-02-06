@@ -1,0 +1,5 @@
+version: '2.0'
+services:
+  db_mongo:
+    ports:
+      - '27017:27017'

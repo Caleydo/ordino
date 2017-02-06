@@ -1,0 +1,26 @@
+// include TargID colors instead of CLUE colors
+@import "styles/colors";
+
+// first: do not import the whole CLUE style, because we want do not want to the colored CLUE header
+//@import "../caleydo_clue/style.scss";
+
+
+$boostrapAssetDir: '~phovea_ui/src/assets';
+// instead: import the CLUE styles separately
+@import "~phovea_clue/src/styles/base";
+@import "~phovea_clue/src/styles/annotation";
+@import "~phovea_clue/src/styles/provvis";
+@import "~phovea_clue/src/styles/storyvis";
+
+// then: override CLUE specific rules
+@import "styles/clue_override";
+
+// extend with TargID specific rules
+@import "styles/base";
+
+// styles for views
+@import "styles/select2";
+@import "styles/start_menu";
+@import "styles/welcome_view";
+@import "styles/login_first_view";
+@import "styles/history";

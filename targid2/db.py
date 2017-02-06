@@ -18,6 +18,7 @@ def _to_config(p):
   config = configview(p.configKey)
   _log.info(config['dburl'])
   engine = sqlalchemy.create_engine(config['dburl'])
+  connector = p.load().factory()
   # Assuming that gevent monkey patched the builtin
   # threading library, we're likely good to use
   # SQLAlchemy's QueuePool, which is the default
@@ -26,8 +27,7 @@ def _to_config(p):
   # https://github.com/kljensen/async-flask-sqlalchemy-example/blob/master/server.py
   engine.pool._use_threadlocal = True
 
-  return config, engine
-
+  return connector, engine
 
 configs = {p.id: _to_config(p) for p in list_plugins('targid-sql-database-definition')}
 
@@ -44,15 +44,8 @@ def assign_ids(rows, idtype):
     row['_id'] = _id
   return rows
 
-
-def _concat(v):
-  if type(v) is list:
-    return '\n'.join(v)
-  return v
-
-
 def to_query(q):
-  return sqlalchemy.sql.text(_concat(q))
+  return sqlalchemy.sql.text(q)
 
 
 class WrappedSession(object):
@@ -92,18 +85,18 @@ def _handle_aggregated_score(config, replacements, args):
   :param replacements:
   :return replacements:
   """
-  view = config.view('agg_score')
+  view = config.agg_score
 
   if args.get('agg', '') == '' or view.query is None:
     return replacements
 
   query = view.query
-  if view.query_median is not None and args.get('agg', '') == 'median':
-    query = view.query_median
+  if 'median' in view.queries is not None and args.get('agg', '') == 'median':
+    query = view.queries['median']
 
   replace = {}
-  if view['replacements'] is not None:
-    for arg in view['replacements']:
+  if view.replacements is not None:
+    for arg in view.replacements:
       replace[arg] = args.get(arg, '')
 
   replacements['agg_score'] = query % replace
@@ -119,15 +112,15 @@ def get_data(database, view_name, replacements=None, arguments=None):
 
   # convert to index lookup
   # row id start with 1
-  view = config.view('views.' + view_name)
+  view = config.views[view_name]
   kwargs = {}
-  if view['arguments'] is not None:
-    for arg in view['arguments']:
+  if view.arguments is not None:
+    for arg in view.arguments:
       kwargs[arg] = arguments[arg]
 
   replace = {}
-  if view['replacements'] is not None:
-    for arg in view['replacements']:
+  if view.replacements is not None:
+    for arg in view.replacements:
       if arg in replacements:
         replace[arg] = replacements[arg]
       else:
@@ -140,5 +133,5 @@ def get_data(database, view_name, replacements=None, arguments=None):
       indices = map(int, arguments['i'].split(','))
       r.sort(lambda a, b: indices.index(a['_index']) - indices.index(b['_index']))
     else:
-      r = sess.run(_concat(view['query']) % replace, **kwargs)
+      r = sess.run(view.query % replace, **kwargs)
   return r, view

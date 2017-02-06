@@ -1,7 +1,6 @@
 __author__ = 'Samuel Gratzl'
 
 
-
 class DBView(object):
   def __init__(self, idtype=None, query=None):
     self.idtype = idtype
@@ -10,6 +9,7 @@ class DBView(object):
     self.columns = {}
     self.replacements = []
     self.arguments = []
+
 
 class DBViewBuilder(object):
   def __init__(self):

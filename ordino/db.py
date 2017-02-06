@@ -7,7 +7,6 @@ import sql_use_gevent  # noqa
 import logging
 import phovea_server.config
 
-
 __author__ = 'Samuel Gratzl'
 
 _log = logging.getLogger(__name__)
@@ -29,6 +28,7 @@ def _to_config(p):
 
   return connector, engine
 
+
 configs = {p.id: _to_config(p) for p in list_plugins('targid-sql-database-definition')}
 
 
@@ -43,6 +43,7 @@ def assign_ids(rows, idtype):
   for _id, row in itertools.izip(manager((r['id'] for r in rows), idtype), rows):
     row['_id'] = _id
   return rows
+
 
 def to_query(q):
   return sqlalchemy.sql.text(q)
@@ -79,6 +80,7 @@ class WrappedSession(object):
 def session(engine):
   return WrappedSession(engine)
 
+
 def _handle_aggregated_score(config, replacements, args):
   """
   Handle aggregation for aggregated (and inverted aggregated) score queries
@@ -102,6 +104,7 @@ def _handle_aggregated_score(config, replacements, args):
   replacements['agg_score'] = query % replace
 
   return replacements
+
 
 def get_data(database, view_name, replacements=None, arguments=None):
   replacements = replacements or {}

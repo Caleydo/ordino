@@ -14,8 +14,10 @@ def load_ids(idtype, mapping):
   manager = phovea_server.plugin.lookup('idmanager')
   manager.load(idtype, mapping)
 
+
 def _get_data(database, view_name, replacements=None):
   return db.get_data(database, view_name, replacements, request.args)
+
 
 @app.route('/<database>/<view_name>')
 def get_data_api(database, view_name):
@@ -34,9 +36,7 @@ def get_namedset_data(database, view_name, namedset_id):
   if len(namedset['ids']) == 0:
     return jsonify([])
 
-  replace = {
-      'ids': ','.join(str(id) for id in namedset['ids'])
-  }
+  replace = dict(ids=','.join(str(id) for id in namedset['ids']))
   view_name_namedset = view_name + '_namedset'
 
   r, _ = _get_data(database, view_name_namedset, replace)
@@ -94,6 +94,7 @@ def get_desc(database, view_name):
   r = dict(idType=view.idtype, columns=infos)
   return jsonify(r)
 
+
 @app.route('/<database>/<view_name>/search')
 def search(database, view_name):
   config, engine = db.resolve(database)
@@ -103,6 +104,7 @@ def search(database, view_name):
   with db.session(engine) as session:
     r = session.run_to_index(view.queries('search') % (column,), query=query)
   return jsonify(r)
+
 
 @app.route('/<database>/<view_name>/match')
 def match(database, view_name):
@@ -134,10 +136,7 @@ def lookup(database, view_name):
       pass
 
   # 'query': '%' + request.args['query'] + '%'
-  arguments = {
-      'query': str(request.args.get('query', '')).lower() + '%',
-      'species': str(request.args.get('species', ''))
-  }
+  arguments = dict(query=str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
 
   replace = {}
   if view.replacements is not None:

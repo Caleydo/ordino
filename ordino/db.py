@@ -52,6 +52,7 @@ def to_query(q):
 class WrappedSession(object):
   def __init__(self, engine):
     from sqlalchemy.orm import sessionmaker, scoped_session
+    _log.info('creating session')
     self._session = scoped_session(sessionmaker(bind=engine))()
 
   def execute(self, query, **kwargs):
@@ -74,6 +75,8 @@ class WrappedSession(object):
     return self
 
   def __exit__(self, exc_type, exc_val, exc_tb):
+    _log.info('removing session again')
+    self._session.remove()
     self._session = None
 
 

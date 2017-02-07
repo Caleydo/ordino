@@ -12,7 +12,7 @@ class LoginFirstView {
 
   private template = `
   <div class="loginFirstView">
-    <!--<img src="/targid2/images/welcome-view-arrow.svg">
+    <!--<img src="/ordino/images/welcome-view-arrow.svg">
     <h1>Login first</h1>-->
   </div>`;
 

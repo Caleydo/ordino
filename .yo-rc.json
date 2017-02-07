@@ -1,7 +1,7 @@
 {
   "generator-phovea": {
     "type": "app-slib",
-    "name": "targid2",
+    "name": "ordino",
     "author": "The Caleydo Team",
     "githubAccount": "caleydo",
     "modules": [
@@ -10,7 +10,7 @@
     "extensions": [
       {
         "type": "application",
-        "id": "targid2",
+        "id": "ordino",
         "module": "",
         "extras": {
           "name": "Target Discovery Platform"
@@ -51,7 +51,7 @@
       },
       {
         "type": "actionFactory",
-        "id": "targid2",
+        "id": "ordino",
         "module": "Targid",
         "extras": {
           "factory": "createCmd",
@@ -60,7 +60,7 @@
       },
       {
         "type": "actionFactory",
-        "id": "targid2",
+        "id": "ordino",
         "module": "LineUpCommands",
         "extras": {
           "factory": "createCmd",
@@ -78,7 +78,7 @@
       },
       {
         "type": "actionFactory",
-        "id": "targid2",
+        "id": "ordino",
         "module": "View",
         "extras": {
           "factory": "createCmd",
@@ -118,7 +118,7 @@
     "sextensions": [
       {
         "type": "namespace",
-        "id": "targid2",
+        "id": "ordino",
         "module": "proxy",
         "extras": {
           "namespace": "/api/targid/proxy"

@@ -1,4 +1,4 @@
-targid2 [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+ordino [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 =====================
 
 Target discovery platform for exploring rankings of genes, disease models, and other entities.
@@ -7,8 +7,8 @@ Installation
 ------------
 
 ```
-git clone https://github.com/caleydo/targid2.git
-cd targid2
+git clone https://github.com/caleydo/ordino.git
+cd ordino
 npm install
 ```
 
@@ -36,9 +36,9 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 
 [phovea-image]: https://img.shields.io/badge/Phovea-Client%20Plugin-F47D20.svg
 [phovea-url]: https://phovea.caleydo.org
-[npm-image]: https://badge.fury.io/js/targid2.svg
-[npm-url]: https://npmjs.org/package/targid2
-[travis-image]: https://travis-ci.org/caleydo/targid2.svg?branch=master
-[travis-url]: https://travis-ci.org/caleydo/targid2
-[daviddm-image]: https://david-dm.org/caleydo/targid2/status.svg
-[daviddm-url]: https://david-dm.org/caleydo/targid2
+[npm-image]: https://badge.fury.io/js/ordino.svg
+[npm-url]: https://npmjs.org/package/ordino
+[travis-image]: https://travis-ci.org/caleydo/ordino.svg?branch=master
+[travis-url]: https://travis-ci.org/caleydo/ordino
+[daviddm-image]: https://david-dm.org/caleydo/ordino/status.svg
+[daviddm-url]: https://david-dm.org/caleydo/ordino

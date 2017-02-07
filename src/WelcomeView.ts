@@ -7,16 +7,15 @@ import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
 import {IView} from './View';
 import {select, Selection} from 'd3';
 
-class WelcomeView {
-
-  protected $node:Selection<IView>;
-
-  private template = `
+const template = `
   <div class="welcomeView">
     <img src="${welcomeArrow}">
     <h1>Start here</h1>
   </div>`;
 
+class WelcomeView {
+
+  protected $node:Selection<IView>;
 
   constructor(parent:Element, options?) {
     this.$node = select(parent);
@@ -24,7 +23,7 @@ class WelcomeView {
   }
 
   private build() {
-    this.$node.html(this.template);
+    this.$node.html(template);
   }
 }
 

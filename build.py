@@ -47,5 +47,5 @@ build_info = dict(name=name, version=version, resolved=resolved, description=pkg
 
 # TODO create build Info
 
-with open('build/source/'+ name +'/buildInfo.json', 'w', encoding='utf-8') as f:
+with open('build/source/' + name + '/buildInfo.json', 'w', encoding='utf-8') as f:
   json.dump(build_info, f, indent=2)

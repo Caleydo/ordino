@@ -76,7 +76,7 @@ class WrappedSession(object):
 
   def __exit__(self, exc_type, exc_val, exc_tb):
     _log.info('removing session again')
-    # self._session.remove()
+    self._session.close()
     self._session = None
 
 

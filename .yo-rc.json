@@ -152,7 +152,8 @@
     "unknown": {
       "requirements": [
         "requests==2.2.1",
-        "SQLAlchemy==1.0.12"
+        "SQLAlchemy==1.0.12",
+        "urllib3==1.20"
       ],
       "debianPackages": [],
       "redhatPackages": []

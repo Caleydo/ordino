@@ -38,8 +38,8 @@ version = to_version(pkg['version'])
 resolved = _resolve_plugin(pkg.get('repository', {}).get('url'), version)
 
 # copy source code
-shutil.rmtree('build/source', ignore_errors=True)
-shutil.copytree(name, 'build/source', symlinks=False, ignore=shutil.ignore_patterns('*.pyc'))
+shutil.rmtree('build/source/' + name, ignore_errors=True)
+shutil.copytree(name, 'build/source/' + name, symlinks=False, ignore=shutil.ignore_patterns('*.pyc'))
 
 # create buildInfo.json
 build_info = dict(name=name, version=version, resolved=resolved, description=pkg['description'],
@@ -47,5 +47,5 @@ build_info = dict(name=name, version=version, resolved=resolved, description=pkg
 
 # TODO create build Info
 
-with open('build/source/buildInfo.json', 'w', encoding='utf-8') as f:
+with open('build/source/'+ name +'/buildInfo.json', 'w', encoding='utf-8') as f:
   json.dump(build_info, f, indent=2)

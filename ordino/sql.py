@@ -140,7 +140,7 @@ def lookup(database, view_name):
 
   replace = {}
   if view.replacements is not None:
-    replace = {arg: request.args.get(arg, '') for arg in view['replacements']}
+    replace = {arg: request.args.get(arg, '') for arg in view.replacements}
 
   replace['limit'] = limit
   replace['offset'] = offset

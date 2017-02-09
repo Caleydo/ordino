@@ -30,9 +30,15 @@ def packaged(*files):
   return r
 
 
+def to_version(v):
+  import datetime
+  now = datetime.datetime.utcnow()
+  return v.replace('SNAPSHOT', now.strftime('%Y%m%d-%H%M%S'))
+
+
 setup(
   name=pkg['name'],
-  version=pkg['version'],
+  version=to_version(pkg['version']),
   description=pkg['description'],
   long_description=read_it('README.md'),
   keywords=pkg.get('keywords', ''),
@@ -71,7 +77,7 @@ setup(
   # If there are data files included in your packages that need to be
   # installed, specify them here.  If using Python 2.6 or less, then these
   # have to be included in MANIFEST.in as well.
-  package_data=packaged('config.json'),
+  package_data=packaged('config.json', 'buildInfo.json'),
 
   # Although 'package_data' is the preferred approach, in some case you may
   # need to place data files outside of your packages. See:

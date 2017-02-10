@@ -15,9 +15,14 @@ c = phovea_server.config.view('ordino')
 
 def _to_config(p):
   config = configview(p.configKey)
-  _log.info(config['dburl'])
-  engine = sqlalchemy.create_engine(config['dburl'])
   connector = p.load().factory()
+  if not connector.dburl:
+    connector.dburl = config['dburl']
+  if not connector.statement_timeout:
+    connector.statement_timeout = config['statement_timeout']
+
+  _log.info(connector.dburl)
+  engine = sqlalchemy.create_engine(connector.dburl)
   # Assuming that gevent monkey patched the builtin
   # threading library, we're likely good to use
   # SQLAlchemy's QueuePool, which is the default
@@ -72,6 +77,7 @@ class WrappedSession(object):
     return [r['_index'] for r in result]
 
   def __enter__(self):
+
     return self
 
   def __exit__(self, exc_type, exc_val, exc_tb):

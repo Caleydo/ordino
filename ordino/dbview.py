@@ -65,3 +65,5 @@ class DBConnector(object):
   def __init__(self, agg_score, views):
     self.agg_score = agg_score
     self.views = views
+    self.dburl = None
+    self.statement_timeout = None

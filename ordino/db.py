@@ -139,6 +139,9 @@ def get_data(database, view_name, replacements=None, arguments=None):
         replace[arg] = arguments.get(arg, '')
 
   with session(engine) as sess:
+    if config.statement_timeout is not None:
+      _log.info('set statement_timeout to {}'.format(config.statement_timeout))
+      sess.execute('set statement_timeout to {}'.format(config.statement_timeout))
     if 'i' in arguments:
       kwargs['query'] = arguments['i']
       r = sess.run(view['querySlice'] % replace, **kwargs)

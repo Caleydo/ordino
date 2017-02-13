@@ -12,8 +12,8 @@ import {EventHandler} from 'phovea_core/src/event';
 
 export class LineUpRankingButtons extends EventHandler {
 
-  public static SAVE_NAMED_SET = 'saveNamedSet';
-  public static ADD_SCORE_COLUMN = 'addScoreColumn';
+  static readonly SAVE_NAMED_SET = 'saveNamedSet';
+  static readonly ADD_SCORE_COLUMN = 'addScoreColumn';
 
   constructor(private lineup, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
     super();

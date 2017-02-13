@@ -6,7 +6,7 @@ import {IDType} from 'phovea_core/src/idtype';
 
 export interface IScoreRow<T> {
   readonly id: string;
-  readonly score: T;
+  score: T;
 }
 
 export interface IScore<T> {

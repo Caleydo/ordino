@@ -1,7 +1,8 @@
 /**
  * Created by sam on 13.02.2017.
  */
-import {IColumnDesc} from 'lineupjs/src/model';
+import {IColumnDesc, createSelectionDesc} from 'lineupjs/src/model';
+import LineUp from 'lineupjs/src/lineup';
 import {extent} from 'd3';
 import {IAnyVector} from 'phovea_core/src/vector';
 import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_INT} from 'phovea_core/src/datatype';
@@ -99,4 +100,10 @@ export function deriveCol(col: IAnyVector): IColumnDesc {
       break;
   }
   return r;
+}
+
+export function useDefaultLayout(instance: LineUp) {
+  instance.data.deriveDefault();
+  //insert selection column
+  instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
 }

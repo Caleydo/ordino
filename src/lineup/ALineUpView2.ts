@@ -18,15 +18,7 @@ import {showErrorModalDialog} from '../Dialogs';
 import {LineUpRankingButtons} from './LineUpRankingButtons';
 import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow} from './IScore';
-import {stringCol} from './desc';
-
-
-export function useDefaultLayout(instance: LineUp) {
-  instance.data.deriveDefault();
-  //insert selection column
-  instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
-}
-
+import {stringCol, useDefaultLayout} from './desc';
 
 export abstract class ALineUpView2 extends AView {
 

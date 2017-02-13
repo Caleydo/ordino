@@ -2,22 +2,23 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
-import LineUp from 'lineupjs/src/lineup';
+import LineUp, {ILineUpConfig} from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
-import {createStackDesc, ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
+import {createStackDesc, ScaleMappingFunction, createSelectionDesc, IColumnDesc} from 'lineupjs/src/model';
+import ValueColumn from 'lineupjs/src/model/ValueColumn';
+import NumberColumn from 'lineupjs/src/model/NumberColumn';
 import {IBoxPlotData} from 'lineupjs/src/model/BoxPlotColumn';
-import {LocalDataProvider} from 'lineupjs/src/provider';
+import {LocalDataProvider, } from 'lineupjs/src/provider';
 import * as d3 from 'd3';
-import * as idtypes from 'phovea_core/src/idtype';
+import {resolve, IDType} from 'phovea_core/src/idtype';
 import {IAnyVector} from 'phovea_core/src/vector';
 import {ITable} from 'phovea_core/src/table';
-import * as ranges from 'phovea_core/src/range';
-import * as plugins from 'phovea_core/src/plugin';
-import * as dialogs from 'phovea_ui/src/dialogs';
-import * as cmds from './LineUpCommands';
+import {list as rlist, RangeLike, Range} from 'phovea_core/src/range';
+import {IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
+import {generateDialog} from 'phovea_ui/src/dialogs';
+import * as cmds from './lineup/cmds';
 import {saveNamedSet} from './storage';
 import {showErrorModalDialog} from './Dialogs';
-import {IDType} from 'phovea_core/src/idtype';
 import {EventHandler} from 'phovea_core/src/event';
 import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_INT} from 'phovea_core/src/datatype';
 
@@ -47,7 +48,6 @@ export function numberCol2(col: string, min: number, max: number, label = col, v
   };
 }
 
-
 export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1) {
   return {
     type: 'categorical',
@@ -60,7 +60,6 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
     selectedId
   };
 }
-
 
 export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1) {
   return {
@@ -93,18 +92,18 @@ export function booleanCol(col: string, label = col, visible = true, width = -1,
  * @param array2
  * @returns {any}
  */
-function array_diff(array1, array2) {
+function array_diff<T>(array1: T[], array2: T[]) {
   return array1.filter((elm) => array2.indexOf(elm) === -1);
 }
 
 
-export function useDefaultLayout(instance: any) {
+export function useDefaultLayout(instance: LineUp) {
   instance.data.deriveDefault();
   //insert selection column
   instance.data.insert(instance.data.getRankings()[0], 1, createSelectionDesc());
 }
 
-export function deriveCol(col: IAnyVector) {
+export function deriveCol(col: IAnyVector): IColumnDesc {
   const r: any = {
     column: col.desc.name
   };
@@ -140,13 +139,13 @@ export abstract class ALineUpView2 extends AView {
 
   resolver: (d: any) => void;
 
-  protected lineup: any;
+  protected lineup: LineUp;
 
   protected additionalScoreParameter: any = null;
 
-  private initLineUpPromise;
+  private initLineUpPromise: Promise<any>;
 
-  private config = {
+  private config : ILineUpConfig = {
     renderingOptions: {
       histograms: true
     },
@@ -165,7 +164,7 @@ export abstract class ALineUpView2 extends AView {
     body: {}
   };
 
-  protected idType: idtypes.IDType;
+  protected idType: IDType;
 
   /**
    * Stores the ranking data when collapsing columns on modeChange()
@@ -176,7 +175,7 @@ export abstract class ALineUpView2 extends AView {
   /**
    * DOM element with message when no data is available
    */
-  protected $nodata;
+  protected $nodata: d3.Selection<any>;
 
   /**
    * DOM element for LineUp stats in parameter UI
@@ -293,7 +292,7 @@ export abstract class ALineUpView2 extends AView {
           c === s.col ||
           c.desc.type === 'rank' ||
           c.desc.type === 'selection' ||
-          c.desc.column === 'id' // = Ensembl column
+          (<any>c.desc).column === 'id' // = Ensembl column
         ) {
           // keep these columns
         } else {
@@ -317,7 +316,7 @@ export abstract class ALineUpView2 extends AView {
 
   private saveNamedSet(order, name, description) {
     const r = this.selectionHelper.rows;
-    const ids = ranges.list(order.map((i) => this.idAccessor(r[i])).sort(d3.ascending));
+    const ids = rlist(order.map((i) => this.idAccessor(r[i])).sort(d3.ascending));
     saveNamedSet(name, this.idType, ids, this.getSubType(), description).then((d) => {
       console.log('saved', d);
       this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
@@ -334,9 +333,9 @@ export abstract class ALineUpView2 extends AView {
     const selectedIds = selection.range.dim(0).asList();
 
     const ranking = this.lineup.data.getLastRanking();
-    const usedCols = ranking.flatColumns.filter((d) => d.desc.selectedId !== -1);
+    const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1);
     const lineupColIds = usedCols
-      .map((d) => d.desc.selectedId)
+      .map((d) => (<any>d.desc).selectedId)
       .filter((d) => d !== undefined);
 
     // compute the difference
@@ -361,7 +360,7 @@ export abstract class ALineUpView2 extends AView {
       this.withoutTracking(() => {
         //console.log('remove columns', diffRemoved);
         diffRemoved.forEach((id) => {
-          const col = usedCols.filter((d) => d.desc.selectedId === id)[0];
+          const col = usedCols.filter((d) => (<any>d.desc).selectedId === id)[0];
           ranking.remove(col);
         });
       });
@@ -394,8 +393,9 @@ export abstract class ALineUpView2 extends AView {
 
     colDesc.color = colors.shift(); // get and remove color from list
     colDesc.accessor = this.scoreAccessor;
-    this.lineup.data.pushDesc(colDesc);
-    const col = this.lineup.data.push(ranking, colDesc);
+    const provider = <LocalDataProvider>this.lineup.data;
+    provider.pushDesc(colDesc);
+    const col = <ValueColumn<any>>this.lineup.data.push(ranking, colDesc);
 
     const loadPromise = loadColumnData(id);
     // error handling
@@ -431,17 +431,18 @@ export abstract class ALineUpView2 extends AView {
         colDesc.scores = scores;
 
         if (colDesc.type === 'number') {
+          const ncol = <NumberColumn>col;
           if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
             colDesc.domain = d3.extent(<number[]>(d3.values(scores)));
           }
           // add selection columns without tracking changes
           if (withoutTracking) {
             this.withoutTracking(() => {
-              col.setMapping(new ScaleMappingFunction(colDesc.domain));
+              ncol.setMapping(new ScaleMappingFunction(colDesc.domain));
             });
             // however, track changes in score columns
           } else {
-            col.setMapping(new ScaleMappingFunction(colDesc.domain));
+            ncol.setMapping(new ScaleMappingFunction(colDesc.domain));
           }
         } else if (colDesc.type === 'boxplot') {
           const values = <IBoxPlotData[]>d3.values(scores);
@@ -485,7 +486,7 @@ export abstract class ALineUpView2 extends AView {
    * @param scoreImpl
    * @param scorePlugin
    */
-  protected addScoreColumn(scoreImpl: IScore<any>, scorePlugin: plugins.IPlugin) {
+  protected addScoreColumn(scoreImpl: IScore<any>, scorePlugin: RangeLike) {
     const colDesc = scoreImpl.createDesc();
     colDesc._score = scorePlugin;
 
@@ -529,7 +530,7 @@ export abstract class ALineUpView2 extends AView {
 
       // set initial column width
       if (d.width > -1) {
-        ranking.columns[i + 1].setWidth(d.width); // i+1 because first column == rank
+        ranking.children[i + 1].setWidth(d.width); // i+1 because first column == rank
       }
     });
 
@@ -570,7 +571,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   protected initColumns(desc: { idType: string}) {
-    this.idType = idtypes.resolve(desc.idType);
+    this.idType = resolve(desc.idType);
   }
 
   protected loadRows() {
@@ -590,7 +591,8 @@ export abstract class ALineUpView2 extends AView {
     rows = this.mapRows(rows);
 
     this.fillIDTypeMapCache(this.idType, rows);
-    this.lineup.data.setData(rows);
+    const provider = <LocalDataProvider>this.lineup.data;
+    provider.setData(rows);
     this.selectionHelper.rows = rows;
     return rows;
   }
@@ -647,7 +649,7 @@ export abstract class ALineUpView2 extends AView {
      * @param shown
      * @returns {string}
      */
-    const showStats = (total, selected = 0, shown = 0) => {
+    const showStats = (total: number, selected = 0, shown = 0) => {
       let str = 'Showing ';
 
       str += `${shown} `;
@@ -661,29 +663,24 @@ export abstract class ALineUpView2 extends AView {
       return str;
     };
 
-    let selected = 0;
-    let total = 0;
 
     // this.lineup not available
     if (!this.lineup) {
-      this.$params.html(showStats(total, selected));
+      this.$params.html(showStats(0, 0));
       return;
     }
 
-    selected = this.lineup.data.getSelection().length;
-    total = this.lineup.data.data.length;
+    const selected = this.lineup.data.getSelection().length;
+    const total = (<LocalDataProvider>this.lineup.data).data.length;
 
     const r = this.lineup.data.getRankings()[0];
     if (r) {
       // needs a setTimeout, because LineUp needs time to filter the rows
       const id = setTimeout(() => {
         clearTimeout(id);
-        this.lineup.data.view(r.getOrder()).then((data) => {
-          const shown = data.length;
-          this.$params.html(showStats(total, selected, shown));
-        });
+        const shown = r.getOrder().length;
+        this.$params.html(showStats(total, selected, shown));
       }, 150); // adjust the time depending on the number of rows(?)
-
     } else {
       this.$params.html(showStats(total, selected));
     }
@@ -747,7 +744,7 @@ class LineUpRankingButtons extends EventHandler {
   }
 
   private saveRankingDialog(order: number[]) {
-    const dialog = dialogs.generateDialog('Save Named Set');
+    const dialog = generateDialog('Save Named Set');
     dialog.body.innerHTML = `
       <form id="namedset_form">
         <div class="form-group">
@@ -804,7 +801,7 @@ class LineUpRankingButtons extends EventHandler {
 
     $ul.append('li').classed('divider', true);
 
-    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
+    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
     $ul.selectAll('li.score').data(scores)
       .enter()
       .append('li').classed('score', true)
@@ -817,7 +814,7 @@ class LineUpRankingButtons extends EventHandler {
       });
   }
 
-  private scoreColumnDialog(scorePlugin: plugins.IPlugin) {
+  private scoreColumnDialog(scorePlugin: IPlugin) {
     //TODO clueify
     // pass dataSource into InvertedAggregatedScore factory method
     Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.extraArgs)) // open modal dialog
@@ -891,7 +888,7 @@ class LineUpSelectionHelper extends EventHandler {
       });
     }
 
-    const ids = ranges.list(this.orderedSelectionIndicies.map((i) => this.idAccessor(this._rows[i])));
+    const ids = rlist(this.orderedSelectionIndicies.map((i) => this.idAccessor(this._rows[i])));
     //console.log(this.orderedSelectionIndicies, ids.toString(), diffAdded, diffRemoved);
 
     const selection: ISelection = {idtype: this.idType, range: ids};
@@ -951,7 +948,7 @@ export class ALineUpView extends AView {
 
   protected lineup: any;
 
-  private idType: idtypes.IDType;
+  private idType: IDType;
   private selectionHelper = {
     id2index: d3.map<number>(),
     index2id: d3.map<number>(),
@@ -1025,7 +1022,7 @@ export class ALineUpView extends AView {
 
     $ul.append('li').classed('divider', true);
 
-    const scores = plugins.list('targidScore').filter((d: any) => d.idtype === this.idType.id);
+    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
     $ul.selectAll('li.score').data(scores)
       .enter()
       .append('li').classed('score', true)
@@ -1043,7 +1040,7 @@ export class ALineUpView extends AView {
     deriveColors(columns);
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
       const rows: any[] = args[0];
-      const rowIds: ranges.Range = args[1];
+      const rowIds: Range = args[1];
 
       const storage = new LocalDataProvider(rows, columns);
       this.idType = table.idtypes[0];
@@ -1065,14 +1062,14 @@ export class ALineUpView extends AView {
   protected replaceLineUpDataFromTable(table: ITable) {
     return Promise.all([<any>table.objects(), table.rowIds()]).then((args: any) => {
       const rows: any[] = args[0];
-      const rowIds: ranges.Range = args[1];
+      const rowIds: Range = args[1];
       this.lineup.data.setData(rows);
       this.updateSelection(rowIds.dim(0).asList());
       return this.lineup;
     });
   }
 
-  protected buildLineUp(rows: any[], columns: any[], idtype: idtypes.IDType, idAccessor: (row: any) => number) {
+  protected buildLineUp(rows: any[], columns: any[], idtype: IDType, idAccessor: (row: any) => number) {
     deriveColors(columns);
     const storage = new LocalDataProvider(rows, columns);
     this.idType = idtype;
@@ -1119,7 +1116,7 @@ export class ALineUpView extends AView {
   }
 
 
-  private initSelection(rows: any[], idAccessor: (row: any) => number, idType: idtypes.IDType) {
+  private initSelection(rows: any[], idAccessor: (row: any) => number, idType: IDType) {
     this.idType = idType;
 
     this.selectionHelper.idAccessor = idAccessor;
@@ -1155,7 +1152,7 @@ export class ALineUpView extends AView {
       });
     }
 
-    const ids = ranges.list(this.orderedSelectionIndicies.map((i) => this.selectionHelper.idAccessor(this.selectionHelper.rows[i])));
+    const ids = rlist(this.orderedSelectionIndicies.map((i) => this.selectionHelper.idAccessor(this.selectionHelper.rows[i])));
     //console.log(this.orderedSelectionIndicies, ids.toString(), diffAdded, diffRemoved);
 
     this.setItemSelection({idtype: this.idType, range: ids});
@@ -1203,7 +1200,7 @@ export class ALineUpView extends AView {
     });
   }
 
-  pushScore(scorePlugin: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+  pushScore(scorePlugin: IPlugin, ranking = this.lineup.data.getLastRanking()) {
     //TODO clueify
     Promise.resolve(scorePlugin.factory(scorePlugin.desc)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
@@ -1217,7 +1214,7 @@ export class ALineUpView extends AView {
    * @param scorePlugin
    * @param ranking
    */
-  protected startScoreComputation(scoreImpl: IScore<any>, scorePlugin: plugins.IPlugin, ranking = this.lineup.data.getLastRanking()) {
+  protected startScoreComputation(scoreImpl: IScore<any>, scorePlugin: IPlugin, ranking = this.lineup.data.getLastRanking()) {
     const that = this;
 
     const colors = d3.scale.category10().range().slice();
@@ -1302,8 +1299,8 @@ export class ALineUpView extends AView {
   saveRanking(order: number[]) {
     const r = this.selectionHelper.rows;
     const acc = this.selectionHelper.idAccessor;
-    const ids = ranges.list(order.map((i) => acc(r[i])).sort(d3.ascending));
-    const dialog = dialogs.generateDialog('Save Named Set');
+    const ids = rlist(order.map((i) => acc(r[i])).sort(d3.ascending));
+    const dialog = generateDialog('Save Named Set');
     dialog.body.innerHTML = `
       <form id="namedset_form">
         <div class="form-group">
@@ -1479,8 +1476,8 @@ export class ALineUpView extends AView {
 }
 
 export interface IScoreRow<T> {
-  id: string;
-  score: T;
+  readonly id: string;
+  readonly score: T;
 }
 
 export interface IScore<T> {
@@ -1490,7 +1487,7 @@ export interface IScore<T> {
    * @param ids
    * @param idtype
    */
-  compute(ids: ranges.RangeLike, idtype: idtypes.IDType): Promise<IScoreRow<T>[]>;
+  compute(ids: RangeLike, idtype: IDType): Promise<IScoreRow<T>[]>;
 }
 
 
@@ -1510,7 +1507,7 @@ export class LineUpView extends ALineUpView {
     const rows = d3.range(300).map((i) => ({name: '' + i, id: i, v1: Math.random() * 100, v2: Math.random() * 100}));
 
     const columns = [stringCol('name'), numberCol('v1', rows), numberCol('v2', rows)];
-    const l = this.buildLineUp(rows, columns, idtypes.resolve('DummyRow'), (r) => r.id);
+    const l = this.buildLineUp(rows, columns, resolve('DummyRow'), (r) => r.id);
     const r = l.data.pushRanking();
     l.data.push(r, columns[0]).setWidth(130);
     const stack = l.data.push(r, createStackDesc('Combined'));

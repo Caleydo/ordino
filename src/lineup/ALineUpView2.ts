@@ -8,7 +8,7 @@ import {ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
 import ValueColumn from 'lineupjs/src/model/ValueColumn';
 import NumberColumn from 'lineupjs/src/model/NumberColumn';
 import {IBoxPlotData} from 'lineupjs/src/model/BoxPlotColumn';
-import {LocalDataProvider, } from 'lineupjs/src/provider';
+import {LocalDataProvider,} from 'lineupjs/src/provider';
 import * as d3 from 'd3';
 import {resolve, IDType} from 'phovea_core/src/idtype';
 import {list as rlist, RangeLike, Range} from 'phovea_core/src/range';
@@ -17,7 +17,7 @@ import {saveNamedSet} from '../storage';
 import {showErrorModalDialog} from '../Dialogs';
 import {LineUpRankingButtons} from './LineUpRankingButtons';
 import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
-import IScore, {IScoreRow} from './IScore';
+import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout} from './desc';
 
 export abstract class ALineUpView2 extends AView {
@@ -30,7 +30,7 @@ export abstract class ALineUpView2 extends AView {
 
   private initLineUpPromise: Promise<any>;
 
-  private config : ILineUpConfig = {
+  private config: ILineUpConfig = {
     renderingOptions: {
       histograms: true
     },
@@ -71,14 +71,6 @@ export abstract class ALineUpView2 extends AView {
 
   protected idAccessor = (d) => d._id;
 
-  private scoreAccessor = (row: any, index: number, id: string, desc: any) => {
-    const rowId = this.idAccessor(row);
-    let r = (desc.scores && typeof desc.scores[rowId] !== 'undefined') ? desc.scores[rowId] : (typeof desc.missingValue !== 'undefined' ? desc.missingValue : null);
-    if (desc.type === 'categorical') {
-      r = String(r); //even null values
-    }
-    return r;
-  }
 
   constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}) {
     super(context, parent, options);
@@ -123,7 +115,7 @@ export abstract class ALineUpView2 extends AView {
     super.setItemSelection(selection);
   }
 
-  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>) {
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any) => Promise<any>) {
     super.buildParameterUI($parent, onChange);
 
     // used for LineUp stats
@@ -199,22 +191,21 @@ export abstract class ALineUpView2 extends AView {
     };
   }
 
-  private saveNamedSet(order, name, description) {
+  private async saveNamedSet(order: number[], name: string, description: string) {
     const r = this.selectionHelper.rows;
     const ids = rlist(order.map((i) => this.idAccessor(r[i])).sort(d3.ascending));
-    saveNamedSet(name, this.idType, ids, this.getSubType(), description).then((d) => {
-      console.log('saved', d);
-      this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
-    });
+
+    const d = await saveNamedSet(name, this.idType, ids, this.getSubType(), description);
+    console.log('saved', d);
+    this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
   }
 
-  protected handleSelectionColumns(selection) {
-    this.initLineUpPromise.then(() => {
-      this.handleSelectionColumnsImpl(selection);
-    });
+  protected async handleSelectionColumns(selection: ISelection) {
+    await this.initLineUpPromise;
+    this.handleSelectionColumnsImpl(selection);
   }
 
-  protected handleSelectionColumnsImpl(selection) {
+  protected handleSelectionColumnsImpl(selection: ISelection) {
     const selectedIds = selection.range.dim(0).asList();
 
     const ranking = this.lineup.data.getLastRanking();
@@ -252,32 +243,28 @@ export abstract class ALineUpView2 extends AView {
     }
   }
 
-  protected getSelectionColumnId(id) {
+  protected getSelectionColumnId(id: number): string {
     // hook
     return `col_${id}`;
   }
 
-  protected getSelectionColumnLabel(id) {
+  protected getSelectionColumnLabel(id: number): Promise<string> {
     // hook
-    return new Promise((resolve) => {
-      const label = `Selection ${id}`;
-      resolve(label);
-    });
+    return Promise.resolve(`Selection ${id}`);
   }
 
-  protected getSelectionColumnDesc(id) {
-    return this.getSelectionColumnLabel(id)
-      .then((label: string) => {
-        return stringCol(this.getSelectionColumnId(id), label, true, 50, id);
-      });
+  protected async getSelectionColumnDesc(id) {
+    const label = await this.getSelectionColumnLabel(id);
+    return stringCol(this.getSelectionColumnId(id), label, true, 50, id);
   }
 
-  protected addColumn(colDesc, loadColumnData: (id) => Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false) {
+  protected addColumn(colDesc: any, loadColumnData: (id: number) => Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false) {
     const ranking = this.lineup.data.getLastRanking();
     const colors = this.getAvailableColumnColors(ranking);
 
     colDesc.color = colors.shift(); // get and remove color from list
-    colDesc.accessor = this.scoreAccessor;
+    const accessor = createAccessor(colDesc, this.idAccessor);
+
     const provider = <LocalDataProvider>this.lineup.data;
     provider.pushDesc(colDesc);
     const col = <ValueColumn<any>>this.lineup.data.push(ranking, colDesc);
@@ -301,24 +288,19 @@ export abstract class ALineUpView2 extends AView {
       })
       // convert to score array to object to use in LineUp
       .then((rows: IScoreRow<any>[]) => {
-        const r: { [id: string]: number } = {};
-
-
-
-
+        const r = new Map<number, any>();
         rows.forEach((row) => {
-
-          r[this.selectionHelper.underscoreIdAccessor(row.id)] = row.score;
+          r.set(this.selectionHelper.underscoreIdAccessor(row.id), row.score);
         });
         return r;
       })
-      .then((scores: { [id: string]: any }) => {
-        colDesc.scores = scores;
+      .then((scores) => {
+        accessor.scores = scores;
 
         if (colDesc.type === 'number') {
           const ncol = <NumberColumn>col;
           if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
-            colDesc.domain = d3.extent(<number[]>(d3.values(scores)));
+            colDesc.domain = d3.extent(<number[]>(Array.from(scores.values())));
           }
           // add selection columns without tracking changes
           if (withoutTracking) {
@@ -330,9 +312,9 @@ export abstract class ALineUpView2 extends AView {
             ncol.setMapping(new ScaleMappingFunction(colDesc.domain));
           }
         } else if (colDesc.type === 'boxplot') {
-          const values = <IBoxPlotData[]>d3.values(scores);
           //HACK we know that the domain of the description is just referenced, so we can update it by changing values!
           if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
+            const values = <IBoxPlotData[]>Array.from(scores.values());
             colDesc.domain[0] = d3.min(values, (d) => d.min);
             colDesc.domain[1] = d3.max(values, (d) => d.max);
           }
@@ -402,9 +384,6 @@ export abstract class ALineUpView2 extends AView {
     this.lineup = new LineUp(this.node, storage, this.config);
     this.initSelectionHelper();
 
-    //this.lineup.on('updateStart', () => { this.setBusy(true); });
-    //this.lineup.on('updateFinished', () => { this.setBusy(false); });
-
     const ranking = this.lineup.data.pushRanking();
 
     columns.forEach((d, i) => {
@@ -424,46 +403,36 @@ export abstract class ALineUpView2 extends AView {
     this.lineup.update();
   }
 
-  protected update() {
-    this.setBusy(true);
+  private async updateImpl() {
+    const desc: {idType: string, columns: any[]} = await this.loadColumnDesc();
+    this.initColumns(desc);
+    const rows = await this.loadRows();
+    this.initRows(rows);
+    this.initializedLineUp();
+    this.setBusy(false);
+  }
 
-    this.initLineUpPromise = this.loadColumnDesc()
-      .then((desc: {idType: string, columns: any[]}) => {
-        this.initColumns(desc);
-        return this.loadRows();
-      })
-      .then((rows: any[]) => {
-        this.initRows(rows);
-      })
-      .then(() => {
-        this.initializedLineUp();
-        this.setBusy(false);
-      })
+  protected async update() {
+    this.setBusy(true);
+    this.initLineUpPromise = this.updateImpl();
+    this.initLineUpPromise
       .catch(() => {
         this.setBusy(false);
       });
   }
 
-  protected loadColumnDesc() {
+  protected loadColumnDesc(): Promise<{idType: string, columns: any[]}> {
     // hook
-    return new Promise((resolve) => {
-      const r = {
-        idType: '',
-        columns: []
-      };
-      resolve(r);
-    });
+    return Promise.resolve({idType: '', columns: []});
   }
 
-  protected initColumns(desc: { idType: string}) {
+  protected initColumns(desc: {idType: string}) {
     this.idType = resolve(desc.idType);
   }
 
-  protected loadRows() {
-    return new Promise((resolve, reject) => {
-      const r = [];
-      resolve(r);
-    });
+  protected loadRows(): Promise<any[]> {
+    // hook
+    return Promise.resolve([]);
   }
 
   protected initRows(rows: any[]) {
@@ -501,7 +470,7 @@ export abstract class ALineUpView2 extends AView {
     this.updateLineUpStats();
   }
 
-  protected withoutTracking(f: (lineup: any)=>void) {
+  protected withoutTracking(f: (lineup: any) => void) {
     cmds.untrack(this.context.ref)
       .then(f.bind(this, this.lineup))
       .then(cmds.clueify.bind(cmds, this.context.ref, this.context.graph));
@@ -529,10 +498,6 @@ export abstract class ALineUpView2 extends AView {
 
     /**
      * Builds the stats string
-     * @param total
-     * @param selected
-     * @param shown
-     * @returns {string}
      */
     const showStats = (total: number, selected = 0, shown = 0) => {
       let str = 'Showing ';

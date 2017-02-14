@@ -3,9 +3,9 @@
  */
 
 import 'scrollTo';
-import * as prov from 'phovea_core/src/provenance';
-import * as idtypes from 'phovea_core/src/idtype';
-import * as ranges from 'phovea_core/src/range';
+import {ProvenanceGraph, IObjectRef, action, meta, op, cat, ActionNode, ref, ICmdFunction} from 'phovea_core/src/provenance';
+import {IDType, resolve, defaultSelectionType} from 'phovea_core/src/idtype';
+import {Range, none, parse} from 'phovea_core/src/range';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {TargidConstants} from './Targid';
@@ -64,33 +64,35 @@ function showAsSmallMultiple(desc: any) {
  * @param selection
  * @returns {any}
  */
-export function findViews(idtype:idtypes.IDType, selection:ranges.Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {
+export async function findViews(idtype:IDType, selection:Range) : Promise<{enabled: boolean, v: IViewPluginDesc}[]> {
   if (idtype === null) {
     return Promise.resolve([]);
   }
   const selectionLength = idtype === null || selection.isNone ? 0 : selection.dim(0).length;
-  return idtype.getCanBeMappedTo().then((mappedTypes) => {
-    const all = [idtype].concat(mappedTypes);
-    function byType(p: any) {
-      const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
-      return all.some((i) => pattern.test(i.id)) && !matchLength(p.selection, 0);
-    }
-    function bySelection(p: any) {
-      return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
-    }
-    return listPlugins(TargidConstants.VIEW).filter(byType).sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase())).map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
-  });
+  const mappedTypes = await idtype.getCanBeMappedTo();
+  const all = [idtype].concat(mappedTypes);
+  function byType(p: any) {
+    const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
+    return all.some((i) => pattern.test(i.id)) && !matchLength(p.selection, 0);
+  }
+  function bySelection(p: any) {
+    return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
+  }
+  return listPlugins(TargidConstants.VIEW)
+    .filter(byType)
+    .sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase()))
+    .map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
 }
 
 export interface ISelection {
-  idtype: idtypes.IDType;
-  range: ranges.Range;
+  idtype: IDType;
+  range: Range;
 }
 
 export interface IViewContext {
-  graph: prov.ProvenanceGraph;
-  desc: IViewPluginDesc;
-  ref: prov.IObjectRef<any>;
+  readonly graph: ProvenanceGraph;
+  readonly desc: IViewPluginDesc;
+  readonly ref: IObjectRef<any>;
 }
 
 export interface IView extends IEventHandler {
@@ -99,15 +101,15 @@ export interface IView extends IEventHandler {
   node: Element;
   context:IViewContext;
 
-  init();
+  init(): void;
 
-  changeSelection(selection: ISelection);
+  changeSelection(selection: ISelection): void;
 
-  setItemSelection(selection: ISelection);
+  setItemSelection(selection: ISelection): void;
 
   getItemSelection(): ISelection;
 
-  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>);
+  buildParameterUI($parent: d3.Selection<any>, onChange: (name: string, value: any)=>Promise<any>): void;
 
   getParameter(name: string): any;
 
@@ -115,7 +117,7 @@ export interface IView extends IEventHandler {
 
   modeChanged(mode:EViewMode);
 
-  destroy();
+  destroy(): void;
 }
 
 export abstract class AView extends EventHandler implements IView {
@@ -135,9 +137,9 @@ export abstract class AView extends EventHandler implements IView {
   static EVENT_LOADING_FINISHED = 'loadingFinished';
 
   protected $node:d3.Selection<IView>;
-  private itemSelection: ISelection = { idtype: null, range: ranges.none() };
+  private itemSelection: ISelection = { idtype: null, range: none() };
 
-  constructor(public context:IViewContext, parent:Element, options?: {}) {
+  constructor(public readonly context:IViewContext, parent:Element, options?: {}) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
     this.$node.append('div').classed('busy', true).classed('hidden', true);
@@ -162,7 +164,7 @@ export abstract class AView extends EventHandler implements IView {
     // propagate
     if (selection.idtype) {
       if (selection.range.isNone) {
-        selection.idtype.clear(idtypes.defaultSelectionType);
+        selection.idtype.clear(defaultSelectionType);
       } else {
         selection.idtype.select(selection.range);
       }
@@ -191,8 +193,8 @@ export abstract class AView extends EventHandler implements IView {
     // hook
   }
 
-  protected resolveIdToNames(fromIDType: idtypes.IDType, id: number, toIDType : idtypes.IDType|string = null): Promise<string[][]> {
-    const target = toIDType === null ? fromIDType: idtypes.resolve(toIDType);
+  protected resolveIdToNames(fromIDType: IDType, id: number, toIDType : IDType|string = null): Promise<string[][]> {
+    const target = toIDType === null ? fromIDType: resolve(toIDType);
     if (fromIDType.id === target.id) {
       // same just unmap to name
       return fromIDType.unmap([id]).then((names) => [names]);
@@ -202,8 +204,8 @@ export abstract class AView extends EventHandler implements IView {
     return fromIDType.mapToName([id], target).then((names) => names);
   }
 
-  protected resolveId(fromIDType: idtypes.IDType, id: number, toIDtype : idtypes.IDType|string = null): Promise<string> {
-    const target = toIDtype === null ? fromIDType: idtypes.resolve(toIDtype);
+  protected resolveId(fromIDType: IDType, id: number, toIDtype : IDType|string = null): Promise<string> {
+    const target = toIDtype === null ? fromIDType: resolve(toIDtype);
     if (fromIDType.id === target.id) {
       // same just unmap to name
       return fromIDType.unmap([id]).then((names) => names[0]);
@@ -213,8 +215,8 @@ export abstract class AView extends EventHandler implements IView {
     return fromIDType.mapToFirstName([id], target).then((names) => names[0]);
   }
 
-  protected resolveIds(fromIDType: idtypes.IDType, ids: ranges.Range|number[], toIDType : idtypes.IDType|string = null): Promise<string[]> {
-    const target = toIDType === null ? fromIDType: idtypes.resolve(toIDType);
+  protected resolveIds(fromIDType: IDType, ids: Range|number[], toIDType : IDType|string = null): Promise<string[]> {
+    const target = toIDType === null ? fromIDType: resolve(toIDType);
     if (fromIDType.id === target.id) {
       // same just unmap to name
       return fromIDType.unmap(ids);
@@ -249,60 +251,58 @@ export abstract class ASmallMultipleView extends AView {
 }
 
 
-export function setParameterImpl(inputs:prov.IObjectRef<any>[], parameter, graph:prov.ProvenanceGraph) {
-  return inputs[0].v.then((view:ViewWrapper) => {
-    const name = parameter.name;
-    const value = parameter.value;
+export async function setParameterImpl(inputs:IObjectRef<any>[], parameter, graph:ProvenanceGraph) {
+  const view: ViewWrapper = await inputs[0].v;
+  const name = parameter.name;
+  const value = parameter.value;
 
-    const bak = view.getParameter(name);
-    view.setParameterImpl(name, value);
-    return {
-      inverse: setParameter(inputs[0], name, bak)
-    };
-  });
+  const bak = view.getParameter(name);
+  view.setParameterImpl(name, value);
+  return {
+    inverse: setParameter(inputs[0], name, bak)
+  };
 }
-export function setParameter(view:prov.IObjectRef<ViewWrapper>, name: string, value: any) {
+export function setParameter(view:IObjectRef<ViewWrapper>, name: string, value: any) {
   //assert view
-  return prov.action(prov.meta('Set Parameter "'+name+'"', prov.cat.visual, prov.op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
+  return action(meta('Set Parameter "'+name+'"', cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
     name,
     value
   });
 }
 
-export function setSelectionImpl(inputs:prov.IObjectRef<any>[], parameter) {
-  return Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]).then((views:ViewWrapper[]) => {
-    const view = views[0];
-    const target = views[1];
-    const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null;
-    const range = ranges.parse(parameter.range);
+export async function setSelectionImpl(inputs:IObjectRef<any>[], parameter) {
+  const views:ViewWrapper[] = await Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]);
+  const view = views[0];
+  const target = views[1];
+  const idtype = parameter.idtype ? resolve(parameter.idtype) : null;
+  const range = parse(parameter.range);
 
-    const bak = view.getItemSelection();
-    view.setItemSelection({ idtype, range});
-    if (target) {
-      target.setParameterSelection({ idtype, range});
-    }
-    return {
-      inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range): setSelection(inputs[0], bak.idtype, bak.range)
-    };
-  });
+  const bak = view.getItemSelection();
+  view.setItemSelection({ idtype, range});
+  if (target) {
+    target.setParameterSelection({ idtype, range});
+  }
+  return {
+    inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range): setSelection(inputs[0], bak.idtype, bak.range)
+  };
 }
-export function setSelection(view:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
+export function setSelection(view:IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
   // assert view
-  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
+  return action(meta('Select '+(idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
 }
 
-export function setAndUpdateSelection(view:prov.IObjectRef<ViewWrapper>, target:prov.IObjectRef<ViewWrapper>, idtype: idtypes.IDType, range: ranges.Range) {
+export function setAndUpdateSelection(view:IObjectRef<ViewWrapper>, target:IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
   // assert view
-  return prov.action(prov.meta('Select '+(idtype ? idtype.name : 'None'), prov.cat.selection, prov.op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
+  return action(meta('Select '+(idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
 }
 
-export function createCmd(id):prov.ICmdFunction {
+export function createCmd(id):ICmdFunction {
   switch (id) {
     case TargidConstants.CMD_SET_PARAMETER:
       return setParameterImpl;
@@ -324,12 +324,12 @@ function isSameSelection(a: ISelection, b: ISelection) {
 /**
  * compresses the given path by removing redundant focus operations
  * @param path
- * @returns {prov.ActionNode[]}
+ * @returns {ActionNode[]}
  */
-export function compressSetParameter(path:prov.ActionNode[]) {
+export function compressSetParameter(path:ActionNode[]) {
   const possible = path.filter((p) => p.f_id === TargidConstants.CMD_SET_PARAMETER);
   //group by view and parameter
-  const toKey = (p: prov.ActionNode) => p.requires[0].id+'_'+p.parameter.name;
+  const toKey = (p: ActionNode) => p.requires[0].id+'_'+p.parameter.name;
   const last = d3.nest().key(toKey).map(possible);
   return path.filter((p) => {
     if (p.f_id !== TargidConstants.CMD_SET_PARAMETER) {
@@ -340,7 +340,7 @@ export function compressSetParameter(path:prov.ActionNode[]) {
   });
 }
 
-export function compressSetSelection(path:prov.ActionNode[]) {
+export function compressSetSelection(path:ActionNode[]) {
   const lastByIDType : any = {};
   path.forEach((p) => {
     if (p.f_id === TargidConstants.CMD_SET_SELECTION) {
@@ -358,7 +358,7 @@ export function compressSetSelection(path:prov.ActionNode[]) {
   });
 }
 
-function generate_hash(desc: IPluginDesc, selection: ISelection, options : any = {}) {
+function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
   return desc.id+'_'+s;
 }
@@ -394,22 +394,21 @@ export class ViewWrapper extends EventHandler {
    * @param idtype
    * @param namedSet
    */
-  private listenerUpdateEntryPoint = (event: any, idtype: idtypes.IDType | string, namedSet: INamedSet) => {
+  private listenerUpdateEntryPoint = (event: any, idtype: IDType | string, namedSet: INamedSet) => {
     this.fire(AView.EVENT_UPDATE_ENTRY_POINT, idtype, namedSet);
   }
 
   /**
    * Wrapper function for event listener
-   * @param event
    */
-  private scrollIntoViewListener = (event:any) => {
+  private scrollIntoViewListener = () => {
     this.scrollIntoView();
   }
 
   /**
    * Provenance graph reference of this object
    */
-  ref: prov.IObjectRef<ViewWrapper>;
+  ref: IObjectRef<ViewWrapper>;
 
   /**
    * Provenance graph context
@@ -424,7 +423,7 @@ export class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  constructor(private graph: prov.ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
+  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
 
     this.init(graph, selection, plugin, options);
@@ -442,9 +441,9 @@ export class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  private init(graph: prov.ProvenanceGraph, selection: ISelection, plugin:IPlugin, options?) {
+  private init(graph: ProvenanceGraph, selection: ISelection, plugin:IPlugin, options?) {
     // create provenance reference
-    this.ref = prov.ref(this, plugin.desc.name, prov.cat.visual, generate_hash(plugin.desc, selection, options));
+    this.ref = ref(this, plugin.desc.name, cat.visual, generate_hash(plugin.desc, selection));
 
     //console.log(graph, generate_hash(plugin.desc, selection, options));
 
@@ -621,7 +620,7 @@ export class ViewWrapper extends EventHandler {
    * @param idtype
    * @param range
    */
-  private chooseNextViews(idtype: idtypes.IDType, range: ranges.Range) {
+  private chooseNextViews(idtype: IDType, range: Range) {
     const that = this;
 
     // show chooser if selection available
@@ -682,7 +681,7 @@ export class ViewWrapper extends EventHandler {
   }
 }
 
-export function createContext(graph:prov.ProvenanceGraph, desc: IPluginDesc, ref: prov.IObjectRef<any>):IViewContext {
+export function createContext(graph:ProvenanceGraph, desc: IPluginDesc, ref: IObjectRef<any>):IViewContext {
   return {
     graph,
     desc: toViewPluginDesc(desc),
@@ -690,7 +689,7 @@ export function createContext(graph:prov.ProvenanceGraph, desc: IPluginDesc, ref
   };
 }
 
-export function createViewWrapper(graph: prov.ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
   return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
 }
 

@@ -2,12 +2,12 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-import * as C from 'phovea_core/src/index';
-import * as prov from 'phovea_core/src/provenance';
-import * as plugins from 'phovea_core/src/plugin';
-import * as events from 'phovea_core/src/event';
-import * as ranges from 'phovea_core/src/range';
-import * as idtypes from 'phovea_core/src/idtype';
+import {resolveIn} from 'phovea_core/src/index';
+import {IObjectRef, ProvenanceGraph, action, meta, op, cat, ICmdFunction, ActionNode, StateNode} from 'phovea_core/src/provenance';
+import {get as getPlugin} from 'phovea_core/src/plugin';
+import {on as globalOn, off as globalOff, IEvent} from 'phovea_core/src/event';
+import {Range, parse, none} from 'phovea_core/src/range';
+import {resolve, IDType} from 'phovea_core/src/idtype';
 import * as session from 'phovea_core/src/session';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
@@ -28,14 +28,14 @@ import {INamedSet} from './storage';
  * @param graph The Provenance graph
  * @returns {Promise<ICmdResult>}
  */
-export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, graph:prov.ProvenanceGraph):Promise<ICmdResult> {
+export function createViewImpl(inputs:IObjectRef<any>[], parameter:any, graph:ProvenanceGraph):Promise<ICmdResult> {
   const targid:Targid = inputs[0].value;
   const viewId:string = parameter.viewId;
-  const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null; // creates a new object
-  const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none(); // creates a new object
+  const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
+  const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
   const options = parameter.options;
 
-  const view = plugins.get(TargidConstants.VIEW, viewId);
+  const view = getPlugin(TargidConstants.VIEW, viewId);
 
   let viewWrapperInstance; // store instance
   return createViewWrapper(graph, { idtype, range: selection }, targid.node, view, options)
@@ -57,7 +57,7 @@ export function createViewImpl(inputs:prov.IObjectRef<any>[], parameter:any, gra
  * @param parameter Parameter such idtype, selection and view options
  * @returns {ICmdResult}
  */
-export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter):ICmdResult {
+export function removeViewImpl(inputs:IObjectRef<any>[], parameter):ICmdResult {
   const targid:Targid = inputs[0].value;
   const view:ViewWrapper = inputs[1].value;
   const oldFocus:number = parameter.focus;
@@ -79,7 +79,7 @@ export function removeViewImpl(inputs:prov.IObjectRef<any>[], parameter):ICmdRes
  * @param graph The Provenance graph
  * @returns {Promise<ICmdResult>}
  */
-export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter:any):Promise<ICmdResult> {
+export function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):Promise<ICmdResult> {
   //const targid:Targid = inputs[0].value;
   const existingView:ViewWrapper = inputs[1].value;
 
@@ -91,12 +91,12 @@ export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter:any):Pr
   };
 
   const viewId:string = parameter.viewId;
-  const idtype = parameter.idtype ? idtypes.resolve(parameter.idtype) : null; // creates a new object
-  const selection = parameter.selection ? ranges.parse(parameter.selection) : ranges.none(); // creates a new object
+  const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
+  const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
   const options = parameter.options;
 
   // create new (inner) view
-  const view = plugins.get(TargidConstants.VIEW, viewId);
+  const view = getPlugin(TargidConstants.VIEW, viewId);
 
   return replaceViewWrapper(existingView, { idtype, range: selection }, view, options)
     .then(() => {
@@ -116,13 +116,13 @@ export function replaceViewImpl(inputs:prov.IObjectRef<any>[], parameter:any):Pr
  * @param options
  * @returns {IAction}
  */
-export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?):IAction {
-  const view = plugins.get(TargidConstants.VIEW, viewId);
+export function createView(targid:IObjectRef<Targid>, viewId:string, idtype:IDType, selection:Range, options?):IAction {
+  const view = getPlugin(TargidConstants.VIEW, viewId);
   // assert view
-  return prov.action(prov.meta('Add ' + view.name, prov.cat.visual, prov.op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
+  return action(meta('Add ' + view.name, cat.visual, op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
     viewId,
     idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : ranges.none().toString(),
+    selection: selection ? selection.toString() : none().toString(),
     options
   });
 }
@@ -134,9 +134,9 @@ export function createView(targid:prov.IObjectRef<Targid>, viewId:string, idtype
  * @param oldFocus
  * @returns {IAction}
  */
-export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<ViewWrapper>, oldFocus = -1):IAction {
+export function removeView(targid:IObjectRef<Targid>, view:IObjectRef<ViewWrapper>, oldFocus = -1):IAction {
   // assert view
-  return prov.action(prov.meta('Remove ' + view.toString(), prov.cat.visual, prov.op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
+  return action(meta('Remove ' + view.toString(), cat.visual, op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
     viewId: view.value.desc.id,
     focus: oldFocus
   });
@@ -152,13 +152,13 @@ export function removeView(targid:prov.IObjectRef<Targid>, view:prov.IObjectRef<
  * @param options
  * @returns {IAction}
  */
-export function replaceView(targid:prov.IObjectRef<Targid>, existingView:prov.IObjectRef<ViewWrapper>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?):IAction {
-  const view = plugins.get(TargidConstants.VIEW, viewId);
+export function replaceView(targid:IObjectRef<Targid>, existingView:IObjectRef<ViewWrapper>, viewId:string, idtype:IDType, selection:Range, options?):IAction {
+  const view = getPlugin(TargidConstants.VIEW, viewId);
   // assert view
-  return prov.action(prov.meta('Replace ' + existingView.name + ' with ' + view.name, prov.cat.visual, prov.op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
+  return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
     viewId,
     idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : ranges.none().toString(),
+    selection: selection ? selection.toString() : none().toString(),
     options
   });
 }
@@ -169,7 +169,7 @@ export function replaceView(targid:prov.IObjectRef<Targid>, existingView:prov.IO
  * @param id
  * @returns {ICmdFunction|null}
  */
-export function createCmd(id):prov.ICmdFunction {
+export function createCmd(id):ICmdFunction {
   switch (id) {
     case TargidConstants.CMD_CREATE_VIEW:
       return createViewImpl;
@@ -188,7 +188,7 @@ export function createCmd(id):prov.ICmdFunction {
  * @param path
  * @returns {Array}
  */
-export function compressCreateRemove(path:prov.ActionNode[]) {
+export function compressCreateRemove(path:ActionNode[]) {
   const r = [];
   for (const p of path) {
     if (p.f_id === TargidConstants.CMD_REMOVE_VIEW && r.length > 0) {
@@ -278,36 +278,36 @@ export class Targid {
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
    */
-  private views:ViewWrapper[] = [];
+  private readonly views:ViewWrapper[] = [];
 
   /**
    * IObjectRef to this Targid instance
    * @type {IObjectRef<Targid>}
    */
-  ref:prov.IObjectRef<Targid>;
+  readonly ref:IObjectRef<Targid>;
 
   private startMenu:Promise<StartMenu>;
   private $startMenu:d3.Selection<any>;
   private $history:d3.Selection<any>;
   private $node:d3.Selection<Targid>;
 
-  private removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
-  private chooseNextView = (event:events.IEvent, viewId:string, idtype:idtypes.IDType, selection:ranges.Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
-  private updateSelection = (event:events.IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, newValue);
-  private updateStartMenu = (event:events.IEvent, idtype: idtypes.IDType | string, namedSet: INamedSet) => this.startMenu.then((menu) => menu.updateEntryPointList(idtype, namedSet));
+  private readonly removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
+  private readonly chooseNextView = (event:IEvent, viewId:string, idtype:IDType, selection:Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
+  private readonly updateSelection = (event:IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, newValue);
+  private readonly updateStartMenu = (event:IEvent, idtype: IDType | string, namedSet: INamedSet) => this.startMenu.then((menu) => menu.updateEntryPointList(idtype, namedSet));
 
-  constructor(public graph:prov.ProvenanceGraph, public graphManager:CLUEGraphManager, parent:Element, private clueWrapper: CLUEWrapper) {
+  constructor(public readonly graph:ProvenanceGraph, public readonly graphManager:CLUEGraphManager, parent:Element, private readonly clueWrapper: CLUEWrapper) {
 
     // add TargId app as (first) object to provenance graph
-    this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, prov.cat.visual);
+    this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, cat.visual);
 
     // event is triggered in caleydo_clue/template.ts -> createLogin()
-    events.on('USER_LOGGED_IN', () => {
+    globalOn('USER_LOGGED_IN', () => {
       this.checkForLoggedIn(parent);
     });
 
     // event is triggered in caleydo_clue/template.ts -> createLogin()
-    events.on('USER_LOGGED_OUT', () => {
+    globalOn('USER_LOGGED_OUT', () => {
       this.checkForLoggedIn(parent);
     });
 
@@ -336,7 +336,7 @@ export class Targid {
    */
   private buildLogin(parent) {
     // otherwise show login
-    plugins.get(TargidConstants.VIEW, 'login_first').load().then((p) => {
+    getPlugin(TargidConstants.VIEW, 'login_first').load().then((p) => {
       p.factory(parent, {});
     });
 
@@ -354,7 +354,7 @@ export class Targid {
    */
   private buildTargid(parent) {
     this.$startMenu = d3.select(parent).append('div').classed('startMenu', true);
-    this.startMenu = plugins.get(TargidConstants.VIEW, 'startMenu').load().then((p) => {
+    this.startMenu = getPlugin(TargidConstants.VIEW, 'startMenu').load().then((p) => {
       return p.factory(this.$startMenu.node(), { targid: this });
     });
 
@@ -373,7 +373,7 @@ export class Targid {
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
 
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    plugins.get(TargidConstants.VIEW, 'welcome').load().then((p) => {
+    getPlugin(TargidConstants.VIEW, 'welcome').load().then((p) => {
       p.factory(this.$node.node(), {});
     });
   }
@@ -418,7 +418,7 @@ export class Targid {
    * @param selection
    * @param options
    */
-  private handleNextView(viewWrapper:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+  private handleNextView(viewWrapper:ViewWrapper, viewId:string, idtype:IDType, selection:Range, options?) {
     const index = this.views.indexOf(viewWrapper);
     const nextView = this.views[index+1];
 
@@ -441,7 +441,7 @@ export class Targid {
    * @param selection
    * @param options
    */
-  private openOrReplaceNextView(viewWrapper:ViewWrapper, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+  private openOrReplaceNextView(viewWrapper:ViewWrapper, viewId:string, idtype:IDType, selection:Range, options?) {
     const mode = 2; // select opener mode
     switch (mode) {
       /**
@@ -542,7 +542,7 @@ export class Targid {
     return this.views[this.views.length-1];
   }
 
-  push(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+  push(viewId:string, idtype:IDType, selection:Range, options?) {
     // create the first view without changing the focus for the (non existing) previous view
     if(this.views.length === 0) {
       return this.pushView(viewId, idtype, selection, options);
@@ -552,7 +552,7 @@ export class Targid {
     }
   }
 
-  private pushView(viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+  private pushView(viewId:string, idtype:IDType, selection:Range, options?) {
     return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
   }
 
@@ -590,7 +590,7 @@ export class Targid {
     view.on(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
     this.views.push(view);
     this.update();
-    return C.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
+    return resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
   }
 
   removeImpl(view:ViewWrapper, focus:number = -1) {
@@ -613,7 +613,7 @@ export class Targid {
     return Promise.resolve(NaN);
   }
 
-  private replaceView(existingView:prov.IObjectRef<ViewWrapper>, viewId:string, idtype:idtypes.IDType, selection:ranges.Range, options?) {
+  private replaceView(existingView:IObjectRef<ViewWrapper>, viewId:string, idtype:IDType, selection:Range, options?) {
     return this.graph.push(replaceView(this.ref, existingView, viewId, idtype, selection, options));
   }
 
@@ -671,7 +671,7 @@ export class Targid {
       return Promise.resolve(old);
     }
     this.update();
-    return C.resolveIn(1000).then(() => old);
+    return resolveIn(1000).then(() => old);
   }
 
   private update() {
@@ -698,9 +698,9 @@ export class Targid {
  * @param stateNode
  * @returns {boolean}
  */
-function isCreateView(stateNode: prov.StateNode) {
+function isCreateView(stateNode: StateNode) {
   const creator = stateNode.creator;
-  return creator != null && creator.meta.category === prov.cat.visual && creator.meta.operation === prov.op.create;
+  return creator != null && creator.meta.category === cat.visual && creator.meta.operation === op.create;
 }
 
 /**
@@ -710,6 +710,6 @@ function isCreateView(stateNode: prov.StateNode) {
  * @param parent
  * @returns {Targid}
  */
-export function create(graph:prov.ProvenanceGraph, graphManager:CLUEGraphManager, parent:Element, clueWrapper: CLUEWrapper) {
+export function create(graph:ProvenanceGraph, graphManager:CLUEGraphManager, parent:Element, clueWrapper: CLUEWrapper) {
   return new Targid(graph, graphManager, parent, clueWrapper);
 }

@@ -182,10 +182,6 @@ function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
 }
 
-export function create(parent: Element, options: IStartMenuOptions) {
-  return new StartMenu(parent, options);
-}
-
 
 export interface IStartFactory {
   readonly name: string;

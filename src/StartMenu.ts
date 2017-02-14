@@ -11,10 +11,18 @@ import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
 import {ENamedSetType} from './storage';
+import {FormBuilder, FormElementType} from './FormBuilder';
+import {api2absURL} from 'phovea_core/src/ajax';
+
+import {
+  getSelectedSpecies, IDataSourceConfig, cellline, gene, tissue
+} from 'targid_common/src/Common';
 
 export interface IStartMenuOptions {
   targid: Targid;
 }
+
+const dataSource = { cellline, ensembl: gene, tissue };
 
 const template = `
     <button class="closeButton">
@@ -286,6 +294,7 @@ export class AEntryPointList implements IEntryPointList {
         // convert to data format and append to species data
         this.data.push(...namedSets);
 
+        this.addSearchField();
         this.$node.append('ul');
         this.updateList(this.data);
 
@@ -374,5 +383,42 @@ export class AEntryPointList implements IEntryPointList {
     });
 
     $options.exit().remove();
+  }
+
+  private addSearchField() {
+    const $searchWrapper: HTMLElement = this.$node.insert('div', ':first-child').attr('class', 'startMenuSearch');
+    const dataSourceKey = this.desc.idtype.toLowerCase();
+
+    const formBuilder: FormBuilder = new FormBuilder($searchWrapper);
+    formBuilder.appendElement({
+      id: `search-${dataSource[dataSourceKey].entityName}`,
+      label: `Search ${this.desc.name}`,
+      type: FormElementType.SELECT2,
+      attributes: {
+        style: 'width:100%',
+      },
+      options: {
+        optionsData: [],
+        ajax: {
+          url: api2absURL(`/targid/db/${dataSource[dataSourceKey].db}/single_entity_lookup/lookup`),
+          data: (params: any) => {
+            return {
+              schema: dataSource[dataSourceKey].schema,
+              table_name: dataSource[dataSourceKey].tableName,
+              id_column: dataSource[dataSourceKey].entityName,
+              query_column: dataSource[dataSourceKey].entityName,
+              species: getSelectedSpecies(),
+              query: params.term,
+              page: params.page
+            };
+          }
+        }
+      }
+    });
+
+    const searchField = formBuilder.getElementById(`search-${dataSource[dataSourceKey].entityName}`);
+    searchField.on('change', (data) => {
+      console.log('change', data);
+    });
   }
 }

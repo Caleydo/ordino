@@ -3,7 +3,7 @@
  */
 
 import * as session from 'phovea_core/src/session';
-import * as dialogs from 'phovea_ui/src/dialogs';
+import {areyousure} from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {Targid} from './Targid';
@@ -18,7 +18,7 @@ class SessionList implements IStartMenuSectionEntry {
 
   //private format = d3.time.format.utc('%Y-%m-%d %H:%M');
 
-  private static TEMPLATE = `<table class="table table-striped table-hover table-bordered table-condensed">
+  private static readonly TEMPLATE = `<table class="table table-striped table-hover table-bordered table-condensed">
     <thead>
       <tr>
         <!--<th>Entity Type</th>-->
@@ -53,58 +53,56 @@ class SessionList implements IStartMenuSectionEntry {
     return [];
   }
 
-  private build() {
+  private async build() {
     const $parent = select(this.parent).classed('menuTable', true).html(`
       <div class="loading">
         <i class="fa fa-spinner fa-pulse fa-fw"></i>
         <span class="sr-only">Loading...</span>
       </div>`);
 
-    this.targid.graphManager.list().then((list:any[]) => {
+    let list = await this.targid.graphManager.list();
+    list = list
+      // filter local workspaces, since we are using remote storage
+      .filter((d) => d.local === false || d.local === undefined)
+      // filter list by username
+      .filter((d) => d.creator === session.retrieve('username'));
 
-      list = list
-        // filter local workspaces, since we are using remote storage
-        .filter((d) => d.local === false || d.local === undefined)
-        // filter list by username
-        .filter((d) => d.creator === session.retrieve('username'));
+    //sort by date desc
+    list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));
 
-      //sort by date desc
-      list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));
+    const $table = $parent.html(SessionList.TEMPLATE);
 
-      const $table = $parent.html(SessionList.TEMPLATE);
-      const $list = $table.select('tbody')
-        .classed('loading', false)
-        .selectAll('tr').data(list);
+    const $list = $table.select('tbody')
+      .classed('loading', false)
+      .selectAll('tr').data(list);
 
-      const $trEnter = $list.enter().append('tr').attr('id',(d) => d.id);
-      //$tr_enter.append('td').text((d) => 'Unknown');
-      $trEnter.append('td').text((d) => d.name);
-      //$tr_enter.append('td').html((d) => d.description ? d.description : '<i>(none)</i>');
-      $trEnter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
-      $trEnter.append('td').text((d) => d.creator);
-      //$tr_enter.append('td').text((d) => `${d.size[0]} / ${d.size[1]}`);
-      $trEnter.append('td').html((d) => {
-        return `<button class="btn btn-xs btn-default" data-action="select" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
-        <button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
-        <button class="btn btn-xs btn-default" data-action="delete" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
-      });
+    const $trEnter = $list.enter().append('tr').attr('id',(d) => d.id);
+    //$tr_enter.append('td').text((d) => 'Unknown');
+    $trEnter.append('td').text((d) => d.name);
+    //$tr_enter.append('td').html((d) => d.description ? d.description : '<i>(none)</i>');
+    $trEnter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+    $trEnter.append('td').text((d) => d.creator);
+    //$tr_enter.append('td').text((d) => `${d.size[0]} / ${d.size[1]}`);
+    $trEnter.append('td').html((d) => {
+      return `<button class="btn btn-xs btn-default" data-action="select" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
+      <button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
+      <button class="btn btn-xs btn-default" data-action="delete" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
+    });
 
-      $trEnter.select('button[data-action="delete"]').on('click', (d) => {
-        dialogs.areyousure('Are you sure to delete: "' + d.name + '"').then((deleteIt) => {
-          if (deleteIt) {
-            this.targid.graphManager.delete(d);
-            $table.selectAll('#'+d.id).remove();
-          }
-        });
-      });
-      $trEnter.select('button[data-action="clone"]').on('click', (d) => {
-        this.targid.graphManager.loadOrClone(d, false);
-        return false;
-      });
-      $trEnter.select('button[data-action="select"]').on('click', (d) => {
-        this.targid.graphManager.loadOrClone(d, true);
-        return false;
-      });
+    $trEnter.select('button[data-action="delete"]').on('click', async (d) => {
+      const deleteIt = await areyousure('Are you sure to delete: "' + d.name + '"');
+      if (deleteIt) {
+        this.targid.graphManager.delete(d);
+        $table.selectAll('#'+d.id).remove();
+      }
+    });
+    $trEnter.select('button[data-action="clone"]').on('click', (d) => {
+      this.targid.graphManager.loadOrClone(d, false);
+      return false;
+    });
+    $trEnter.select('button[data-action="select"]').on('click', (d) => {
+      this.targid.graphManager.loadOrClone(d, true);
+      return false;
     });
   }
 }

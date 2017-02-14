@@ -2,10 +2,10 @@
  * Created by Samuel Gratzl on 11.05.2016.
  */
 
-import * as ajax from 'phovea_core/src/ajax';
-import * as idtypes from 'phovea_core/src/idtype';
-import * as ranges from 'phovea_core/src/range';
-import * as session from 'phovea_core/src/session';
+import {getAPIJSON, sendAPI} from 'phovea_core/src/ajax';
+import {IDType, resolve} from 'phovea_core/src/idtype';
+import {parse, RangeLike} from 'phovea_core/src/range';
+import {retrieve} from 'phovea_core/src/session';
 
 export enum ENamedSetType {
   NAMEDSET, CUSTOM, PANEL
@@ -63,29 +63,31 @@ export interface INamedSet {
   subTypeFromSession?: boolean;
 }
 
-export function listNamedSets(idType : idtypes.IDType | string = null):Promise<INamedSet[]> {
-  const args = idType ? { idType : idtypes.resolve(idType).id} : {};
-  return ajax.getAPIJSON('/targid/storage/namedsets/', args).then((sets: INamedSet[]) => {
+export function listNamedSets(idType : IDType | string = null):Promise<INamedSet[]> {
+  const args = idType ? { idType : resolve(idType).id} : {};
+  return getAPIJSON('/targid/storage/namedsets/', args).then((sets: INamedSet[]) => {
+    // default value
     sets.forEach((s) => s.type = s.type || ENamedSetType.NAMEDSET);
-    sets = sets.filter((d) => d.creator === session.retrieve('username'));
+
+    sets = sets.filter((d) => d.creator === retrieve('username'));
     return sets;
   });
 }
 
-export function saveNamedSet(name: string, idType: idtypes.IDType|string, ids: ranges.RangeLike, subType: {key:string, value:string}, description = '') {
+export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike, subType: {key:string, value:string}, description = '') {
   const data:INamedSet = {
     name,
     type: ENamedSetType.NAMEDSET,
-    creator: session.retrieve('username', 'Anonymous'),
-    idType: idtypes.resolve(idType).id,
-    ids: ranges.parse(ids).toString(),
+    creator: retrieve('username', 'Anonymous'),
+    idType: resolve(idType).id,
+    ids: parse(ids).toString(),
     subTypeKey: subType.key,
     subTypeValue: subType.value,
     description
   };
-  return ajax.sendAPI('/targid/storage/namedsets/', data, 'POST');
+  return sendAPI('/targid/storage/namedsets/', data, 'POST');
 }
 
 export function deleteNamedSet(id:string) {
-  return ajax.sendAPI(`/targid/storage/namedset/${id}`, {}, 'DELETE');
+  return sendAPI(`/targid/storage/namedset/${id}`, {}, 'DELETE');
 }

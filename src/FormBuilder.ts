@@ -323,6 +323,12 @@ export interface IFormSelectDesc extends IFormElementDesc {
   };
 }
 
+export interface IFormSelectOption {
+  name: string;
+  value: string;
+  data: any;
+}
+
 /**
  * Add specific functions for select form element
  */
@@ -331,7 +337,7 @@ export interface IFormSelectElement extends IFormElement {
    * Update the options of a select form element using the given data array
    * @param data
    */
-  updateOptionElements(data:string[]|{name: string, value: string, data: any}[]):void;
+  updateOptionElements(data:string[]|IFormSelectOption[]):void;
 
   /**
    * Returns the selectedIndex. If the option `useSession` is enabled,

@@ -18,7 +18,7 @@ export class FormBuilder {
   /**
    * DOM node for the form itself
    */
-  private $node;
+  private $node: d3.Selection<any>;
 
   /**
    * Unique id for every form and all the form elements
@@ -36,7 +36,7 @@ export class FormBuilder {
    * Constructor
    * @param $parent Node that the form should be attached to
    */
-  constructor($parent: JQuery) {
+  constructor($parent: d3.Selection<any>) {
     this.$node = $parent.append('form');
   }
 

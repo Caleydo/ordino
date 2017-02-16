@@ -15,6 +15,14 @@ class DBViewBuilder(object):
   def __init__(self):
     self.v = DBView()
 
+  def clone(self, view):
+    self.v.idtype = view.idtype
+    self.v.query = view.query
+    self.v.queries = view.queries.copy()
+    self.v.columns = view.columns.copy()
+    self.v.replacements = list(view.replacements)
+    self.v.arguments = list(view.arguments)
+
   def idtype(self, idtype):
     self.v.idtype = idtype
     return self
@@ -25,6 +33,14 @@ class DBViewBuilder(object):
       self.v.query = query
     else:
       self.v.queries[label] = query
+    return self
+
+  def append(self, label, query=None):
+    if query is None:
+      query = label
+      self.v.query += query
+    else:
+      self.v.queries[label] += query
     return self
 
   def query_stats(self, query):

@@ -28,6 +28,26 @@ def get_data_api(database, view_name):
   return jsonify(r)
 
 
+@app.route('/<database>/<view_name>/filter')
+def get_filtered_data(database, view_name):
+  args = request.args
+  processed_args = dict()
+  where_clause = {}
+  for k,v in args.items():
+    if k.startswith('filter_'):
+      where_clause[k[7:]] = v
+    else:
+      processed_args[k] = v
+  where_clause = [k + ' = ' + (str(v) if type(v) == float or type(v) == int else '"' + str(v) + '"') for k,v in where_clause.items()]
+  processed_args['and_where'] = ' AND '.join(where_clause) if where_clause else ''
+  processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
+
+  r, view = db.get_data(database, view_name, None, processed_args)
+
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, view.idtype)
+  return jsonify(r)
+
 @app.route('/<database>/<view_name>/namedset/<namedset_id>')
 def get_namedset_data(database, view_name, namedset_id):
   import storage
@@ -151,6 +171,7 @@ def lookup(database, view_name):
 
   r = dict(total_count=r_total_count[0]['total_count'], items=r_items, items_per_page=limit)
   return jsonify(r)
+
 
 
 def create():

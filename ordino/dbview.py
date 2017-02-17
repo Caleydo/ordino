@@ -22,6 +22,7 @@ class DBViewBuilder(object):
     self.v.columns = view.columns.copy()
     self.v.replacements = list(view.replacements)
     self.v.arguments = list(view.arguments)
+    return self
 
   def idtype(self, idtype):
     self.v.idtype = idtype

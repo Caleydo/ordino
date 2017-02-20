@@ -413,7 +413,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
       const values = <IFormSelectOption[]>dependElements.map((d) => d.value);
       optionsData = options.optionsFnc(values);
 
-      const onDependentChange = ()=> {
+      const onDependentChange = () => {
         const values = <IFormSelectOption[]>dependElements.map((d) => d.value);
         this.updateOptionElements(options.optionsFnc(values));
         $select.property('selectedIndex', options.selectedIndex || 0);

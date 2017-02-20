@@ -32,9 +32,9 @@ def get_data_api(database, view_name):
 def get_filtered_data(database, view_name):
   args = request.args
   processed_args = dict()
-  extra_args=dict()
+  extra_args = dict()
   where_clause = {}
-  for k,v in args.lists():
+  for k, v in args.lists():
     if k.startswith('filter_'):
       where_clause[k[7:]] = v
     else:
@@ -45,12 +45,11 @@ def get_filtered_data(database, view_name):
     kp = k.replace('.', '_')
     if l == 1:  # single value
       extra_args[kp] = v[0]
-      return '{k} = :{kp}'.format(k=k,kp=kp)
+      return '{k} = :{kp}'.format(k=k, kp=kp)
     extra_args[kp] = v  # list value
-    return '{k} = ANY(:{kp})'.format(k=k,kp=kp)
+    return '{k} = ANY(:{kp})'.format(k=k, kp=kp)
 
-
-  where_clause = [to_clause(k,v) for k,v in where_clause.items()]
+  where_clause = [to_clause(k, v) for k, v in where_clause.items()]
   processed_args['and_where'] = ' AND '.join(where_clause) if where_clause else ''
   processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
 
@@ -59,6 +58,7 @@ def get_filtered_data(database, view_name):
   if request.args.get('_assignids', False):
     r = db.assign_ids(r, view.idtype)
   return jsonify(r)
+
 
 @app.route('/<database>/<view_name>/namedset/<namedset_id>')
 def get_namedset_data(database, view_name, namedset_id):
@@ -183,7 +183,6 @@ def lookup(database, view_name):
 
   r = dict(total_count=r_total_count[0]['total_count'], items=r_items, items_per_page=limit)
   return jsonify(r)
-
 
 
 def create():

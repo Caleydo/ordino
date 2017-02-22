@@ -96,7 +96,8 @@ module.exports = function (registry) {
     return System.import('./src/GeneIDTypeDetector');
   }, {
     'name': 'IDTypeDetector',
-    'factory': 'geneIDTypeDetector'
+    'factory': 'geneIDTypeDetector',
+    'idType': 'Ensembl'
   });
 
   // generator-phovea:end

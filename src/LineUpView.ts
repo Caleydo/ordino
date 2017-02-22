@@ -5,6 +5,7 @@ import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from './View';
 import LineUp from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
 import {createStackDesc, ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
+import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
 import {IBoxPlotData} from 'lineupjs/src/model/BoxPlotColumn';
 import {LocalDataProvider} from 'lineupjs/src/provider';
 import * as d3 from 'd3';
@@ -171,7 +172,7 @@ export abstract class ALineUpView2 extends AView {
    * Stores the ranking data when collapsing columns on modeChange()
    * @type {any}
    */
-  private dump: any = null;
+  private dump: Map<string, number|boolean> = null;
 
   /**
    * DOM element with message when no data is available
@@ -269,14 +270,19 @@ export abstract class ALineUpView2 extends AView {
     }
 
     // collapse all columns
-    const data = this.lineup.data;
+    const data = <LocalDataProvider>this.lineup.data;
 
     if (mode === EViewMode.FOCUS) {
       if (this.dump) {
         const r = data.getRankings()[0];
         r.children.forEach((c) => {
-          if (c.id in this.dump) {
-            c.setWidth(this.dump[c.id]);
+          if (!this.dump.has(c.id)) {
+            return;
+          }
+          if (c instanceof CompositeColumn) {
+            c.setCompressed(false);
+          } else {
+            c.setWidth(<number>this.dump.get(c.id));
           }
         });
       }
@@ -287,18 +293,21 @@ export abstract class ALineUpView2 extends AView {
       const s = r.getSortCriteria();
       const labelColumn = r.children.filter((c) => c.desc.type === 'string')[0];
 
-      this.dump = {};
+      this.dump = new Map<string, number|boolean>();
       r.children.forEach((c) => {
         if (c === labelColumn ||
           c === s.col ||
           c.desc.type === 'rank' ||
           c.desc.type === 'selection' ||
-          c.desc.column === 'id' // = Ensembl column
+          (<any>c.desc).column === 'id' // = Ensembl column
         ) {
           // keep these columns
+        } else if (c instanceof CompositeColumn && !c.getCompressed()) {
+          c.setCompressed(true);
+          this.dump.set(c.id, true);
         } else {
-          this.dump[c.id] = c.getWidth();
-          c.setWidth(0);
+          this.dump.set(c.id, c.getWidth());
+          c.hide();
         }
       });
     }

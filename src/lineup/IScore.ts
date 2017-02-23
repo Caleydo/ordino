@@ -19,6 +19,10 @@ export interface IScore<T> {
   compute(ids: RangeLike, idtype: IDType): Promise<IScoreRow<T>[]>;
 }
 
+export interface IScoreParam {
+  [key: string]: any;
+}
+
 export default IScore;
 
 export class AScoreAccessorProxy<T> {

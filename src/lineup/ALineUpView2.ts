@@ -3,6 +3,7 @@
  */
 import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from '../View';
 import LineUp, {ILineUpConfig} from 'lineupjs/src/lineup';
+import Column from 'lineupjs/src/model/Column';
 import {deriveColors} from 'lineupjs/src/';
 import {ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
 import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
@@ -20,6 +21,7 @@ import {LineUpRankingButtons} from './LineUpRankingButtons';
 import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout} from './desc';
+import {addScore as addScoreCmd} from './scorecmds';
 
 export abstract class ALineUpView2 extends AView {
 
@@ -41,8 +43,11 @@ export abstract class ALineUpView2 extends AView {
         rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description) => {
           this.saveNamedSet(order, name, description);
         });
-        rb.on(LineUpRankingButtons.ADD_SCORE_COLUMN, (event, scoreImpl, scorePlugin) => {
-          this.addScoreColumn(scoreImpl, scorePlugin);
+        rb.on(LineUpRankingButtons.ADD_SCORE_COLUMN, (event, scoreImpl) => {
+          this.addScoreColumn(scoreImpl);
+        });
+        rb.on(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, (event, scoreId: string, params: any) => {
+          this.pushTrackedScoreColumn(scoreId, params);
         });
         return rb;
       }
@@ -267,7 +272,7 @@ export abstract class ALineUpView2 extends AView {
     return stringCol(this.getSelectionColumnId(id), label, true, 50, id);
   }
 
-  protected addColumn(colDesc: any, loadColumnData: (id: number) => Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false) {
+  protected addColumn(colDesc: any, loadColumnData: (id: number) => Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false): { col: Column, loaded: Promise<Column>} {
     const ranking = this.lineup.data.getLastRanking();
     const colors = this.getAvailableColumnColors(ranking);
 
@@ -287,7 +292,7 @@ export abstract class ALineUpView2 extends AView {
       });
 
     // success
-    loadPromise
+    const loaded = loadPromise
     // map selection rows
       .then((rows: IScoreRow<any>[]) => {
         if (id !== -1) {
@@ -330,9 +335,10 @@ export abstract class ALineUpView2 extends AView {
         }
         col.setLoaded(true);
         this.lineup.update();
+        return col;
       });
 
-    return col;
+    return {col, loaded};
   }
 
   protected mapSelectionRows(rows: IScoreRow<any>[]) {
@@ -357,20 +363,30 @@ export abstract class ALineUpView2 extends AView {
     return Promise.resolve([]);
   }
 
-  /**
-   *
-   * @param scoreImpl
-   * @param scorePlugin
-   */
-  protected addScoreColumn(scoreImpl: IScore<any>, scorePlugin: RangeLike) {
-    const colDesc = scoreImpl.createDesc();
-    colDesc._score = scorePlugin;
+  private addScoreColumn(score: IScore<any>) {
+    const colDesc = score.createDesc();
+    // flag that it is a score
+    colDesc._score = true;
 
-    const loadScoreColumn = (id) => {
-      return scoreImpl.compute([], this.idType);
+    const loadScoreColumn = () => {
+      return score.compute([], this.idType);
     };
+    return this.addColumn(colDesc, loadScoreColumn);
+  }
 
-    this.addColumn(colDesc, loadScoreColumn);
+  addTrackedScoreColumn(score: IScore<any>) {
+    return this.withoutTracking(() => this.addScoreColumn(score));
+  }
+
+  pushTrackedScoreColumn(scoreId: string, params: any) {
+    return this.context.graph.push(addScoreCmd(this.context.ref, scoreId, params));
+  }
+
+  removeTrackedScoreColumn(columnId: string) {
+    return this.withoutTracking((lineup) => {
+      const column = lineup.data.find(columnId);
+      return column.removeMe();
+    });
   }
 
   destroy() {
@@ -479,10 +495,11 @@ export abstract class ALineUpView2 extends AView {
     this.updateLineUpStats();
   }
 
-  protected withoutTracking(f: (lineup: any) => void) {
-    cmds.untrack(this.context.ref)
-      .then(f.bind(this, this.lineup))
-      .then(cmds.clueify.bind(cmds, this.context.ref, this.context.graph));
+  protected async withoutTracking<T>(f: (lineup: any) => T): Promise<T> {
+    await cmds.untrack(this.context.ref);
+    const r = f(this.lineup);
+    await cmds.clueify(this.context.ref, this.context.graph);
+    return r;
   }
 
   /**

@@ -14,7 +14,6 @@ import CategoricalNumberColumn from 'lineupjs/src/model/CategoricalNumberColumn'
 import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
 import Ranking from 'lineupjs/src/model/Ranking';
 import Column from 'lineupjs/src/model/Column';
-import ALineUpView from './ALineUpView';
 
 
 //TODO better solution
@@ -93,12 +92,12 @@ async function setColumnImpl(inputs:IObjectRef<any>[], parameter:any) {
 
 export interface IViewProvider {
   data: ADataProvider;
-  getInstance(): { updateLineUpStats(); };
+  getInstance(): { updateLineUpStats()};
 }
 
 export function setColumn(provider:IObjectRef<IViewProvider>, rid:number, path:string, prop:string, value:any) {
   // assert ALineUpView and update the stats
-  (<ALineUpView>provider.value.getInstance()).updateLineUpStats();
+  provider.value.getInstance().updateLineUpStats();
 
   return action(meta('Set Property ' + prop, cat.layout, op.update), 'lineupSetColumn', setColumnImpl, [provider], {
     rid,

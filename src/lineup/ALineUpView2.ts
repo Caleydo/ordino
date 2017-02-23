@@ -5,6 +5,7 @@ import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from '../View';
 import LineUp, {ILineUpConfig} from 'lineupjs/src/lineup';
 import {deriveColors} from 'lineupjs/src/';
 import {ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
+import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
 import ValueColumn from 'lineupjs/src/model/ValueColumn';
 import NumberColumn from 'lineupjs/src/model/NumberColumn';
 import {IBoxPlotData} from 'lineupjs/src/model/BoxPlotColumn';

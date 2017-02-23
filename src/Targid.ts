@@ -608,7 +608,11 @@ export class Targid {
   }
 
   private replaceView(existingView:IObjectRef<ViewWrapper>, viewId:string, idtype:IDType, selection:Range, options?) {
-    return this.graph.push(replaceView(this.ref, existingView, viewId, idtype, selection, options));
+    return this.graph.push(replaceView(this.ref, existingView, viewId, idtype, selection, options))
+      .then((r) => {
+        this.update();
+        return r;
+      });
   }
 
   /**

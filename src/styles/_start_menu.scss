@@ -230,7 +230,7 @@
         }
       }
 
-      label {
+      label[for^="speciesSelector"] {
         cursor: pointer;
         margin-right: 1em;
         padding: 0.6em .25em .6em;
@@ -299,6 +299,10 @@
 
       input[type=radio] {
         display: none;
+      }
+
+      .startMenuSearch {
+        margin-top: 10px;
       }
 
     }

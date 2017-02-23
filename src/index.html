@@ -23,7 +23,8 @@
 <script>
   (function() {
     var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-    if (!isChrome) {
+    var isFirefox = /Firefox/.test(navigator.userAgent);
+    if (!isChrome && !isFirefox) {
       alert('This application was designed to be used in Google Chrome.\nRunning the application in other browsers might result in performance issues or other misbehavior.');
     }
   })();

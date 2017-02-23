@@ -120,7 +120,7 @@ export class LineUpRankingButtons extends EventHandler {
       });
 
     const ordinoScores = listPlugins('ordinoScore').filter((d: any) => d.idtype === this.idType.id);
-    $ul.selectAll('li.oscore').data(scores)
+    $ul.selectAll('li.oscore').data(ordinoScores)
       .enter()
       .append('li').classed('oscore', true)
       .append('a').attr('href', '#').text((d) => d.name)

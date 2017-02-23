@@ -15,22 +15,31 @@ export const CMD_REMOVE_SCORE = 'ordinoRemoveScore';
 
 export interface IViewProvider {
   getInstance(): {
-    addTrackedScoreColumn(score: IScore<any>): { col: Column, loaded: Promise<Column>};
+    addTrackedScoreColumn(score: IScore<any>): Promise<{ col: Column, loaded: Promise<Column>}>;
     removeTrackedScoreColumn(columnId: string);
   };
 }
 
-async function addScoreImpl(inputs:IObjectRef<IViewProvider>[], parameter:any) {
+async function addScoreLogic(waitForScore: boolean, inputs:IObjectRef<IViewProvider>[], parameter:any) {
   const scoreId: string = parameter.id;
   const plugin = await getPlugin(EXTENSION_POINT_SCORE_IMPL, scoreId).load();
   const view = await inputs[0].v.then((vi) => vi.getInstance());
   const score: IScore<any> = plugin.factory(parameter.params);
 
-  const col = await view.addTrackedScoreColumn(score).loaded;
+  const r = await view.addTrackedScoreColumn(score);
+  const col = waitForScore ? await r.loaded : r.col;
 
   return {
     inverse: removeScore(inputs[0], scoreId, parameter.params, col.id)
   };
+}
+
+function addScoreImpl(inputs:IObjectRef<IViewProvider>[], parameter:any) {
+  return addScoreLogic(true, inputs, parameter);
+}
+
+async function addScoreAsync(inputs:IObjectRef<IViewProvider>[], parameter:any) {
+  return addScoreLogic(false, inputs, parameter);
 }
 
 
@@ -50,6 +59,12 @@ export function addScore(provider:IObjectRef<IViewProvider>, scoreId: string, pa
     id: scoreId,
     params
   });
+}
+
+export async function pushScoreAsync(graph: ProvenanceGraph, provider:IObjectRef<IViewProvider>, scoreId: string, params: any) {
+  const actionParams = {id: scoreId, params};
+  const result = await addScoreAsync([provider], actionParams);
+  return graph.pushWithResult(action(meta('Add Score', cat.data, op.create), CMD_ADD_SCORE, addScoreImpl, [provider], actionParams), result);
 }
 
 export function removeScore(provider:IObjectRef<IViewProvider>, scoreId: string, params: any, columnId: string) {

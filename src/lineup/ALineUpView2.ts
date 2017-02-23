@@ -21,7 +21,7 @@ import {LineUpRankingButtons} from './LineUpRankingButtons';
 import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout} from './desc';
-import {addScore as addScoreCmd} from './scorecmds';
+import {pushScoreAsync} from './scorecmds';
 
 export abstract class ALineUpView2 extends AView {
 
@@ -314,16 +314,13 @@ export abstract class ALineUpView2 extends AView {
         if (colDesc.type === 'number') {
           const ncol = <NumberColumn>col;
           if (!(colDesc.constantDomain)) { //create a dynamic range if not fixed
-            colDesc.domain = d3.extent(<number[]>(Array.from(scores.values())));
-          }
-          // add selection columns without tracking changes
-          if (withoutTracking) {
-            this.withoutTracking(() => {
-              ncol.setMapping(new ScaleMappingFunction(colDesc.domain));
-            });
-            // however, track changes in score columns
-          } else {
-            ncol.setMapping(new ScaleMappingFunction(colDesc.domain));
+            const domain = d3.extent(<number[]>(Array.from(scores.values())));
+            //HACK by pass the setMapping function and set it inplace
+            const ori = <ScaleMappingFunction>(<any>ncol).original;
+            const current = <ScaleMappingFunction>(<any>ncol).mapping;
+            colDesc.domain = domain;
+            ori.domain = domain;
+            current.domain = domain;
           }
         } else if (colDesc.type === 'boxplot') {
           //HACK we know that the domain of the description is just referenced, so we can update it by changing values!
@@ -379,7 +376,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   pushTrackedScoreColumn(scoreId: string, params: any) {
-    return this.context.graph.push(addScoreCmd(this.context.ref, scoreId, params));
+    return pushScoreAsync(this.context.graph, this.context.ref, scoreId, params);
   }
 
   removeTrackedScoreColumn(columnId: string) {

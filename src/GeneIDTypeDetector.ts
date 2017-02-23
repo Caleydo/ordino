@@ -18,7 +18,7 @@ function detectIDType(data: any[], accessor: (row: any) => string, sampleSize: n
       continue; //skip empty samples
     }
 
-    if(v.indexOf('ENSG') >= 0) {
+    if(v.indexOf('ENS') >= 0 || v.indexOf('LRG') >= 0) {
       ++foundIDTypes;
     }
     ++validSize;

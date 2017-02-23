@@ -77,7 +77,6 @@ class WrappedSession(object):
     return [r['_index'] for r in result]
 
   def __enter__(self):
-
     return self
 
   def __exit__(self, exc_type, exc_val, exc_tb):
@@ -115,7 +114,7 @@ def _handle_aggregated_score(config, replacements, args):
   return replacements
 
 
-def get_data(database, view_name, replacements=None, arguments=None):
+def get_data(database, view_name, replacements=None, arguments=None, extra_sql_argument=None):
   replacements = replacements or {}
   arguments = arguments or {}
   config, engine = resolve(database)
@@ -129,6 +128,9 @@ def get_data(database, view_name, replacements=None, arguments=None):
   if view.arguments is not None:
     for arg in view.arguments:
       kwargs[arg] = arguments[arg]
+
+  if extra_sql_argument is not None:
+    kwargs.update(extra_sql_argument)
 
   replace = {}
   if view.replacements is not None:

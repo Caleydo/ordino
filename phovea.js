@@ -8,38 +8,6 @@
 module.exports = function (registry) {
   //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
   // generator-phovea:begin
-  registry.push('application', 'ordino', function () {
-    return System.import('./src/');
-  }, {
-    'name': 'Target Discovery Platform'
-  });
-
-  registry.push('targidView', 'startMenu', function () {
-    return System.import('./src/StartMenu');
-  }, {
-    'name': 'startMenu',
-    'factory': 'create',
-    'idtype': 'none',
-    'selection': 'none'
-  });
-
-  registry.push('targidView', 'login_first', function () {
-    return System.import('./src/LoginFirstView');
-  }, {
-    'name': 'Login First',
-    'factory': 'create',
-    'idtype': 'none',
-    'selection': 'none'
-  });
-
-  registry.push('targidView', 'welcome', function () {
-    return System.import('./src/WelcomeView');
-  }, {
-    'name': 'Welcome',
-    'factory': 'create',
-    'idtype': 'none',
-    'selection': 'none'
-  });
 
   registry.push('actionFactory', 'ordino', function () {
     return System.import('./src/Targid');
@@ -48,12 +16,10 @@ module.exports = function (registry) {
     'creates': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
-  registry.push('actionFactory', 'ordino', function () {
-    return System.import('./src/LineUpCommands');
-  }, {
-    'factory': 'createCmd',
-    'creates': '(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)'
-  });
+  registry.push('actionFactory', 'ordino', function() { return System.import('./src/lineup/cmds'); }, {
+  'factory': 'createCmd',
+  'creates': '(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)'
+ });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
     return System.import('./src/Targid');
@@ -62,12 +28,10 @@ module.exports = function (registry) {
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
-  registry.push('actionFactory', 'ordino', function () {
-    return System.import('./src/View');
-  }, {
-    'factory': 'createCmd',
-    'creates': '(targidSetParameter|targidSetSelection)'
-  });
+  registry.push('actionFactory', 'ordinoParameter', function() { return System.import('./src/View'); }, {
+  'factory': 'createCmd',
+  'creates': '(targidSetParameter|targidSetSelection)'
+ });
 
   registry.push('actionCompressor', 'targidCompressSetParameter', function () {
     return System.import('./src/View');

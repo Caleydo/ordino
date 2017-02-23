@@ -28,6 +28,38 @@ def get_data_api(database, view_name):
   return jsonify(r)
 
 
+@app.route('/<database>/<view_name>/filter')
+def get_filtered_data(database, view_name):
+  args = request.args
+  processed_args = dict()
+  extra_args = dict()
+  where_clause = {}
+  for k, v in args.lists():
+    if k.startswith('filter_'):
+      where_clause[k[7:]] = v
+    else:
+      processed_args[k] = v[0] if len(v) == 1 else v
+
+  def to_clause(k, v):
+    l = len(v)
+    kp = k.replace('.', '_')
+    if l == 1:  # single value
+      extra_args[kp] = v[0]
+      return '{k} = :{kp}'.format(k=k, kp=kp)
+    extra_args[kp] = v  # list value
+    return '{k} = ANY(:{kp})'.format(k=k, kp=kp)
+
+  where_clause = [to_clause(k, v) for k, v in where_clause.items()]
+  processed_args['and_where'] = ' AND '.join(where_clause) if where_clause else ''
+  processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
+
+  r, view = db.get_data(database, view_name, None, processed_args, extra_args)
+
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, view.idtype)
+  return jsonify(r)
+
+
 @app.route('/<database>/<view_name>/namedset/<namedset_id>')
 def get_namedset_data(database, view_name, namedset_id):
   import storage

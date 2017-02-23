@@ -18,25 +18,25 @@ export class FormBuilder {
   /**
    * DOM node for the form itself
    */
-  private $node;
+  private $node: d3.Selection<any>;
 
   /**
    * Unique id for every form and all the form elements
    * @type {string}
    */
-  private formId = randomId();
+  private readonly formId = randomId();
 
   /**
    * Map of all appended form elements with the element id as key
    * @type {d3.Map<IFormElement>}
    */
-  private elements:d3.Map<IFormElement> = d3.map<IFormElement>();
+  private readonly elements = new Map<string, IFormElement>();
 
   /**
    * Constructor
    * @param $parent Node that the form should be attached to
    */
-  constructor($parent) {
+  constructor($parent: d3.Selection<any>) {
     this.$node = $parent.append('form');
   }
 
@@ -82,7 +82,7 @@ export class FormBuilder {
    * @param id
    * @returns {IFormElement}
    */
-  getElementById(id:string):IFormElement {
+  getElementById(id:string) {
     return this.elements.get(id);
   }
 
@@ -90,9 +90,9 @@ export class FormBuilder {
    * Returns an object with the form element id as key and the current data as value
    * @returns {{}}
    */
-  getElementData():any {
-    const r = {};
-    this.elements.forEach((key, el) => {
+  getElementData():{[key: string]: any} {
+    const r:{[key: string]: any} = {};
+    this.elements.forEach((el, key) => {
       r[key] = (el.value !== null && el.value.data !== undefined) ? el.value.data : el.value;
     });
     return r;
@@ -102,9 +102,9 @@ export class FormBuilder {
    * Returns an object with the form element id as key and the current form element value
    * @returns {{}}
    */
-  getElementValues():any {
-    const r = {};
-    this.elements.forEach((key, el) => {
+  getElementValues():{[key: string]: any} {
+    const r:{[key: string]: any}= {};
+    this.elements.forEach((el, key) => {
       r[key] = el.value.value || el.value;
     });
     return r;
@@ -208,7 +208,7 @@ interface IFormElement extends IEventHandler {
    * Set the visibility of an form element
    * @param visible
    */
-  setVisible(visible:boolean);
+  setVisible(visible:boolean): void;
 }
 
 /**
@@ -216,9 +216,9 @@ interface IFormElement extends IEventHandler {
  */
 abstract class AFormElement extends EventHandler implements IFormElement {
 
-  public id;
+  id: string;
 
-  protected $node;
+  protected $node: d3.Selection<any>;
 
   /**
    * Constructor
@@ -226,7 +226,7 @@ abstract class AFormElement extends EventHandler implements IFormElement {
    * @param $parent
    * @param desc
    */
-  constructor(public formBuilder:FormBuilder, $parent, protected desc:IFormElementDesc) {
+  constructor(public readonly formBuilder:FormBuilder, $parent: d3.Selection<any>, protected readonly desc:IFormElementDesc) {
     super();
 
     this.id = desc.id;
@@ -236,7 +236,7 @@ abstract class AFormElement extends EventHandler implements IFormElement {
    * Set the visibility of an form element
    * @param visible
    */
-  public setVisible(visible:boolean) {
+  setVisible(visible:boolean) {
     this.$node.classed('hidden', !visible);
   }
 
@@ -246,19 +246,14 @@ abstract class AFormElement extends EventHandler implements IFormElement {
    * @param $node
    * @param attributes Plain JS object with key as attribute name and the value as attribute value
    */
-  protected setAttributes($node, attributes) {
+  protected setAttributes($node: d3.Selection<any>, attributes: {[key: string]: any}) {
     if(!attributes) {
       return;
     }
 
-    for(const key in attributes) {
-      // skip loop if the property is from prototype
-      if(!attributes.hasOwnProperty(key)) {
-        continue;
-      }
-
+    Object.keys(attributes).forEach((key) => {
       $node.attr((key === 'clazz') ? 'class' : key, attributes[key]);
-    }
+    });
   }
 
   protected handleShowIf() {
@@ -297,6 +292,34 @@ abstract class AFormElement extends EventHandler implements IFormElement {
   }
 }
 
+export interface IFormSelectOption {
+  name: string;
+  value: string;
+  data: any;
+}
+
+
+export interface IFormSelectOptions {
+  /**
+   * Custom on change function that is executed when the selection has changed
+   * @param selection
+   * @param formElement
+   */
+  onChange?: (selection:IFormSelectOption, formElement:IFormElement) => any;
+  /**
+   * Data for the options elements of the select
+   */
+  optionsData?: string[]|IFormSelectOption[];
+  /**
+   * Function to generate dynamic options based on the selection of the depending form element
+   * @param selection selection of the depending form element (see `dependsOn` property)
+   */
+  optionsFnc?: (selection:IFormSelectOption[]) => string[]|IFormSelectOption[];
+  /**
+   * Index of the selected option; this option overrides the selected index from the `useSession` property
+   */
+  selectedIndex?: number;
+}
 
 /**
  * Add specific options for select form elements
@@ -305,28 +328,9 @@ export interface IFormSelectDesc extends IFormElementDesc {
   /**
    * Additional options
    */
-  options?: {
-    /**
-     * Custom on change function that is executed when the selection has changed
-     * @param selection
-     * @param formElement
-     */
-    onChange?: (selection:{name:string, value:string, data:any}, formElement:IFormElement) => any,
-    /**
-     * Data for the options elements of the select
-     */
-    optionsData?: string[]|{name: string, value: string, data: any}[],
-    /**
-     * Function to generate dynamic options based on the selection of the depending form element
-     * @param selection selection of the depending form element (see `dependsOn` property)
-     */
-    optionsFnc?: (selection:{name:string, value:string, data:any}) => string[]|{name: string, value: string, data: any}[],
-    /**
-     * Index of the selected option; this option overrides the selected index from the `useSession` property
-     */
-    selectedIndex?: number
-  };
+  options?: IFormSelectOptions;
 }
+
 
 /**
  * Add specific functions for select form element
@@ -336,7 +340,7 @@ export interface IFormSelectElement extends IFormElement {
    * Update the options of a select form element using the given data array
    * @param data
    */
-  updateOptionElements(data:string[]|{name: string, value: string, data: any}[]):void;
+  updateOptionElements(data:string[]|IFormSelectOption[]):void;
 
   /**
    * Returns the selectedIndex. If the option `useSession` is enabled,
@@ -351,7 +355,7 @@ export interface IFormSelectElement extends IFormElement {
  */
 class FormSelect extends AFormElement implements IFormSelectElement {
 
-  private $select;
+  private $select: d3.Selection<any>;
 
   /**
    * Constructor
@@ -359,7 +363,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * @param $parent
    * @param desc
    */
-  constructor(public formBuilder:FormBuilder, $parent, protected desc:IFormSelectDesc) {
+  constructor(formBuilder:FormBuilder, $parent: d3.Selection<any>, protected readonly desc:IFormSelectDesc) {
     super(formBuilder, $parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
@@ -387,7 +391,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
 
     // propagate change action with the data of the selected option
     this.$select.on('change.propagate', () => {
-      this.fire('change', d3.select(this.$select.node().selectedOptions[0]).datum(), this.$select);
+      this.fire('change', d3.select((<HTMLSelectElement>this.$select.node()).selectedOptions[0]).datum(), this.$select);
     });
   }
 
@@ -396,7 +400,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * @param $select
    * @param options
    */
-  private handleOptions($select, options) {
+  private handleOptions($select: d3.Selection<any>, options: IFormSelectOptions) {
     if(!options) {
       return;
     }
@@ -413,18 +417,20 @@ class FormSelect extends AFormElement implements IFormSelectElement {
     if(this.desc.dependsOn && options.optionsFnc) {
       const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
 
+      const values = <IFormSelectOption[]>dependElements.map((d) => d.value);
+      optionsData = options.optionsFnc(values);
+
+      const onDependentChange = () => {
+        const values = <IFormSelectOption[]>dependElements.map((d) => d.value);
+        this.updateOptionElements(options.optionsFnc(values));
+        $select.property('selectedIndex', options.selectedIndex || 0);
+
+        // propagate that options has changed
+        this.fire('change', this.value, $select);
+      };
+
       dependElements.forEach((depElem) => {
-        const values = dependElements.map((d) => d.value);
-        optionsData = options.optionsFnc(values);
-
-        depElem.on('change', (evt, value) => {
-          const values = dependElements.map((d) => d.value);
-          this.updateOptionElements(options.optionsFnc(values));
-          $select.property('selectedIndex', options.selectedIndex || 0);
-
-          // propagate that options has changed
-          this.fire('change', this.value, $select);
-        });
+        depElem.on('change', onDependentChange);
       });
     }
 
@@ -438,7 +444,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
       }
 
       $select.on('change.storeInSession', () => {
-        session.store(this.id + '_selectedIndex', $select.node().selectedIndex);
+        session.store(this.id + '_selectedIndex', (<HTMLSelectElement>$select.node()).selectedIndex);
       });
     }
 
@@ -466,20 +472,18 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * Update the options of a select form element using the given data array
    * @param data
    */
-  updateOptionElements(data) {
-    data = data.map((d) => {
-      return {
-        name: (d.name) ? d.name : d,
-        value: (d.value) ? d.value : d,
-        data: (d.data) ? d.data : d
-      };
+  updateOptionElements(data: (string|IFormSelectOption)[]) {
+    const options: IFormSelectOption[] = data.map((d) => {
+      if (typeof d === 'string') {
+        return {name: d, value: d, data: d};
+      }
+      return <IFormSelectOption>d;
     });
 
-    const $options = this.$select.selectAll('option').data(data);
+    const $options = this.$select.selectAll('option').data(options);
     $options.enter().append('option');
 
-    $options
-      .attr('value', (d) => d.value)
+    $options.attr('value', (d) => d.value)
       .html((d) => d.name);
 
     $options.exit().remove();
@@ -490,7 +494,7 @@ class FormSelect extends AFormElement implements IFormSelectElement {
    * @returns {string|{name: string, value: string, data: any}|null}
    */
   get value() {
-    const option = d3.select(this.$select.node().selectedOptions[0]);
+    const option = d3.select((<HTMLSelectElement>this.$select.node()).selectedOptions[0]);
     return (option.size() > 0) ? option.datum() : null;
   }
 
@@ -535,7 +539,7 @@ export interface IFormSelect2 extends IFormSelectDesc {
  */
 class FormSelect2 extends AFormElement {
 
-  private $select; // jQuery
+  private $select: JQuery;
 
   /**
    * Constructor
@@ -584,7 +588,7 @@ class FormSelect2 extends AFormElement {
    * @param options
    * @returns {JQuery}
    */
-  private buildSelect2($select, options) {
+  private buildSelect2($select: d3.Selection<any>, options?) {
     if(!options) {
       return;
     }
@@ -707,7 +711,7 @@ class FormSelect2 extends AFormElement {
       r.text = v.name || v.text;
     }
 
-    this.$select.val(r).trigger('change');
+    this.$select.val(<any>r).trigger('change');
   }
 
 }
@@ -735,7 +739,7 @@ export declare type IFormInputTextElement = IFormElement;
  */
 class FormInputText extends AFormElement implements IFormInputTextElement {
 
-  private $input;
+  private $input: d3.Selection<any>;
 
   /**
    * Constructor
@@ -743,7 +747,7 @@ class FormInputText extends AFormElement implements IFormInputTextElement {
    * @param $parent
    * @param desc
    */
-  constructor(public formBuilder: FormBuilder, $parent, protected desc:IFormInputTextDesc) {
+  constructor(formBuilder: FormBuilder, $parent, protected readonly desc:IFormInputTextDesc) {
     super(formBuilder, $parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
@@ -779,7 +783,7 @@ class FormInputText extends AFormElement implements IFormInputTextElement {
    * @returns {string}
    */
   get value() {
-    return this.$input.node().value;
+    return (<HTMLInputElement>this.$input.node()).value;
   }
 
   /**
@@ -787,6 +791,6 @@ class FormInputText extends AFormElement implements IFormInputTextElement {
    * @param v
    */
   set value(v:string) {
-    this.$input.node().value = v;
+    (<HTMLInputElement>this.$input.node()).value = v;
   }
 }

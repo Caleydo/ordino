@@ -1,7 +1,3 @@
-export interface IIDTypeDetector {
-  detectIDType: (data: any[], accessor: (row: any) => string, sampleSize: number) => Promise<number>|number;
-}
-
 function detectIDType(data: any[], accessor: (row: any) => string, sampleSize: number) : number {
   const testSize = Math.min(data.length, sampleSize);
   if (testSize <= 0) {
@@ -18,7 +14,7 @@ function detectIDType(data: any[], accessor: (row: any) => string, sampleSize: n
       continue; //skip empty samples
     }
 
-    if(v.indexOf('ENS') >= 0 || v.indexOf('LRG') >= 0) {
+    if(v.indexOf('ENS') === 0 || v.indexOf('LRG') === 0) {
       ++foundIDTypes;
     }
     ++validSize;
@@ -27,7 +23,7 @@ function detectIDType(data: any[], accessor: (row: any) => string, sampleSize: n
   return foundIDTypes / validSize;
 }
 
-export function geneIDTypeDetector(): IIDTypeDetector {
+export function geneIDTypeDetector() {
   return {
     detectIDType
   };

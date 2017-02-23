@@ -78,6 +78,7 @@ export abstract class ALineUpView2 extends AView {
 
     this.$node.classed('lineup', true);
 
+    // hack in for providing the data provider within the graph
     this.context.ref.value.data = new Promise((resolve) => {
       this.resolver = resolve;
     });

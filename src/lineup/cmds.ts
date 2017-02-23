@@ -5,6 +5,8 @@
 
 import {IObjectRef, action, meta, cat, op, ICmdFunction, ProvenanceGraph} from 'phovea_core/src/provenance';
 import NumberColumn, {createMappingFunction} from 'lineupjs/src/model/NumberColumn';
+import ADataProvider from 'lineupjs/src/provider/ADataProvider';
+import LineUp from 'lineupjs/src/lineup';
 import StackColumn from 'lineupjs/src/model/StackColumn';
 import ScriptColumn from 'lineupjs/src/model/ScriptColumn';
 import LinkColumn from 'lineupjs/src/model/LinkColumn';
@@ -14,13 +16,14 @@ import Ranking from 'lineupjs/src/model/Ranking';
 import Column from 'lineupjs/src/model/Column';
 import ALineUpView from './ALineUpView';
 
+
 //TODO better solution
 let ignoreNext:string = null;
 
 async function addRankingImpl(inputs:IObjectRef<any>[], parameter:any) {
-  const p = await Promise.resolve((await inputs[0].v).data);
-  const index = parameter.index;
-  let ranking;
+  const p: ADataProvider = await Promise.resolve((await inputs[0].v).data);
+  const index: number = parameter.index;
+  let ranking: Ranking;
   if (parameter.dump) { //add
     ignoreNext = 'addRanking';
     p.insertRanking(p.restoreRanking(parameter.dump), index);
@@ -46,7 +49,7 @@ function toSortObject(v) {
 }
 
 async function setRankingSortCriteriaImpl(inputs:IObjectRef<any>[], parameter:any) {
-  const p = await Promise.resolve((await inputs[0].v).data);
+  const p: ADataProvider = await Promise.resolve((await inputs[0].v).data);
   const ranking = p.getRankings()[parameter.rid];
   const bak = toSortObject(ranking.getSortCriteria());
   ignoreNext = 'sortCriteriaChanged';
@@ -66,12 +69,12 @@ export function setRankingSortCriteria(provider:IObjectRef<any>, rid:number, val
 }
 
 async function setColumnImpl(inputs:IObjectRef<any>[], parameter:any) {
-  const p = await Promise.resolve((await inputs[0].v).data);
+  const p: ADataProvider = await Promise.resolve((await inputs[0].v).data);
   const ranking = p.getRankings()[parameter.rid];
   const prop = parameter.prop[0].toUpperCase() + parameter.prop.slice(1);
 
   let bak;
-  let source = ranking;
+  let source: Column|Ranking = ranking;
   if (parameter.path) {
     source = ranking.findByPath(parameter.path);
   }
@@ -88,7 +91,12 @@ async function setColumnImpl(inputs:IObjectRef<any>[], parameter:any) {
   };
 }
 
-export function setColumn(provider:IObjectRef<any>, rid:number, path:string, prop:string, value:any) {
+export interface IViewProvider {
+  data: ADataProvider;
+  getInstance(): { updateLineUpStats(); };
+}
+
+export function setColumn(provider:IObjectRef<IViewProvider>, rid:number, path:string, prop:string, value:any) {
   // assert ALineUpView and update the stats
   (<ALineUpView>provider.value.getInstance()).updateLineUpStats();
 
@@ -100,14 +108,14 @@ export function setColumn(provider:IObjectRef<any>, rid:number, path:string, pro
   });
 }
 
-async function addColumnImpl(inputs:IObjectRef<any>[], parameter:any) {
-  const p = await Promise.resolve((await inputs[0].v).data);
-  let ranking = p.getRankings()[parameter.rid];
+async function addColumnImpl(inputs:IObjectRef<IViewProvider>[], parameter:any) {
+  const p: ADataProvider = await Promise.resolve((await inputs[0].v).data);
+  let ranking: Ranking|CompositeColumn = p.getRankings()[parameter.rid];
 
-  const index = parameter.index;
+  const index: number = parameter.index;
   let bak;
   if (parameter.path) {
-    ranking = ranking.findByPath(parameter.path);
+    ranking = <CompositeColumn>ranking.findByPath(parameter.path);
   }
   if (parameter.dump) { //add
     ignoreNext = 'addColumn';
@@ -122,7 +130,7 @@ async function addColumnImpl(inputs:IObjectRef<any>[], parameter:any) {
   };
 }
 
-export function addColumn(provider:IObjectRef<any>, rid:number, path:string, index:number, dump:any) {
+export function addColumn(provider:IObjectRef<IViewProvider>, rid:number, path:string, index:number, dump:any) {
   return action(meta(dump ? 'Add Column' : 'Remove Column', cat.layout, dump ? op.create : op.remove), 'lineupAddColumn', addColumnImpl, [provider], {
     rid,
     path,
@@ -131,7 +139,7 @@ export function addColumn(provider:IObjectRef<any>, rid:number, path:string, ind
   });
 }
 
-export function createCmd(id):ICmdFunction {
+export function createCmd(id: string):ICmdFunction {
   switch (id) {
     case 'lineupAddRanking':
       return addRankingImpl;
@@ -166,21 +174,21 @@ function delayedCall(callback:(old:any, newValue:any) => void, timeToDelay = 100
   };
 }
 
-function rankingId(provider:any, ranking:any) {
+function rankingId(provider:ADataProvider, ranking:Ranking) {
   return provider.getRankings().indexOf(ranking);
 }
 
 
-function recordPropertyChange(source:any, provider:any, lineupViewWrapper:IObjectRef<any>, graph:ProvenanceGraph, property:string, delayed = -1) {
+function recordPropertyChange(source:Column|Ranking, provider:ADataProvider, lineupViewWrapper:IObjectRef<IViewProvider>, graph:ProvenanceGraph, property:string, delayed = -1) {
   const f = (old:any, newValue:any) => {
     if (ignoreNext === property + 'Changed') {
       ignoreNext = null;
       return;
     }
-    console.log(source, property, old, newValue);
+    // console.log(source, property, old, newValue);
     if (source instanceof Column) {
       // assert ALineUpView and update the stats
-      (<ALineUpView>lineupViewWrapper.value.getInstance()).updateLineUpStats();
+      lineupViewWrapper.value.getInstance().updateLineUpStats();
 
       const rid = rankingId(provider, source.findMyRanker());
       const path = source.fqpath;
@@ -197,7 +205,7 @@ function recordPropertyChange(source:any, provider:any, lineupViewWrapper:IObjec
   source.on(property + 'Changed.track', delayed > 0 ? delayedCall(f, delayed) : f);
 }
 
-function trackColumn(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, col) {
+function trackColumn(provider: ADataProvider, lineup:IObjectRef<IViewProvider>, graph:ProvenanceGraph, col: Column) {
   recordPropertyChange(col, provider, lineup, graph, 'metaData');
   recordPropertyChange(col, provider, lineup, graph, 'filter');
   //recordPropertyChange(col, provider, lineup, graph, 'width', 100);
@@ -209,7 +217,7 @@ function trackColumn(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, co
         ignoreNext = null;
         return;
       }
-      console.log(col.fqpath, 'addColumn', column, index);
+      // console.log(col.fqpath, 'addColumn', column, index);
       const d = provider.dumpColumn(column);
       const rid = rankingId(provider, col.findMyRanker());
       const path = col.fqpath;
@@ -223,7 +231,7 @@ function trackColumn(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, co
         ignoreNext = null;
         return;
       }
-      console.log(col.fqpath, 'addColumn', column, index);
+      // console.log(col.fqpath, 'addColumn', column, index);
       const d = provider.dumpColumn(column);
       const rid = rankingId(provider, col.findMyRanker());
       const path = col.fqpath;
@@ -242,7 +250,7 @@ function trackColumn(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, co
         ignoreNext = null;
         return;
       }
-      console.log(col.fqpath, 'mapping', old.dump(), newValue.dump());
+      // console.log(col.fqpath, 'mapping', old.dump(), newValue.dump());
       const rid = rankingId(provider, col.findMyRanker());
       const path = col.fqpath;
       graph.pushWithResult(setColumn(lineup, rid, path, 'mapping', newValue.dump()), {
@@ -259,7 +267,7 @@ function trackColumn(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, co
 }
 
 
-function untrackColumn(col) {
+function untrackColumn(col: Column) {
   col.on(['metaDataChanged.filter', 'filterChanged.track', 'widthChanged.track'], null);
 
   if (col instanceof CompositeColumn) {
@@ -274,13 +282,13 @@ function untrackColumn(col) {
   }
 }
 
-function trackRanking(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, ranking) {
+function trackRanking(provider: ADataProvider, lineup:IObjectRef<IViewProvider>, graph:ProvenanceGraph, ranking: Ranking) {
   ranking.on('sortCriteriaChanged.track', (old, newValue) => {
     if (ignoreNext === 'sortCriteriaChanged') {
       ignoreNext = null;
       return;
     }
-    console.log(ranking.id, 'sortCriteriaChanged', old, newValue);
+    // console.log(ranking.id, 'sortCriteriaChanged', old, newValue);
     const rid = rankingId(provider, ranking);
     graph.pushWithResult(setRankingSortCriteria(lineup, rid, toSortObject(newValue)), {
       inverse: setRankingSortCriteria(lineup, rid, toSortObject(old))
@@ -292,7 +300,7 @@ function trackRanking(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, r
       ignoreNext = null;
       return;
     }
-    console.log(ranking, 'addColumn', column, index);
+    // console.log(ranking, 'addColumn', column, index);
     const d = provider.dumpColumn(column);
     const rid = rankingId(provider, ranking);
     graph.pushWithResult(addColumn(lineup, rid, null, index, d), {
@@ -305,7 +313,7 @@ function trackRanking(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, r
       ignoreNext = null;
       return;
     }
-    console.log(ranking, 'removeColumn', column, index);
+    // console.log(ranking, 'removeColumn', column, index);
     const d = provider.dumpColumn(column);
     const rid = rankingId(provider, ranking);
     graph.pushWithResult(addColumn(lineup, rid, null, index, null), {
@@ -315,7 +323,7 @@ function trackRanking(provider, lineup:IObjectRef<any>, graph:ProvenanceGraph, r
   ranking.children.forEach(trackColumn.bind(this, provider, lineup, graph));
 }
 
-function untrackRanking(ranking) {
+function untrackRanking(ranking: Ranking) {
   ranking.on(['sortCriteriaChanged.track', 'addColumn.track', 'removeColumn.track'], null);
   ranking.children.forEach(untrackColumn);
 }
@@ -325,7 +333,7 @@ function untrackRanking(ranking) {
  * @param lineup the object ref on the lineup provider instance
  * @param graph
  */
-export async function clueify(lineup:IObjectRef<any>, graph:ProvenanceGraph) {
+export async function clueify(lineup:IObjectRef<IViewProvider>, graph:ProvenanceGraph) {
   const p = await Promise.resolve((await lineup.v).data);
   p.on('addRanking', (ranking, index:number) => {
     if (ignoreNext === 'addRanking') {
@@ -352,7 +360,7 @@ export async function clueify(lineup:IObjectRef<any>, graph:ProvenanceGraph) {
   p.getRankings().forEach(trackRanking.bind(this, p, lineup, graph));
 }
 
-export async function untrack(lineup:IObjectRef<any>) {
+export async function untrack(lineup:IObjectRef<LineUp>) {
   const p = await Promise.resolve((await lineup.v).data);
   p.on(['addRanking.track', 'removeRanking.track'], null);
   p.getRankings().forEach(untrackRanking);

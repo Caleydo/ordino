@@ -98,6 +98,7 @@ export function compress(path:ActionNode[]) {
     r.push(p);
   }
   return r;
+}
 
 
 export function createCmd(id):ICmdFunction {

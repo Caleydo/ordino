@@ -14,7 +14,7 @@ module.exports = function(registry) {
   'creates': '(targidCreateView|targidRemoveView|targidReplaceView)'
  });
 
-  registry.push('actionFactory', 'ordino', function() { return System.import('./src/LineUpCommands'); }, {
+  registry.push('actionFactory', 'ordino', function() { return System.import('./src/lineup/cmds'); }, {
   'factory': 'createCmd',
   'creates': '(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)'
  });

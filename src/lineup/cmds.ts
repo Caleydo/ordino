@@ -12,7 +12,7 @@ import CategoricalNumberColumn from 'lineupjs/src/model/CategoricalNumberColumn'
 import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
 import Ranking from 'lineupjs/src/model/Ranking';
 import Column from 'lineupjs/src/model/Column';
-import {ALineUpView} from './LineUpView';
+import ALineUpView from './ALineUpView';
 
 //TODO better solution
 let ignoreNext:string = null;

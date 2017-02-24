@@ -139,7 +139,7 @@ export interface IFormElementDesc {
   /**
    * Label for the form element
    */
-  label: string;
+  label?: string;
 
   /**
    * Show or hide form element
@@ -183,6 +183,11 @@ export interface IFormElementDesc {
    * Form element specific options
    */
   options?: {};
+
+  /**
+   * hide label
+   */
+  hideLabel?: boolean;
 }
 
 /**
@@ -375,7 +380,9 @@ class FormSelect extends AFormElement implements IFormSelectElement {
       this.$node.classed('hidden', true);
     }
 
-    this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    if(!this.desc.hideLabel) {
+      this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    }
 
     this.$select = this.$node.append('select');
     this.setAttributes(this.$select, this.desc.attributes);
@@ -557,7 +564,9 @@ class FormSelect2 extends AFormElement {
       this.$node.classed('hidden', true);
     }
 
-    this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    if(!this.desc.hideLabel) {
+      this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    }
 
     const $select = this.$node.append('select');
     this.setAttributes($select, this.desc.attributes);
@@ -755,7 +764,9 @@ class FormInputText extends AFormElement implements IFormInputTextElement {
       this.$node.classed('hidden', true);
     }
 
-    this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    if(!this.desc.hideLabel) {
+      this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    }
 
     this.$input = this.$node.append('input').attr('type', 'text');
     this.setAttributes(this.$input, this.desc.attributes);

@@ -273,6 +273,9 @@ export class AEntryPointList implements IEntryPointList {
         // convert to data format and append to species data
         this.data.push(...namedSets);
 
+        this.$node.append('div').classed('header subheader', true);
+        this.$node.append('ul').classed('namedSets', true);
+
         this.updateList(this.data);
 
         return namedSets;
@@ -297,21 +300,24 @@ export class AEntryPointList implements IEntryPointList {
 
     const headerText = this.desc.name === 'Genes'? 'Gene Sets' : `${this.desc.name.substr(0, this.desc.name.length - 1)} Panels`;
 
-    this.$node.append('div').classed('header', true).text(`Predefined ${headerText}`);
+    this.$node.select('.header.subheader').text(`Predefined ${headerText}`);
     this.$node.append('ul').classed('namedSets', true);
 
 
     const predefinedNamedSets = data.filter((datum) => !datum.creator);
     const customNamedSets = data.slice(predefinedNamedSets.length);
 
-    if(customNamedSets.length > 0) {
-      this.$node.append('div').classed('header', true).text(`My ${headerText}`);
-      this.$node.append('ul').classed('customNamedSets', true);
+    if(this.$node.select('.customNamedSets').empty() && customNamedSets.length > 0) {
+      const customNamedSetsNode = this.$node.append('div').classed('customNamedSets', true);
+      customNamedSetsNode.append('div').classed('header subheader', true).text(`My ${headerText}`);
+      customNamedSetsNode.append('ul');
+    } else if(customNamedSets.length === 0) {
+      this.$node.select('.customNamedSets').remove();
     }
 
     // append the list items
     const $ul = this.$node.select('.namedSets');
-    const $customNamedSets = this.$node.select('.customNamedSets');
+    const $customNamedSets = this.$node.select('.customNamedSets ul');
 
     const $options = [$ul.selectAll('li').data(predefinedNamedSets), $customNamedSets.selectAll('li').data(customNamedSets)];
     $options.map((options) => {

@@ -90,6 +90,15 @@
       .header {
         font-weight: 500;
       }
+
+      .subheader {
+        font-size: 0.95em;
+      }
+
+      .customNamedSets {
+        border-top: 1px dotted $core_border;
+        margin-top: 1em;
+      }
     }
 
     // Visually hide radio buttons
@@ -116,14 +125,6 @@
 
         margin: 0;
         padding: 0;
-
-        &.namedset {
-          border-top: 1px dotted $core_border;
-        }
-
-        &.namedset ~ .namedset {
-          border-top: none;
-        }
 
         > a {
           padding: 5px;

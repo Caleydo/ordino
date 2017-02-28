@@ -303,9 +303,8 @@ export class AEntryPointList implements IEntryPointList {
     this.$node.select('.header.subheader').text(`Predefined ${headerText}`);
     this.$node.append('ul').classed('namedSets', true);
 
-
-    const predefinedNamedSets = data.filter((datum) => !datum.creator);
-    const customNamedSets = data.slice(predefinedNamedSets.length);
+    const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
+    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
 
     if(this.$node.select('.customNamedSets').empty() && customNamedSets.length > 0) {
       const customNamedSetsNode = this.$node.append('div').classed('customNamedSets', true);

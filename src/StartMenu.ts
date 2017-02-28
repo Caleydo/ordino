@@ -7,7 +7,7 @@ import {IDType, resolve} from 'phovea_core/src/idtype';
 import {areyousure} from 'phovea_ui/src/dialogs';
 import {Targid, TargidConstants} from './Targid';
 import {listNamedSets, INamedSet, deleteNamedSet} from './storage';
-import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
+import {IPluginDesc, list as listPlugins, get as getPlugin} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
 import {ENamedSetType} from './storage';
@@ -25,6 +25,7 @@ const template = `
   `;
 
 export const EXTENSION_POINT_ID = 'targidStartMenuSection';
+const EXTENSION_ID = 'targid_start_species';
 
 interface IStartMenuSection extends IPluginDesc {
   readonly name: string;
@@ -298,7 +299,9 @@ export class AEntryPointList implements IEntryPointList {
   private updateList(data: INamedSet[]) {
     const that = this;
 
-    const headerText = this.desc.name === 'Genes'? 'Gene Sets' : `${this.desc.name.substr(0, this.desc.name.length - 1)} Panels`;
+    const plugin = getPlugin(EXTENSION_POINT_ID, EXTENSION_ID);
+
+    const headerText = plugin.headers[this.getIdType().toLowerCase()];
 
     this.$node.select('.header.subheader').text(`Predefined ${headerText}`);
     this.$node.append('ul').classed('namedSets', true);

@@ -28,6 +28,16 @@ module.exports = function (registry) {
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
+  registry.push('actionFactory', 'ordinoScore', function() { return System.import('./src/lineup/scorecmds'); }, {
+  'factory': 'createCmd',
+  'creates': '(ordinoAddScore|ordinoRemoveScore)'
+ });
+
+  registry.push('actionCompressor', 'ordinoScoreCompressor', function() { return System.import('./src/lineup/scorecmds'); }, {
+  'factory': 'compress',
+  'matches': '(ordinoAddScore|ordinoRemoveScore)'
+ });
+
   registry.push('actionFactory', 'ordinoParameter', function() { return System.import('./src/View'); }, {
   'factory': 'createCmd',
   'creates': '(targidSetParameter|targidSetSelection)'

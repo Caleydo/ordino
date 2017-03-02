@@ -14,6 +14,7 @@ export class LineUpRankingButtons extends EventHandler {
 
   static readonly SAVE_NAMED_SET = 'saveNamedSet';
   static readonly ADD_SCORE_COLUMN = 'addScoreColumn';
+  static readonly ADD_TRACKED_SCORE_COLUMN = 'addTrackedScoreColumn';
 
   constructor(private lineup, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
     super();
@@ -116,6 +117,18 @@ export class LineUpRankingButtons extends EventHandler {
           this.scoreColumnDialog(p);
         });
         (<Event>d3.event).preventDefault();
+      });
+
+    const ordinoScores = listPlugins('ordinoScore').filter((d: any) => d.idtype === this.idType.id);
+    $ul.selectAll('li.oscore').data(ordinoScores)
+      .enter()
+      .append('li').classed('oscore', true)
+      .append('a').attr('href', '#').text((d) => d.name)
+      .on('click', async (d) => {
+        (<Event>d3.event).preventDefault();
+        const p = await d.load();
+        const params = await Promise.resolve(p.factory(d, this.extraArgs));
+        this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
       });
   }
 

@@ -205,6 +205,11 @@ interface IFormElement extends IEventHandler {
   value: any;
 
   /**
+   * Form element values for multiple selection
+   */
+  values?: {id: string, text: string}[];
+
+  /**
    * Set the visibility of an form element
    * @param visible
    */
@@ -689,6 +694,23 @@ class FormSelect2 extends AFormElement {
     if(this.$select.val() !== null) {
       r.id = this.$select.select2('data')[0].id;
       r.text = this.$select.select2('data')[0].text;
+    }
+
+    return r;
+  }
+
+  get values() {
+    const r = [];
+
+    if(this.$select.val().length === 0) {
+      return [{ id: '', text: '' }];
+    }
+
+    for(const value of this.$select.select2('data')) {
+      r.push({
+        id: value.id,
+        text: value.text
+      });
     }
 
     return r;

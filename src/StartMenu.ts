@@ -25,7 +25,6 @@ const template = `
   `;
 
 export const EXTENSION_POINT_ID = 'targidStartMenuSection';
-const EXTENSION_ID = 'targid_start_species';
 
 interface IStartMenuSection extends IPluginDesc {
   readonly name: string;
@@ -299,11 +298,7 @@ export class AEntryPointList implements IEntryPointList {
   private updateList(data: INamedSet[]) {
     const that = this;
 
-    const plugin = getPlugin(EXTENSION_POINT_ID, EXTENSION_ID);
-
-    const headerText = plugin.headers[this.getIdType().toLowerCase()];
-
-    this.$node.select('.header.subheader').text(`Predefined ${headerText}`);
+    this.$node.select('.header.subheader').text(`Predefined ${this.desc.description}`);
     this.$node.append('ul').classed('namedSets', true);
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
@@ -311,7 +306,7 @@ export class AEntryPointList implements IEntryPointList {
 
     if(this.$node.select('.customNamedSets').empty() && customNamedSets.length > 0) {
       const customNamedSetsNode = this.$node.append('div').classed('customNamedSets', true);
-      customNamedSetsNode.append('div').classed('header subheader', true).text(`My ${headerText}`);
+      customNamedSetsNode.append('div').classed('header subheader', true).text(`My ${this.desc.description}`);
       customNamedSetsNode.append('ul');
     } else if(customNamedSets.length === 0) {
       this.$node.select('.customNamedSets').remove();

@@ -35,12 +35,12 @@ export interface IOrdinoOptions {
 export default class Ordino extends ACLUEWrapper {
   private targid: Promise<Targid>;
 
-  constructor(options: IOrdinoOptions = {}) {
-    super(document.body, {replaceBody: false});
-
+  constructor(private readonly options: IOrdinoOptions = {}) {
+    super();
+    this.build(document.body, {replaceBody: false});
   }
 
-  protected build(body: HTMLElement): {graph: Promise<ProvenanceGraph>, storyVis: Promise<VerticalStoryVis>, manager: CLUEGraphManager} {
+  protected buildImpl(body: HTMLElement): {graph: Promise<ProvenanceGraph>, storyVis: Promise<VerticalStoryVis>, manager: CLUEGraphManager} {
     //create the common header
     const headerOptions = {
       showOptionsLink: true, // always activate options
@@ -63,9 +63,10 @@ export default class Ordino extends ACLUEWrapper {
     header.wait();
 
     const loginMenu = new LoginMenu(header, {
-      insertIntoHeader: true
+      insertIntoHeader: true,
+      loginForm: this.options.loginForm
     });
-    loginMenu.on('logged_out', ()=> {
+    loginMenu.on(LoginMenu.EVENT_LOGGED_OUT, ()=> {
       // reopen after logged out
       loginMenu.forceShowDialog();
     });
@@ -105,6 +106,7 @@ export default class Ordino extends ACLUEWrapper {
       const targid = new Targid(graph, clueManager, main);
 
       const startMenuNode = main.ownerDocument.createElement('div');
+      main.appendChild(startMenuNode);
       startMenuNode.classList.add('startMenu');
       const startMenu = new StartMenu(startMenuNode, {targid});
 
@@ -126,7 +128,7 @@ export default class Ordino extends ACLUEWrapper {
         }
       };
 
-      loginMenu.on('logged_in', () => {
+      loginMenu.on(LoginMenu.EVENT_LOGGED_IN, () => {
         initSession();
       });
       if (!isLoggedIn()) {

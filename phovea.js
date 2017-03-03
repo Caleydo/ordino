@@ -60,10 +60,31 @@ module.exports = function (registry) {
   registry.push('targidStartMenuSection', 'targid_session_start', function () {
     return System.import('./src/SessionList');
   }, {
-    'name': 'Sessions',
-    'cssClass': 'targidSessionData',
-    'factory': 'create',
-    'priority': 100
+    name: 'Temporary Sessions',
+    cssClass: 'targidSessionTemporaryData',
+    factory: 'create',
+    priority: 90,
+    mode: 'temporary'
+  });
+
+  registry.push('targidStartMenuSection', 'targid_session_start', function () {
+    return System.import('./src/SessionList');
+  }, {
+    name: 'My Sessions',
+    cssClass: 'targidSessionMyData',
+    factory: 'create',
+    priority: 95,
+    mode: 'my'
+  });
+
+  registry.push('targidStartMenuSection', 'targid_session_start', function () {
+    return System.import('./src/SessionList');
+  }, {
+    name: 'Public Sessions',
+    cssClass: 'targidSessionPublicData',
+    factory: 'create',
+    priority: 100,
+    mode: 'public'
   });
 
   registry.push('idTypeDetector', 'gene_idtype_detector', function () {

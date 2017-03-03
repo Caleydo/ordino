@@ -2,18 +2,13 @@
  * Created by sam on 03.03.2017.
  */
 
-import {ProvenanceGraph} from 'phovea_core/src/provenance';
+import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
 import {create as createHeader, AppHeaderLink} from 'phovea_ui/src/header';
 import {IEvent} from 'phovea_core/src/event';
-import {Range} from 'phovea_core/src/range';
-import {IDType} from 'phovea_core/src/idtype';
+import IDType from 'phovea_core/src/idtype/IDType';
 import * as session from 'phovea_core/src/session';
-import { AView} from './View';
-import {
-  MixedStorageProvenanceGraphManager,
-  IProvenanceGraphDataDescription,
-  SlideNode
-} from 'phovea_core/src/provenance';
+import {AView} from './View';
+import {MixedStorageProvenanceGraphManager} from 'phovea_core/src/provenance';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';
@@ -46,7 +41,7 @@ export default class Ordino extends ACLUEWrapper {
       showOptionsLink: true, // always activate options
       appLink: new AppHeaderLink('Target Discovery Platform', (event) => {
         event.preventDefault();
-        this.fire('open_default');
+        this.fire('openStartMenu');
         return false;
       })
     };
@@ -110,6 +105,7 @@ export default class Ordino extends ACLUEWrapper {
       startMenuNode.classList.add('startMenu');
       const startMenu = new StartMenu(startMenuNode, {targid});
 
+      this.on('openStartMenu', () => startMenu.open());
       targid.on('openStartMenu', () => startMenu.open());
       targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event:IEvent, idtype: IDType | string, namedSet: INamedSet) => startMenu.updateEntryPointList(idtype, namedSet));
 
@@ -128,6 +124,7 @@ export default class Ordino extends ACLUEWrapper {
         }
       };
 
+      // INITIAL LOGIC
       loginMenu.on(LoginMenu.EVENT_LOGGED_IN, () => {
         initSession();
       });

@@ -10,6 +10,7 @@ import {select} from 'd3';
 import {isLoggedIn} from 'phovea_clue/src/user';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
+import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
 
 enum ESessionListMode {
   TEMPORARY, MY, PUBLIC_ONES
@@ -64,8 +65,13 @@ class SessionList implements IStartMenuSectionEntry {
         <span class="sr-only">Loading...</span>
       </div>`);
 
-    //select and sort by date
+    //select and sort by date desc
     const workspaces = selectWorkspaces(await manager.list(), mode).sort((a: any, b: any) => -((a.ts || 0) - (b.ts || 0)));
+
+    // cleanup up temporary ones
+    if (mode === ESessionListMode.TEMPORARY && workspaces.length > KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES) {
+      await Promise.all(workspaces.slice(KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES).map((d) => manager.delete(d)));
+    }
 
     //replace loading
     const $table = $parent.html(SessionList.TEMPLATE);

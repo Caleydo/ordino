@@ -67,11 +67,15 @@ class SessionList implements IStartMenuSectionEntry {
       </div>`);
 
     //select and sort by date desc
-    const workspaces = selectWorkspaces(await manager.list(), mode).sort((a: any, b: any) => -((a.ts || 0) - (b.ts || 0)));
+    let workspaces = selectWorkspaces(await manager.list(), mode).sort((a: any, b: any) => -((a.ts || 0) - (b.ts || 0)));
 
     // cleanup up temporary ones
     if (mode === ESessionListMode.TEMPORARY && workspaces.length > KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES) {
-      await Promise.all(workspaces.slice(KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES).map((d) => manager.delete(d)));
+      const toDelete = workspaces.slice(KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES);
+      workspaces = workspaces.slice(0, KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES);
+      Promise.all(toDelete.map((d) => manager.delete(d))).catch((error) => {
+        console.warn('cannot delete old graphs:', error);
+      });
     }
 
     //replace loading

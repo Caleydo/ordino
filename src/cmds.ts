@@ -61,7 +61,6 @@ export function removeViewImpl(inputs:IObjectRef<any>[], parameter):ICmdResult {
  *
  * @param inputs Array with object references, where the first one is the TargId object
  * @param parameter Parameter such idtype, selection and view options
- * @param graph The Provenance graph
  * @returns {Promise<ICmdResult>}
  */
 export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):Promise<ICmdResult> {

@@ -3,7 +3,7 @@
  */
 
 import * as session from 'phovea_core/src/session';
-import {areyousure} from 'phovea_ui/src/dialogs';
+import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {select} from 'd3';
@@ -11,6 +11,7 @@ import {isLoggedIn} from 'phovea_clue/src/user';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
+import {randomId} from 'phovea_core/src';
 
 enum ESessionListMode {
   TEMPORARY, MY, PUBLIC_ONES
@@ -83,10 +84,19 @@ class SessionList implements IStartMenuSectionEntry {
     $trEnter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
     $trEnter.append('td').text((d) => d.creator);
     $trEnter.append('td').html((d) => {
-      return `<button class="btn btn-xs btn-default" data-action="select" ${!isLoggedIn() ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
-      <button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
-      <button class="btn btn-xs btn-default" data-action="delete" ${!isLoggedIn() ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
-    });
+      let buttons = '';
+      if (isLoggedIn()) {
+        buttons += `<button class="btn btn-xs btn-default" data-action="select"><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>`;
+      }
+      buttons += `<button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>`;
+      if (mode === ESessionListMode.TEMPORARY) {
+        buttons += `<button class="btn btn-xs btn-default" data-action="persist"}><i class="fa fa-save" aria-hidden="true"></i> Persist</button>`;
+      }
+      if (isLoggedIn() || mode === ESessionListMode.TEMPORARY) {
+        buttons += `<button class="btn btn-xs btn-default" data-action="delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
+      }
+      return buttons;
+     });
 
     $trEnter.select('button[data-action="delete"]').on('click', async(d) => {
       const deleteIt = await areyousure(`Are you sure to delete: "${d.name}"`);
@@ -101,6 +111,13 @@ class SessionList implements IStartMenuSectionEntry {
     });
     $trEnter.select('button[data-action="select"]').on('click', (d) => {
       manager.loadGraph(d);
+      return false;
+    });
+    $trEnter.select('button[data-action="persist"]').on('click', async (d) => {
+      const extras = await importDialog(d);
+      if (extras !== null) {
+        manager.importExistingGraph(d, extras);
+      }
       return false;
     });
   }
@@ -118,6 +135,36 @@ function selectWorkspaces(workspaces: IProvenanceGraphDataDescription[], mode: E
     default:
       return workspaces.filter((d) => isPersistent(d) && d.creator === me);
   }
+}
+
+async function importDialog(d: IProvenanceGraphDataDescription) {
+  const dialog = generateDialog('Import Provenance Graph', 'Import');
+  const prefix = 'd' + randomId();
+  dialog.body.innerHTML = `
+    <form>
+        <div class="form-group">
+          <label for="${prefix}_name">Name</label>
+          <input type="text" class="form-control" id="${prefix}_name" value="${d.name}" required="required">
+        </div>
+        <div class="form-group">
+          <label for="${prefix}_desc">Description</label>
+          <textarea class="form-control" id="${prefix}_desc" rows="3">${d.description || ''}</textarea>
+        </div>
+    </form>
+  `;
+  return new Promise((resolve) => {
+    dialog.onHide(() => {
+      resolve(null);
+    });
+    dialog.onSubmit(() => {
+      const extras = {
+        name: (<HTMLInputElement>dialog.body.querySelector(`#${prefix}_name`)).value,
+        description: (<HTMLTextAreaElement>dialog.body.querySelector(`#${prefix}_desc`)).value
+      };
+      resolve(extras);
+    });
+    dialog.show();
+  });
 }
 
 export function create(parent: HTMLElement, desc: IPluginDesc, options: IStartMenuOptions) {

@@ -50,7 +50,7 @@ export default class Ordino extends ACLUEWrapper {
     //load all available provenance graphs
     const manager = new MixedStorageProvenanceGraphManager({
       prefix: 'ordino',
-      storage: sessionStorage,
+      storage: localStorage,
       application: 'ordino'
     });
     const clueManager = new CLUEGraphManager(manager);

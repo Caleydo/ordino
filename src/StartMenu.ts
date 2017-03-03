@@ -332,7 +332,7 @@ export class AEntryPointList implements IEntryPointList {
             });
 
             // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-            that.options.targid.graphManager.newRemoteGraph();
+            that.options.targid.graphManager.newGraph();
           } else {
             console.error('no targid object given to push new view');
           }

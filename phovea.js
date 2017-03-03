@@ -10,7 +10,7 @@ module.exports = function (registry) {
   // generator-phovea:begin
 
   registry.push('actionFactory', 'ordino', function () {
-    return System.import('./src/Targid');
+    return System.import('./src/cmds');
   }, {
     'factory': 'createCmd',
     'creates': '(targidCreateView|targidRemoveView|targidReplaceView)'
@@ -22,7 +22,7 @@ module.exports = function (registry) {
  });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
-    return System.import('./src/Targid');
+    return System.import('./src/cmds');
   }, {
     'factory': 'compressCreateRemove',
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'

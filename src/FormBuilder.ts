@@ -527,7 +527,7 @@ export interface IFormSelect2 extends IFormSelectDesc {
    */
   options?: {
     /**
-     * URL to data provider backend
+     * URL to data provider backend, returning {id: string|number, text: string}[]
      */
     dataProviderUrl?: string;
   };

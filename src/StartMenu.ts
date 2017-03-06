@@ -273,8 +273,15 @@ export class AEntryPointList implements IEntryPointList {
         // convert to data format and append to species data
         this.data.push(...namedSets);
 
-        this.$node.append('div').classed('header subheader', true);
-        this.$node.append('ul').classed('namedSets', true);
+        const wrapper = this.$node.append('div').classed('named-sets-wrapper', true);
+
+        const namedSetsWrapper = wrapper.append('div').classed('predefined-named-sets', true);
+        namedSetsWrapper.append('div').classed('header', true).text(`Predefined ${this.desc.description}`);
+        namedSetsWrapper.append('ul');
+
+        const customNamedSetsWrapper = wrapper.append('div').classed('custom-named-sets', true);
+        customNamedSetsWrapper.append('div').classed('header', true).text(`My ${this.desc.description}`);
+        customNamedSetsWrapper.append('ul');
 
         this.updateList(this.data);
 
@@ -298,26 +305,19 @@ export class AEntryPointList implements IEntryPointList {
   private updateList(data: INamedSet[]) {
     const that = this;
 
-    this.$node.select('.header.subheader').text(`Predefined ${this.desc.description}`);
-    this.$node.append('ul').classed('namedSets', true);
-
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
     const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
 
-    if(this.$node.select('.customNamedSets').empty() && customNamedSets.length > 0) {
-      const customNamedSetsNode = this.$node.append('div').classed('customNamedSets', true);
-      customNamedSetsNode.append('div').classed('header subheader', true).text(`My ${this.desc.description}`);
-      customNamedSetsNode.append('ul');
-    } else if(customNamedSets.length === 0) {
-      this.$node.select('.customNamedSets').remove();
-    }
+
+    const namedSetsWrapper = this.$node.select('.predefined-named-sets');
+    const customNamedSetsWrapper = this.$node.select('.custom-named-sets');
+
+    const $ul = namedSetsWrapper.select('ul');
+    const $customNamedSets = customNamedSetsWrapper.select('ul');
 
     // append the list items
-    const $ul = this.$node.select('.namedSets');
-    const $customNamedSets = this.$node.select('.customNamedSets ul');
-
     const $options = [$ul.selectAll('li').data(predefinedNamedSets), $customNamedSets.selectAll('li').data(customNamedSets)];
-    $options.map((options) => {
+    $options.forEach((options) => {
       const enter = options.enter()
       .append('li')
       .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);

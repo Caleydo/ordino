@@ -78,10 +78,6 @@
       .item {
         margin-right: 30px;
 
-        &:last-child {
-          margin-right: 0;
-        }
-
         &:only-child {
           width: 100%;
         }
@@ -89,10 +85,6 @@
 
       .header {
         font-weight: 500;
-      }
-
-      .subheader {
-        font-size: 0.95em;
       }
 
       .customNamedSets {
@@ -197,7 +189,6 @@
       }
 
       .entry-points-wrapper {
-        display: flex;
         margin-top: 15px;
       }
 
@@ -305,6 +296,12 @@
       .startMenuSearch {
         margin-top: 10px;
         text-align: right;
+      }
+
+      .named-sets-wrapper {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
       }
 
     }

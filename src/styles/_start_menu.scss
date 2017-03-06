@@ -295,7 +295,12 @@
 
       .startMenuSearch {
         margin-top: 10px;
-        text-align: right;
+        display: flex;
+        justify-content: space-between;
+
+        form {
+          width: 90%;
+        }
 
         // fix select2 placeholder cutoff
         // https://github.com/select2/select2/issues/291

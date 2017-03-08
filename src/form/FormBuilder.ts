@@ -42,7 +42,7 @@ export default class FormBuilder {
    * @param elements
    */
   build(elements:IFormElementDesc[]) {
-    elements.map((el) => {
+    elements.forEach((el) => {
       this.appendElement(el);
     });
   }

@@ -48,11 +48,17 @@ export interface IFormSelectDesc extends IFormElementDesc {
   options?: IFormSelectOptions;
 }
 
+export interface IFormSelectElement extends IFormElement {
+  getSelectedIndex(): number;
+
+  updateOptionElements(data: (string|IFormSelectOption)[]): void;
+}
+
 /**
  * Select form element instance
  * Propagates the changes from the DOM select element using the internal `change` event
  */
-export default class FormSelect extends AFormElement {
+export default class FormSelect extends AFormElement implements IFormSelectElement {
 
   private $select: d3.Selection<any>;
 

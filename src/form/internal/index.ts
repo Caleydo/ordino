@@ -5,6 +5,7 @@ import {IFormParent, IFormElementDesc, FormElementType} from '../interfaces';
 import FormSelect from './FormSelect';
 import FormSelect2 from './FormSelect2';
 import FormInputText from './FormInputText';
+import FormMap from './FormMap';
 
 
 export function create(parent: IFormParent, $parent: d3.Selection<any>, desc: IFormElementDesc) {
@@ -15,6 +16,8 @@ export function create(parent: IFormParent, $parent: d3.Selection<any>, desc: IF
       return new FormSelect2(parent, $parent, desc);
     case FormElementType.INPUT_TEXT:
       return new FormInputText(parent, $parent, desc);
+    case FormElementType.MAP:
+      return new FormMap(parent, $parent, desc);
     default:
       throw new Error('unknown form element type: ' + desc.type);
   }

@@ -12,7 +12,8 @@ import {IEventHandler} from 'phovea_core/src/event';
 export enum FormElementType {
   SELECT,
   SELECT2,
-  INPUT_TEXT
+  INPUT_TEXT,
+  MAP
 }
 
 /**

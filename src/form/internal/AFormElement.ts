@@ -87,7 +87,7 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
    * Set the form element value
    * @param v
    */
-  abstract set value(v: string);
+  abstract set value(v: any);
 }
 
 export default AFormElement;

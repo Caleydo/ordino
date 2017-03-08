@@ -9,19 +9,18 @@ import {IFormElementDesc, IFormParent, IFormElement} from '../interfaces';
 /**
  * Abstract form element class that is used as parent class for other form elements
  */
-export abstract class AFormElement extends EventHandler implements IFormElement {
+export abstract class AFormElement<T extends IFormElementDesc> extends EventHandler implements IFormElement {
 
-  id: string;
+  readonly id: string;
 
   protected $node: d3.Selection<any>;
 
   /**
    * Constructor
-   * @param formBuilder
-   * @param $parent
+   * @param parent
    * @param desc
    */
-  constructor(public readonly formBuilder: IFormParent, $parent: d3.Selection<any>, protected readonly desc: IFormElementDesc) {
+  constructor(protected readonly parent: IFormParent, protected readonly desc: T) {
     super();
     this.id = desc.id;
   }
@@ -32,6 +31,16 @@ export abstract class AFormElement extends EventHandler implements IFormElement 
    */
   setVisible(visible: boolean) {
     this.$node.classed('hidden', !visible);
+  }
+
+  protected build() {
+    if (this.desc.visible === false) {
+      this.$node.classed('hidden', true);
+    }
+
+    if (!this.desc.hideLabel) {
+      this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+    }
   }
 
   /**
@@ -55,7 +64,7 @@ export abstract class AFormElement extends EventHandler implements IFormElement 
       return;
     }
 
-    const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
+    const dependElements = this.desc.dependsOn.map((depOn) => this.parent.getElementById(depOn));
 
     dependElements.forEach((depElem) => {
       depElem.on('change', (evt, value) => {
@@ -72,18 +81,13 @@ export abstract class AFormElement extends EventHandler implements IFormElement 
    * Returns the form element value
    * @returns {string}
    */
-  get value() {
-    // hook
-    return 'Override AFormElement.value';
-  }
+  abstract get value();
 
   /**
    * Set the form element value
    * @param v
    */
-  set value(v: string) {
-    // hook
-  }
+  abstract set value(v: string);
 }
 
 export default AFormElement;

@@ -17,18 +17,18 @@ export interface IFormInputTextDesc extends IFormElementDesc {
   options?: {};
 }
 
-export default class FormInputText extends AFormElement {
+export default class FormInputText extends AFormElement<IFormInputTextDesc> {
 
   private $input: d3.Selection<any>;
 
   /**
    * Constructor
-   * @param formBuilder
+   * @param parent
    * @param $parent
    * @param desc
    */
-  constructor(formBuilder: IFormParent, $parent, protected readonly desc: IFormInputTextDesc) {
-    super(formBuilder, $parent, desc);
+  constructor(parent: IFormParent, $parent, desc: IFormInputTextDesc) {
+    super(parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
 
@@ -39,15 +39,8 @@ export default class FormInputText extends AFormElement {
    * Build the label and input element
    * Bind the change listener and propagate the selection by firing a change event
    */
-  private build() {
-    if (this.desc.visible === false) {
-      this.$node.classed('hidden', true);
-    }
-
-    if (!this.desc.hideLabel) {
-      this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
-    }
-
+  protected build() {
+    super.build();
     this.$input = this.$node.append('input').attr('type', 'text');
     this.setAttributes(this.$input, this.desc.attributes);
     this.handleShowIf();

@@ -41,7 +41,7 @@ export default class FormBuilder {
    * Builds a form from a list of given form element descriptions
    * @param elements
    */
-  build(elements:IFormElementDesc[]) {
+  build(elements: IFormElementDesc[]) {
     elements.forEach((el) => {
       this.appendElement(el);
     });
@@ -52,7 +52,7 @@ export default class FormBuilder {
    * appends it to the form
    * @param elementDesc
    */
-  appendElement(elementDesc:IFormElementDesc) {
+  appendElement(elementDesc: IFormElementDesc) {
     // inject formId into form element id
     const uid = elementDesc.id + '_' + this.formId;
 
@@ -69,7 +69,7 @@ export default class FormBuilder {
    * @param id
    * @returns {IFormElement}
    */
-  getElementById(id:string) {
+  getElementById(id: string) {
     return this.elements.get(id);
   }
 
@@ -77,8 +77,8 @@ export default class FormBuilder {
    * Returns an object with the form element id as key and the current data as value
    * @returns {{}}
    */
-  getElementData():{[key: string]: any} {
-    const r:{[key: string]: any} = {};
+  getElementData(): {[key: string]: any} {
+    const r: {[key: string]: any} = {};
     this.elements.forEach((el, key) => {
       r[key] = (el.value !== null && el.value.data !== undefined) ? el.value.data : el.value;
     });
@@ -89,8 +89,8 @@ export default class FormBuilder {
    * Returns an object with the form element id as key and the current form element value
    * @returns {{}}
    */
-  getElementValues():{[key: string]: any} {
-    const r:{[key: string]: any}= {};
+  getElementValues(): {[key: string]: any} {
+    const r: {[key: string]: any} = {};
     this.elements.forEach((el, key) => {
       r[key] = el.value.value || el.value;
     });

@@ -96,7 +96,7 @@ export interface IFormElement extends IEventHandler {
   /**
    * Unique identifier of the element within the form
    */
-  id: string;
+  readonly id: string;
 
   /**
    * Form element value

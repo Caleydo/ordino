@@ -33,18 +33,18 @@ export interface IFormSelect2 extends IFormSelectDesc {
  * Select2 drop down field with integrated search field and communication to external data provider
  * Propagates the changes from the DOM select element using the internal `change` event
  */
-export default class FormSelect2 extends AFormElement {
+export default class FormSelect2 extends AFormElement<IFormSelect2> {
 
   private $select: JQuery;
 
   /**
    * Constructor
-   * @param formBuilder
+   * @param parent
    * @param $parent
    * @param desc
    */
-  constructor(public formBuilder: IFormParent, $parent, protected desc: IFormSelect2) {
-    super(formBuilder, $parent, desc);
+  constructor(parent: IFormParent, $parent, desc: IFormSelect2) {
+    super(parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
 
@@ -55,14 +55,8 @@ export default class FormSelect2 extends AFormElement {
    * Build the label and select element
    * Bind the change listener and propagate the selection by firing a change event
    */
-  private build() {
-    if (this.desc.visible === false) {
-      this.$node.classed('hidden', true);
-    }
-
-    if (!this.desc.hideLabel) {
-      this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
-    }
+  protected build() {
+    super.build();
 
     const $select = this.$node.append('select');
     this.setAttributes($select, this.desc.attributes);
@@ -155,7 +149,7 @@ export default class FormSelect2 extends AFormElement {
     let optionsData = options.optionsData;
 
     if (this.desc.dependsOn && options.optionsFnc) {
-      const dependElements = this.desc.dependsOn.map((depOn) => this.formBuilder.getElementById(depOn));
+      const dependElements = this.desc.dependsOn.map((depOn) => this.parent.getElementById(depOn));
 
       dependElements.forEach((depElem) => {
         const values = dependElements.map((d) => d.value);

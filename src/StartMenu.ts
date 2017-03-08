@@ -309,14 +309,11 @@ export class AEntryPointList implements IEntryPointList {
     const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
 
 
-    const namedSetsWrapper = this.$node.select('.predefined-named-sets');
-    const customNamedSetsWrapper = this.$node.select('.custom-named-sets');
-
-    const $ul = namedSetsWrapper.select('ul');
-    const $customNamedSets = customNamedSetsWrapper.select('ul');
+    const namedSetItems = this.$node.select('.predefined-named-sets ul').selectAll('li');
+    const customNamedSetItems = this.$node.select('.custom-named-sets ul').selectAll('li');
 
     // append the list items
-    const $options = [$ul.selectAll('li').data(predefinedNamedSets), $customNamedSets.selectAll('li').data(customNamedSets)];
+    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets)];
     $options.forEach((options) => {
       const enter = options.enter()
       .append('li')

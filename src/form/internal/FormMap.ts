@@ -27,6 +27,7 @@ interface IFormRow {
 export default class FormMap extends AFormElement<IFormMapDesc> {
 
   private $group: d3.Selection<any>;
+  private rows: IFormRow[] = [];
 
   /**
    * Constructor
@@ -48,12 +49,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    */
   protected build() {
     super.build();
-    this.$group = this.$node.append('div').attr('class', 'form-horizontal');
+    this.$group = this.$node.append('div');
     this.setAttributes(this.$group, this.desc.attributes);
-    this.$group.classed('form-horizontal', true);
+    // adapt default settings
+    this.$group.classed('form-horizontal', true).classed('form-control', false);
     this.handleShowIf();
 
-    this.buildMap([]);
+    this.buildMap();
 
     // propagate change action with the data of the selected option
     this.$group.on('change.propagate', () => {
@@ -65,52 +67,58 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     return `<input type="text" class="form-control">`;
   }
 
-  private buildMap(values: IFormRow[]) {
-    values = values.filter((d) => !!d.key);
+  private buildMap() {
+    const that = this;
+    const group = <HTMLDivElement>this.$group.node();
+    group.innerHTML = ''; // remove all approach
+    const values = this.rows.filter((d) => !!d.key);
     // put empty row at the end
     values.push({key: '', value: null});
+    this.rows = [];
 
     const options = (this.desc.options.keys || []).map((d) => {
       const value = typeof d === 'string' ? d : d.value;
       const name = typeof d === 'string' ? d : d.name;
       return {name, value};
     });
-    const optionValues = options.map((d) => d.value);
 
-    const $formGroups = this.$group.selectAll('.form-group').data(values);
-    const $formsGroupsEnter = $formGroups.enter().append('div')
-      .classed('form-group', true)
-      .html((d, i) => `
+    const renderRow = (d: IFormRow) => {
+      this.rows.push(d);
+      const row = group.ownerDocument.createElement('div');
+      row.classList.add('form-group');
+      group.appendChild(row);
+      row.innerHTML = `
         <div class="col-sm-5">
-          <select id="${this.desc.id}_key${i}" class="form-control">
+          <select class="form-control">
             <option value="">Select...</option>
-            ${options.map((d) => `<option value="${d.value}">${d.name}</option>`).join('')}
+            ${options.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"': ''}>${o.name}</option>`).join('')}
           </select>
         </div>
-      `);
-    const that = this;
-    $formsGroupsEnter.select('select').on('change', function (this: HTMLSelectElement, d) {
-      const parent = this.parentElement;
-      if (!this.value) {
-        // remove this row
-        parent.remove();
-        return;
-      }
-      if (d.key !== this.value) { // value changed
-        if (d.key) { //has an old value?
-          parent.lastElementChild.remove();
+        <div class="col-sm-7">${d.key ? this.createValueEditor(d.key) : ''}</div>`;
+      row.querySelector('select').addEventListener('change', function (this: HTMLSelectElement) {
+        if (!this.value) {
+          // remove this row
+          row.remove();
+          return;
         }
-        parent.insertAdjacentHTML('beforeend', `<div class="col-sm-7">${that.createValueEditor(this.value)}</div>`);
-        parent.lastElementChild.addEventListener('change', function (this: HTMLSelectElement|HTMLInputElement) {
-          d.value = this.value;
-        });
-      }
-      d.key = this.value;
-    });
-    // + 1 the empty entry
-    $formGroups.select('select').property('selectedIndex', (d) => optionValues.indexOf(d.key) + 1);
-    // TODO
-    $formGroups.exit().remove();
+        if (d.key !== this.value) { // value changed
+          if (d.key) { //has an old value?
+            row.lastElementChild.remove();
+          }
+          row.insertAdjacentHTML('beforeend', `<div class="col-sm-7">${that.createValueEditor(this.value)}</div>`);
+          row.lastElementChild.addEventListener('change', function (this: HTMLSelectElement|HTMLInputElement) {
+            d.value = this.value;
+          });
+
+          if (!d.key) {
+            // ensure that there is an empty row
+            renderRow({key: '', value: null});
+          }
+        }
+        d.key = this.value;
+      });
+    };
+    values.forEach(renderRow);
   }
 
   /**
@@ -119,7 +127,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    */
   get value() {
     // filter all rows that don't have a key
-    return this.$group.selectAll<IFormRow>('.form-group').data().filter((d) => !!d.key);
+    return this.rows.filter((d) => !!d.key);
   }
 
   /**
@@ -127,7 +135,8 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    * @param v
    */
   set value(v: IFormRow[]) {
-    this.buildMap(v);
+    this.rows = v;
+    this.buildMap();
   }
 
 }

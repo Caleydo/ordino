@@ -17,7 +17,7 @@ export function create(parent: IFormParent, $parent: d3.Selection<any>, desc: IF
     case FormElementType.INPUT_TEXT:
       return new FormInputText(parent, $parent, desc);
     case FormElementType.MAP:
-      return new FormMap(parent, $parent, desc);
+      return new FormMap(parent, $parent, <any>desc);
     default:
       throw new Error('unknown form element type: ' + desc.type);
   }

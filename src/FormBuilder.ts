@@ -205,11 +205,6 @@ interface IFormElement extends IEventHandler {
   value: any;
 
   /**
-   * Form element values for multiple selection
-   */
-  values?: {id: string, text: string}[];
-
-  /**
    * Set the visibility of an form element
    * @param visible
    */
@@ -539,10 +534,20 @@ export interface IFormSelect2 extends IFormSelectDesc {
 }
 
 /**
+ * Add specific functions for select2 form element
+ */
+export interface IFormSelect2Element extends IFormElement {
+  /**
+   * Form element values for multiple selection
+   */
+  values?: {id: string, text: string}[];
+}
+
+/**
  * Select2 drop down field with integrated search field and communication to external data provider
  * Propagates the changes from the DOM select element using the internal `change` event
  */
-class FormSelect2 extends AFormElement {
+class FormSelect2 extends AFormElement implements IFormSelect2Element {
 
   private $select: JQuery;
 

@@ -185,6 +185,9 @@ function byPriority(a: any, b: any) {
 
 export interface IStartFactory {
   readonly name: string;
+  readonly cssClass: string;
+  readonly idType: string;
+  readonly description: string;
   build(element: HTMLElement);
   options(): Promise<{viewId: string; options: any}>;
 }
@@ -198,6 +201,18 @@ class StartFactory implements IStartFactory {
 
   get name() {
     return this.p.name;
+  }
+
+  get cssClass() {
+    return this.p.cssClass;
+  }
+
+  get idType() {
+    return this.p.idtype;
+  }
+
+  get description() {
+    return this.p.description;
   }
 
   build(element: HTMLElement, options: IEntryPointOptions = {}) {

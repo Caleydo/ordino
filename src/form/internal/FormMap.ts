@@ -11,16 +11,21 @@ import {IFormSelectOption} from './FormSelect';
 import {DEFAULT_OPTIONS} from './FormSelect2';
 import {mixin} from 'phovea_core/src';
 
-export interface ISubInputDesc {
+export interface ISubDesc {
+  name: string;
+  value: string;
+}
+export interface ISubInputDesc extends ISubDesc {
   type: FormElementType.INPUT_TEXT;
 }
-export interface ISubSelectDesc {
+export interface ISubSelectDesc extends ISubDesc {
   type: FormElementType.SELECT;
   optionsData: (string|IFormSelectOption)[];
 }
-export interface ISubSelect2Desc {
+export interface ISubSelect2Desc extends ISubDesc {
   type: FormElementType.SELECT2;
   optionsData?: (string|IFormSelectOption)[];
+  return?: 'text'|'id';
   dataProviderUrl?: string;
 }
 
@@ -32,10 +37,7 @@ export interface IFormMapDesc extends IFormElementDesc {
    * Additional options
    */
   options?: {
-    keys?: (string|{value: string, name: string})[];
-    values?: {
-      [key: string]: ISubInputDesc|ISubSelectDesc|ISubSelect2Desc;
-    }
+    entries: (ISubInputDesc|ISubSelectDesc|ISubSelect2Desc)[];
   };
 }
 
@@ -85,15 +87,14 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 
   private addValueEditor(row: IFormRow, parent: Element) {
     const that = this;
-    let desc = this.desc.options ? this.desc.options.values[row.key] : null;
-    if (!desc) {
-      desc = {type: FormElementType.INPUT_TEXT};
-    }
+    const desc = this.desc.options.entries.find((d) => d.value === row.key);
+
     function mapOptions(d: IFormSelectOption) {
       const value = typeof d === 'string' ? d : d.value;
       const name = typeof d === 'string' ? d : d.name;
       return `<option value="${value}">${name}</option>`;
     }
+
     const initialValue = row.value;
 
     switch (desc.type) {
@@ -117,10 +118,17 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         }, DEFAULT_OPTIONS, desc));
         // register on change listener use full select2 items
         $s.on('change', function (this: HTMLSelectElement) {
-          row.value = {id: '', text: ''}; // default value
+          const r = {id: '', text: ''}; // default value
           if ($s.val() !== null) {
-            row.value.id = $s.select2('data')[0].id;
-            row.value.text = $s.select2('data')[0].text;
+            r.id = $s.select2('data')[0].id;
+            r.text = $s.select2('data')[0].text;
+          }
+          if (desc.return === 'id') {
+            row.value = r.id;
+          } else if (desc.return === 'text') {
+            row.value = r.text;
+          } else {
+            row.value = r;
           }
           that.fire('change', that.value, that.$group);
         });
@@ -131,7 +139,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           row.value = this.value;
           that.fire('change', that.value, that.$group);
         });
-  }
+    }
   }
 
   private buildMap() {
@@ -143,12 +151,6 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     values.push({key: '', value: null});
     this.rows = [];
 
-    const options = (this.desc.options.keys || []).map((d) => {
-      const value = typeof d === 'string' ? d : d.value;
-      const name = typeof d === 'string' ? d : d.name;
-      return {name, value};
-    });
-
     const renderRow = (d: IFormRow) => {
       this.rows.push(d);
       const row = group.ownerDocument.createElement('div');
@@ -158,7 +160,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         <div class="col-sm-5">
           <select class="form-control">
             <option value="">Select...</option>
-            ${options.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
+            ${this.desc.options.entries.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
           </select>
         </div>
         <div class="col-sm-7"></div>`;
@@ -194,8 +196,8 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    * @returns {string}
    */
   get value() {
-    // filter all rows that don't have a key
-    return this.rows.filter((d) => !!d.key);
+    // just rows with a valid key and value
+    return this.rows.filter((d) => d.key && d.value);
   }
 
   /**
@@ -207,4 +209,24 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.buildMap();
   }
 
+}
+
+export function convertRow2MultiMap(rows: IFormRow[]) {
+  const map = new Map<string, any[]>();
+  rows.forEach((row) => {
+    if (!map.has(row.key)) {
+      map.set(row.key, [row.value]);
+    } else {
+      map.get(row.key).push(row.value);
+    }
+  });
+  const r:{ [key: string]: any|any[]} = {};
+  map.forEach((v, k) => {
+    if (v.length === 1) {
+      r[k] = v[0];
+    } else {
+      r[k] = v;
+    }
+  });
+  return r;
 }

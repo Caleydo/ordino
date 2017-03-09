@@ -2,10 +2,27 @@
  * Created by Samuel Gratzl on 08.03.2017.
  */
 
+import 'select2';
 import {} from 'd3';
+import * as $ from 'jquery';
 import AFormElement from './AFormElement';
-import {IFormElementDesc, IFormParent} from '../interfaces';
+import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
+import {IFormSelectOption} from './FormSelect';
+import {DEFAULT_OPTIONS} from './FormSelect2';
+import {mixin} from 'phovea_core/src';
 
+export interface ISubInputDesc {
+  type: FormElementType.INPUT_TEXT;
+}
+export interface ISubSelectDesc {
+  type: FormElementType.SELECT;
+  optionsData: (string|IFormSelectOption)[];
+}
+export interface ISubSelect2Desc {
+  type: FormElementType.SELECT2;
+  optionsData?: (string|IFormSelectOption)[];
+  dataProviderUrl?: string;
+}
 
 /**
  * Add specific options for input form elements
@@ -16,6 +33,9 @@ export interface IFormMapDesc extends IFormElementDesc {
    */
   options?: {
     keys?: (string|{value: string, name: string})[];
+    values?: {
+      [key: string]: ISubInputDesc|ISubSelectDesc|ISubSelect2Desc;
+    }
   };
 }
 
@@ -63,8 +83,55 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     });
   }
 
-  private createValueEditor(value: string) {
-    return `<input type="text" class="form-control">`;
+  private addValueEditor(row: IFormRow, parent: Element) {
+    const that = this;
+    let desc = this.desc.options ? this.desc.options.values[row.key] : null;
+    if (!desc) {
+      desc = {type: FormElementType.INPUT_TEXT};
+    }
+    function mapOptions(d: IFormSelectOption) {
+      const value = typeof d === 'string' ? d : d.value;
+      const name = typeof d === 'string' ? d : d.name;
+      return `<option value="${value}">${name}</option>`;
+    }
+    const initialValue = row.value;
+
+    switch (desc.type) {
+      case FormElementType.SELECT:
+        parent.insertAdjacentHTML('afterbegin', `<select class="form-control">${desc.optionsData.map(mapOptions).join('')}</select>`);
+        // register on change listener
+        parent.firstElementChild.addEventListener('change', function (this: HTMLSelectElement) {
+          row.value = this.value;
+          that.fire('change', that.value, that.$group);
+        });
+        if (initialValue) {
+          (<HTMLSelectElement>parent.firstElementChild).selectedIndex = desc.optionsData.map((d) => typeof d === 'string' ? d : d.value).indexOf(initialValue);
+        }
+        break;
+      case FormElementType.SELECT2:
+        const options = desc.optionsData ? desc.optionsData.map(mapOptions) : [];
+        parent.insertAdjacentHTML('afterbegin', `<select class="form-control">${options.join('')}</select>`);
+        const s = parent.firstElementChild;
+        const $s = (<any>$(s)).select2(mixin({
+          defaultData: initialValue ? [initialValue] : []
+        }, DEFAULT_OPTIONS, desc));
+        // register on change listener use full select2 items
+        $s.on('change', function (this: HTMLSelectElement) {
+          row.value = {id: '', text: ''}; // default value
+          if ($s.val() !== null) {
+            row.value.id = $s.select2('data')[0].id;
+            row.value.text = $s.select2('data')[0].text;
+          }
+          that.fire('change', that.value, that.$group);
+        });
+        break;
+      default:
+        parent.insertAdjacentHTML('afterbegin', `<input type="text" class="form-control" value="${initialValue || ''}">`);
+        parent.firstElementChild.addEventListener('change', function (this: HTMLInputElement) {
+          row.value = this.value;
+          that.fire('change', that.value, that.$group);
+        });
+  }
   }
 
   private buildMap() {
@@ -91,31 +158,32 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         <div class="col-sm-5">
           <select class="form-control">
             <option value="">Select...</option>
-            ${options.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"': ''}>${o.name}</option>`).join('')}
+            ${options.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
           </select>
         </div>
-        <div class="col-sm-7">${d.key ? this.createValueEditor(d.key) : ''}</div>`;
+        <div class="col-sm-7"></div>`;
+
+      if (d.key) { // has value
+        this.addValueEditor(d, row.lastElementChild);
+      }
       row.querySelector('select').addEventListener('change', function (this: HTMLSelectElement) {
         if (!this.value) {
           // remove this row
           row.remove();
+          that.rows.splice(that.rows.indexOf(d), 1);
+          that.fire('change', that.value, that.$group);
           return;
         }
         if (d.key !== this.value) { // value changed
           if (d.key) { //has an old value?
-            row.lastElementChild.remove();
-          }
-          row.insertAdjacentHTML('beforeend', `<div class="col-sm-7">${that.createValueEditor(this.value)}</div>`);
-          row.lastElementChild.addEventListener('change', function (this: HTMLSelectElement|HTMLInputElement) {
-            d.value = this.value;
-          });
-
-          if (!d.key) {
+            row.lastElementChild.innerHTML = '';
+          } else {
             // ensure that there is an empty row
             renderRow({key: '', value: null});
           }
+          d.key = this.value;
+          that.addValueEditor(d, row.lastElementChild);
         }
-        d.key = this.value;
       });
     };
     values.forEach(renderRow);

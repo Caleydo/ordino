@@ -29,6 +29,38 @@ export interface IFormSelect2 extends IFormSelectDesc {
 }
 
 
+export const DEFAULT_OPTIONS = {
+    placeholder: 'Start typing...',
+    theme: 'bootstrap',
+    minimumInputLength: 1,
+    //selectOnClose: true,
+    //tokenSeparators: [' ', ',', ';'], // requires multiple attribute for select element
+    ajax: {
+      url: api2absURL('url_needed'), // URL
+      dataType: 'json',
+      delay: 250,
+      cache: true,
+      data: (params: any) => {
+        return {
+          query: params.term, // search term from select2
+          page: params.page
+        };
+      },
+      processResults: (data, params) => {
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: { // indicate infinite scrolling
+            more: (params.page * data.items_per_page) < data.total_count
+          }
+        };
+      }
+    },
+    escapeMarkup: (markup) => markup,
+    templateResult: (item: any) => item.text,
+    templateSelection: (item: any) => item.text
+  };
+
 /**
  * Select2 drop down field with integrated search field and communication to external data provider
  * Propagates the changes from the DOM select element using the internal `change` event
@@ -90,43 +122,14 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
       defaultData = (defaultVal.id && defaultVal.text) ? [defaultVal] : [{id: defaultVal, text: defaultVal}];
     }
 
-    const defaultOptions = {
-      data: defaultData,
-      placeholder: 'Start typing...',
-      theme: 'bootstrap',
-      minimumInputLength: 1,
-      //selectOnClose: true,
-      //tokenSeparators: [' ', ',', ';'], // requires multiple attribute for select element
-      ajax: {
-        url: api2absURL('url_needed'), // URL
-        dataType: 'json',
-        delay: 250,
-        cache: true,
-        data: (params: any) => {
-          return {
-            query: params.term, // search term from select2
-            page: params.page
-          };
-        },
-        processResults: (data, params) => {
-          params.page = params.page || 1;
-          return {
-            results: data.items,
-            pagination: { // indicate infinite scrolling
-              more: (params.page * data.items_per_page) < data.total_count
-            }
-          };
-        }
-      },
-      escapeMarkup: (markup) => markup,
-      templateResult: (item: any) => item.text,
-      templateSelection: (item: any) => item.text
+    const select2Options = {
+      data: defaultData
     };
 
-    mixin(defaultOptions, options);
+    mixin(select2Options, DEFAULT_OPTIONS, options);
     //console.log(defaultOptions);
 
-    return (<any>$($select.node())).select2(defaultOptions).trigger('change');
+    return (<any>$($select.node())).select2(select2Options).trigger('change');
   }
 
   /**

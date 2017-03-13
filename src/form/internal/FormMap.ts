@@ -18,13 +18,16 @@ export interface ISubDesc {
 export interface ISubInputDesc extends ISubDesc {
   type: FormElementType.INPUT_TEXT;
 }
+
+declare type ISelectOptions = ((string|IFormSelectOption)[]|Promise<(string|IFormSelectOption)[]>);
+
 export interface ISubSelectDesc extends ISubDesc {
   type: FormElementType.SELECT;
-  optionsData: (string|IFormSelectOption)[];
+  optionsData: ISelectOptions;
 }
 export interface ISubSelect2Desc extends ISubDesc {
   type: FormElementType.SELECT2;
-  optionsData?: (string|IFormSelectOption)[];
+  optionsData?: ISelectOptions;
   return?: 'text'|'id';
   dataProviderUrl?: string;
 }
@@ -89,7 +92,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     const that = this;
     const desc = this.desc.options.entries.find((d) => d.value === row.key);
 
-    function mapOptions(d: IFormSelectOption) {
+    function mapOptions(d: IFormSelectOption|string) {
       const value = typeof d === 'string' ? d : d.value;
       const name = typeof d === 'string' ? d : d.name;
       return `<option value="${value}">${name}</option>`;
@@ -99,38 +102,46 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 
     switch (desc.type) {
       case FormElementType.SELECT:
-        parent.insertAdjacentHTML('afterbegin', `<select class="form-control">${desc.optionsData.map(mapOptions).join('')}</select>`);
+        parent.insertAdjacentHTML('afterbegin', `<select class="form-control"></select>`);
         // register on change listener
         parent.firstElementChild.addEventListener('change', function (this: HTMLSelectElement) {
           row.value = this.value;
           that.fire('change', that.value, that.$group);
         });
-        if (initialValue) {
-          (<HTMLSelectElement>parent.firstElementChild).selectedIndex = desc.optionsData.map((d) => typeof d === 'string' ? d : d.value).indexOf(initialValue);
-        }
+        Promise.resolve(desc.optionsData).then((values) => {
+          parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
+          if (initialValue) {
+            (<HTMLSelectElement>parent.firstElementChild).selectedIndex = values.map((d) => typeof d === 'string' ? d : d.value).indexOf(initialValue);
+          }
+        });
         break;
       case FormElementType.SELECT2:
-        const options = desc.optionsData ? desc.optionsData.map(mapOptions) : [];
-        parent.insertAdjacentHTML('afterbegin', `<select class="form-control">${options.join('')}</select>`);
-        const s = parent.firstElementChild;
-        const $s = (<any>$(s)).select2(mixin({
-          defaultData: initialValue ? [initialValue] : []
-        }, DEFAULT_OPTIONS, desc));
-        // register on change listener use full select2 items
-        $s.on('change', function (this: HTMLSelectElement) {
-          const r = {id: '', text: ''}; // default value
-          if ($s.val() !== null) {
-            r.id = $s.select2('data')[0].id;
-            r.text = $s.select2('data')[0].text;
-          }
-          if (desc.return === 'id') {
-            row.value = r.id;
-          } else if (desc.return === 'text') {
-            row.value = r.text;
-          } else {
-            row.value = r;
-          }
-          that.fire('change', that.value, that.$group);
+        parent.insertAdjacentHTML('afterbegin', `<select class="form-control"></select>`);
+        if (!desc.optionsData) {
+          desc.optionsData = [];
+        }
+        Promise.resolve(desc.optionsData).then((values) => {
+          parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
+          const s = parent.firstElementChild;
+          const $s = (<any>$(s)).select2(mixin({
+            defaultData: initialValue ? [initialValue] : []
+          }, DEFAULT_OPTIONS, desc));
+          // register on change listener use full select2 items
+          $s.on('change', function (this: HTMLSelectElement) {
+            const r = {id: '', text: ''}; // default value
+            if ($s.val() !== null) {
+              r.id = $s.select2('data')[0].id;
+              r.text = $s.select2('data')[0].text;
+            }
+            if (desc.return === 'id') {
+              row.value = r.id;
+            } else if (desc.return === 'text') {
+              row.value = r.text;
+            } else {
+              row.value = r;
+            }
+            that.fire('change', that.value, that.$group);
+          });
         });
         break;
       default:

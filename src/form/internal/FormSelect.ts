@@ -25,7 +25,7 @@ export interface IFormSelectOptions {
   /**
    * Data for the options elements of the select
    */
-  optionsData?: string[]|IFormSelectOption[];
+  optionsData?: (string|IFormSelectOption)[];
   /**
    * Function to generate dynamic options based on the selection of the depending form element
    * @param selection selection of the depending form element (see `dependsOn` property)

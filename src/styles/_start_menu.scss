@@ -78,10 +78,6 @@
       .item {
         margin-right: 30px;
 
-        &:last-child {
-          margin-right: 0;
-        }
-
         &:only-child {
           width: 100%;
         }
@@ -89,10 +85,6 @@
 
       .header {
         font-weight: 500;
-      }
-
-      .subheader {
-        font-size: 0.95em;
       }
 
       .customNamedSets {
@@ -197,7 +189,6 @@
       }
 
       .entry-points-wrapper {
-        display: flex;
         margin-top: 15px;
       }
 
@@ -304,6 +295,24 @@
 
       .startMenuSearch {
         margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+
+        form {
+          width: 90%;
+        }
+
+        // fix select2 placeholder cutoff
+        // https://github.com/select2/select2/issues/291
+        .select2-search__field {
+          width: auto !important;
+        }
+      }
+
+      .named-sets-wrapper {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
       }
 
     }

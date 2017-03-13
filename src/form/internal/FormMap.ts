@@ -23,11 +23,14 @@ declare type ISelectOptions = ((string|IFormSelectOption)[]|Promise<(string|IFor
 
 export interface ISubSelectDesc extends ISubDesc {
   type: FormElementType.SELECT;
-  optionsData: ISelectOptions;
+  /**
+   * teh data, a promise of the data or a function computing the data or promise
+   */
+  optionsData: ISelectOptions|(() => ISelectOptions);
 }
 export interface ISubSelect2Desc extends ISubDesc {
   type: FormElementType.SELECT2;
-  optionsData?: ISelectOptions;
+  optionsData?: ISelectOptions|(() => ISelectOptions);
   return?: 'text'|'id';
   dataProviderUrl?: string;
 }
@@ -77,7 +80,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.$group = this.$node.append('div');
     this.setAttributes(this.$group, this.desc.attributes);
     // adapt default settings
-    this.$group.classed('form-horizontal', true).classed('form-control', false);
+    this.$group.classed('form-horizontal', true).classed('form-control', false).classed('form-group-sm', true);
     this.handleShowIf();
 
     this.buildMap();
@@ -108,10 +111,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           row.value = this.value;
           that.fire('change', that.value, that.$group);
         });
-        Promise.resolve(desc.optionsData).then((values) => {
+        Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
           parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
           if (initialValue) {
             (<HTMLSelectElement>parent.firstElementChild).selectedIndex = values.map((d) => typeof d === 'string' ? d : d.value).indexOf(initialValue);
+          } else {
+            const first = values[0];
+            row.value = typeof first === 'string' ? first : first.value;
           }
         });
         break;
@@ -120,12 +126,16 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         if (!desc.optionsData) {
           desc.optionsData = [];
         }
-        Promise.resolve(desc.optionsData).then((values) => {
+        Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
           parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
           const s = parent.firstElementChild;
           const $s = (<any>$(s)).select2(mixin({
             defaultData: initialValue ? [initialValue] : []
           }, DEFAULT_OPTIONS, desc));
+          if (values.length > 0 && !initialValue) {
+            const first = values[0];
+            row.value = typeof first === 'string' ? first : first.value;
+          }
           // register on change listener use full select2 items
           $s.on('change', function (this: HTMLSelectElement) {
             const r = {id: '', text: ''}; // default value
@@ -231,7 +241,7 @@ export function convertRow2MultiMap(rows: IFormRow[]) {
       map.get(row.key).push(row.value);
     }
   });
-  const r:{ [key: string]: any|any[]} = {};
+  const r: {[key: string]: any|any[]} = {};
   map.forEach((v, k) => {
     if (v.length === 1) {
       r[k] = v[0];

@@ -87,7 +87,7 @@ def get_filtered_data(database, view_name):
     return '{k} IN :{kp}'.format(k=k, kp=kp)
 
   where_clause = [to_clause(k, v) for k, v in where_clause.items()]
-  processed_args['and_where'] = ' AND '.join(where_clause) if where_clause else ''
+  processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''
   processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
 
   r, view = db.get_data(database, view_name, None, processed_args, extra_args)

@@ -40,18 +40,21 @@ def _replace_named_sets_in_ids(v):
   manager = phovea_server.plugin.lookup('idmanager')
 
   union = set()
-  for vi in v:
-    if (isinstance(vi, str) or isinstance(vi, unicode)) and vi.startswith('NAMEDSET_'):
-      # convert named sets to the primary ids
-      namedset_id = vi[len('NAMEDSET_'):]
-      namedset = storage.get_namedset_by_id(namedset_id)
-      uids = namedset['ids']
-      id_type = namedset['idType']
-      ids = manager.unmap(uids, id_type)
-      for id in ids:
-        union.add(id)
-    else:
-      union.add(vi)
+  def add_namedset(vi):
+    # convert named sets to the primary ids
+    namedset_id = vi
+    namedset = storage.get_namedset_by_id(namedset_id)
+    uids = namedset['ids']
+    id_type = namedset['idType']
+    ids = manager.unmap(uids, id_type)
+    for id in ids:
+      union.add(id)
+
+  if isinstance(v, list):
+    for vi in v:
+      add_namedset(vi)
+  else:
+    add_namedset(v)
   return list(union)
 
 
@@ -68,15 +71,26 @@ def get_filtered_data(database, view_name):
   extra_args = dict()
   where_clause = {}
   for k, v in args.lists():
+    if k.endswith('[]'):
+      k = k[:-2]
     if k.startswith('filter_'):
-      where_clause[k[7:]] = v
+      where_clause[k[7:]] = v  # remove filter_
     else:
       processed_args[k] = v[0] if len(v) == 1 else v
 
+  # handle special namedset4 filter types by resolve them and and the real ids as filter
+  for k, v in where_clause.items():
+    if k.startswith('namedset4'):
+      del where_clause[k] # delete value
+      real_key = k[9:]  # remove the namedset4 part
+      ids = _replace_named_sets_in_ids(v)
+      if real_key not in where_clause:
+        where_clause[real_key] = ids
+      else:
+        where_clause[real_key].extend(ids)
+
   def to_clause(k, v):
     l = len(v)
-    if k.endswith('[]'):
-      k = k[:-2]
     kp = k.replace('.', '_')
     if k == 'name':
       v = _replace_named_sets_in_ids(v)

@@ -60,6 +60,10 @@ def _replace_named_sets_in_ids(v):
 
 @app.route('/<database>/<view_name>/filter')
 def get_filtered_data(database, view_name):
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  # row id start with 1
+  view = config.views[view_name]
   """
   like the raw data but with special processing to compute the filter
   :param database:
@@ -92,13 +96,15 @@ def get_filtered_data(database, view_name):
   def to_clause(k, v):
     l = len(v)
     kp = k.replace('.', '_')
-    if k == 'name':
-      v = _replace_named_sets_in_ids(v)
     if l == 1:  # single value
       extra_args[kp] = v[0]
-      return '{k} = :{kp}'.format(k=k, kp=kp)
-    extra_args[kp] = tuple(v)
-    return '{k} IN :{kp}'.format(k=k, kp=kp)
+      operator = '='
+    else:
+      extra_args[kp] = tuple(v)
+      operator = 'IN'
+    # find the sub query to replace, can be injected for more complex filter operations based on the input
+    sub_query = view.queries['filter_' + k] if 'filter_' + k in view.queries else k + ' %(operator)s %(value)s'
+    return sub_query % dict(operator=operator, value=':' + kp)
 
   where_clause = [to_clause(k, v) for k, v in where_clause.items()]
   processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''

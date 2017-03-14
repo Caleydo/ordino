@@ -19,3 +19,7 @@ export default function cached<T>(key: string, creator: () => T) {
   values.set(key, v);
   return v;
 }
+
+export function cachedLazy<T>(key: string, creator: () => T): (() => T)  {
+  return () => cached(key, creator);
+}

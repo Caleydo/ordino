@@ -28,8 +28,41 @@ def get_data_api(database, view_name):
   return jsonify(r)
 
 
+def _replace_named_sets_in_ids(v):
+  """
+  replaces magic named sets references with their ids
+  :param v:
+  :return:
+  """
+  import storage
+  import phovea_server.plugin
+
+  manager = phovea_server.plugin.lookup('idmanager')
+
+  union = set()
+  for vi in v:
+    if (isinstance(vi, str) or isinstance(vi, unicode)) and vi.startswith('NAMEDSET_'):
+      # convert named sets to the primary ids
+      namedset_id = vi[len('NAMEDSET_'):]
+      namedset = storage.get_namedset_by_id(namedset_id)
+      uids = namedset['ids']
+      id_type = namedset['idType']
+      ids = manager.unmap(uids, id_type)
+      for id in ids:
+        union.add(id)
+    else:
+      union.add(vi)
+  return list(union)
+
+
 @app.route('/<database>/<view_name>/filter')
 def get_filtered_data(database, view_name):
+  """
+  like the raw data but with special processing to compute the filter
+  :param database:
+  :param view_name:
+  :return:
+  """
   args = request.args
   processed_args = dict()
   extra_args = dict()
@@ -42,12 +75,16 @@ def get_filtered_data(database, view_name):
 
   def to_clause(k, v):
     l = len(v)
+    if k.endswith('[]'):
+      k = k[:-2]
     kp = k.replace('.', '_')
+    if k == 'name':
+      v = _replace_named_sets_in_ids(v)
     if l == 1:  # single value
       extra_args[kp] = v[0]
       return '{k} = :{kp}'.format(k=k, kp=kp)
-    extra_args[kp] = v  # list value
-    return '{k} = ANY(:{kp})'.format(k=k, kp=kp)
+    extra_args[kp] = tuple(v)
+    return '{k} IN :{kp}'.format(k=k, kp=kp)
 
   where_clause = [to_clause(k, v) for k, v in where_clause.items()]
   processed_args['and_where'] = ' AND '.join(where_clause) if where_clause else ''

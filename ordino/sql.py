@@ -40,6 +40,7 @@ def _replace_named_sets_in_ids(v):
   manager = phovea_server.plugin.lookup('idmanager')
 
   union = set()
+
   def add_namedset(vi):
     # convert named sets to the primary ids
     namedset_id = vi
@@ -85,7 +86,7 @@ def get_filtered_data(database, view_name):
   # handle special namedset4 filter types by resolve them and and the real ids as filter
   for k, v in where_clause.items():
     if k.startswith('namedset4'):
-      del where_clause[k] # delete value
+      del where_clause[k]  # delete value
       real_key = k[9:]  # remove the namedset4 part
       ids = _replace_named_sets_in_ids(v)
       if real_key not in where_clause:

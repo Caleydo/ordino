@@ -50,7 +50,7 @@ export interface IFormMapDesc extends IFormElementDesc {
      * @param selection
      * @param formElement
      */
-    onChange?: (selection: IFormSelectOption, formElement: IFormElement) => any;
+    onChange?: (elem: IFormElement, formElement: IFormElement) => any;
 
     entries: (ISubInputDesc|ISubSelectDesc|ISubSelect2Desc)[];
   };
@@ -75,6 +75,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 
   private $group: d3.Selection<any>;
   private rows: IFormRow[] = [];
+  private readonly inline: boolean;
 
   /**
    * Constructor
@@ -86,6 +87,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     super(parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
+    this.inline = hasInlineParent(<HTMLElement>this.$node.node());
 
     this.build();
   }
@@ -95,11 +97,10 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    * Bind the change listener and propagate the selection by firing a change event
    */
   protected build() {
-    const inline = hasInlineParent(<HTMLElement>this.$node.node());
     if (this.desc.visible === false) {
       this.$node.classed('hidden', true);
     }
-    if (inline) {
+    if (this.inline) {
       this.$node.classed('dropdown', true);
       this.$node.html(`
           <button class="btn btn-default dropdown-toggle" type="button" id="${this.desc.attributes.id}l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -136,15 +137,25 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 
     this.buildMap();
 
-    // propagate change action with the data of the selected option
-    this.$group.on('change.propagate', () => {
-      this.fire('change', this.value, this.$group);
-    });
-
     if (this.desc.options.onChange) {
-      this.on('change', (value) => {
-        this.desc.options.onChange(value, this);
-      });
+      const handler = this.desc.options.onChange;
+      if (this.inline) {
+        let changed = false;
+        this.on('change', () => {
+          changed = true;
+        });
+        // trigger change on onChange listener just when the dialog is closed
+        $(this.$node.node()).on('hidden.bs.dropdown', () => {
+          if (changed) {
+            handler(this, this);
+          }
+          changed = false;
+        });
+      } else {
+        this.on('change', () => {
+            handler(this, this);
+        });
+      }
     }
   }
 
@@ -283,10 +294,23 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    * @param v
    */
   set value(v: IFormRow[]) {
+    if (isEqual(v, this.value)) {
+      return;
+    }
     this.rows = v;
     this.buildMap();
   }
 
+}
+
+function isEqual(a: IFormRow[], b: IFormRow[]) {
+  if (a.length !== b.length) {
+    return false;
+  }
+  return a.every((ai,i) => {
+    const bi = b[i];
+    return ai.key === bi.key && ai.value === bi.value;
+  });
 }
 
 export function convertRow2MultiMap(rows: IFormRow[]) {

@@ -3,7 +3,7 @@
  */
 
 import 'select2';
-import {} from 'd3';
+import {event as d3event} from 'd3';
 import * as $ from 'jquery';
 import AFormElement from './AFormElement';
 import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
@@ -43,7 +43,6 @@ export interface IFormMapDesc extends IFormElementDesc {
    * Additional options
    */
   options?: {
-    inline?: boolean;
     entries: (ISubInputDesc|ISubSelectDesc|ISubSelect2Desc)[];
   };
 }
@@ -51,6 +50,16 @@ export interface IFormMapDesc extends IFormElementDesc {
 interface IFormRow {
   key: string;
   value: any;
+}
+
+function hasInlineParent(node: HTMLElement) {
+  while(node.parentElement) {
+    node = node.parentElement;
+    if (node.classList.contains('parameters')) {
+      return node.classList.contains('form-inline');
+    }
+  }
+  return false;
 }
 
 export default class FormMap extends AFormElement<IFormMapDesc> {
@@ -77,8 +86,32 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    * Bind the change listener and propagate the selection by firing a change event
    */
   protected build() {
-    super.build();
-    this.$group = this.$node.append('div');
+    const inline = hasInlineParent(<HTMLElement>this.$node.node());
+    if (this.desc.visible === false) {
+      this.$node.classed('hidden', true);
+    }
+    if (inline) {
+      this.$node.classed('dropdown', true);
+      this.$node.html(`
+          <button class="btn btn-default dropdown-toggle" type="button" id="${this.desc.attributes.id}l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            ${this.desc.label}
+            <span class="caret"></span>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="${this.desc.attributes.id}l" style="min-width: 25em">
+            <div class="form-horizontal"></div>
+          </div>
+      `);
+      this.$group = this.$node.select('div.form-horizontal');
+      this.$group.on('click', () => {
+        // stop click propagation to avoid closing the dropdown
+        (<MouseEvent>d3event).stopPropagation();
+      });
+    } else {
+      if (!this.desc.hideLabel) {
+        this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+      }
+      this.$group = this.$node.append('div');
+    }
     this.setAttributes(this.$group, this.desc.attributes);
     // adapt default settings
     this.$group.classed('form-horizontal', true).classed('form-control', false).classed('form-group-sm', true);
@@ -97,8 +130,8 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     const desc = this.desc.options.entries.find((d) => d.value === row.key);
 
     function mapOptions(d: IFormSelectOption|string) {
-      const value = typeof d === 'string' ? d : d.value;
-      const name = typeof d === 'string' ? d : d.name;
+      const value = typeof d === 'string' || !d ? d : d.value;
+      const name = typeof d === 'string' || !d ? d : d.name;
       return `<option value="${value}">${name}</option>`;
     }
 
@@ -106,7 +139,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 
     switch (desc.type) {
       case FormElementType.SELECT:
-        parent.insertAdjacentHTML('afterbegin', `<select class="form-control"></select>`);
+        parent.insertAdjacentHTML('afterbegin', `<select class="form-control" style="width: 100%"></select>`);
         // register on change listener
         parent.firstElementChild.addEventListener('change', function (this: HTMLSelectElement) {
           row.value = this.value;
@@ -118,12 +151,12 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             (<HTMLSelectElement>parent.firstElementChild).selectedIndex = values.map((d) => typeof d === 'string' ? d : d.value).indexOf(initialValue);
           } else {
             const first = values[0];
-            row.value = typeof first === 'string' ? first : first.value;
+            row.value = typeof first === 'string' || !first ? first : first.value;
           }
         });
         break;
       case FormElementType.SELECT2:
-        parent.insertAdjacentHTML('afterbegin', `<select class="form-control"></select>`);
+        parent.insertAdjacentHTML('afterbegin', `<select class="form-control" style="width: 100%"></select>`);
         if (!desc.optionsData) {
           desc.optionsData = [];
         }
@@ -135,7 +168,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           }, DEFAULT_OPTIONS, desc));
           if (values.length > 0 && !initialValue) {
             const first = values[0];
-            row.value = typeof first === 'string' ? first : first.value;
+            row.value = typeof first === 'string' || !first ? first : first.value;
           }
           // register on change listener use full select2 items
           $s.on('change', function (this: HTMLSelectElement) {

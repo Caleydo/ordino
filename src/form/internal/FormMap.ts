@@ -130,7 +130,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     if (this.desc.useSession) {
       this.rows = session.retrieve(this.id + '_rows', []);
 
-      this.on('change', (value) => {
+      this.on('change', (event, value) => {
         session.store(this.id + '_rows', value);
       });
     }
@@ -187,6 +187,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
           }
+          that.fire('change', that.value, that.$group);
         });
         break;
       case FormElementType.SELECT2:
@@ -204,6 +205,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
           }
+          that.fire('change', that.value, that.$group);
           // register on change listener use full select2 items
           $s.on('change', function (this: HTMLSelectElement) {
             const r = {id: '', text: ''}; // default value
@@ -228,6 +230,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           row.value = this.value;
           that.fire('change', that.value, that.$group);
         });
+        that.fire('change', that.value, that.$group);
     }
   }
 

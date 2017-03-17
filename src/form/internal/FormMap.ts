@@ -4,12 +4,14 @@
 
 import 'select2';
 import {event as d3event} from 'd3';
+import * as session from 'phovea_core/src/session';
 import * as $ from 'jquery';
 import AFormElement from './AFormElement';
 import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
 import {IFormSelectOption} from './FormSelect';
 import {DEFAULT_OPTIONS} from './FormSelect2';
 import {mixin} from 'phovea_core/src';
+import {IFormElement} from 'ordino/src/form';
 
 export interface ISubDesc {
   name: string;
@@ -43,6 +45,13 @@ export interface IFormMapDesc extends IFormElementDesc {
    * Additional options
    */
   options?: {
+    /**
+     * Custom on change function that is executed when the selection has changed
+     * @param selection
+     * @param formElement
+     */
+    onChange?: (selection: IFormSelectOption, formElement: IFormElement) => any;
+
     entries: (ISubInputDesc|ISubSelectDesc|ISubSelect2Desc)[];
   };
 }
@@ -117,12 +126,26 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.$group.classed('form-horizontal', true).classed('form-control', false).classed('form-group-sm', true);
     this.handleShowIf();
 
+    if (this.desc.useSession) {
+      this.rows = session.retrieve(this.id + '_rows', []);
+
+      this.on('change', (value) => {
+        session.store(this.id + '_rows', value);
+      });
+    }
+
     this.buildMap();
 
     // propagate change action with the data of the selected option
     this.$group.on('change.propagate', () => {
       this.fire('change', this.value, this.$group);
     });
+
+    if (this.desc.options.onChange) {
+      this.on('change', (value) => {
+        this.desc.options.onChange(value, this);
+      });
+    }
   }
 
   private addValueEditor(row: IFormRow, parent: Element) {

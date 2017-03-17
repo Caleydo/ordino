@@ -37,6 +37,8 @@ export interface ISubSelect2Desc extends ISubDesc {
   dataProviderUrl?: string;
 }
 
+declare type ISubDescs = ISubInputDesc|ISubSelectDesc|ISubSelect2Desc;
+
 /**
  * Add specific options for input form elements
  */
@@ -52,7 +54,7 @@ export interface IFormMapDesc extends IFormElementDesc {
      */
     onChange?: (elem: IFormElement, formElement: IFormElement) => any;
 
-    entries: (ISubInputDesc|ISubSelectDesc|ISubSelect2Desc)[];
+    entries: (ISubDescs[])|((...dependent: IFormElement[])=>(ISubDescs[]));
   };
 }
 
@@ -136,6 +138,15 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
       });
     }
 
+    const dependent = (this.desc.dependsOn || []).map((id) => this.parent.getElementById(id));
+    dependent.forEach((d) => {
+      d.on('change', () => {
+        this.rows = []; // clear old
+        this.buildMap();
+      });
+    });
+
+
     this.buildMap();
 
     if (this.desc.options.onChange) {
@@ -160,9 +171,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     }
   }
 
-  private addValueEditor(row: IFormRow, parent: Element) {
+  private addValueEditor(row: IFormRow, parent: Element, entries: ISubDescs[]) {
     const that = this;
-    const desc = this.desc.options.entries.find((d) => d.value === row.key);
+    const desc = entries.find((d) => d.value === row.key);
 
     function mapOptions(d: IFormSelectOption|string) {
       const value = typeof d === 'string' || !d ? d : d.value;
@@ -236,6 +247,16 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
   }
 
   private buildMap() {
+    if (Array.isArray(this.desc.options.entries)) {
+      this.buildMapImpl(this.desc.options.entries);
+    } else { // function case
+      const dependent = (this.desc.dependsOn || []).map((id) => this.parent.getElementById(id));
+      const entries = this.desc.options.entries(...dependent);
+      this.buildMapImpl(entries);
+    }
+  }
+
+  private buildMapImpl(entries: ISubDescs[]) {
     const that = this;
     const group = <HTMLDivElement>this.$group.node();
     group.innerHTML = ''; // remove all approach
@@ -253,13 +274,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         <div class="col-sm-5">
           <select class="form-control">
             <option value="">Select...</option>
-            ${this.desc.options.entries.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
+            ${entries.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
           </select>
         </div>
         <div class="col-sm-7"></div>`;
 
       if (d.key) { // has value
-        this.addValueEditor(d, row.lastElementChild);
+        this.addValueEditor(d, row.lastElementChild, entries);
       }
       row.querySelector('select').addEventListener('change', function (this: HTMLSelectElement) {
         if (!this.value) {
@@ -277,7 +298,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             renderRow({key: '', value: null});
           }
           d.key = this.value;
-          that.addValueEditor(d, row.lastElementChild);
+          that.addValueEditor(d, row.lastElementChild, entries);
         }
       });
     };
@@ -290,7 +311,10 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
    */
   get value() {
     // just rows with a valid key and value
-    return this.rows.filter((d) => d.key && d.value);
+    const rows = this.rows.filter((d) => d.key && d.value);
+    // HACK since it seems that it always expects a selection option and uses the ".data" attribute, hack it in
+    (<any>rows).data = rows;
+    return rows;
   }
 
   /**

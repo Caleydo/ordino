@@ -43,6 +43,7 @@ export interface IFormMapDesc extends IFormElementDesc {
    * Additional options
    */
   options?: {
+    inline?: boolean;
     entries: (ISubInputDesc|ISubSelectDesc|ISubSelect2Desc)[];
   };
 }
@@ -233,6 +234,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 }
 
 export function convertRow2MultiMap(rows: IFormRow[]) {
+  if (!rows) {
+    return {};
+  }
   const map = new Map<string, any[]>();
   rows.forEach((row) => {
     if (!map.has(row.key)) {

@@ -128,10 +128,11 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.handleShowIf();
 
     if (this.desc.useSession) {
-      this.rows = session.retrieve(this.id + '_rows', []);
+      const key = `formBuilder.map.${this.id}`;
+      this.rows = session.retrieve(key, []);
 
       this.on('change', (event, value) => {
-        session.store(this.id + '_rows', value);
+        session.store(key, value);
       });
     }
 

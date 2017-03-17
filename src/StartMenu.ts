@@ -185,6 +185,9 @@ function byPriority(a: any, b: any) {
 
 export interface IStartFactory {
   readonly name: string;
+  readonly cssClass: string;
+  readonly idType: string;
+  readonly description: string;
   build(element: HTMLElement);
   options(): Promise<{viewId: string; options: any}>;
 }
@@ -198,6 +201,18 @@ class StartFactory implements IStartFactory {
 
   get name() {
     return this.p.name;
+  }
+
+  get cssClass() {
+    return this.p.cssClass;
+  }
+
+  get idType() {
+    return this.p.idtype;
+  }
+
+  get description() {
+    return this.p.description;
   }
 
   build(element: HTMLElement, options: IEntryPointOptions = {}) {
@@ -273,7 +288,16 @@ export class AEntryPointList implements IEntryPointList {
         // convert to data format and append to species data
         this.data.push(...namedSets);
 
-        this.$node.append('ul');
+        const wrapper = this.$node.append('div').classed('named-sets-wrapper', true);
+
+        const namedSetsWrapper = wrapper.append('div').classed('predefined-named-sets', true);
+        namedSetsWrapper.append('div').classed('header', true).text(`Predefined ${this.desc.description}`);
+        namedSetsWrapper.append('ul');
+
+        const customNamedSetsWrapper = wrapper.append('div').classed('custom-named-sets', true);
+        customNamedSetsWrapper.append('div').classed('header', true).text(`My ${this.desc.description}`);
+        customNamedSetsWrapper.append('ul');
+
         this.updateList(this.data);
 
         return namedSets;
@@ -296,64 +320,72 @@ export class AEntryPointList implements IEntryPointList {
   private updateList(data: INamedSet[]) {
     const that = this;
 
+    const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
+    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
+
+
+    const namedSetItems = this.$node.select('.predefined-named-sets ul').selectAll('li');
+    const customNamedSetItems = this.$node.select('.custom-named-sets ul').selectAll('li');
+
     // append the list items
-    const $ul = this.$node.select('ul');
-    const $options = $ul.selectAll('li').data(data);
-    const enter = $options.enter()
+    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets)];
+    $options.forEach((options) => {
+      const enter = options.enter()
       .append('li')
       .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
 
-    enter.append('a')
-      .classed('goto', true)
-      .attr('href', '#');
+      enter.append('a')
+        .classed('goto', true)
+        .attr('href', '#');
 
-    enter.append('a')
-      .classed('delete', true)
-      .attr('href', '#')
-      .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
-      .attr('title', 'Delete');
+      enter.append('a')
+        .classed('delete', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
+        .attr('title', 'Delete');
 
-    $options.each(function () {
-      const $this = d3.select(this);
-      $this.select('a.goto')
-        .text((d: any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
-        .on('click', (namedSet: INamedSet) => {
-          // prevent changing the hash (href)
-          (<Event>d3.event).preventDefault();
+      options.each(function () {
+        const $this = d3.select(this);
+        $this.select('a.goto')
+          .text((d: any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
+          .on('click', (namedSet: INamedSet) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
 
-          // if targid object is available
-          if (that.options.targid) {
-            // store state to session before creating a new graph
-            session.store(TargidConstants.NEW_ENTRY_POINT, {
-              view: (<any>that.desc).viewId,
-              options: {
-                namedSet
-              }
-            });
+            // if targid object is available
+            if (that.options.targid) {
+              // store state to session before creating a new graph
+              session.store(TargidConstants.NEW_ENTRY_POINT, {
+                view: (<any>that.desc).viewId,
+                options: {
+                  namedSet
+                }
+              });
 
-            // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-            that.options.targid.graphManager.newRemoteGraph();
-          } else {
-            console.error('no targid object given to push new view');
-          }
-        });
+              // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+              that.options.targid.graphManager.newRemoteGraph();
+            } else {
+              console.error('no targid object given to push new view');
+            }
+          });
 
-      $this.select('a.delete')
-        .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-        .on('click', async (namedSet: INamedSet) => {
-          // prevent changing the hash (href)
-          (<Event>d3.event).preventDefault();
+        $this.select('a.delete')
+          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
+          .on('click', async (namedSet: INamedSet) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
 
-          const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
-            {title: `Delete named set`}
-          );
-          if (deleteIt) {
-            await deleteNamedSet(namedSet.id);
-            that.removeNamedSet(namedSet);
-          }
-        });
+            const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
+              {title: `Delete named set`}
+            );
+            if (deleteIt) {
+              await deleteNamedSet(namedSet.id);
+              that.removeNamedSet(namedSet);
+            }
+          });
+      });
+
+      options.exit().remove();
     });
-
-    $options.exit().remove();
   }
 }

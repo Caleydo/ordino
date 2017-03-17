@@ -11,6 +11,7 @@ import {api2absURL} from 'phovea_core/src/ajax';
 import AFormElement from './AFormElement';
 import {IFormParent} from '../interfaces';
 import {IFormSelectDesc} from './FormSelect';
+import {IFormElement} from 'ordino/src/form';
 
 
 /**
@@ -26,6 +27,16 @@ export interface IFormSelect2 extends IFormSelectDesc {
      */
     dataProviderUrl?: string;
   };
+}
+
+/**
+ * Add specific functions for select2 form element
+ */
+export interface IFormSelect2Element extends IFormElement {
+  /**
+   * Form element values for multiple selection
+   */
+  values?: {id: string, text: string}[];
 }
 
 
@@ -65,7 +76,7 @@ export const DEFAULT_OPTIONS = {
  * Select2 drop down field with integrated search field and communication to external data provider
  * Propagates the changes from the DOM select element using the internal `change` event
  */
-export default class FormSelect2 extends AFormElement<IFormSelect2> {
+export default class FormSelect2 extends AFormElement<IFormSelect2> implements IFormSelect2Element {
 
   private $select: JQuery;
 
@@ -182,6 +193,23 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
     if (this.$select.val() !== null) {
       r.id = this.$select.select2('data')[0].id;
       r.text = this.$select.select2('data')[0].text;
+    }
+
+    return r;
+  }
+
+  get values() {
+    const r = [];
+
+    if(this.$select.val().length === 0) {
+      return [{ id: '', text: '' }];
+    }
+
+    for(const value of this.$select.select2('data')) {
+      r.push({
+        id: value.id,
+        text: value.text
+      });
     }
 
     return r;

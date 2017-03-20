@@ -655,6 +655,9 @@ export class ViewWrapper extends EventHandler {
           that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
         });
 
+      this.$chooser.select('.category:first-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.internal);
+      this.$chooser.select('.category:last-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.external);
+
       $buttons.exit().remove();
     });
   }

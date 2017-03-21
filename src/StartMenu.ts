@@ -4,9 +4,9 @@
 
 import * as session from 'phovea_core/src/session';
 import {IDType, resolve} from 'phovea_core/src/idtype';
-import {areyousure} from 'phovea_ui/src/dialogs';
+import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import {Targid, TargidConstants} from './Targid';
-import {listNamedSets, INamedSet, deleteNamedSet} from './storage';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
@@ -35,6 +35,7 @@ export interface IEntryPointList {
   getIdType(): IDType | string;
   addNamedSet(namedSet: INamedSet);
   removeNamedSet(namedSet: INamedSet);
+  updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet);
 }
 
 export interface IStartMenuSectionEntry {
@@ -274,6 +275,11 @@ export class AEntryPointList implements IEntryPointList {
     this.updateList(this.data);
   }
 
+  updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet) {
+    this.data.splice(this.data.indexOf(oldNamedSet), 1, newNamedSet);
+    this.updateList(this.data);
+  }
+
   protected getNamedSets(): Promise<INamedSet[]> {
     return listNamedSets(this.idType);
   }
@@ -339,6 +345,12 @@ export class AEntryPointList implements IEntryPointList {
         .attr('href', '#');
 
       enter.append('a')
+        .classed('edit', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
+        .attr('title', 'Edit');
+
+      enter.append('a')
         .classed('delete', true)
         .attr('href', '#')
         .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
@@ -382,6 +394,49 @@ export class AEntryPointList implements IEntryPointList {
               await deleteNamedSet(namedSet.id);
               that.removeNamedSet(namedSet);
             }
+          });
+
+        $this.select('a.edit')
+          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
+          .on('click', async (namedSet: INamedSet) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
+
+            const dialog = generateDialog('Edit Named Set', 'Edit');
+
+            const form = document.createElement('form');
+
+            form.innerHTML = `
+              <form id="namedset_form">
+                <div class="form-group">
+                  <label for="namedset_name">Name</label>
+                  <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required" value="${namedSet.name}">
+                </div>
+                <div class="form-group">
+                  <label for="namedset_description">Description</label>
+                  <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description">${namedSet.description}</textarea>
+                </div>
+              </form>
+            `;
+
+            dialog.onHide(() => dialog.destroy());
+
+            dialog.onSubmit(async () => {
+              const name = (<HTMLInputElement>document.getElementById('namedset_name')).value;
+              const description = (<HTMLInputElement>document.getElementById('namedset_description')).value;
+
+              const params = {
+                name,
+                description
+              };
+
+              const editedSet = await editNamedSet(namedSet.id, params);
+              that.updateNamedSet(namedSet, editedSet);
+              dialog.hide();
+            });
+
+            dialog.body.appendChild(form);
+            dialog.show();
           });
       });
 

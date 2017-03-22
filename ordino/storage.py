@@ -58,6 +58,7 @@ def get_namedset(namedset_id):
     result = db.namedsets.find_one_and_update(filter, query, return_document=ReturnDocument.AFTER)
     return jsonify(result)
 
+
 def get_namedset_by_id(namedset_id):
   db = MongoClient(c.host, c.port)[c.database]
   q = dict(id=namedset_id)

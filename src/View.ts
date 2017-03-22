@@ -56,6 +56,15 @@ function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
 
+const CHOOSER_CATEGORY_WEIGHTS = new Map([
+  ['Sample overview', 100],
+  ['Gene overview', 100],
+  ['Visualization', 90],
+  ['Internal resources', 80],
+  ['External resources', 70],
+  ['Other', 0]
+]);
+
 
 /**
  * Find views for a given idtype and number of selected items.
@@ -643,7 +652,8 @@ export class ViewWrapper extends EventHandler {
         }
       });
 
-      const $categories = this.$chooser.selectAll('div.category').data(Array.from(groups));
+      const sortedGroups = Array.from(groups).sort((a, b) => CHOOSER_CATEGORY_WEIGHTS.get(b[0]) - CHOOSER_CATEGORY_WEIGHTS.get(a[0]));
+      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups);
 
       $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();

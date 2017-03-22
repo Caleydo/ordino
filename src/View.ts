@@ -57,12 +57,12 @@ function showAsSmallMultiple(desc: any) {
 }
 
 const CHOOSER_CATEGORY_WEIGHTS = new Map([
-  ['Sample overview', 100],
-  ['Gene overview', 100],
-  ['Visualization', 90],
-  ['Internal resources', 80],
-  ['External resources', 70],
-  ['Other', 0]
+  ['Sample overview', 0],
+  ['Gene overview', 1],
+  ['Visualization', 10],
+  ['Internal resources', 20],
+  ['External resources', 30],
+  ['Other', 100]
 ]);
 
 
@@ -642,23 +642,26 @@ export class ViewWrapper extends EventHandler {
     findViews(idtype, range).then((views) => {
       const groups = new Map();
       views.forEach((elem) => {
-        if(!elem.v.group) {
-          elem.v.group = 'Other'; // fallback category if none is present
+        if(!elem.v.group) { // fallback category if none is present
+          elem.v.group = {
+            name: 'Other',
+            order: 0
+          };
         }
-        if(!groups.has(elem.v.group)) {
-          groups.set(elem.v.group, [elem]);
+        if(!groups.has(elem.v.group.name)) {
+          groups.set(elem.v.group.name, [elem]);
         } else {
-          groups.get(elem.v.group).push(elem);
+          groups.get(elem.v.group.name).push(elem);
         }
       });
 
-      const sortedGroups = Array.from(groups).sort((a, b) => CHOOSER_CATEGORY_WEIGHTS.get(b[0]) - CHOOSER_CATEGORY_WEIGHTS.get(a[0]));
+      const sortedGroups = Array.from(groups).sort((a, b) => CHOOSER_CATEGORY_WEIGHTS.get(a[0]) - CHOOSER_CATEGORY_WEIGHTS.get(b[0]));
       const $categories = this.$chooser.selectAll('div.category').data(sortedGroups);
 
       $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();
 
-      const $buttons = $categories.selectAll('button').data((d:[string, {enabled: boolean, v: IViewPluginDesc}[]]) => d[1]);
+      const $buttons = $categories.selectAll('button').data((d:[string, {enabled: boolean, v: IViewPluginDesc}[]]) => d[1].sort((a, b) => a.v.group.order - b.v.group.order));
 
       $buttons.enter().append('button')
         .classed('btn btn-default', true);

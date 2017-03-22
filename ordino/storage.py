@@ -1,5 +1,6 @@
 import phovea_server.config
 from pymongo import MongoClient
+from pymongo.collection import ReturnDocument
 from phovea_server.ns import Namespace, request
 from phovea_server.util import jsonify
 import phovea_server.security as security
@@ -37,7 +38,7 @@ def get_namedsets():
     return jsonify(entry)
 
 
-@app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE'])
+@app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE', 'PUT'])
 def get_namedset(namedset_id):
   if request.method == 'GET':
     return jsonify(get_namedset_by_id(namedset_id))
@@ -47,6 +48,15 @@ def get_namedset(namedset_id):
     q = dict(id=namedset_id)
     result = db.namedsets.remove(q)
     return jsonify(result['n'])  # number of deleted documents
+
+  if request.method == 'PUT':
+    db = MongoClient(c.host, c.port)[c.database]
+    filter = dict(id=namedset_id)
+
+    query = {'$set': request.form}
+
+    result = db.namedsets.find_one_and_update(filter, query, return_document=ReturnDocument.AFTER)
+    return jsonify(result)
 
 
 def get_namedset_by_id(namedset_id):

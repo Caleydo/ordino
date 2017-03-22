@@ -631,11 +631,11 @@ export class ViewWrapper extends EventHandler {
     }
 
     findViews(idtype, range).then((views) => {
-      const data = [];
-      console.log('VIEWS', views);
-
       const groups = new Map();
       views.forEach((elem) => {
+        if(!elem.v.group) {
+          elem.v.group = 'Other'; // fallback category if none is present
+        }
         if(!groups.has(elem.v.group)) {
           groups.set(elem.v.group, [elem]);
         } else {

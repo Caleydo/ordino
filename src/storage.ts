@@ -95,3 +95,7 @@ export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike
 export function deleteNamedSet(id:string) {
   return sendAPI(`/targid/storage/namedset/${id}`, {}, 'DELETE');
 }
+
+export function editNamedSet(id:string, data: {[key: string]: string}) {
+  return sendAPI(`/targid/storage/namedset/${id}`, data, 'PUT');
+}

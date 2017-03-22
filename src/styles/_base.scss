@@ -377,11 +377,17 @@ div.targid {
       padding: 8px 0;
       font-size: 12px;
 
-      .category:not(:first-child) {
-        margin-top: 4px;
-        padding-top: 8px;
-      }
+      .category {
+        &:not(:first-child) {
+          margin-top: 4px;
+          padding-top: 8px;
+        }
 
+        header h1 {
+          font-size: 1.2em;
+          margin: 0;
+        }
+      }
       button {
         width: 100%;
         padding: 5px 0;

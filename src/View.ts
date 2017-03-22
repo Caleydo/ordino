@@ -632,19 +632,26 @@ export class ViewWrapper extends EventHandler {
 
     findViews(idtype, range).then((views) => {
       const data = [];
-      data[0] = views.filter((d:any) => d.v.category === undefined || d.v.category !== 'static');
-      data[1] = views.filter((d:any) => d.v.category !== undefined && d.v.category === 'static');
+      console.log('VIEWS', views);
 
-      const $categories = this.$chooser.selectAll('div.category').data(data);
+      const groups = new Map();
+      views.forEach((elem) => {
+        if(!groups.has(elem.v.group)) {
+          groups.set(elem.v.group, [elem]);
+        } else {
+          groups.get(elem.v.group).push(elem);
+        }
+      });
 
-      $categories.enter().append('div').classed('category', true);
+      const $categories = this.$chooser.selectAll('div.category').data(Array.from(groups));
+
+      $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();
 
-      const $buttons = $categories.selectAll('button').data((d:{enabled: boolean, v: IViewPluginDesc}[]) => d);
+      const $buttons = $categories.selectAll('button').data((d:[string, {enabled: boolean, v: IViewPluginDesc}[]]) => d[1]);
 
       $buttons.enter().append('button')
-        .classed('btn', true)
-        .classed('btn-default', true);
+        .classed('btn btn-default', true);
 
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
@@ -654,11 +661,6 @@ export class ViewWrapper extends EventHandler {
 
           that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
         });
-
-      if(this.$chooser.select('.category:first-child div').empty() && this.$chooser.select('.category:last-child div').empty()) {
-        this.$chooser.select('.category:first-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.internal);
-        this.$chooser.select('.category:last-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.external);
-      }
 
       $buttons.exit().remove();
     });

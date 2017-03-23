@@ -34,6 +34,7 @@ export interface ISubSelect2Desc extends ISubDesc {
   type: FormElementType.SELECT2;
   optionsData?: ISelectOptions|(() => ISelectOptions);
   return?: 'text'|'id';
+  multiple?: boolean;
   dataProviderUrl?: string;
 }
 
@@ -55,6 +56,11 @@ export interface IFormMapDesc extends IFormElementDesc {
     onChange?: (elem: IFormElement, formElement: IFormElement) => any;
 
     entries: (ISubDescs[])|((...dependent: IFormElement[])=>(ISubDescs[]));
+
+    /**
+     * whether an element can just be selected once
+     */
+    uniqueKeys?: boolean;
   };
 }
 
@@ -210,9 +216,12 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
           parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
           const s = parent.firstElementChild;
+          // merge only the default options if we have no local data
           const $s = (<any>$(s)).select2(mixin({
-            defaultData: initialValue ? [initialValue] : []
-          }, DEFAULT_OPTIONS, desc));
+            defaultData: initialValue ? [initialValue] : [],
+            placeholder: 'Start typing...',
+            theme: 'bootstrap'
+          }, values.length === 0 ? DEFAULT_OPTIONS: {}, desc));
           if (values.length > 0 && !initialValue) {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
@@ -220,17 +229,20 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           that.fire('change', that.value, that.$group);
           // register on change listener use full select2 items
           $s.on('change', function (this: HTMLSelectElement) {
-            const r = {id: '', text: ''}; // default value
-            if ($s.val() !== null) {
-              r.id = $s.select2('data')[0].id;
-              r.text = $s.select2('data')[0].text;
-            }
-            if (desc.return === 'id') {
-              row.value = r.id;
-            } else if (desc.return === 'text') {
-              row.value = r.text;
+            const data = $s.select2('data');
+            if (data.length === 0) {
+              row.value = null;
             } else {
-              row.value = r;
+              if (desc.return === 'id') {
+                row.value = data.map((r) => r.id);
+              } else if (desc.return === 'text') {
+                row.value = data.map((r) => r.text);
+              } else {
+                row.value = data.map((r) => ({'id': r.id, 'text': r.text}));
+              }
+              if (row.value.length === 1) {
+                row.value = row.value[0];
+              }
             }
             that.fire('change', that.value, that.$group);
           });
@@ -265,6 +277,20 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     values.push({key: '', value: null});
     this.rows = [];
 
+    const updateOptions = () => {
+      // disable used options
+      if (!this.desc.options.uniqueKeys) {
+        return;
+      }
+      const keys = new Set<string>(this.rows.map((d) => d.key));
+      Array.from(group.querySelectorAll('select.map-selector')).forEach((select: HTMLSelectElement) => {
+        const selected = select.selectedIndex;
+        Array.from(select.options).forEach((option, i) => {
+          option.disabled = i !== selected && option.value !== '' && keys.has(option.value);
+        });
+      });
+    };
+
     const renderRow = (d: IFormRow) => {
       this.rows.push(d);
       const row = group.ownerDocument.createElement('div');
@@ -272,7 +298,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
       group.appendChild(row);
       row.innerHTML = `
         <div class="col-sm-5">
-          <select class="form-control">
+          <select class="form-control map-selector">
             <option value="">Select...</option>
             ${entries.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
           </select>
@@ -287,6 +313,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           // remove this row
           row.remove();
           that.rows.splice(that.rows.indexOf(d), 1);
+          updateOptions();
           that.fire('change', that.value, that.$group);
           return;
         }
@@ -299,10 +326,12 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           }
           d.key = this.value;
           that.addValueEditor(d, row.lastElementChild, entries);
+          updateOptions();
         }
       });
     };
     values.forEach(renderRow);
+    updateOptions();
   }
 
   /**
@@ -348,9 +377,13 @@ export function convertRow2MultiMap(rows: IFormRow[]) {
   const map = new Map<string, any[]>();
   rows.forEach((row) => {
     if (!map.has(row.key)) {
-      map.set(row.key, [row.value]);
+      map.set(row.key, []);
+    }
+    const v = map.get(row.key);
+    if (Array.isArray(row.value)) {
+      v.push(...row.value);
     } else {
-      map.get(row.key).push(row.value);
+      v.push(row.value);
     }
   });
   const r: {[key: string]: any|any[]} = {};

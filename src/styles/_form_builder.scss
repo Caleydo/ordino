@@ -15,3 +15,7 @@
     margin-right: -15px;
   }
 }
+
+.select.map-selector option:disabled {
+  color: darkgray;
+}

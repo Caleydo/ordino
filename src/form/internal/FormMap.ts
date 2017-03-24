@@ -35,7 +35,7 @@ export interface ISubSelect2Desc extends ISubDesc {
   optionsData?: ISelectOptions|(() => ISelectOptions);
   return?: 'text'|'id';
   multiple?: boolean;
-  dataProviderUrl?: string;
+  ajax?: any;
 }
 
 declare type ISubDescs = ISubInputDesc|ISubSelectDesc|ISubSelect2Desc;
@@ -221,7 +221,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             defaultData: initialValue ? [initialValue] : [],
             placeholder: 'Start typing...',
             theme: 'bootstrap'
-          }, values.length === 0 ? DEFAULT_OPTIONS: {}, desc));
+          }, desc.ajax ? DEFAULT_OPTIONS: {}, desc));
           if (values.length > 0 && !initialValue) {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
@@ -273,7 +273,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     const group = <HTMLDivElement>this.$group.node();
     group.innerHTML = ''; // remove all approach
     // filter to only valid entries
-    const values = this.rows.filter((d) => !!d.key && entries.find((e) => e.name === d.key));
+    const values = this.rows.filter((d) => !!d.key && entries.find((e) => e.value === d.key));
     // put empty row at the end
     values.push({key: '', value: null});
     this.rows = [];

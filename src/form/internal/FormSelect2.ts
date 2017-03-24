@@ -156,7 +156,7 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
     // custom on change function
     if (options.onChange) {
       this.$select.on('change.customListener', () => {
-        options.onChange(this.value, $select);
+        options.onChange(this.value, this);
       });
     }
 
@@ -225,11 +225,17 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
       this.$select.trigger('clear');
     }
 
+
     const r = {id: v, text: v};
 
     if ((v.name || v.text) && (v.value || v.id)) {
       r.id = v.value || v.id;
       r.text = v.name || v.text;
+    }
+
+    const old = this.value;
+    if (old.id === r.id) { // no change
+      return;
     }
 
     this.$select.val(<any>r).trigger('change');

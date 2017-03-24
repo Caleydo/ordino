@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
-import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
+import {IPluginDesc, IPlugin, list as listPlugins, get as getPlugin} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
 
 
@@ -55,16 +55,6 @@ export function matchLength(s: any, length: number) {
 function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
-
-const CHOOSER_CATEGORY_WEIGHTS = new Map([
-  ['Sample overview', 0],
-  ['Gene overview', 1],
-  ['Visualization', 10],
-  ['Internal resources', 20],
-  ['External resources', 30],
-  ['Other', 100]
-]);
-
 
 /**
  * Find views for a given idtype and number of selected items.
@@ -655,8 +645,15 @@ export class ViewWrapper extends EventHandler {
         }
       });
 
-      const sortedGroups = Array.from(groups).sort((a, b) => CHOOSER_CATEGORY_WEIGHTS.get(a[0]) - CHOOSER_CATEGORY_WEIGHTS.get(b[0]));
-      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups);
+      const groupsArray = Array.from(groups);
+      const categoryOrder = getPlugin('chooserConfig', 'chooser_header_order');
+
+      let sortedGroups = null;
+      if(categoryOrder) {
+        sortedGroups = groupsArray.sort((a, b) => categoryOrder.order[a[0]] - categoryOrder.order[b[0]]);
+      }
+
+      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups? sortedGroups : groupsArray);
 
       $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();

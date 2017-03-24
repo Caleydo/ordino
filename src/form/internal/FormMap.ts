@@ -272,7 +272,8 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     const that = this;
     const group = <HTMLDivElement>this.$group.node();
     group.innerHTML = ''; // remove all approach
-    const values = this.rows.filter((d) => !!d.key);
+    // filter to only valid entries
+    const values = this.rows.filter((d) => !!d.key && entries.find((e) => e.name === d.key));
     // put empty row at the end
     values.push({key: '', value: null});
     this.rows = [];

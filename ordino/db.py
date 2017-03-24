@@ -96,13 +96,14 @@ def _handle_aggregated_score(config, replacements, args):
   :return replacements:
   """
   view = config.agg_score
+  agg = args.get('agg', '')
 
-  if args.get('agg', '') == '' or view.query is None:
+  if agg == '' or view.query is None:
     return replacements
 
   query = view.query
-  if 'median' in view.queries is not None and args.get('agg', '') == 'median':
-    query = view.queries['median']
+  if agg in view.queries:
+    query = view.queries[agg]
 
   replace = {}
   if view.replacements is not None:

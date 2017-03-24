@@ -22,9 +22,10 @@ export interface IViewProvider {
 
 async function addScoreLogic(waitForScore: boolean, inputs:IObjectRef<IViewProvider>[], parameter:any) {
   const scoreId: string = parameter.id;
-  const plugin = await getPlugin(EXTENSION_POINT_SCORE_IMPL, scoreId).load();
+  const pluginDesc = getPlugin(EXTENSION_POINT_SCORE_IMPL, scoreId);
+  const plugin = await pluginDesc.load();
   const view = await inputs[0].v.then((vi) => vi.getInstance());
-  const score: IScore<any> = plugin.factory(parameter.params);
+  const score: IScore<any> = plugin.factory(parameter.params, pluginDesc);
 
   const r = await view.addTrackedScoreColumn(score);
   const col = waitForScore ? await r.loaded : r.col;

@@ -74,6 +74,10 @@ export function listNamedSets(idType : IDType | string = null):Promise<INamedSet
   });
 }
 
+export function listNamedSetsAsOptions(idType : IDType | string = null) {
+  return listNamedSets(idType).then((namedSets) => namedSets.map((d) => ({name: d.name, value: d.id})));
+}
+
 export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike, subType: {key:string, value:string}, description = '') {
   const data:INamedSet = {
     name,

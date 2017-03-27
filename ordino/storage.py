@@ -13,8 +13,8 @@ _log = logging.getLogger(__name__)
 
 app = Namespace(__name__)
 
-@security.login_required
 @app.route('/namedsets/', methods=['GET', 'POST'])
+@security.login_required
 def get_namedsets():
   db = MongoClient(c.host, c.port)[c.database]
 
@@ -38,8 +38,8 @@ def get_namedsets():
     return jsonify(entry)
 
 
-@security.login_required
 @app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE', 'PUT'])
+@security.login_required
 def get_namedset(namedset_id):
   elem = get_namedset_by_id(namedset_id)
   if request.method == 'GET':

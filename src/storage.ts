@@ -6,12 +6,13 @@ import {getAPIJSON, sendAPI} from 'phovea_core/src/ajax';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {parse, RangeLike} from 'phovea_core/src/range';
 import {retrieve} from 'phovea_core/src/session';
+import {ISecureItem, currentUserNameOrAnonymous} from 'phovea_core/src/security';
 
 export enum ENamedSetType {
   NAMEDSET, CUSTOM, PANEL
 }
 
-export interface INamedSet {
+export interface INamedSet extends ISecureItem {
   /**
    * Id with random characters (generated when storing it on the server)
    */
@@ -31,11 +32,6 @@ export interface INamedSet {
    * Filter description
    */
   description: string;
-
-  /**
-   * Creator name
-   */
-  creator: string;
 
   /**
    * idtype name to match the filter for an entry point
@@ -68,8 +64,6 @@ export function listNamedSets(idType : IDType | string = null):Promise<INamedSet
   return getAPIJSON('/targid/storage/namedsets/', args).then((sets: INamedSet[]) => {
     // default value
     sets.forEach((s) => s.type = s.type || ENamedSetType.NAMEDSET);
-
-    sets = sets.filter((d) => d.creator === retrieve('username'));
     return sets;
   });
 }
@@ -82,7 +76,7 @@ export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike
   const data:INamedSet = {
     name,
     type: ENamedSetType.NAMEDSET,
-    creator: retrieve('username', 'Anonymous'),
+    creator: currentUserNameOrAnonymous(),
     idType: resolve(idType).id,
     ids: parse(ids).toString(),
     subTypeKey: subType.key,

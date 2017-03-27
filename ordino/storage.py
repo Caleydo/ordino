@@ -13,14 +13,14 @@ _log = logging.getLogger(__name__)
 
 app = Namespace(__name__)
 
-
+@security.login_required
 @app.route('/namedsets/', methods=['GET', 'POST'])
 def get_namedsets():
   db = MongoClient(c.host, c.port)[c.database]
 
   if request.method == 'GET':
     q = dict(idType=request.args['idType']) if 'idType' in request.args else {}
-    return jsonify(list(db.namedsets.find(q, {'_id': 0})))
+    return jsonify(list((d for d in db.namedsets.find(q, {'_id': 0}) if security.can_read(d))))
 
   if request.method == 'POST':
     id = _generate_id()
@@ -38,10 +38,15 @@ def get_namedsets():
     return jsonify(entry)
 
 
+@security.login_required
 @app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE', 'PUT'])
 def get_namedset(namedset_id):
+  elem = get_namedset_by_id(namedset_id)
   if request.method == 'GET':
-    return jsonify(get_namedset_by_id(namedset_id))
+    return jsonify(elem) if security.can_read(elem) else 403
+
+  if not security.can_write(elem):
+    return 403
 
   if request.method == 'DELETE':
     db = MongoClient(c.host, c.port)[c.database]

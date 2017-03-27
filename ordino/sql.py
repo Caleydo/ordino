@@ -118,9 +118,9 @@ def get_filtered_data(database, view_name):
         where_clause[real_key].extend(ids)
     if k.startswith('rangeOf'):
       del where_clause[k]  # delete value
-      k = k[7:]
-      id_type = k[:k.index('4')]
-      real_key = k[k.index('4')+1:]  # remove the range4 part
+      id_type_and_key = k[7:]
+      id_type = id_type_and_key[:id_type_and_key.index('4')]
+      real_key = id_type_and_key[id_type_and_key.index('4') + 1:]  # remove the range4 part
       ids = _replace_range_in_ids(v, id_type)
       if real_key not in where_clause:
         where_clause[real_key] = ids

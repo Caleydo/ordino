@@ -218,7 +218,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           const s = parent.firstElementChild;
           // merge only the default options if we have no local data
           const $s = (<any>$(s)).select2(mixin({
-            defaultData: initialValue ? [initialValue] : [],
+            defaultData: initialValue ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : [],
             placeholder: 'Start typing...',
             theme: 'bootstrap'
           }, values.length === 0 ? DEFAULT_OPTIONS: {}, desc));

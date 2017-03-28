@@ -446,6 +446,8 @@ div.lu {
   .rankingbuttons .dropdown-menu {
     left: auto;
     right: 0;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 }
 

@@ -218,14 +218,17 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           const s = parent.firstElementChild;
           // merge only the default options if we have no local data
           const $s = (<any>$(s)).select2(mixin({
-            defaultData: initialValue ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : [],
             placeholder: 'Start typing...',
             theme: 'bootstrap'
           }, desc.ajax ? DEFAULT_OPTIONS: {}, desc));
+          if (initialValue) {
+            $s.val(Array.isArray(initialValue) ? initialValue : [initialValue]).trigger('change');
+          }
           if (values.length > 0 && !initialValue) {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
           }
+
           that.fire('change', that.value, that.$group);
           // register on change listener use full select2 items
           $s.on('change', function (this: HTMLSelectElement) {

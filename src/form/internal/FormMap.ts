@@ -216,7 +216,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           desc.optionsData = [];
         }
         Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
-          const initially = (Array.isArray(initialValue) ? initialValue : [initialValue]).map((d) => typeof d === 'string' ? d : d.id);
+          const initially = initialValue ? ((Array.isArray(initialValue) ? initialValue : [initialValue]).map((d) => typeof d === 'string' ? d : d.id)) : [];
           // in case of ajax but have default value
           if (desc.ajax && values.length === 0 && initialValue) {
             values = Array.isArray(initialValue) ? initialValue : [initialValue];

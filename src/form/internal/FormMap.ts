@@ -181,9 +181,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     const that = this;
     const desc = entries.find((d) => d.value === row.key);
 
-    function mapOptions(d: IFormSelectOption|string) {
-      const value = typeof d === 'string' || !d ? d : d.value;
-      const name = typeof d === 'string' || !d ? d : d.name;
+    function mapOptions(d: any|string) {
+      const value = typeof d === 'string' || !d ? d : (d.value || d.id);
+      const name = typeof d === 'string' || !d ? d : (d.name || d.text);
       return `<option value="${value}">${name}</option>`;
     }
 
@@ -214,16 +214,23 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           desc.optionsData = [];
         }
         Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
+          const initially = (Array.isArray(initialValue) ? initialValue : [initialValue]).map((d) => typeof d === 'string' ? d : d.id);
+          // in case of ajax but have default value
+          if (desc.ajax && values.length === 0 && initialValue) {
+            values = Array.isArray(initialValue) ? initialValue : [initialValue];
+          }
           parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
           const s = parent.firstElementChild;
+          const $s = (<any>$(s));
+          if (initialValue) {
+            $s.val(initially);
+          }
           // merge only the default options if we have no local data
-          const $s = (<any>$(s)).select2(mixin({
+          $s.select2(mixin({
             placeholder: 'Start typing...',
             theme: 'bootstrap'
           }, desc.ajax ? DEFAULT_OPTIONS: {}, desc));
-          if (initialValue) {
-            $s.val(Array.isArray(initialValue) ? initialValue : [initialValue]).trigger('change');
-          }
+
           if (values.length > 0 && !initialValue) {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;

@@ -61,6 +61,8 @@ export interface IFormMapDesc extends IFormElementDesc {
      * whether an element can just be selected once
      */
     uniqueKeys?: boolean;
+
+    sessionKeySuffix?: string;
   };
 }
 
@@ -136,7 +138,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.handleShowIf();
 
     if (this.desc.useSession) {
-      const key = `formBuilder.map.${this.id}`;
+      const key = `formBuilder.map.${this.id}${this.desc.options.sessionKeySuffix || ''}`;
       this.rows = session.retrieve(key, []);
 
       this.on('change', (event, value) => {

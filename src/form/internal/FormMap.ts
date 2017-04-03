@@ -124,6 +124,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           </button>
           <div class="dropdown-menu" aria-labelledby="${this.desc.attributes.id}l" style="min-width: 25em">
             <div class="form-horizontal"></div>
+            <div>
+                <button class="btn btn-default btn-sm right">Apply</button>      
+            </div>
           </div>
       `);
       this.$group = this.$node.select('div.form-horizontal');

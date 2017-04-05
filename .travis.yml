@@ -3,40 +3,50 @@ sudo: required
 env:
 - TOXENV=py27
 - TOXENV=py34
-
 node_js:
 - 6
-
 addons:
   firefox: 49.0.1
-
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 - nvm install 6
 - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
-
 install:
-- (!(test -f docker_packages.txt) || (cat docker_packages.txt | xargs sudo apt-get install -y))
+- "(!(test -f docker_packages.txt) || (cat docker_packages.txt | xargs sudo apt-get
+  install -y))"
 - pip install -r requirements_dev.txt
 - pip install -r requirements.txt
 - npm install
-
 script: npm run dist
-
-deploy:
-  provider: releases
-  api_key:
-    secure: TK9/P34Bi3WuppiDrBCwVcn41yCBwmILaU8hXTBzUPbT7TbeFIwsC6/4CtH85Z+ZrUve4S5pTmWRNf2dQDxWw3uYu7+bJuemV2J1LHG76mognj+TNEiYxfLQUt3Gql4W7C7FcI4Rlx5/uMN9wY1wro8TWUBMwT6jjSrUWIvK3GXoojd5bHvJx07XpjWl9wCon4D0ruZiFoM2mdeP23lbc2GckETi32oEKswnQXxkMACmxbPzoWbvkxH4aK8Bt2Rj2sl2TbPhVkN6DAkHGkGAvLI+2/aRfG27+oo3OKsaDjbuGABct8TfZccJ970CbQ8kbnCjYxstvqkg1JWjF0W67sX/flBZZOEUA5l0OLWo6HqMGMxm7/lEQhIdPMsRmvXL+HVOxkMrB2dda58QzxVwiZp+rRqUaeabPZp8Kl5xodGrVxsBvxe6zAbJ5jCtCSumG6+kLyKI00/kYlghqQNrgUw0ZsYJlQ34h3lo/24QpaeyDpQoCkGWQgtgqiXGpeKSu7bCnOqIqAy3nbT9Utwj7K8gIasTG5idosEAz/THMampNbGDuyxxc340sYGNMg9Bhm1g2ILWRdtV470p5hwBtIDTKi3/PAizEO26+Wh0zI47Sg3ao57avcbCsTmzbZUeA5J4bojmchhJCHX8su9cSCGh/2fJA/1eBIgEvOQ8LNE=
-  file_glob: true
-  file:
-   - dist/ordino*.egg
-   - dist/ordino.tar.gz
-  on:
-    tags: true
-
 notifications:
   slack:
-    secure: E8/1UIdHSczUbN+6i6gd1d5LM4vmLdwLQ30tpyjvnM0wvfDce76oPxLJAy240WJ5ybXRZUtNrttpVpt4tEXCy8aLFCmxD7s77rVloH+q1J8R/ptTFWZGhFGEujk1awEmVbzcWxJkV9/JENQaeGBKxwv8/EQwWwEkAb7p/+AJb9owmH88b3wUZUGHBWtbMiyyaF4Rm1Wg1stJB8Z1Ga7PRF4cqufTgcDdsCPVv9gAY+VxOIGqX/Vfuc9UWpUH8vq8lHUE7Inn5QS78kuFfSgLWga3H6Mu/Gko1XNlWk0QWWQBUvEZ6ZC6Wuo68KzvUjJHDTnx8WyfHue2JNHIslcX+eJq2WHLeEgM24VeNkILCGo/H/60NGHiSjrIv/Y9h6bQ9FDjo6TUyE4nbdPYN1RN9FQ5UbI9Y4Gi753H9mqnHWlEywBOzHxdZCAuz9Wh03CCF/blsvJ+Obbyo6Jrfe+g44jyi9kQdBNQ78qG6v4EXws8FiYao6x3PpgIwFix42Cpr+soAh5FpA3C1zHSAyZZpXF65/lrDl5yPNofK7Wy0B9bw+0I6Z/u7ZKFNVZXvYPGYvtUVcsALGBdmYc61+LCta36Po0KZseWVAlJj6QnOJDYzv0wvV/zsuf9A5KpYFGiqV9Q7zmtiO5FYF5sBy+lE7O9tHVO4O18IRndhRQgxhs=
+    secure: yDc+LGPgkbx2K7g2QLSdlJI5wSPo7x1t3SpV1MNR9eLtzq7xpcyCSwLZNvP3qN9oLytVSMbPknITQGTWY2ohO953B3Rx4GZEIRfliPh93YihsYMqTIBc3v/TC+Kl2Og/QNY3k6/7JxVfC8CPjf6sWtmhA2d3gYf6X2NI6yYSEEuCKMOZZ6shgsRYzQ9xQXcijybNThDhkNAIGGbem+5tUb22MPyrMTbKqIFjeXFJQMc7Vfvoj3mALii2B2WImof+G5XNtU2XKOp/ORqzkPYKzyMExeb7WouT7sWGauMFQX++ydnwmMy7s8f1I0kYRdxAoHckKPZ2rnTCQcyhhXW7Coon574+rZm3iARGm28K1ovYeS2qcoPYAH4rCja1atroQd94BW5QK82NtzfRsvHNQ4FbFONosnkoIf/KP/aWAorVgYWEA9yjIDcRcqtQNILCT4Y06JaKI1Fn4lGZcyr6bNXASKk9JGjibMdz0lZq+/kG5hjq9BAGNO65Jw3PEWNsMbFr2QxawSMosS+DG0hbCHDelGvKa3DXzfmEqJENkicLanl5HhecIgAHADK0XQHYtUv0u5/vGRhKkdcbgAkYHPllnuRX3ot2/c79Ex86XvoqBZ4ErEJYQ1Hdk2sw6he5d7lHxpry1R0FOZN5z+DxTOLdE2PPSScqVihdqJ3JDjo=
     on_success: change
     on_failure: always
+deploy:
+- provider: releases
+  api_key:
+    secure: tHOB+9MiKbMc6GlvkMa+sSV0q4g58y8M7TJrqvGa60dxKt+KdJkGJb/4Imd3vSeNN9zNaps6OHETcR9roNe7xQMwu8qKgXcRec4M9WZESPhQPhEWP/NBWIzz13QI4uCrUo2Sotoopbc3QMcHSPsgBKFDOSDTBnMZe/q409gapJfz7ml4Z2gdU3QRC59LY54+rIA1SVAdv/T0mmXMR6MTogSmoYIX4QCX0Bart03GnRqQmq44hd0yboSxMQ3nFjoMUyihZxtkPdKwD/YjEnUkQqrrA1VDstFMMrmINC7F9ZB/QdtaMQsTdepRIi+xTaUTGRHEq359iN7575YUG+a4eEh2xsgfNp/rptcygUWqrQ69zqnhGJ3JjdcFkJFbU9Th5PqQ1w9Zhgv8dlXoeO1NxOwBwUN4N9L0YIIWvdzmTlI2z5Q5beVFzSwMJ6ywi6dfgy8kwRxD9ajduNFDkbBdKxB4Ho7dTt50onEDJtP5Wb7T5qhJfuc+PeMOG0hoEptUgHhVoJN8/1auBEWdfI3Q+eg6P7BwGO3p61pr3aJkCE24Qr16BQ1SNxSe/IsPGYqYjSDFHXUXt+UOGp6za0WfYyQIL425+MJQc35YZhCNXEGLXzUU+daWBI8EmuCxZ97T3gCSLbbLltdKQm8lMwbb/xCBHNVwp1uCH0ab31EMQas=
+  file_glob: true
+  file:
+  - dist/ordino*.egg
+  - dist/ordino.tar.gz
+  on:
+    tags: true
+    repo: Caleydo/ordino
+- provider: npm
+  email: samuel.gratzl@jku.at
+  api_key:
+    secure: MUaouieuD9IzZx5BvCrHEpLIQ8moTATlqIUjnf1jWfF0OaxJY1P7wR+SzwCLRpTN1ySNdYj2fzgvQXahkG+usAHqKZGDhBl4l7N2aZyXRM8oBgDcRYoP70+EHPq6kmgWgLOjEXyV1wC2cY0Ppy/6yyYrf+uJdoSJSo9+0CITJBziFU1cGmvu36/LmAsVGR/Kgp6kmcuaGiJC+5BMyPmS2bXH9hRVXbCCQBulTI/X+xIKUyFNB8+uQYVLPAMcPQHIztKWQTxtZlX+7EpoZ0s+E/7IXDpoTlYxRXVwOW+UsteUYZ9U/bbua4M4Pio3pEQ+/mUParCjX0UHHcBZpSUItjXCHDGny1xYtQ/i6fpPAyFP8hV12Guk4apuCS627SEbK4xyMYAEryJJw8HwjgMtzpKleWIzZpBNXHHMXNEqbnVJCykDQ08f7MU+smLz1foUtgzDmjY7HeL10bD7uNgcumuV4Lap6U5AoUYXYO+Vhk+QnASeSAQw573h5p24DI4J77GLcRUwiFM2eI4Xd0m4dh5e4rnXZxuw1vIMrnNM+LvwjnUxU74VPHE7ejmBL2lvAVm7DV30op/pQY2hvfvu7AnBjGMddmsS+oAHQ0gmYyDjcQROfEbIh77RYOKK0iyhwhKQHoQMQIImAdFa477ssNPYoRoNKlQi1rpanr3X+yA=
+  on:
+    tags: true
+    repo: Caleydo/ordino
+- provider: pypi
+  user: caleydo-bot
+  password:
+    secure: Lemzhl0SYTPlSnOOXCbHOCb7oSykMH0QxNEPSj8hwJVkFryVKwFXwwQhKyEi6Kex1KEirVNAM4yNYqWjEUXIuUUXY39DWWBiHi4xgm1nQPgfFOlCt1gQOSuecGZyda8m9GLb68OszQUnnh5FkoVvzAV5+MEAVhfnJJt9mxVTqjkJTcJVUosMc5ahccCC3q7hmcq0u4wKN3KgHVrFqBYCK0yo1vgMPxE0crUi//PDRxKv4GsMs1Yuu7pZ6laWxuwTftn+8vxwB23zkwbnWDUmastarK/wzmPZmvqhXg+gj9l313mBWk7aFOLf9J7AaljKsGe+ANxxkhnIqFkMp+WFve93VIEtgI6fAGHRJnLlMYjXp447uBZhlElwvH8bdpC8T/etFVX5CkkBeGakmBM3yZFEQRRvRICZS+/BL7QHG9mDyjPhE6YDPs1nBHBCxy/O+ZPePEeUdUoz1BigLO9SiLYz+h0I2uh58u70NtRWRU/YKq2ug/ExRBdqrHpCcsAaighoVGW2vNs6Qiqr7hPgd3s+20EmKoTkUMY8OO/gAc/hD9A97IXvGCya92oA82aWc/h6ZaosSid9J4sYQgACRT0ThKDjG2f8J7ARRP9Pk0VNQMaF9xOr9tq6jQqEvLX3KMnfHN8qYMdw3iL9MTNqmQCatoxuNseIYL7fphiGCMo=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: Caleydo/ordino

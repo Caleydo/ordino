@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
-import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
+import {IPluginDesc, IPlugin, list as listPlugins, get as getPlugin} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
 
 
@@ -55,7 +55,6 @@ export function matchLength(s: any, length: number) {
 function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
-
 
 /**
  * Find views for a given idtype and number of selected items.
@@ -631,20 +630,38 @@ export class ViewWrapper extends EventHandler {
     }
 
     findViews(idtype, range).then((views) => {
-      const data = [];
-      data[0] = views.filter((d:any) => d.v.category === undefined || d.v.category !== 'static');
-      data[1] = views.filter((d:any) => d.v.category !== undefined && d.v.category === 'static');
+      const groups = new Map();
+      views.forEach((elem) => {
+        if(!elem.v.group) { // fallback category if none is present
+          elem.v.group = {
+            name: 'Other',
+            order: 0
+          };
+        }
+        if(!groups.has(elem.v.group.name)) {
+          groups.set(elem.v.group.name, [elem]);
+        } else {
+          groups.get(elem.v.group.name).push(elem);
+        }
+      });
 
-      const $categories = this.$chooser.selectAll('div.category').data(data);
+      const groupsArray = Array.from(groups);
+      const categoryOrder = getPlugin('chooserConfig', 'chooser_header_order');
 
-      $categories.enter().append('div').classed('category', true);
+      let sortedGroups = null;
+      if(categoryOrder) {
+        sortedGroups = groupsArray.sort((a, b) => categoryOrder.order[a[0]] - categoryOrder.order[b[0]]);
+      }
+
+      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups? sortedGroups : groupsArray);
+
+      $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();
 
-      const $buttons = $categories.selectAll('button').data((d:{enabled: boolean, v: IViewPluginDesc}[]) => d);
+      const $buttons = $categories.selectAll('button').data((d:[string, {enabled: boolean, v: IViewPluginDesc}[]]) => d[1].sort((a, b) => a.v.group.order - b.v.group.order));
 
       $buttons.enter().append('button')
-        .classed('btn', true)
-        .classed('btn-default', true);
+        .classed('btn btn-default', true);
 
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
@@ -654,11 +671,6 @@ export class ViewWrapper extends EventHandler {
 
           that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
         });
-
-      if(this.$chooser.select('.category:first-child div').empty() && this.$chooser.select('.category:last-child div').empty()) {
-        this.$chooser.select('.category:first-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.internal);
-        this.$chooser.select('.category:last-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.external);
-      }
 
       $buttons.exit().remove();
     });

@@ -36,12 +36,12 @@ export interface IBaseNamedSet {
   /**
    * Name of a categorical column (e.g., species)
    */
-  subTypeKey: string;
+  subTypeKey?: string;
 
   /**
    * Value of the categorical column (e.g., "Homo_sapiens" as value for species)
    */
-  subTypeValue: string;
+  subTypeValue?: string;
 
   /**
    * Use the subType value for the given key from the session

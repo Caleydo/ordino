@@ -13,7 +13,7 @@ module.exports = function (registry) {
     return System.import('./src/Targid');
   }, {
     'factory': 'createCmd',
-    'creates': '(targidCreateView|targidRemoveView|targidReplaceView)'
+    'creates': '(targidCreateView|targidRemoveView|targidReplaceView|targidInitSession)'
   });
 
   registry.push('actionFactory', 'ordino', function() { return System.import('./src/lineup/cmds'); }, {

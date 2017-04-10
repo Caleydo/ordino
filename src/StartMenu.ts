@@ -6,7 +6,7 @@ import * as session from 'phovea_core/src/session';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import {Targid, TargidConstants} from './Targid';
-import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet} from './storage';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
@@ -383,7 +383,7 @@ export class AEntryPointList implements IEntryPointList {
 
         $this.select('a.delete')
           .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: INamedSet) => {
+          .on('click', async (namedSet: IStoredNamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 
@@ -398,7 +398,7 @@ export class AEntryPointList implements IEntryPointList {
 
         $this.select('a.edit')
           .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: INamedSet) => {
+          .on('click', async (namedSet: IStoredNamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 

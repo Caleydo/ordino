@@ -366,7 +366,7 @@ export abstract class ALineUpView2 extends AView {
     colDesc._score = true;
 
     const loadScoreColumn = () => {
-      return score.compute([], this.idType);
+      return score.compute(this.selectionHelper.rowIdsAsSet(), this.idType);
     };
     return this.addColumn(colDesc, loadScoreColumn);
   }

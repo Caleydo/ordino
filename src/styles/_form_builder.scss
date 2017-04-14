@@ -12,7 +12,13 @@
 
   .form-group {
     display: block;
-    margin-right: -15px;
+    margin-right: 0;
+    margin-left: 0;
+
+    > div {
+      padding-left: 1px;
+      padding-right: 1px;
+    }
   }
 }
 

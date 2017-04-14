@@ -129,6 +129,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             </div>
           </div>
       `);
+      this.$node.select('button').on('click', () => {
+        (<MouseEvent>d3event).preventDefault();
+      });
       this.$group = this.$node.select('div.form-horizontal');
       this.$group.on('click', () => {
         // stop click propagation to avoid closing the dropdown

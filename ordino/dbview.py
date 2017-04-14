@@ -78,9 +78,17 @@ class DBViewBuilder(object):
     return self.v
 
 
+class DBMapping(object):
+  def __init__(self, from_idtype, to_idtype, query):
+    self.from_idtype = from_idtype
+    self.to_idtype = to_idtype
+    self.query = query
+
+
 class DBConnector(object):
-  def __init__(self, agg_score, views):
+  def __init__(self, agg_score, views, mappings=None):
     self.agg_score = agg_score
     self.views = views
     self.dburl = None
+    self.mappings = mappings
     self.statement_timeout = None

@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {TargidConstants} from './Targid';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
-import {IPluginDesc, IPlugin, list as listPlugins, get as getPlugin} from 'phovea_core/src/plugin';
+import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
 
 
@@ -635,7 +635,7 @@ export class ViewWrapper extends EventHandler {
         if(!elem.v.group) { // fallback category if none is present
           elem.v.group = {
             name: 'Other',
-            order: 0
+            order: Infinity
           };
         }
         if(!groups.has(elem.v.group.name)) {
@@ -646,11 +646,13 @@ export class ViewWrapper extends EventHandler {
       });
 
       const groupsArray = Array.from(groups);
-      const categoryOrder = getPlugin('chooserConfig', 'chooser_header_order');
+
+      const orderDescs = listPlugins('chooserConfig').map((desc) => desc.order);
 
       let sortedGroups = null;
-      if(categoryOrder) {
-        sortedGroups = groupsArray.sort((a, b) => categoryOrder.order[a[0]] - categoryOrder.order[b[0]]);
+      if(orderDescs.length) {
+        const categoryOrder = Object.assign({}, ...orderDescs);
+        sortedGroups = groupsArray.sort((a, b) => categoryOrder[a[0]] - categoryOrder[b[0]]);
       }
 
       const $categories = this.$chooser.selectAll('div.category').data(sortedGroups? sortedGroups : groupsArray);

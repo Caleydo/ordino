@@ -634,8 +634,7 @@ export class ViewWrapper extends EventHandler {
       views.forEach((elem) => {
         if(!elem.v.group) { // fallback category if none is present
           elem.v.group = {
-            name: 'Other',
-            order: Infinity
+            name: 'Other'
           };
         }
         if(!groups.has(elem.v.group.name)) {
@@ -649,18 +648,52 @@ export class ViewWrapper extends EventHandler {
 
       const orderDescs = listPlugins('chooserConfig').map((desc) => desc.order);
 
-      let sortedGroups = null;
-      if(orderDescs.length) {
-        const categoryOrder = Object.assign({}, ...orderDescs);
-        sortedGroups = groupsArray.sort((a, b) => categoryOrder[a[0]] - categoryOrder[b[0]]);
+      function orderAlphabetically(a: string, b: string): number {
+        const firstKey = a.toLowerCase();
+        const secondKey = b.toLowerCase();
+
+        // firstKey alphabetically before secondKey? sort firstKey at lower index or vice versa
+        // else the keys are equal
+        return firstKey < secondKey? -1 : firstKey > secondKey? 1 : 0;
       }
 
-      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups? sortedGroups : groupsArray);
+      let sortedGroups = null;
+      // order groups by defined weights if they exist
+      if(orderDescs.length) {
+        const categoryOrder = Object.assign({}, ...orderDescs);
+        sortedGroups = groupsArray.sort((a, b) => {
+          const firstOrder: number = categoryOrder[a[0]];
+          const secondOrder: number = categoryOrder[b[0]];
+
+          // no order numbers provided -> sort alphabetically by keys
+          if(firstOrder === undefined || secondOrder === undefined || firstOrder === secondOrder) {
+            return orderAlphabetically(a[0], b[0]);
+          }
+
+          return firstOrder - secondOrder;
+        });
+      } else {
+        // order groups alphabetically as a fallback
+        sortedGroups = groupsArray.sort((a, b) => orderAlphabetically(a[0], b[0]));
+      }
+
+      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups);
 
       $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();
 
-      const $buttons = $categories.selectAll('button').data((d:[string, {enabled: boolean, v: IViewPluginDesc}[]]) => d[1].sort((a, b) => a.v.group.order - b.v.group.order));
+      // sort data that buttons inside groups are sorted
+      const $buttons = $categories.selectAll('button').data((d: [ string, {enabled: boolean, v: IViewPluginDesc}[] ]) => d[1].sort((a, b) => {
+        const firstOrder: number = a.v.group.order;
+        const secondOrder: number = b.v.group.order;
+
+        // no order numbers provided -> sort alphabetically by keys
+        if(firstOrder === undefined || secondOrder === undefined || firstOrder === secondOrder) {
+          return orderAlphabetically(a.v.name, b.v.name);
+        }
+
+        return firstOrder - secondOrder;
+      }));
 
       $buttons.enter().append('button')
         .classed('btn btn-default', true);

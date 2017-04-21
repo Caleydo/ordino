@@ -7,6 +7,7 @@ import {mixin} from 'phovea_core/src/index';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement, IFormSelectOption} from './FormBuilder';
+import * as session from 'phovea_core/src/session';
 
 /**
  * helper view for proxying an existing external website
@@ -165,7 +166,8 @@ export class ProxyView extends AView {
 
     this.setBusy(true);
 
-    const args = mixin(this.options.extra, {[this.options.argument]: selectedItemId});
+    const species = session.retrieve('species', 'human');
+    const args = mixin(this.options.extra, {[this.options.argument]: selectedItemId, species});
     const url = this.createUrl(args);
     //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
     this.$node.select('iframe')

@@ -129,7 +129,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             </div>
           </div>
       `);
-      this.$node.select('button').on('click', () => {
+      this.$node.select('button.right').on('click', () => {
         (<MouseEvent>d3event).preventDefault();
       });
       this.$group = this.$node.select('div.form-horizontal');

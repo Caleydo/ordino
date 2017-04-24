@@ -103,8 +103,13 @@ export class LineUpSelectionHelper extends EventHandler {
   /**
    * gets the rows ids as a set, i.e. the order doesn't mean anything
    */
-  rowIdsAsSet() {
-    const ids = this._rows.map((d) => this.idAccessor(d));
+  rowIdsAsSet(indices: number[]) {
+    let ids: number[];
+    if (indices.length === this._rows.length) {
+      ids = this._rows.map((d) => this.idAccessor(d));
+    } else {
+      ids = indices.map((i) => this.index2id.get(String(i)));
+    }
     ids.sort((a, b) => a - b); // sort by number
     return rlist(ids);
   }

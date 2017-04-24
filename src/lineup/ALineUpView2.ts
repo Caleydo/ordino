@@ -366,9 +366,13 @@ export abstract class ALineUpView2 extends AView {
     colDesc._score = true;
 
     const loadScoreColumn = () => {
-      return score.compute(this.selectionHelper.rowIdsAsSet(), this.idType);
+      return score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.idType, this.extraComputeScoreParam());
     };
     return this.addColumn(colDesc, loadScoreColumn);
+  }
+
+  protected extraComputeScoreParam(): any {
+    return null;
   }
 
   addTrackedScoreColumn(score: IScore<any>) {

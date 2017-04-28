@@ -16,7 +16,7 @@ export interface IScore<T> {
    * @param ids
    * @param idtype
    */
-  compute(ids: RangeLike, idtype: IDType): Promise<IScoreRow<T>[]>;
+  compute(ids: RangeLike, idtype: IDType, extras?: any): Promise<IScoreRow<T>[]>;
 }
 
 export interface IScoreParam {

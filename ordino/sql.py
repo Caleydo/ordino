@@ -59,6 +59,29 @@ def _replace_named_sets_in_ids(v):
   return list(union)
 
 
+def _replace_range_in_ids(v, id_type):
+  import phovea_server.plugin
+  from phovea_server.range import parse
+
+  manager = phovea_server.plugin.lookup('idmanager')
+
+  union = set()
+
+  def add_range(r):
+    # convert named sets to the primary ids
+    uids = parse(r)[0].tolist()
+    ids = manager.unmap(uids, id_type)
+    for id in ids:
+      union.add(id)
+
+  if isinstance(v, list):
+    for vi in v:
+      add_range(vi)
+  else:
+    add_range(v)
+  return list(union)
+
+
 @app.route('/<database>/<view_name>/filter')
 def get_filtered_data(database, view_name):
   config, _ = db.resolve(database)
@@ -89,6 +112,16 @@ def get_filtered_data(database, view_name):
       del where_clause[k]  # delete value
       real_key = k[9:]  # remove the namedset4 part
       ids = _replace_named_sets_in_ids(v)
+      if real_key not in where_clause:
+        where_clause[real_key] = ids
+      else:
+        where_clause[real_key].extend(ids)
+    if k.startswith('rangeOf'):
+      del where_clause[k]  # delete value
+      id_type_and_key = k[7:]
+      id_type = id_type_and_key[:id_type_and_key.index('4')]
+      real_key = id_type_and_key[id_type_and_key.index('4') + 1:]  # remove the range4 part
+      ids = _replace_range_in_ids(v, id_type)
       if real_key not in where_clause:
         where_clause[real_key] = ids
       else:

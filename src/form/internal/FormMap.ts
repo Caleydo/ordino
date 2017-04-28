@@ -61,6 +61,13 @@ export interface IFormMapDesc extends IFormElementDesc {
      * whether an element can just be selected once
      */
     uniqueKeys?: boolean;
+
+    sessionKeySuffix?: string;
+
+    /**
+     * @default true
+     */
+    defaultSelection?: boolean;
   };
 }
 
@@ -117,8 +124,14 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           </button>
           <div class="dropdown-menu" aria-labelledby="${this.desc.attributes.id}l" style="min-width: 25em">
             <div class="form-horizontal"></div>
+            <div>
+                <button class="btn btn-default btn-sm right">Apply</button>      
+            </div>
           </div>
       `);
+      this.$node.select('button.right').on('click', () => {
+        (<MouseEvent>d3event).preventDefault();
+      });
       this.$group = this.$node.select('div.form-horizontal');
       this.$group.on('click', () => {
         // stop click propagation to avoid closing the dropdown
@@ -136,7 +149,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.handleShowIf();
 
     if (this.desc.useSession) {
-      const key = `formBuilder.map.${this.id}`;
+      const key = `formBuilder.map.${this.id}${this.desc.options.sessionKeySuffix || ''}`;
       this.rows = session.retrieve(key, []);
 
       this.on('change', (event, value) => {
@@ -180,10 +193,11 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
   private addValueEditor(row: IFormRow, parent: Element, entries: ISubDescs[]) {
     const that = this;
     const desc = entries.find((d) => d.value === row.key);
+    const defaultSelection = this.desc.options.defaultSelection !== false;
 
-    function mapOptions(d: IFormSelectOption|string) {
-      const value = typeof d === 'string' || !d ? d : d.value;
-      const name = typeof d === 'string' || !d ? d : d.name;
+    function mapOptions(d: any|string) {
+      const value = typeof d === 'string' || !d ? d : (d.value || d.id);
+      const name = typeof d === 'string' || !d ? d : (d.name || d.text);
       return `<option value="${value}">${name}</option>`;
     }
 
@@ -198,10 +212,10 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           that.fire('change', that.value, that.$group);
         });
         Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
-          parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
+          parent.firstElementChild.innerHTML = (!defaultSelection ? `<option value="">Select me...</option>` : '') + values.map(mapOptions).join('');
           if (initialValue) {
             (<HTMLSelectElement>parent.firstElementChild).selectedIndex = values.map((d) => typeof d === 'string' ? d : d.value).indexOf(initialValue);
-          } else {
+          } else if (defaultSelection) {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
           }
@@ -214,18 +228,31 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           desc.optionsData = [];
         }
         Promise.resolve(typeof desc.optionsData === 'function' ? desc.optionsData() : desc.optionsData).then((values) => {
+          const initially = initialValue ? ((Array.isArray(initialValue) ? initialValue : [initialValue]).map((d) => typeof d === 'string' ? d : d.id)) : [];
+          // in case of ajax but have default value
+          if (desc.ajax && values.length === 0 && initialValue) {
+            values = Array.isArray(initialValue) ? initialValue : [initialValue];
+          }
           parent.firstElementChild.innerHTML = values.map(mapOptions).join('');
           const s = parent.firstElementChild;
+          const $s = (<any>$(s));
           // merge only the default options if we have no local data
-          const $s = (<any>$(s)).select2(mixin({
-            defaultData: initialValue ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : [],
+          $s.select2(mixin({
             placeholder: 'Start typing...',
             theme: 'bootstrap'
           }, desc.ajax ? DEFAULT_OPTIONS: {}, desc));
-          if (values.length > 0 && !initialValue) {
+          if (initialValue) {
+            $s.val(initially).trigger('change');
+          } else if (!defaultSelection && that.desc.options.uniqueKeys) {
+            // force no selection
+            $s.val([]).trigger('change');
+          }
+
+          if (values.length > 0 && !initialValue && defaultSelection) {
             const first = values[0];
             row.value = typeof first === 'string' || !first ? first : first.value;
           }
+
           that.fire('change', that.value, that.$group);
           // register on change listener use full select2 items
           $s.on('change', function (this: HTMLSelectElement) {
@@ -304,11 +331,33 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
             ${entries.map((o) => `<option value="${o.value}" ${o.value === d.key ? 'selected="selected"' : ''}>${o.name}</option>`).join('')}
           </select>
         </div>
-        <div class="col-sm-7"></div>`;
+        <div class="col-sm-6"></div>
+        <div class="col-sm-1"><button class="btn btn-default btn-sm" title="Remove"><span aria-hidden="true">×</span></button></div>`;
 
+      const valueElem = <HTMLElement>row.querySelector('.col-sm-6');
       if (d.key) { // has value
-        this.addValueEditor(d, row.lastElementChild, entries);
+        this.addValueEditor(d, valueElem, entries);
+      } else {
+        // add remove all button
       }
+      row.querySelector('div.col-sm-1 button').addEventListener('click', (evt: MouseEvent) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (d.key) {
+          // remove this row
+          row.remove();
+          that.rows.splice(that.rows.indexOf(d), 1);
+          updateOptions();
+        } else {
+          // remove all rows
+          that.rows = [];
+          const children = Array.from(group.children);
+          // remove all dom rows
+          children.splice(0, children.length - 1).forEach((d) => d.remove());
+          updateOptions();
+        }
+        that.fire('change', that.value, that.$group);
+      });
       row.querySelector('select').addEventListener('change', function (this: HTMLSelectElement) {
         if (!this.value) {
           // remove this row
@@ -320,13 +369,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         }
         if (d.key !== this.value) { // value changed
           if (d.key) { //has an old value?
-            row.lastElementChild.innerHTML = '';
+            valueElem.innerHTML = '';
           } else {
             // ensure that there is an empty row
             renderRow({key: '', value: null});
           }
           d.key = this.value;
-          that.addValueEditor(d, row.lastElementChild, entries);
+          that.addValueEditor(d, valueElem, entries);
           updateOptions();
         }
       });

@@ -100,6 +100,20 @@ export class LineUpSelectionHelper extends EventHandler {
     return this._rows;
   }
 
+  /**
+   * gets the rows ids as a set, i.e. the order doesn't mean anything
+   */
+  rowIdsAsSet(indices: number[]) {
+    let ids: number[];
+    if (indices.length === this._rows.length) {
+      ids = this._rows.map((d) => this.idAccessor(d));
+    } else {
+      ids = indices.map((i) => this.index2id.get(String(i)));
+    }
+    ids.sort((a, b) => a - b); // sort by number
+    return rlist(ids);
+  }
+
   setItemSelection(sel: ISelection) {
     if (!this.lineup) {
       return;

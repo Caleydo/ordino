@@ -41,6 +41,9 @@ const elems = createWrapper(document.body, {
   }
 });
 
+const aboutDialogBody = elems.header.aboutDialog;
+aboutDialogBody.insertAdjacentHTML('afterbegin', '<div class="alert alert-warning" role="alert"><strong>Disclaimer</strong> This software is <strong>for research purpose only</strong>.</span></div>');
+
 
 // copy nodes from original document to new document (template)
 const mainNode = <HTMLElement>elems.$main.node();

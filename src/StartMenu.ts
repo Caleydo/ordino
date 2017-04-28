@@ -2,10 +2,9 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import * as session from 'phovea_core/src/session';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
-import {Targid, TargidConstants} from './Targid';
+import {Targid} from './Targid';
 import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
@@ -284,6 +283,10 @@ export class AEntryPointList implements IEntryPointList {
     return listNamedSets(this.idType);
   }
 
+  protected getDefaultSessionValues(): any|null {
+    return null;
+  }
+
   protected build(): Promise<INamedSet[]> {
     // load named sets (stored LineUp sessions)
     const promise = this.getNamedSets()
@@ -366,16 +369,7 @@ export class AEntryPointList implements IEntryPointList {
 
             // if targid object is available
             if (that.options.targid) {
-              // store state to session before creating a new graph
-              session.store(TargidConstants.NEW_ENTRY_POINT, {
-                view: (<any>that.desc).viewId,
-                options: {
-                  namedSet
-                }
-              });
-
-              // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-              that.options.targid.graphManager.newRemoteGraph();
+              that.options.targid.initNewSession((<any>that.desc).viewId, {namedSet}, that.getDefaultSessionValues());
             } else {
               console.error('no targid object given to push new view');
             }

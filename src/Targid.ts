@@ -157,6 +157,24 @@ export function replaceView(targid:IObjectRef<Targid>, existingView:IObjectRef<V
 }
 
 
+function initSessionImpl(inputs, parameters) {
+  const old = {};
+  Object.keys(parameters).forEach((key) => {
+    old[key] = session.retrieve(key, null);
+    const value = parameters[key];
+    if (value !== null) {
+      session.store(key, parameters[key]);
+    }
+  });
+  return {
+    inverse: initSession(old)
+  };
+}
+
+function initSession(map: any) {
+  return action(meta('Initialize Session', cat.custom, op.update), TargidConstants.CMD_INIT_SESSION, initSessionImpl, [], map);
+}
+
 /**
  * Create a CLUE command by ID
  * @param id
@@ -170,6 +188,8 @@ export function createCmd(id):ICmdFunction {
       return removeViewImpl;
     case TargidConstants.CMD_REPLACE_VIEW:
       return replaceViewImpl;
+    case TargidConstants.CMD_INIT_SESSION:
+      return initSessionImpl;
   }
   return null;
 }
@@ -227,6 +247,8 @@ export class TargidConstants {
    * @type {string}
    */
   static readonly CMD_REPLACE_VIEW = 'targidReplaceView';
+
+  static readonly CMD_INIT_SESSION = 'targidInitSession';
 
   /**
    * Static constant as identification for Targid views
@@ -383,8 +405,12 @@ export class Targid {
     if(this.graph.isEmpty && !hasInitScript) {
       this.openStartMenu();
     } else if (hasInitScript) {
-      const entryPoint:any = session.retrieve(TargidConstants.NEW_ENTRY_POINT);
-      this.push(entryPoint.view, null, null, entryPoint.options);
+      const {view, options, defaultSessionValues} = <any>session.retrieve(TargidConstants.NEW_ENTRY_POINT);
+
+      if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
+        this.graph.push(initSession(defaultSessionValues));
+      }
+      this.push(view, null, null, options);
       session.remove(TargidConstants.NEW_ENTRY_POINT);
     } else {
       //just if no other option applies jump to the stored state
@@ -544,6 +570,17 @@ export class Targid {
     } else {
       return this.focus(this.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
     }
+  }
+
+  initNewSession(view: string, options: any, defaultSessionValues: any = null) {
+    // store state to session before creating a new graph
+    session.store(TargidConstants.NEW_ENTRY_POINT, {
+      view,
+      options,
+      defaultSessionValues
+    });
+    // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+    this.graphManager.newGraph();
   }
 
   private pushView(viewId:string, idtype:IDType, selection:Range, options?) {

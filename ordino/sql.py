@@ -259,7 +259,7 @@ def lookup(database, view_name):
       pass
 
   # 'query': '%' + request.args['query'] + '%'
-  arguments = dict(query=str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
+  arguments = dict(query='%' + str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
 
   replace = {}
   if view.replacements is not None:

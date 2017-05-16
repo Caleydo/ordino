@@ -24,6 +24,7 @@ const template = `
   `;
 
 export const EXTENSION_POINT_ID = 'targidStartMenuSection';
+const FILTERS_EXTENSION_POINT_ID = 'listFilters';
 
 interface IStartMenuSection extends IPluginDesc {
   readonly name: string;
@@ -326,8 +327,14 @@ export class AEntryPointList implements IEntryPointList {
    * Also binds the click listener that saves the selection to the session, before reloading the page
    * @param data
    */
-  private updateList(data: INamedSet[]) {
+  private async updateList(data: INamedSet[]) {
     const that = this;
+
+    // TODO: trigger updateList method when selectedSpecies changes
+    const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+    if(filters.length) {
+      data = filters.reduce((data, filter) => filter.factory(data, (datum) => datum.subTypeValue), data);
+    }
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
     const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);

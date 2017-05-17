@@ -332,10 +332,9 @@ export class AEntryPointList implements IEntryPointList {
     let data = this.data;
     const that = this;
 
-    // TODO: trigger updateList method when selectedSpecies changes
     const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
     if(filters.length) {
-      data = filters.reduce((data, filter) => filter.factory(data, (datum) => datum.subTypeValue), data);
+      data = filters.reduce((data, filter) => filter.factory(data, (datum) => datum[filter.desc.keyToFilter]), data);
     }
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);

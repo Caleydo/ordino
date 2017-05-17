@@ -36,6 +36,7 @@ export interface IEntryPointList {
   addNamedSet(namedSet: INamedSet);
   removeNamedSet(namedSet: INamedSet);
   updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet);
+  updateList(): void;
 }
 
 export interface IStartMenuSectionEntry {
@@ -267,17 +268,17 @@ export class AEntryPointList implements IEntryPointList {
    */
   addNamedSet(namedSet: INamedSet) {
     this.data.push(namedSet);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   removeNamedSet(namedSet: INamedSet) {
     this.data.splice(this.data.indexOf(namedSet), 1);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet) {
     this.data.splice(this.data.indexOf(oldNamedSet), 1, newNamedSet);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   protected getNamedSets(): Promise<INamedSet[]> {
@@ -308,7 +309,7 @@ export class AEntryPointList implements IEntryPointList {
         customNamedSetsWrapper.append('div').classed('header', true).text(`My ${this.desc.description}`);
         customNamedSetsWrapper.append('ul');
 
-        this.updateList(this.data);
+        this.updateList();
 
         return namedSets;
       });
@@ -327,7 +328,8 @@ export class AEntryPointList implements IEntryPointList {
    * Also binds the click listener that saves the selection to the session, before reloading the page
    * @param data
    */
-  private async updateList(data: INamedSet[]) {
+  async updateList() {
+    let data = this.data;
     const that = this;
 
     // TODO: trigger updateList method when selectedSpecies changes

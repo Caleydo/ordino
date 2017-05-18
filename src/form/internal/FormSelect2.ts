@@ -43,7 +43,7 @@ export interface IFormSelect2Element extends IFormElement {
 export const DEFAULT_OPTIONS = {
     placeholder: 'Start typing...',
     theme: 'bootstrap',
-    minimumInputLength: 1,
+    minimumInputLength: 0,
     //selectOnClose: true,
     //tokenSeparators: [' ', ',', ';'], // requires multiple attribute for select element
     ajax: {

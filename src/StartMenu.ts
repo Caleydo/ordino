@@ -24,7 +24,7 @@ const template = `
   `;
 
 export const EXTENSION_POINT_ID = 'targidStartMenuSection';
-const FILTERS_EXTENSION_POINT_ID = 'listFilters';
+const FILTERS_EXTENSION_POINT_ID = 'ordinoListFilters';
 
 interface IStartMenuSection extends IPluginDesc {
   readonly name: string;

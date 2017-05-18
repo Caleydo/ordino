@@ -359,8 +359,8 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           that.rows.splice(that.rows.indexOf(d), 1);
           updateOptions();
         } else {
-          // remove all rows
-          that.rows = [];
+          // remove all rows and add the dummy one = me again
+          that.rows = [d];
           const children = Array.from(group.children);
           // remove all dom rows
           children.splice(0, children.length - 1).forEach((d) => d.remove());

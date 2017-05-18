@@ -238,6 +238,8 @@ export abstract class ALineUpView2 extends AView {
       diffAdded.forEach((id) => {
         this.getSelectionColumnDesc(id)
           .then((columnDesc) => {
+            //mark as lazy loaded
+            (<any>columnDesc).lazyLoaded = true;
             this.withoutTracking(() => {
               this.addColumn(columnDesc, this.loadSelectionColumnData.bind(this), id, true); // true == withoutTracking
             });

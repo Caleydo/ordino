@@ -117,9 +117,11 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     }
     if (this.inline) {
       this.$node.classed('dropdown', true);
+      const initValue = this.value;
       this.$node.html(`
           <button class="btn btn-default dropdown-toggle" type="button" id="${this.desc.attributes.id}l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             ${this.desc.label}
+            <span class="badge">${initValue.length === 0 ? '' : initValue.length}</span>
             <span class="caret"></span>
           </button>
           <div class="dropdown-menu" aria-labelledby="${this.desc.attributes.id}l" style="min-width: 25em">
@@ -130,6 +132,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           </div>
       `);
       this.$node.select('button.right').on('click', () => {
+
         (<MouseEvent>d3event).preventDefault();
       });
       this.$group = this.$node.select('div.form-horizontal');
@@ -137,6 +140,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         // stop click propagation to avoid closing the dropdown
         (<MouseEvent>d3event).stopPropagation();
       });
+
+      this.on('change', () => {
+        //update badge icon
+        const v = this.value;
+        this.$node.select('span.badge').text(v.length === 0 ? '' : v.length);
+      });
+
     } else {
       if (!this.desc.hideLabel) {
         this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
@@ -349,8 +359,8 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           that.rows.splice(that.rows.indexOf(d), 1);
           updateOptions();
         } else {
-          // remove all rows
-          that.rows = [];
+          // remove all rows and add the dummy one = me again
+          that.rows = [d];
           const children = Array.from(group.children);
           // remove all dom rows
           children.splice(0, children.length - 1).forEach((d) => d.remove());

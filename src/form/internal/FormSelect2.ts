@@ -138,6 +138,9 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
     };
 
     mixin(select2Options, DEFAULT_OPTIONS, options);
+    if (!options.ajax) { // if no configured ajax options => url, delete the whole ajax thing
+      delete (<any>select2Options).ajax;
+    }
     //console.log(defaultOptions);
 
     return (<any>$($select.node())).select2(select2Options).trigger('change');
@@ -190,7 +193,8 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
   get value() {
     const r = {id: '', text: ''}; // select2 default format
 
-    if (this.$select.val() !== null) {
+    const v = this.$select.val();
+    if (v !== null && !(Array.isArray(v) && v.length === 0)) {
       r.id = this.$select.select2('data')[0].id;
       r.text = this.$select.select2('data')[0].text;
     }

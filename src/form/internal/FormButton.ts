@@ -9,7 +9,7 @@ export interface IButtonElementDesc extends IFormElementDesc {
 
 export default class FormButton extends EventHandler implements IFormElement {
   private $button: d3.Selection<HTMLButtonElement>;
-  private $node;
+  private $node: d3.Selection<any>;
   private clicked: boolean = false;
 
   readonly type: FormElementType.BUTTON;

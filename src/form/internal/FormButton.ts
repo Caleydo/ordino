@@ -4,9 +4,10 @@ import {EventHandler} from 'phovea_core/src/event';
 
 export interface IButtonElementDesc extends IFormElementDesc {
   iconClasses: string;
+  onClick: () => void;
 }
 
-export default class FormButton extends EventHandler implements IFormElementDesc, IFormElement {
+export default class FormButton extends EventHandler implements IFormElement {
   private $button: d3.Selection<HTMLButtonElement>;
   private $node;
 
@@ -29,7 +30,8 @@ export default class FormButton extends EventHandler implements IFormElementDesc
   }
 
   build() {
-    this.$button = this.$node.append('button').classed('btn btn-primary', true);
+    this.$button = this.$node.append('button').classed(this.desc.attributes.clazz, true);
     this.$button.html(() => this.desc.iconClasses? `<i class="${this.desc.iconClasses}"></i> ${this.desc.label}` : this.desc.label);
+    this.$button.on('click', this.desc.onClick);
   }
 }

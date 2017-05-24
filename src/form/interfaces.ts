@@ -13,7 +13,8 @@ export enum FormElementType {
   SELECT,
   SELECT2,
   INPUT_TEXT,
-  MAP
+  MAP,
+  BUTTON
 }
 
 /**

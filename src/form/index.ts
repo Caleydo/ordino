@@ -8,3 +8,4 @@ export {IFormInputTextDesc} from './internal/FormInputText';
 export {IFormSelectOption, IFormSelectDesc, IFormSelectOptions, IFormSelectElement} from './internal/FormSelect';
 export {IFormSelect2, IFormSelect2Element} from './internal/FormSelect2';
 export {IFormMapDesc} from './internal/FormMap';
+export {IButtonElementDesc} from './internal/FormButton';

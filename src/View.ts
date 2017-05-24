@@ -362,6 +362,9 @@ function generate_hash(desc: IPluginDesc, selection: ISelection) {
   return desc.id+'_'+s;
 }
 
+
+const FILTERS_EXTENSION_POINT_ID = 'ordinoListFilters';
+
 export class ViewWrapper extends EventHandler {
   static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
@@ -629,7 +632,11 @@ export class ViewWrapper extends EventHandler {
       this.$chooser.selectAll('button').classed('active', false);
     }
 
-    findViews(idtype, range).then((views) => {
+    findViews(idtype, range).then(async (views) => {
+      // const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+      // if(filters.length) {
+      //   views = filters.reduce((view, filter) => filter.factory(views, (datum) => datum[filter.desc.keyToFilter]), views);
+      // }
       const groups = new Map();
       views.forEach((elem) => {
         if(!elem.v.group) { // fallback category if none is present

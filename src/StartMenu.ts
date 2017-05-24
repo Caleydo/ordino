@@ -334,7 +334,11 @@ export class AEntryPointList implements IEntryPointList {
 
     const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
     if(filters.length) {
-      data = filters.reduce((data, filter) => filter.factory(data, (datum) => datum[filter.desc.keyToFilter]), data);
+      const dataAccessors = [
+        (datum) => datum.subTypeKey
+      ];
+
+      data = filters.reduce((data, filter, i) => filter.factory(data, dataAccessors[i]), data);
     }
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);

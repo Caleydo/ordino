@@ -103,7 +103,7 @@ export interface IFormElement extends IEventHandler {
   /**
    * Form element value
    */
-  value?: any;
+  value: any;
 
   /**
    * Set the visibility of an form element

@@ -13,7 +13,8 @@ export enum FormElementType {
   SELECT,
   SELECT2,
   INPUT_TEXT,
-  MAP
+  MAP,
+  BUTTON
 }
 
 /**
@@ -102,7 +103,7 @@ export interface IFormElement extends IEventHandler {
   /**
    * Form element value
    */
-  value: any;
+  value?: any;
 
   /**
    * Set the visibility of an form element

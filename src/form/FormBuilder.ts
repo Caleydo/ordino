@@ -99,7 +99,11 @@ export default class FormBuilder {
     return r;
   }
 
+  /**
+   * validates the current form
+   * @returns {boolean} if valid
+   */
   validate() {
-    return Array.from(this.elements.values()).every((d) => d.validate());
+    return Array.from(this.elements.values()).map((d) => d.validate()).every((d) => d);
   }
 }

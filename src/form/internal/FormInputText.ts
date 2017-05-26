@@ -14,7 +14,9 @@ export interface IFormInputTextDesc extends IFormElementDesc {
   /**
    * Additional options
    */
-  options?: {};
+  options?: {
+    type?: string;
+  };
 }
 
 export default class FormInputText extends AFormElement<IFormInputTextDesc> {
@@ -41,7 +43,7 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    */
   protected build() {
     super.build();
-    this.$input = this.$node.append('input').attr('type', 'text');
+    this.$input = this.$node.append('input').attr('type', (this.desc.options || {}).type || 'text');
     this.setAttributes(this.$input, this.desc.attributes);
     this.handleShowIf();
 

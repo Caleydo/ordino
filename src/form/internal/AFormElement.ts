@@ -33,7 +33,9 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
     if (!this.isVisible() || !this.isRequired()) {
       return true;
     }
-    return  this.hasValue();
+    const v = this.hasValue();
+    this.$node.classed('has-error', !v);
+    return v;
   }
 
   protected hasValue() {
@@ -42,7 +44,7 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
 
 
   isVisible() {
-    return this.$node.classed('hidden');
+    return !this.$node.classed('hidden');
   }
 
   /**

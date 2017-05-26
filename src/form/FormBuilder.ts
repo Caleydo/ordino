@@ -80,7 +80,8 @@ export default class FormBuilder {
   getElementData(): {[key: string]: any} {
     const r: {[key: string]: any} = {};
     this.elements.forEach((el, key) => {
-      r[key] = (el.value !== null && el.value.data !== undefined) ? el.value.data : el.value;
+      const value = el.value;
+      r[key] = (value !== null && value.data !== undefined) ? value.data : value;
     });
     return r;
   }
@@ -92,7 +93,8 @@ export default class FormBuilder {
   getElementValues(): {[key: string]: any} {
     const r: {[key: string]: any} = {};
     this.elements.forEach((el, key) => {
-      r[key] = el.value.value || el.value;
+      const value = el.value;
+      r[key] = value.value || value;
     });
     return r;
   }

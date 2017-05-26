@@ -12,6 +12,7 @@ import {IEventHandler} from 'phovea_core/src/event';
 export enum FormElementType {
   SELECT,
   SELECT2,
+  SELECT2_MULTIPLE,
   INPUT_TEXT,
   MAP,
   BUTTON
@@ -24,7 +25,7 @@ export interface IFormElementDesc {
   /**
    * Choose a type which element should be created
    */
-    type: FormElementType;
+  type: FormElementType;
 
   /**
    * Unique identifier for each page

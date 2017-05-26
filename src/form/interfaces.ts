@@ -43,6 +43,11 @@ export interface IFormElementDesc {
   visible?: boolean;
 
   /**
+   * is this field required
+   */
+  required?: boolean;
+
+  /**
    * Attributes that are applied to the DOM element
    */
   attributes?: {
@@ -111,4 +116,9 @@ export interface IFormElement extends IEventHandler {
    * @param visible
    */
   setVisible(visible: boolean): void;
+
+  /**
+   * validates this field
+   */
+  validate(): boolean;
 }

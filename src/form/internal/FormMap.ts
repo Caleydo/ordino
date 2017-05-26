@@ -403,6 +403,10 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     return rows;
   }
 
+  hasValue() {
+    return this.value.length > 0;
+  }
+
   /**
    * Sets the value
    * @param v

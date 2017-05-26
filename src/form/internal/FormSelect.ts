@@ -215,4 +215,8 @@ export default class FormSelect extends AFormElement<IFormSelectDesc> implements
     });
   }
 
+  hasValue() {
+    return this.value !== null;
+  }
+
 }

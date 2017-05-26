@@ -207,6 +207,15 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
     }
   }
 
+  hasValue() {
+    const v = this.value;
+    if (this.multiple) {
+      return (<any[]>v).length > 0;
+    } else {
+      return v !== '' || (<any>v).id !== '';
+    }
+  }
+
   /**
    * Select the option by value. If no value found, then the first option is selected.
    * @param v If string then compares to the option value property. Otherwise compares the object reference.

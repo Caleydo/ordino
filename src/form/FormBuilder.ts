@@ -99,4 +99,7 @@ export default class FormBuilder {
     return r;
   }
 
+  validate() {
+    return Array.from(this.elements.values()).every((d) => d.validate());
+  }
 }

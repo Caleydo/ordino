@@ -56,7 +56,7 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    * @returns {string}
    */
   get value() {
-    return (<HTMLInputElement>this.$input.node()).value;
+    return this.$input.property('value');
   }
 
   /**
@@ -64,6 +64,6 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    * @param v
    */
   set value(v: string) {
-    (<HTMLInputElement>this.$input.node()).value = v;
+    this.$input.property('value', v);
   }
 }

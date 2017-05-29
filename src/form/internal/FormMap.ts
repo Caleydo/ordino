@@ -9,7 +9,7 @@ import * as $ from 'jquery';
 import AFormElement from './AFormElement';
 import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
 import {IFormSelectOption} from './FormSelect';
-import {DEFAULT_OPTIONS} from './FormSelect2';
+import {DEFAULT_OPTIONS, DEFAULT_AJAX_OPTIONS} from './FormSelect2';
 import {mixin} from 'phovea_core/src';
 import {IFormElement} from 'ordino/src/form';
 
@@ -247,10 +247,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
           const s = parent.firstElementChild;
           const $s = (<any>$(s));
           // merge only the default options if we have no local data
-          $s.select2(mixin({
-            placeholder: 'Start typing...',
-            theme: 'bootstrap'
-          }, desc.ajax ? DEFAULT_OPTIONS: {}, desc));
+          $s.select2(mixin({}, desc.ajax ? DEFAULT_AJAX_OPTIONS: DEFAULT_OPTIONS, desc));
           if (initialValue) {
             $s.val(initially).trigger('change');
           } else if (!defaultSelection && that.desc.options.uniqueKeys) {
@@ -404,6 +401,10 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     // HACK since it seems that it always expects a selection option and uses the ".data" attribute, hack it in
     (<any>rows).data = rows;
     return rows;
+  }
+
+  hasValue() {
+    return this.value.length > 0;
   }
 
   /**

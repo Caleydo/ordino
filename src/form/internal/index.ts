@@ -15,6 +15,8 @@ export function create(parent: IFormParent, $parent: d3.Selection<any>, desc: IF
       return new FormSelect(parent, $parent, desc);
     case FormElementType.SELECT2:
       return new FormSelect2(parent, $parent, desc);
+    case FormElementType.SELECT2_MULTIPLE:
+      return new FormSelect2(parent, $parent, desc, 'multiple');
     case FormElementType.INPUT_TEXT:
       return new FormInputText(parent, $parent, desc);
     case FormElementType.MAP:

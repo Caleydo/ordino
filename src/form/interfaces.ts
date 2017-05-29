@@ -12,6 +12,7 @@ import {IEventHandler} from 'phovea_core/src/event';
 export enum FormElementType {
   SELECT,
   SELECT2,
+  SELECT2_MULTIPLE,
   INPUT_TEXT,
   MAP,
   BUTTON
@@ -24,7 +25,7 @@ export interface IFormElementDesc {
   /**
    * Choose a type which element should be created
    */
-    type: FormElementType;
+  type: FormElementType;
 
   /**
    * Unique identifier for each page
@@ -40,6 +41,11 @@ export interface IFormElementDesc {
    * Show or hide form element
    */
   visible?: boolean;
+
+  /**
+   * is this field required
+   */
+  required?: boolean;
 
   /**
    * Attributes that are applied to the DOM element
@@ -110,4 +116,9 @@ export interface IFormElement extends IEventHandler {
    * @param visible
    */
   setVisible(visible: boolean): void;
+
+  /**
+   * validates this field
+   */
+  validate(): boolean;
 }

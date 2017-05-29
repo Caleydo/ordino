@@ -6,7 +6,7 @@ import {generateDialog} from 'phovea_ui/src/dialogs';
 
 let globalErrorTemplate = (details: string) => details;
 
-export function setGlobalErrorTemplate(template: (details: string)=>string) {
+export function setGlobalErrorTemplate(template: (details: string) => string) {
   globalErrorTemplate = template;
 }
 
@@ -26,25 +26,25 @@ export function setGlobalErrorTemplate(template: (details: string)=>string) {
  * @param error
  * @returns {Promise<any>|Promise}
  */
-export function showErrorModalDialog(error:any) {
+export function showErrorModalDialog(error: any) {
   function commonDialog(title: string, body: string) {
-     return new Promise((resolve, reject) => {
-       const dialog = generateDialog(title, 'Dismiss');
+    return new Promise((resolve, reject) => {
+      const dialog = generateDialog(title, 'Dismiss');
 
-       dialog.body.innerHTML = globalErrorTemplate(body);
+      dialog.body.innerHTML = globalErrorTemplate(body);
 
-       dialog.onSubmit(() => {
-         dialog.hide();
-         return false;
-       });
+      dialog.onSubmit(() => {
+        dialog.hide();
+        return false;
+      });
 
-       dialog.onHide(() => {
-         reject(error);
-         dialog.destroy();
-       });
+      dialog.onHide(() => {
+        reject(error);
+        dialog.destroy();
+      });
 
-       dialog.show();
-     });
+      dialog.show();
+    });
   }
 
   if (error instanceof Response || error.response instanceof Response) {
@@ -53,7 +53,7 @@ export function showErrorModalDialog(error:any) {
       const title = `Error ${xhr.status} (${xhr.statusText})`;
       if (xhr.status !== 400) {
         body = `${body}<hr>
-          The requested URL was:<br><a href="${xhr.url}" target="_blank">${(xhr.url.length > 100) ? xhr.url.substring(0, 100)+'...' : xhr.url}</a>`;
+          The requested URL was:<br><a href="${xhr.url}" target="_blank">${(xhr.url.length > 100) ? xhr.url.substring(0, 100) + '...' : xhr.url}</a>`;
       }
       return commonDialog(title, body);
     });

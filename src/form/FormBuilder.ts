@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import {randomId} from 'phovea_core/src/index';
 import {IFormElement, IFormElementDesc} from './interfaces';
 import {create} from './internal';
+
 /**
  * Builds a form from a given collection of form elements
  */
@@ -77,8 +78,8 @@ export default class FormBuilder {
    * Returns an object with the form element id as key and the current data as value
    * @returns {{}}
    */
-  getElementData(): {[key: string]: any} {
-    const r: {[key: string]: any} = {};
+  getElementData(): { [key: string]: any } {
+    const r: { [key: string]: any } = {};
     this.elements.forEach((el, key) => {
       const value = el.value;
       r[key] = (value !== null && value.data !== undefined) ? value.data : value;
@@ -90,8 +91,8 @@ export default class FormBuilder {
    * Returns an object with the form element id as key and the current form element value
    * @returns {{}}
    */
-  getElementValues(): {[key: string]: any} {
-    const r: {[key: string]: any} = {};
+  getElementValues(): { [key: string]: any } {
+    const r: { [key: string]: any } = {};
     this.elements.forEach((el, key) => {
       const value = el.value;
       r[key] = value.value || value;
@@ -104,6 +105,8 @@ export default class FormBuilder {
    * @returns {boolean} if valid
    */
   validate() {
-    return Array.from(this.elements.values()).map((d) => d.validate()).every((d) => d);
+    return Array.from(this.elements.values())
+      .map((d) => d.validate()) // perform validation on each element (returns array of boolean values)
+      .every((d) => d); // return true if every validation was truthy
   }
 }

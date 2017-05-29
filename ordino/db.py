@@ -115,16 +115,12 @@ def _handle_aggregated_score(config, replacements, args):
   return replacements
 
 
-def get_data(database, view_name, replacements=None, arguments=None, extra_sql_argument=None):
+def _prepare_arguments(view, config, replacements=None, arguments=None, extra_sql_argument=None):
   replacements = replacements or {}
   arguments = arguments or {}
-  config, engine = resolve(database)
-
   replacements = _handle_aggregated_score(config, replacements, arguments)
 
   # convert to index lookup
-  # row id start with 1
-  view = config.views[view_name]
   kwargs = {}
   if view.arguments is not None:
     for arg in view.arguments:
@@ -141,6 +137,15 @@ def get_data(database, view_name, replacements=None, arguments=None, extra_sql_a
       else:
         replace[arg] = arguments.get(arg, '')
 
+  return kwargs, replace
+
+
+def get_data(database, view_name, replacements=None, arguments=None, extra_sql_argument=None):
+  config, engine = resolve(database)
+  view = config.views[view_name]
+
+  kwargs, replace = _prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
+
   with session(engine) as sess:
     if config.statement_timeout is not None:
       _log.info('set statement_timeout to {}'.format(config.statement_timeout))
@@ -153,3 +158,27 @@ def get_data(database, view_name, replacements=None, arguments=None, extra_sql_a
     else:
       r = sess.run(view.query % replace, **kwargs)
   return r, view
+
+
+def get_count(database, view_name, replacements=None, arguments=None, extra_sql_argument=None):
+  config, engine = resolve(database)
+  view = config.views[view_name]
+
+  kwargs, replace = _prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
+
+  if 'count' in view.queries:
+    count_query = view.queries['count'] % replace
+  else:
+    query = view.query % replace
+    # heuristic replace everything before ' FROM ' with a select count(*)
+    from_clause = query.upper().index(' FROM ')
+    count_query = 'SELECT count(*)' + query[from_clause:]
+
+  with session(engine) as sess:
+    if config.statement_timeout is not None:
+      _log.info('set statement_timeout to {}'.format(config.statement_timeout))
+      sess.execute('set statement_timeout to {}'.format(config.statement_timeout))
+    r = sess.run(count_query, **kwargs)
+  if r:
+    return r[0]['count']
+  return 0

@@ -82,16 +82,10 @@ def _replace_range_in_ids(v, id_type):
   return list(union)
 
 
-@app.route('/<database>/<view_name>/filter')
-def get_filtered_data(database, view_name):
-  config, _ = db.resolve(database)
-  # convert to index lookup
-  # row id start with 1
-  view = config.views[view_name]
+def _filter_logic(view):
   """
-  like the raw data but with special processing to compute the filter
-  :param database:
-  :param view_name:
+  parses the request arguments for filter
+  :param view:
   :return:
   """
   args = request.args
@@ -140,14 +134,49 @@ def get_filtered_data(database, view_name):
     sub_query = view.queries['filter_' + k] if 'filter_' + k in view.queries else k + ' %(operator)s %(value)s'
     return sub_query % dict(operator=operator, value=':' + kp)
 
-  where_clause = [to_clause(k, v) for k, v in where_clause.items()]
+  where_clause = [to_clause(k, v) for k, v in where_clause.items() if len(v) > 0]
   processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''
   processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
+
+  return processed_args, extra_args
+
+
+@app.route('/<database>/<view_name>/filter')
+def get_filtered_data(database, view_name):
+  """
+  version of getting data in which the arguments starting with `filter_` are used to build a where clause
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  # row id start with 1
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
 
   r, view = db.get_data(database, view_name, None, processed_args, extra_args)
 
   if request.args.get('_assignids', False):
     r = db.assign_ids(r, view.idtype)
+  return jsonify(r)
+
+
+@app.route('/<database>/<view_name>/count')
+def get_count_data(database, view_name):
+  """
+  similar to the /filter clause but returns the count of results instead of the rows itself
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
+
+  r = db.get_count(database, view_name, None, processed_args, extra_args)
+
   return jsonify(r)
 
 

@@ -49,8 +49,8 @@ export const DEFAULT_AJAX_OPTIONS = Object.assign({
     cache: true,
     data: (params: any) => {
       return {
-        query: params.term, // search term from select2
-        page: params.page
+        query: params.term === undefined ? '': params.term, // search term from select2
+        page: params.page === undefined ? 0: params.page
       };
     },
     processResults: (data, params) => {

@@ -48,6 +48,7 @@ export interface IFormMapDesc extends IFormElementDesc {
    * Additional options
    */
   options?: {
+    badgeProvider?: (value: IFormRow[], ...dependent: IFormElement[]) => Promise<string> | string;
     /**
      * Custom on change function that is executed when the selection has changed
      * @param selection
@@ -107,6 +108,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.build();
   }
 
+  private updateBadge() {
+    const dependent = (this.desc.dependsOn || []).map((id) => this.parent.getElementById(id));
+    Promise.resolve(this.desc.options.badgeProvider(this.value, ...dependent)).then((text) => {
+      this.$node.select('span.badge').html(text);
+    });
+  }
+
   /**
    * Build the label and input element
    * Bind the change listener and propagate the selection by firing a change event
@@ -116,12 +124,15 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
       this.$node.classed('hidden', true);
     }
     if (this.inline) {
+      if (!this.desc.options.badgeProvider) {
+        //default badge provider for inline
+        this.desc.options.badgeProvider = (rows) => rows.length === 0 ? '' : rows.length.toString();
+      }
       this.$node.classed('dropdown', true);
-      const initValue = this.value;
       this.$node.html(`
           <button class="btn btn-default dropdown-toggle" type="button" id="${this.desc.attributes.id}l" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             ${this.desc.label}
-            <span class="badge">${initValue.length === 0 ? '' : initValue.length}</span>
+            <span class="badge"></span>
             <span class="caret"></span>
           </button>
           <div class="dropdown-menu" aria-labelledby="${this.desc.attributes.id}l" style="min-width: 25em">
@@ -141,15 +152,14 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
         (<MouseEvent>d3event).stopPropagation();
       });
 
-      this.on('change', () => {
-        //update badge icon
-        const v = this.value;
-        this.$node.select('span.badge').text(v.length === 0 ? '' : v.length);
-      });
-
     } else {
       if (!this.desc.hideLabel) {
-        this.$node.append('label').attr('for', this.desc.attributes.id).text(this.desc.label);
+        const $label = this.$node.append('label').attr('for', this.desc.attributes.id);
+        if (this.desc.options.badgeProvider) {
+          $label.html(`${this.desc.label} <span class="badge"></span>`);
+        } else {
+          $label.text(this.desc.label);
+        }
       }
       this.$group = this.$node.append('div');
     }
@@ -164,6 +174,13 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
 
       this.on('change', (event, value) => {
         session.store(key, value);
+      });
+    }
+
+    if (this.desc.options.badgeProvider) {
+      this.updateBadge();
+      this.on('change', () => {
+        this.updateBadge();
       });
     }
 

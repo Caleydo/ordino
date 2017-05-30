@@ -186,6 +186,7 @@
         display: flex;
         padding-bottom: 15px;
         border-bottom: 1px solid $core_border;
+        margin-bottom: 5px;
       }
 
       .entry-points-wrapper {
@@ -237,7 +238,7 @@
           display: block;
           visibility: hidden;
           position: absolute;
-          bottom: -67%;
+          bottom: -66%;
           left: 4%;
           opacity: 0;
           content: attr(data-title);

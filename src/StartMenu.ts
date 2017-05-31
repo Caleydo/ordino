@@ -184,6 +184,7 @@ function byPriority(a: any, b: any) {
 
 
 export interface IStartFactory {
+  readonly id: string;
   readonly name: string;
   readonly cssClass: string;
   readonly idType: string;
@@ -197,6 +198,10 @@ class StartFactory implements IStartFactory {
 
   constructor(private readonly p: IPluginDesc) {
 
+  }
+
+  get id() {
+    return this.p.id;
   }
 
   get name() {

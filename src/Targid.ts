@@ -580,7 +580,7 @@ export class Targid {
       defaultSessionValues
     });
     // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-    this.graphManager.newGraph();
+    this.graphManager.newRemoteGraph();
   }
 
   private pushView(viewId:string, idtype:IDType, selection:Range, options?) {

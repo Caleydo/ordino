@@ -11,3 +11,7 @@
   font-size: 12px;
   color: #ccc;
 }
+
+.select2-container--bootstrap .select2-results>.select2-results__options {
+  max-height:300px;
+}

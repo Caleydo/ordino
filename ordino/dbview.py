@@ -15,6 +15,15 @@ class DBViewBuilder(object):
   def __init__(self):
     self.v = DBView()
 
+  def clone(self, view):
+    self.v.idtype = view.idtype
+    self.v.query = view.query
+    self.v.queries = view.queries.copy()
+    self.v.columns = view.columns.copy()
+    self.v.replacements = list(view.replacements)
+    self.v.arguments = list(view.arguments)
+    return self
+
   def idtype(self, idtype):
     self.v.idtype = idtype
     return self
@@ -25,6 +34,14 @@ class DBViewBuilder(object):
       self.v.query = query
     else:
       self.v.queries[label] = query
+    return self
+
+  def append(self, label, query=None):
+    if query is None:
+      query = label
+      self.v.query += query
+    else:
+      self.v.queries[label] += query
     return self
 
   def query_stats(self, query):
@@ -61,9 +78,17 @@ class DBViewBuilder(object):
     return self.v
 
 
+class DBMapping(object):
+  def __init__(self, from_idtype, to_idtype, query):
+    self.from_idtype = from_idtype
+    self.to_idtype = to_idtype
+    self.query = query
+
+
 class DBConnector(object):
-  def __init__(self, agg_score, views):
+  def __init__(self, agg_score, views, mappings=None):
     self.agg_score = agg_score
     self.views = views
     self.dburl = None
+    self.mappings = mappings
     self.statement_timeout = None

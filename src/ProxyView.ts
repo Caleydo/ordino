@@ -6,7 +6,7 @@ import {api2absURL} from 'phovea_core/src/ajax';
 import {mixin} from 'phovea_core/src/index';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from 'phovea_core/src/plugin';
-import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement} from './FormBuilder';
+import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement, IFormSelectOption} from './FormBuilder';
 
 /**
  * helper view for proxying an existing external website
@@ -120,12 +120,12 @@ export class ProxyView extends AView {
       .then((args: any[]) => {
         const names = <string[]>args[0]; // use names to get the last selected element
         const data = <{value:string, name:string, data:any}[]>args[1];
-        const selectedItemSelect = this.paramForm.getElementById(ProxyView.SELECTED_ITEM);
+        const selectedItemSelect: IFormSelectElement = <IFormSelectElement>this.paramForm.getElementById(ProxyView.SELECTED_ITEM);
 
         // backup entry and restore the selectedIndex by value afterwards again,
         // because the position of the selected element might change
-        const bak = selectedItemSelect.value || data[(<IFormSelectElement>selectedItemSelect).getSelectedIndex()];
-        (<IFormSelectElement>selectedItemSelect).updateOptionElements(data);
+        const bak = selectedItemSelect.value || data[selectedItemSelect.getSelectedIndex()];
+        selectedItemSelect.updateOptionElements(data);
 
         // select last item from incoming `selection.range`
         if(forceUseLastSelection) {
@@ -138,15 +138,13 @@ export class ProxyView extends AView {
       });
   }
 
-  protected getSelectionSelectData(names:string[]):Promise<{value:string, name:string, data:any}[]> {
+  protected getSelectionSelectData(names:string[]):Promise<IFormSelectOption[]> {
     if(names === null) {
       return Promise.resolve([]);
     }
 
     // hook
-    return Promise.resolve(names.map((d:string) => {
-      return {value: d, name: d, data: d};
-    }));
+    return Promise.resolve(names.map((d) => ({value: d, name: d, data: d})));
   }
 
   protected updateProxyView() {
@@ -179,7 +177,7 @@ export class ProxyView extends AView {
       });
   }
 
-  protected showErrorMessage(selectedItemId) {
+  protected showErrorMessage(selectedItemId: string) {
     this.setBusy(false);
     this.$node.html(`<p>Cannot map <i>${this.selection.idtype.name}</i> ('${selectedItemId}') to <i>${this.options.idtype}</i>.</p>`);
     this.fire(AView.EVENT_LOADING_FINISHED);

@@ -2,11 +2,10 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import * as session from 'phovea_core/src/session';
-import * as idtypes from 'phovea_core/src/idtype';
-import * as dialogs from 'phovea_ui/src/dialogs';
-import {Targid, TargidConstants} from './Targid';
-import {listNamedSets, INamedSet, deleteNamedSet} from './storage';
+import {IDType, resolve} from 'phovea_core/src/idtype';
+import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
+import {Targid} from './Targid';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
@@ -27,18 +26,19 @@ const template = `
 export const EXTENSION_POINT_ID = 'targidStartMenuSection';
 
 interface IStartMenuSection extends IPluginDesc {
-  name: string;
-  cssClass: string;
+  readonly name: string;
+  readonly cssClass: string;
 }
 
 export interface IEntryPointList {
-  getIdType(): idtypes.IDType | string;
+  getIdType(): IDType | string;
   addNamedSet(namedSet: INamedSet);
   removeNamedSet(namedSet: INamedSet);
+  updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet);
 }
 
 export interface IStartMenuSectionEntry {
-  desc: IPluginDesc;
+  readonly desc: IPluginDesc;
   getEntryPointLists(): IEntryPointList[];
 }
 
@@ -89,12 +89,12 @@ export class StartMenu {
    * @param idType
    * @param namedSet
    */
-  updateEntryPointList(idType: idtypes.IDType | string, namedSet: INamedSet) {
+  updateEntryPointList(idType: IDType | string, namedSet: INamedSet) {
     this.entryPoints
       .map((d) => d.getEntryPointLists())
       .filter((d) => d !== null && d !== undefined)
       .reduce((a, b) => a.concat(b), []) // [[0, 1], [2, 3], [4, 5]] -> [0, 1, 2, 3, 4, 5]
-      .filter((d) => d.getIdType() === idtypes.resolve(idType).id)
+      .filter((d) => d.getIdType() === resolve(idType).id)
       .forEach((d) => {
         d.addNamedSet(namedSet);
       });
@@ -114,7 +114,7 @@ export class StartMenu {
       }
     });
 
-    this.$node.select('.closeButton').on('click', (d) => {
+    this.$node.select('.closeButton').on('click', () => {
       // prevent changing the hash (href)
       (<Event>d3.event).preventDefault();
 
@@ -158,7 +158,7 @@ export class StartMenu {
   private updateSections() {
     const that = this;
 
-    this.$sections.each(function (section: IStartMenuSection) {
+    this.$sections.each(async function (section: IStartMenuSection) {
       // reload the entry points every time the
       const elem = <HTMLElement>d3.select(this).select('div.body').node();
 
@@ -167,21 +167,12 @@ export class StartMenu {
         return;
       }
 
-      section.load()
-        .then((i) => {
-          return i.factory(elem, section, {targid: that.targid});
-        })
-        .then((entryPoint) => {
-          // prevent adding the entryPoint if already in list or undefined
-          if (entryPoint === undefined || that.hasEntryPoint(section)) {
-            return;
-          }
-          that.entryPoints.push(entryPoint);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-      //.catch(showErrorModalDialog);
+      const entryPoint = (await section.load()).factory(elem, section, {targid: that.targid});
+      // prevent adding the entryPoint if already in list or undefined
+      if (entryPoint === undefined || that.hasEntryPoint(section)) {
+        return;
+      }
+      that.entryPoints.push(entryPoint);
     });
   }
 
@@ -191,13 +182,13 @@ function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
 }
 
-export function create(parent: Element, options?) {
-  return new StartMenu(parent, options);
-}
-
 
 export interface IStartFactory {
-  name: string;
+  readonly id: string;
+  readonly name: string;
+  readonly cssClass: string;
+  readonly idType: string;
+  readonly description: string;
   build(element: HTMLElement);
   options(): Promise<{viewId: string; options: any}>;
 }
@@ -205,12 +196,28 @@ export interface IStartFactory {
 class StartFactory implements IStartFactory {
   private builder: Promise<() => any> = null;
 
-  constructor(private p: IPluginDesc) {
+  constructor(private readonly p: IPluginDesc) {
 
+  }
+
+  get id() {
+    return this.p.id;
   }
 
   get name() {
     return this.p.name;
+  }
+
+  get cssClass() {
+    return this.p.cssClass;
+  }
+
+  get idType() {
+    return this.p.idtype;
+  }
+
+  get description() {
+    return this.p.description;
   }
 
   build(element: HTMLElement, options: IEntryPointOptions = {}) {
@@ -231,7 +238,7 @@ class StartFactory implements IStartFactory {
 
 
 export function findViewCreators(type: string): IStartFactory[] {
-  const plugins = listPlugins(type).sort((a: any, b: any) => (a.priority || 10) - (b.priority || 10));
+  const plugins = listPlugins(type).sort(byPriority);
   return plugins.map((p: IPluginDesc) => new StartFactory(p));
 }
 
@@ -246,11 +253,11 @@ export class AEntryPointList implements IEntryPointList {
 
   protected idType = 'Ensembl';
 
-  protected $node;
+  protected readonly $node;
 
   protected data: INamedSet[] = [];
 
-  constructor(protected parent: HTMLElement, public desc: IPluginDesc, protected options: IEntryPointOptions) {
+  constructor(protected readonly parent: HTMLElement, public readonly desc: IPluginDesc, protected readonly options: IEntryPointOptions) {
     this.$node = d3.select(parent);
   }
 
@@ -272,8 +279,17 @@ export class AEntryPointList implements IEntryPointList {
     this.updateList(this.data);
   }
 
+  updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet) {
+    this.data.splice(this.data.indexOf(oldNamedSet), 1, newNamedSet);
+    this.updateList(this.data);
+  }
+
   protected getNamedSets(): Promise<INamedSet[]> {
     return listNamedSets(this.idType);
+  }
+
+  protected getDefaultSessionValues(): any|null {
+    return null;
   }
 
   protected build(): Promise<INamedSet[]> {
@@ -286,7 +302,16 @@ export class AEntryPointList implements IEntryPointList {
         // convert to data format and append to species data
         this.data.push(...namedSets);
 
-        this.$node.append('ul');
+        const wrapper = this.$node.append('div').classed('named-sets-wrapper', true);
+
+        const namedSetsWrapper = wrapper.append('div').classed('predefined-named-sets', true);
+        namedSetsWrapper.append('div').classed('header', true).text(`Predefined ${this.desc.description}`);
+        namedSetsWrapper.append('ul');
+
+        const customNamedSetsWrapper = wrapper.append('div').classed('custom-named-sets', true);
+        customNamedSetsWrapper.append('div').classed('header', true).text(`My ${this.desc.description}`);
+        customNamedSetsWrapper.append('ul');
+
         this.updateList(this.data);
 
         return namedSets;
@@ -309,70 +334,112 @@ export class AEntryPointList implements IEntryPointList {
   private updateList(data: INamedSet[]) {
     const that = this;
 
+    const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
+    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
+
+
+    const namedSetItems = this.$node.select('.predefined-named-sets ul').selectAll('li');
+    const customNamedSetItems = this.$node.select('.custom-named-sets ul').selectAll('li');
+
     // append the list items
-    const $ul = this.$node.select('ul');
-    const $options = $ul.selectAll('li').data(data);
-    const enter = $options.enter()
+    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets)];
+    $options.forEach((options) => {
+      const enter = options.enter()
       .append('li')
       .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
 
-    enter.append('a')
-      .classed('goto', true)
-      .attr('href', '#');
+      enter.append('a')
+        .classed('goto', true)
+        .attr('href', '#');
 
-    enter.append('a')
-      .classed('delete', true)
-      .attr('href', '#')
-      .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
-      .attr('title', 'Delete');
+      enter.append('a')
+        .classed('edit', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
+        .attr('title', 'Edit');
 
-    $options.each(function () {
-      const $this = d3.select(this);
-      $this.select('a.goto')
-        .text((d: any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
-        .on('click', (namedSet: INamedSet) => {
-          // prevent changing the hash (href)
-          (<Event>d3.event).preventDefault();
+      enter.append('a')
+        .classed('delete', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
+        .attr('title', 'Delete');
 
-          // if targid object is available
-          if (that.options.targid) {
-            // store state to session before creating a new graph
-            session.store(TargidConstants.NEW_ENTRY_POINT, {
-              view: (<any>that.desc).viewId,
-              options: {
-                namedSet
-              }
+      options.each(function () {
+        const $this = d3.select(this);
+        $this.select('a.goto')
+          .text((d: any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
+          .on('click', (namedSet: INamedSet) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
+
+            // if targid object is available
+            if (that.options.targid) {
+              that.options.targid.initNewSession((<any>that.desc).viewId, {namedSet}, that.getDefaultSessionValues());
+            } else {
+              console.error('no targid object given to push new view');
+            }
+          });
+
+        $this.select('a.delete')
+          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
+          .on('click', async (namedSet: IStoredNamedSet) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
+
+            const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
+              {title: `Delete named set`}
+            );
+            if (deleteIt) {
+              await deleteNamedSet(namedSet.id);
+              that.removeNamedSet(namedSet);
+            }
+          });
+
+        $this.select('a.edit')
+          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
+          .on('click', async (namedSet: IStoredNamedSet) => {
+            // prevent changing the hash (href)
+            (<Event>d3.event).preventDefault();
+
+            const dialog = generateDialog('Edit Named Set', 'Edit');
+
+            const form = document.createElement('form');
+
+            form.innerHTML = `
+              <form id="namedset_form">
+                <div class="form-group">
+                  <label for="namedset_name">Name</label>
+                  <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required" value="${namedSet.name}">
+                </div>
+                <div class="form-group">
+                  <label for="namedset_description">Description</label>
+                  <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description">${namedSet.description}</textarea>
+                </div>
+              </form>
+            `;
+
+            dialog.onHide(() => dialog.destroy());
+
+            dialog.onSubmit(async () => {
+              const name = (<HTMLInputElement>document.getElementById('namedset_name')).value;
+              const description = (<HTMLInputElement>document.getElementById('namedset_description')).value;
+
+              const params = {
+                name,
+                description
+              };
+
+              const editedSet = await editNamedSet(namedSet.id, params);
+              that.updateNamedSet(namedSet, editedSet);
+              dialog.hide();
             });
 
-            // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-            that.options.targid.graphManager.newRemoteGraph();
-          } else {
-            console.error('no targid object given to push new view');
-          }
-        });
+            dialog.body.appendChild(form);
+            dialog.show();
+          });
+      });
 
-      $this.select('a.delete')
-        .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-        .on('click', (namedSet: INamedSet) => {
-          // prevent changing the hash (href)
-          (<Event>d3.event).preventDefault();
-
-          dialogs.areyousure(
-            `The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
-            {title: `Delete named set`}
-          )
-            .then((deleteIt) => {
-              if (deleteIt) {
-                deleteNamedSet(namedSet.id)
-                  .then(() => {
-                    that.removeNamedSet(namedSet);
-                  });
-              }
-            });
-
-        });
+      options.exit().remove();
     });
-
-    $options.exit().remove();
   }
 }

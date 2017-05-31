@@ -28,6 +28,158 @@ def get_data_api(database, view_name):
   return jsonify(r)
 
 
+def _replace_named_sets_in_ids(v):
+  """
+  replaces magic named sets references with their ids
+  :param v:
+  :return:
+  """
+  import storage
+  import phovea_server.plugin
+
+  manager = phovea_server.plugin.lookup('idmanager')
+
+  union = set()
+
+  def add_namedset(vi):
+    # convert named sets to the primary ids
+    namedset_id = vi
+    namedset = storage.get_namedset_by_id(namedset_id)
+    uids = namedset['ids']
+    id_type = namedset['idType']
+    ids = manager.unmap(uids, id_type)
+    for id in ids:
+      union.add(id)
+
+  if isinstance(v, list):
+    for vi in v:
+      add_namedset(vi)
+  else:
+    add_namedset(v)
+  return list(union)
+
+
+def _replace_range_in_ids(v, id_type):
+  import phovea_server.plugin
+  from phovea_server.range import parse
+
+  manager = phovea_server.plugin.lookup('idmanager')
+
+  union = set()
+
+  def add_range(r):
+    # convert named sets to the primary ids
+    uids = parse(r)[0].tolist()
+    ids = manager.unmap(uids, id_type)
+    for id in ids:
+      union.add(id)
+
+  if isinstance(v, list):
+    for vi in v:
+      add_range(vi)
+  else:
+    add_range(v)
+  return list(union)
+
+
+def _filter_logic(view):
+  """
+  parses the request arguments for filter
+  :param view:
+  :return:
+  """
+  args = request.args
+  processed_args = dict()
+  extra_args = dict()
+  where_clause = {}
+  for k, v in args.lists():
+    if k.endswith('[]'):
+      k = k[:-2]
+    if k.startswith('filter_'):
+      where_clause[k[7:]] = v  # remove filter_
+    else:
+      processed_args[k] = v[0] if len(v) == 1 else v
+
+  # handle special namedset4 filter types by resolve them and and the real ids as filter
+  for k, v in where_clause.items():
+    if k.startswith('namedset4'):
+      del where_clause[k]  # delete value
+      real_key = k[9:]  # remove the namedset4 part
+      ids = _replace_named_sets_in_ids(v)
+      if real_key not in where_clause:
+        where_clause[real_key] = ids
+      else:
+        where_clause[real_key].extend(ids)
+    if k.startswith('rangeOf'):
+      del where_clause[k]  # delete value
+      id_type_and_key = k[7:]
+      id_type = id_type_and_key[:id_type_and_key.index('4')]
+      real_key = id_type_and_key[id_type_and_key.index('4') + 1:]  # remove the range4 part
+      ids = _replace_range_in_ids(v, id_type)
+      if real_key not in where_clause:
+        where_clause[real_key] = ids
+      else:
+        where_clause[real_key].extend(ids)
+
+  def to_clause(k, v):
+    l = len(v)
+    kp = k.replace('.', '_')
+    if l == 1:  # single value
+      extra_args[kp] = v[0]
+      operator = '='
+    else:
+      extra_args[kp] = tuple(v)
+      operator = 'IN'
+    # find the sub query to replace, can be injected for more complex filter operations based on the input
+    sub_query = view.queries['filter_' + k] if 'filter_' + k in view.queries else k + ' %(operator)s %(value)s'
+    return sub_query % dict(operator=operator, value=':' + kp)
+
+  where_clause = [to_clause(k, v) for k, v in where_clause.items() if len(v) > 0]
+  processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''
+  processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
+
+  return processed_args, extra_args
+
+
+@app.route('/<database>/<view_name>/filter')
+def get_filtered_data(database, view_name):
+  """
+  version of getting data in which the arguments starting with `filter_` are used to build a where clause
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  # row id start with 1
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
+
+  r, view = db.get_data(database, view_name, None, processed_args, extra_args)
+
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, view.idtype)
+  return jsonify(r)
+
+
+@app.route('/<database>/<view_name>/count')
+def get_count_data(database, view_name):
+  """
+  similar to the /filter clause but returns the count of results instead of the rows itself
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
+
+  r = db.get_count(database, view_name, None, processed_args, extra_args)
+
+  return jsonify(r)
+
+
 @app.route('/<database>/<view_name>/namedset/<namedset_id>')
 def get_namedset_data(database, view_name, namedset_id):
   import storage
@@ -136,7 +288,7 @@ def lookup(database, view_name):
       pass
 
   # 'query': '%' + request.args['query'] + '%'
-  arguments = dict(query=str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
+  arguments = dict(query='%' + str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
 
   replace = {}
   if view.replacements is not None:

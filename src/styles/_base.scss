@@ -19,6 +19,10 @@ b,
   }
 }
 
+.form-horizontal.form-group-sm .form-group {
+  margin-bottom: 5px;
+}
+
 main.targid {
   display: -webkit-flex;
   display: flex;
@@ -304,7 +308,6 @@ div.targid {
       > .inner,
       > .parameters {
         margin: 10px;
-        overflow: hidden;
       }
 
       > .parameters {
@@ -368,26 +371,32 @@ div.targid {
     }*/
 
     > .chooser {
-      flex: 0 0 10em;
+      max-height: calc(100vh - 36px - 38px); // viewport height - header - history
+      flex: 0 0 15em;
       background-color: $core_colour;
       text-align: center;
       position: relative;
       overflow-y: auto;
       padding: 8px 0;
+      font-size: 12px;
 
-      .category:not(:first-child) {
-        border-top: 1px solid $core_border;
-        margin-top: 4px;
-        padding-top: 8px;
+      .category {
+        &:not(:first-child) {
+          margin-top: 4px;
+          padding-top: 8px;
+        }
+
+        header h1 {
+          font-size: 1.2em;
+          margin: 0;
+        }
       }
-
       button {
-        width: 90%;
-        margin-bottom: 4px;
-        padding: 10px 5px;
+        width: 100%;
+        padding: 10px 0;
         white-space: normal;
-        //border-radius: 0;
-        line-height: 1.2;
+        border-radius: 0;
+        line-height: 1;
         border: 1px solid #ccc;
 
         &:active,
@@ -437,6 +446,8 @@ div.lu {
   .rankingbuttons .dropdown-menu {
     left: auto;
     right: 0;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 }
 

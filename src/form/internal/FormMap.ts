@@ -111,7 +111,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
   private updateBadge() {
     const dependent = (this.desc.dependsOn || []).map((id) => this.parent.getElementById(id));
     Promise.resolve(this.desc.options.badgeProvider(this.value, ...dependent)).then((text) => {
-      this.$node.select('span.badge').html(text);
+      this.$node.select('span.badge').html(text).attr('title', `${text} items remaining after filtering`);
     });
   }
 

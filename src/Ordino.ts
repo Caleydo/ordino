@@ -88,7 +88,7 @@ export default class Ordino extends ACLUEWrapper {
 
     graph.then((graph) => {
       graph.on('sync_start,sync', (event: IEvent) => {
-        select('nav span.glyphicon-cog').classed('fa-spin', event.type !== 'sync');
+        select('nav i.fa-cog').classed('fa-spin', event.type !== 'sync');
       });
     });
 

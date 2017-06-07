@@ -61,6 +61,11 @@ export class LineUpRankingButtons extends EventHandler {
           <label for="namedset_description">Description</label>
           <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
         </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="namedset_public"> Public (everybody can see and use it)
+          </label>
+        </div>
       </form>`;
 
     const form = <HTMLFormElement>dialog.body.querySelector('#namedset_form');
@@ -68,8 +73,9 @@ export class LineUpRankingButtons extends EventHandler {
     form.onsubmit = () => {
       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
+      const isPublic = (<HTMLInputElement>document.getElementById('namedset_public')).checked;
 
-      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description);
+      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description, isPublic);
 
       dialog.hide();
       return false;

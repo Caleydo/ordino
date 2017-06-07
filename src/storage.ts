@@ -5,7 +5,7 @@
 import {getAPIJSON, sendAPI} from 'phovea_core/src/ajax';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {parse, RangeLike} from 'phovea_core/src/range';
-import {currentUserNameOrAnonymous} from 'phovea_core/src/security';
+import {currentUserNameOrAnonymous, ALL_READ_NONE, ISecureItem, ALL_READ_READ} from 'phovea_core/src/security';
 
 export enum ENamedSetType {
   NAMEDSET, CUSTOM, PANEL, FILTER
@@ -53,17 +53,13 @@ export interface IPanelNamedSet extends IBaseNamedSet {
   type: ENamedSetType.PANEL;
   id: string;
 }
-export interface IStoredNamedSet extends IBaseNamedSet {
+export interface IStoredNamedSet extends IBaseNamedSet, ISecureItem {
   type: ENamedSetType.NAMEDSET;
 
   /**
    * Id with random characters (generated when storing it on the server)
    */
   id: string;
-  /**
-   * Creator name
-   */
-  creator: string;
 
   /**
    * List of comma separated ids
@@ -87,8 +83,6 @@ export function listNamedSets(idType : IDType | string = null):Promise<IStoredNa
   return getAPIJSON('/targid/storage/namedsets/', args).then((sets: IStoredNamedSet[]) => {
     // default value
     sets.forEach((s) => s.type = s.type || ENamedSetType.NAMEDSET);
-
-    sets = sets.filter((d) => d.creator === currentUserNameOrAnonymous());
     return sets;
   });
 }
@@ -97,11 +91,12 @@ export function listNamedSetsAsOptions(idType : IDType | string = null) {
   return listNamedSets(idType).then((namedSets) => namedSets.map((d) => ({name: d.name, value: d.id})));
 }
 
-export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike, subType: {key:string, value:string}, description = '') {
+export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike, subType: {key:string, value:string}, description = '', isPublic: boolean = false) {
   const data = {
     name,
     type: ENamedSetType.NAMEDSET,
     creator: currentUserNameOrAnonymous(),
+    permissions: isPublic ? ALL_READ_READ : ALL_READ_NONE,
     idType: resolve(idType).id,
     ids: parse(ids).toString(),
     subTypeKey: subType.key,
@@ -115,6 +110,6 @@ export function deleteNamedSet(id:string) {
   return sendAPI(`/targid/storage/namedset/${id}`, {}, 'DELETE');
 }
 
-export function editNamedSet(id:string, data: {[key: string]: string}) {
+export function editNamedSet(id:string, data: {[key: string]: any}) {
   return sendAPI(`/targid/storage/namedset/${id}`, data, 'PUT');
 }

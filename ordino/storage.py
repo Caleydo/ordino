@@ -26,7 +26,7 @@ def get_namedsets():
     id = _generate_id()
     name = request.values.get('name', 'NoName')
     creator = request.values.get('creator', security.current_username())
-    permissions = request.values.get('permissions', security.DEFAULT_PERMISSION)
+    permissions = int(request.values.get('permissions', security.DEFAULT_PERMISSION))
     id_type = request.values.get('idType', '')
     ids = ranges.parse(request.values.get('ids', ''))[0].tolist()
     description = request.values.get('description', '')
@@ -37,6 +37,7 @@ def get_namedsets():
                  description=description,
                  subTypeKey=sub_type_key, subTypeValue=sub_type_value, type=type)
     db.namedsets.insert_one(entry)
+    del entry['_id']
     return jsonify(entry)
 
 
@@ -67,6 +68,7 @@ def get_namedset(namedset_id):
     filter = dict(id=namedset_id)
     query = {'$set': request.form}
     result = db.namedsets.find_one_and_update(filter, query, return_document=ReturnDocument.AFTER)
+    del result['_id']
     return jsonify(result)
 
 

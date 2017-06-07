@@ -40,8 +40,8 @@ export abstract class ALineUpView2 extends AView {
     header: {
       rankingButtons: ($node: d3.Selection<any>) => {
         const rb = new LineUpRankingButtons(this.lineup, $node, this.idType, this.additionalScoreParameter);
-        rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description) => {
-          this.saveNamedSet(order, name, description);
+        rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description, isPublic) => {
+          this.saveNamedSet(order, name, description, isPublic);
         });
         rb.on(LineUpRankingButtons.ADD_SCORE_COLUMN, (event, scoreImpl) => {
           this.addScoreColumn(scoreImpl);
@@ -205,11 +205,11 @@ export abstract class ALineUpView2 extends AView {
     };
   }
 
-  private async saveNamedSet(order: number[], name: string, description: string) {
+  private async saveNamedSet(order: number[], name: string, description: string, isPublic: boolean = false) {
     const r = this.selectionHelper.rows;
     const ids = rlist(order.map((i) => this.idAccessor(r[i])).sort(d3.ascending));
 
-    const d = await saveNamedSet(name, this.idType, ids, this.getSubType(), description);
+    const d = await saveNamedSet(name, this.idType, ids, this.getSubType(), description, isPublic);
     console.log('saved', d);
     this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
   }

@@ -10,6 +10,10 @@ import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
 import {ENamedSetType} from './storage';
+import {
+  ALL_NONE_NONE, ALL_READ_READ, canWrite, DEFAULT_PERMISSION, EEntity,
+  hasPermission
+} from 'phovea_core/src/security';
 
 export interface IStartMenuOptions {
   targid: Targid;
@@ -350,25 +354,8 @@ export class AEntryPointList implements IEntryPointList {
 
       enter.append('a')
         .classed('goto', true)
-        .attr('href', '#');
-
-      enter.append('a')
-        .classed('edit', true)
         .attr('href', '#')
-        .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
-        .attr('title', 'Edit');
-
-      enter.append('a')
-        .classed('delete', true)
-        .attr('href', '#')
-        .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
-        .attr('title', 'Delete');
-
-      options.each(function () {
-        const $this = d3.select(this);
-        $this.select('a.goto')
-          .text((d: any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
-          .on('click', (namedSet: INamedSet) => {
+        .on('click', (namedSet: INamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 
@@ -380,32 +367,22 @@ export class AEntryPointList implements IEntryPointList {
             }
           });
 
-        $this.select('a.delete')
-          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: IStoredNamedSet) => {
+      enter.append('a')
+        .classed('edit', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
+        .attr('title', 'Edit')
+        .on('click', async (namedSet: IStoredNamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 
-            const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
-              {title: `Delete named set`}
-            );
-            if (deleteIt) {
-              await deleteNamedSet(namedSet.id);
-              that.removeNamedSet(namedSet);
+            if (!canWrite(namedSet)) {
+              return;
             }
-          });
-
-        $this.select('a.edit')
-          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: IStoredNamedSet) => {
-            // prevent changing the hash (href)
-            (<Event>d3.event).preventDefault();
 
             const dialog = generateDialog('Edit Named Set', 'Edit');
 
-            const form = document.createElement('form');
-
-            form.innerHTML = `
+            dialog.body.innerHTML = `
               <form id="namedset_form">
                 <div class="form-group">
                   <label for="namedset_name">Name</label>
@@ -415,6 +392,11 @@ export class AEntryPointList implements IEntryPointList {
                   <label for="namedset_description">Description</label>
                   <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description">${namedSet.description}</textarea>
                 </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="namedset_public" ${hasPermission(namedSet, EEntity.OTHERS) ? 'checked="checked"' : ''}> Public (everybody can see and use it)
+                  </label>
+                </div>
               </form>
             `;
 
@@ -423,21 +405,47 @@ export class AEntryPointList implements IEntryPointList {
             dialog.onSubmit(async () => {
               const name = (<HTMLInputElement>document.getElementById('namedset_name')).value;
               const description = (<HTMLInputElement>document.getElementById('namedset_description')).value;
+              const isPublic = (<HTMLInputElement>document.getElementById('namedset_public')).checked;
 
               const params = {
                 name,
-                description
+                description,
+                permissions: isPublic? ALL_READ_READ: ALL_NONE_NONE
               };
 
               const editedSet = await editNamedSet(namedSet.id, params);
               that.updateNamedSet(namedSet, editedSet);
               dialog.hide();
             });
-
-            dialog.body.appendChild(form);
             dialog.show();
           });
-      });
+
+      enter.append('a')
+        .classed('delete', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
+        .attr('title', 'Delete')
+        .on('click', async (namedSet: IStoredNamedSet) => {
+          // prevent changing the hash (href)
+          (<Event>d3.event).preventDefault();
+
+          if (!canWrite(namedSet)) {
+            return;
+          }
+
+          const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
+            {title: `Delete named set`}
+          );
+          if (deleteIt) {
+            await deleteNamedSet(namedSet.id);
+            that.removeNamedSet(namedSet);
+          }
+        });
+
+      //update
+      options.select('a.goto').text((d) => d.name);
+      options.select('a.delete').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
+      options.select('a.edit').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
 
       options.exit().remove();
     });

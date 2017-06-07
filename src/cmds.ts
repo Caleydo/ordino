@@ -145,6 +145,23 @@ export function replaceView(targid:IObjectRef<Targid>, existingView:IObjectRef<V
   });
 }
 
+function initSessionImpl(inputs, parameters) {
+  const old = {};
+  Object.keys(parameters).forEach((key) => {
+    old[key] = session.retrieve(key, null);
+    const value = parameters[key];
+    if (value !== null) {
+      session.store(key, parameters[key]);
+    }
+  });
+  return {
+    inverse: initSession(old)
+  };
+}
+
+export function initSession(map: any) {
+  return action(meta('Initialize Session', cat.custom, op.update), TargidConstants.CMD_INIT_SESSION, initSessionImpl, [], map);
+}
 
 /**
  * Create a CLUE command by ID
@@ -159,6 +176,8 @@ export function createCmd(id):ICmdFunction {
       return removeViewImpl;
     case TargidConstants.CMD_REPLACE_VIEW:
       return replaceViewImpl;
+    case TargidConstants.CMD_INIT_SESSION:
+      return initSessionImpl;
   }
   return null;
 }

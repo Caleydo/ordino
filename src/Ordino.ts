@@ -19,7 +19,7 @@ import {create as createProvVis} from 'phovea_clue/src/provvis';
 import LoginMenu from 'phovea_clue/src/menu/LoginMenu';
 import TargidConstants from './constants';
 import Targid from './Targid';
-import {isLoggedIn} from 'phovea_clue/src/user';
+import {isLoggedIn} from 'phovea_core/src/security';
 export {default as CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 
@@ -28,6 +28,7 @@ export interface IOrdinoOptions {
 }
 
 export default class Ordino extends ACLUEWrapper {
+  static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   private targid: Promise<Targid>;
 
   constructor(private readonly options: IOrdinoOptions = {}) {
@@ -41,11 +42,15 @@ export default class Ordino extends ACLUEWrapper {
       showOptionsLink: true, // always activate options
       appLink: new AppHeaderLink('Target Discovery Platform', (event) => {
         event.preventDefault();
-        this.fire('openStartMenu');
+        this.fire(Ordino.EVENT_OPEN_START_MENU);
         return false;
       })
     };
     const header = createHeader(<HTMLElement>body.querySelector('div.box'), headerOptions);
+
+    const aboutDialogBody = header.aboutDialog;
+    aboutDialogBody.insertAdjacentHTML('afterbegin', '<div class="alert alert-warning" role="alert"><strong>Disclaimer</strong> This software is <strong>for research purpose only</strong>.</span></div>');
+
     this.on('jumped_to,loaded_graph', () => header.ready());
     //load all available provenance graphs
     const manager = new MixedStorageProvenanceGraphManager({
@@ -105,8 +110,8 @@ export default class Ordino extends ACLUEWrapper {
       startMenuNode.classList.add('startMenu');
       const startMenu = new StartMenu(startMenuNode, {targid});
 
-      this.on('openStartMenu', () => startMenu.open());
-      targid.on('openStartMenu', () => startMenu.open());
+      this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+      targid.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
       targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event:IEvent, idtype: IDType | string, namedSet: INamedSet) => startMenu.updateEntryPointList(idtype, namedSet));
 
       const initSession = () => {

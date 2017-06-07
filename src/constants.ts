@@ -35,6 +35,8 @@ export default class TargidConstants {
    */
   static readonly CMD_REPLACE_VIEW = 'targidReplaceView';
 
+  static readonly CMD_INIT_SESSION = 'targidInitSession';
+
   /**
    * Static constant as identification for Targid views
    * Note: the string value is referenced for multiple view definitions in the package.json,

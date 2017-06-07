@@ -3,15 +3,16 @@
  */
 
 import * as session from 'phovea_core/src/session';
-import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
+import {areyousure, FormDialog, generateDialog} from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {select} from 'd3';
-import {isLoggedIn, currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
+import {isLoggedIn, currentUserNameOrAnonymous, canWrite, ALL_READ_READ, ALL_READ_NONE} from 'phovea_core/src/security';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
+import {IProvenanceGraphDataDescription, op} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
 import {randomId} from 'phovea_core/src';
+import {showErrorModalDialog} from 'ordino/src/Dialogs';
 
 enum ESessionListMode {
   TEMPORARY, MY, PUBLIC_ONES
@@ -88,16 +89,19 @@ class SessionList implements IStartMenuSectionEntry {
     $trEnter.append('td').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
     $trEnter.append('td').text((d) => d.creator);
     $trEnter.append('td').html((d) => {
-      let buttons = '';
-      if (isLoggedIn()) {
-        buttons += `<button class="btn btn-xs btn-default" data-action="select"><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>`;
-      }
-      buttons += `<button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>`;
-      if (mode === ESessionListMode.TEMPORARY) {
-        buttons += `<button class="btn btn-xs btn-default" data-action="persist"}><i class="fa fa-save" aria-hidden="true"></i> Persist</button>`;
-      }
+      let buttons = ``;
       if (isLoggedIn() || mode === ESessionListMode.TEMPORARY) {
-        buttons += `<button class="btn btn-xs btn-default" data-action="delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
+        buttons += `<button class="btn btn-xs btn-default" data-action="select" title="Select"><i class="fa fa-folder-open" aria-hidden="true"></i><span class="sr-only">Select</span></button>`;
+      }
+      buttons += `<button class="btn btn-xs btn-default" data-action="clone" title="Clone"><i class="fa fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></button>`;
+      if (mode === ESessionListMode.TEMPORARY) {
+        buttons += `<button class="btn btn-xs btn-default" data-action="persist" title="Persist"><i class="fa fa-save" aria-hidden="true"></i><span class="sr-only">Persist</span></button>`;
+      }
+      if ((isLoggedIn() && canWrite(d)) || mode === ESessionListMode.TEMPORARY) {
+        buttons += `<button class="btn btn-xs btn-default" data-action="edit" title="Edit"><i class="fa fa-edit" aria-hidden="true"></i><span class="sr-only">Edit</span></button>`;
+      }
+      if ((isLoggedIn() && canWrite(d)) || mode === ESessionListMode.TEMPORARY) {
+        buttons += `<button class="btn btn-xs btn-default" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Delete</span></button>`;
       }
       return buttons;
      });
@@ -114,14 +118,33 @@ class SessionList implements IStartMenuSectionEntry {
       return false;
     });
     $trEnter.select('button[data-action="select"]').on('click', (d) => {
-      manager.loadGraph(d);
+      if (!canWrite(d)) {
+        manager.loadOrClone(d, false);
+      } else {
+        manager.loadGraph(d);
+      }
       return false;
     });
-    $trEnter.select('button[data-action="persist"]').on('click', async (d) => {
-      const extras = await importDialog(d);
-      if (extras !== null) {
-        manager.importExistingGraph(d, extras);
-      }
+    $trEnter.select('button[data-action="edit"]').on('click', function (this:HTMLButtonElement, d) {
+      const nameTd = this.parentElement.parentElement.querySelector('td');
+      editDialog(d, 'Edit').then((extras) => {
+        if (extras !== null) {
+          manager.editGraphMetaData(d, extras)
+            .then((desc) => {
+              //update the name
+              nameTd.innerText = desc.name;
+            })
+            .catch(showErrorModalDialog);
+        }
+      });
+      return false;
+    });
+    $trEnter.select('button[data-action="persist"]').on('click', (d) => {
+      editDialog(d, 'Import').then((extras) => {
+        if (extras !== null) {
+          manager.importExistingGraph(d, extras).catch(showErrorModalDialog);
+        }
+      });
       return false;
     });
   }
@@ -129,7 +152,7 @@ class SessionList implements IStartMenuSectionEntry {
 
 function selectWorkspaces(workspaces: IProvenanceGraphDataDescription[], mode: ESessionListMode) {
   const isPersistent = (d: any) => d.local === false || d.local === undefined;
-  const me = session.retrieve('username');
+  const me = currentUserNameOrAnonymous();
 
   switch (mode) {
     case ESessionListMode.PUBLIC_ONES:
@@ -141,10 +164,10 @@ function selectWorkspaces(workspaces: IProvenanceGraphDataDescription[], mode: E
   }
 }
 
-async function importDialog(d: IProvenanceGraphDataDescription) {
-  const dialog = generateDialog('Import Provenance Graph', 'Import');
+async function editDialog(d: IProvenanceGraphDataDescription, operation: string = 'Import') {
+  const dialog = new FormDialog(operation + ' Provenance Graph', operation);
   const prefix = 'd' + randomId();
-  dialog.body.innerHTML = `
+  dialog.form.innerHTML = `
     <form>
         <div class="form-group">
           <label for="${prefix}_name">Name</label>
@@ -153,6 +176,11 @@ async function importDialog(d: IProvenanceGraphDataDescription) {
         <div class="form-group">
           <label for="${prefix}_desc">Description</label>
           <textarea class="form-control" id="${prefix}_desc" rows="3">${d.description || ''}</textarea>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="${prefix}_public"> Public (everybody can see and use it)
+          </label>
         </div>
     </form>
   `;
@@ -163,7 +191,8 @@ async function importDialog(d: IProvenanceGraphDataDescription) {
     dialog.onSubmit(() => {
       const extras = {
         name: (<HTMLInputElement>dialog.body.querySelector(`#${prefix}_name`)).value,
-        description: (<HTMLTextAreaElement>dialog.body.querySelector(`#${prefix}_desc`)).value
+        description: (<HTMLTextAreaElement>dialog.body.querySelector(`#${prefix}_desc`)).value,
+        permissions: (<HTMLInputElement>dialog.body.querySelector(`#${prefix}_public`)).checked ? ALL_READ_READ : ALL_READ_NONE
       };
       resolve(extras);
     });

@@ -349,12 +349,13 @@ export class AEntryPointList implements IEntryPointList {
     const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets)];
     $options.forEach((options) => {
       const enter = options.enter()
-      .append('li')
-      .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
+        .append('li')
+        .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
 
       enter.append('a')
         .classed('goto', true)
         .attr('href', '#')
+        .attr('title',(d) => `Name: ${d.name}\nDescription: ${d.description}${d.type === ENamedSetType.NAMEDSET ? `\nCreator: ${(<IStoredNamedSet>d).creator}\nPublic: ${hasPermission(<IStoredNamedSet>d, EEntity.OTHERS)}`: ''}`)
         .on('click', (namedSet: INamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();

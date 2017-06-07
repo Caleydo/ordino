@@ -12,6 +12,7 @@ import {
 import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import TargidConstants from './constants';
 import Targid from './Targid';
+import * as session from 'phovea_core/src/session';
 /**
  * Creates a view instance and wraps the instance with the inverse action in a CLUE command
  * @param inputs Array with object references, where the first one is the TargId object

@@ -8,7 +8,7 @@ import {IDType, resolve, defaultSelectionType} from 'phovea_core/src/idtype';
 import {Range, none, parse} from 'phovea_core/src/range';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {TargidConstants} from './Targid';
+import TargidConstants from './constants';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';

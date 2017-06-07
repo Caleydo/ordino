@@ -59,7 +59,9 @@ export default class EditProvenanceGraphMenu {
             <li><a href="#" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>            
           </ul>`;
 
-    (<HTMLLinkElement>li.querySelector('a[data-action="edit"]')).addEventListener('click', () => {
+    (<HTMLLinkElement>li.querySelector('a[data-action="edit"]')).addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (!this.graph) {
         return false;
       }
@@ -76,7 +78,9 @@ export default class EditProvenanceGraphMenu {
       return false;
     });
 
-    (<HTMLLinkElement>li.querySelector('a[data-action="clone"]')).addEventListener('click', () => {
+    (<HTMLLinkElement>li.querySelector('a[data-action="clone"]')).addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (!this.graph) {
         return false;
       }
@@ -84,7 +88,9 @@ export default class EditProvenanceGraphMenu {
       return false;
     });
 
-    (<HTMLLinkElement>li.querySelector('a[data-action="persist"]')).addEventListener('click', () => {
+    (<HTMLLinkElement>li.querySelector('a[data-action="persist"]')).addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (!this.graph) {
         return false;
       }
@@ -96,7 +102,9 @@ export default class EditProvenanceGraphMenu {
       return false;
     });
 
-    (<HTMLLinkElement>li.querySelector('a[data-action="delete"]')).addEventListener('click', () => {
+    (<HTMLLinkElement>li.querySelector('a[data-action="delete"]')).addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (!this.graph) {
         return false;
       }
@@ -145,6 +153,7 @@ export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, 
         permissions: (<HTMLInputElement>dialog.body.querySelector(`#${prefix}_public`)).checked ? ALL_READ_READ : ALL_READ_NONE
       };
       resolve(extras);
+      dialog.hide();
     });
     dialog.show();
   });

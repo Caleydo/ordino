@@ -93,15 +93,14 @@ class SessionList implements IStartMenuSectionEntry {
         buttons += `<button class="btn btn-xs btn-default" data-action="select" title="Select"><i class="fa fa-folder-open" aria-hidden="true"></i><span class="sr-only">Select</span></button>`;
       }
       buttons += `<button class="btn btn-xs btn-default" data-action="clone" title="Clone"><i class="fa fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></button>`;
+
+      const canEdit = (isLoggedIn() && canWrite(d)) || mode === ESessionListMode.TEMPORARY;
+      buttons += `<button class="btn btn-xs btn-default" data-action="edit" title="Edit" ${canEdit ? '': `disabled="disabled"`}><i class="fa fa-edit" aria-hidden="true"></i><span class="sr-only">Edit</span></button>`;
       if (mode === ESessionListMode.TEMPORARY) {
         buttons += `<button class="btn btn-xs btn-default" data-action="persist" title="Persist"><i class="fa fa-save" aria-hidden="true"></i><span class="sr-only">Persist</span></button>`;
       }
-      if ((isLoggedIn() && canWrite(d)) || mode === ESessionListMode.TEMPORARY) {
-        buttons += `<button class="btn btn-xs btn-default" data-action="edit" title="Edit"><i class="fa fa-edit" aria-hidden="true"></i><span class="sr-only">Edit</span></button>`;
-      }
-      if ((isLoggedIn() && canWrite(d)) || mode === ESessionListMode.TEMPORARY) {
-        buttons += `<button class="btn btn-xs btn-default" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Delete</span></button>`;
-      }
+      buttons += `<button class="btn btn-xs btn-default" data-action="delete" title="Delete" ${canEdit && d.id !== this.options.targid.graph.desc.id ? '': `disabled="disabled"`}><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Delete</span></button>`;
+
       return buttons;
      });
 

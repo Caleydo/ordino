@@ -466,3 +466,17 @@ div.view .proxy_view {
     height: 100%;
   }
 }
+
+
+.sync-indicator {
+  color: inherit;
+  transition: color ease .2s;
+
+  overflow: hidden;
+  max-width: 10em;
+  text-overflow: ellipsis;
+
+  &.active {
+    color: blue;
+  }
+}

@@ -23,6 +23,7 @@ import {isLoggedIn} from 'phovea_core/src/security';
 export {default as CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 import {initSession as initSessionCmd} from './cmds';
+import EditProvenanceGraphMenu from 'ordino/src/EditProvenanceGraphMenu';
 
 export interface IOrdinoOptions {
   loginForm?: string;
@@ -41,7 +42,7 @@ export default class Ordino extends ACLUEWrapper {
     //create the common header
     const headerOptions = {
       showOptionsLink: true, // always activate options
-      appLink: new AppHeaderLink('Target Discovery Platform', (event) => {
+      appLink: new AppHeaderLink('Ordino', (event) => {
         event.preventDefault();
         this.fire(Ordino.EVENT_OPEN_START_MENU);
         return false;
@@ -72,6 +73,8 @@ export default class Ordino extends ACLUEWrapper {
       loginMenu.forceShowDialog();
     });
 
+    const provenanceMenu = new EditProvenanceGraphMenu(clueManager, header.rightMenu);
+
     const modeSelector = body.querySelector('header');
     modeSelector.className += 'clue-modeselector';
     cmode.createButton(modeSelector, {
@@ -87,9 +90,7 @@ export default class Ordino extends ACLUEWrapper {
     main.classList.add('targid');
 
     graph.then((graph) => {
-      graph.on('sync_start,sync', (event: IEvent) => {
-        select('nav i.fa-cog').classed('fa-spin', event.type !== 'sync');
-      });
+      provenanceMenu.setGraph(graph);
     });
 
     const storyVis = graph.then((graph) => {

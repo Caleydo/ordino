@@ -2,17 +2,16 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import * as session from 'phovea_core/src/session';
-import {areyousure, FormDialog, generateDialog} from 'phovea_ui/src/dialogs';
+import {areyousure} from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {select} from 'd3';
-import {isLoggedIn, currentUserNameOrAnonymous, canWrite, ALL_READ_READ, ALL_READ_NONE} from 'phovea_core/src/security';
+import {isLoggedIn, currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {IProvenanceGraphDataDescription, op} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
-import {randomId} from 'phovea_core/src';
 import {showErrorModalDialog} from 'ordino/src/Dialogs';
+import {editProvenanceGraphMetaData} from './EditProvenanceGraphMenu';
 
 enum ESessionListMode {
   TEMPORARY, MY, PUBLIC_ONES
@@ -114,12 +113,12 @@ class SessionList implements IStartMenuSectionEntry {
       }
     });
     $trEnter.select('button[data-action="clone"]').on('click', (d) => {
-      manager.loadOrClone(d, false);
+      manager.cloneLocal(d);
       return false;
     });
     $trEnter.select('button[data-action="select"]').on('click', (d) => {
       if (!canWrite(d)) {
-        manager.loadOrClone(d, false);
+        manager.cloneLocal(d);
       } else {
         manager.loadGraph(d);
       }
@@ -127,7 +126,7 @@ class SessionList implements IStartMenuSectionEntry {
     });
     $trEnter.select('button[data-action="edit"]').on('click', function (this:HTMLButtonElement, d) {
       const nameTd = this.parentElement.parentElement.querySelector('td');
-      editDialog(d, 'Edit').then((extras) => {
+      editProvenanceGraphMetaData(d, 'Edit').then((extras) => {
         if (extras !== null) {
           manager.editGraphMetaData(d, extras)
             .then((desc) => {
@@ -140,7 +139,7 @@ class SessionList implements IStartMenuSectionEntry {
       return false;
     });
     $trEnter.select('button[data-action="persist"]').on('click', (d) => {
-      editDialog(d, 'Import').then((extras) => {
+      editProvenanceGraphMetaData(d, 'Import').then((extras: any) => {
         if (extras !== null) {
           manager.importExistingGraph(d, extras).catch(showErrorModalDialog);
         }
@@ -162,42 +161,6 @@ function selectWorkspaces(workspaces: IProvenanceGraphDataDescription[], mode: E
     default:
       return workspaces.filter((d) => isPersistent(d) && d.creator === me);
   }
-}
-
-async function editDialog(d: IProvenanceGraphDataDescription, operation: string = 'Import') {
-  const dialog = new FormDialog(operation + ' Provenance Graph', operation);
-  const prefix = 'd' + randomId();
-  dialog.form.innerHTML = `
-    <form>
-        <div class="form-group">
-          <label for="${prefix}_name">Name</label>
-          <input type="text" class="form-control" id="${prefix}_name" value="${d.name}" required="required">
-        </div>
-        <div class="form-group">
-          <label for="${prefix}_desc">Description</label>
-          <textarea class="form-control" id="${prefix}_desc" rows="3">${d.description || ''}</textarea>
-        </div>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" id="${prefix}_public"> Public (everybody can see and use it)
-          </label>
-        </div>
-    </form>
-  `;
-  return new Promise((resolve) => {
-    dialog.onHide(() => {
-      resolve(null);
-    });
-    dialog.onSubmit(() => {
-      const extras = {
-        name: (<HTMLInputElement>dialog.body.querySelector(`#${prefix}_name`)).value,
-        description: (<HTMLTextAreaElement>dialog.body.querySelector(`#${prefix}_desc`)).value,
-        permissions: (<HTMLInputElement>dialog.body.querySelector(`#${prefix}_public`)).checked ? ALL_READ_READ : ALL_READ_NONE
-      };
-      resolve(extras);
-    });
-    dialog.show();
-  });
 }
 
 export function create(parent: HTMLElement, desc: IPluginDesc, options: IStartMenuOptions) {

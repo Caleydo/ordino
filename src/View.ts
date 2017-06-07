@@ -56,7 +56,6 @@ function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
 
-
 /**
  * Find views for a given idtype and number of selected items.
  * The seleted items itself are not considered in this function.
@@ -631,20 +630,73 @@ export class ViewWrapper extends EventHandler {
     }
 
     findViews(idtype, range).then((views) => {
-      const data = [];
-      data[0] = views.filter((d:any) => d.v.category === undefined || d.v.category !== 'static');
-      data[1] = views.filter((d:any) => d.v.category !== undefined && d.v.category === 'static');
+      const groups = new Map();
+      views.forEach((elem) => {
+        if(!elem.v.group) { // fallback category if none is present
+          elem.v.group = {
+            name: 'Other'
+          };
+        }
+        if(!groups.has(elem.v.group.name)) {
+          groups.set(elem.v.group.name, [elem]);
+        } else {
+          groups.get(elem.v.group.name).push(elem);
+        }
+      });
 
-      const $categories = this.$chooser.selectAll('div.category').data(data);
+      const groupsArray = Array.from(groups);
 
-      $categories.enter().append('div').classed('category', true);
+      const orderDescs = listPlugins('chooserConfig').map((desc) => desc.order);
+
+      function orderAlphabetically(a: string, b: string): number {
+        const firstKey = a.toLowerCase();
+        const secondKey = b.toLowerCase();
+
+        // firstKey alphabetically before secondKey? sort firstKey at lower index or vice versa
+        // else the keys are equal
+        return firstKey < secondKey? -1 : firstKey > secondKey? 1 : 0;
+      }
+
+      let sortedGroups = null;
+      // order groups by defined weights if they exist
+      if(orderDescs.length) {
+        const categoryOrder = Object.assign({}, ...orderDescs);
+        sortedGroups = groupsArray.sort((a, b) => {
+          const firstOrder: number = categoryOrder[a[0]];
+          const secondOrder: number = categoryOrder[b[0]];
+
+          // no order numbers provided -> sort alphabetically by keys
+          if(firstOrder === undefined || secondOrder === undefined || firstOrder === secondOrder) {
+            return orderAlphabetically(a[0], b[0]);
+          }
+
+          return firstOrder - secondOrder;
+        });
+      } else {
+        // order groups alphabetically as a fallback
+        sortedGroups = groupsArray.sort((a, b) => orderAlphabetically(a[0], b[0]));
+      }
+
+      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups);
+
+      $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
       $categories.exit().remove();
 
-      const $buttons = $categories.selectAll('button').data((d:{enabled: boolean, v: IViewPluginDesc}[]) => d);
+      // sort data that buttons inside groups are sorted
+      const $buttons = $categories.selectAll('button').data((d: [ string, {enabled: boolean, v: IViewPluginDesc}[] ]) => d[1].sort((a, b) => {
+        const firstOrder: number = a.v.group.order;
+        const secondOrder: number = b.v.group.order;
+
+        // no order numbers provided -> sort alphabetically by keys
+        if(firstOrder === undefined || secondOrder === undefined || firstOrder === secondOrder) {
+          return orderAlphabetically(a.v.name, b.v.name);
+        }
+
+        return firstOrder - secondOrder;
+      }));
 
       $buttons.enter().append('button')
-        .classed('btn', true)
-        .classed('btn-default', true);
+        .classed('btn btn-default', true);
 
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
@@ -654,11 +706,6 @@ export class ViewWrapper extends EventHandler {
 
           that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
         });
-
-      if(this.$chooser.select('.category:first-child div').empty() && this.$chooser.select('.category:last-child div').empty()) {
-        this.$chooser.select('.category:first-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.internal);
-        this.$chooser.select('.category:last-child').insert('div', ':first-child').text(this.plugin.desc.chooserHeaders.external);
-      }
 
       $buttons.exit().remove();
     });

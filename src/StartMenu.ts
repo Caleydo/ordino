@@ -2,11 +2,10 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import * as session from 'phovea_core/src/session';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
-import {Targid, TargidConstants} from './Targid';
-import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet} from './storage';
+import {Targid} from './Targid';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
@@ -185,6 +184,7 @@ function byPriority(a: any, b: any) {
 
 
 export interface IStartFactory {
+  readonly id: string;
   readonly name: string;
   readonly cssClass: string;
   readonly idType: string;
@@ -198,6 +198,10 @@ class StartFactory implements IStartFactory {
 
   constructor(private readonly p: IPluginDesc) {
 
+  }
+
+  get id() {
+    return this.p.id;
   }
 
   get name() {
@@ -284,6 +288,10 @@ export class AEntryPointList implements IEntryPointList {
     return listNamedSets(this.idType);
   }
 
+  protected getDefaultSessionValues(): any|null {
+    return null;
+  }
+
   protected build(): Promise<INamedSet[]> {
     // load named sets (stored LineUp sessions)
     const promise = this.getNamedSets()
@@ -366,16 +374,7 @@ export class AEntryPointList implements IEntryPointList {
 
             // if targid object is available
             if (that.options.targid) {
-              // store state to session before creating a new graph
-              session.store(TargidConstants.NEW_ENTRY_POINT, {
-                view: (<any>that.desc).viewId,
-                options: {
-                  namedSet
-                }
-              });
-
-              // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-              that.options.targid.graphManager.newGraph();
+              that.options.targid.initNewSession((<any>that.desc).viewId, {namedSet}, that.getDefaultSessionValues());
             } else {
               console.error('no targid object given to push new view');
             }
@@ -383,7 +382,7 @@ export class AEntryPointList implements IEntryPointList {
 
         $this.select('a.delete')
           .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: INamedSet) => {
+          .on('click', async (namedSet: IStoredNamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 
@@ -398,7 +397,7 @@ export class AEntryPointList implements IEntryPointList {
 
         $this.select('a.edit')
           .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: INamedSet) => {
+          .on('click', async (namedSet: IStoredNamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 

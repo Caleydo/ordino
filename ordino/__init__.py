@@ -30,6 +30,7 @@ def phovea(registry):
                   {
                       'namespace': '/api/targid/processing'
                   })
+  registry.append('mapping_provider', 'ordino', 'ordino.mapping_table')
   # generator-phovea:end
   pass
 

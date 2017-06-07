@@ -11,7 +11,6 @@ import {api2absURL} from 'phovea_core/src/ajax';
 import AFormElement from './AFormElement';
 import {IFormParent} from '../interfaces';
 import {IFormSelectDesc} from './FormSelect';
-import {IFormElement} from 'ordino/src/form';
 
 
 /**
@@ -21,64 +20,60 @@ export interface IFormSelect2 extends IFormSelectDesc {
   /**
    * Additional options
    */
-  options?: {
-    /**
-     * URL to data provider backend, returning {id: string|number, text: string}[]
-     */
-    dataProviderUrl?: string;
+  options?: Select2Options & {
+    return?: 'text'|'id';
   };
 }
 
-/**
- * Add specific functions for select2 form element
- */
-export interface IFormSelect2Element extends IFormElement {
-  /**
-   * Form element values for multiple selection
-   */
-  values?: {id: string, text: string}[];
+export interface ISelect2Option {
+  id: string;
+  text: string;
 }
-
 
 export const DEFAULT_OPTIONS = {
     placeholder: 'Start typing...',
     theme: 'bootstrap',
-    minimumInputLength: 1,
+    minimumInputLength: 0,
     //selectOnClose: true,
     //tokenSeparators: [' ', ',', ';'], // requires multiple attribute for select element
-    ajax: {
-      url: api2absURL('url_needed'), // URL
-      dataType: 'json',
-      delay: 250,
-      cache: true,
-      data: (params: any) => {
-        return {
-          query: params.term, // search term from select2
-          page: params.page
-        };
-      },
-      processResults: (data, params) => {
-        params.page = params.page || 1;
-        return {
-          results: data.items,
-          pagination: { // indicate infinite scrolling
-            more: (params.page * data.items_per_page) < data.total_count
-          }
-        };
-      }
-    },
     escapeMarkup: (markup) => markup,
     templateResult: (item: any) => item.text,
     templateSelection: (item: any) => item.text
   };
 
+export const DEFAULT_AJAX_OPTIONS = Object.assign({
+  ajax: {
+    url: api2absURL('url_needed'), // URL
+    dataType: 'json',
+    delay: 250,
+    cache: true,
+    data: (params: any) => {
+      return {
+        query: params.term === undefined ? '': params.term, // search term from select2
+        page: params.page === undefined ? 0: params.page
+      };
+    },
+    processResults: (data, params) => {
+      params.page = params.page || 1;
+      return {
+        results: data.items,
+        pagination: { // indicate infinite scrolling
+          more: (params.page * data.items_per_page) < data.total_count
+        }
+      };
+    }
+  }
+}, DEFAULT_OPTIONS);
+
 /**
  * Select2 drop down field with integrated search field and communication to external data provider
  * Propagates the changes from the DOM select element using the internal `change` event
  */
-export default class FormSelect2 extends AFormElement<IFormSelect2> implements IFormSelect2Element {
+export default class FormSelect2 extends AFormElement<IFormSelect2> {
 
   private $select: JQuery;
+
+  private readonly multiple: boolean;
 
   /**
    * Constructor
@@ -86,10 +81,11 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
    * @param $parent
    * @param desc
    */
-  constructor(parent: IFormParent, $parent, desc: IFormSelect2) {
+  constructor(parent: IFormParent, $parent, desc: IFormSelect2, multiple: 'multiple'|'single' = 'single') {
     super(parent, desc);
 
     this.$node = $parent.append('div').classed('form-group', true);
+    this.multiple = multiple === 'multiple';
 
     this.build();
   }
@@ -123,24 +119,35 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
    */
   private buildSelect2($select: d3.Selection<any>, options?) {
     if (!options) {
-      return;
+      options = {};
     }
+    const select2Options: any = {};
 
-    let defaultData = [];
-
+    let initialValue: string[] = [];
     if (this.desc.useSession) {
-      const defaultVal: any = session.retrieve(this.id + '_defaultVal', '');
-      defaultData = (defaultVal.id && defaultVal.text) ? [defaultVal] : [{id: defaultVal, text: defaultVal}];
+      const defaultVal: any = session.retrieve(this.id + '_defaultVal', null);
+      if (defaultVal) {
+        if (this.multiple) {
+          const defaultValues = Array.isArray(defaultVal) ? defaultVal : [defaultVal];
+          initialValue = defaultValues.map((d) => typeof d === 'string' ? d : d.id);
+          if (!options.data) { //derive default data if none is set explictly
+            select2Options.data = defaultValues.map((d) => (typeof d === 'string' ? ({id: d, text: d}) : d));
+          }
+        } else {
+          initialValue = [typeof defaultVal === 'string' ? defaultVal : <string>defaultVal.id];
+          if (!options.data) {
+            select2Options.data = [typeof defaultVal === 'string' ? ({id: defaultVal, text: defaultVal}) : defaultVal];
+          }
+        }
+      }
     }
 
-    const select2Options = {
-      data: defaultData
-    };
+    if (this.multiple) {
+      select2Options.multiple = true;
+    }
+    mixin(select2Options, options.ajax ? DEFAULT_AJAX_OPTIONS : DEFAULT_OPTIONS, options);
 
-    mixin(select2Options, DEFAULT_OPTIONS, options);
-    //console.log(defaultOptions);
-
-    return (<any>$($select.node())).select2(select2Options).trigger('change');
+    return (<any>$($select.node())).select2(select2Options).val(initialValue).trigger('change');
   }
 
   /**
@@ -187,58 +194,82 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> implements I
    * Returns the selected value or if nothing found `null`
    * @returns {string|{name: string, value: string, data: any}|null}
    */
-  get value() {
-    const r = {id: '', text: ''}; // select2 default format
-
-    if (this.$select.val() !== null) {
-      r.id = this.$select.select2('data')[0].id;
-      r.text = this.$select.select2('data')[0].text;
+  get value(): (ISelect2Option|string)|(ISelect2Option|string)[] {
+    const returnValue = this.desc.options.return;
+    const returnF = returnValue === 'id' ? (d) => d.id : (returnValue === 'text' ? (d) => d.text : (d) => d);
+    const data = this.$select.select2('data').map((d) => ({id: d.id, text: d.text})).map(returnF);
+    if (this.multiple) {
+      return data;
+    } else if (data.length === 0) {
+      return returnF({id: '', text: ''});
+    } else {
+      return data[0];
     }
-
-    return r;
   }
 
-  get values() {
-    const r = [];
-
-    if(this.$select.val().length === 0) {
-      return [{ id: '', text: '' }];
+  hasValue() {
+    const v = this.value;
+    if (this.multiple) {
+      return (<any[]>v).length > 0;
+    } else {
+      return v !== '' || (<any>v).id !== '';
     }
-
-    for(const value of this.$select.select2('data')) {
-      r.push({
-        id: value.id,
-        text: value.text
-      });
-    }
-
-    return r;
   }
 
   /**
    * Select the option by value. If no value found, then the first option is selected.
    * @param v If string then compares to the option value property. Otherwise compares the object reference.
    */
-  set value(v: any) {
+  set value(v: (ISelect2Option|string)|(ISelect2Option|string)[]) {
     // if value is undefined or null, clear
     if (!v) {
       this.$select.trigger('clear');
-    }
-
-
-    const r = {id: v, text: v};
-
-    if ((v.name || v.text) && (v.value || v.id)) {
-      r.id = v.value || v.id;
-      r.text = v.name || v.text;
-    }
-
-    const old = this.value;
-    if (old.id === r.id) { // no change
       return;
     }
+    let r: any = null;
 
-    this.$select.val(<any>r).trigger('change');
+    if (this.multiple) {
+      const values = Array.isArray(v) ? v : [v];
+      r = values.map((d: any) => ({id: d.value || d.id, text: d.name || d.text}));
+      const old = <ISelect2Option[]>this.value;
+      if (sameValues(old, r)) {
+        return;
+      }
+    } else {
+      const vi: any = Array.isArray(v) ? v[0] : v;
+      r = {id: vi, text: vi};
+
+      if ((vi.name || vi.text) && (vi.value || vi.id)) {
+        r.id = vi.value || vi.id;
+        r.text = vi.name || vi.text;
+      }
+
+      const old = <ISelect2Option>this.value;
+      if (old.id === r.id) { // no change
+        return;
+      }
+    }
+
+    this.$select.val(r).trigger('change');
   }
 
+}
+
+/**
+ * compare array independent of the order
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
+function sameValues(a: ISelect2Option[], b: ISelect2Option[]) {
+  if (a.length !== b.length) {
+    return false;
+  }
+  const aids = new Set(a.map((d) => d.id));
+  const bids = new Set(b.map((d) => d.id));
+  if (aids.size !== bids.size) {
+    return false;
+  }
+  // all of a contained in b
+  return Array.from(aids.values()).every((d) => bids.has(d));
 }

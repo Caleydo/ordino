@@ -9,7 +9,7 @@ import {retrieve} from 'phovea_core/src/session';
 import {ISecureItem, currentUserNameOrAnonymous} from 'phovea_core/src/security';
 
 export enum ENamedSetType {
-  NAMEDSET, CUSTOM, PANEL
+  NAMEDSET, CUSTOM, PANEL, FILTER
 }
 
 export interface INamedSet extends ISecureItem {
@@ -18,6 +18,8 @@ export interface INamedSet extends ISecureItem {
    */
   id?: string;
 
+
+export interface IBaseNamedSet {
   /**
    * type of the named set
    */
@@ -37,21 +39,15 @@ export interface INamedSet extends ISecureItem {
    * idtype name to match the filter for an entry point
    */
   idType: string;
-
-  /**
-   * List of comma separated ids
-   */
-  ids: string;
-
   /**
    * Name of a categorical column (e.g., species)
    */
-  subTypeKey: string;
+  subTypeKey?: string;
 
   /**
    * Value of the categorical column (e.g., "Homo_sapiens" as value for species)
    */
-  subTypeValue: string;
+  subTypeValue?: string;
 
   /**
    * Use the subType value for the given key from the session
@@ -59,9 +55,42 @@ export interface INamedSet extends ISecureItem {
   subTypeFromSession?: boolean;
 }
 
-export function listNamedSets(idType : IDType | string = null):Promise<INamedSet[]> {
+export interface IPanelNamedSet extends IBaseNamedSet {
+  type: ENamedSetType.PANEL;
+  id: string;
+}
+export interface IStoredNamedSet extends IBaseNamedSet {
+  type: ENamedSetType.NAMEDSET;
+
+  /**
+   * Id with random characters (generated when storing it on the server)
+   */
+  id: string;
+  /**
+   * Creator name
+   */
+  creator: string;
+
+  /**
+   * List of comma separated ids
+   */
+  ids: string;
+}
+
+export interface IFilterNamedSet extends IBaseNamedSet {
+  type: ENamedSetType.FILTER;
+
+  filter: {[key: string]: any};
+}
+export interface ICustomNamedSet extends IBaseNamedSet {
+  type: ENamedSetType.CUSTOM;
+}
+
+export declare type INamedSet = IFilterNamedSet | IPanelNamedSet | IStoredNamedSet | ICustomNamedSet;
+
+export function listNamedSets(idType : IDType | string = null):Promise<IStoredNamedSet[]> {
   const args = idType ? { idType : resolve(idType).id} : {};
-  return getAPIJSON('/targid/storage/namedsets/', args).then((sets: INamedSet[]) => {
+  return getAPIJSON('/targid/storage/namedsets/', args).then((sets: IStoredNamedSet[]) => {
     // default value
     sets.forEach((s) => s.type = s.type || ENamedSetType.NAMEDSET);
     return sets;
@@ -73,7 +102,7 @@ export function listNamedSetsAsOptions(idType : IDType | string = null) {
 }
 
 export function saveNamedSet(name: string, idType: IDType|string, ids: RangeLike, subType: {key:string, value:string}, description = '') {
-  const data:INamedSet = {
+  const data = {
     name,
     type: ENamedSetType.NAMEDSET,
     creator: currentUserNameOrAnonymous(),

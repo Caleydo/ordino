@@ -380,14 +380,20 @@ div.targid {
       padding: 8px 0;
       font-size: 12px;
 
-      .category:not(:first-child) {
-        margin-top: 4px;
-        padding-top: 8px;
-      }
+      .category {
+        &:not(:first-child) {
+          margin-top: 4px;
+          padding-top: 8px;
+        }
 
+        header h1 {
+          font-size: 1.2em;
+          margin: 0;
+        }
+      }
       button {
         width: 100%;
-        padding: 5px 0;
+        padding: 10px 0;
         white-space: normal;
         border-radius: 0;
         line-height: 1;
@@ -440,6 +446,8 @@ div.lu {
   .rankingbuttons .dropdown-menu {
     left: auto;
     right: 0;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 }
 

@@ -8,11 +8,7 @@ import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {Targid} from './Targid';
 import {select} from 'd3';
-
-
-function isLoggedIn() {
-  return session.retrieve('logged_in', <boolean>false);
-}
+import {isLoggedIn, currentUserNameOrAnonymous} from 'phovea_core/src/security';
 
 class SessionList implements IStartMenuSectionEntry {
 
@@ -65,7 +61,7 @@ class SessionList implements IStartMenuSectionEntry {
       // filter local workspaces, since we are using remote storage
       .filter((d) => d.local === false || d.local === undefined)
       // filter list by username
-      .filter((d) => d.creator === session.retrieve('username'));
+      .filter((d) => d.creator === currentUserNameOrAnonymous());
 
     //sort by date desc
     list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));

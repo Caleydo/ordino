@@ -18,6 +18,7 @@ import {
 } from './View';
 import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import {CLUEGraphManager, CLUEWrapper} from 'phovea_clue/src/template';
+import {isLoggedIn} from 'phovea_core/src/security';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';
 
@@ -336,7 +337,7 @@ export class Targid {
    */
   private checkForLoggedIn(parent) {
     // user is already logged in --> build targid
-    if(session.retrieve('logged_in', <boolean>false) === true) {
+    if(isLoggedIn()) {
       this.buildTargid(parent);
       this.initSession();
       return;

@@ -232,7 +232,7 @@ export class Targid extends EventHandler {
       defaultSessionValues
     });
     // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-    this.graphManager.newRemoteGraph();
+    this.graphManager.newGraph();
   }
 
   private pushView(viewId:string, idtype:IDType, selection:Range, options?) {

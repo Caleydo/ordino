@@ -9,12 +9,9 @@ import {IEvent, EventHandler} from 'phovea_core/src/event';
 import * as d3 from 'd3';
 import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
 import {ViewWrapper, EViewMode, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
-import {ICmdResult, IAction} from 'phovea_core/src/provenance';
-import {CLUEGraphManager, CLUEWrapper} from 'phovea_clue/src/template';
-import {isLoggedIn} from 'phovea_core/src/security';
-import {StartMenu} from './StartMenu';
-import {INamedSet} from './storage';
-import {initSession, createView, removeView, replaceView} from './cmds';
+import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager'
+import {createView, removeView, replaceView} from './cmds';
+import Range from 'phovea_core/src/range/Range';
 import TargidConstants from './constants';
 import * as session from 'phovea_core/src/session';
 
@@ -27,6 +24,7 @@ import * as session from 'phovea_core/src/session';
  * - provides a reference to the provenance graph
  */
 export class Targid extends EventHandler {
+  static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
@@ -73,37 +71,9 @@ export class Targid extends EventHandler {
     $history.select('.homeButton > a').on('click', (d) => {
       // prevent changing the hash (href)
       (<Event>d3.event).preventDefault();
-      this.fire('openStartMenu');
+      this.fire(Targid.EVENT_OPEN_START_MENU);
     });
     return $history;
-  }
-
-  /**
-   * initializes the targid session
-   */
-  private initSession() {
-    const hasInitScript = session.has(TargidConstants.NEW_ENTRY_POINT);
-
-    if(this.graph.isEmpty && !hasInitScript) {
-      this.openStartMenu();
-    } else if (hasInitScript) {
-      const {view, options, defaultSessionValues} = <any>session.retrieve(TargidConstants.NEW_ENTRY_POINT);
-
-      if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-        this.graph.push(initSession(defaultSessionValues));
-      }
-      this.push(view, null, null, options);
-      session.remove(TargidConstants.NEW_ENTRY_POINT);
-    } else {
-      //just if no other option applies jump to the stored state
-      this.clueWrapper.jumpToStoredOrLastState();
-    }
-  }
-
-  openStartMenu() {
-    if(this.startMenu) {
-      this.startMenu.open();
-    }
   }
 
   get node() {

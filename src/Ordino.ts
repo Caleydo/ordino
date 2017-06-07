@@ -22,6 +22,7 @@ import Targid from './Targid';
 import {isLoggedIn} from 'phovea_core/src/security';
 export {default as CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
+import {initSession as initSessionCmd} from './cmds';
 
 export interface IOrdinoOptions {
   loginForm?: string;
@@ -120,8 +121,12 @@ export default class Ordino extends ACLUEWrapper {
         if(graph.isEmpty && !hasInitScript) {
           startMenu.open();
         } else if (hasInitScript) {
-          const entryPoint:any = session.retrieve(TargidConstants.NEW_ENTRY_POINT);
-          targid.push(entryPoint.view, null, null, entryPoint.options);
+          const {view, options, defaultSessionValues} = <any>session.retrieve(TargidConstants.NEW_ENTRY_POINT);
+
+          if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
+            graph.push(initSessionCmd(defaultSessionValues));
+          }
+          targid.push(view, null, null, options);
           session.remove(TargidConstants.NEW_ENTRY_POINT);
         } else {
           //just if no other option applies jump to the stored state

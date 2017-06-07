@@ -13,6 +13,7 @@ export default class FormBuilderDialog extends FormDialog {
 
   constructor(title: string, primaryButton: string, formId = 'form' + randomId(5)) {
     super(title, primaryButton, formId);
+    this.body.innerHTML = ''; //clear old form since the form builder brings its own
     this.builder = new FormBuilder(select(this.body), formId);
 
     this.onHide(() => {

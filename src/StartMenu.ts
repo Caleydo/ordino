@@ -5,7 +5,7 @@
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import {Targid} from './Targid';
-import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet} from './storage';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet, editDialog} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
@@ -380,34 +380,7 @@ export class AEntryPointList implements IEntryPointList {
             if (!canWrite(namedSet)) {
               return;
             }
-
-            const dialog = generateDialog('Edit Named Set', 'Edit');
-
-            dialog.body.innerHTML = `
-              <form id="namedset_form">
-                <div class="form-group">
-                  <label for="namedset_name">Name</label>
-                  <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required" value="${namedSet.name}">
-                </div>
-                <div class="form-group">
-                  <label for="namedset_description">Description</label>
-                  <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description">${namedSet.description}</textarea>
-                </div>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" id="namedset_public" ${hasPermission(namedSet, EEntity.OTHERS) ? 'checked="checked"' : ''}> Public (everybody can see and use it)
-                  </label>
-                </div>
-              </form>
-            `;
-
-            dialog.onHide(() => dialog.destroy());
-
-            dialog.onSubmit(async () => {
-              const name = (<HTMLInputElement>document.getElementById('namedset_name')).value;
-              const description = (<HTMLInputElement>document.getElementById('namedset_description')).value;
-              const isPublic = (<HTMLInputElement>document.getElementById('namedset_public')).checked;
-
+            editDialog(namedSet, async (name, description, isPublic) => {
               const params = {
                 name,
                 description,
@@ -416,9 +389,8 @@ export class AEntryPointList implements IEntryPointList {
 
               const editedSet = await editNamedSet(namedSet.id, params);
               that.updateNamedSet(namedSet, editedSet);
-              dialog.hide();
             });
-            dialog.show();
+            const dialog = generateDialog('Edit Named Set', 'Edit');
           });
 
       enter.append('a')

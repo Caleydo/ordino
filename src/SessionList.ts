@@ -8,7 +8,7 @@ import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {Targid} from './Targid';
 import {select} from 'd3';
-import {isLoggedIn, currentUserNameOrAnonymous} from 'phovea_core/src/security';
+import {isLoggedIn, currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
 
 class SessionList implements IStartMenuSectionEntry {
 
@@ -59,9 +59,7 @@ class SessionList implements IStartMenuSectionEntry {
     let list = await this.targid.graphManager.list();
     list = list
       // filter local workspaces, since we are using remote storage
-      .filter((d) => d.local === false || d.local === undefined)
-      // filter list by username
-      .filter((d) => d.creator === currentUserNameOrAnonymous());
+      .filter((d) => d.local === false || d.local === undefined);
 
     //sort by date desc
     list = list.sort((a, b) => -((a.ts || 0) - (b.ts || 0)));
@@ -82,7 +80,7 @@ class SessionList implements IStartMenuSectionEntry {
     $trEnter.append('td').html((d) => {
       return `<button class="btn btn-xs btn-default" data-action="select" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><span class="fa fa-folder-open" aria-hidden="true"></span> Select</button>
       <button class="btn btn-xs btn-default" data-action="clone"><span class="fa fa-clone" aria-hidden="true"></span> Clone</button>
-      <button class="btn btn-xs btn-default" data-action="delete" ${!isLoggedIn() && !d.local ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
+      <button class="btn btn-xs btn-default" data-action="delete" ${!isLoggedIn() && !d.local && canWrite(d) ? 'disabled="disabled"' : ''}><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>`;
     });
 
     $trEnter.select('button[data-action="delete"]').on('click', async (d) => {

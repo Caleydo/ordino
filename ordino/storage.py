@@ -1,7 +1,7 @@
 import phovea_server.config
 from pymongo import MongoClient
 from pymongo.collection import ReturnDocument
-from phovea_server.ns import Namespace, request
+from phovea_server.ns import Namespace, request, abort
 from phovea_server.util import jsonify
 import phovea_server.security as security
 import phovea_server.range as ranges
@@ -13,8 +13,8 @@ _log = logging.getLogger(__name__)
 
 app = Namespace(__name__)
 
+
 @app.route('/namedsets/', methods=['GET', 'POST'])
-@security.login_required
 def get_namedsets():
   db = MongoClient(c.host, c.port)[c.database]
 
@@ -26,41 +26,49 @@ def get_namedsets():
     id = _generate_id()
     name = request.values.get('name', 'NoName')
     creator = request.values.get('creator', security.current_username())
+    permissions = int(request.values.get('permissions', security.DEFAULT_PERMISSION))
     id_type = request.values.get('idType', '')
     ids = ranges.parse(request.values.get('ids', ''))[0].tolist()
     description = request.values.get('description', '')
     sub_type_key = request.values.get('subTypeKey', '')
     sub_type_value = request.values.get('subTypeValue', '')
     type = int(request.values.get('type', ''))
-    entry = dict(id=id, name=name, creator=creator, ids=ids, idType=id_type, description=description,
+    entry = dict(id=id, name=name, creator=creator, permissions=permissions, ids=ids, idType=id_type,
+                 description=description,
                  subTypeKey=sub_type_key, subTypeValue=sub_type_value, type=type)
     db.namedsets.insert_one(entry)
+    del entry['_id']
     return jsonify(entry)
 
 
 @app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE', 'PUT'])
-@security.login_required
 def get_namedset(namedset_id):
-  elem = get_namedset_by_id(namedset_id)
-  if request.method == 'GET':
-    return jsonify(elem) if security.can_read(elem) else 403
+  db = MongoClient(c.host, c.port)[c.database]
+  result = list(db.namedsets.find(dict(id=namedset_id), {'_id': 0}))
+  entry = result[0] if len(result) > 0 else None
 
-  if not security.can_write(elem):
-    return 403
+  if not entry:
+    abort(404)
+
+  if request.method == 'GET':
+    if not security.can_read(entry):
+      abort(403)
+    return jsonify(entry)
 
   if request.method == 'DELETE':
-    db = MongoClient(c.host, c.port)[c.database]
+    if not security.can_write(entry):
+      abort(404)
     q = dict(id=namedset_id)
     result = db.namedsets.remove(q)
     return jsonify(result['n'])  # number of deleted documents
 
   if request.method == 'PUT':
-    db = MongoClient(c.host, c.port)[c.database]
+    if not security.can_write(entry):
+      abort(404)
     filter = dict(id=namedset_id)
-
     query = {'$set': request.form}
-
     result = db.namedsets.find_one_and_update(filter, query, return_document=ReturnDocument.AFTER)
+    del result['_id']
     return jsonify(result)
 
 
@@ -68,7 +76,7 @@ def get_namedset_by_id(namedset_id):
   db = MongoClient(c.host, c.port)[c.database]
   q = dict(id=namedset_id)
   result = list(db.namedsets.find(q, {'_id': 0}))
-  if len(result) == 0:
+  if len(result) == 0 or not security.can_read(results[0]):
     return {}
   else:
     return result[0]

@@ -7,7 +7,7 @@ import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
 import {select} from 'd3';
-import {isLoggedIn} from 'phovea_clue/src/user';
+import {isLoggedIn, currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';

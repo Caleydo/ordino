@@ -133,6 +133,8 @@
           flex-grow: 10;
           font-weight: 500;
 
+          text-transform: capitalize;
+
           &:before {
             margin-right: 8px;
             content: "\f105";

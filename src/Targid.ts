@@ -8,12 +8,17 @@ import IDType from 'phovea_core/src/idtype/IDType';
 import {IEvent, EventHandler} from 'phovea_core/src/event';
 import * as d3 from 'd3';
 import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
-import { ViewWrapper, EViewMode, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
-import TargidConstants from './constants';
-export {default as TargidConstants} from './constants';
-import {createView, removeView, replaceView} from './cmds';
-import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import Range from 'phovea_core/src/range/Range';
+import {
+  ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
+  replaceViewWrapper
+} from './View';
+import {ICmdResult, IAction} from 'phovea_core/src/provenance';
+import {CLUEGraphManager, CLUEWrapper} from 'phovea_clue/src/template';
+import {isLoggedIn} from 'phovea_core/src/security';
+import {StartMenu} from './StartMenu';
+import {INamedSet} from './storage';
+
+
 /**
  * Creates a view instance and wraps the instance with the inverse action in a CLUE command
  * @param inputs Array with object references, where the first one is the TargId object

@@ -25,8 +25,8 @@ export default class FormBuilderDialog extends FormDialog {
     this.builder.build(elements);
   }
 
-  onSubmitForm(callback: (builder: FormBuilder)=>void) {
-    this.onSubmit(() => {
+  onSubmit(callback: (builder?: FormBuilder)=>void) {
+    return super.onSubmit(() => {
       if (!this.builder.validate()) {
         return false;
       }
@@ -37,7 +37,7 @@ export default class FormBuilderDialog extends FormDialog {
 
   showAsPromise<T>(processData: (builder: FormBuilder) => T) {
     return new Promise<T>((resolve) => {
-      this.onSubmitForm((builder) => {
+      this.onSubmit((builder) => {
         const data = processData(builder);
         if (data !== null) {
           this.hide();

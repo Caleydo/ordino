@@ -65,13 +65,15 @@ abstract class ASessionList implements IStartMenuSectionEntry {
     });
     $trEnter.select('a[data-action="edit"]').on('click', function (this: HTMLButtonElement, d) {
       const nameTd = this.parentElement.parentElement.querySelector('td');
+      const publicI = this.parentElement.parentElement.querySelector('td:nth-child(2) i');
       editProvenanceGraphMetaData(d, 'Edit').then((extras) => {
         if (extras !== null) {
           manager.editGraphMetaData(d, extras)
             .then((desc) => {
               //update the name
               nameTd.innerText = desc.name;
-              nameTd.className = isPublic(desc) ? 'public' : 'private';
+              publicI.className = isPublic(desc) ? 'fa fa-users' : 'fa fa-user';
+              publicI.setAttribute('title', isPublic(d) ? 'Public (everyone can see it)': 'Private');
             })
             .catch(showErrorModalDialog);
         }
@@ -128,7 +130,7 @@ class TemporarySessionList extends ASessionList {
       <tr>
         <th>Name</th>
         <th>Date</th>
-        <th>Actions</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -178,7 +180,7 @@ class PersistentSessionList extends ASessionList {
                     <th>Name</th>
                     <th></th>
                     <th>Date</th>
-                    <th>Actions</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -193,7 +195,7 @@ class PersistentSessionList extends ASessionList {
                     <th>Name</th>
                     <th>Creator</th>
                     <th>Date</th>
-                    <th>Actions</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,13 +215,15 @@ class PersistentSessionList extends ASessionList {
 
       const $trEnter = $tr.enter().append('tr').html(`
           <td></td>
-          <td><i class="fa"></i></td>
+          <td class="text-center"><i class="fa"></i></td>
           <td></td>
           <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('edit')}${this.createButton('delete')}</td>`);
 
       this.registerActionListener(manager, $trEnter);
       $tr.select('td').text((d) => d.name);
-      $tr.select('td:nth-child(2) i').attr('class', (d) => isPublic(d) ? 'fa fa-users': 'fa fa-user');
+      $tr.select('td:nth-child(2) i')
+        .attr('class', (d) => isPublic(d) ? 'fa fa-users': 'fa fa-user')
+        .attr('title', (d) => isPublic(d) ? 'Public (everyone can see it)': 'Private');
       $tr.select('td:nth-child(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
       $tr.exit().remove();
@@ -231,7 +235,7 @@ class PersistentSessionList extends ASessionList {
           <td></td>
           <td></td>
           <td></td>
-          <td>${this.createButton('clone')}${this.createButton('delete')}</td>`);
+          <td>${this.createButton('clone')}</td>`);
 
       this.registerActionListener(manager, $trEnter);
       $tr.select('td').text((d) => d.name);

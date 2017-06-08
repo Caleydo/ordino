@@ -8,7 +8,7 @@ import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {showErrorModalDialog} from 'ordino/src/Dialogs';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {FormDialog} from 'phovea_ui/src/dialogs';
-import {randomId} from 'phovea_core/src';
+import {mixin, randomId} from 'phovea_core/src';
 import {ALL_READ_NONE, ALL_READ_READ, EEntity, hasPermission} from 'phovea_core/src/security';
 import {IEvent} from 'phovea_core/src/event';
 
@@ -24,9 +24,17 @@ export default class EditProvenanceGraphMenu {
 
   setGraph(graph: ProvenanceGraph) {
     this.node.querySelector('a span').innerHTML = graph.desc.name;
-    (<HTMLLinkElement>this.node.querySelector('a[data-action="persist"]')).disabled = !graph.desc.local;
-
     const syncIcon = this.node.querySelector('.sync-indicator');
+    const persisted = isPersistent(graph.desc);
+    if (persisted) {
+      syncIcon.classList.remove('fa-clock-o');
+      syncIcon.classList.add('fa-cloud');
+    } else {
+      syncIcon.classList.add('fa-clock-o');
+      syncIcon.classList.remove('fa-cloud');
+    }
+    (<HTMLLinkElement>this.node.querySelector('a[data-action="persist"]')).disabled = persisted;
+
     graph.on('sync_start,sync', (event: IEvent) => {
       const should = event.type !== 'sync';
       const has = syncIcon.classList.contains('active');
@@ -50,12 +58,12 @@ export default class EditProvenanceGraphMenu {
 
     li.innerHTML = `
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-             aria-expanded="false"><i class="fa fa-save sync-indicator" aria-hidden="true"></i> <span>No Name</span></a>
+             aria-expanded="false"><i class="fa fa-clock-o sync-indicator" aria-hidden="true"></i> <span>No Name</span></a>
           <ul class="dropdown-menu">
-            <li><a href="#" data-action="edit" title="Edit"><i class="fa fa-edit" aria-hidden="true"></i> Edit</span></a></li>
-            <li><a href="#" data-action="clone" title="Clone"><i class="fa fa-clone" aria-hidden="true"></i> Clone</a></li>
+            <li><a href="#" data-action="edit" title="Edit Details"><i class="fa fa-edit" aria-hidden="true"></i> Edit Details</span></a></li>
+            <li><a href="#" data-action="clone" title="Clone to Temporary Session"><i class="fa fa-clone" aria-hidden="true"></i> Clone to Temporary Session</a></li>
             <li class="divider"></li>
-            <li><a href="#" disabled="disabled" data-action="persist" title="Persist"><i class="fa fa-save" aria-hidden="true"></i> Persist</a></li>
+            <li><a href="#" disabled="disabled" data-action="persist" title="Persist Session"><i class="fa fa-cloud" aria-hidden="true"></i> Persist Session</a></li>
             <li><a href="#" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>            
           </ul>`;
 
@@ -65,7 +73,7 @@ export default class EditProvenanceGraphMenu {
       if (!this.graph) {
         return false;
       }
-      editProvenanceGraphMetaData(this.graph.desc, 'Edit').then((extras) => {
+      editProvenanceGraphMetaData(this.graph.desc, {permission: isPersistent(this.graph.desc)}).then((extras) => {
         if (extras !== null) {
           manager.editGraphMetaData(this.graph.desc, extras)
             .then((desc) => {
@@ -94,9 +102,9 @@ export default class EditProvenanceGraphMenu {
       if (!this.graph) {
         return false;
       }
-      editProvenanceGraphMetaData(this.graph.desc, 'Import').then((extras: any) => {
+      persistProvenanceGraphMetaData(this.graph.desc).then((extras: any) => {
         if (extras !== null) {
-          manager.importExistingGraph(this.graph.desc, extras).catch(showErrorModalDialog);
+          manager.importExistingGraph(this.graph.desc, extras, true).catch(showErrorModalDialog);
         }
       });
       return false;
@@ -108,7 +116,7 @@ export default class EditProvenanceGraphMenu {
       if (!this.graph) {
         return false;
       }
-      areyousure(`Are you sure to delete: "${this.graph.desc.name}"`).then((deleteIt) => {
+      areyousure(`Are you sure to delete session: "${this.graph.desc.name}"`).then((deleteIt) => {
         if (deleteIt) {
           this.manager.delete(this.graph.desc).then((r) => {
             this.manager.startFromScratch();
@@ -122,8 +130,21 @@ export default class EditProvenanceGraphMenu {
   }
 }
 
-export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, title: string = 'Edit') {
-  const dialog = new FormDialog(title + ' Provenance Graph', title);
+export function isPersistent(d: IProvenanceGraphDataDescription) {
+  return !d.local;
+}
+
+export function persistProvenanceGraphMetaData(d: IProvenanceGraphDataDescription) {
+  return editProvenanceGraphMetaData(d, {title: '<i class="fa fa-cloud"></i> Persist Session', button: '<i class="fa fa-cloud"></i> Persist'});
+}
+
+export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, args: {button?: string, title?: string, permission?: boolean} = {}) {
+  args = mixin({
+    button: 'Edit',
+    title: '<i class="fa fa-edit" aria-hidden="true"></i> Edit Session Details',
+    permission: true
+  }, args);
+  const dialog = new FormDialog(args.title, args.button);
   const prefix = 'd' + randomId();
   dialog.form.innerHTML = `
     <form>
@@ -135,7 +156,7 @@ export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, 
           <label for="${prefix}_desc">Description</label>
           <textarea class="form-control" id="${prefix}_desc" rows="3">${d.description || ''}</textarea>
         </div>
-        <div class="checkbox">
+        <div class="checkbox" ${!args.permission ? `style="display: none"`: ''}>
           <label>
             <input type="checkbox" id="${prefix}_public" ${hasPermission(d, EEntity.OTHERS) ? 'checked="checked"' : ''}> Public (everybody can see and use it)
           </label>

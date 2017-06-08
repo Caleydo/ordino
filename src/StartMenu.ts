@@ -11,7 +11,7 @@ import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
 import {ENamedSetType} from './storage';
 import {
-  ALL_NONE_NONE, ALL_READ_READ, canWrite, DEFAULT_PERMISSION, EEntity,
+  ALL_NONE_NONE, ALL_READ_READ, canWrite, currentUserNameOrAnonymous, DEFAULT_PERMISSION, EEntity,
   hasPermission
 } from 'phovea_core/src/security';
 
@@ -309,12 +309,16 @@ export class AEntryPointList implements IEntryPointList {
         const wrapper = this.$node.append('div').classed('named-sets-wrapper', true);
 
         const namedSetsWrapper = wrapper.append('div').classed('predefined-named-sets', true);
-        namedSetsWrapper.append('div').classed('header', true).text(`Predefined ${this.desc.description}`);
+        namedSetsWrapper.append('div').classed('header', true).text(`Predefined Sets`);
         namedSetsWrapper.append('ul');
 
         const customNamedSetsWrapper = wrapper.append('div').classed('custom-named-sets', true);
-        customNamedSetsWrapper.append('div').classed('header', true).text(`My ${this.desc.description}`);
+        customNamedSetsWrapper.append('div').classed('header', true).text(`My Sets`);
         customNamedSetsWrapper.append('ul');
+
+        const otherNamedSetsWrapper = wrapper.append('div').classed('other-named-sets', true);
+        otherNamedSetsWrapper.append('div').classed('header', true).text(`Public Sets`);
+        otherNamedSetsWrapper.append('ul');
 
         this.updateList(this.data);
 
@@ -339,14 +343,17 @@ export class AEntryPointList implements IEntryPointList {
     const that = this;
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
-    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
+    const me = currentUserNameOrAnonymous();
+    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me);
+    const otherNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me);
 
 
     const namedSetItems = this.$node.select('.predefined-named-sets ul').selectAll('li');
     const customNamedSetItems = this.$node.select('.custom-named-sets ul').selectAll('li');
+    const otherNamedSetItems = this.$node.select('.other-named-sets ul').selectAll('li');
 
     // append the list items
-    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets)];
+    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets), otherNamedSetItems.data(otherNamedSets)];
     $options.forEach((options) => {
       const enter = options.enter()
         .append('li')
@@ -390,7 +397,6 @@ export class AEntryPointList implements IEntryPointList {
               const editedSet = await editNamedSet(namedSet.id, params);
               that.updateNamedSet(namedSet, editedSet);
             });
-            const dialog = generateDialog('Edit Named Set', 'Edit');
           });
 
       enter.append('a')

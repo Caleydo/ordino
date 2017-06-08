@@ -327,6 +327,21 @@
     content: "\f1c0"; //fa-database
   }
 
+  .speciesSelector {
+    .predefined-named-sets .header:before {
+      @include fontAwesome();
+      content: "\f1c0"; //fa-database
+    }
+    .custom-named-sets .header:before {
+      @include fontAwesome();
+      content: "\f007 "; //fa-user
+    }
+    .other-named-sets .header:before {
+      @include fontAwesome();
+      content: "\f0c0"; //fa-users
+    }
+  }
+
   .targidSessionTemporaryData {
     > header > h1 > label:before {
       @include fontAwesome();

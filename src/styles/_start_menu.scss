@@ -327,15 +327,26 @@
     content: "\f1c0"; //fa-database
   }
 
-  .targidSessionTemporaryData > header > h1 > label:before {
+  .targidSessionTemporaryData {
+    > header > h1 > label:before {
       @include fontAwesome();
-    content: "\f017"; //fa-clock-o
+      content: "\f017"; //fa-clock-o
+    }
+    .body {
+      max-height: 300px;
+      overflow-y: auto;
+    }
   }
 
   .targidSessionPersistentData {
     > header > h1 > label:before {
       @include fontAwesome();
       content: "\f0c2"; //fa-cloud
+    }
+
+    .tab-pane {
+      max-height: 300px;
+      overflow-y: auto;
     }
   }
 }

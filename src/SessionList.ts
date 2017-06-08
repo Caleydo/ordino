@@ -147,7 +147,7 @@ class TemporarySessionList extends ASessionList {
 
     this.registerActionListener(manager, $trEnter);
     $tr.select('td').text((d) => d.name).attr('class', (d) => isPublic(d) ? 'public' : 'private');
-    $tr.select('td:nth-child(2)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+    $tr.select('td:nth-of-type(2)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
     $tr.exit().remove();
   }
@@ -221,10 +221,10 @@ class PersistentSessionList extends ASessionList {
 
       this.registerActionListener(manager, $trEnter);
       $tr.select('td').text((d) => d.name);
-      $tr.select('td:nth-child(2) i')
+      $tr.select('td:nth-of-type(2) i')
         .attr('class', (d) => isPublic(d) ? 'fa fa-users': 'fa fa-user')
         .attr('title', (d) => isPublic(d) ? 'Public (everyone can see it)': 'Private');
-      $tr.select('td:nth-child(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+      $tr.select('td:nth-of-type(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
       $tr.exit().remove();
     }
@@ -239,8 +239,8 @@ class PersistentSessionList extends ASessionList {
 
       this.registerActionListener(manager, $trEnter);
       $tr.select('td').text((d) => d.name);
-      $tr.select('td:nth-child(2)').text((d) => d.creator);
-      $tr.select('td:nth-child(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+      $tr.select('td:nth-of-type(2)').text((d) => d.creator);
+      $tr.select('td:nth-of-type(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
       $tr.exit().remove();
     }

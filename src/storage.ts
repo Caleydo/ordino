@@ -129,9 +129,12 @@ export function editDialog(namedSet: IStoredNamedSet, result: (name: string, des
       <label for="namedset_description">Description</label>
       <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description">${namedSet ? namedSet.description : ''}</textarea>
     </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" id="namedset_public" ${namedSet && hasPermission(namedSet, EEntity.OTHERS) ? 'checked="checked"' : ''}> Public (everybody can see and use it)
+    <div class="radio">
+      <label class="radio-inline">
+        <input type="radio" name="namedset_public" value="private" ${!(namedSet && hasPermission(namedSet, EEntity.OTHERS)) ? 'checked="checked"': ''}> <i class="fa fa-user"></i> Private
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="namedset_public" id="namedset_public" value="public" ${namedSet && hasPermission(namedSet, EEntity.OTHERS) ? 'checked="checked"': ''}> <i class="fa fa-users"></i> Public (everybody can see and use it)
       </label>
     </div>
   `;
@@ -145,6 +148,7 @@ export function editDialog(namedSet: IStoredNamedSet, result: (name: string, des
 
     result(name, description, isPublic);
     dialog.hide();
+    return false;
   });
 
   dialog.show();

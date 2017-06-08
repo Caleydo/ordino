@@ -1,3 +1,4 @@
+@import './utils';
 
 .startMenu {
   position: absolute;
@@ -318,6 +319,23 @@
         justify-content: space-between;
       }
 
+    }
+  }
+
+  .speciesSelector > header > h1 > label:before {
+    @include fontAwesome();
+    content: "\f1c0"; //fa-database
+  }
+
+  .targidSessionTemporaryData > header > h1 > label:before {
+      @include fontAwesome();
+    content: "\f017"; //fa-clock-o
+  }
+
+  .targidSessionPersistentData {
+    > header > h1 > label:before {
+      @include fontAwesome();
+      content: "\f0c2"; //fa-cloud
     }
   }
 }

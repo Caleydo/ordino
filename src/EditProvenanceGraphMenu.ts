@@ -9,7 +9,7 @@ import {showErrorModalDialog} from 'ordino/src/Dialogs';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {FormDialog} from 'phovea_ui/src/dialogs';
 import {mixin, randomId} from 'phovea_core/src';
-import {ALL_READ_NONE, ALL_READ_READ, EEntity, hasPermission} from 'phovea_core/src/security';
+import {ALL_READ_NONE, ALL_READ_READ, EEntity, hasPermission, ISecureItem} from 'phovea_core/src/security';
 import {IEvent} from 'phovea_core/src/event';
 
 
@@ -131,18 +131,24 @@ export default class EditProvenanceGraphMenu {
 }
 
 export function isPersistent(d: IProvenanceGraphDataDescription) {
-  return !d.local;
+  return d.local === false || d.local === undefined;
 }
 
 export function persistProvenanceGraphMetaData(d: IProvenanceGraphDataDescription) {
-  return editProvenanceGraphMetaData(d, {title: '<i class="fa fa-cloud"></i> Persist Session', button: '<i class="fa fa-cloud"></i> Persist'});
+  const name = d.name.startsWith('Temporary') ? `Persistent ${d.name.slice(10)}` : d.name;
+  return editProvenanceGraphMetaData(d, {title: '<i class="fa fa-cloud"></i> Persist Session', button: '<i class="fa fa-cloud"></i> Persist', name});
 }
 
-export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, args: {button?: string, title?: string, permission?: boolean} = {}) {
+export function isPublic(d: ISecureItem) {
+  return hasPermission(d, EEntity.OTHERS);
+}
+
+export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, args: {button?: string, title?: string, permission?: boolean, name?: string} = {}) {
   args = mixin({
     button: 'Edit',
     title: '<i class="fa fa-edit" aria-hidden="true"></i> Edit Session Details',
-    permission: true
+    permission: true,
+    name: d.name
   }, args);
   const dialog = new FormDialog(args.title, args.button);
   const prefix = 'd' + randomId();
@@ -150,15 +156,18 @@ export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, 
     <form>
         <div class="form-group">
           <label for="${prefix}_name">Name</label>
-          <input type="text" class="form-control" id="${prefix}_name" value="${d.name}" required="required">
+          <input type="text" class="form-control" id="${prefix}_name" value="${args.name}" required="required">
         </div>
         <div class="form-group">
           <label for="${prefix}_desc">Description</label>
           <textarea class="form-control" id="${prefix}_desc" rows="3">${d.description || ''}</textarea>
         </div>
         <div class="checkbox" ${!args.permission ? `style="display: none"`: ''}>
-          <label>
-            <input type="checkbox" id="${prefix}_public" ${hasPermission(d, EEntity.OTHERS) ? 'checked="checked"' : ''}> Public (everybody can see and use it)
+          <label class="radio-inline">
+            <input type="radio" name="${prefix}_public" value="private" ${!isPublic(d) ? 'checked="checked"': ''}> <i class="fa fa-user"></i> Private
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="${prefix}_public" id="${prefix}_public" value="public" ${isPublic(d) ? 'checked="checked"': ''}> <i class="fa fa-users"></i> Public (everybody can see and use it)
           </label>
         </div>
     </form>
@@ -175,6 +184,7 @@ export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, 
       };
       resolve(extras);
       dialog.hide();
+      return false;
     });
     dialog.show();
   });

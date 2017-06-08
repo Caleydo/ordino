@@ -57,34 +57,22 @@ module.exports = function (registry) {
     'matches': '(targidSetSelection)'
   });
 
-  registry.push('targidStartMenuSection', 'targid_session_start', function () {
+  registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
     return System.import('./src/SessionList');
   }, {
     name: 'Temporary Sessions',
     cssClass: 'targidSessionTemporaryData',
-    factory: 'create',
-    priority: 90,
-    mode: 'temporary'
+    factory: 'createTemporary',
+    priority: 90
   });
 
-  registry.push('targidStartMenuSection', 'targid_session_start', function () {
+  registry.push('targidStartMenuSection', 'targid_persistent_session', function () {
     return System.import('./src/SessionList');
   }, {
-    name: 'My Sessions',
-    cssClass: 'targidSessionMyData',
-    factory: 'create',
-    priority: 95,
-    mode: 'my'
-  });
-
-  registry.push('targidStartMenuSection', 'targid_session_start', function () {
-    return System.import('./src/SessionList');
-  }, {
-    name: 'Public Sessions',
-    cssClass: 'targidSessionPublicData',
-    factory: 'create',
-    priority: 100,
-    mode: 'public'
+    name: 'Persistent Sessions',
+    cssClass: 'targidSessionPersistentData',
+    factory: 'createPersistent',
+    priority: 95
   });
 
   registry.push('idTypeDetector', 'gene_idtype_detector', function () {

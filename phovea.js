@@ -60,7 +60,7 @@ module.exports = function (registry) {
   registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
     return System.import('./src/SessionList');
   }, {
-    name: 'Temporary Sessions',
+    name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
     cssClass: 'targidSessionTemporaryData',
     factory: 'createTemporary',
     priority: 90

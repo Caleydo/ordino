@@ -5,8 +5,9 @@
 import {areyousure} from 'phovea_ui/src/dialogs';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {IStartMenuSectionEntry, IStartMenuOptions} from './StartMenu';
-import {select, Selection} from 'd3';
-import {isLoggedIn, currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
+import {select, Selection, event} from 'd3';
+import * as $ from 'jquery';
+import {currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {IProvenanceGraphDataDescription, op} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
@@ -26,8 +27,8 @@ abstract class ASessionList implements IStartMenuSectionEntry {
     return [];
   }
 
-  protected createButton(type: 'delete'|'select'|'clone'|'persist'|'edit') {
-    switch(type) {
+  protected createButton(type: 'delete' | 'select' | 'clone' | 'persist' | 'edit') {
+    switch (type) {
       case 'delete':
         return `<a href="#" data-action="delete" title="Delete Session" ><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Delete</span></a>`;
       case 'select':
@@ -62,7 +63,7 @@ abstract class ASessionList implements IStartMenuSectionEntry {
       }
       return false;
     });
-    $trEnter.select('a[data-action="edit"]').on('click', function (this:HTMLButtonElement, d) {
+    $trEnter.select('a[data-action="edit"]').on('click', function (this: HTMLButtonElement, d) {
       const nameTd = this.parentElement.parentElement.querySelector('td');
       editProvenanceGraphMetaData(d, 'Edit').then((extras) => {
         if (extras !== null) {
@@ -70,7 +71,7 @@ abstract class ASessionList implements IStartMenuSectionEntry {
             .then((desc) => {
               //update the name
               nameTd.innerText = desc.name;
-              nameTd.className = isPublic(desc) ? 'public': 'private';
+              nameTd.className = isPublic(desc) ? 'public' : 'private';
             })
             .catch(showErrorModalDialog);
         }
@@ -102,33 +103,6 @@ function byDateDesc(a: any, b: any) {
   return -((a.ts || 0) - (b.ts || 0));
 }
 
-const MY_TABLE_TEMPLATE = `<table class="table table-striped table-hover table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
-  </table>`;
-
-const PUBLIC_TABLE_TEMPLATE = `<table class="table table-striped table-hover table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Creator</th>
-        <th>Date</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-
-    </tbody>
-  </table>`;
-
 
 class TemporarySessionList extends ASessionList {
 
@@ -149,7 +123,18 @@ class TemporarySessionList extends ASessionList {
     }
 
     //replace loading
-    const $table = $parent.html(MY_TABLE_TEMPLATE);
+    const $table = $parent.html(`<table class="table table-striped table-hover table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>`);
 
     const $tr = $table.select('tbody').selectAll('tr').data(workspaces);
 
@@ -159,15 +144,14 @@ class TemporarySessionList extends ASessionList {
         <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('persist')}${this.createButton('delete')}</td>`);
 
     this.registerActionListener(manager, $trEnter);
-    $trEnter.select('td').text((d) => d.name).attr('class', (d) => isPublic(d)? 'public': 'private');
-    $trEnter.select('td:nth-child(2)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+    $tr.select('td').text((d) => d.name).attr('class', (d) => isPublic(d) ? 'public' : 'private');
+    $tr.select('td:nth-child(2)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
     $tr.exit().remove();
   }
 }
 
 class PersistentSessionList extends ASessionList {
-
 
 
   protected async build(manager: CLUEGraphManager) {
@@ -181,22 +165,81 @@ class PersistentSessionList extends ASessionList {
     const myworkspaces = workspaces.filter((d) => d.creator === me);
     const otherworkspaces = workspaces.filter((d) => d.creator !== me);
 
-    //replace loading
-    const $table = $parent.html(MY_TABLE_TEMPLATE);
+    $parent.html(`
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="active" role="presentation"><a href="#session_mine" class="active"><i class="fa fa-user"></i> My Sessions</a></li>
+          <li role="presentation"><a href="#session_others"><i class="fa fa-users"></i> Other Sessions</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="session_mine" class="tab-pane active">
+                <table class="table table-striped table-hover table-bordered table-condensed">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th></th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+            
+                </tbody>
+              </table>
+            </div>
+            <div id="session_others" class="tab-pane">
+                <table class="table table-striped table-hover table-bordered table-condensed">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Creator</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+            
+                </tbody>
+              </table>
+            </div>
+       </div>`);
 
-    const $tr = $table.select('tbody').selectAll('tr').data(workspaces);
+    $parent.selectAll('ul.nav-tabs a').on('click', function () {
+      (<Event>event).preventDefault();
+      $(this).tab('show');
+    });
 
-    const $trEnter = $tr.enter().append('tr').html(`
-        <td></td>
-        <td></td>
-        <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('persist')}${this.createButton('delete')}</td>`);
+    {
+      const $tr = $parent.select('#session_mine tbody').selectAll('tr').data(myworkspaces);
 
-    this.registerActionListener(manager, $trEnter);
-    $trEnter.select('td').text((d) => d.name).attr('class', (d) => isPublic(d)? 'public': 'private');
-    $trEnter.select('td:nth-child(2)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+      const $trEnter = $tr.enter().append('tr').html(`
+          <td></td>
+          <td><i class="fa"></i></td>
+          <td></td>
+          <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('edit')}${this.createButton('delete')}</td>`);
 
-    $tr.exit().remove();
+      this.registerActionListener(manager, $trEnter);
+      $tr.select('td').text((d) => d.name);
+      $tr.select('td:nth-child(2) i').attr('class', (d) => isPublic(d) ? 'fa fa-users': 'fa fa-user');
+      $tr.select('td:nth-child(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
+      $tr.exit().remove();
+    }
+    {
+      const $tr = $parent.select('#session_others tbody').selectAll('tr').data(otherworkspaces);
+
+      const $trEnter = $tr.enter().append('tr').html(`
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>${this.createButton('clone')}${this.createButton('delete')}</td>`);
+
+      this.registerActionListener(manager, $trEnter);
+      $tr.select('td').text((d) => d.name);
+      $tr.select('td:nth-child(2)').text((d) => d.creator);
+      $tr.select('td:nth-child(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+
+      $tr.exit().remove();
+    }
 
   }
 }

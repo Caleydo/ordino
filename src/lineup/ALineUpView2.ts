@@ -39,7 +39,7 @@ export abstract class ALineUpView2 extends AView {
     },
     header: {
       rankingButtons: ($node: d3.Selection<any>) => {
-        const rb = new LineUpRankingButtons(this.lineup, $node, this.idType, this.additionalScoreParameter);
+        const rb = new LineUpRankingButtons(this.lineup, $node, this.rowIDType, this.additionalScoreParameter);
         rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description) => {
           this.saveNamedSet(order, name, description);
         });
@@ -55,7 +55,7 @@ export abstract class ALineUpView2 extends AView {
     body: {}
   };
 
-  protected idType: IDType;
+  protected rowIDType: IDType;
 
   /**
    * Stores the ranking data when collapsing columns on modeChange()
@@ -102,7 +102,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   private initSelectionHelper() {
-    this.selectionHelper = new LineUpSelectionHelper(this.lineup, this.idType, this.idAccessor);
+    this.selectionHelper = new LineUpSelectionHelper(this.lineup, this.rowIDType, this.idAccessor);
     this.selectionHelper.on(LineUpSelectionHelper.SET_ITEM_SELECTION, (event, selection) => {
       this.setItemSelection(selection);
     });
@@ -209,9 +209,9 @@ export abstract class ALineUpView2 extends AView {
     const r = this.selectionHelper.rows;
     const ids = rlist(order.map((i) => this.idAccessor(r[i])).sort(d3.ascending));
 
-    const d = await saveNamedSet(name, this.idType, ids, this.getSubType(), description);
+    const d = await saveNamedSet(name, this.rowIDType, ids, this.getSubType(), description);
     console.log('saved', d);
-    this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
+    this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.rowIDType, d);
   }
 
   protected async handleSelectionColumns(selection: ISelection) {
@@ -368,7 +368,7 @@ export abstract class ALineUpView2 extends AView {
     colDesc._score = true;
 
     const loadScoreColumn = () => {
-      return score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.idType, this.extraComputeScoreParam());
+      return score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.rowIDType, this.extraComputeScoreParam());
     };
     return this.addColumn(colDesc, loadScoreColumn);
   }
@@ -455,7 +455,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   protected initColumns(desc: {idType: string}) {
-    this.idType = resolve(desc.idType);
+    this.rowIDType = resolve(desc.idType);
   }
 
   protected loadRows(): Promise<any[]> {
@@ -472,7 +472,7 @@ export abstract class ALineUpView2 extends AView {
 
     rows = this.mapRows(rows);
 
-    this.fillIDTypeMapCache(this.idType, rows);
+    this.fillIDTypeMapCache(this.rowIDType, rows);
     const provider = <LocalDataProvider>this.lineup.data;
     provider.setData(rows);
     this.selectionHelper.rows = rows;

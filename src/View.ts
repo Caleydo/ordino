@@ -138,10 +138,13 @@ export abstract class AView extends EventHandler implements IView {
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: none() };
 
+  protected readonly idType: IDType;
+
   constructor(public readonly context:IViewContext, parent:Element, options?: {}) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
     this.$node.append('div').classed('busy', true).classed('hidden', true);
+    this.idType = resolve(context.desc.idtype);
   }
 
   protected setBusy(busy: boolean) {

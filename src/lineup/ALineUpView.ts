@@ -36,7 +36,7 @@ export default class ALineUpView extends AView {
 
   protected lineup: any;
 
-  private idType: IDType;
+  private rowIDType: IDType;
   private selectionHelper = {
     id2index: d3.map<number>(),
     index2id: d3.map<number>(),
@@ -110,7 +110,7 @@ export default class ALineUpView extends AView {
 
     $ul.append('li').classed('divider', true);
 
-    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
+    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.rowIDType.id);
     $ul.selectAll('li.score').data(scores)
       .enter()
       .append('li').classed('score', true)
@@ -131,7 +131,7 @@ export default class ALineUpView extends AView {
       const rowIds: Range = args[1];
 
       const storage = new LocalDataProvider(rows, columns);
-      this.idType = table.idtypes[0];
+      this.rowIDType = table.idtypes[0];
       this.lineup = new LineUp(this.node, storage, this.config);
       this.lineup.update();
       this.initSelection(rowIds.dim(0).asList(), (x) => x, table.idtypes[0]);
@@ -160,7 +160,7 @@ export default class ALineUpView extends AView {
   protected buildLineUp(rows: any[], columns: any[], idtype: IDType, idAccessor: (row: any) => number) {
     deriveColors(columns);
     const storage = new LocalDataProvider(rows, columns);
-    this.idType = idtype;
+    this.rowIDType = idtype;
     this.lineup = new LineUp(this.node, storage, this.config);
 
     //this.lineup.update();
@@ -205,7 +205,7 @@ export default class ALineUpView extends AView {
 
 
   private initSelection(rows: any[], idAccessor: (row: any) => number, idType: IDType) {
-    this.idType = idType;
+    this.rowIDType = idType;
 
     this.selectionHelper.idAccessor = idAccessor;
     this.selectionHelper.rows = rows;
@@ -243,7 +243,7 @@ export default class ALineUpView extends AView {
     const ids = rlist(this.orderedSelectionIndicies.map((i) => this.selectionHelper.idAccessor(this.selectionHelper.rows[i])));
     //console.log(this.orderedSelectionIndicies, ids.toString(), diffAdded, diffRemoved);
 
-    this.setItemSelection({idtype: this.idType, range: ids});
+    this.setItemSelection({idtype: this.rowIDType, range: ids});
   }
 
   /**
@@ -358,7 +358,7 @@ export default class ALineUpView extends AView {
       animateBars(); // start animation
     }
 
-    scoreImpl.compute([], this.idType)
+    scoreImpl.compute([], this.rowIDType)
     // convert to score array to object to use in LineUp
       .then((rows: IScoreRow<any>[]) => {
         const r: { [id: string]: number } = {};
@@ -406,9 +406,9 @@ export default class ALineUpView extends AView {
     form.onsubmit = () => {
       const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
       const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
-      saveNamedSet(name, this.idType, ids, this.getSubType(), description).then((d) => {
+      saveNamedSet(name, this.rowIDType, ids, this.getSubType(), description).then((d) => {
         console.log('saved', d);
-        this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.idType, d);
+        this.fire(AView.EVENT_UPDATE_ENTRY_POINT, this.rowIDType, d);
       });
       dialog.hide();
       return false;

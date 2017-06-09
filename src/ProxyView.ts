@@ -115,7 +115,7 @@ export class ProxyView extends AView {
   }
 
   protected updateSelectedItemSelect(forceUseLastSelection = false) {
-    return this.resolveIds(this.selection.idtype, this.selection.range)
+    return this.resolveIds(this.selection.idtype, this.selection.range, this.idType)
       .then((names) => Promise.all<any>([names, this.getSelectionSelectData(names)]))
       .then((args: any[]) => {
         const names = <string[]>args[0]; // use names to get the last selected element

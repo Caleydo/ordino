@@ -257,6 +257,9 @@ export class TargidConstants {
    */
   static readonly VIEW = 'targidView';
 
+
+  static readonly EXTENSION_POINT_DISABLE_VIEW = 'disableTargidView';
+
   /**
    * Static constant for setting a parameter of a view
    * Note: the string value is referenced for the `actionFactory` in the package.json,

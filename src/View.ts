@@ -74,11 +74,16 @@ export async function findViews(idtype:IDType, selection:Range) : Promise<{enabl
     const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
     return all.some((i) => pattern.test(i.id)) && !matchLength(p.selection, 0);
   }
+  //disable certain views based on another plugin
+  const disabler = listPlugins(TargidConstants.EXTENSION_POINT_DISABLE_VIEW).map((p: any) => new RegExp(p.filter));
+  function disabled(p: IPluginDesc) {
+    return disabler.some((re) => re.test(p.id));
+  }
   function bySelection(p: any) {
     return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
   }
   return listPlugins(TargidConstants.VIEW)
-    .filter(byType)
+    .filter((p) => byType(p) && !disabled(p))
     .sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase()))
     .map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
 }

@@ -183,11 +183,13 @@ def get_score_data(database, view_name):
   target_idtype = request.args.get('target', data_idtype)
 
   if data_idtype != target_idtype:
-    r = map_scores(r, data_idtype, target_idtype)
+    mapped_scores = map_scores(r, data_idtype, target_idtype)
+  else:
+    mapped_scores = r
 
   if request.args.get('_assignids', False):
-    r = db.assign_ids(r, target_idtype)
-  return jsonify(r)
+    mapped_scores = db.assign_ids(mapped_scores, target_idtype)
+  return jsonify(mapped_scores)
 
 
 @app.route('/<database>/<view_name>/count')

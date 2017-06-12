@@ -9,10 +9,10 @@ def map_scores(scores, from_idtype, to_idtype):
   :param to_idtype:
   :return: a mapped version of the scores
   """
-  from phovea_server.dataset import mappingmanager
+  from phovea_server.dataset import get_mappingmanager
   from itertools import izip
 
-  manager = mappingmanager()
+  manager = get_mappingmanager()
   if not manager.can_map(from_idtype, to_idtype):
     abort(400, 'score cannot be mapped to target')
   mapped_ids = manager(from_idtype, to_idtype, [r['id'] for r in scores])

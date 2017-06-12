@@ -60,11 +60,12 @@ def _replace_named_sets_in_ids(v):
   return list(union)
 
 
-def _replace_range_in_ids(v, id_type):
-  import phovea_server.plugin
+def _replace_range_in_ids(v, id_type, target_id_type):
+  from phovea_server.dataset import get_mappingmanager, get_idmanager
   from phovea_server.range import parse
 
-  manager = phovea_server.plugin.lookup('idmanager')
+  manager = get_idmanager()
+  mappingmanager = get_mappingmanager()
 
   union = set()
 
@@ -72,8 +73,15 @@ def _replace_range_in_ids(v, id_type):
     # convert named sets to the primary ids
     uids = parse(r)[0].tolist()
     ids = manager.unmap(uids, id_type)
-    for id in ids:
-      union.add(id)
+    if id_type != target_id_type:
+      # need to map the ids
+      mapped_ids = mappingmanager(id_type, target_id_type, ids)
+      for id in mapped_ids:
+        if id is not None and len(id) > 0:
+          union.add(id[0]) # just the first one for now
+    else:
+      for id in ids:
+        union.add(id)
 
   if isinstance(v, list):
     for vi in v:
@@ -116,7 +124,7 @@ def _filter_logic(view):
       id_type_and_key = k[7:]
       id_type = id_type_and_key[:id_type_and_key.index('4')]
       real_key = id_type_and_key[id_type_and_key.index('4') + 1:]  # remove the range4 part
-      ids = _replace_range_in_ids(v, id_type)
+      ids = _replace_range_in_ids(v, id_type, view.idtype)
       if real_key not in where_clause:
         where_clause[real_key] = ids
       else:

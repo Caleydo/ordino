@@ -12,6 +12,9 @@ def map_scores(scores, from_idtype, to_idtype):
   from phovea_server.dataset import get_mappingmanager
   from itertools import izip
 
+  if len(scores) == 0:
+    return []
+
   manager = get_mappingmanager()
   if not manager.can_map(from_idtype, to_idtype):
     abort(400, 'score cannot be mapped to target')

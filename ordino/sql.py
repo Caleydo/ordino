@@ -78,7 +78,7 @@ def _replace_range_in_ids(v, id_type, target_id_type):
       mapped_ids = mappingmanager(id_type, target_id_type, ids)
       for id in mapped_ids:
         if id is not None and len(id) > 0:
-          union.add(id[0]) # just the first one for now
+          union.add(id[0])  # just the first one for now
     else:
       for id in ids:
         union.add(id)

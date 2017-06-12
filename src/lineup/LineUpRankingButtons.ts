@@ -4,8 +4,8 @@
 
 import {createStackDesc} from 'lineupjs/src/model';
 import * as d3 from 'd3';
-import {IDType} from 'phovea_core/src/idtype';
-import {IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
+import {IDType, resolve} from 'phovea_core/src/idtype';
+import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {generateDialog} from 'phovea_ui/src/dialogs';
 import {saveNamedSet} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
@@ -84,6 +84,24 @@ export class LineUpRankingButtons extends EventHandler {
     dialog.show();
   }
 
+  static findScores(target: IDType) {
+    const all = listPlugins('ordinoScore');
+    const idTypes = Array.from(new Set<string>(all.map((d) => d.idtype)));
+
+    function canBeMappedTo(idtype: string) {
+      if (idtype === target.id) {
+        return true;
+      }
+      //lookup the targets and check if our target is part of it
+      return resolve(idtype).getCanBeMappedTo().then((mappables: IDType[]) => mappables.some((d) => d.id === target.id));
+    }
+    //check which idTypes can be mapped to the target one
+    return Promise.all(idTypes.map(canBeMappedTo)).then((mappable: boolean[]) => {
+      const valid = idTypes.filter((d, i) => mappable[i]);
+      return all.filter((d) => valid.indexOf(d.idtype) >= 0);
+    });
+  }
+
   private appendMoreColumns() {
     const $div = this.$node.append('div');
 
@@ -119,17 +137,18 @@ export class LineUpRankingButtons extends EventHandler {
         (<Event>d3.event).preventDefault();
       });
 
-    const ordinoScores = listPlugins('ordinoScore').filter((d: any) => d.idtype === this.idType.id);
-    $ul.selectAll('li.oscore').data(ordinoScores)
-      .enter()
-      .append('li').classed('oscore', true)
-      .append('a').attr('href', '#').text((d) => d.name)
-      .on('click', async (d) => {
-        (<Event>d3.event).preventDefault();
-        const p = await d.load();
-        const params = await Promise.resolve(p.factory(d, this.extraArgs));
-        this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
-      });
+    LineUpRankingButtons.findScores(this.idType).then((ordinoScores: IPluginDesc[]) => {
+      $ul.selectAll('li.oscore').data(ordinoScores)
+        .enter()
+        .append('li').classed('oscore', true)
+        .append('a').attr('href', '#').text((d) => d.name)
+        .on('click', async (d) => {
+          (<Event>d3.event).preventDefault();
+          const p = await d.load();
+          const params = await Promise.resolve(p.factory(d, this.extraArgs));
+          this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
+        });
+    });
   }
 
   private scoreColumnDialog(scorePlugin: IPlugin) {

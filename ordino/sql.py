@@ -1,5 +1,6 @@
 from phovea_server.ns import Namespace, request, abort
 from . import db
+from .utils import map_scores
 from phovea_server.util import jsonify
 import logging
 
@@ -159,6 +160,33 @@ def get_filtered_data(database, view_name):
 
   if request.args.get('_assignids', False):
     r = db.assign_ids(r, view.idtype)
+  return jsonify(r)
+
+
+@app.route('/<database>/<view_name>/score')
+def get_score_data(database, view_name):
+  """
+  version of getting data like filter with additional mapping of score entries
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  # row id start with 1
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
+
+  r, view = db.get_data(database, view_name, None, processed_args, extra_args)
+
+  data_idtype = view.idtype
+  target_idtype = request.args.get('target', data_idtype)
+
+  if data_idtype != target_idtype:
+    r = map_scores(r, data_idtype, target_idtype)
+
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, target_idtype)
   return jsonify(r)
 
 

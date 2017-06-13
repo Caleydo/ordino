@@ -67,6 +67,9 @@ export default class TargidConstants {
   static readonly NEW_ENTRY_POINT = 'targidNewEntryPoint';
 
 
+  //filter to disable certain views
+  static readonly EXTENSION_POINT_DISABLE_VIEW = 'disableTargidView';
+
 }
 
 

@@ -24,6 +24,7 @@ export {default as CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 import {initSession as initSessionCmd} from './cmds';
 import EditProvenanceGraphMenu from 'ordino/src/EditProvenanceGraphMenu';
+import {showProveanceGraphNotFoundDialog} from 'ordino/src/Dialogs';
 
 export interface IOrdinoOptions {
   loginForm?: string;
@@ -82,7 +83,10 @@ export default class Ordino extends ACLUEWrapper {
     });
 
     const graph = clueManager.list().then((graphs) => {
-      return clueManager.choose(graphs);
+      return clueManager.choose(graphs, true);
+    });
+    graph.catch((error: {graph: string}) => {
+      showProveanceGraphNotFoundDialog(clueManager, error.graph);
     });
 
 

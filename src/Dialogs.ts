@@ -3,6 +3,7 @@
  */
 
 import {generateDialog} from 'phovea_ui/src/dialogs';
+import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 
 let globalErrorTemplate = (details: string) => details;
 
@@ -62,4 +63,35 @@ export function showErrorModalDialog(error: any) {
   } else {
     return commonDialog('Unknown Error', error.toString());
   }
+}
+
+
+export function showProveanceGraphNotFoundDialog(manager: CLUEGraphManager, id: string) {
+    const msg = `
+      <div class="alert alert-danger fade in">
+        <p>
+            <strong>Session Not Found!</strong> The requested session "${id}" was not found or is not accessible.
+        </p> 
+        <p>
+            Possible reasons are that you 
+            <ul>
+                <li>requested a <i>temporary session</i> that is already expired</li>
+                <li>tried to access a <i>temporary session</i> of another user</li>
+                <li>tried to access a <i>private persistent session</i> of another user</li>
+            </ul>
+        </p>
+        <p>
+            In the latter two cases, please contact the original owner of the session to create a public persistent session.     
+        </p>
+        <p>
+            <a href="#" class="alert-link" id="new-session-link">Click here to start a new temporary session</a>    
+        </p>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', msg);
+  document.querySelector('#new-session-link').addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    manager.newGraph();
+    return false;
+  });
 }

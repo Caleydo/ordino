@@ -115,7 +115,7 @@ export class ProxyView extends AView {
   }
 
   protected updateSelectedItemSelect(forceUseLastSelection = false) {
-    return this.resolveIds(this.selection.idtype, this.selection.range)
+    return this.resolveIds(this.selection.idtype, this.selection.range, this.idType)
       .then((names) => Promise.all<any>([names, this.getSelectionSelectData(names)]))
       .then((args: any[]) => {
         const names = <string[]>args[0]; // use names to get the last selected element
@@ -161,14 +161,18 @@ export class ProxyView extends AView {
     this.$node.selectAll('p').remove();
     this.$node.selectAll('iframe').remove();
 
-    this.$node.append('iframe').attr('src', null);
-
     this.setBusy(true);
 
     const args = mixin(this.options.extra, {[this.options.argument]: selectedItemId});
     const url = this.createUrl(args);
+
+    if (ProxyView.isNoNSecurePage(url)) {
+      this.showNoHttpsMessage(url);
+      return;
+    }
+
     //console.log('start loading', this.$node.select('iframe').node().getBoundingClientRect());
-    this.$node.select('iframe')
+    this.$node.append('iframe')
       .attr('src', url)
       .on('load', () => {
         this.setBusy(false);
@@ -180,6 +184,25 @@ export class ProxyView extends AView {
   protected showErrorMessage(selectedItemId: string) {
     this.setBusy(false);
     this.$node.html(`<p>Cannot map <i>${this.selection.idtype.name}</i> ('${selectedItemId}') to <i>${this.options.idtype}</i>.</p>`);
+    this.fire(AView.EVENT_LOADING_FINISHED);
+  }
+
+  private static isNoNSecurePage(url: string) {
+    const self = location.protocol.toLowerCase();
+    if (self !== 'https') {
+      return false; // if I'm not secure doesn't matter
+    }
+    return url.startsWith('http://');
+  }
+
+  protected showNoHttpsMessage(url: string) {
+    this.setBusy(false);
+    this.$node.html(`
+        <p><div class="alert alert-info center-block" role="alert" style="max-width: 40em"><strong>Security Information: </strong>Ordino uses HTTPS to secure your communication with our server. 
+            However, the requested external website doesn't support HTTPS and thus cannot be directly embedded in Ordino. 
+            Please use the following <a href="${url}" target="_blank" class="alert-link">link</a> to open the website in a separate window: 
+            <br><br><a href="${url}" target="_blank" class="alert-link">$\{url}</a>         
+        </div></p><p></p>`);
     this.fire(AView.EVENT_LOADING_FINISHED);
   }
 

@@ -340,12 +340,19 @@ export class Targid {
   private checkForLoggedIn(parent) {
     // user is already logged in --> build targid
     if(session.retrieve('logged_in', <boolean>false) === true) {
-      this.buildTargid(parent);
-      this.initSession();
+      if (!Targid.isBuilt(parent)) {
+        this.buildTargid(parent);
+        this.initSession();
+      }
       return;
     }
 
     this.buildLogin(parent);
+  }
+
+  private static isBuilt(parent: HTMLElement) {
+    // found the start menu dom entry
+    return !!parent.querySelector('div.startMenu');
   }
 
   /**

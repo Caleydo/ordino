@@ -189,7 +189,7 @@ export class ProxyView extends AView {
 
   private static isNoNSecurePage(url: string) {
     const self = location.protocol.toLowerCase();
-    if (self !== 'https') {
+    if (!self.startsWith('https')) {
       return false; // if I'm not secure doesn't matter
     }
     return url.startsWith('http://');

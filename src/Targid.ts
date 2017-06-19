@@ -360,7 +360,10 @@ export class Targid extends EventHandler {
     return resolveIn(1000).then(() => old);
   }
 
-  private update() {
+  /**
+   * updates the views information, e.g. history
+   */
+  update() {
     const $views = this.$history.selectAll('li.hview').data(this.views);
     $views.enter()
       .append('li').classed('hview', true)
@@ -376,6 +379,15 @@ export class Targid extends EventHandler {
       .classed('t-focus', (d) => d.mode === EViewMode.FOCUS)
       .select('a').text((d) => d.desc.name);
     $views.exit().remove();
+
+    //notify views which next view is chosen
+    this.views.forEach((view, i) => {
+      if (i < this.views.length - 1) {
+        view.setActiveNextView(this.views[i + 1].desc.id);
+      } else {
+        view.setActiveNextView(null);
+      }
+    });
   }
 }
 export default Targid;

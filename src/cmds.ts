@@ -65,7 +65,7 @@ export function removeViewImpl(inputs:IObjectRef<any>[], parameter):ICmdResult {
  * @returns {Promise<ICmdResult>}
  */
 export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):Promise<ICmdResult> {
-  //const targid:Targid = inputs[0].value;
+  const targid:Targid = inputs[0].value;
   const existingView:ViewWrapper = inputs[1].value;
 
   const oldParams = {
@@ -84,6 +84,9 @@ export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):P
   const view = getPlugin(TargidConstants.VIEW, viewId);
 
   await replaceViewWrapper(existingView, { idtype, range: selection }, view, options);
+
+  targid.update();
+
   return {
     created: [existingView.ref],
     inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)

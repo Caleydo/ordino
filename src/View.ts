@@ -706,6 +706,7 @@ export class ViewWrapper extends EventHandler {
       $buttons.enter().append('button')
         .classed('btn btn-default', true);
 
+      $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
         .on('click', function(d) {
@@ -717,6 +718,14 @@ export class ViewWrapper extends EventHandler {
 
       $buttons.exit().remove();
     });
+  }
+
+  setActiveNextView(viewId?: string) {
+    //disable old
+    this.$chooser.selectAll('button.active').classed('active', false);
+    if (viewId) {
+      this.$chooser.select(`button[data-viewid="${viewId}"]`).classed('active', true);
+    }
   }
 
   get desc() {

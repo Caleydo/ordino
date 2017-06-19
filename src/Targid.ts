@@ -9,7 +9,7 @@ import {IEvent, EventHandler} from 'phovea_core/src/event';
 import * as d3 from 'd3';
 import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
 import {ViewWrapper, EViewMode, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
-import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager'
+import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {createView, removeView, replaceView} from './cmds';
 import Range from 'phovea_core/src/range/Range';
 import TargidConstants from './constants';

@@ -22,6 +22,7 @@ import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout} from './desc';
 import {pushScoreAsync} from './scorecmds';
+import Ranking from "lineupjs/src/model/ranking";
 
 export abstract class ALineUpView2 extends AView {
 
@@ -416,6 +417,14 @@ export abstract class ALineUpView2 extends AView {
 
     const ranking = this.lineup.data.pushRanking();
 
+    this.buildInitialRanking(ranking, columns);
+
+    // add selection column
+    useDefaultLayout(this.lineup);
+    this.lineup.update();
+  }
+
+  protected buildInitialRanking(ranking: Ranking, columns: any[]) {
     columns.forEach((d, i) => {
       // add visible columns
       if (d.visible) {
@@ -427,10 +436,6 @@ export abstract class ALineUpView2 extends AView {
         ranking.children[i + 1].setWidth(d.width); // i+1 because first column == rank
       }
     });
-
-    // add selection column
-    useDefaultLayout(this.lineup);
-    this.lineup.update();
   }
 
   private async updateImpl() {

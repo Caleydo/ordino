@@ -76,7 +76,7 @@ def get_namedset_by_id(namedset_id):
   db = MongoClient(c.host, c.port)[c.database]
   q = dict(id=namedset_id)
   result = list(db.namedsets.find(q, {'_id': 0}))
-  if len(result) == 0 or not security.can_read(results[0]):
+  if len(result) == 0 or not security.can_read(result[0]):
     return {}
   else:
     return result[0]

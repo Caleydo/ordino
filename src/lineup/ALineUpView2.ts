@@ -5,7 +5,7 @@ import {AView, EViewMode, IViewContext, ISelection, ViewWrapper} from '../View';
 import LineUp, {ILineUpConfig} from 'lineupjs/src/lineup';
 import Column from 'lineupjs/src/model/Column';
 import {deriveColors} from 'lineupjs/src/';
-import {ScaleMappingFunction, createSelectionDesc} from 'lineupjs/src/model';
+import {ScaleMappingFunction, createSelectionDesc, Ranking} from 'lineupjs/src/model';
 import CompositeColumn from 'lineupjs/src/model/CompositeColumn';
 import ValueColumn from 'lineupjs/src/model/ValueColumn';
 import NumberColumn from 'lineupjs/src/model/NumberColumn';
@@ -22,7 +22,6 @@ import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout} from './desc';
 import {pushScoreAsync} from './scorecmds';
-import Ranking from "lineupjs/src/model/ranking";
 
 export abstract class ALineUpView2 extends AView {
 

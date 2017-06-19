@@ -391,7 +391,7 @@ export class AEntryPointList implements IEntryPointList {
               const params = {
                 name,
                 description,
-                permissions: isPublic? ALL_READ_READ: ALL_NONE_NONE
+                permissions: isPublic ? ALL_READ_READ: ALL_NONE_NONE
               };
 
               const editedSet = await editNamedSet(namedSet.id, params);

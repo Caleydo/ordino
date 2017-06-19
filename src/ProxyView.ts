@@ -189,7 +189,7 @@ export class ProxyView extends AView {
 
   private static isNoNSecurePage(url: string) {
     const self = location.protocol.toLowerCase();
-    if (self !== 'https') {
+    if (!self.startsWith('https')) {
       return false; // if I'm not secure doesn't matter
     }
     return url.startsWith('http://');
@@ -198,10 +198,10 @@ export class ProxyView extends AView {
   protected showNoHttpsMessage(url: string) {
     this.setBusy(false);
     this.$node.html(`
-        <p><div class="alert alert-info center-block" role="alert" style="max-width: 40em"><strong>Security Information: </strong>Ordino uses HTTPS to secure your communication with our server. 
-            However, the requested external website doesn't support HTTPS and thus cannot be directly embedded in Ordino. 
-            Please use the following <a href="${url}" target="_blank" class="alert-link">link</a> to open the website in a separate window: 
-            <br><br><a href="${url}" target="_blank" class="alert-link">$\{url}</a>         
+        <p><div class="alert alert-info center-block" role="alert" style="max-width: 40em"><strong>Security Information: </strong>Ordino uses HTTPS to secure your communication with our server.
+            However, the requested external website doesn't support HTTPS and thus cannot be directly embedded in Ordino.
+            Please use the following <a href="${url}" target="_blank" class="alert-link">link</a> to open the website in a separate window:
+            <br><br><a href="${url}" target="_blank" class="alert-link">${url}</a>
         </div></p><p></p>`);
     this.fire(AView.EVENT_LOADING_FINISHED);
   }

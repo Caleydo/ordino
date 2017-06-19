@@ -11,7 +11,7 @@ import {currentUserNameOrAnonymous, canWrite} from 'phovea_core/src/security';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {IProvenanceGraphDataDescription, op} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
-import {showErrorModalDialog} from 'ordino/src/Dialogs';
+import {showErrorModalDialog} from './Dialogs';
 import {
   editProvenanceGraphMetaData, isPersistent, isPublic,
   persistProvenanceGraphMetaData

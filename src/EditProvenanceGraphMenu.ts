@@ -5,7 +5,7 @@
 import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
 import {areyousure} from 'phovea_ui/src/dialogs';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {showErrorModalDialog} from 'ordino/src/Dialogs';
+import {showErrorModalDialog} from './Dialogs';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {FormDialog} from 'phovea_ui/src/dialogs';
 import {mixin, randomId} from 'phovea_core/src';

@@ -13,7 +13,6 @@ import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {StartMenu} from './StartMenu';
 import {INamedSet} from './storage';
 import {VerticalStoryVis} from 'phovea_clue/src/storyvis';
-import {select} from 'd3';
 import * as cmode from 'phovea_clue/src/mode';
 import {create as createProvVis} from 'phovea_clue/src/provvis';
 import LoginMenu from 'phovea_clue/src/menu/LoginMenu';
@@ -23,8 +22,8 @@ import {isLoggedIn} from 'phovea_core/src/security';
 export {default as CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 import {initSession as initSessionCmd} from './cmds';
-import EditProvenanceGraphMenu from 'ordino/src/EditProvenanceGraphMenu';
-import {showProveanceGraphNotFoundDialog} from 'ordino/src/Dialogs';
+import EditProvenanceGraphMenu from './EditProvenanceGraphMenu';
+import {showProveanceGraphNotFoundDialog} from './Dialogs';
 
 export interface IOrdinoOptions {
   loginForm?: string;

@@ -2,6 +2,7 @@ from phovea_server.ns import Namespace, request, abort
 from . import db
 from .utils import map_scores
 from phovea_server.util import jsonify
+from phovea_server.security import login_required
 import logging
 
 __author__ = 'Samuel Gratzl'
@@ -21,6 +22,7 @@ def _get_data(database, view_name, replacements=None):
 
 
 @app.route('/<database>/<view_name>')
+@login_required
 def get_data_api(database, view_name):
   r, view = _get_data(database, view_name)
 
@@ -151,6 +153,7 @@ def _filter_logic(view):
 
 
 @app.route('/<database>/<view_name>/filter')
+@login_required
 def get_filtered_data(database, view_name):
   """
   version of getting data in which the arguments starting with `filter_` are used to build a where clause
@@ -201,6 +204,7 @@ def get_score_data(database, view_name):
 
 
 @app.route('/<database>/<view_name>/count')
+@login_required
 def get_count_data(database, view_name):
   """
   similar to the /filter clause but returns the count of results instead of the rows itself
@@ -219,6 +223,7 @@ def get_count_data(database, view_name):
 
 
 @app.route('/<database>/<view_name>/namedset/<namedset_id>')
+@login_required
 def get_namedset_data(database, view_name, namedset_id):
   import storage
   namedset = storage.get_namedset_by_id(namedset_id)
@@ -234,12 +239,14 @@ def get_namedset_data(database, view_name, namedset_id):
 
 
 @app.route('/<database>/<view_name>/raw')
+@login_required
 def get_raw_data(database, view_name):
   r, _ = _get_data(database, view_name)
   return jsonify(r)
 
 
 @app.route('/<database>/<view_name>/raw/<col>')
+@login_required
 def get_raw_col_data(database, view_name, col):
   r, _ = _get_data(database, view_name)
   return jsonify([e[col] for e in r])
@@ -254,6 +261,7 @@ def _check_column(col, view):
 
 
 @app.route('/<database>/<view_name>/desc')
+@login_required
 def get_desc(database, view_name):
   config, engine = db.resolve(database)
   # convert to index lookup
@@ -286,6 +294,7 @@ def get_desc(database, view_name):
 
 
 @app.route('/<database>/<view_name>/search')
+@login_required
 def search(database, view_name):
   config, engine = db.resolve(database)
   view = config.views[view_name]
@@ -297,11 +306,13 @@ def search(database, view_name):
 
 
 @app.route('/<database>/<view_name>/match')
+@login_required
 def match(database, view_name):
   return search(database, view_name)
 
 
 @app.route('/<database>/<view_name>/lookup')
+@login_required
 def lookup(database, view_name):
   """
   Does the same job as search, but paginates the result set

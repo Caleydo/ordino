@@ -8,7 +8,7 @@ import {IDType, resolve, defaultSelectionType} from 'phovea_core/src/idtype';
 import {Range, none, parse} from 'phovea_core/src/range';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {TargidConstants} from './Targid';
+import TargidConstants from './constants';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
@@ -474,16 +474,18 @@ export class ViewWrapper extends EventHandler {
       .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
       .datum(this);
 
-    const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline')
-      .datum(this);
-
-    $params.append('button')
-      .attr('class', 'btn btn-default btn-sm btn-close')
-      .html('<i class="fa fa-close"></i>')
+    this.$node.append('button')
+      .attr('type', 'button')
+      .attr('class', 'close')
+      .attr('aria-label','Close')
+      .html(`<span aria-hidden="true">×</span>`)
       .on('click', (d) => {
         this.remove();
       });
+
+    const $params = this.$node.append('div')
+      .attr('class', 'parameters form-inline')
+      .datum(this);
 
     const $inner = this.$node.append('div')
       .classed('inner', true);
@@ -706,6 +708,7 @@ export class ViewWrapper extends EventHandler {
       $buttons.enter().append('button')
         .classed('btn btn-default', true);
 
+      $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
         .on('click', function(d) {
@@ -717,6 +720,14 @@ export class ViewWrapper extends EventHandler {
 
       $buttons.exit().remove();
     });
+  }
+
+  setActiveNextView(viewId?: string) {
+    //disable old
+    this.$chooser.selectAll('button.active').classed('active', false);
+    if (viewId) {
+      this.$chooser.select(`button[data-viewid="${viewId}"]`).classed('active', true);
+    }
   }
 
   get desc() {

@@ -1,3 +1,4 @@
+@import './utils';
 
 .startMenu {
   position: absolute;
@@ -132,6 +133,8 @@
         > a.goto {
           flex-grow: 10;
           font-weight: 500;
+
+          text-transform: capitalize;
 
           &:before {
             margin-right: 8px;
@@ -316,6 +319,49 @@
         justify-content: space-between;
       }
 
+    }
+  }
+
+  .speciesSelector > header > h1 > label:before {
+    @include fontAwesome();
+    content: "\f1c0"; //fa-database
+  }
+
+  .speciesSelector {
+    .predefined-named-sets .header:before {
+      @include fontAwesome();
+      content: "\f1c0"; //fa-database
+    }
+    .custom-named-sets .header:before {
+      @include fontAwesome();
+      content: "\f007 "; //fa-user
+    }
+    .other-named-sets .header:before {
+      @include fontAwesome();
+      content: "\f0c0"; //fa-users
+    }
+  }
+
+  .targidSessionTemporaryData {
+    > header > h1 > label:before {
+      @include fontAwesome();
+      content: "\f017"; //fa-clock-o
+    }
+    .body {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  }
+
+  .targidSessionPersistentData {
+    > header > h1 > label:before {
+      @include fontAwesome();
+      content: "\f0c2"; //fa-cloud
+    }
+
+    .tab-pane {
+      max-height: 300px;
+      overflow-y: auto;
     }
   }
 }

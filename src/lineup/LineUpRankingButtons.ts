@@ -6,8 +6,7 @@ import {createStackDesc} from 'lineupjs/src/model';
 import * as d3 from 'd3';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
-import {generateDialog} from 'phovea_ui/src/dialogs';
-import {saveNamedSet} from '../storage';
+import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
 
 export class LineUpRankingButtons extends EventHandler {
@@ -50,38 +49,9 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private saveRankingDialog(order: number[]) {
-    const dialog = generateDialog('Save Named Set');
-    dialog.body.innerHTML = `
-      <form id="namedset_form">
-        <div class="form-group">
-          <label for="namedset_name">Name</label>
-          <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required">
-        </div>
-        <div class="form-group">
-          <label for="namedset_description">Description</label>
-          <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
-        </div>
-      </form>`;
-
-    const form = <HTMLFormElement>dialog.body.querySelector('#namedset_form');
-
-    form.onsubmit = () => {
-      const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
-      const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
-
-      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description);
-
-      dialog.hide();
-      return false;
-    };
-
-    dialog.footer.innerHTML = `<button type="submit" form="namedset_form" class="btn btn-default btn-primary">Save</button>`;
-
-    dialog.onHide(() => {
-      dialog.destroy();
+    editDialog(null, (name, description, isPublic) => {
+      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description, isPublic);
     });
-
-    dialog.show();
   }
 
   static findScores(target: IDType) {

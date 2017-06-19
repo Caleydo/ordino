@@ -1,0 +1,10 @@
+
+@mixin fontAwesome() {
+  margin-right: 0.2em;
+  font-family: "FontAwesome", serif;
+}
+
+input[type="checkbox"].public:after {
+  @include fontAwesome();
+  content: '\f0c0'; //fa-users
+}

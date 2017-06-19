@@ -19,12 +19,6 @@ export default class FormBuilder {
   private $node: d3.Selection<any>;
 
   /**
-   * Unique id for every form and all the form elements
-   * @type {string}
-   */
-  private readonly formId = randomId();
-
-  /**
    * Map of all appended form elements with the element id as key
    * @type {d3.Map<IFormElement>}
    */
@@ -34,8 +28,8 @@ export default class FormBuilder {
    * Constructor
    * @param $parent Node that the form should be attached to
    */
-  constructor($parent: d3.Selection<any>) {
-    this.$node = $parent.append('form');
+  constructor($parent: d3.Selection<any>, private readonly formId = randomId()) {
+    this.$node = $parent.append('form').attr('id', this.formId);
   }
 
   /**

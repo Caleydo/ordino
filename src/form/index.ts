@@ -9,3 +9,4 @@ export {IFormSelectOption, IFormSelectDesc, IFormSelectOptions, IFormSelectEleme
 export {IFormSelect2} from './internal/FormSelect2';
 export {IFormMapDesc} from './internal/FormMap';
 export {IButtonElementDesc} from './internal/FormButton';
+export {default as FormDialog} from './FormDialog';

@@ -474,16 +474,18 @@ export class ViewWrapper extends EventHandler {
       .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
       .datum(this);
 
-    const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline')
-      .datum(this);
-
-    $params.append('button')
-      .attr('class', 'btn btn-default btn-sm btn-close')
-      .html('<i class="fa fa-close"></i>')
+    this.$node.append('button')
+      .attr('type', 'button')
+      .attr('class', 'close')
+      .attr('aria-label','Close')
+      .html(`<span aria-hidden="true">×</span>`)
       .on('click', (d) => {
         this.remove();
       });
+
+    const $params = this.$node.append('div')
+      .attr('class', 'parameters form-inline')
+      .datum(this);
 
     const $inner = this.$node.append('div')
       .classed('inner', true);

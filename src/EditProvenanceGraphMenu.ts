@@ -169,6 +169,9 @@ export function editProvenanceGraphMetaData(d: IProvenanceGraphDataDescription, 
           <label class="radio-inline">
             <input type="radio" name="${prefix}_public" id="${prefix}_public" value="public" ${isPublic(d) ? 'checked="checked"': ''}> <i class="fa fa-users"></i> Public (everybody can see and use it)
           </label>
+          <div class="help-block">
+            Please ensure when publishing a session that associated datasets (i.e. uploaded datasets) are also public.
+          </div>
         </div>
     </form>
   `;

@@ -107,8 +107,6 @@ export abstract class ALineUpView2 extends AView {
       this.setItemSelection(selection);
     });
     this.selectionHelper.init();
-    //init selection
-    this.selectionHelper.setItemSelection(this.getItemSelection());
     this.updateLineUpStats();
   }
 
@@ -480,6 +478,8 @@ export abstract class ALineUpView2 extends AView {
     const provider = <LocalDataProvider>this.lineup.data;
     provider.setData(rows);
     this.selectionHelper.rows = rows;
+    //reset the selection in LineUp
+    this.selectionHelper.setItemSelection(this.getItemSelection());
     return rows;
   }
 

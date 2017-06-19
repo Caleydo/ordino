@@ -130,7 +130,7 @@ class TemporarySessionList extends ASessionList {
       <tr>
         <th>Name</th>
         <th>Date</th>
-        <th></th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -178,9 +178,9 @@ class PersistentSessionList extends ASessionList {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th></th>
+                    <th>Access</th>
                     <th>Date</th>
-                    <th></th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,7 +195,7 @@ class PersistentSessionList extends ASessionList {
                     <th>Name</th>
                     <th>Creator</th>
                     <th>Date</th>
-                    <th></th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -346,13 +346,10 @@ export class AEntryPointList implements IEntryPointList {
     let data = this.data;
     const that = this;
 
+    // filter named sets by using the provided accessor
     const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
     if(filters.length) {
-      const dataAccessors = [
-        (datum) => datum.subTypeKey
-      ];
-
-      data = filters.reduce((data, filter, i) => filter.factory(data, dataAccessors[i]), data);
+      data = filters.reduce((data, filter, i) => filter.factory(data, filter.desc.accessor), data);
     }
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);

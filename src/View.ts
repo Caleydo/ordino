@@ -723,10 +723,14 @@ export class ViewWrapper extends EventHandler {
   }
 
   setActiveNextView(viewId?: string) {
-    //disable old
-    this.$chooser.selectAll('button.active').classed('active', false);
+    const chooser = (<HTMLElement>this.$chooser.node());
+    //disable old don't use d3 to don't screw up the data binding
+    Array.from(chooser.querySelectorAll('button.active')).forEach((d: HTMLElement) => d.classList.remove('active'));
     if (viewId) {
-      this.$chooser.select(`button[data-viewid="${viewId}"]`).classed('active', true);
+      const button = chooser.querySelector(`button[data-viewid="${viewId}"]`);
+      if (button) {
+        button.classList.add('active');
+      }
     }
   }
 

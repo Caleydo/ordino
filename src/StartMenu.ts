@@ -14,6 +14,7 @@ import {
   ALL_NONE_NONE, ALL_READ_READ, canWrite, currentUserNameOrAnonymous, DEFAULT_PERMISSION, EEntity,
   hasPermission
 } from 'phovea_core/src/security';
+import TargidConstants from './constants';
 
 export interface IStartMenuOptions {
   targid: Targid;
@@ -39,6 +40,7 @@ export interface IEntryPointList {
   addNamedSet(namedSet: INamedSet);
   removeNamedSet(namedSet: INamedSet);
   updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet);
+  updateList(): void;
 }
 
 export interface IStartMenuSectionEntry {
@@ -261,6 +263,8 @@ export class AEntryPointList implements IEntryPointList {
 
   protected data: INamedSet[] = [];
 
+  private extensionFilters: (p: {[key: string]: any}) => any;
+
   constructor(protected readonly parent: HTMLElement, public readonly desc: IPluginDesc, protected readonly options: IEntryPointOptions) {
     this.$node = d3.select(parent);
   }
@@ -275,17 +279,17 @@ export class AEntryPointList implements IEntryPointList {
    */
   addNamedSet(namedSet: INamedSet) {
     this.data.push(namedSet);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   removeNamedSet(namedSet: INamedSet) {
     this.data.splice(this.data.indexOf(namedSet), 1);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet) {
     this.data.splice(this.data.indexOf(oldNamedSet), 1, newNamedSet);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   protected getNamedSets(): Promise<INamedSet[]> {
@@ -300,8 +304,15 @@ export class AEntryPointList implements IEntryPointList {
     // load named sets (stored LineUp sessions)
     const promise = this.getNamedSets()
     // on success
-      .then((namedSets: INamedSet[]) => {
+      .then(async (namedSets: INamedSet[]) => {
         this.$node.html(''); // remove loading element or previous data
+
+        // execute extension filters
+        const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+        this.extensionFilters = function (f) {
+          return filters.every((filter) => filter.factory(f));
+        };
+
 
         // convert to data format and append to species data
         this.data.push(...namedSets);
@@ -316,11 +327,12 @@ export class AEntryPointList implements IEntryPointList {
         customNamedSetsWrapper.append('div').classed('header', true).text(`My Sets`);
         customNamedSetsWrapper.append('ul');
 
+
         const otherNamedSetsWrapper = wrapper.append('div').classed('other-named-sets', true);
         otherNamedSetsWrapper.append('div').classed('header', true).text(`Public Sets`);
         otherNamedSetsWrapper.append('ul');
 
-        this.updateList(this.data);
+        this.updateList();
 
         return namedSets;
       });
@@ -339,8 +351,14 @@ export class AEntryPointList implements IEntryPointList {
    * Also binds the click listener that saves the selection to the session, before reloading the page
    * @param data
    */
-  private updateList(data: INamedSet[]) {
+  updateList() {
+    let data = this.data;
     const that = this;
+
+    data = data.filter((datum) => {
+      const f = {[datum.subTypeKey]: datum.subTypeValue};
+      return this.extensionFilters(f);
+    });
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
     const me = currentUserNameOrAnonymous();

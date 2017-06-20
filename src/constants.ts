@@ -70,6 +70,9 @@ export default class TargidConstants {
   //filter to disable certain views
   static readonly EXTENSION_POINT_DISABLE_VIEW = 'disableTargidView';
 
+  // filter extensions
+  static readonly FILTERS_EXTENSION_POINT_ID = 'ordinoListFilters';
+
 }
 
 

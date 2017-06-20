@@ -82,8 +82,16 @@ export async function findViews(idtype:IDType, selection:Range) : Promise<{enabl
   function bySelection(p: any) {
     return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
   }
+
+  // execute extension filters
+  const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+  function extensionFilters(p: IPluginDesc) {
+    const f = p.filter || {};
+    return filters.every((filter) => filter.factory(f));
+  }
+
   return listPlugins(TargidConstants.VIEW)
-    .filter((p) => byType(p) && !disabled(p))
+    .filter((p) => byType(p) && !disabled(p) && extensionFilters(p))
     .sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase()))
     .map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
 }
@@ -639,7 +647,7 @@ export class ViewWrapper extends EventHandler {
       this.$chooser.selectAll('button').classed('active', false);
     }
 
-    findViews(idtype, range).then((views) => {
+    findViews(idtype, range).then(async (views) => {
       const groups = new Map();
       views.forEach((elem) => {
         if(!elem.v.group) { // fallback category if none is present

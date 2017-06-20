@@ -263,6 +263,8 @@ export class AEntryPointList implements IEntryPointList {
 
   protected data: INamedSet[] = [];
 
+  private extensionFilters: (p: {[key: string]: any}) => any;
+
   constructor(protected readonly parent: HTMLElement, public readonly desc: IPluginDesc, protected readonly options: IEntryPointOptions) {
     this.$node = d3.select(parent);
   }
@@ -302,8 +304,16 @@ export class AEntryPointList implements IEntryPointList {
     // load named sets (stored LineUp sessions)
     const promise = this.getNamedSets()
     // on success
-      .then((namedSets: INamedSet[]) => {
+      .then(async (namedSets: INamedSet[]) => {
         this.$node.html(''); // remove loading element or previous data
+
+        // execute extension filters
+        const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+        this.extensionFilters = function (p) {
+          const f = {[p.subTypeKey]: p.subTypeValue};
+          return filters.every((filter) => filter.factory(f));
+        };
+
 
         // convert to data format and append to species data
         this.data.push(...namedSets);
@@ -342,16 +352,11 @@ export class AEntryPointList implements IEntryPointList {
    * Also binds the click listener that saves the selection to the session, before reloading the page
    * @param data
    */
-  async updateList() {
+  updateList() {
     let data = this.data;
     const that = this;
 
-    // execute extension filters
-    const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
-    function byExtensionFilters(p) {
-      return filters.every((filter) => filter.factory(p.subTypeValue));
-    }
-    data = data.filter((datum) => byExtensionFilters(datum));
+    data = data.filter((datum) => this.extensionFilters(datum));
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
     const me = currentUserNameOrAnonymous();

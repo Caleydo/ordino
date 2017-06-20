@@ -85,12 +85,12 @@ export async function findViews(idtype:IDType, selection:Range) : Promise<{enabl
 
   // execute extension filters
   const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
-  function byExtensionFilters(p: IPluginDesc) {
-    return filters.every((filter) => filter.factory(p.group.species));
+  function extensionFilters(p: IPluginDesc) {
+    return filters.every((filter) => filter.factory(p));
   }
 
   return listPlugins(TargidConstants.VIEW)
-    .filter((p) => byType(p) && !disabled(p) && byExtensionFilters(p))
+    .filter((p) => byType(p) && !disabled(p) && extensionFilters(p))
     .sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase()))
     .map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
 }

@@ -309,8 +309,7 @@ export class AEntryPointList implements IEntryPointList {
 
         // execute extension filters
         const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
-        this.extensionFilters = function (p) {
-          const f = {[p.subTypeKey]: p.subTypeValue};
+        this.extensionFilters = function (f) {
           return filters.every((filter) => filter.factory(f));
         };
 
@@ -356,7 +355,10 @@ export class AEntryPointList implements IEntryPointList {
     let data = this.data;
     const that = this;
 
-    data = data.filter((datum) => this.extensionFilters(datum));
+    data = data.filter((datum) => {
+      const f = {[datum.subTypeKey]: datum.subTypeValue};
+      return this.extensionFilters(f);
+    });
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
     const me = currentUserNameOrAnonymous();

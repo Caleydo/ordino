@@ -82,8 +82,15 @@ export async function findViews(idtype:IDType, selection:Range) : Promise<{enabl
   function bySelection(p: any) {
     return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
   }
+
+  // execute extension filters
+  const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+  function byExtensionFilters(p: IPluginDesc) {
+    return filters.some((filter) => filter.factory(p.group.species));
+  }
+
   return listPlugins(TargidConstants.VIEW)
-    .filter((p) => byType(p) && !disabled(p))
+    .filter((p) => byType(p) && !disabled(p) && byExtensionFilters(p))
     .sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase()))
     .map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
 }
@@ -370,9 +377,6 @@ function generate_hash(desc: IPluginDesc, selection: ISelection) {
   return desc.id+'_'+s;
 }
 
-
-const FILTERS_EXTENSION_POINT_ID = 'ordinoListFilters';
-
 export class ViewWrapper extends EventHandler {
   static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
@@ -643,10 +647,6 @@ export class ViewWrapper extends EventHandler {
     }
 
     findViews(idtype, range).then(async (views) => {
-      // const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
-      // if(filters.length) {
-      //   views = filters.reduce((view, filter) => filter.factory(views, (datum) => datum[filter.desc.keyToFilter]), views);
-      // }
       const groups = new Map();
       views.forEach((elem) => {
         if(!elem.v.group) { // fallback category if none is present

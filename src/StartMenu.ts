@@ -14,6 +14,7 @@ import {
   ALL_NONE_NONE, ALL_READ_READ, canWrite, currentUserNameOrAnonymous, DEFAULT_PERMISSION, EEntity,
   hasPermission
 } from 'phovea_core/src/security';
+import TargidConstants from './constants';
 
 export interface IStartMenuOptions {
   targid: Targid;
@@ -28,7 +29,6 @@ const template = `
   `;
 
 export const EXTENSION_POINT_ID = 'targidStartMenuSection';
-const FILTERS_EXTENSION_POINT_ID = 'ordinoListFilters';
 
 interface IStartMenuSection extends IPluginDesc {
   readonly name: string;
@@ -346,11 +346,12 @@ export class AEntryPointList implements IEntryPointList {
     let data = this.data;
     const that = this;
 
-    // filter named sets by using the provided accessor
-    const filters = await Promise.all(listPlugins(FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
-    if(filters.length) {
-      data = filters.reduce((data, filter, i) => filter.factory(data, filter.desc.accessor), data);
+    // execute extension filters
+    const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+    function byExtensionFilters(p) {
+      return filters.some((filter) => filter.factory(p.subTypeValue));
     }
+    data = data.filter((datum) => byExtensionFilters(datum));
 
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
     const me = currentUserNameOrAnonymous();

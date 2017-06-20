@@ -86,7 +86,7 @@ export async function findViews(idtype:IDType, selection:Range) : Promise<{enabl
   // execute extension filters
   const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
   function byExtensionFilters(p: IPluginDesc) {
-    return filters.some((filter) => filter.factory(p.group.species));
+    return filters.every((filter) => filter.factory(p.group.species));
   }
 
   return listPlugins(TargidConstants.VIEW)

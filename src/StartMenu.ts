@@ -349,7 +349,7 @@ export class AEntryPointList implements IEntryPointList {
     // execute extension filters
     const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
     function byExtensionFilters(p) {
-      return filters.some((filter) => filter.factory(p.subTypeValue));
+      return filters.every((filter) => filter.factory(p.subTypeValue));
     }
     data = data.filter((datum) => byExtensionFilters(datum));
 

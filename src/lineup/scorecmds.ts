@@ -25,13 +25,14 @@ async function addScoreLogic(waitForScore: boolean, inputs:IObjectRef<IViewProvi
   const pluginDesc = getPlugin(EXTENSION_POINT_SCORE_IMPL, scoreId);
   const plugin = await pluginDesc.load();
   const view = await inputs[0].v.then((vi) => vi.getInstance());
-  const score: IScore<any> = plugin.factory(parameter.params, pluginDesc);
+  const score: IScore<any>|IScore<any>[] = plugin.factory(parameter.params, pluginDesc);
+  const scores = Array.isArray(score) ? score : [score];
 
-  const r = await view.addTrackedScoreColumn(score);
-  const col = waitForScore ? await r.loaded : r.col;
+  const results = await Promise.all(scores.map((s) => view.addTrackedScoreColumn(s)));
+  const col = waitForScore ? await Promise.all(results.map((r) => r.loaded)) : results.map((r) => r.col);
 
   return {
-    inverse: removeScore(inputs[0], scoreId, parameter.params, col.id)
+    inverse: removeScore(inputs[0], scoreId, parameter.params, col.map((c) => c.id))
   };
 }
 
@@ -46,9 +47,10 @@ async function addScoreAsync(inputs:IObjectRef<IViewProvider>[], parameter:any) 
 
 async function removeScoreImpl(inputs:IObjectRef<IViewProvider>[], parameter:any) {
   const view = await inputs[0].v.then((vi) => vi.getInstance());
-  const columnId: string = parameter.columnId;
+  const columnId: string|string[] = parameter.columnId;
+  const columnIds = Array.isArray(columnId) ? columnId : [columnId];
 
-  view.removeTrackedScoreColumn(columnId);
+  columnIds.forEach((id) => view.removeTrackedScoreColumn(id));
 
   return {
     inverse: addScore(inputs[0], parameter.id, parameter.params)
@@ -68,7 +70,7 @@ export async function pushScoreAsync(graph: ProvenanceGraph, provider:IObjectRef
   return graph.pushWithResult(action(meta('Add Score', cat.data, op.create), CMD_ADD_SCORE, addScoreImpl, [provider], actionParams), result);
 }
 
-export function removeScore(provider:IObjectRef<IViewProvider>, scoreId: string, params: any, columnId: string) {
+export function removeScore(provider:IObjectRef<IViewProvider>, scoreId: string, params: any, columnId: string|string[]) {
   return action(meta('Remove Score', cat.data, op.remove), CMD_REMOVE_SCORE, removeScoreImpl, [provider], {
     id: scoreId,
     params,

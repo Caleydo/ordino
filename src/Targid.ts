@@ -3,283 +3,18 @@
  */
 
 import {resolveIn} from 'phovea_core/src/index';
-import {IObjectRef, ProvenanceGraph, action, meta, op, cat, ICmdFunction, ActionNode, StateNode} from 'phovea_core/src/provenance';
-import {get as getPlugin} from 'phovea_core/src/plugin';
-import {on as globalOn, off as globalOff, IEvent} from 'phovea_core/src/event';
-import {Range, parse, none} from 'phovea_core/src/range';
-import {resolve, IDType} from 'phovea_core/src/idtype';
-import * as session from 'phovea_core/src/session';
+import {IObjectRef, ProvenanceGraph, op, cat, StateNode} from 'phovea_core/src/provenance';
+import IDType from 'phovea_core/src/idtype/IDType';
+import {IEvent, EventHandler} from 'phovea_core/src/event';
 import * as d3 from 'd3';
-import * as $ from 'jquery';
 import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
-import {
-  ViewWrapper, EViewMode, createViewWrapper, AView, ISelection, setSelection, setAndUpdateSelection,
-  replaceViewWrapper
-} from './View';
-import {ICmdResult, IAction} from 'phovea_core/src/provenance';
-import {CLUEGraphManager, CLUEWrapper} from 'phovea_clue/src/template';
-import {StartMenu} from './StartMenu';
-import {INamedSet} from './storage';
+import {ViewWrapper, EViewMode, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
+import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
+import {createView, removeView, replaceView} from './cmds';
+import Range from 'phovea_core/src/range/Range';
+import TargidConstants from './constants';
+import * as session from 'phovea_core/src/session';
 
-
-/**
- * Creates a view instance and wraps the instance with the inverse action in a CLUE command
- * @param inputs Array with object references, where the first one is the TargId object
- * @param parameter Parameter such idtype, selection and view options
- * @param graph The Provenance graph
- * @returns {Promise<ICmdResult>}
- */
-export async function createViewImpl(inputs:IObjectRef<any>[], parameter:any, graph:ProvenanceGraph):Promise<ICmdResult> {
-  const targid:Targid = inputs[0].value;
-  const viewId:string = parameter.viewId;
-  const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
-  const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
-  const options = parameter.options;
-
-  const view = getPlugin(TargidConstants.VIEW, viewId);
-
-  const viewWrapperInstance = await createViewWrapper(graph, { idtype, range: selection }, targid.node, view, options);
-  const oldFocus = await targid.pushImpl(viewWrapperInstance);
-  return {
-    created: [viewWrapperInstance.ref],
-    inverse: (inputs, created, removed) => removeView(inputs[0], created[0], oldFocus)
-  };
-}
-
-/**
- * Removes a view instance and wraps the instance with the inverse action in a CLUE command
- * @param inputs Array with object references, where the first one is the TargId object
- * @param parameter Parameter such idtype, selection and view options
- * @returns {ICmdResult}
- */
-export function removeViewImpl(inputs:IObjectRef<any>[], parameter):ICmdResult {
-  const targid:Targid = inputs[0].value;
-  const view:ViewWrapper = inputs[1].value;
-  const oldFocus:number = parameter.focus;
-
-  targid.removeImpl(view, oldFocus);
-  return {
-    removed: [inputs[1]],
-    inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range, view.options)
-  };
-}
-
-/**
- * Replaces a (inner) view of an existing ViewWrapper with a new (inner) view.
- * First backup the data of the existing view, delete it and then create a new view.
- * The inverse provenance graph action will restore the old view.
- *
- * @param inputs Array with object references, where the first one is the TargId object
- * @param parameter Parameter such idtype, selection and view options
- * @param graph The Provenance graph
- * @returns {Promise<ICmdResult>}
- */
-export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):Promise<ICmdResult> {
-  //const targid:Targid = inputs[0].value;
-  const existingView:ViewWrapper = inputs[1].value;
-
-  const oldParams = {
-    viewId: existingView.desc.id,
-    idtype: existingView.selection.idtype,
-    selection: existingView.selection.range,
-    options: existingView.options
-  };
-
-  const viewId:string = parameter.viewId;
-  const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
-  const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
-  const options = parameter.options;
-
-  // create new (inner) view
-  const view = getPlugin(TargidConstants.VIEW, viewId);
-
-  await replaceViewWrapper(existingView, { idtype, range: selection }, view, options);
-  return {
-    created: [existingView.ref],
-    inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)
-  };
-}
-
-/**
- * Creates a view and adds a CLUE command view to the provenance graph
- * @param targid
- * @param viewId
- * @param idtype
- * @param selection
- * @param options
- * @returns {IAction}
- */
-export function createView(targid:IObjectRef<Targid>, viewId:string, idtype:IDType, selection:Range, options?):IAction {
-  const view = getPlugin(TargidConstants.VIEW, viewId);
-  // assert view
-  return action(meta('Add ' + view.name, cat.visual, op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
-    viewId,
-    idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : none().toString(),
-    options
-  });
-}
-
-/**
- * Removes a view and adds a CLUE command view to the provenance graph
- * @param targid
- * @param view ViewWrapper instance of the view
- * @param oldFocus
- * @returns {IAction}
- */
-export function removeView(targid:IObjectRef<Targid>, view:IObjectRef<ViewWrapper>, oldFocus = -1):IAction {
-  // assert view
-  return action(meta('Remove ' + view.toString(), cat.visual, op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
-    viewId: view.value.desc.id,
-    focus: oldFocus
-  });
-}
-
-/**
- * Replaces an (inner) view of an existing ViewWrapper and adds a CLUE command view to the provenance graph
- * @param targid
- * @param existingView
- * @param viewId
- * @param idtype
- * @param selection
- * @param options
- * @returns {IAction}
- */
-export function replaceView(targid:IObjectRef<Targid>, existingView:IObjectRef<ViewWrapper>, viewId:string, idtype:IDType, selection:Range, options?):IAction {
-  const view = getPlugin(TargidConstants.VIEW, viewId);
-  // assert view
-  return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
-    viewId,
-    idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : none().toString(),
-    options
-  });
-}
-
-
-function initSessionImpl(inputs, parameters) {
-  const old = {};
-  Object.keys(parameters).forEach((key) => {
-    old[key] = session.retrieve(key, null);
-    const value = parameters[key];
-    if (value !== null) {
-      session.store(key, parameters[key]);
-    }
-  });
-  return {
-    inverse: initSession(old)
-  };
-}
-
-function initSession(map: any) {
-  return action(meta('Initialize Session', cat.custom, op.update), TargidConstants.CMD_INIT_SESSION, initSessionImpl, [], map);
-}
-
-/**
- * Create a CLUE command by ID
- * @param id
- * @returns {ICmdFunction|null}
- */
-export function createCmd(id):ICmdFunction {
-  switch (id) {
-    case TargidConstants.CMD_CREATE_VIEW:
-      return createViewImpl;
-    case TargidConstants.CMD_REMOVE_VIEW:
-      return removeViewImpl;
-    case TargidConstants.CMD_REPLACE_VIEW:
-      return replaceViewImpl;
-    case TargidConstants.CMD_INIT_SESSION:
-      return initSessionImpl;
-  }
-  return null;
-}
-
-/**
- * Factory function that compresses a series of action to fewer one.
- * Note: This function is referenced as `actionCompressor` in the package.json
- * @type {string}
- * @param path
- * @returns {Array}
- */
-export function compressCreateRemove(path:ActionNode[]) {
-  const r = [];
-  for (const p of path) {
-    if (p.f_id === TargidConstants.CMD_REMOVE_VIEW && r.length > 0) {
-      const last = r[r.length - 1];
-      if (last.f_id === TargidConstants.CMD_CREATE_VIEW && p.parameter.viewId === last.parameter.viewId) {
-        r.pop();
-        continue;
-      }
-    }
-    r.push(p);
-  }
-  return r;
-}
-
-export class TargidConstants {
-  /**
-   * Name of the application
-   * Note: the string value is referenced in the package.json, i.e. be careful when refactor the value
-   * @type {string}
-   */
-  static readonly APP_NAME = 'Targid';
-
-  /**
-   * Static constant for creating a view command
-   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json,
-   *       i.e. be careful when refactor the value
-   * @type {string}
-   */
-  static readonly CMD_CREATE_VIEW = 'targidCreateView';
-
-  /**
-   * Static constant for removing a view command
-   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json,
-   *       i.e. be careful when refactor the value
-   * @type {string}
-   */
-  static readonly CMD_REMOVE_VIEW = 'targidRemoveView';
-
-  /**
-   * Static constant for replacing a view command
-   * Note: the string value is referenced for the `actionFactory` and `actionCompressor` in the package.json,
-   *       i.e. be careful when refactor the value
-   * @type {string}
-   */
-  static readonly CMD_REPLACE_VIEW = 'targidReplaceView';
-
-  static readonly CMD_INIT_SESSION = 'targidInitSession';
-
-  /**
-   * Static constant as identification for Targid views
-   * Note: the string value is referenced for multiple view definitions in the package.json,
-   *       i.e. be careful when refactor the value
-   */
-  static readonly VIEW = 'targidView';
-
-  /**
-   * Static constant for setting a parameter of a view
-   * Note: the string value is referenced for the `actionFactory` in the package.json,
-   *       i.e. be careful when refactor the value
-   * @type {string}
-   */
-  static readonly CMD_SET_PARAMETER = 'targidSetParameter';
-
-  /**
-   * Static constant for setting a selection of a view
-   * Note: the string value is referenced for the `actionFactory` in the package.json,
-   *       i.e. be careful when refactor the value
-   * @type {string}
-   */
-  static readonly CMD_SET_SELECTION = 'targidSetSelection';
-
-  /**
-   * Static constant to store details about a new entry point in the session
-   * @type {string}
-   */
-  static readonly NEW_ENTRY_POINT = 'targidNewEntryPoint';
-
-}
 
 /**
  * The main class for the TargID app
@@ -288,7 +23,8 @@ export class TargidConstants {
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class Targid {
+export class Targid extends EventHandler {
+  static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
@@ -301,94 +37,23 @@ export class Targid {
    */
   readonly ref:IObjectRef<Targid>;
 
-  private startMenu:StartMenu;
-  private $startMenu:d3.Selection<any>;
-  private $history:d3.Selection<any>;
-  private $node:d3.Selection<Targid>;
+  private readonly $history:d3.Selection<any>;
+  private readonly $node:d3.Selection<Targid>;
 
   private readonly removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private readonly chooseNextView = (event:IEvent, viewId:string, idtype:IDType, selection:Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
   private readonly updateSelection = (event:IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, newValue);
-  private readonly updateStartMenu = (event:IEvent, idtype: IDType | string, namedSet: INamedSet) => this.startMenu.updateEntryPointList(idtype, namedSet);
 
-  constructor(public readonly graph:ProvenanceGraph, public readonly graphManager:CLUEGraphManager, parent:Element, private readonly clueWrapper: CLUEWrapper) {
-
+  constructor(public readonly graph:ProvenanceGraph, public readonly graphManager:CLUEGraphManager, parent:HTMLElement) {
+    super();
     // add TargId app as (first) object to provenance graph
     this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, cat.visual);
 
-    // event is triggered in caleydo_clue/template.ts -> createLogin()
-    globalOn('USER_LOGGED_IN', () => {
-      this.checkForLoggedIn(parent);
-    });
 
-    // event is triggered in caleydo_clue/template.ts -> createLogin()
-    globalOn('USER_LOGGED_OUT', () => {
-      this.checkForLoggedIn(parent);
-    });
-
-    // check once initially
-    this.checkForLoggedIn(parent);
-  }
-
-  /**
-   * Checks whether a user is logged in or not and shows either the login view or the application
-   * @param parent
-   */
-  private checkForLoggedIn(parent) {
-    // user is already logged in --> build targid
-    if(session.retrieve('logged_in', <boolean>false) === true) {
-      this.buildTargid(parent);
-      this.initSession();
-      return;
-    }
-
-    this.buildLogin(parent);
-  }
-
-  /**
-   * Builds the login first view and opens the login modal dialog
-   * @param parent
-   */
-  private buildLogin(parent: HTMLElement) {
-    // otherwise show login
-    parent.innerHTML = `
-      <div class="loginFirstView">
-        <!--<img src="/ordino/images/welcome-view-arrow.svg">
-        <h1>Login first</h1>-->
-      </div>`;
-
-    const $loginDialog = (<any>$('#loginDialog'));
-    $loginDialog.find('.modal-header .close').addClass('hidden'); // disable closing the dialog
-    $loginDialog.modal('show')
-      .on('shown.bs.modal', function () {
-        (<any>$('#login_username', $loginDialog)).focus();
-      });
-  }
-
-  /**
-   * Builds the DOM nodes for the Targid application
-   * @param parent
-   */
-  private buildTargid(parent) {
-    this.$startMenu = d3.select(parent).append('div').classed('startMenu', true);
-    this.startMenu = new StartMenu(<HTMLElement>this.$startMenu.node(), { targid: this });
-
-    this.$history = d3.select(parent).append('ul').classed('history', true);
-    this.$history.append('li').classed('homeButton', true)
-      .html(`<a href="#">
-        <i class="fa fa-home" aria-hidden="true"></i>
-        <span class="sr-only">Start</span>
-      </a>`);
-    this.$history.select('.homeButton > a').on('click', (d) => {
-      // prevent changing the hash (href)
-      (<Event>d3.event).preventDefault();
-      this.openStartMenu();
-    });
+    this.$history = this.buildHistory(parent);
 
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
-
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-
     this.$node.html(`
     <div class="welcomeView">
       <img src="${welcomeArrow}">
@@ -396,32 +61,19 @@ export class Targid {
     </div>`);
   }
 
-  /**
-   * initializes the targid session
-   */
-  private initSession() {
-    const hasInitScript = session.has(TargidConstants.NEW_ENTRY_POINT);
-
-    if(this.graph.isEmpty && !hasInitScript) {
-      this.openStartMenu();
-    } else if (hasInitScript) {
-      const {view, options, defaultSessionValues} = <any>session.retrieve(TargidConstants.NEW_ENTRY_POINT);
-
-      if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-        this.graph.push(initSession(defaultSessionValues));
-      }
-      this.push(view, null, null, options);
-      session.remove(TargidConstants.NEW_ENTRY_POINT);
-    } else {
-      //just if no other option applies jump to the stored state
-      this.clueWrapper.jumpToStoredOrLastState();
-    }
-  }
-
-  openStartMenu() {
-    if(this.startMenu) {
-      this.startMenu.open();
-    }
+  private buildHistory(parent: HTMLElement) {
+    const $history = d3.select(parent).append('ul').classed('history', true);
+    $history.append('li').classed('homeButton', true)
+      .html(`<a href="#">
+        <i class="fa fa-home" aria-hidden="true"></i>
+        <span class="sr-only">Start</span>
+      </a>`);
+    $history.select('.homeButton > a').on('click', (d) => {
+      // prevent changing the hash (href)
+      (<Event>d3.event).preventDefault();
+      this.fire(Targid.EVENT_OPEN_START_MENU);
+    });
+    return $history;
   }
 
   get node() {
@@ -610,7 +262,7 @@ export class Targid {
 
     // no views available, then open start menu
     if(index === 0) {
-      this.openStartMenu();
+      this.fire('openStartMenu');
     }
   }
 
@@ -618,7 +270,7 @@ export class Targid {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    view.on(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
+    this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
     this.views.push(view);
     this.update();
     return resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
@@ -629,7 +281,6 @@ export class Targid {
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    view.off(AView.EVENT_UPDATE_ENTRY_POINT, this.updateStartMenu);
 
     this.views.splice(i, 1);
     this.update();
@@ -709,7 +360,10 @@ export class Targid {
     return resolveIn(1000).then(() => old);
   }
 
-  private update() {
+  /**
+   * updates the views information, e.g. history
+   */
+  update() {
     const $views = this.$history.selectAll('li.hview').data(this.views);
     $views.enter()
       .append('li').classed('hview', true)
@@ -725,8 +379,18 @@ export class Targid {
       .classed('t-focus', (d) => d.mode === EViewMode.FOCUS)
       .select('a').text((d) => d.desc.name);
     $views.exit().remove();
+
+    //notify views which next view is chosen
+    this.views.forEach((view, i) => {
+      if (i < this.views.length - 1) {
+        view.setActiveNextView(this.views[i + 1].desc.id);
+      } else {
+        view.setActiveNextView(null);
+      }
+    });
   }
 }
+export default Targid;
 
 /**
  * Helper function to filter views that were created
@@ -745,6 +409,6 @@ function isCreateView(stateNode: StateNode) {
  * @param parent
  * @returns {Targid}
  */
-export function create(graph:ProvenanceGraph, graphManager:CLUEGraphManager, parent:Element, clueWrapper: CLUEWrapper) {
-  return new Targid(graph, graphManager, parent, clueWrapper);
+export function create(graph:ProvenanceGraph, graphManager:CLUEGraphManager, parent:HTMLElement) {
+  return new Targid(graph, graphManager, parent);
 }

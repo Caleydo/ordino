@@ -3,6 +3,7 @@
  */
 
 import * as d3 from 'd3';
+import * as session from 'phovea_core/src/session';
 import AFormElement from './AFormElement';
 import {IFormElementDesc, IFormParent} from '../interfaces';
 
@@ -14,7 +15,13 @@ export interface IFormInputTextDesc extends IFormElementDesc {
   /**
    * Additional options
    */
-  options?: {};
+  options?: {
+    /**
+     * input field type: text, number, email, ...
+     * @default text
+     */
+    type?: string;
+  };
 }
 
 export default class FormInputText extends AFormElement<IFormInputTextDesc> {
@@ -41,12 +48,20 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    */
   protected build() {
     super.build();
-    this.$input = this.$node.append('input').attr('type', 'text');
+    this.$input = this.$node.append('input').attr('type', (this.desc.options || {}).type || 'text');
     this.setAttributes(this.$input, this.desc.attributes);
+
+    if (this.desc.useSession) {
+      this.$input.property('value', session.retrieve(this.id + '_value', ''));
+    }
+
     this.handleShowIf();
 
     // propagate change action with the data of the selected option
     this.$input.on('change.propagate', () => {
+      if (this.desc.useSession) {
+        session.store(this.id+'_value', this.value);
+      }
       this.fire('change', this.value, this.$input);
     });
   }
@@ -56,7 +71,7 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    * @returns {string}
    */
   get value() {
-    return (<HTMLInputElement>this.$input.node()).value;
+    return this.$input.property('value');
   }
 
   /**
@@ -64,6 +79,6 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    * @param v
    */
   set value(v: string) {
-    (<HTMLInputElement>this.$input.node()).value = v;
+    this.$input.property('value', v);
   }
 }

@@ -17,6 +17,7 @@ $boostrapAssetDir: '~phovea_ui/src/assets';
 
 // extend with TargID specific rules
 @import "styles/base";
+@import "styles/utils";
 
 // styles for views
 @import "styles/select2";

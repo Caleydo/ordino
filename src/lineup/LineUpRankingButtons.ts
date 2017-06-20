@@ -4,10 +4,9 @@
 
 import {createStackDesc} from 'lineupjs/src/model';
 import * as d3 from 'd3';
-import {IDType} from 'phovea_core/src/idtype';
-import {IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
-import {generateDialog} from 'phovea_ui/src/dialogs';
-import {saveNamedSet} from '../storage';
+import {IDType, resolve} from 'phovea_core/src/idtype';
+import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
+import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
 
 export class LineUpRankingButtons extends EventHandler {
@@ -50,38 +49,27 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private saveRankingDialog(order: number[]) {
-    const dialog = generateDialog('Save Named Set');
-    dialog.body.innerHTML = `
-      <form id="namedset_form">
-        <div class="form-group">
-          <label for="namedset_name">Name</label>
-          <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required">
-        </div>
-        <div class="form-group">
-          <label for="namedset_description">Description</label>
-          <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description"></textarea>
-        </div>
-      </form>`;
-
-    const form = <HTMLFormElement>dialog.body.querySelector('#namedset_form');
-
-    form.onsubmit = () => {
-      const name = (<HTMLInputElement>dialog.body.querySelector('#namedset_name')).value;
-      const description = (<HTMLTextAreaElement>dialog.body.querySelector('#namedset_description')).value;
-
-      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description);
-
-      dialog.hide();
-      return false;
-    };
-
-    dialog.footer.innerHTML = `<button type="submit" form="namedset_form" class="btn btn-default btn-primary">Save</button>`;
-
-    dialog.onHide(() => {
-      dialog.destroy();
+    editDialog(null, (name, description, isPublic) => {
+      this.fire(LineUpRankingButtons.SAVE_NAMED_SET, order, name, description, isPublic);
     });
+  }
 
-    dialog.show();
+  static findScores(target: IDType) {
+    const all = listPlugins('ordinoScore');
+    const idTypes = Array.from(new Set<string>(all.map((d) => d.idtype)));
+
+    function canBeMappedTo(idtype: string) {
+      if (idtype === target.id) {
+        return true;
+      }
+      //lookup the targets and check if our target is part of it
+      return resolve(idtype).getCanBeMappedTo().then((mappables: IDType[]) => mappables.some((d) => d.id === target.id));
+    }
+    //check which idTypes can be mapped to the target one
+    return Promise.all(idTypes.map(canBeMappedTo)).then((mappable: boolean[]) => {
+      const valid = idTypes.filter((d, i) => mappable[i]);
+      return all.filter((d) => valid.indexOf(d.idtype) >= 0);
+    });
   }
 
   private appendMoreColumns() {
@@ -119,17 +107,18 @@ export class LineUpRankingButtons extends EventHandler {
         (<Event>d3.event).preventDefault();
       });
 
-    const ordinoScores = listPlugins('ordinoScore').filter((d: any) => d.idtype === this.idType.id);
-    $ul.selectAll('li.oscore').data(ordinoScores)
-      .enter()
-      .append('li').classed('oscore', true)
-      .append('a').attr('href', '#').text((d) => d.name)
-      .on('click', async (d) => {
-        (<Event>d3.event).preventDefault();
-        const p = await d.load();
-        const params = await Promise.resolve(p.factory(d, this.extraArgs));
-        this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
-      });
+    LineUpRankingButtons.findScores(this.idType).then((ordinoScores: IPluginDesc[]) => {
+      $ul.selectAll('li.oscore').data(ordinoScores)
+        .enter()
+        .append('li').classed('oscore', true)
+        .append('a').attr('href', '#').text((d) => d.name)
+        .on('click', async (d) => {
+          (<Event>d3.event).preventDefault();
+          const p = await d.load();
+          const params = await Promise.resolve(p.factory(d, this.extraArgs));
+          this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
+        });
+    });
   }
 
   private scoreColumnDialog(scorePlugin: IPlugin) {

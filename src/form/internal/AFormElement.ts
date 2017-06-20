@@ -25,6 +25,28 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
     this.id = desc.id;
   }
 
+  isRequired() {
+    return this.desc.required;
+  }
+
+  validate() {
+    if (!this.isVisible() || !this.isRequired()) {
+      return true;
+    }
+    const v = this.hasValue();
+    this.$node.classed('has-error', !v);
+    return v;
+  }
+
+  protected hasValue() {
+    return !!this.value;
+  }
+
+
+  isVisible() {
+    return !this.$node.classed('hidden');
+  }
+
   /**
    * Set the visibility of an form element
    * @param visible
@@ -57,6 +79,10 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
     Object.keys(attributes).forEach((key) => {
       $node.attr((key === 'clazz') ? 'class' : key, attributes[key]);
     });
+
+    if (this.desc.required) {
+      $node.attr('required', 'required');
+    }
   }
 
   protected handleShowIf() {

@@ -10,7 +10,7 @@ module.exports = function (registry) {
   // generator-phovea:begin
 
   registry.push('actionFactory', 'ordino', function () {
-    return System.import('./src/Targid');
+    return System.import('./src/cmds');
   }, {
     'factory': 'createCmd',
     'creates': '(targidCreateView|targidRemoveView|targidReplaceView|targidInitSession)'
@@ -22,7 +22,7 @@ module.exports = function (registry) {
  });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
-    return System.import('./src/Targid');
+    return System.import('./src/cmds');
   }, {
     'factory': 'compressCreateRemove',
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
@@ -57,13 +57,22 @@ module.exports = function (registry) {
     'matches': '(targidSetSelection)'
   });
 
-  registry.push('targidStartMenuSection', 'targid_session_start', function () {
+  registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
     return System.import('./src/SessionList');
   }, {
-    'name': 'Sessions',
-    'cssClass': 'targidSessionData',
-    'factory': 'create',
-    'priority': 100
+    name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
+    cssClass: 'targidSessionTemporaryData',
+    factory: 'createTemporary',
+    priority: 90
+  });
+
+  registry.push('targidStartMenuSection', 'targid_persistent_session', function () {
+    return System.import('./src/SessionList');
+  }, {
+    name: 'Persistent Sessions',
+    cssClass: 'targidSessionPersistentData',
+    factory: 'createPersistent',
+    priority: 95
   });
 
   registry.push('idTypeDetector', 'gene_idtype_detector', function () {

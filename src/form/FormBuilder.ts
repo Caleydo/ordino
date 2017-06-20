@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import {randomId} from 'phovea_core/src/index';
 import {IFormElement, IFormElementDesc} from './interfaces';
 import {create} from './internal';
+
 /**
  * Builds a form from a given collection of form elements
  */
@@ -18,12 +19,6 @@ export default class FormBuilder {
   private $node: d3.Selection<any>;
 
   /**
-   * Unique id for every form and all the form elements
-   * @type {string}
-   */
-  private readonly formId = randomId();
-
-  /**
    * Map of all appended form elements with the element id as key
    * @type {d3.Map<IFormElement>}
    */
@@ -33,8 +28,8 @@ export default class FormBuilder {
    * Constructor
    * @param $parent Node that the form should be attached to
    */
-  constructor($parent: d3.Selection<any>) {
-    this.$node = $parent.append('form');
+  constructor($parent: d3.Selection<any>, private readonly formId = randomId()) {
+    this.$node = $parent.append('form').attr('id', this.formId);
   }
 
   /**
@@ -77,10 +72,11 @@ export default class FormBuilder {
    * Returns an object with the form element id as key and the current data as value
    * @returns {{}}
    */
-  getElementData(): {[key: string]: any} {
-    const r: {[key: string]: any} = {};
+  getElementData(): { [key: string]: any } {
+    const r: { [key: string]: any } = {};
     this.elements.forEach((el, key) => {
-      r[key] = (el.value !== null && el.value.data !== undefined) ? el.value.data : el.value;
+      const value = el.value;
+      r[key] = (value !== null && value.data !== undefined) ? value.data : value;
     });
     return r;
   }
@@ -89,12 +85,22 @@ export default class FormBuilder {
    * Returns an object with the form element id as key and the current form element value
    * @returns {{}}
    */
-  getElementValues(): {[key: string]: any} {
-    const r: {[key: string]: any} = {};
+  getElementValues(): { [key: string]: any } {
+    const r: { [key: string]: any } = {};
     this.elements.forEach((el, key) => {
-      r[key] = el.value.value || el.value;
+      const value = el.value;
+      r[key] = value.value || value;
     });
     return r;
   }
 
+  /**
+   * validates the current form
+   * @returns {boolean} if valid
+   */
+  validate() {
+    return Array.from(this.elements.values())
+      .map((d) => d.validate()) // perform validation on each element (returns array of boolean values)
+      .every((d) => d); // return true if every validation was truthy
+  }
 }

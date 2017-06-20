@@ -1,6 +1,8 @@
 from phovea_server.ns import Namespace, request, abort
 from . import db
+from .utils import map_scores
 from phovea_server.util import jsonify
+from phovea_server.security import login_required
 import logging
 
 __author__ = 'Samuel Gratzl'
@@ -20,6 +22,7 @@ def _get_data(database, view_name, replacements=None):
 
 
 @app.route('/<database>/<view_name>')
+@login_required
 def get_data_api(database, view_name):
   r, view = _get_data(database, view_name)
 
@@ -59,11 +62,12 @@ def _replace_named_sets_in_ids(v):
   return list(union)
 
 
-def _replace_range_in_ids(v, id_type):
-  import phovea_server.plugin
+def _replace_range_in_ids(v, id_type, target_id_type):
+  from phovea_server.dataset import get_mappingmanager, get_idmanager
   from phovea_server.range import parse
 
-  manager = phovea_server.plugin.lookup('idmanager')
+  manager = get_idmanager()
+  mappingmanager = get_mappingmanager()
 
   union = set()
 
@@ -71,8 +75,15 @@ def _replace_range_in_ids(v, id_type):
     # convert named sets to the primary ids
     uids = parse(r)[0].tolist()
     ids = manager.unmap(uids, id_type)
-    for id in ids:
-      union.add(id)
+    if id_type != target_id_type:
+      # need to map the ids
+      mapped_ids = mappingmanager(id_type, target_id_type, ids)
+      for id in mapped_ids:
+        if id is not None and len(id) > 0:
+          union.add(id[0])  # just the first one for now
+    else:
+      for id in ids:
+        union.add(id)
 
   if isinstance(v, list):
     for vi in v:
@@ -82,16 +93,10 @@ def _replace_range_in_ids(v, id_type):
   return list(union)
 
 
-@app.route('/<database>/<view_name>/filter')
-def get_filtered_data(database, view_name):
-  config, _ = db.resolve(database)
-  # convert to index lookup
-  # row id start with 1
-  view = config.views[view_name]
+def _filter_logic(view):
   """
-  like the raw data but with special processing to compute the filter
-  :param database:
-  :param view_name:
+  parses the request arguments for filter
+  :param view:
   :return:
   """
   args = request.args
@@ -121,7 +126,7 @@ def get_filtered_data(database, view_name):
       id_type_and_key = k[7:]
       id_type = id_type_and_key[:id_type_and_key.index('4')]
       real_key = id_type_and_key[id_type_and_key.index('4') + 1:]  # remove the range4 part
-      ids = _replace_range_in_ids(v, id_type)
+      ids = _replace_range_in_ids(v, id_type, view.idtype)
       if real_key not in where_clause:
         where_clause[real_key] = ids
       else:
@@ -140,9 +145,27 @@ def get_filtered_data(database, view_name):
     sub_query = view.queries['filter_' + k] if 'filter_' + k in view.queries else k + ' %(operator)s %(value)s'
     return sub_query % dict(operator=operator, value=':' + kp)
 
-  where_clause = [to_clause(k, v) for k, v in where_clause.items()]
+  where_clause = [to_clause(k, v) for k, v in where_clause.items() if len(v) > 0]
   processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''
   processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
+
+  return processed_args, extra_args
+
+
+@app.route('/<database>/<view_name>/filter')
+@login_required
+def get_filtered_data(database, view_name):
+  """
+  version of getting data in which the arguments starting with `filter_` are used to build a where clause
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  # row id start with 1
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
 
   r, view = db.get_data(database, view_name, None, processed_args, extra_args)
 
@@ -151,7 +174,56 @@ def get_filtered_data(database, view_name):
   return jsonify(r)
 
 
+@app.route('/<database>/<view_name>/score')
+def get_score_data(database, view_name):
+  """
+  version of getting data like filter with additional mapping of score entries
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  # row id start with 1
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
+
+  r, view = db.get_data(database, view_name, None, processed_args, extra_args)
+
+  data_idtype = view.idtype
+  target_idtype = request.args.get('target', data_idtype)
+
+  if data_idtype != target_idtype:
+    mapped_scores = map_scores(r, data_idtype, target_idtype)
+  else:
+    mapped_scores = r
+
+  if request.args.get('_assignids', False):
+    mapped_scores = db.assign_ids(mapped_scores, target_idtype)
+  return jsonify(mapped_scores)
+
+
+@app.route('/<database>/<view_name>/count')
+@login_required
+def get_count_data(database, view_name):
+  """
+  similar to the /filter clause but returns the count of results instead of the rows itself
+  :param database:
+  :param view_name:
+  :return:
+  """
+  config, _ = db.resolve(database)
+  # convert to index lookup
+  view = config.views[view_name]
+  processed_args, extra_args = _filter_logic(view)
+
+  r = db.get_count(database, view_name, None, processed_args, extra_args)
+
+  return jsonify(r)
+
+
 @app.route('/<database>/<view_name>/namedset/<namedset_id>')
+@login_required
 def get_namedset_data(database, view_name, namedset_id):
   import storage
   namedset = storage.get_namedset_by_id(namedset_id)
@@ -167,12 +239,14 @@ def get_namedset_data(database, view_name, namedset_id):
 
 
 @app.route('/<database>/<view_name>/raw')
+@login_required
 def get_raw_data(database, view_name):
   r, _ = _get_data(database, view_name)
   return jsonify(r)
 
 
 @app.route('/<database>/<view_name>/raw/<col>')
+@login_required
 def get_raw_col_data(database, view_name, col):
   r, _ = _get_data(database, view_name)
   return jsonify([e[col] for e in r])
@@ -187,6 +261,7 @@ def _check_column(col, view):
 
 
 @app.route('/<database>/<view_name>/desc')
+@login_required
 def get_desc(database, view_name):
   config, engine = db.resolve(database)
   # convert to index lookup
@@ -219,6 +294,7 @@ def get_desc(database, view_name):
 
 
 @app.route('/<database>/<view_name>/search')
+@login_required
 def search(database, view_name):
   config, engine = db.resolve(database)
   view = config.views[view_name]
@@ -230,11 +306,13 @@ def search(database, view_name):
 
 
 @app.route('/<database>/<view_name>/match')
+@login_required
 def match(database, view_name):
   return search(database, view_name)
 
 
 @app.route('/<database>/<view_name>/lookup')
+@login_required
 def lookup(database, view_name):
   """
   Does the same job as search, but paginates the result set

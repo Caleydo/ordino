@@ -263,7 +263,7 @@ export class AEntryPointList implements IEntryPointList {
 
   protected data: INamedSet[] = [];
 
-  private extensionFilters: (p: {[key: string]: any}) => any;
+  private extensionFilters: (filterConfig: {[key: string]: any}) => boolean;
 
   constructor(protected readonly parent: HTMLElement, public readonly desc: IPluginDesc, protected readonly options: IEntryPointOptions) {
     this.$node = d3.select(parent);
@@ -309,8 +309,8 @@ export class AEntryPointList implements IEntryPointList {
 
         // execute extension filters
         const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
-        this.extensionFilters = function (f) {
-          return filters.every((filter) => filter.factory(f));
+        this.extensionFilters = function (filterConfig) {
+          return filters.every((filter) => filter.factory(filterConfig));
         };
 
 

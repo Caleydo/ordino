@@ -647,7 +647,7 @@ export class ViewWrapper extends EventHandler {
       this.$chooser.selectAll('button').classed('active', false);
     }
 
-    findViews(idtype, range).then(async (views) => {
+    findViews(idtype, range).then((views) => {
       const groups = new Map();
       views.forEach((elem) => {
         if(!elem.v.group) { // fallback category if none is present

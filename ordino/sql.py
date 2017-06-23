@@ -174,7 +174,8 @@ def get_filtered_data(database, view_name):
   return jsonify(r)
 
 
-@app.route('/<database>/<view_name>/score')
+@app.route('/<database>/<view_name>/score'
+@login_required
 def get_score_data(database, view_name):
   """
   version of getting data like filter with additional mapping of score entries

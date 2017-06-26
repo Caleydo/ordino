@@ -82,7 +82,7 @@ export class LineUpRankingButtons extends EventHandler {
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
-    columns.push(createStackDesc());
+    columns.push(createStackDesc('Weighted Sum'));
     $ul.selectAll('li.col').data(columns)
       .enter()
       .append('li').classed('col', true)

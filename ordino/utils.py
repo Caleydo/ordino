@@ -25,5 +25,7 @@ def map_scores(scores, from_idtype, to_idtype):
     if not mapped:
       continue
     for target_id in mapped:
-      mapped_scores.append(dict(id=target_id, score=score['score']))
+      clone = score.copy()
+      clone['id'] = target_id
+      mapped_scores.append(clone)
   return mapped_scores

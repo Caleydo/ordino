@@ -81,16 +81,17 @@ export default class Ordino extends ACLUEWrapper {
       size: 'sm'
     });
 
-    const graph = clueManager.list().then((graphs) => {
-      return clueManager.choose(graphs, true);
-    });
-    graph.catch((error: {graph: string}) => {
-      showProveanceGraphNotFoundDialog(clueManager, error.graph);
-    });
-
 
     const main = <HTMLElement>document.body.querySelector('main');
     main.classList.add('targid');
+
+    //wrapper around to better control when the graph will be resolved
+    let graphResolver: (graph: Promise<ProvenanceGraph>)=>void;
+    const graph = new Promise<ProvenanceGraph>((resolve, reject) => graphResolver = resolve);
+
+    graph.catch((error: {graph: string}) => {
+      showProveanceGraphNotFoundDialog(clueManager, error.graph);
+    });
 
     graph.then((graph) => {
       provenanceMenu.setGraph(graph);
@@ -106,10 +107,9 @@ export default class Ordino extends ACLUEWrapper {
       });
     });
 
-    graph.then((graph) => {
-      // create TargID app once the provenance graph is available
-      const targid = new Targid(graph, clueManager, main);
+    this.targid = graph.then((graph) => new Targid(graph, clueManager, main));
 
+    this.targid.then((targid) => {
       const startMenuNode = main.ownerDocument.createElement('div');
       main.appendChild(startMenuNode);
       startMenuNode.classList.add('startMenu');
@@ -118,12 +118,20 @@ export default class Ordino extends ACLUEWrapper {
       this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
       targid.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
       targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event:IEvent, idtype: IDType | string, namedSet: INamedSet) => startMenu.updateEntryPointList(idtype, namedSet));
+    });
 
-      const initSession = () => {
-        const hasInitScript = session.has(TargidConstants.NEW_ENTRY_POINT);
+    const initSession = () => {
+      //logged in, so we can resolve the graph for real
+      graphResolver(clueManager.list().then((graphs) => {
+        return clueManager.choose(graphs, true);
+      }));
 
-        if(graph.isEmpty && !hasInitScript) {
-          startMenu.open();
+      const hasInitScript = session.has(TargidConstants.NEW_ENTRY_POINT);
+      //wait till rest is initialized
+      this.targid.then((targid) => {
+        const graph = targid.graph;
+        if (graph.isEmpty && !hasInitScript) {
+          this.fire(Ordino.EVENT_OPEN_START_MENU);
         } else if (hasInitScript) {
           const {view, options, defaultSessionValues} = <any>session.retrieve(TargidConstants.NEW_ENTRY_POINT);
 
@@ -136,18 +144,22 @@ export default class Ordino extends ACLUEWrapper {
           //just if no other option applies jump to the stored state
           this.jumpToStoredOrLastState();
         }
-      };
-
-      // INITIAL LOGIC
-      loginMenu.on(LoginMenu.EVENT_LOGGED_IN, () => {
-        initSession();
       });
-      if (!isLoggedIn()) {
-        loginMenu.forceShowDialog();
-      } else {
-        initSession();
-      }
+    };
+
+    let forceShowLoginDialogTimeout: any = -1;
+    // INITIAL LOGIC
+    loginMenu.on(LoginMenu.EVENT_LOGGED_IN, () => {
+      clearTimeout(forceShowLoginDialogTimeout);
+      initSession();
     });
+    if (!isLoggedIn()) {
+      //wait 1sec before the showing the login dialog to give the auto login mechanism a chance
+      forceShowLoginDialogTimeout = setTimeout(() => loginMenu.forceShowDialog(), 1000);
+    } else {
+      initSession();
+    }
+
     return {graph, manager: clueManager, storyVis};
   }
 }

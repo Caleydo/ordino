@@ -12,18 +12,19 @@ jobs:
       - restore_cache:
           key: deps2-{{ .Branch }}-{{ checksum "package.json" }}
       - run:
-          command: |
-            npm install
+          name: install-npm-wee
+          command: npm install
       - save_cache:
           key: deps2-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
           - ./node_modules
       - run: #force update of dynamic dependencies
-          command: |
-            npm update
+          name: update-vcs-dependencies
+          command: npm update
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
       - run:
+          name: install-pip-wee
           command: |
             virtualenv ~/venv
             . ~/venv/bin/activate
@@ -34,10 +35,12 @@ jobs:
           paths:
           - ~/venv
       - run: #force update of VCS dependencies?
+          name: update-pip-vcs-dependencies
           command: |
             . ~/venv/bin/activate
             pip install --upgrade --upgrade-strategy=only-if-needed -r requirements.txt
       - run:
+          name: dist
           command: |
             . ~/venv/bin/activate
             npm run dist

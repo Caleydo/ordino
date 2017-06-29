@@ -18,6 +18,9 @@ jobs:
           key: deps2-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
           - ./node_modules
+      - run: #force update of dynamic dependencies
+          command: |
+            npm update
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
       - run:
@@ -30,6 +33,10 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
           paths:
           - ~/venv
+      - run: #force update of VCS dependencies?
+          command: |
+            . ~/venv/bin/activate
+            pip install --upgrade --upgrade-strategy=only-if-needed -r requirements.txt
       - run:
           command: |
             . ~/venv/bin/activate

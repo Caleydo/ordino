@@ -3,8 +3,8 @@
  */
 import {FormDialog} from 'phovea_ui/src/dialogs';
 import {randomId} from 'phovea_core/src';
-import FormBuilder from 'ordino/src/form/FormBuilder';
-import {IFormElementDesc} from 'ordino/src/form/interfaces';
+import FormBuilder from './FormBuilder';
+import {IFormElementDesc} from './interfaces';
 import {select} from 'd3';
 
 

@@ -11,7 +11,7 @@ import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
 import {IFormSelectOption} from './FormSelect';
 import {DEFAULT_OPTIONS, DEFAULT_AJAX_OPTIONS} from './FormSelect2';
 import {mixin} from 'phovea_core/src';
-import {IFormElement} from '../form';
+import {IFormElement} from '../';
 
 export interface ISubDesc {
   name: string;

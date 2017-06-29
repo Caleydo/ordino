@@ -240,11 +240,24 @@ export abstract class ALineUpView2 extends AView {
       diffAdded.forEach((id) => {
         this.getSelectionColumnDesc(id)
           .then((columnDesc) => {
-            //mark as lazy loaded
-            (<any>columnDesc).lazyLoaded = true;
-            this.withoutTracking(() => {
-              this.addColumn(columnDesc, this.loadSelectionColumnData.bind(this), id, true); // true == withoutTracking
-            });
+            const addColumn = (col, newColumnPromise) => {
+              //mark as lazy loaded
+              (<any>col).lazyLoaded = true;
+              this.withoutTracking(() => {
+                this.addColumn(col, newColumnPromise, id, true); // true == withoutTracking
+              });
+            };
+
+            // add multiple columns
+            if(Array.isArray(columnDesc)) {
+              const newColumns = this.loadSelectionColumnData.call(this, id);
+              newColumns.then((dataPromise) => {
+                columnDesc.forEach((col, i) => {
+                  addColumn(col, dataPromise[i]);
+                });
+              });
+            }
+            addColumn(columnDesc, this.loadSelectionColumnData.call(this, id));
           });
       });
     }
@@ -276,7 +289,7 @@ export abstract class ALineUpView2 extends AView {
     return stringCol(this.getSelectionColumnId(id), label, true, 50, id);
   }
 
-  protected addColumn(colDesc: any, loadColumnData: (id: number) => Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false): { col: Column, loaded: Promise<Column>} {
+  protected addColumn(colDesc: any, loadPromise: Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false): { col: Column, loaded: Promise<Column>} {
     const ranking = this.lineup.data.getLastRanking();
     const colors = this.getAvailableColumnColors(ranking);
 
@@ -287,7 +300,6 @@ export abstract class ALineUpView2 extends AView {
     provider.pushDesc(colDesc);
     const col = <ValueColumn<any>>this.lineup.data.push(ranking, colDesc);
 
-    const loadPromise = loadColumnData(id);
     // error handling
     loadPromise
       .catch(showErrorModalDialog)
@@ -359,7 +371,7 @@ export abstract class ALineUpView2 extends AView {
     return colors;
   }
 
-  protected loadSelectionColumnData(id: number): Promise<IScoreRow<any>[]> {
+  protected loadSelectionColumnData(id: number): Promise<IScoreRow<any>[]>|Promise<IScoreRow<any>[][]> {
     // hook
     return Promise.resolve([]);
   }
@@ -372,7 +384,7 @@ export abstract class ALineUpView2 extends AView {
     const loadScoreColumn = () => {
       return score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.rowIDType, this.extraComputeScoreParam());
     };
-    return this.addColumn(colDesc, loadScoreColumn);
+    return this.addColumn(colDesc, loadScoreColumn());
   }
 
   protected extraComputeScoreParam(): any {

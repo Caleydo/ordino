@@ -9,8 +9,8 @@ import {mixin} from 'phovea_core/src/index';
 import * as session from 'phovea_core/src/session';
 import {api2absURL} from 'phovea_core/src/ajax';
 import AFormElement from './AFormElement';
-import {IFormParent} from '../interfaces';
-import {IFormSelectDesc} from './FormSelect';
+import {IFormElement, IFormParent} from '../interfaces';
+import {IFormSelectDesc, IFormSelectOption} from './FormSelect';
 
 
 /**
@@ -22,6 +22,7 @@ export interface IFormSelect2 extends IFormSelectDesc {
    */
   options?: Select2Options & {
     return?: 'text'|'id';
+    onChange?: (selection: IFormSelectOption, formElement: IFormElement) => any
   };
 }
 
@@ -197,7 +198,7 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
   get value(): (ISelect2Option|string)|(ISelect2Option|string)[] {
     const returnValue = this.desc.options.return;
     const returnF = returnValue === 'id' ? (d) => d.id : (returnValue === 'text' ? (d) => d.text : (d) => d);
-    const data = this.$select.select2('data').map((d) => ({id: d.id, text: d.text})).map(returnF);
+    const data = this.$select.select2('data').map((d) => ({id: d.id, text: d.text, data: d.data? d.data : undefined})).map(returnF);
     if (this.multiple) {
       return data;
     } else if (data.length === 0) {

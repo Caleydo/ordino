@@ -240,24 +240,27 @@ export abstract class ALineUpView2 extends AView {
       diffAdded.forEach((id) => {
         this.getSelectionColumnDesc(id)
           .then((columnDesc) => {
-            const addColumn = (col, newColumnPromise) => {
+            const addColumn = (desc, newColumnPromise) => {
               //mark as lazy loaded
-              (<any>col).lazyLoaded = true;
+              (<any>desc).lazyLoaded = true;
               this.withoutTracking(() => {
-                this.addColumn(col, newColumnPromise, id, true); // true == withoutTracking
+                this.addColumn(desc, newColumnPromise, id, true); // true == withoutTracking
               });
             };
 
             // add multiple columns
             if(Array.isArray(columnDesc)) {
-              const newColumns = this.loadSelectionColumnData.call(this, id);
-              newColumns.then((dataPromise) => {
-                columnDesc.forEach((col, i) => {
-                  addColumn(col, dataPromise[i]);
+              if(columnDesc.length > 0) {
+                const newColumns = this.loadSelectionColumnData.call(this, id);
+                newColumns.then((dataPromise) => {
+                  columnDesc.forEach((desc, i) => {
+                    addColumn(desc, dataPromise[i]);
+                  });
                 });
-              });
+              }
+            } else {
+              addColumn(columnDesc, this.loadSelectionColumnData.call(this, id));
             }
-            addColumn(columnDesc, this.loadSelectionColumnData.call(this, id));
           });
       });
     }

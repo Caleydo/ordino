@@ -287,7 +287,7 @@ export abstract class ALineUpView2 extends AView {
     return Promise.resolve(`Selection ${id}`);
   }
 
-  protected async getSelectionColumnDesc(id) {
+  protected async getSelectionColumnDesc(id): Promise<any|any[]> {
     const label = await this.getSelectionColumnLabel(id);
     return stringCol(this.getSelectionColumnId(id), label, true, 50, id);
   }
@@ -374,7 +374,7 @@ export abstract class ALineUpView2 extends AView {
     return colors;
   }
 
-  protected loadSelectionColumnData(id: number): Promise<IScoreRow<any>[]>|Promise<IScoreRow<any>[][]> {
+  protected loadSelectionColumnData(id: number, desc?: any): Promise<IScoreRow<any>[]>|Promise<IScoreRow<any>[]>[] {
     // hook
     return Promise.resolve([]);
   }

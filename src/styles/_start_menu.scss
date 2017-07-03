@@ -143,7 +143,7 @@
           }
         }
 
-        > a.delete, > a.edit {
+        > a.delete, > a.edit, > a.public {
           visibility: hidden;
           opacity: 0;
           transition: background ease .2s, color ease .2s, opacity ease .4s;
@@ -159,7 +159,7 @@
         &:active,
         &:hover,
         &:focus {
-          > a.delete, > a.edit {
+          > a.delete, > a.edit, > a.public {
             visibility: visible;
             opacity: 1;
           }

@@ -393,29 +393,37 @@ export class AEntryPointList implements IEntryPointList {
             }
           });
 
+      const edit = (namedSet: IStoredNamedSet) => {
+        // prevent changing the hash (href)
+        (<Event>d3.event).preventDefault();
+
+        if (!canWrite(namedSet)) {
+          return;
+        }
+        editDialog(namedSet, async (name, description, isPublic) => {
+          const params = {
+            name,
+            description,
+            permissions: isPublic ? ALL_READ_READ: ALL_NONE_NONE
+          };
+
+          const editedSet = await editNamedSet(namedSet.id, params);
+          that.updateNamedSet(namedSet, editedSet);
+        });
+      };
+
+      enter.append('a')
+        .classed('public', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-fw" aria-hidden="true"></i> <span class="sr-only"></span>`)
+        .on('click', edit);
+
       enter.append('a')
         .classed('edit', true)
         .attr('href', '#')
         .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
         .attr('title', 'Edit')
-        .on('click', async (namedSet: IStoredNamedSet) => {
-            // prevent changing the hash (href)
-            (<Event>d3.event).preventDefault();
-
-            if (!canWrite(namedSet)) {
-              return;
-            }
-            editDialog(namedSet, async (name, description, isPublic) => {
-              const params = {
-                name,
-                description,
-                permissions: isPublic ? ALL_READ_READ: ALL_NONE_NONE
-              };
-
-              const editedSet = await editNamedSet(namedSet.id, params);
-              that.updateNamedSet(namedSet, editedSet);
-            });
-          });
+        .on('click', edit);
 
       enter.append('a')
         .classed('delete', true)
@@ -443,6 +451,12 @@ export class AEntryPointList implements IEntryPointList {
       options.select('a.goto').text((d) => d.name);
       options.select('a.delete').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
       options.select('a.edit').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
+      options.select('a.public')
+        .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d))
+        .html((d) => {
+          const isPublic = d.type === ENamedSetType.NAMEDSET && hasPermission(<IStoredNamedSet>d, EEntity.OTHERS);
+          return `<i class="fa ${isPublic ? 'fa-users': 'fa-users'}" aria-hidden="true"></i> <span class="sr-only"></span>`;
+        });
 
       options.exit().remove();
     });

@@ -15,7 +15,8 @@ export enum FormElementType {
   SELECT2_MULTIPLE,
   INPUT_TEXT,
   MAP,
-  BUTTON
+  BUTTON,
+  CHECKBOX
 }
 
 /**

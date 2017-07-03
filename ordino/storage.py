@@ -43,7 +43,7 @@ def get_namedsets():
 
 
 @app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE', 'PUT'])
-@ns.etag
+@etag
 def get_namedset(namedset_id):
   db = MongoClient(c.host, c.port)[c.database]
   result = list(db.namedsets.find(dict(id=namedset_id), {'_id': 0}))

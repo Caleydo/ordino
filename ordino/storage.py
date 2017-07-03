@@ -1,7 +1,7 @@
 import phovea_server.config
 from pymongo import MongoClient
 from pymongo.collection import ReturnDocument
-from phovea_server.ns import Namespace, request, abort
+from phovea_server.ns import Namespace, request, abort, etag
 from phovea_server.util import jsonify
 import phovea_server.security as security
 import phovea_server.range as ranges
@@ -15,6 +15,7 @@ app = Namespace(__name__)
 
 
 @app.route('/namedsets/', methods=['GET', 'POST'])
+@etag
 def get_namedsets():
   db = MongoClient(c.host, c.port)[c.database]
 
@@ -42,6 +43,7 @@ def get_namedsets():
 
 
 @app.route('/namedset/<namedset_id>', methods=['GET', 'DELETE', 'PUT'])
+@ns.etag
 def get_namedset(namedset_id):
   db = MongoClient(c.host, c.port)[c.database]
   result = list(db.namedsets.find(dict(id=namedset_id), {'_id': 0}))

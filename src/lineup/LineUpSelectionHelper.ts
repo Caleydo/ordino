@@ -20,6 +20,22 @@ export function array_diff<T>(array1: T[], array2: T[]) {
   return array1.filter((elm) => array2.indexOf(elm) === -1);
 }
 
+/**
+ * Returns all elements from set1 which are not in set2
+ * @param set1
+ * @param set2
+ * @returns Set<T>
+ */
+export function set_diff<T>(set1: Set<T>, set2: Set<T>) : Set<T> {
+  const diff = new Set();
+  set1.forEach((elem) => {
+    if(!set2.has(elem)) {
+      diff.add(elem);
+    }
+  });
+  return diff;
+}
+
 export class LineUpSelectionHelper extends EventHandler {
   static readonly SET_ITEM_SELECTION = 'setItemSelection';
 

@@ -18,7 +18,7 @@ import * as cmds from './cmds';
 import {saveNamedSet} from '../storage';
 import {showErrorModalDialog} from '../Dialogs';
 import {LineUpRankingButtons} from './LineUpRankingButtons';
-import {LineUpSelectionHelper, array_diff} from './LineUpSelectionHelper';
+import {LineUpSelectionHelper, array_diff, set_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout} from './desc';
 import {pushScoreAsync} from './scorecmds';
@@ -77,6 +77,10 @@ export abstract class ALineUpView2 extends AView {
 
   protected idAccessor = (d) => d._id;
 
+  /**
+   * Set which stores the selection id and the id of the column descriptions
+   */
+  private dynamicColumns: Set<string> = new Set();
 
   constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}) {
     super(context, parent, options);
@@ -138,6 +142,8 @@ export abstract class ALineUpView2 extends AView {
   }
 
   setParameter(name: string, value: any) {
+    const selectedIds = this.selection.range.dim(0).asList();
+    this.addDynamicColumns(selectedIds);
     return super.setParameter(name, value);
   }
 
@@ -221,6 +227,45 @@ export abstract class ALineUpView2 extends AView {
     this.handleSelectionColumnsImpl(selection);
   }
 
+  private addDynamicColumns(ids: number[]) {
+    ids.forEach((id) => {
+      this.getSelectionColumnDesc(id)
+        .then((columnDesc) => {
+          const addColumn = (desc, newColumnPromise) => {
+            //mark as lazy loaded
+            (<any>desc).lazyLoaded = true;
+            this.withoutTracking(() => {
+              this.addColumn(desc, newColumnPromise, id, true); // true == withoutTracking
+            });
+          };
+
+          // add multiple columns
+          if(Array.isArray(columnDesc)) {
+            if(columnDesc.length > 0) {
+              // Save which columns have been added for which element in the selection
+              const selectedElements = new Set(columnDesc.map((desc) => `${id}_${desc.subType.id}`));
+
+              // Check which items are new and should therefore be added
+              const addedParameters = set_diff(selectedElements, this.dynamicColumns);
+              addedParameters.forEach((value) => this.dynamicColumns.add(value));
+
+              // Filter the descriptions to only leave the new columns and load them
+              const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(`${id}_${desc.subType.id}`));
+              const newColumns = this.loadSelectionColumnData.call(this, id, columnsToBeAdded);
+
+              newColumns.then((dataPromise) => {
+                columnsToBeAdded.forEach((desc, i) => {
+                  addColumn(desc, dataPromise[i]);
+                });
+              });
+            }
+          } else {
+            addColumn(columnDesc, this.loadSelectionColumnData.call(this, id));
+          }
+        });
+    });
+  }
+
   protected handleSelectionColumnsImpl(selection: ISelection) {
     const selectedIds = selection.range.dim(0).asList();
 
@@ -237,32 +282,7 @@ export abstract class ALineUpView2 extends AView {
     // add new columns to the end
     if (diffAdded.length > 0) {
       //console.log('add columns', diffAdded);
-      diffAdded.forEach((id) => {
-        this.getSelectionColumnDesc(id)
-          .then((columnDesc) => {
-            const addColumn = (desc, newColumnPromise) => {
-              //mark as lazy loaded
-              (<any>desc).lazyLoaded = true;
-              this.withoutTracking(() => {
-                this.addColumn(desc, newColumnPromise, id, true); // true == withoutTracking
-              });
-            };
-
-            // add multiple columns
-            if(Array.isArray(columnDesc)) {
-              if(columnDesc.length > 0) {
-                const newColumns = this.loadSelectionColumnData.call(this, id);
-                newColumns.then((dataPromise) => {
-                  columnDesc.forEach((desc, i) => {
-                    addColumn(desc, dataPromise[i]);
-                  });
-                });
-              }
-            } else {
-              addColumn(columnDesc, this.loadSelectionColumnData.call(this, id));
-            }
-          });
-      });
+      this.addDynamicColumns(diffAdded);
     }
 
     // remove deselected columns

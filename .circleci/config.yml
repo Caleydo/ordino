@@ -14,13 +14,17 @@ jobs:
       - run:
           name: install-npm-wee
           command: npm install
+      - run: #remove all resolved github dependencies
+          name: delete-vcs-dependencies
+          command: |
+            (grep -l '._resolved.: .\(git\|github\|bitbucket\):' ./node_modules/*/package.json || true) | xargs -r dirname | xargs -r rm -rf
       - save_cache:
           key: deps2-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
           - ./node_modules
-      - run: #force update of dynamic dependencies
-          name: update-vcs-dependencies
-          command: npm update
+      - run: #install all dependencies
+          name: install-npm-wee2
+          command: npm install
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
       - run:

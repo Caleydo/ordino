@@ -229,16 +229,18 @@ export abstract class ALineUpView2 extends AView {
   }
 
   private addDynamicColumns(ids: number[]) {
+    const addColumn = (desc, newColumnPromise, id) => {
+      //mark as lazy loaded
+      (<any>desc).lazyLoaded = true;
+      this.withoutTracking(() => {
+        this.addColumn(desc, newColumnPromise, id, true); // true == withoutTracking
+      });
+    };
+
     ids.forEach((id) => {
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
-          const addColumn = (desc, newColumnPromise) => {
-            //mark as lazy loaded
-            (<any>desc).lazyLoaded = true;
-            this.withoutTracking(() => {
-              this.addColumn(desc, newColumnPromise, id, true); // true == withoutTracking
-            });
-          };
+
 
           // add multiple columns
           if(Array.isArray(columnDesc)) {
@@ -262,13 +264,13 @@ export abstract class ALineUpView2 extends AView {
                 // add new columns
                 newColumns.then((dataPromise) => {
                   columnsToBeAdded.forEach((desc, i) => {
-                    addColumn(desc, dataPromise[i]);
+                    addColumn(desc, dataPromise[i], id);
                   });
                 });
               }
             }
           } else { // single column
-            addColumn(columnDesc, this.loadSelectionColumnData.call(this, id));
+            addColumn(columnDesc, this.loadSelectionColumnData.call(this, id), id);
           }
         });
     });
@@ -282,20 +284,22 @@ export abstract class ALineUpView2 extends AView {
       }
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
-          const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
+          if(Array.isArray(columnDesc)) {
+            const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
 
-          // check which parameters are currently selected and get the IDs
-          const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.id));
+            // check which parameters are currently selected and get the IDs
+            const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.id));
 
-          // check which parameters have been removed
-          const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
+            // check which parameters have been removed
+            const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
 
-          if(removedParameters.size > 0) {
-            removedParameters.forEach((param) => {
-              this.dynamicColumns.get(id).delete(param);
-              const col = usedCols.find((d) => (<any>d.desc).selectionOptions.id === param);
-              ranking.remove(col);
-            });
+            if(removedParameters.size > 0) {
+              removedParameters.forEach((param) => {
+                this.dynamicColumns.get(id).delete(param);
+                const col = usedCols.find((d) => (<any>d.desc).selectionOptions.id === param);
+                ranking.remove(col);
+              });
+            }
           }
         });
     });
@@ -324,12 +328,9 @@ export abstract class ALineUpView2 extends AView {
     if (diffRemoved.length > 0) {
       this.withoutTracking(() => {
         //console.log('remove columns', diffRemoved);
-        this.removeDynamicColumns(diffRemoved);
 
-        // TODO: Refactor
         diffRemoved.forEach((id) => {
-          // select columns either with the selectedId or by using the colID (which is a combination of the selectionID and the SubType Parameter)
-          const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id || (<any>d.desc).selectionOptions !== undefined && (<any>d.desc).selectionOptions.id.indexOf(id) > -1);
+          const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id);
           cols.forEach((col) => ranking.remove(col));
         });
       });

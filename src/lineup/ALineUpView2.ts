@@ -248,7 +248,7 @@ export abstract class ALineUpView2 extends AView {
               }
 
               // Save which columns have been added for a specific element in the selection
-              const selectedElements = new Set(columnDesc.map((desc) => desc.selectionOptions.colID));
+              const selectedElements = new Set(columnDesc.map((desc) => desc.selectionOptions.id));
 
               // Check which items are new and should therefore be added as columns
               const addedParameters = set_diff(selectedElements, this.dynamicColumns.get(id));
@@ -256,7 +256,7 @@ export abstract class ALineUpView2 extends AView {
 
               if(addedParameters.size > 0) {
                 // Filter the descriptions to only leave the new columns and load them
-                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(desc.selectionOptions.colID));
+                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(desc.selectionOptions.id));
                 const newColumns = this.loadSelectionColumnData.call(this, id, columnsToBeAdded);
 
                 // add new columns
@@ -276,15 +276,16 @@ export abstract class ALineUpView2 extends AView {
 
   private removeDynamicColumns(ids: number[]) {
     const ranking = this.lineup.data.getLastRanking();
-    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
     ids.forEach((id) => {
       if(!this.dynamicColumns.has(id)) {
         return;
       }
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
+          const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
+
           // check which parameters are currently selected and get the IDs
-          const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.colID));
+          const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.id));
 
           // check which parameters have been removed
           const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
@@ -292,7 +293,7 @@ export abstract class ALineUpView2 extends AView {
           if(removedParameters.size > 0) {
             removedParameters.forEach((param) => {
               this.dynamicColumns.get(id).delete(param);
-              const col = usedCols.find((d) => (<any>d.desc).selectionOptions.colID === param);
+              const col = usedCols.find((d) => (<any>d.desc).selectionOptions.id === param);
               ranking.remove(col);
             });
           }
@@ -328,7 +329,7 @@ export abstract class ALineUpView2 extends AView {
         // TODO: Refactor
         diffRemoved.forEach((id) => {
           // select columns either with the selectedId or by using the colID (which is a combination of the selectionID and the SubType Parameter)
-          const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id || (<any>d.desc).selectionOptions !== undefined && (<any>d.desc).selectionOptions.colID.indexOf(id) > -1);
+          const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id || (<any>d.desc).selectionOptions !== undefined && (<any>d.desc).selectionOptions.id.indexOf(id) > -1);
           cols.forEach((col) => ranking.remove(col));
         });
       });

@@ -82,6 +82,13 @@ export abstract class ALineUpView2 extends AView {
    */
   private dynamicColumns: Map<number, Set<string>> = new Map();
 
+  /**
+   * Map that assigns each selection ID a color, which is used as color for columns
+   */
+  private colorMap: Map<number, string> = new Map();
+
+  private colors: string[];
+
   constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}) {
     super(context, parent, options);
 
@@ -228,7 +235,28 @@ export abstract class ALineUpView2 extends AView {
     this.handleSelectionColumnsImpl(selection);
   }
 
-  private addDynamicColumns(ids: number[]) {
+  private getColumnColor(id: number) : string {
+    let color = '';
+    if(!this.colorMap.has(id)) {
+      color = this.colors.shift();
+      this.colorMap.set(id, color);
+    } else {
+      color = this.colorMap.get(id);
+    }
+    return color;
+  }
+
+  private freeColumnColor(id: number) : void {
+    const color = this.colorMap.get(id);
+    if(color) {
+      this.colorMap.delete(id);
+      if(this.colors.indexOf(color) === -1) {
+        this.colors.unshift(color);
+      }
+    }
+  }
+
+  private addDynamicColumns(ids: number[]) : void {
     const addColumn = (desc, newColumnPromise, id) => {
       //mark as lazy loaded
       (<any>desc).lazyLoaded = true;
@@ -240,8 +268,6 @@ export abstract class ALineUpView2 extends AView {
     ids.forEach((id) => {
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
-
-
           // add multiple columns
           if(Array.isArray(columnDesc)) {
             if(columnDesc.length > 0) {
@@ -276,7 +302,7 @@ export abstract class ALineUpView2 extends AView {
     });
   }
 
-  private removeDynamicColumns(ids: number[]) {
+  private removeDynamicColumns(ids: number[]) : void {
     const ranking = this.lineup.data.getLastRanking();
     ids.forEach((id) => {
       if(!this.dynamicColumns.has(id)) {
@@ -285,6 +311,9 @@ export abstract class ALineUpView2 extends AView {
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
           if(Array.isArray(columnDesc)) {
+            if(columnDesc.length === 0) {
+              this.freeColumnColor(id);
+            }
             const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
 
             // check which parameters are currently selected and get the IDs
@@ -333,6 +362,7 @@ export abstract class ALineUpView2 extends AView {
           const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id);
           cols.forEach((col) => ranking.remove(col));
           this.dynamicColumns.set(id, new Set());
+          this.freeColumnColor(id);
         });
       });
     }
@@ -355,9 +385,9 @@ export abstract class ALineUpView2 extends AView {
 
   protected addColumn(colDesc: any, loadPromise: Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false): { col: Column, loaded: Promise<Column>} {
     const ranking = this.lineup.data.getLastRanking();
-    const colors = this.getAvailableColumnColors(ranking);
 
-    colDesc.color = colors.shift(); // get and remove color from list
+    colDesc.color = this.getColumnColor(id);
+
     const accessor = createAccessor(colDesc, this.idAccessor);
 
     const provider = <LocalDataProvider>this.lineup.data;
@@ -519,6 +549,7 @@ export abstract class ALineUpView2 extends AView {
     const rows = await this.loadRows();
     this.initRows(rows);
     this.initializedLineUp();
+    this.colors = this.getAvailableColumnColors();
     this.setBusy(false);
   }
 

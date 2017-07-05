@@ -332,6 +332,7 @@ export abstract class ALineUpView2 extends AView {
         diffRemoved.forEach((id) => {
           const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id);
           cols.forEach((col) => ranking.remove(col));
+          this.dynamicColumns.set(id, new Set());
         });
       });
     }

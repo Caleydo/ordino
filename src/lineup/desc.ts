@@ -7,7 +7,7 @@ import {extent} from 'd3';
 import {IAnyVector} from 'phovea_core/src/vector';
 import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_INT} from 'phovea_core/src/datatype';
 
-export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, subType?: any) {
+export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
   return {
     type: 'number',
     column: col,
@@ -17,11 +17,11 @@ export function numberCol(col: string, rows: any[], label = col, visible = true,
     visible,
     width,
     selectedId,
-    subType
+    selectionOptions
   };
 }
 
-export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, subType?: any) {
+export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
   return {
     type: 'number',
     column: col,
@@ -31,11 +31,11 @@ export function numberCol2(col: string, min: number, max: number, label = col, v
     visible,
     width,
     selectedId,
-    subType
+    selectionOptions
   };
 }
 
-export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, subType?: any) {
+export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
   return {
     type: 'categorical',
     column: col,
@@ -45,11 +45,11 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
     visible,
     width,
     selectedId,
-    subType
+    selectionOptions
   };
 }
 
-export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, subType?: any) {
+export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
   return {
     type: 'string',
     column: col,
@@ -58,11 +58,11 @@ export function stringCol(col: string, label = col, visible = true, width = -1, 
     visible,
     width,
     selectedId,
-    subType
+    selectionOptions
   };
 }
 
-export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, subType?: any) {
+export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
   return {
     type: 'boolean',
     column: col,
@@ -71,7 +71,7 @@ export function booleanCol(col: string, label = col, visible = true, width = -1,
     visible,
     width,
     selectedId,
-    subType
+    selectionOptions
   };
 }
 

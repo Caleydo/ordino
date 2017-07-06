@@ -302,35 +302,43 @@ export abstract class ALineUpView2 extends AView {
     });
   }
 
-  private removeDynamicColumns(ids: number[]) : void {
+  private removeDynamicColumns(ids: number[], removeAll: boolean = false) : void {
     const ranking = this.lineup.data.getLastRanking();
     ids.forEach((id) => {
       if(!this.dynamicColumns.has(id)) {
         return;
       }
-      this.getSelectionColumnDesc(id)
-        .then((columnDesc) => {
-          if(Array.isArray(columnDesc)) {
-            if(columnDesc.length === 0) {
-              this.freeColumnColor(id);
+      if(removeAll) {
+        const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1);
+        const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id);
+        cols.forEach((col) => ranking.remove(col));
+        this.dynamicColumns.set(id, new Set());
+        this.freeColumnColor(id);
+      } else {
+        this.getSelectionColumnDesc(id)
+          .then((columnDesc) => {
+            if(Array.isArray(columnDesc)) {
+              if(columnDesc.length === 0) {
+                this.freeColumnColor(id);
+              }
+              const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
+
+              // check which parameters are currently selected and get the IDs
+              const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.id));
+
+              // check which parameters have been removed
+              const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
+
+              if(removedParameters.size > 0) {
+                removedParameters.forEach((param) => {
+                  this.dynamicColumns.get(id).delete(param);
+                  const col = usedCols.find((d) => (<any>d.desc).selectionOptions.id === param);
+                  ranking.remove(col);
+                });
+              }
             }
-            const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
-
-            // check which parameters are currently selected and get the IDs
-            const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.id));
-
-            // check which parameters have been removed
-            const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
-
-            if(removedParameters.size > 0) {
-              removedParameters.forEach((param) => {
-                this.dynamicColumns.get(id).delete(param);
-                const col = usedCols.find((d) => (<any>d.desc).selectionOptions.id === param);
-                ranking.remove(col);
-              });
-            }
-          }
-        });
+          });
+      }
     });
   }
 
@@ -357,13 +365,7 @@ export abstract class ALineUpView2 extends AView {
     if (diffRemoved.length > 0) {
       this.withoutTracking(() => {
         //console.log('remove columns', diffRemoved);
-
-        diffRemoved.forEach((id) => {
-          const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id);
-          cols.forEach((col) => ranking.remove(col));
-          this.dynamicColumns.set(id, new Set());
-          this.freeColumnColor(id);
-        });
+        this.removeDynamicColumns(diffRemoved, true);
       });
     }
   }

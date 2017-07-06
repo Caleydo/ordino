@@ -408,7 +408,7 @@ export abstract class ALineUpView2 extends AView {
     // map selection rows
       .then((rows: IScoreRow<any>[]) => {
         if (id !== -1) {
-          return this.mapSelectionRows(rows);
+          return this.mapSelectionRows(rows, colDesc);
         }
         return rows;
       })
@@ -450,7 +450,7 @@ export abstract class ALineUpView2 extends AView {
     return {col, loaded};
   }
 
-  protected mapSelectionRows(rows: IScoreRow<any>[]) {
+  protected mapSelectionRows(rows: IScoreRow<any>[], colDesc?: any) {
     // hook
     return rows;
   }

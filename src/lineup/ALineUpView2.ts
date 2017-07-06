@@ -269,12 +269,11 @@ export abstract class ALineUpView2 extends AView {
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
           // add multiple columns
+          if(!this.dynamicColumns.has(id)) {
+            this.dynamicColumns.set(id, new Set());
+          }
           if(Array.isArray(columnDesc)) {
             if(columnDesc.length > 0) {
-              if(!this.dynamicColumns.has(id)) {
-               this.dynamicColumns.set(id, new Set());
-              }
-
               // Save which columns have been added for a specific element in the selection
               const selectedElements = new Set(columnDesc.map((desc) => desc.selectionOptions.id));
 

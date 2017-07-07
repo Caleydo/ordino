@@ -20,7 +20,7 @@ import {showErrorModalDialog} from '../Dialogs';
 import {LineUpRankingButtons} from './LineUpRankingButtons';
 import {LineUpSelectionHelper, array_diff, set_diff} from './LineUpSelectionHelper';
 import IScore, {IScoreRow, createAccessor} from './IScore';
-import {stringCol, useDefaultLayout} from './desc';
+import {stringCol, useDefaultLayout, IAdditionalColumnDesc} from './desc';
 import {pushScoreAsync} from './scorecmds';
 
 export abstract class ALineUpView2 extends AView {
@@ -257,7 +257,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   private addDynamicColumns(ids: number[]) : void {
-    const addColumn = (desc, newColumnPromise, id) => {
+    const addColumn = (desc: IAdditionalColumnDesc, newColumnPromise: Promise<IScoreRow<any>[]>, id: number) => {
       //mark as lazy loaded
       (<any>desc).lazyLoaded = true;
       this.withoutTracking(() => {
@@ -275,7 +275,7 @@ export abstract class ALineUpView2 extends AView {
           if(Array.isArray(columnDesc)) {
             if(columnDesc.length > 0) {
               // Save which columns have been added for a specific element in the selection
-              const selectedElements = new Set(columnDesc.map((desc) => desc.selectionOptions.id));
+              const selectedElements = new Set(columnDesc.map((desc) => desc.selectionOptions));
 
               // Check which items are new and should therefore be added as columns
               const addedParameters = set_diff(selectedElements, this.dynamicColumns.get(id));
@@ -283,8 +283,8 @@ export abstract class ALineUpView2 extends AView {
 
               if(addedParameters.size > 0) {
                 // Filter the descriptions to only leave the new columns and load them
-                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(desc.selectionOptions.id));
-                const newColumns = this.loadSelectionColumnData.call(this, id, columnsToBeAdded);
+                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(desc.selectionOptions));
+                const newColumns: any = this.loadSelectionColumnData(id, columnsToBeAdded);
 
                 // add new columns
                 newColumns.then((dataPromise) => {
@@ -295,7 +295,7 @@ export abstract class ALineUpView2 extends AView {
               }
             }
           } else { // single column
-            addColumn(columnDesc, this.loadSelectionColumnData.call(this, id), id);
+            addColumn(columnDesc, <Promise<IScoreRow<any>[]>>this.loadSelectionColumnData(id), id);
           }
         });
     });
@@ -323,7 +323,7 @@ export abstract class ALineUpView2 extends AView {
               const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
 
               // check which parameters are currently selected and get the IDs
-              const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions.id));
+              const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions));
 
               // check which parameters have been removed
               const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
@@ -331,7 +331,7 @@ export abstract class ALineUpView2 extends AView {
               if(removedParameters.size > 0) {
                 removedParameters.forEach((param) => {
                   this.dynamicColumns.get(id).delete(param);
-                  const col = usedCols.find((d) => (<any>d.desc).selectionOptions.id === param);
+                  const col = usedCols.find((d) => (<any>d.desc).selectionOptions === param);
                   ranking.remove(col);
                 });
               }

@@ -7,7 +7,12 @@ import {extent} from 'd3';
 import {IAnyVector} from 'phovea_core/src/vector';
 import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_INT} from 'phovea_core/src/datatype';
 
-export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
+export interface IAdditionalColumnDesc extends IColumnDesc {
+  selectedId: number;
+  selectedOptions?: any;
+}
+
+export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
   return {
     type: 'number',
     column: col,
@@ -21,7 +26,7 @@ export function numberCol(col: string, rows: any[], label = col, visible = true,
   };
 }
 
-export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
+export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
   return {
     type: 'number',
     column: col,
@@ -35,7 +40,7 @@ export function numberCol2(col: string, min: number, max: number, label = col, v
   };
 }
 
-export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
+export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
   return {
     type: 'categorical',
     column: col,
@@ -49,7 +54,7 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
   };
 }
 
-export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
+export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions: string = undefined) {
   return {
     type: 'string',
     column: col,
@@ -62,7 +67,7 @@ export function stringCol(col: string, label = col, visible = true, width = -1, 
   };
 }
 
-export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions = undefined) {
+export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
   return {
     type: 'boolean',
     column: col,

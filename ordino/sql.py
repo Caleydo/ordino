@@ -327,7 +327,7 @@ def lookup(database, view_name):
     return jsonify(r)
 
   page = request.args.get('page', None)
-  limit = 30  # or 'all'
+  limit = request.args.get('limit', 30)  # or 'all'
   offset = 0
   if page is not None:
     try:

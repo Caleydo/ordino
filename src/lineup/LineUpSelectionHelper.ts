@@ -27,7 +27,7 @@ export function array_diff<T>(array1: T[], array2: T[]) {
  * @returns Set<T>
  */
 export function set_diff<T>(set1: Set<T>, set2: Set<T>) : Set<T> {
-  const diff = new Set();
+  const diff = new Set<T>();
   set1.forEach((elem) => {
     if(!set2.has(elem)) {
       diff.add(elem);

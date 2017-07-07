@@ -11,6 +11,7 @@ import * as cmode from 'phovea_clue/src/mode';
 import {create as createProvVis} from 'phovea_clue/src/provvis';
 import LoginMenu from 'phovea_clue/src/menu/LoginMenu';
 import {isLoggedIn} from 'phovea_core/src/security';
+
 export {default as CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 import EditProvenanceGraphMenu from './EditProvenanceGraphMenu';
@@ -40,7 +41,7 @@ export abstract class AOrdino<T> extends ACLUEWrapper {
     this.build(document.body, {replaceBody: false});
   }
 
-  protected buildImpl(body: HTMLElement): {graph: Promise<ProvenanceGraph>, storyVis: Promise<VerticalStoryVis>, manager: CLUEGraphManager} {
+  protected buildImpl(body: HTMLElement): { graph: Promise<ProvenanceGraph>, storyVis: Promise<VerticalStoryVis>, manager: CLUEGraphManager } {
     //create the common header
     const headerOptions = {
       showOptionsLink: true, // always activate options
@@ -70,7 +71,7 @@ export abstract class AOrdino<T> extends ACLUEWrapper {
       insertIntoHeader: true,
       loginForm: this.options.loginForm
     });
-    loginMenu.on(LoginMenu.EVENT_LOGGED_OUT, ()=> {
+    loginMenu.on(LoginMenu.EVENT_LOGGED_OUT, () => {
       // reopen after logged out
       loginMenu.forceShowDialog();
     });
@@ -85,13 +86,12 @@ export abstract class AOrdino<T> extends ACLUEWrapper {
 
 
     const main = <HTMLElement>document.body.querySelector('main');
-    main.classList.add('targid');
 
     //wrapper around to better control when the graph will be resolved
-    let graphResolver: (graph: Promise<ProvenanceGraph>)=>void;
+    let graphResolver: (graph: Promise<ProvenanceGraph>) => void;
     const graph = new Promise<ProvenanceGraph>((resolve, reject) => graphResolver = resolve);
 
-    graph.catch((error: {graph: string}) => {
+    graph.catch((error: { graph: string }) => {
       showProveanceGraphNotFoundDialog(clueManager, error.graph);
     });
 
@@ -136,7 +136,8 @@ export abstract class AOrdino<T> extends ACLUEWrapper {
     return {graph, manager: clueManager, storyVis};
   }
 
-  protected abstract createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<T>|T;
+  protected abstract createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<T> | T;
+
   protected abstract initSessionImpl(app: T);
 }
 

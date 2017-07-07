@@ -14,12 +14,14 @@ import TargidConstants from './constants';
 import Targid from './Targid';
 import {initSession as initSessionCmd} from './cmds';
 import {AOrdino, IOrdinoOptions} from './AOrdino';
+
 export {IOrdinoOptions, CLUEGraphManager} from './AOrdino';
 
 export default class Ordino extends AOrdino<Targid> {
 
   protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
-     const targid = new Targid(graph, manager, main);
+    main.classList.add('targid');
+    const targid = new Targid(graph, manager, main);
 
     const startMenuNode = main.ownerDocument.createElement('div');
     main.appendChild(startMenuNode);
@@ -28,7 +30,7 @@ export default class Ordino extends AOrdino<Targid> {
 
     this.on(AOrdino.EVENT_OPEN_START_MENU, () => startMenu.open());
     targid.on(AOrdino.EVENT_OPEN_START_MENU, () => startMenu.open());
-    targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event:IEvent, idtype: IDType | string, namedSet: INamedSet) => startMenu.updateEntryPointList(idtype, namedSet));
+    targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event: IEvent, idtype: IDType | string, namedSet: INamedSet) => startMenu.updateEntryPointList(idtype, namedSet));
     return targid;
   }
 

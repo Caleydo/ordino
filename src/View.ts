@@ -24,7 +24,7 @@ export interface IViewPluginDesc extends IPluginDesc {
   mockup?: boolean;
 }
 
-function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
+export function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
   const r : any = p;
   r.selection = r.selection || 'none';
   return r;
@@ -52,7 +52,7 @@ export function matchLength(s: any, length: number) {
   }
 }
 
-function showAsSmallMultiple(desc: any) {
+export function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
 }
 
@@ -265,9 +265,14 @@ export abstract class ASmallMultipleView extends AView {
   }
 }
 
+interface IParameterAble {
+  getParameter(name: string): any;
+  setParameterImpl(name: string, value: any);
+}
+
 
 export async function setParameterImpl(inputs:IObjectRef<any>[], parameter, graph:ProvenanceGraph) {
-  const view: ViewWrapper = await inputs[0].v;
+  const view: IParameterAble = await inputs[0].v;
   const name = parameter.name;
   const value = parameter.value;
 
@@ -277,7 +282,7 @@ export async function setParameterImpl(inputs:IObjectRef<any>[], parameter, grap
     inverse: setParameter(inputs[0], name, bak)
   };
 }
-export function setParameter(view:IObjectRef<ViewWrapper>, name: string, value: any) {
+export function setParameter(view:IObjectRef<IParameterAble>, name: string, value: any) {
   //assert view
   return action(meta('Set Parameter "'+name+'"', cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
     name,
@@ -327,7 +332,7 @@ export function createCmd(id):ICmdFunction {
   return null;
 }
 
-function isSameSelection(a: ISelection, b: ISelection) {
+export function isSameSelection(a: ISelection, b: ISelection) {
   const aNull = (a === null || a.idtype === null);
   const bNull = (b === null || b.idtype === null);
   if (aNull || bNull) {

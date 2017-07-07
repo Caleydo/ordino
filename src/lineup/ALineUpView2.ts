@@ -308,9 +308,8 @@ export abstract class ALineUpView2 extends AView {
         return;
       }
       if(removeAll) {
-        const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1);
-        const cols = usedCols.filter((d) => (<any>d.desc).selectedId === id);
-        cols.forEach((col) => ranking.remove(col));
+        const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1 && (<any>d.desc).selectedId === id);
+        usedCols.forEach((col) => ranking.remove(col));
         this.dynamicColumns.set(id, new Set());
         this.freeColumnColor(id);
       } else {

@@ -6,17 +6,13 @@
 
 
 $boostrapAssetDir: '~phovea_ui/src/assets';
-// instead: import the CLUE styles separately
-@import "~phovea_clue/src/styles/base";
-@import "~phovea_clue/src/styles/annotation";
-@import "~phovea_clue/src/styles/provvis";
-@import "~phovea_clue/src/styles/storyvis";
 
 // then: override CLUE specific rules
 @import "styles/clue_override";
 
 // extend with TargID specific rules
 @import "styles/base";
+@import "styles/targid";
 @import "styles/utils";
 
 // styles for views

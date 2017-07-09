@@ -326,17 +326,9 @@ def lookup(database, view_name):
     r = dict(total_count=0, items=[])
     return jsonify(r)
 
-  page = request.args.get('page', None)
-  limit = request.args.get('limit', 30)  # or 'all'
-  offset = 0
-  if page is not None:
-    try:
-      page = int(page)
-      if isinstance(page, int) and page > 0:
-        offset = (page - 1) * limit
-    except:
-      pass
-
+  page = int(request.args.get('page', 1))
+  limit = int(request.args.get('limit', 30))  # or 'all'
+  offset = (page - 1) * limit
   # 'query': '%' + request.args['query'] + '%'
   arguments = dict(query='%' + str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
 

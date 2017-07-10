@@ -142,8 +142,13 @@ def _filter_logic(view):
       extra_args[kp] = tuple(v)
       operator = 'IN'
     # find the sub query to replace, can be injected for more complex filter operations based on the input
-    sub_query = view.queries['filter_' + k] if 'filter_' + k in view.queries else k + ' %(operator)s %(value)s'
+    sub_query = view.get_filter_subquery(k)
     return sub_query % dict(operator=operator, value=':' + kp)
+
+  for key in where_clause.keys():
+    if not view.is_valid_filter(key):
+      _log.warn('invalid filter key detected for view "%s" and key "%s"', view.query, key)
+      del where_clause[key]
 
   where_clause = [to_clause(k, v) for k, v in where_clause.items() if len(v) > 0]
   processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''

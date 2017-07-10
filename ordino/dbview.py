@@ -8,8 +8,27 @@ class DBView(object):
     self.queries = {}
     self.columns = {}
     self.replacements = []
+    self.valid_replacements = {}
     self.arguments = []
+    self.filters = {}
 
+  def is_valid_filter(self, key):
+    return not self.filters or key in self.filters
+
+  def get_filter_subquery(self, key):
+    if key in self.filters and self.filters[key] is not None:
+      return self.filters[key]
+    if ('filter_' + key) in self.queries:  # compatibility
+      return self.queries['filter_' + key]
+    return key + ' %(operator)s %(value)s'
+
+  def is_valid_replacement(self, key, value):
+    if not self.valid_replacements:
+      return True
+    return key not in self.valid_replacements or value in self.valid_replacements[key]
+
+  def is_valid_argument(self, key):
+    return key in self.arguments
 
 class DBViewBuilder(object):
   def __init__(self):
@@ -22,6 +41,8 @@ class DBViewBuilder(object):
     self.v.columns = view.columns.copy()
     self.v.replacements = list(view.replacements)
     self.v.arguments = list(view.arguments)
+    self.v.filters = view.filters.copy()
+    self.v.valid_replacements = view.valid_replacements.copy()
     return self
 
   def idtype(self, idtype):
@@ -34,6 +55,10 @@ class DBViewBuilder(object):
       self.v.query = query
     else:
       self.v.queries[label] = query
+    return self
+
+  def filter(self, key, replacement=None):
+    self.v.filters[key] = replacement
     return self
 
   def append(self, label, query=None):
@@ -62,8 +87,10 @@ class DBViewBuilder(object):
     self.v.replacements = replacements
     return self
 
-  def replace(self, replace):
+  def replace(self, replace, valid_replacements=None):
     self.v.replacements.append(replace)
+    if valid_replacements is not None:
+      self.v.valid_replacements[replace] = valid_replacements
     return self
 
   def arguments(self, arguments):

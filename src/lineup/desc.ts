@@ -9,7 +9,7 @@ import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_I
 
 export interface IAdditionalColumnDesc extends IColumnDesc {
   selectedId: number;
-  selectedOptions?: any;
+  selectionOptions?: string;
 }
 
 export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
@@ -54,7 +54,7 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
   };
 }
 
-export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions: string = undefined) {
+export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
   return {
     type: 'string',
     column: col,

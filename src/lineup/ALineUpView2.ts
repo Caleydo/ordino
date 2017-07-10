@@ -78,11 +78,6 @@ export abstract class ALineUpView2 extends AView {
   protected idAccessor = (d) => d._id;
 
   /**
-   * Map that keeps track of the columns being added or removed from detail views which can add multiple columns by setting different parameters
-   */
-  private dynamicColumns: Map<number, Set<string>> = new Map();
-
-  /**
    * Map that assigns each selection ID a color, which is used as color for columns
    */
   private colorMap: Map<number, string> = new Map();
@@ -257,6 +252,10 @@ export abstract class ALineUpView2 extends AView {
   }
 
   private addDynamicColumns(ids: number[]) : void {
+    const ranking = this.lineup.data.getLastRanking();
+    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
+    const dynamicColumnIDs = new Set<string>(usedCols.map((col) => `${(<any>col.desc).selectedId}_${(<any>col.desc).selectionOptions}`));
+
     const addColumn = (desc: IAdditionalColumnDesc, newColumnPromise: Promise<IScoreRow<any>[]>, id: number) => {
       //mark as lazy loaded
       (<any>desc).lazyLoaded = true;
@@ -269,21 +268,17 @@ export abstract class ALineUpView2 extends AView {
       this.getSelectionColumnDesc(id)
         .then((columnDesc) => {
           // add multiple columns
-          if(!this.dynamicColumns.has(id)) {
-            this.dynamicColumns.set(id, new Set());
-          }
           if(Array.isArray(columnDesc)) {
             if(columnDesc.length > 0) {
               // Save which columns have been added for a specific element in the selection
-              const selectedElements = new Set(columnDesc.map((desc) => desc.selectionOptions));
+              const selectedElements = new Set<string>(columnDesc.map((desc) => `${id}_${desc.selectionOptions}`));
 
               // Check which items are new and should therefore be added as columns
-              const addedParameters = set_diff(selectedElements, this.dynamicColumns.get(id));
-              addedParameters.forEach((value) => this.dynamicColumns.get(id).add(value));
+              const addedParameters = set_diff(selectedElements, dynamicColumnIDs);
 
               if(addedParameters.size > 0) {
                 // Filter the descriptions to only leave the new columns and load them
-                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(desc.selectionOptions));
+                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(`${id}_${desc.selectionOptions}`));
                 const newColumns: any = this.loadSelectionColumnData(id, columnsToBeAdded);
 
                 // add new columns
@@ -303,14 +298,16 @@ export abstract class ALineUpView2 extends AView {
 
   private removeDynamicColumns(ids: number[], removeAll: boolean = false) : void {
     const ranking = this.lineup.data.getLastRanking();
+    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
+
+    // get available all current subtypes from lineup
+    const dynamicColumnSubtypes = new Set<string>(usedCols.map((col) => (<any>col.desc).selectionOptions));
+
     ids.forEach((id) => {
-      if(!this.dynamicColumns.has(id)) {
-        return;
-      }
       if(removeAll) {
         const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1 && (<any>d.desc).selectedId === id);
+
         usedCols.forEach((col) => ranking.remove(col));
-        this.dynamicColumns.set(id, new Set());
         this.freeColumnColor(id);
       } else {
         this.getSelectionColumnDesc(id)
@@ -319,19 +316,16 @@ export abstract class ALineUpView2 extends AView {
               if(columnDesc.length === 0) {
                 this.freeColumnColor(id);
               }
-              const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
-
-              // check which parameters are currently selected and get the IDs
+              // get currently selected subtypes
               const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions));
 
               // check which parameters have been removed
-              const removedParameters = set_diff(this.dynamicColumns.get(id), selectedElements);
+              const removedParameters = set_diff(dynamicColumnSubtypes, selectedElements);
 
               if(removedParameters.size > 0) {
                 removedParameters.forEach((param) => {
-                  this.dynamicColumns.get(id).delete(param);
-                  const col = usedCols.find((d) => (<any>d.desc).selectionOptions === param);
-                  ranking.remove(col);
+                  const cols = usedCols.filter((d) => (<any>d.desc).selectionOptions === param);
+                  cols.forEach((col) => ranking.remove(col));
                 });
               }
             }

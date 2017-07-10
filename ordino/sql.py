@@ -280,9 +280,9 @@ def lookup(database, view_name):
   # replace with wildcard version
   arguments['query'] = '%' + str(request.args.get('query', '')).lower() + '%'
 
-  page = int(request.args.get('page', 1))
+  page = int(request.args.get('page', 0))  # zero based
   limit = int(request.args.get('limit', 30))  # or 'all'
-  offset = (page - 1) * limit
+  offset = page * limit
   # add 1 for checking if we have more
   replacements = dict(limit=limit + 1, offset=offset)
 

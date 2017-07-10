@@ -79,7 +79,11 @@ class DBViewBuilder(object):
 
   def filters(self, *keys):
     for key in keys:
-      self.v.filters[key] = None
+      if isinstance(key, list):
+        for kkey in key:
+          self.v.filters[kkey] = None
+      else:
+        self.v.filters[key] = None
     return self
 
   def filter(self, key, replacement=None):

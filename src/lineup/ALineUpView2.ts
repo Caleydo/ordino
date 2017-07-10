@@ -253,8 +253,8 @@ export abstract class ALineUpView2 extends AView {
 
   private addDynamicColumns(ids: number[]) : void {
     const ranking = this.lineup.data.getLastRanking();
-    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
-    const dynamicColumnIDs = new Set<string>(usedCols.map((col) => `${(<any>col.desc).selectedId}_${(<any>col.desc).selectionOptions}`));
+    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectedSubtype !== undefined);
+    const dynamicColumnIDs = new Set<string>(usedCols.map((col) => `${(<any>col.desc).selectedId}_${(<any>col.desc).selectedSubtype}`));
 
     const addColumn = (desc: IAdditionalColumnDesc, newColumnPromise: Promise<IScoreRow<any>[]>, id: number) => {
       //mark as lazy loaded
@@ -271,14 +271,14 @@ export abstract class ALineUpView2 extends AView {
           if(Array.isArray(columnDesc)) {
             if(columnDesc.length > 0) {
               // Save which columns have been added for a specific element in the selection
-              const selectedElements = new Set<string>(columnDesc.map((desc) => `${id}_${desc.selectionOptions}`));
+              const selectedElements = new Set<string>(columnDesc.map((desc) => `${id}_${desc.selectedSubtype}`));
 
               // Check which items are new and should therefore be added as columns
               const addedParameters = set_diff(selectedElements, dynamicColumnIDs);
 
               if(addedParameters.size > 0) {
                 // Filter the descriptions to only leave the new columns and load them
-                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(`${id}_${desc.selectionOptions}`));
+                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(`${id}_${desc.selectedSubtype}`));
                 const newColumns: any = this.loadSelectionColumnData(id, columnsToBeAdded);
 
                 // add new columns
@@ -298,10 +298,10 @@ export abstract class ALineUpView2 extends AView {
 
   private removeDynamicColumns(ids: number[], removeAll: boolean = false) : void {
     const ranking = this.lineup.data.getLastRanking();
-    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectionOptions !== undefined);
+    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectedSubtype !== undefined);
 
     // get available all current subtypes from lineup
-    const dynamicColumnSubtypes = new Set<string>(usedCols.map((col) => (<any>col.desc).selectionOptions));
+    const dynamicColumnSubtypes = new Set<string>(usedCols.map((col) => (<any>col.desc).selectedSubtype));
 
     ids.forEach((id) => {
       if(removeAll) {
@@ -317,14 +317,14 @@ export abstract class ALineUpView2 extends AView {
                 this.freeColumnColor(id);
               }
               // get currently selected subtypes
-              const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectionOptions));
+              const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectedSubtype));
 
               // check which parameters have been removed
               const removedParameters = set_diff(dynamicColumnSubtypes, selectedElements);
 
               if(removedParameters.size > 0) {
                 removedParameters.forEach((param) => {
-                  const cols = usedCols.filter((d) => (<any>d.desc).selectionOptions === param);
+                  const cols = usedCols.filter((d) => (<any>d.desc).selectedSubtype === param);
                   cols.forEach((col) => ranking.remove(col));
                 });
               }

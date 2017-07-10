@@ -9,10 +9,10 @@ import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_I
 
 export interface IAdditionalColumnDesc extends IColumnDesc {
   selectedId: number;
-  selectionOptions?: string;
+  selectedSubType?: string;
 }
 
-export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
+export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'number',
     column: col,
@@ -22,11 +22,11 @@ export function numberCol(col: string, rows: any[], label = col, visible = true,
     visible,
     width,
     selectedId,
-    selectionOptions
+    selectedSubtype
   };
 }
 
-export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
+export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'number',
     column: col,
@@ -36,11 +36,11 @@ export function numberCol2(col: string, min: number, max: number, label = col, v
     visible,
     width,
     selectedId,
-    selectionOptions
+    selectedSubtype
   };
 }
 
-export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
+export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'categorical',
     column: col,
@@ -50,11 +50,11 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
     visible,
     width,
     selectedId,
-    selectionOptions
+    selectedSubtype
   };
 }
 
-export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
+export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'string',
     column: col,
@@ -63,11 +63,11 @@ export function stringCol(col: string, label = col, visible = true, width = -1, 
     visible,
     width,
     selectedId,
-    selectionOptions
+    selectedSubtype
   };
 }
 
-export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectionOptions?: string) {
+export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'boolean',
     column: col,
@@ -76,7 +76,7 @@ export function booleanCol(col: string, label = col, visible = true, width = -1,
     visible,
     width,
     selectedId,
-    selectionOptions
+    selectedSubtype
   };
 }
 

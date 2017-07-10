@@ -242,7 +242,9 @@ def get_namedset_data(database, view_name, namedset_id):
 @app.route('/<database>/<view_name>/raw')
 @login_required
 def get_raw_data(database, view_name):
-  r, _ = _get_data(database, view_name)
+  r, view = _get_data(database, view_name)
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, view.idtype)
   return jsonify(r)
 
 
@@ -303,6 +305,8 @@ def search(database, view_name):
   column = _check_column(request.args['column'], view)
   with db.session(engine) as session:
     r = session.run_to_index(view.queries('search') % (column,), query=query)
+  if request.args.get('_assignids', False):
+    r = db.assign_ids(r, view.idtype)
   return jsonify(r)
 
 
@@ -346,6 +350,8 @@ def lookup(database, view_name):
   if more:
     # hit the boundary of more remove the artificial one
     del r_items[-1]
+  if request.args.get('_assignids', False):
+    r_items = db.assign_ids(r_items, view.idtype)
   return jsonify(dict(items=r_items, more=more))
 
 

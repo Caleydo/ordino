@@ -1,8 +1,10 @@
 import logging
+import re
 
 
 __author__ = 'Samuel Gratzl'
 _log = logging.getLogger(__name__)
+REGEX_TYPE = type(re.compile(''))
 
 
 class DBView(object):
@@ -17,7 +19,11 @@ class DBView(object):
     self.filters = {}
 
   def is_valid_filter(self, key):
-    return not self.filters or key in self.filters
+    if key in self.filters:
+      return True
+    if key in self.columns:
+      return True
+    return not self.filters
 
   def get_filter_subquery(self, key):
     if key in self.filters and self.filters[key] is not None:
@@ -36,7 +42,8 @@ class DBView(object):
       return value in v
     if v == int or v == float:
       return type(value) == v
-    # TODO what else?
+    if isinstance(v, REGEX_TYPE):
+      return v.match(value)
     _log.info('unknown %s %s %s', key, value, v)
     return True
 

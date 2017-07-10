@@ -469,10 +469,8 @@ export abstract class ALineUpView2 extends AView {
     // flag that it is a score
     colDesc._score = true;
 
-    const loadScoreColumn = () => {
-      return score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.rowIDType, this.extraComputeScoreParam());
-    };
-    return this.addColumn(colDesc, loadScoreColumn());
+    const scoreColumnPromise = score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.rowIDType, this.extraComputeScoreParam());;
+    return this.addColumn(colDesc, scoreColumnPromise);
   }
 
   protected extraComputeScoreParam(): any {

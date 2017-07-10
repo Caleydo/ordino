@@ -336,15 +336,17 @@ def lookup(database, view_name):
   if view.replacements is not None:
     replace = {arg: request.args.get(arg, '') for arg in view.replacements}
 
-  replace['limit'] = limit
+  replace['limit'] = limit + 1 # add 1 for checking if we have more
   replace['offset'] = offset
 
   with db.session(engine) as session:
     r_items = session.run(view.query % replace, **arguments)
-    r_total_count = session.run(view.queries['count'] % replace, **arguments)
 
-  r = dict(total_count=r_total_count[0]['total_count'], items=r_items, items_per_page=limit)
-  return jsonify(r)
+  more = len(r_items) > limit
+  if more:
+    # hit the boundary of more remove the artificial one
+    del r_items[-1]
+  return jsonify(dict(items=r_items, more=more))
 
 
 def create():

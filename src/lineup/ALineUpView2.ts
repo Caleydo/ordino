@@ -22,6 +22,7 @@ import {LineUpSelectionHelper, array_diff, set_diff} from './LineUpSelectionHelp
 import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout, IAdditionalColumnDesc} from './desc';
 import {pushScoreAsync} from './scorecmds';
+import {ISelect2Option} from '../form';
 
 export abstract class ALineUpView2 extends AView {
 
@@ -298,40 +299,42 @@ export abstract class ALineUpView2 extends AView {
 
   private removeDynamicColumns(ids: number[], removeAll: boolean = false) : void {
     const ranking = this.lineup.data.getLastRanking();
-    const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectedSubtype !== undefined);
 
-    // get available all current subtypes from lineup
-    const dynamicColumnSubtypes = new Set<string>(usedCols.map((col) => (<any>col.desc).selectedSubtype));
-
-    ids.forEach((id) => {
-      if(removeAll) {
+    if(removeAll) {
+      ids.forEach((id) => {
         const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1 && (<any>d.desc).selectedId === id);
 
         usedCols.forEach((col) => ranking.remove(col));
         this.freeColumnColor(id);
-      } else {
-        this.getSelectionColumnDesc(id)
-          .then((columnDesc) => {
-            if(Array.isArray(columnDesc)) {
-              if(columnDesc.length === 0) {
-                this.freeColumnColor(id);
-              }
-              // get currently selected subtypes
-              const selectedElements = new Set<string>(columnDesc.map((desc) => desc.selectedSubtype));
+      });
+    } else {
+        const selectedOptions = this.loadDynamicColumnOptions();
+        if(selectedOptions.length === 0) {
+          ids.forEach((id) => this.freeColumnColor(id));
+        }
+        // get currently selected subtypes
+        const selectedElements = new Set<string>(selectedOptions.map((option) => option.id));
 
-              // check which parameters have been removed
-              const removedParameters = set_diff(dynamicColumnSubtypes, selectedElements);
+        const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectedSubtype !== undefined);
 
-              if(removedParameters.size > 0) {
-                removedParameters.forEach((param) => {
-                  const cols = usedCols.filter((d) => (<any>d.desc).selectedSubtype === param);
-                  cols.forEach((col) => ranking.remove(col));
-                });
-              }
-            }
+        // get available all current subtypes from lineup
+        const dynamicColumnSubtypes = new Set<string>(usedCols.map((col) => (<any>col.desc).selectedSubtype));
+
+        // check which parameters have been removed
+        const removedParameters = set_diff(dynamicColumnSubtypes, selectedElements);
+
+        if(removedParameters.size > 0) {
+          removedParameters.forEach((param) => {
+            const cols = usedCols.filter((d) => (<any>d.desc).selectedSubtype === param);
+            cols.forEach((col) => ranking.remove(col));
           });
+        }
       }
-    });
+
+  }
+
+  protected loadDynamicColumnOptions() : ISelect2Option[] {
+    return [];
   }
 
   protected handleSelectionColumnsImpl(selection: ISelection) {

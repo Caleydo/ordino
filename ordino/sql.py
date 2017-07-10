@@ -322,7 +322,7 @@ def lookup(database, view_name):
   config, engine = db.resolve(database)
   view = config.views[view_name]
 
-  if view.query is None or 'count' not in view.queries:
+  if view.query is None:
     r = dict(total_count=0, items=[])
     return jsonify(r)
 
@@ -345,7 +345,7 @@ def lookup(database, view_name):
   more = len(r_items) > limit
   if more:
     # hit the boundary of more remove the artificial one
-    del r_items[-1]
+    del r_items[len(r_items) -1 ]
   return jsonify(dict(items=r_items, more=more))
 
 

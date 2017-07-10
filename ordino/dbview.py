@@ -1,4 +1,8 @@
+import logging
+
+
 __author__ = 'Samuel Gratzl'
+_log = logging.getLogger(__name__)
 
 
 class DBView(object):
@@ -23,9 +27,18 @@ class DBView(object):
     return key + ' %(operator)s %(value)s'
 
   def is_valid_replacement(self, key, value):
-    if not self.valid_replacements:
+    if key not in self.replacements:
+      return False
+    if key not in self.valid_replacements:
       return True
-    return key not in self.valid_replacements or value in self.valid_replacements[key]
+    v = self.valid_replacements[key]
+    if isinstance(v, list):
+      return value in v
+    if v == int or v == float:
+      return type(value) == v
+    # TODO what else?
+    _log.info('unknown %s %s %s', key, value, v)
+    return True
 
   def is_valid_argument(self, key):
     return key in self.arguments
@@ -55,6 +68,11 @@ class DBViewBuilder(object):
       self.v.query = query
     else:
       self.v.queries[label] = query
+    return self
+
+  def filters(self, *keys):
+    for key in keys:
+      self.v.filters[key] = None
     return self
 
   def filter(self, key, replacement=None):

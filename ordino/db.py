@@ -1,5 +1,6 @@
 from phovea_server.config import view as configview
 import itertools
+from phovea_server.ns import abort
 from phovea_server.plugin import list as list_plugins
 import sqlalchemy
 # import such that it the sql driver uses gevent
@@ -117,15 +118,19 @@ def _handle_aggregated_score(config, replacements, args):
   return replacements
 
 
-def _prepare_arguments(view, config, replacements=None, arguments=None, extra_sql_argument=None):
+def prepare_arguments(view, config, replacements=None, arguments=None, extra_sql_argument=None):
   replacements = replacements or {}
   arguments = arguments or {}
   replacements = _handle_aggregated_score(config, replacements, arguments)
+  secure_replacements = ['where', 'and_where', 'agg_score']  # has to be part of the computed replacements
 
   # convert to index lookup
   kwargs = {}
   if view.arguments is not None:
     for arg in view.arguments:
+      if arg not in arguments:
+        _log.warn('missing argument "%s": "%s"', view.query, arg)
+        abort(400, 'missing argument: ' + arg)
       kwargs[arg] = arguments[arg]
 
   if extra_sql_argument is not None:
@@ -134,10 +139,16 @@ def _prepare_arguments(view, config, replacements=None, arguments=None, extra_sq
   replace = {}
   if view.replacements is not None:
     for arg in view.replacements:
-      if arg in replacements:
-        replace[arg] = replacements[arg]
+      fallback = arguments.get(arg, '')
+      if arg in secure_replacements:  # has to be part of the replacements
+        value = replacements.get(arg, '')
       else:
-        replace[arg] = arguments.get(arg, '')
+        value = replacements.get(arg, fallback)  # if not a secure one fallback with an argument
+      if not view.is_valid_replacement(arg, value):
+        _log.warn('invalid replacement value detected "%s": "%s"="%s"', view.query, arg, value)
+        abort(400, 'the given parameter "%s" is invalid' % arg)
+      else:
+        replace[arg] = value
 
   return kwargs, replace
 
@@ -146,7 +157,7 @@ def get_data(database, view_name, replacements=None, arguments=None, extra_sql_a
   config, engine = resolve(database)
   view = config.views[view_name]
 
-  kwargs, replace = _prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
+  kwargs, replace = prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
 
   with session(engine) as sess:
     if config.statement_timeout is not None:
@@ -166,7 +177,7 @@ def get_count(database, view_name, replacements=None, arguments=None, extra_sql_
   config, engine = resolve(database)
   view = config.views[view_name]
 
-  kwargs, replace = _prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
+  kwargs, replace = prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
 
   if 'count' in view.queries:
     count_query = view.queries['count'] % replace

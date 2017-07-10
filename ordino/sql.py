@@ -151,10 +151,12 @@ def _filter_logic(view):
       del where_clause[key]
 
   where_clause = [to_clause(k, v) for k, v in where_clause.items() if len(v) > 0]
-  processed_args['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''
-  processed_args['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
 
-  return processed_args, extra_args
+  replacements = dict()
+  replacements['and_where'] = (' AND ' + ' AND '.join(where_clause)) if where_clause else ''
+  replacements['where'] = (' WHERE ' + ' AND '.join(where_clause)) if where_clause else ''
+
+  return replacements, processed_args, extra_args
 
 
 @app.route('/<database>/<view_name>/filter')
@@ -170,9 +172,9 @@ def get_filtered_data(database, view_name):
   # convert to index lookup
   # row id start with 1
   view = config.views[view_name]
-  processed_args, extra_args = _filter_logic(view)
+  replacements, processed_args, extra_args = _filter_logic(view)
 
-  r, view = db.get_data(database, view_name, None, processed_args, extra_args)
+  r, view = db.get_data(database, view_name, replacements, processed_args, extra_args)
 
   if request.args.get('_assignids', False):
     r = db.assign_ids(r, view.idtype)
@@ -192,9 +194,9 @@ def get_score_data(database, view_name):
   # convert to index lookup
   # row id start with 1
   view = config.views[view_name]
-  processed_args, extra_args = _filter_logic(view)
+  replacements, processed_args, extra_args = _filter_logic(view)
 
-  r, view = db.get_data(database, view_name, None, processed_args, extra_args)
+  r, view = db.get_data(database, view_name, replacements, processed_args, extra_args)
 
   data_idtype = view.idtype
   target_idtype = request.args.get('target', data_idtype)
@@ -221,51 +223,11 @@ def get_count_data(database, view_name):
   config, _ = db.resolve(database)
   # convert to index lookup
   view = config.views[view_name]
-  processed_args, extra_args = _filter_logic(view)
+  replacements, processed_args, extra_args = _filter_logic(view)
 
-  r = db.get_count(database, view_name, None, processed_args, extra_args)
+  r = db.get_count(database, view_name, replacements, processed_args, extra_args)
 
   return jsonify(r)
-
-
-@app.route('/<database>/<view_name>/namedset/<namedset_id>')
-@login_required
-def get_namedset_data(database, view_name, namedset_id):
-  import storage
-  namedset = storage.get_namedset_by_id(namedset_id)
-
-  if len(namedset['ids']) == 0:
-    return jsonify([])
-
-  replace = dict(ids=','.join(str(id) for id in namedset['ids']))
-  view_name_namedset = view_name + '_namedset'
-
-  r, _ = _get_data(database, view_name_namedset, replace)
-  return jsonify(r)
-
-
-@app.route('/<database>/<view_name>/raw')
-@login_required
-def get_raw_data(database, view_name):
-  r, view = _get_data(database, view_name)
-  if request.args.get('_assignids', False):
-    r = db.assign_ids(r, view.idtype)
-  return jsonify(r)
-
-
-@app.route('/<database>/<view_name>/raw/<col>')
-@login_required
-def get_raw_col_data(database, view_name, col):
-  r, _ = _get_data(database, view_name)
-  return jsonify([e[col] for e in r])
-
-
-def _check_column(col, view):
-  cols = view.columns
-  if col in cols:
-    return cols[col]['label']
-  # bad request
-  abort(400)
 
 
 @app.route('/<database>/<view_name>/desc')
@@ -301,26 +263,6 @@ def get_desc(database, view_name):
   return jsonify(r)
 
 
-@app.route('/<database>/<view_name>/search')
-@login_required
-def search(database, view_name):
-  config, engine = db.resolve(database)
-  view = config.views[view_name]
-  query = '%' + request.args['query'] + '%'
-  column = _check_column(request.args['column'], view)
-  with db.session(engine) as session:
-    r = session.run_to_index(view.queries('search') % (column,), query=query)
-  if request.args.get('_assignids', False):
-    r = db.assign_ids(r, view.idtype)
-  return jsonify(r)
-
-
-@app.route('/<database>/<view_name>/match')
-@login_required
-def match(database, view_name):
-  return search(database, view_name)
-
-
 @app.route('/<database>/<view_name>/lookup')
 @login_required
 def lookup(database, view_name):
@@ -332,24 +274,23 @@ def lookup(database, view_name):
   view = config.views[view_name]
 
   if view.query is None:
-    r = dict(total_count=0, items=[])
-    return jsonify(r)
+    return jsonify(dict(items=[], more=False))
+
+  arguments = request.args.copy()
+  # replace with wildcard version
+  arguments['query'] = '%' + str(request.args.get('query', '')).lower() + '%'
 
   page = int(request.args.get('page', 1))
   limit = int(request.args.get('limit', 30))  # or 'all'
   offset = (page - 1) * limit
-  # 'query': '%' + request.args['query'] + '%'
-  arguments = dict(query='%' + str(request.args.get('query', '')).lower() + '%', species=str(request.args.get('species', '')))
+  # add 1 for checking if we have more
+  replacements = dict(limit=limit + 1, offset=offset)
 
-  replace = {}
-  if view.replacements is not None:
-    replace = {arg: request.args.get(arg, '') for arg in view.replacements}
+  kwargs, replace = db.prepare_arguments(view, config, replacements, arguments)
 
-  replace['limit'] = limit + 1  # add 1 for checking if we have more
-  replace['offset'] = offset
 
   with db.session(engine) as session:
-    r_items = session.run(view.query % replace, **arguments)
+    r_items = session.run(view.query % replace, **kwargs)
 
   more = len(r_items) > limit
   if more:

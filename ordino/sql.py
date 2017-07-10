@@ -336,7 +336,7 @@ def lookup(database, view_name):
   if view.replacements is not None:
     replace = {arg: request.args.get(arg, '') for arg in view.replacements}
 
-  replace['limit'] = limit + 1 # add 1 for checking if we have more
+  replace['limit'] = limit + 1  # add 1 for checking if we have more
   replace['offset'] = offset
 
   with db.session(engine) as session:
@@ -345,7 +345,7 @@ def lookup(database, view_name):
   more = len(r_items) > limit
   if more:
     # hit the boundary of more remove the artificial one
-    del r_items[len(r_items) -1 ]
+    del r_items[-1]
   return jsonify(dict(items=r_items, more=more))
 
 

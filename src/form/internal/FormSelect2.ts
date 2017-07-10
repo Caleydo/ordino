@@ -144,6 +144,7 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
 
     if (this.multiple) {
       select2Options.multiple = true;
+      select2Options.allowClear = true;
     }
     mixin(select2Options, options.ajax ? DEFAULT_AJAX_OPTIONS : DEFAULT_OPTIONS, options);
 

@@ -1,4 +1,4 @@
-from phovea_server.ns import Namespace, request, abort
+from phovea_server.ns import Namespace, request
 from . import db
 from .utils import map_scores
 from phovea_server.util import jsonify
@@ -287,7 +287,6 @@ def lookup(database, view_name):
   replacements = dict(limit=limit + 1, offset=offset)
 
   kwargs, replace = db.prepare_arguments(view, config, replacements, arguments)
-
 
   with db.session(engine) as session:
     r_items = session.run(view.query % replace, **kwargs)

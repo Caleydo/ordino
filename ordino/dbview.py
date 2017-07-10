@@ -50,6 +50,7 @@ class DBView(object):
   def is_valid_argument(self, key):
     return key in self.arguments
 
+
 class DBViewBuilder(object):
   def __init__(self):
     self.v = DBView()

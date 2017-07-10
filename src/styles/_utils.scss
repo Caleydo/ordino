@@ -8,3 +8,19 @@ input[type="checkbox"].public:after {
   @include fontAwesome();
   content: '\f0c0'; //fa-users
 }
+
+@mixin idtype_color($color) {
+  &.checkbox-inline {
+    color: $color;
+  }
+  &.select2-selection__choice {
+    border-color: $color !important;
+  }
+  &.select2-results__group {
+    background: $color;
+    color: complement($color);
+  }
+  &.view {
+    border-color: $color;
+  }
+}

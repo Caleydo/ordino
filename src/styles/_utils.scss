@@ -17,8 +17,8 @@ input[type="checkbox"].public:after {
     border-color: $color !important;
   }
   &.select2-results__group {
-    background: $color;
-    color: complement($color);
+    background: $color !important;
+    color: complement($color) !important;
   }
   &.view {
     border-color: $color;

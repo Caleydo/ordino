@@ -9,18 +9,24 @@ input[type="checkbox"].public:after {
   content: '\f0c0'; //fa-users
 }
 
-@mixin idtype_color($color) {
-  &.checkbox-inline {
-    color: $color;
+@mixin idtype_color($idType, $color) {
+  form.search {
+    label.checkbox-inline[data-idtype="#{$idType}"] {
+      color: $color;
+    }
   }
-  &.select2-selection__choice {
-    border-color: $color !important;
+
+  .select2-container--bootstrap .select2-selection--multiple {
+    .select2-selection__choice[data-idtype="#{$idType}"] {
+      border-color: $color;
+    }
+    &.select2-results__group[data-idtype="#{$idType}"] {
+      background: $color;
+      color: complement($color);
+    }
   }
-  &.select2-results__group {
-    background: $color !important;
-    color: complement($color) !important;
-  }
-  &.view {
+
+  article.view[data-idtype="#{$idType}"] {
     border-color: $color;
   }
 }

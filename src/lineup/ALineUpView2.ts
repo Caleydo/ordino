@@ -305,7 +305,7 @@ export abstract class ALineUpView2 extends AView {
     this.withoutTracking(() => {
       if(removeAll) {
         ids.forEach((id) => {
-          const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId !== -1 && (<any>d.desc).selectedId === id);
+          const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId === id);
 
           usedCols.forEach((col) => ranking.remove(col));
           this.freeColumnColor(id);

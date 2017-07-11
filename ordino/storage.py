@@ -33,7 +33,7 @@ def get_namedsets():
     description = request.values.get('description', '')
     sub_type_key = request.values.get('subTypeKey', '')
     sub_type_value = request.values.get('subTypeValue', '')
-    type = int(request.values.get('type', ''))
+    type = int(request.values.get('type', '0'))
     entry = dict(id=id, name=name, creator=creator, permissions=permissions, ids=ids, idType=id_type,
                  description=description,
                  subTypeKey=sub_type_key, subTypeValue=sub_type_value, type=type)
@@ -68,7 +68,16 @@ def get_namedset(namedset_id):
     if not security.can_write(entry):
       abort(404)
     filter = dict(id=namedset_id)
-    query = {'$set': request.form}
+    values = dict()
+    for key in ['name', 'idType', 'description', 'subTypeKey', 'subTypeValue']:
+      if key in request.form:
+        values[key] = request.form[key]
+    if 'ids' in request.form:
+      values['ids'] = ranges.parse(request.form['ids'])[0].tolist()
+    for key in ['permissions', 'type']:
+      if key in request.form:
+        values[key] = int(request.form[key])
+    query = {'$set': values}
     result = db.namedsets.find_one_and_update(filter, query, return_document=ReturnDocument.AFTER)
     del result['_id']
     return jsonify(result)

@@ -83,6 +83,12 @@ module.exports = function (registry) {
     'idType': 'Ensembl'
   });
 
+  registry.push('scoreLoadingWrapper', 'ordino_score_wrapper', function() {
+    return System.import('./src/ScoreLoadingWrapper');
+  }, {
+    factory: 'wrap'
+  });
+
   // generator-phovea:end
 };
 

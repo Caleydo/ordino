@@ -8,6 +8,9 @@ import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
+import FormBuilderDialog from '../form/FormDialog';
+import {FormElementType, IFormElementDesc} from '../form/interfaces';
+import {OrdinoFormIds} from '../constants';
 
 export class LineUpRankingButtons extends EventHandler {
 
@@ -76,48 +79,105 @@ export class LineUpRankingButtons extends EventHandler {
     const $div = this.$node.append('div');
 
     $div.append('button')
-      .attr('class', 'fa fa-plus dropdown-toggle')
-      .attr('data-toggle', 'dropdown');
+      .attr('class', 'fa fa-plus');
 
-    const $ul = $div.append('ul').attr('class', 'dropdown-menu');
-
+    // const $ul = $div.append('ul').attr('class', 'dropdown-menu');
+    //
     const columns = this.lineup.data.getColumns().filter((d) => !d._score);
-    columns.push(createStackDesc('Weighted Sum'));
-    $ul.selectAll('li.col').data(columns)
-      .enter()
-      .append('li').classed('col', true)
-      .append('a').attr('href', '#').text((d: any) => d.label)
-      .on('click', (d) => {
-        const ranking = this.lineup.data.getLastRanking();
-        this.lineup.data.push(ranking, d);
-        (<Event>d3.event).preventDefault();
+    // columns.push(createStackDesc('Weighted Sum'));
+    // $ul.selectAll('li.col').data(columns)
+    //   .enter()
+    //   .append('li').classed('col', true)
+    //   .append('a').attr('href', '#').text((d: any) => d.label)
+    //   .on('click', (d) => {
+    //     const ranking = this.lineup.data.getLastRanking();
+    //     this.lineup.data.push(ranking, d);
+    //     (<Event>d3.event).preventDefault();
+    //   });
+    //
+    // $ul.append('li').classed('divider', true);
+    //
+    // const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
+    // $ul.selectAll('li.score').data(scores)
+    //   .enter()
+    //   .append('li').classed('score', true)
+    //   .append('a').attr('href', '#').text((d) => d.name)
+    //   .on('click', (d) => {
+    //     d.load().then((p) => {
+    //       this.scoreColumnDialog(p);
+    //     });
+    //     (<Event>d3.event).preventDefault();
+    //   });
+    //
+    // LineUpRankingButtons.findScores(this.idType).then((ordinoScores: IPluginDesc[]) => {
+    //
+    //   $ul.selectAll('li.oscore').data(ordinoScores)
+    //     .enter()
+    //     .append('li').classed('oscore', true)
+    //     .append('a').attr('href', '#').text((d) => d.name)
+    //     .on('click', async (d) => {
+    //       (<Event>d3.event).preventDefault();
+    //       const p = await d.load();
+    //       const params = await Promise.resolve(p.factory(d, this.extraArgs));
+    //       this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
+    //     });
+    // });
+
+
+    $div.select('button').on('click', async () => {
+      const dialog = new FormBuilderDialog('Add new column', 'Add');
+      const scoreWrapper = listPlugins('scoreLoadingWrapper');
+      const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
+
+      const wrappers = await Promise.all(wrapperPromises);
+      const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findScores(this.idType);
+
+      const wrappedScores = [];
+      wrappers.forEach((wrapper) => wrappedScores.push(...ordinoScores.map((score) => wrapper.factory(score))));
+
+      const scoreOptions = wrappedScores.map((score) => ({ label: score.name, column: score.id }));
+
+      const columnsWrapper = [{
+          text: 'Columns',
+          children: columns
+        },
+        {
+          text: 'ParameterizedScores',
+          children: scoreOptions
+        }
+      ];
+
+
+      const select2: IFormElementDesc = {
+        type: FormElementType.SELECT2,
+        id: OrdinoFormIds.SCORE,
+        label: 'Column',
+        attributes: {
+          style: 'width:100%'
+        },
+        required: true,
+        options: {
+          data: columnsWrapper.map((category) => {
+            return {
+              text: category.text,
+              children: category.children.map((entry) => {
+                return { text: entry.label, id: `${category.text}-${entry.column}` };
+              })
+            };
+          })
+        },
+        useSession: true
+      };
+
+      dialog.append(select2);
+      dialog.show();
+
+      dialog.onSubmit((builder) => {
+        // TODO: validate
+        const result = builder.getElementById(OrdinoFormIds.SCORE).value;
+        console.log('TEST: ', result.id.split('-'));
+        dialog.hide();
       });
-
-    $ul.append('li').classed('divider', true);
-
-    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
-    $ul.selectAll('li.score').data(scores)
-      .enter()
-      .append('li').classed('score', true)
-      .append('a').attr('href', '#').text((d) => d.name)
-      .on('click', (d) => {
-        d.load().then((p) => {
-          this.scoreColumnDialog(p);
-        });
-        (<Event>d3.event).preventDefault();
-      });
-
-    LineUpRankingButtons.findScores(this.idType).then((ordinoScores: IPluginDesc[]) => {
-      $ul.selectAll('li.oscore').data(ordinoScores)
-        .enter()
-        .append('li').classed('oscore', true)
-        .append('a').attr('href', '#').text((d) => d.name)
-        .on('click', async (d) => {
-          (<Event>d3.event).preventDefault();
-          const p = await d.load();
-          const params = await Promise.resolve(p.factory(d, this.extraArgs));
-          this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
-        });
     });
   }
 

@@ -1,3 +1,4 @@
+import {ParameterFormIds} from '../../targid_boehringer/src/forms';
 /**
  * Created by sam on 03.03.2017.
  */
@@ -81,3 +82,8 @@ export default class TargidConstants {
  * @type {number}
  */
 export const KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES = 5;
+
+
+export class OrdinoFormIds {
+  static SCORE = 'ordino_score';
+}

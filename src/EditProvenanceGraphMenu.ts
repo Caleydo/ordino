@@ -104,7 +104,7 @@ export default class EditProvenanceGraphMenu {
       }
       persistProvenanceGraphMetaData(this.graph.desc).then((extras: any) => {
         if (extras !== null) {
-          manager.importExistingGraph(this.graph.desc, extras, true).catch(showErrorModalDialog);
+          manager.migrateGraph(this.graph, extras).catch(showErrorModalDialog);
         }
       });
       return false;

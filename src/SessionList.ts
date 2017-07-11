@@ -43,7 +43,13 @@ abstract class ASessionList implements IStartMenuSectionEntry {
   }
 
   protected registerActionListener(manager: CLUEGraphManager, $trEnter: Selection<IProvenanceGraphDataDescription>) {
+    const stopEvent = () => {
+      (<Event>event).preventDefault();
+      (<Event>event).stopPropagation();
+    };
+
     $trEnter.select('a[data-action="delete"]').on('click', async function (d) {
+      stopEvent();
       const deleteIt = await areyousure(`Are you sure to delete session: "${d.name}"`);
       if (deleteIt) {
         await manager.delete(d);
@@ -52,10 +58,12 @@ abstract class ASessionList implements IStartMenuSectionEntry {
       }
     });
     $trEnter.select('a[data-action="clone"]').on('click', (d) => {
+      stopEvent();
       manager.cloneLocal(d);
       return false;
     });
     $trEnter.select('a[data-action="select"]').on('click', (d) => {
+      stopEvent();
       if (!canWrite(d)) {
         manager.cloneLocal(d);
       } else {
@@ -64,6 +72,7 @@ abstract class ASessionList implements IStartMenuSectionEntry {
       return false;
     });
     $trEnter.select('a[data-action="edit"]').on('click', function (this: HTMLButtonElement, d) {
+      stopEvent();
       const nameTd = this.parentElement.parentElement.querySelector('td');
       const publicI = this.parentElement.parentElement.querySelector('td:nth-child(2) i');
       editProvenanceGraphMetaData(d, 'Edit').then((extras) => {
@@ -81,6 +90,7 @@ abstract class ASessionList implements IStartMenuSectionEntry {
       return false;
     });
     $trEnter.select('a[data-action="persist"]').on('click', (d) => {
+      stopEvent();
       persistProvenanceGraphMetaData(d).then((extras: any) => {
         if (extras !== null) {
           manager.importExistingGraph(d, extras, true).catch(showErrorModalDialog);

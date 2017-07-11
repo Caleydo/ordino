@@ -380,7 +380,6 @@ export class AEntryPointList implements IEntryPointList {
       enter.append('a')
         .classed('goto', true)
         .attr('href', '#')
-        .attr('title',(d) => `Name: ${d.name}\nDescription: ${d.description}${d.type === ENamedSetType.NAMEDSET ? `\nCreator: ${(<IStoredNamedSet>d).creator}\nPublic: ${hasPermission(<IStoredNamedSet>d, EEntity.OTHERS)}`: ''}`)
         .on('click', (namedSet: INamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
@@ -448,14 +447,15 @@ export class AEntryPointList implements IEntryPointList {
         });
 
       //update
-      options.select('a.goto').text((d) => d.name);
+      options.select('a.goto').text((d) => d.name)
+        .attr('title',(d) => `Name: ${d.name}\nDescription: ${d.description}${d.type === ENamedSetType.NAMEDSET ? `\nCreator: ${(<IStoredNamedSet>d).creator}\nPublic: ${hasPermission(<IStoredNamedSet>d, EEntity.OTHERS)}`: ''}`);
       options.select('a.delete').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
       options.select('a.edit').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
       options.select('a.public')
         .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d))
         .html((d) => {
           const isPublic = d.type === ENamedSetType.NAMEDSET && hasPermission(<IStoredNamedSet>d, EEntity.OTHERS);
-          return `<i class="fa ${isPublic ? 'fa-users': 'fa-users'}" aria-hidden="true"></i> <span class="sr-only"></span>`;
+          return `<i class="fa ${isPublic ? 'fa-users': 'fa-user'}" aria-hidden="true" title="${isPublic ? 'Public': 'Private'}"></i> <span class="sr-only">${isPublic ? 'Public': 'Private'}</span>`;
         });
 
       options.exit().remove();

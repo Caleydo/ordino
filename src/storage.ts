@@ -112,7 +112,10 @@ export function deleteNamedSet(id: string) {
 }
 
 export function editNamedSet(id: string, data: { [key: string]: any }) {
-  return sendAPI(`/targid/storage/namedset/${id}`, data, 'PUT');
+  return sendAPI(`/targid/storage/namedset/${id}`, data, 'PUT').then((s) => {
+    s.type = s.type || ENamedSetType.NAMEDSET;
+    return s;
+  });
 }
 
 export function editDialog(namedSet: IStoredNamedSet, result: (name: string, description: string, isPublic: boolean) => void) {

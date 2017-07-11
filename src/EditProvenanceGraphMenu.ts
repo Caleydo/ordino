@@ -22,19 +22,25 @@ export default class EditProvenanceGraphMenu {
     parent.insertBefore(this.node, parent.firstChild);
   }
 
-  setGraph(graph: ProvenanceGraph) {
+  updateGraphMetaData(graph: ProvenanceGraph) {
     this.node.querySelector('a span').innerHTML = graph.desc.name;
     const syncIcon = this.node.querySelector('.sync-indicator');
     const persisted = isPersistent(graph.desc);
+    const persistAction = (<HTMLLinkElement>this.node.querySelector('a[data-action="persist"]').parentElement);
     if (persisted) {
       syncIcon.classList.remove('fa-clock-o');
       syncIcon.classList.add('fa-cloud');
+      persistAction.classList.add('disabled');
     } else {
       syncIcon.classList.add('fa-clock-o');
       syncIcon.classList.remove('fa-cloud');
+      persistAction.classList.remove('disabled');
     }
-    (<HTMLLinkElement>this.node.querySelector('a[data-action="persist"]')).disabled = persisted;
+  }
 
+  setGraph(graph: ProvenanceGraph) {
+    this.updateGraphMetaData(graph);
+    const syncIcon = this.node.querySelector('.sync-indicator');
     graph.on('sync_start,sync', (event: IEvent) => {
       const should = event.type !== 'sync';
       const has = syncIcon.classList.contains('active');
@@ -63,7 +69,7 @@ export default class EditProvenanceGraphMenu {
             <li><a href="#" data-action="edit" title="Edit Details"><i class="fa fa-edit" aria-hidden="true"></i> Edit Details</a></li>
             <li><a href="#" data-action="clone" title="Clone to Temporary Session"><i class="fa fa-clone" aria-hidden="true"></i> Clone to Temporary Session</a></li>
             <li class="divider"></li>
-            <li><a href="#" disabled="disabled" data-action="persist" title="Persist Session"><i class="fa fa-cloud" aria-hidden="true"></i> Persist Session</a></li>
+            <li><a href="#" data-action="persist" title="Persist Session"><i class="fa fa-cloud" aria-hidden="true"></i> Persist Session</a></li>
             <li><a href="#" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>            
           </ul>`;
 
@@ -104,7 +110,9 @@ export default class EditProvenanceGraphMenu {
       }
       persistProvenanceGraphMetaData(this.graph.desc).then((extras: any) => {
         if (extras !== null) {
-          manager.migrateGraph(this.graph, extras).catch(showErrorModalDialog);
+          manager.migrateGraph(this.graph, extras).catch(showErrorModalDialog).then(() => {
+            this.updateGraphMetaData(this.graph);
+          });
         }
       });
       return false;

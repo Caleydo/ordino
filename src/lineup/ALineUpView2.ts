@@ -257,45 +257,44 @@ export abstract class ALineUpView2 extends AView {
     const usedCols = ranking.flatColumns.filter((col) => (<any>col.desc).selectedSubtype !== undefined);
     const dynamicColumnIDs = new Set<string>(usedCols.map((col) => `${(<any>col.desc).selectedId}_${(<any>col.desc).selectedSubtype}`));
 
-    const addColumn = (desc: IAdditionalColumnDesc, newColumnPromise: Promise<IScoreRow<any>[]>, id: number) => {
-      //mark as lazy loaded
-      (<any>desc).lazyLoaded = true;
+    ids.forEach((id) => {
+      this.getSelectionColumnDesc(id)
+        .then((columnDesc) => {
+          // add multiple columns
+          const addColumn = (desc: IAdditionalColumnDesc, newColumnPromise: Promise<IScoreRow<any>[]>, id: number) => {
+            //mark as lazy loaded
+            (<any>desc).lazyLoaded = true;
+            this.addColumn(desc, newColumnPromise, id);
+          };
+          if(Array.isArray(columnDesc)) {
+            if(columnDesc.length > 0) {
+              // Save which columns have been added for a specific element in the selection
+              const selectedElements = new Set<string>(columnDesc.map((desc) => `${id}_${desc.selectedSubtype}`));
 
-      this.addColumn(desc, newColumnPromise, id, true); // true == withoutTracking
+              // Check which items are new and should therefore be added as columns
+              const addedParameters = set_diff(selectedElements, dynamicColumnIDs);
 
-    };
+              if(addedParameters.size > 0) {
+                // Filter the descriptions to only leave the new columns and load them
+                const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(`${id}_${desc.selectedSubtype}`));
+                const newColumns: any = this.loadSelectionColumnData(id, columnsToBeAdded);
 
-    this.withoutTracking(() => {
-      ids.forEach((id) => {
-        this.getSelectionColumnDesc(id)
-          .then((columnDesc) => {
-            // add multiple columns
-            if(Array.isArray(columnDesc)) {
-              if(columnDesc.length > 0) {
-                // Save which columns have been added for a specific element in the selection
-                const selectedElements = new Set<string>(columnDesc.map((desc) => `${id}_${desc.selectedSubtype}`));
-
-                // Check which items are new and should therefore be added as columns
-                const addedParameters = set_diff(selectedElements, dynamicColumnIDs);
-
-                if(addedParameters.size > 0) {
-                  // Filter the descriptions to only leave the new columns and load them
-                  const columnsToBeAdded = columnDesc.filter((desc) => addedParameters.has(`${id}_${desc.selectedSubtype}`));
-                  const newColumns: any = this.loadSelectionColumnData(id, columnsToBeAdded);
-
-                  // add new columns
-                  newColumns.then((dataPromise) => {
+                // add new columns
+                newColumns.then((dataPromise) => {
+                  this.withoutTracking(() => {
                     columnsToBeAdded.forEach((desc, i) => {
                       addColumn(desc, dataPromise[i], id);
                     });
-                  });
-                }
+                  })
+                });
               }
-            } else { // single column
-              addColumn(columnDesc, <Promise<IScoreRow<any>[]>>this.loadSelectionColumnData(id), id);
             }
-          });
-      });
+          } else { // single column
+            this.withoutTracking(() => {
+              addColumn(columnDesc, <Promise<IScoreRow<any>[]>>this.loadSelectionColumnData(id), id);
+            });
+          }
+        });
     });
   }
 
@@ -303,7 +302,7 @@ export abstract class ALineUpView2 extends AView {
     const ranking = this.lineup.data.getLastRanking();
 
     this.withoutTracking(() => {
-      if(removeAll) {
+      if (removeAll) {
         ids.forEach((id) => {
           const usedCols = ranking.flatColumns.filter((d) => (<any>d.desc).selectedId === id);
 
@@ -312,7 +311,7 @@ export abstract class ALineUpView2 extends AView {
         });
       } else {
         const selectedOptions = this.loadDynamicColumnOptions();
-        if(selectedOptions.length === 0) {
+        if (selectedOptions.length === 0) {
           ids.forEach((id) => this.freeColumnColor(id));
         }
         // get currently selected subtypes
@@ -326,7 +325,7 @@ export abstract class ALineUpView2 extends AView {
         // check which parameters have been removed
         const removedParameters = set_diff(dynamicColumnSubtypes, selectedElements);
 
-        if(removedParameters.size > 0) {
+        if (removedParameters.size > 0) {
           removedParameters.forEach((param) => {
             const cols = usedCols.filter((d) => (<any>d.desc).selectedSubtype === param);
             cols.forEach((col) => ranking.remove(col));
@@ -381,7 +380,7 @@ export abstract class ALineUpView2 extends AView {
     return stringCol(this.getSelectionColumnId(id), label, true, 50, id);
   }
 
-  protected addColumn(colDesc: any, loadPromise: Promise<IScoreRow<any>[]>, id = -1, withoutTracking = false): { col: Column, loaded: Promise<Column>} {
+  protected addColumn(colDesc: any, loadPromise: Promise<IScoreRow<any>[]>, id = -1): { col: Column, loaded: Promise<Column>} {
     const ranking = this.lineup.data.getLastRanking();
 
     colDesc.color = this.getColumnColor(id);
@@ -473,7 +472,7 @@ export abstract class ALineUpView2 extends AView {
     // flag that it is a score
     colDesc._score = true;
 
-    const scoreColumnPromise = score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.rowIDType, this.extraComputeScoreParam());;
+    const scoreColumnPromise = score.compute(this.selectionHelper.rowIdsAsSet(this.lineup.data.getRankings()[0].getOrder()), this.rowIDType, this.extraComputeScoreParam());
     return this.addColumn(colDesc, scoreColumnPromise);
   }
 

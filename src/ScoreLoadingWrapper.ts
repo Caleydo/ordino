@@ -1,6 +1,6 @@
 import {IPluginDesc} from 'phovea_core/src/plugin';
 
-interface IScoreLoader {
+export interface IScoreLoader {
   /**
    * name for the entry
    */
@@ -25,6 +25,11 @@ interface IScoreLoaderExtensionDesc extends IPluginDesc {
   idtype: string;
 }
 
+/**
+ * Wraps the ordinoScore such that the plugin is loaded and the score modal opened, when the factory function is called
+ * @param ordinoScore
+ * @returns {IScoreLoader}
+ */
 export function wrap(ordinoScore: IPluginDesc): IScoreLoader {
   return {
     name: ordinoScore.name,

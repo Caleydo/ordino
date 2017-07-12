@@ -8,9 +8,10 @@ import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
-import FormBuilderDialog from '../form/FormDialog';
 import {FormElementType, IFormElementDesc} from '../form/interfaces';
 import {OrdinoFormIds} from '../constants';
+import {IScoreLoader} from '../ScoreLoadingWrapper';
+import FormBuilder from '../form/FormBuilder';
 
 interface IColumnWrapper {
   text: string;
@@ -81,89 +82,89 @@ export class LineUpRankingButtons extends EventHandler {
     });
   }
 
-  private appendMoreColumns() {
+  private async appendMoreColumns() {
     const $div = this.$node.append('div');
 
     $div.append('button')
-      .attr('class', 'fa fa-plus');
+      .attr('class', 'fa fa-plus dropdown-toggle')
+      .attr('data-toggle', 'dropdown');
 
     const uploads = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
 
-    $div.select('button').on('click', async () => {
-      const dialog = new FormBuilderDialog('Add new column', 'Add');
-      const scoreWrapper = listPlugins('scoreLoadingWrapper');
-      const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
+    const $selectWrapper = $div.append('div').attr('class', 'dropdown-menu');
+    $selectWrapper.on('click', () => (<Event>d3.event).stopPropagation()); // HACK: don't close the dropdown when clicking Select2
 
-      const wrappers = await Promise.all(wrapperPromises);
-      const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findScores(this.idType);
+    const builder = new FormBuilder($selectWrapper);
+    const scoreWrapper = listPlugins('scoreLoadingWrapper');
+    const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
 
-      const wrappedScores = [];
-      wrappers.forEach((wrapper) => wrappedScores.push(...ordinoScores.map((score) => wrapper.factory(score))));
+    const wrappers = await Promise.all(wrapperPromises);
+    const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findScores(this.idType);
 
-      const columns = this.lineup.data.getColumns()
-        .filter((d) => !d._score)
-        .map((d) => Object.assign(d, { name: d.label, id: d.column })); // use the same keys as in the scores
+    const wrappedScores: IScoreLoader[] = [];
 
-      const columnsWrapper: IColumnWrapper[] = [
-        {
-          text: 'Columns',
-          plugins: columns,
-          action: (column) => {
-            const ranking = this.lineup.data.getLastRanking();
-            this.lineup.data.push(ranking, column);
-          }
-        },
-        {
-          text: 'Parameterized Scores',
-          plugins: wrappedScores,
-          action: (scorePlugin) => {
-            scorePlugin.factory().then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
-          }
-        },
-        {
-          text: 'Upload Score',
-          plugins: uploads,
-          action: (plugin) => {
-            plugin.load().then((p) => this.scoreColumnDialog(p));
-          }
+    wrappers.forEach((wrapper) => wrappedScores.push(...ordinoScores.map((score) => wrapper.factory(score))));
+
+    const columns = this.lineup.data.getColumns()
+      .filter((d) => !d._score)
+      .map((d) => Object.assign(d, { name: d.label, id: d.column })); // use the same keys as in the scores
+
+    const columnsWrapper: IColumnWrapper[] = [
+      {
+        text: 'Columns',
+        plugins: columns,
+        action: (column) => {
+          const ranking = this.lineup.data.getLastRanking();
+          this.lineup.data.push(ranking, column);
         }
-      ];
+      },
+      {
+        text: 'Parameterized Scores',
+        plugins: wrappedScores,
+        action: (scorePlugin) => {
+          scorePlugin.factory().then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
+        }
+      },
+      {
+        text: 'Upload Score',
+        plugins: uploads,
+        action: (plugin) => {
+          plugin.load().then((p) => this.scoreColumnDialog(p));
+        }
+      }
+    ];
 
-      dialog.append({
-        type: FormElementType.SELECT2,
-        id: OrdinoFormIds.SCORE,
-        label: 'Column',
-        attributes: {
-          style: 'width:100%'
-        },
-        required: true,
-        options: {
-          data: columnsWrapper.map((category) => {
-            return {
-              text: category.text,
-              children: category.plugins.map((entry) => {
-                return { text: entry.name, id: `${category.text}-${entry.id}` };
-              })
-            };
-          })
-        },
-        useSession: true
-      });
-      dialog.show();
+    const elements: IFormElementDesc[] = [{
+      type: FormElementType.SELECT2,
+      id: OrdinoFormIds.SCORE,
+      attributes: {
+        style: 'width:200px'
+      },
+      required: true,
+      hideLabel: true,
+      options: {
+        data: columnsWrapper.map((category) => {
+          return {
+            text: category.text,
+            children: category.plugins.map((entry) => {
+              return { text: entry.name, id: `${category.text}-${entry.id}` };
+            })
+          };
+        }),
+        onChange: () => {
+          const result = builder.getElementById(OrdinoFormIds.SCORE).value;
+          const [category, scoreID] = result.id.split('-');
 
-      dialog.onSubmit((builder) => {
-        // TODO: validate
-        const result = builder.getElementById(OrdinoFormIds.SCORE).value;
-        const [category, scoreID] = result.id.split('-');
+          const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
+          const plugin = chosenCategory.plugins.find((child) => child.id === scoreID);
 
-        const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
-        const plugin = chosenCategory.plugins.find((child) => child.id === scoreID);
+          chosenCategory.action(plugin);
+        }
+      },
+      useSession: true
+    }];
 
-        chosenCategory.action(plugin);
-
-        dialog.hide();
-      });
-    });
+    builder.build(elements);
   }
 
   private scoreColumnDialog(scorePlugin: IPlugin) {

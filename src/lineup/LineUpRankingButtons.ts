@@ -87,50 +87,7 @@ export class LineUpRankingButtons extends EventHandler {
     $div.append('button')
       .attr('class', 'fa fa-plus');
 
-    // const $ul = $div.append('ul').attr('class', 'dropdown-menu');
-    //
-    const columns = this.lineup.data.getColumns()
-      .filter((d) => !d._score)
-      .map((d) => Object.assign(d, { name: d.label, id: d.column })); // use the same keys as in the scores
-    // columns.push(createStackDesc('Weighted Sum'));
-    // $ul.selectAll('li.col').data(columns)
-    //   .enter()
-    //   .append('li').classed('col', true)
-    //   .append('a').attr('href', '#').text((d: any) => d.label)
-    //   .on('click', (d) => {
-    //     const ranking = this.lineup.data.getLastRanking();
-    //     this.lineup.data.push(ranking, d);
-    //     (<Event>d3.event).preventDefault();
-    //   });
-    //
-    // $ul.append('li').classed('divider', true);
-    //
-    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
-    // $ul.selectAll('li.score').data(scores)
-    //   .enter()
-    //   .append('li').classed('score', true)
-    //   .append('a').attr('href', '#').text((d) => d.name)
-    //   .on('click', (d) => {
-    //     d.load().then((p) => {
-    //       this.scoreColumnDialog(p);
-    //     });
-    //     (<Event>d3.event).preventDefault();
-    //   });
-    //
-    // LineUpRankingButtons.findScores(this.idType).then((ordinoScores: IPluginDesc[]) => {
-    //
-    //   $ul.selectAll('li.oscore').data(ordinoScores)
-    //     .enter()
-    //     .append('li').classed('oscore', true)
-    //     .append('a').attr('href', '#').text((d) => d.name)
-    //     .on('click', async (d) => {
-    //       (<Event>d3.event).preventDefault();
-    //       const p = await d.load();
-    //       const params = await Promise.resolve(p.factory(d, this.extraArgs));
-    //       this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, d.id, params);
-    //     });
-    // });
-
+    const uploads = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
 
     $div.select('button').on('click', async () => {
       const dialog = new FormBuilderDialog('Add new column', 'Add');
@@ -143,7 +100,12 @@ export class LineUpRankingButtons extends EventHandler {
       const wrappedScores = [];
       wrappers.forEach((wrapper) => wrappedScores.push(...ordinoScores.map((score) => wrapper.factory(score))));
 
-      const columnsWrapper: IColumnWrapper[] = [{
+      const columns = this.lineup.data.getColumns()
+        .filter((d) => !d._score)
+        .map((d) => Object.assign(d, { name: d.label, id: d.column })); // use the same keys as in the scores
+
+      const columnsWrapper: IColumnWrapper[] = [
+        {
           text: 'Columns',
           plugins: columns,
           action: (column) => {
@@ -157,9 +119,10 @@ export class LineUpRankingButtons extends EventHandler {
           action: (scorePlugin) => {
             scorePlugin.factory().then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
           }
-        }, {
+        },
+        {
           text: 'Upload Score',
-          plugins: scores,
+          plugins: uploads,
           action: (plugin) => {
             plugin.load().then((p) => this.scoreColumnDialog(p));
           }

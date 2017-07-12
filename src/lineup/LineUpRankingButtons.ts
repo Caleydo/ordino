@@ -12,6 +12,12 @@ import FormBuilderDialog from '../form/FormDialog';
 import {FormElementType, IFormElementDesc} from '../form/interfaces';
 import {OrdinoFormIds} from '../constants';
 
+interface IColumnWrapper {
+  text: string;
+  action: (param: any) => void;
+  children?: any[];
+}
+
 export class LineUpRankingButtons extends EventHandler {
 
   static readonly SAVE_NAMED_SET = 'saveNamedSet';
@@ -83,7 +89,9 @@ export class LineUpRankingButtons extends EventHandler {
 
     // const $ul = $div.append('ul').attr('class', 'dropdown-menu');
     //
-    const columns = this.lineup.data.getColumns().filter((d) => !d._score);
+    const columns = this.lineup.data.getColumns()
+      .filter((d) => !d._score)
+      .map((d) => Object.assign(d, { name: d.label, id: d.column })); // use the same keys as in the scores
     // columns.push(createStackDesc('Weighted Sum'));
     // $ul.selectAll('li.col').data(columns)
     //   .enter()
@@ -97,7 +105,7 @@ export class LineUpRankingButtons extends EventHandler {
     //
     // $ul.append('li').classed('divider', true);
     //
-    // const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
+    const scores = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
     // $ul.selectAll('li.score').data(scores)
     //   .enter()
     //   .append('li').classed('score', true)
@@ -135,20 +143,30 @@ export class LineUpRankingButtons extends EventHandler {
       const wrappedScores = [];
       wrappers.forEach((wrapper) => wrappedScores.push(...ordinoScores.map((score) => wrapper.factory(score))));
 
-      const scoreOptions = wrappedScores.map((score) => ({ label: score.name, column: score.id }));
-
-      const columnsWrapper = [{
+      const columnsWrapper: IColumnWrapper[] = [{
           text: 'Columns',
-          children: columns
+          children: columns,
+          action: (column) => {
+            const ranking = this.lineup.data.getLastRanking();
+            this.lineup.data.push(ranking, column);
+          }
         },
         {
-          text: 'ParameterizedScores',
-          children: scoreOptions
+          text: 'Parameterized Scores',
+          children: wrappedScores,
+          action: async (scorePlugin) => {
+            const params = await scorePlugin.factory();
+            this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params);
+          }
+        }, {
+          text: 'Upload Score',
+          action: (plugin) => {
+            this.scoreColumnDialog(plugin);
+          }
         }
       ];
 
-
-      const select2: IFormElementDesc = {
+      dialog.append({
         type: FormElementType.SELECT2,
         id: OrdinoFormIds.SCORE,
         label: 'Column',
@@ -158,24 +176,37 @@ export class LineUpRankingButtons extends EventHandler {
         required: true,
         options: {
           data: columnsWrapper.map((category) => {
-            return {
-              text: category.text,
-              children: category.children.map((entry) => {
-                return { text: entry.label, id: `${category.text}-${entry.column}` };
-              })
-            };
+
+            if(category.children) {
+              return {
+                text: category.text,
+                children: category.children.map((entry) => {
+                  return { text: entry.name, id: `${category.text}-${entry.id}` };
+                })
+              };
+            } else {
+              return {
+                text: category.text,
+                id: category.text
+              };
+            }
+
           })
         },
         useSession: true
-      };
-
-      dialog.append(select2);
+      });
       dialog.show();
 
       dialog.onSubmit((builder) => {
         // TODO: validate
         const result = builder.getElementById(OrdinoFormIds.SCORE).value;
-        console.log('TEST: ', result.id.split('-'));
+        const [category, scoreID] = result.id.split('-');
+
+        const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
+        const plugin = chosenCategory.children.find((child) => child.id === scoreID);
+
+        chosenCategory.action(plugin);
+
         dialog.hide();
       });
     });

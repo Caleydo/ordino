@@ -15,7 +15,7 @@ import {OrdinoFormIds} from '../constants';
 interface IColumnWrapper {
   text: string;
   action: (param: any) => void;
-  children?: any[];
+  plugins?: any[];
 }
 
 export class LineUpRankingButtons extends EventHandler {
@@ -145,7 +145,7 @@ export class LineUpRankingButtons extends EventHandler {
 
       const columnsWrapper: IColumnWrapper[] = [{
           text: 'Columns',
-          children: columns,
+          plugins: columns,
           action: (column) => {
             const ranking = this.lineup.data.getLastRanking();
             this.lineup.data.push(ranking, column);
@@ -153,15 +153,15 @@ export class LineUpRankingButtons extends EventHandler {
         },
         {
           text: 'Parameterized Scores',
-          children: wrappedScores,
-          action: async (scorePlugin) => {
-            const params = await scorePlugin.factory();
-            this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params);
+          plugins: wrappedScores,
+          action: (scorePlugin) => {
+            scorePlugin.factory().then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
           }
         }, {
           text: 'Upload Score',
+          plugins: scores,
           action: (plugin) => {
-            this.scoreColumnDialog(plugin);
+            plugin.load().then((p) => this.scoreColumnDialog(p));
           }
         }
       ];
@@ -176,21 +176,12 @@ export class LineUpRankingButtons extends EventHandler {
         required: true,
         options: {
           data: columnsWrapper.map((category) => {
-
-            if(category.children) {
-              return {
-                text: category.text,
-                children: category.children.map((entry) => {
-                  return { text: entry.name, id: `${category.text}-${entry.id}` };
-                })
-              };
-            } else {
-              return {
-                text: category.text,
-                id: category.text
-              };
-            }
-
+            return {
+              text: category.text,
+              children: category.plugins.map((entry) => {
+                return { text: entry.name, id: `${category.text}-${entry.id}` };
+              })
+            };
           })
         },
         useSession: true
@@ -203,7 +194,7 @@ export class LineUpRankingButtons extends EventHandler {
         const [category, scoreID] = result.id.split('-');
 
         const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
-        const plugin = chosenCategory.children.find((child) => child.id === scoreID);
+        const plugin = chosenCategory.plugins.find((child) => child.id === scoreID);
 
         chosenCategory.action(plugin);
 

@@ -1,4 +1,3 @@
-import {ParameterFormIds} from '../../targid_boehringer/src/forms';
 /**
  * Created by sam on 03.03.2017.
  */

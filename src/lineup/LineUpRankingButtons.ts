@@ -118,7 +118,7 @@ export class LineUpRankingButtons extends EventHandler {
       loadedScorePlugins.push(...ordinoScores.map((desc) => wrapper.factory(desc)));
     });
 
-    // wait until all
+    // wait until all meta data columns are ready
     const metaDataDescs = await Promise.all(metaDataPlugins);
 
     const metaDataOptions = this.buildMetaDataDescriptions(metaData, metaDataDescs);

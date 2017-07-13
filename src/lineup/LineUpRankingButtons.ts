@@ -12,6 +12,7 @@ import {FormElementType, IFormElementDesc} from '../form/interfaces';
 import {OrdinoFormIds} from '../constants';
 import {IScoreLoader} from '../ScoreLoadingWrapper';
 import FormBuilder from '../form/FormBuilder';
+import {IButtonElementDesc} from '../form/internal/FormButton';
 
 interface IColumnWrapper {
   text: string;
@@ -89,21 +90,39 @@ export class LineUpRankingButtons extends EventHandler {
       .attr('class', 'fa fa-plus dropdown-toggle')
       .attr('data-toggle', 'dropdown');
 
-    const uploads = listPlugins('targidScore').filter((d: any) => d.idtype === this.idType.id);
-
     const $selectWrapper = $div.append('div').attr('class', 'dropdown-menu');
     $selectWrapper.on('click', () => (<Event>d3.event).stopPropagation()); // HACK: don't close the dropdown when clicking Select2
 
     const builder = new FormBuilder($selectWrapper);
-    const scoreWrapper = listPlugins('scoreLoadingWrapper');
-    const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
 
+    const uploads = listPlugins('targidScore').find((d: any) => d.idtype === this.idType.id);
+    const metaData = listPlugins('metaDataColumns');
+    const scoreWrapper = listPlugins('scoreLoadingWrapper');
+
+    $selectWrapper.insert('b', ':first-child').html(uploads? 'Select from dropdown or upload' : 'Select from dropdown');
+
+    // load wrapper plugins
+    const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
     const wrappers = await Promise.all(wrapperPromises);
+
+    // load ordino scores, which are available for the current IDType
     const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findScores(this.idType);
 
-    const wrappedScores: IScoreLoader[] = [];
+    const loadedScorePlugins: IScoreLoader[] = [];
+    const metaDataPlugins: Promise<object[]>[] = [];
 
-    wrappers.forEach((wrapper) => wrappedScores.push(...ordinoScores.map((score) => wrapper.factory(score))));
+    wrappers.forEach((wrapper) => {
+      // wrap and load MetaData plugins immediately to show the additional columns in the dropdown
+      metaDataPlugins.push(...metaData.map((desc) => wrapper.factory(desc).factory(this.extraArgs).then((col) => desc.col = col)));
+
+      // wrap the score plugins
+      loadedScorePlugins.push(...ordinoScores.map((desc) => wrapper.factory(desc)));
+    });
+
+    // wait until all
+    const metaDataDescs = await Promise.all(metaDataPlugins);
+
+    const metaDataOptions = this.buildMetaDataDescriptions(metaData, metaDataDescs);
 
     const columns = this.lineup.data.getColumns()
       .filter((d) => !d._score)
@@ -120,27 +139,21 @@ export class LineUpRankingButtons extends EventHandler {
       },
       {
         text: 'Parameterized Scores',
-        plugins: wrappedScores,
+        plugins: loadedScorePlugins,
         action: (scorePlugin) => {
+          // the factory function call executes the score's implementation
           scorePlugin.factory().then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
         }
       },
-      {
-        text: 'Upload Score',
-        plugins: uploads,
-        action: (plugin) => {
-          plugin.load().then((p) => this.scoreColumnDialog(p));
-        }
-      }
+      ...metaDataOptions
     ];
 
-    const elements: IFormElementDesc[] = [{
+    const elements: (IFormElementDesc|IButtonElementDesc)[] = [{
       type: FormElementType.SELECT2,
       id: OrdinoFormIds.SCORE,
       attributes: {
         style: 'width:200px'
       },
-      required: true,
       hideLabel: true,
       options: {
         data: columnsWrapper.map((category) => {
@@ -164,7 +177,30 @@ export class LineUpRankingButtons extends EventHandler {
       useSession: true
     }];
 
+    if(uploads) {
+      elements.push({
+        type: FormElementType.BUTTON,
+        label: 'Upload',
+        id: 'upload',
+        onClick: () => {
+          uploads.load().then((p) => this.scoreColumnDialog(p));
+        }
+      });
+    }
+
     builder.build(elements);
+  }
+
+  private buildMetaDataDescriptions(descs, columns) {
+    return descs.map((desc, i) => {
+      return {
+        text: desc.name,
+        plugins: columns[i],
+        action: (plugin) => {
+          this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, plugin.data.id, plugin.data);
+        }
+      };
+    });
   }
 
   private scoreColumnDialog(scorePlugin: IPlugin) {

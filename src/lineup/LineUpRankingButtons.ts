@@ -149,7 +149,7 @@ export class LineUpRankingButtons extends EventHandler {
 
     const elements: (IFormElementDesc|IButtonElementDesc)[] = [{
       type: FormElementType.SELECT2,
-      id: OrdinoFormIds.SCORE,
+      id: OrdinoFormIds.ADDITIONAL_COLUMN,
       attributes: {
         style: 'width:200px'
       },
@@ -164,7 +164,7 @@ export class LineUpRankingButtons extends EventHandler {
           };
         }),
         onChange: () => {
-          const result = builder.getElementById(OrdinoFormIds.SCORE).value;
+          const result = builder.getElementById(OrdinoFormIds.ADDITIONAL_COLUMN).value;
           const [category, scoreID] = result.id.split('-');
 
           const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
@@ -180,7 +180,7 @@ export class LineUpRankingButtons extends EventHandler {
       elements.push({
         type: FormElementType.BUTTON,
         label: 'Upload',
-        id: 'upload',
+        id: OrdinoFormIds.UPLOAD,
         onClick: () => {
           uploads.load().then((p) => this.scoreColumnDialog(p));
         }

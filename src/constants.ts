@@ -84,5 +84,6 @@ export const KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES = 5;
 
 
 export class OrdinoFormIds {
-  static SCORE = 'ordino_score';
+  static ADDITIONAL_COLUMN = 'ordino_additional_column';
+  static UPLOAD = 'ordino_upload';
 }

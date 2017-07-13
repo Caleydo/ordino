@@ -65,8 +65,7 @@ export class LineUpRankingButtons extends EventHandler {
     });
   }
 
-  static findScores(target: IDType) {
-    const all = listPlugins('ordinoScore');
+  static findMappablePlugins(target: IDType, all: IPluginDesc[]) {
     const idTypes = Array.from(new Set<string>(all.map((d) => d.idtype)));
 
     function canBeMappedTo(idtype: string) {
@@ -96,17 +95,17 @@ export class LineUpRankingButtons extends EventHandler {
     const builder = new FormBuilder($selectWrapper);
 
     const uploads = listPlugins('targidScore').find((d: any) => d.idtype === this.idType.id);
-    const metaData = listPlugins('metaDataColumns');
     const scoreWrapper = listPlugins('scoreLoadingWrapper');
+
+    // load plugins, which need to be checked if the IDTypes are mappable
+    const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('ordinoScore'));
+    const metaData = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
 
     $selectWrapper.insert('b', ':first-child').html(uploads? 'Select from dropdown or upload' : 'Select from dropdown');
 
     // load wrapper plugins
     const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
     const wrappers = await Promise.all(wrapperPromises);
-
-    // load ordino scores, which are available for the current IDType
-    const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findScores(this.idType);
 
     const loadedScorePlugins: IScoreLoader[] = [];
     const metaDataPlugins: Promise<object[]>[] = [];

@@ -507,10 +507,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   protected async withoutTracking<T>(f: (lineup: any) => T): Promise<T> {
-    await cmds.untrack(this.context.ref);
-    const r = f(this.lineup);
-    await cmds.clueify(this.context.ref, this.context.graph);
-    return r;
+    return cmds.withoutTracking(this.context.ref, () => f(this.lineup));
   }
 
   /**

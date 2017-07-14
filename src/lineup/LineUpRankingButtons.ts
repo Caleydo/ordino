@@ -13,6 +13,7 @@ import {OrdinoFormIds} from '../constants';
 import {IScoreLoader, IScoreLoaderExtensionDesc} from '../ScoreLoadingWrapper';
 import FormBuilder from '../form/FormBuilder';
 import {IButtonElementDesc} from '../form/internal/FormButton';
+import wrap from '../ScoreLoadingWrapper';
 
 interface IColumnWrapper<T> {
   text: string;
@@ -101,19 +102,12 @@ export class LineUpRankingButtons extends EventHandler {
     const builder = new FormBuilder($selectWrapper);
 
     const uploads = listPlugins('targidScore').find((d: any) => d.idtype === this.idType.id);
-    const scoreWrapper = listPlugins('scoreLoadingWrapper');
 
     // load plugins, which need to be checked if the IDTypes are mappable
     const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('ordinoScore'));
     const metaDataPluginDescs = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
 
     $selectWrapper.insert('b', ':first-child').html(uploads? 'Select from dropdown or upload' : 'Select from dropdown');
-
-    // load wrapper plugins
-    const wrapperPromises = scoreWrapper.map((wrapper) => wrapper.load());
-    const wrappers = await Promise.all(wrapperPromises);
-
-    const loadedScorePlugins: IScoreLoader[] = [];
 
     const metaDataPluginPromises: Promise<IColumnWrapper<IScoreLoader>>[] = metaDataPluginDescs
       .map((plugin: IPluginDesc) => plugin.load()
@@ -125,11 +119,7 @@ export class LineUpRankingButtons extends EventHandler {
 
     // Load meta data plugins
     const metaDataOptions = await Promise.all(metaDataPluginPromises);
-
-    wrappers.forEach((wrapper) => {
-      // wrap the score plugins
-      loadedScorePlugins.push(...ordinoScores.map((desc) => wrapper.factory(desc)));
-    });
+    const loadedScorePlugins = ordinoScores.map((desc) => wrap(desc));
 
 
     const columns: IWrappedColumnDesc[] = this.lineup.data.getColumns()

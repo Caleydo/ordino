@@ -2,13 +2,17 @@ import {IPluginDesc} from 'phovea_core/src/plugin';
 
 export interface IScoreLoader {
   /**
+   unique id of this loader
+   */
+  readonly id: string;
+  /**
    * name for the entry
    */
-  readonly name: string;
+  readonly text: string;
   /**
    * id of the score implementation plugin
    */
-  readonly id: string;
+  readonly scoreId: string;
 
   /**
    * @param extraArgs
@@ -34,6 +38,7 @@ export function wrap(ordinoScore: IPluginDesc): IScoreLoader {
   return {
     name: ordinoScore.name,
     id: ordinoScore.id,
+    scoreId: ordinoScore.id,
     factory(extraArgs: object) {
       return ordinoScore.load().then((p) => Promise.resolve(p.factory(ordinoScore, extraArgs)));
     }

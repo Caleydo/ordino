@@ -14,10 +14,16 @@ import {IScoreLoader} from '../ScoreLoadingWrapper';
 import FormBuilder from '../form/FormBuilder';
 import {IButtonElementDesc} from '../form/internal/FormButton';
 
-interface IColumnWrapper {
+interface IColumnWrapper<T> {
   text: string;
-  action: (param: any) => void;
-  plugins?: any[];
+  action: (param: T) => void;
+  plugins?: Array<T>;
+}
+
+interface IWrappedColumnDesc {
+  name: string;
+  id: string;
+  column: IColumnDesc;
 }
 
 export class LineUpRankingButtons extends EventHandler {
@@ -125,23 +131,23 @@ export class LineUpRankingButtons extends EventHandler {
 
     const columns = this.lineup.data.getColumns()
       .filter((d) => !d._score)
-      .map((d) => Object.assign(d, { name: d.label, id: d.column })); // use the same keys as in the scores
+      .map((d) => ({ name: d.label, id: d.column, column: d }));
 
-    const columnsWrapper: IColumnWrapper[] = [
+    const columnsWrapper: IColumnWrapper<IScoreLoader|IWrappedColumnDesc>[] = [
       {
         text: 'Columns',
         plugins: columns,
-        action: (column) => {
+        action: (wrappedColumn: IWrappedColumnDesc) => {
           const ranking = this.lineup.data.getLastRanking();
-          this.lineup.data.push(ranking, column);
+          this.lineup.data.push(ranking, wrappedColumn.column);
         }
       },
       {
         text: 'Parameterized Scores',
         plugins: loadedScorePlugins,
-        action: (scorePlugin) => {
+        action: (scorePlugin: IScoreLoader) => {
           // the factory function call executes the score's implementation
-          scorePlugin.factory().then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
+          scorePlugin.factory(this.extraArgs).then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
         }
       },
       ...metaDataOptions

@@ -58,7 +58,8 @@ async function setRankingSortCriteriaImpl(inputs: IObjectRef<any>[], parameter: 
   const ranking = p.getRankings()[parameter.rid];
   const bak = toSortObject(ranking.getSortCriteria());
   ignoreNext = 'sortCriteriaChanged';
-  ranking.sortBy(parameter.value.col ? ranking.findByPath(parameter.value.col) : null, parameter.value.asc);
+  //expects just null not undefined
+  ranking.sortBy(parameter.value.col ? (ranking.findByPath(parameter.value.col) || null) : null, parameter.value.asc);
 
   return {
     inverse: setRankingSortCriteria(inputs[0], parameter.rid, bak)
@@ -78,7 +79,7 @@ async function setColumnImpl(inputs: IObjectRef<any>[], parameter: any) {
   const ranking = p.getRankings()[parameter.rid];
   const prop = parameter.prop[0].toUpperCase() + parameter.prop.slice(1);
 
-  let bak;
+  let bak = null;
   let source: Column | Ranking = ranking;
   if (parameter.path) {
     source = ranking.findByPath(parameter.path);
@@ -87,7 +88,7 @@ async function setColumnImpl(inputs: IObjectRef<any>[], parameter: any) {
   if (parameter.prop === 'mapping' && source instanceof NumberColumn) {
     bak = source.getMapping().dump();
     source.setMapping(createMappingFunction(parameter.value));
-  } else {
+  } else if (source) {
     bak = source['get' + prop]();
     source['set' + prop].call(source, parameter.value);
   }
@@ -119,20 +120,22 @@ async function addColumnImpl(inputs: IObjectRef<IViewProvider>[], parameter: any
   let ranking: Ranking | CompositeColumn = p.getRankings()[parameter.rid];
 
   const index: number = parameter.index;
-  let bak;
+  let bak = null;
   if (parameter.path) {
     ranking = <CompositeColumn>ranking.findByPath(parameter.path);
   }
-  if (parameter.dump) { //add
-    ignoreNext = 'addColumn';
-    ranking.insert(p.restoreColumn(parameter.dump), index);
-  } else { //remove
-    bak = ranking.at(index);
-    ignoreNext = 'removeColumn';
-    ranking.remove(bak);
+  if (ranking) {
+    if (parameter.dump) { //add
+      ignoreNext = 'addColumn';
+      ranking.insert(p.restoreColumn(parameter.dump), index);
+    } else { //remove
+      bak = ranking.at(index);
+      ignoreNext = 'removeColumn';
+      ranking.remove(bak);
+    }
   }
   return {
-    inverse: addColumn(inputs[0], parameter.rid, parameter.path, index, parameter.dump ? null : p.dumpColumn(bak))
+    inverse: addColumn(inputs[0], parameter.rid, parameter.path, index, parameter.dump || !bak ? null : p.dumpColumn(bak))
   };
 }
 

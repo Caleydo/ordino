@@ -2,7 +2,7 @@
  * Created by sam on 13.02.2017.
  */
 
-import {createStackDesc} from 'lineupjs/src/model';
+import {createStackDesc, IColumnDesc} from 'lineupjs/src/model';
 import * as d3 from 'd3';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
@@ -10,7 +10,7 @@ import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
 import {FormElementType, IFormElementDesc} from '../form/interfaces';
 import {OrdinoFormIds} from '../constants';
-import {IScoreLoader} from '../ScoreLoadingWrapper';
+import {IScoreLoader, IScoreLoaderExtensionDesc} from '../ScoreLoadingWrapper';
 import FormBuilder from '../form/FormBuilder';
 import {IButtonElementDesc} from '../form/internal/FormButton';
 
@@ -105,7 +105,7 @@ export class LineUpRankingButtons extends EventHandler {
 
     // load plugins, which need to be checked if the IDTypes are mappable
     const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('ordinoScore'));
-    const metaData = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
+    const metaDataPluginDescs = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
 
     $selectWrapper.insert('b', ':first-child').html(uploads? 'Select from dropdown or upload' : 'Select from dropdown');
 
@@ -114,20 +114,23 @@ export class LineUpRankingButtons extends EventHandler {
     const wrappers = await Promise.all(wrapperPromises);
 
     const loadedScorePlugins: IScoreLoader[] = [];
-    const metaDataPlugins: Promise<object[]>[] = [];
+
+    const metaDataPluginPromises: Promise<IColumnWrapper<IScoreLoader>>[] = metaDataPluginDescs
+      .map((plugin: IPluginDesc) => plugin.load()
+        .then((loadedPlugin: IPlugin) => loadedPlugin.factory(plugin))
+        .then((scores: IScoreLoader[]) => {
+          return this.buildMetaDataDescriptions(plugin, scores);
+        })
+      );
+
+    // Load meta data plugins
+    const metaDataOptions = await Promise.all(metaDataPluginPromises);
 
     wrappers.forEach((wrapper) => {
-      // wrap and load MetaData plugins immediately to show the additional columns in the dropdown
-      metaDataPlugins.push(...metaData.map((desc) => wrapper.factory(desc).factory(this.extraArgs).then((col) => desc.col = col)));
-
       // wrap the score plugins
       loadedScorePlugins.push(...ordinoScores.map((desc) => wrapper.factory(desc)));
     });
 
-    // wait until all meta data columns are ready
-    const metaDataDescs = await Promise.all(metaDataPlugins);
-
-    const metaDataOptions = this.buildMetaDataDescriptions(metaData, metaDataDescs);
 
     const columns: IWrappedColumnDesc[] = this.lineup.data.getColumns()
       .filter((d) => !d._score)
@@ -196,16 +199,16 @@ export class LineUpRankingButtons extends EventHandler {
     builder.build(elements);
   }
 
-  private buildMetaDataDescriptions(descs, columns) {
-    return descs.map((desc, i) => {
-      return {
-        text: desc.name,
-        plugins: columns[i],
-        action: (plugin) => {
-          this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, plugin.data.id, plugin.data);
-        }
-      };
-    });
+  private buildMetaDataDescriptions(desc: IPluginDesc, columns: IScoreLoader[]) {
+    return {
+      text: desc.name,
+      plugins: columns,
+      action: (plugin: IScoreLoader) => {
+        const params = plugin.factory(this.extraArgs);
+        console.log('PARAMS: ', params);
+        this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, plugin.scoreId, params);
+      }
+    };
   }
 
   private scoreColumnDialog(scorePlugin: IPlugin) {

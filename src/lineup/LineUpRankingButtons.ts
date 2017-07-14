@@ -176,7 +176,9 @@ export class LineUpRankingButtons extends EventHandler {
           };
         }),
         onChange: () => {
-          const result = builder.getElementById(OrdinoFormIds.ADDITIONAL_COLUMN).value;
+          const dropdown = builder.getElementById(OrdinoFormIds.ADDITIONAL_COLUMN);
+          const result = dropdown.value;
+          dropdown.value = null;
           const [category, scoreID] = result.id.split('-');
 
           const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
@@ -184,8 +186,7 @@ export class LineUpRankingButtons extends EventHandler {
 
           chosenCategory.action(plugin);
         }
-      },
-      useSession: true
+      }
     }];
 
     if(uploads) {

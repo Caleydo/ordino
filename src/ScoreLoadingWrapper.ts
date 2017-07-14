@@ -2,7 +2,7 @@ import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
 
 export interface IScoreLoader {
   /**
-   unique id of this loader
+   * unique id of this loader
    */
   readonly id: string;
   /**
@@ -36,7 +36,7 @@ export interface IScoreLoaderExtensionDesc extends IPluginDesc {
  * @param ordinoScore
  * @returns {IScoreLoader}
  */
-export function wrap(ordinoScore: IPluginDesc): IScoreLoader {
+export default function wrap(ordinoScore: IPluginDesc): IScoreLoader {
   return {
     text: ordinoScore.name,
     id: ordinoScore.id,

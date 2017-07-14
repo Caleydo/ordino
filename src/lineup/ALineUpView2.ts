@@ -335,7 +335,9 @@ export abstract class ALineUpView2 extends AView {
           }
         }
         col.setLoaded(true);
-        this.lineup.update();
+        if (this.lineup) {
+          this.lineup.update();
+        }
         return col;
       });
 

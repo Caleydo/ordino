@@ -84,6 +84,6 @@ export const KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES = 5;
 
 
 export class OrdinoFormIds {
-  static ADDITIONAL_COLUMN = 'ordino_additional_column';
-  static UPLOAD = 'ordino_upload';
+  static ADDITIONAL_COLUMN = 'ordino.lineup.column.add';
+  static UPLOAD = 'ordino.lineup.column.upload';
 }

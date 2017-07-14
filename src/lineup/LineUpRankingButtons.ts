@@ -149,8 +149,11 @@ export class LineUpRankingButtons extends EventHandler {
         text: 'Parameterized Scores',
         plugins: loadedScorePlugins,
         action: (scorePlugin: IScoreLoader) => {
+          // number of rows of the last ranking
+          const amountOfRows: number = this.lineup.data.getLastRanking().getOrder().length;
+
           // the factory function call executes the score's implementation
-          scorePlugin.factory(this.extraArgs).then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
+          scorePlugin.factory(this.extraArgs, amountOfRows).then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
         }
       },
       ...metaDataOptions
@@ -204,8 +207,10 @@ export class LineUpRankingButtons extends EventHandler {
       text: desc.name,
       plugins: columns,
       action: (plugin: IScoreLoader) => {
-        const params = plugin.factory(this.extraArgs);
-        console.log('PARAMS: ', params);
+        // number of rows of the last ranking
+        const amountOfRows: number = this.lineup.data.getLastRanking().getOrder().length;
+
+        const params = plugin.factory(this.extraArgs, amountOfRows);
         this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, plugin.scoreId, params);
       }
     };

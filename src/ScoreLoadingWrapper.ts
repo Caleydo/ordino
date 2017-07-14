@@ -18,7 +18,7 @@ export interface IScoreLoader {
    * @param extraArgs
    * @returns {Promise<any>} a promise of the score params
    */
-  factory(extraArgs: object): Promise<object>;
+  factory(extraArgs: object, count: number): Promise<object>;
 }
 
 export interface IScoreLoaderExtension {
@@ -41,8 +41,8 @@ export function wrap(ordinoScore: IPluginDesc): IScoreLoader {
     text: ordinoScore.name,
     id: ordinoScore.id,
     scoreId: ordinoScore.id,
-    factory(extraArgs: object) {
-      return ordinoScore.load().then((p) => Promise.resolve(p.factory(ordinoScore, extraArgs)));
+    factory(extraArgs: object, count: number) {
+      return ordinoScore.load().then((p) => Promise.resolve(p.factory(ordinoScore, extraArgs, count)));
     }
   };
 }

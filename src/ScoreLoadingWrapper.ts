@@ -1,4 +1,4 @@
-import {IPluginDesc} from 'phovea_core/src/plugin';
+import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
 
 export interface IScoreLoader {
   /**
@@ -21,12 +21,14 @@ export interface IScoreLoader {
   factory(extraArgs: object): Promise<object>;
 }
 
-interface IScoreLoaderExtension {
+export interface IScoreLoaderExtension {
   (desc: IPluginDesc, extraArgs: object): Promise<IScoreLoader[]>;
 }
 
-interface IScoreLoaderExtensionDesc extends IPluginDesc {
+export interface IScoreLoaderExtensionDesc extends IPluginDesc {
   idtype: string;
+
+  load(): Promise<IPlugin & IScoreLoaderExtension>;
 }
 
 /**

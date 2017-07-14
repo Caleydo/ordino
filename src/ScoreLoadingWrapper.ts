@@ -36,7 +36,7 @@ interface IScoreLoaderExtensionDesc extends IPluginDesc {
  */
 export function wrap(ordinoScore: IPluginDesc): IScoreLoader {
   return {
-    name: ordinoScore.name,
+    text: ordinoScore.name,
     id: ordinoScore.id,
     scoreId: ordinoScore.id,
     factory(extraArgs: object) {

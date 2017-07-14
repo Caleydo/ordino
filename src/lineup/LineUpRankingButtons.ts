@@ -21,7 +21,7 @@ interface IColumnWrapper<T> {
 }
 
 interface IWrappedColumnDesc {
-  name: string;
+  text: string;
   id: string;
   column: IColumnDesc;
 }
@@ -129,9 +129,9 @@ export class LineUpRankingButtons extends EventHandler {
 
     const metaDataOptions = this.buildMetaDataDescriptions(metaData, metaDataDescs);
 
-    const columns = this.lineup.data.getColumns()
+    const columns: IWrappedColumnDesc[] = this.lineup.data.getColumns()
       .filter((d) => !d._score)
-      .map((d) => ({ name: d.label, id: d.column, column: d }));
+      .map((d) => ({ text: d.label, id: d.column, column: d }));
 
     const columnsWrapper: IColumnWrapper<IScoreLoader|IWrappedColumnDesc>[] = [
       {
@@ -165,7 +165,7 @@ export class LineUpRankingButtons extends EventHandler {
           return {
             text: category.text,
             children: category.plugins.map((entry) => {
-              return { text: entry.name, id: `${category.text}-${entry.id}` };
+              return { text: entry.text, id: `${category.text}-${entry.id}` };
             })
           };
         }),

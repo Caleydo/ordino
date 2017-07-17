@@ -76,7 +76,7 @@ export default class Ordino extends ACLUEWrapper {
     const provenanceMenu = new EditProvenanceGraphMenu(clueManager, header.rightMenu);
 
     const modeSelector = body.querySelector('header');
-    modeSelector.className += 'clue-modeselector';
+    modeSelector.className += 'clue-modeselector collapsed';
     cmode.createButton(modeSelector, {
       size: 'sm'
     });
@@ -100,7 +100,8 @@ export default class Ordino extends ACLUEWrapper {
     const storyVis = graph.then((graph) => {
       createProvVis(graph, body.querySelector('div.content'), {
         thumbnails: false,
-        provVisCollapsed: true
+        provVisCollapsed: true,
+        hideCLUEButtonsOnCollapse: true
       });
       return createStoryVis(graph, <HTMLElement>body.querySelector('div.content'), main, {
         thumbnails: false

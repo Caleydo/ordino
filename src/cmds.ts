@@ -23,7 +23,7 @@ import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import TargidConstants from './constants';
 import Targid from './Targid';
 import * as session from 'phovea_core/src/session';
-import {nest} from 'd3';
+import {createRemove, lastOnly} from 'phovea_clue/src/compress';
 
 /**
  * Creates a view instance and wraps the instance with the inverse action in a CLUE command
@@ -265,53 +265,17 @@ export function createCmd(id): ICmdFunction {
  * @returns {Array}
  */
 export function compressCreateRemove(path: ActionNode[]) {
-  const r = [];
-  for (const p of path) {
-    if (p.f_id === TargidConstants.CMD_REMOVE_VIEW && r.length > 0) {
-      const last = r[r.length - 1];
-      if (last.f_id === TargidConstants.CMD_CREATE_VIEW && p.parameter.viewId === last.parameter.viewId) {
-        r.pop();
-        continue;
-      }
-    }
-    r.push(p);
-  }
-  return r;
+  return createRemove(path, TargidConstants.CMD_CREATE_VIEW, TargidConstants.CMD_REMOVE_VIEW);
 }
 
-/**
- * compresses the given path by removing redundant focus operations
- * @param path
- * @returns {ActionNode[]}
- */
+export function compressReplace(path: ActionNode[]) {
+  return lastOnly(path, TargidConstants.CMD_REPLACE_VIEW, (p) => String(p.requires[1].id));
+}
+
 export function compressSetParameter(path: ActionNode[]) {
-  const possible = path.filter((p) => p.f_id === TargidConstants.CMD_SET_PARAMETER);
-  //group by view and parameter
-  const toKey = (p: ActionNode) => p.requires[0].id + '_' + p.parameter.name;
-  const last = nest().key(toKey).map(possible);
-  return path.filter((p) => {
-    if (p.f_id !== TargidConstants.CMD_SET_PARAMETER) {
-      return true;
-    }
-    const elems = last[toKey(p)];
-    return elems[elems.length - 1] === p; //just the last survives
-  });
+  return lastOnly(path, TargidConstants.CMD_SET_PARAMETER, (p: ActionNode) => p.requires[0].id + '_' + p.parameter.name);
 }
 
 export function compressSetSelection(path: ActionNode[]) {
-  const lastByIDType: any = {};
-  path.forEach((p) => {
-    if (p.f_id === TargidConstants.CMD_SET_SELECTION) {
-      const para = p.parameter;
-      lastByIDType[para.idtype + '@' + p.requires[0].id] = p;
-    }
-  });
-  return path.filter((p) => {
-    if (p.f_id !== TargidConstants.CMD_SET_SELECTION) {
-      return true;
-    }
-    const para = p.parameter;
-    //last one remains
-    return lastByIDType[para.idtype + '@' + p.requires[0].id] === p;
-  });
+  return lastOnly(path, TargidConstants.CMD_SET_SELECTION, (p: ActionNode) => p.parameter.idtype + '@' + p.requires[0].id);
 }

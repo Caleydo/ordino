@@ -47,42 +47,48 @@ export class LineUpRankingButtons extends EventHandler {
     this.appendUpload();
   }
 
-  private createMarkup(title: string = '', liClass: string = '') {
+  private createMarkup(title: string = '', linkClass: string = '', linkListener: (param: any) => void | null, liClass: string = '') {
     const $li = this.$ul.append('li')
       .classed(liClass, liClass.length > 0);
 
-    $li.append('a')
+    const $a = $li.append('a')
       .attr('title', title)
-      .attr('href', '#');
+      .attr('href', '#')
+      .classed(linkClass, linkClass .length> 0);
+
+    if(linkListener) {
+      $a.on('click', linkListener);
+    }
 
     return $li;
   }
 
   private appendDownload() {
-    const download = this.createMarkup('Export Data');
-    download.select('a')
-      .attr('class', 'fa fa-download')
-      .on('click', (ranking) => {
-        this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
-          const downloadLink = document.createElement('a');
-          const blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
-          downloadLink.href = URL.createObjectURL(blob);
-          (<any>downloadLink).download = 'export.csv';
+    const listener = (ranking) => {
+      this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
+        const downloadLink = document.createElement('a');
+        const blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
+        downloadLink.href = URL.createObjectURL(blob);
+        (<any>downloadLink).download = 'export.csv';
 
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-        });
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
       });
+    };
+
+    this.createMarkup('Export Data', 'fa fa-download', listener);
   }
 
   private appendSaveRanking() {
-    const save = this.createMarkup('Save Named Set');
-    save.select('a')
-      .attr('class', 'fa fa-save')
-      .on('click', (ranking) => {
-        this.saveRankingDialog(ranking.getOrder());
-      });
+    const listener = (ranking) => {
+      (<Event>d3.event).preventDefault();
+      (<Event>d3.event).stopPropagation();
+
+      this.saveRankingDialog(ranking.getOrder());
+    };
+
+    this.createMarkup('Save Named Set', 'fa fa-save', listener);
   }
 
   private saveRankingDialog(order: number[]) {
@@ -109,10 +115,9 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private async appendMoreColumns() {
-    const dropdown = this.createMarkup('Add Column', 'dropdown');
+    const dropdown = this.createMarkup('Add Column', 'fa fa-plus dropdown-toggle', null, 'dropdown');
 
     dropdown.select('a')
-      .attr('class', 'fa fa-plus dropdown-toggle')
       .attr('data-toggle', 'dropdown');
 
     const $selectWrapper = dropdown.append('div').attr('class', 'dropdown-menu');
@@ -202,15 +207,14 @@ export class LineUpRankingButtons extends EventHandler {
 
   private appendUpload() {
     const uploaderDesc = listPlugins('ordinoScoreButton')[0];
+
     if(uploaderDesc) {
-      const upload = this.createMarkup(uploaderDesc.name);
-      upload .select('a')
-        .attr('class', 'fa fa-upload')
-          .on('click', () => {
-            uploaderDesc.load().then((p) => this.scoreColumnDialog(p));
-            (<Event>d3.event).preventDefault();
-            (<Event>d3.event).stopPropagation();
-          });
+      const listener = () => {
+        uploaderDesc.load().then((p) => this.scoreColumnDialog(p));
+        (<Event>d3.event).preventDefault();
+        (<Event>d3.event).stopPropagation();
+      };
+      const upload = this.createMarkup(uploaderDesc.name,'fa fa-upload', listener);
     }
   }
 

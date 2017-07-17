@@ -16,6 +16,7 @@ import {
   editProvenanceGraphMetaData, isPersistent, isPublic,
   persistProvenanceGraphMetaData
 } from './EditProvenanceGraphMenu';
+import {fromNow} from './utils';
 
 
 abstract class ASessionList implements IStartMenuSectionEntry {
@@ -157,7 +158,9 @@ class TemporarySessionList extends ASessionList {
 
     this.registerActionListener(manager, $trEnter);
     $tr.select('td').text((d) => d.name).attr('class', (d) => isPublic(d) ? 'public' : 'private');
-    $tr.select('td:nth-of-type(2)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+    $tr.select('td:nth-of-type(2)')
+      .text((d) => d.ts ? fromNow(d.ts) : 'Unknown')
+      .attr('title', (d) => d.ts ? new Date(d.ts).toUTCString() : null);
 
     $tr.exit().remove();
   }
@@ -234,7 +237,9 @@ class PersistentSessionList extends ASessionList {
       $tr.select('td:nth-of-type(2) i')
         .attr('class', (d) => isPublic(d) ? 'fa fa-users': 'fa fa-user')
         .attr('title', (d) => isPublic(d) ? 'Public (everyone can see it)': 'Private');
-      $tr.select('td:nth-of-type(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+      $tr.select('td:nth-of-type(3)')
+        .text((d) => d.ts ? fromNow(d.ts) : 'Unknown')
+        .attr('title', (d) => d.ts ? new Date(d.ts).toUTCString() : null);
 
       $tr.exit().remove();
     }

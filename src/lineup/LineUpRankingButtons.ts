@@ -40,6 +40,7 @@ export class LineUpRankingButtons extends EventHandler {
     this.appendDownload();
     this.appendSaveRanking();
     this.appendMoreColumns();
+    this.appendUpload();
   }
 
   private appendDownload() {
@@ -102,13 +103,9 @@ export class LineUpRankingButtons extends EventHandler {
 
     const builder = new FormBuilder($selectWrapper);
 
-    const uploads = listPlugins('targidScore').find((d: any) => d.idtype === this.idType.id);
-
     // load plugins, which need to be checked if the IDTypes are mappable
     const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('ordinoScore'));
     const metaDataPluginDescs = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
-
-    $selectWrapper.insert('b', ':first-child').html(uploads? 'Select from dropdown or upload' : 'Select from dropdown');
 
     const metaDataPluginPromises: Promise<IColumnWrapper<IScoreLoader>>[] = metaDataPluginDescs
       .map((plugin: IPluginDesc) => plugin.load()
@@ -183,18 +180,19 @@ export class LineUpRankingButtons extends EventHandler {
       }
     }];
 
-    if(uploads) {
-      elements.push({
-        type: FormElementType.BUTTON,
-        label: 'Upload',
-        id: OrdinoFormIds.UPLOAD,
-        onClick: () => {
-          uploads.load().then((p) => this.scoreColumnDialog(p));
-        }
-      });
-    }
-
     builder.build(elements);
+  }
+
+  private appendUpload() {
+    const uploaderDesc = listPlugins('ordinoScoreButton')[0];
+    if(uploaderDesc) {
+      this.$node.append('button')
+        .attr('class', 'fa fa-upload')
+        .attr('title', uploaderDesc.name)
+          .on('click', () => {
+            uploaderDesc.load().then((p) => this.scoreColumnDialog(p));
+          });
+    }
   }
 
   private buildMetaDataDescriptions(desc: IPluginDesc, columns: IScoreLoader[]) {

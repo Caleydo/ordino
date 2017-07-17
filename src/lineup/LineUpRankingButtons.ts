@@ -14,11 +14,12 @@ import {IScoreLoader, IScoreLoaderExtensionDesc} from '../ScoreLoadingWrapper';
 import FormBuilder from '../form/FormBuilder';
 import {IButtonElementDesc} from '../form/internal/FormButton';
 import wrap from '../ScoreLoadingWrapper';
+import LineUp from 'lineupjs/src/lineup';
 
 interface IColumnWrapper<T> {
   text: string;
   action: (param: T) => void;
-  plugins?: Array<T>;
+  plugins?: T[];
 }
 
 interface IWrappedColumnDesc {
@@ -33,7 +34,7 @@ export class LineUpRankingButtons extends EventHandler {
   static readonly ADD_SCORE_COLUMN = 'addScoreColumn';
   static readonly ADD_TRACKED_SCORE_COLUMN = 'addTrackedScoreColumn';
 
-  constructor(private lineup, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
+  constructor(private lineup: LineUp, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
     super();
 
     this.appendDownload();
@@ -123,8 +124,11 @@ export class LineUpRankingButtons extends EventHandler {
 
 
     const columns: IWrappedColumnDesc[] = this.lineup.data.getColumns()
-      .filter((d) => !d._score)
-      .map((d) => ({ text: d.label, id: d.column, column: d }));
+      .filter((d) => !(<any>d)._score)
+      .map((d) => ({ text: d.label, id: (<any>d).column, column: d }));
+
+    const weightedSum = createStackDesc('Weighted Sum');
+    columns.push({ text: weightedSum.label, id: 'weightedSum', column: weightedSum });
 
     const columnsWrapper: IColumnWrapper<IScoreLoader|IWrappedColumnDesc>[] = [
       {

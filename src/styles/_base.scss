@@ -25,9 +25,9 @@ b,
 
 
 /**
- * Hide provenance graph list from header navigation
+ * Hide options menu
  */
-ul[data-clue='provenanceGraphList'] {
+li[data-header="optionsLink"] {
   display: none;
 }
 

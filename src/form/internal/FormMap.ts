@@ -189,6 +189,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
       d.on('change', () => {
         this.rows = []; // clear old
         this.buildMap();
+        if (this.desc.options.badgeProvider) {
+          this.updateBadge();
+        }
       });
     });
 

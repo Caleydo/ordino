@@ -24,6 +24,7 @@ import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 import {initSession as initSessionCmd} from './cmds';
 import EditProvenanceGraphMenu from './EditProvenanceGraphMenu';
 import {showProveanceGraphNotFoundDialog} from './Dialogs';
+import favicon from 'phovea_ui/src/assets/favicon.png';
 
 export interface IOrdinoOptions {
   loginForm?: string;
@@ -35,6 +36,7 @@ export default class Ordino extends ACLUEWrapper {
 
   constructor(private readonly options: IOrdinoOptions = {}) {
     super();
+    this.addFavicon();
     this.build(document.body, {replaceBody: false});
   }
 
@@ -162,5 +164,12 @@ export default class Ordino extends ACLUEWrapper {
     }
 
     return {graph, manager: clueManager, storyVis};
+  }
+
+  private addFavicon() {
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = favicon;
+    document.querySelector('head').appendChild(link);
   }
 }

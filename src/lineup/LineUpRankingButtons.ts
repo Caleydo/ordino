@@ -40,6 +40,7 @@ export class LineUpRankingButtons extends EventHandler {
     this.appendDownload();
     this.appendSaveRanking();
     this.appendMoreColumns();
+    this.appendUpload();
   }
 
   private appendDownload() {
@@ -102,13 +103,9 @@ export class LineUpRankingButtons extends EventHandler {
 
     const builder = new FormBuilder($selectWrapper);
 
-    const uploads = listPlugins('targidScore').find((d: any) => d.idtype === this.idType.id);
-
     // load plugins, which need to be checked if the IDTypes are mappable
     const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('ordinoScore'));
     const metaDataPluginDescs = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
-
-    $selectWrapper.insert('b', ':first-child').html(uploads? 'Select from dropdown or upload' : 'Select from dropdown');
 
     const metaDataPluginPromises: Promise<IColumnWrapper<IScoreLoader>>[] = metaDataPluginDescs
       .map((plugin: IPluginDesc) => plugin.load()
@@ -183,18 +180,19 @@ export class LineUpRankingButtons extends EventHandler {
       }
     }];
 
-    if(uploads) {
-      elements.push({
-        type: FormElementType.BUTTON,
-        label: 'Upload',
-        id: OrdinoFormIds.UPLOAD,
-        onClick: () => {
-          uploads.load().then((p) => this.scoreColumnDialog(p));
-        }
-      });
-    }
-
     builder.build(elements);
+  }
+
+  private appendUpload() {
+    const uploads = listPlugins('ordinoScoreButton')[0];
+    if(uploads) {
+      this.$node.append('button')
+        .attr('class', 'fa fa-upload')
+        .attr('title', 'Upload Score')
+          .on('click', () => {
+            uploads.load().then((p) => this.scoreColumnDialog(p));
+          });
+    }
   }
 
   private buildMetaDataDescriptions(desc: IPluginDesc, columns: IScoreLoader[]) {
@@ -214,7 +212,7 @@ export class LineUpRankingButtons extends EventHandler {
   private scoreColumnDialog(scorePlugin: IPlugin) {
     //TODO clueify
     // pass dataSource into InvertedAggregatedScore factory method
-    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.extraArgs)) // open modal dialog
+    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.idType.id, this.extraArgs)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
         this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
       });

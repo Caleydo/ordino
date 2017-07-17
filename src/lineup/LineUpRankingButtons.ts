@@ -212,7 +212,7 @@ export class LineUpRankingButtons extends EventHandler {
   private scoreColumnDialog(scorePlugin: IPlugin) {
     //TODO clueify
     // pass dataSource into InvertedAggregatedScore factory method
-    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.extraArgs)) // open modal dialog
+    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.idType.id, this.extraArgs)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
         this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
       });

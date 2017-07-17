@@ -62,7 +62,7 @@ export class Targid extends EventHandler {
   }
 
   private buildHistory(parent: HTMLElement) {
-    const $history = d3.select(parent).append('ul').classed('history', true);
+    const $history = d3.select(parent).append('ul').classed('ordino-button-group history', true);
     $history.append('li').classed('homeButton', true)
       .html(`<a href="#">
         <i class="fa fa-home" aria-hidden="true"></i>

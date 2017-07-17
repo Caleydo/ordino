@@ -34,8 +34,12 @@ export class LineUpRankingButtons extends EventHandler {
   static readonly ADD_SCORE_COLUMN = 'addScoreColumn';
   static readonly ADD_TRACKED_SCORE_COLUMN = 'addTrackedScoreColumn';
 
+  private readonly $ul;
+
   constructor(private lineup: LineUp, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
     super();
+
+    this.$ul = this.$node.append('ul').classed('ordino-button-group', true);
 
     this.appendDownload();
     this.appendSaveRanking();
@@ -43,8 +47,20 @@ export class LineUpRankingButtons extends EventHandler {
     this.appendUpload();
   }
 
+  private createMarkup(title: string = '', liClass: string = '') {
+    const $li = this.$ul.append('li')
+      .classed(liClass, liClass.length > 0);
+
+    $li.append('a')
+      .attr('title', title)
+      .attr('href', '#');
+
+    return $li;
+  }
+
   private appendDownload() {
-    this.$node.append('button')
+    const download = this.createMarkup('Export Data');
+    download.select('a')
       .attr('class', 'fa fa-download')
       .on('click', (ranking) => {
         this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
@@ -61,7 +77,8 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private appendSaveRanking() {
-    this.$node.append('button')
+    const save = this.createMarkup('Save Named Set');
+    save.select('a')
       .attr('class', 'fa fa-save')
       .on('click', (ranking) => {
         this.saveRankingDialog(ranking.getOrder());
@@ -92,13 +109,13 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private async appendMoreColumns() {
-    const $div = this.$node.append('div');
+    const dropdown = this.createMarkup('Add Column', 'dropdown');
 
-    $div.append('button')
+    dropdown.select('a')
       .attr('class', 'fa fa-plus dropdown-toggle')
       .attr('data-toggle', 'dropdown');
 
-    const $selectWrapper = $div.append('div').attr('class', 'dropdown-menu');
+    const $selectWrapper = dropdown.append('div').attr('class', 'dropdown-menu');
     $selectWrapper.on('click', () => (<Event>d3.event).stopPropagation()); // HACK: don't close the dropdown when clicking Select2
 
     const builder = new FormBuilder($selectWrapper);
@@ -186,11 +203,13 @@ export class LineUpRankingButtons extends EventHandler {
   private appendUpload() {
     const uploaderDesc = listPlugins('ordinoScoreButton')[0];
     if(uploaderDesc) {
-      this.$node.append('button')
+      const upload = this.createMarkup(uploaderDesc.name);
+      upload .select('a')
         .attr('class', 'fa fa-upload')
-        .attr('title', uploaderDesc.name)
           .on('click', () => {
             uploaderDesc.load().then((p) => this.scoreColumnDialog(p));
+            (<Event>d3.event).preventDefault();
+            (<Event>d3.event).stopPropagation();
           });
     }
   }

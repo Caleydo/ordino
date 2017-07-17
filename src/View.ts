@@ -325,7 +325,7 @@ export class ViewWrapper extends EventHandler {
   /**
    * Provenance graph reference of this object
    */
-  ref: IObjectRef<ViewWrapper>;
+  readonly ref: IObjectRef<ViewWrapper>;
 
   /**
    * Provenance graph context
@@ -343,6 +343,9 @@ export class ViewWrapper extends EventHandler {
   constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
 
+    // create provenance reference
+    this.ref = ref(this, plugin.desc.name, cat.visual, generate_hash(plugin.desc, selection));
+
     this.init(graph, selection, plugin, options);
 
     // create ViewWrapper root node
@@ -359,8 +362,6 @@ export class ViewWrapper extends EventHandler {
    * @param options
    */
   private init(graph: ProvenanceGraph, selection: ISelection, plugin:IPlugin, options?) {
-    // create provenance reference
-    this.ref = ref(this, plugin.desc.name, cat.visual, generate_hash(plugin.desc, selection));
 
     //console.log(graph, generate_hash(plugin.desc, selection, options));
 

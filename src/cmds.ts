@@ -100,8 +100,7 @@ export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any)
   targid.update();
 
   return {
-    created: [existingView.ref],
-    inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)
+    inverse: replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)
   };
 }
 
@@ -265,11 +264,50 @@ export function createCmd(id): ICmdFunction {
  * @returns {Array}
  */
 export function compressCreateRemove(path: ActionNode[]) {
-  return createRemove(path, TargidConstants.CMD_CREATE_VIEW, TargidConstants.CMD_REMOVE_VIEW);
-}
+  const r: ActionNode[] = [];
 
-export function compressReplace(path: ActionNode[]) {
-  return lastOnly(path, TargidConstants.CMD_REPLACE_VIEW, (p) => String(p.requires[1].id));
+  function compatibilityReplaceView(previous: ActionNode) {
+    //old replace view creates a new ref for each new view instead of reusing the old one
+    if (previous.f_id !== TargidConstants.CMD_REPLACE_VIEW) {
+      return false;
+    }
+    // in case of the view created an ref (=old behavior) -> keep it
+    return previous.creates.length > 0;
+  }
+
+  outer: for (const act of path) {
+    if (act.f_id === TargidConstants.CMD_REMOVE_VIEW) {
+      const removed = act.removes[0];
+      //removed view delete intermediate change and optional creation
+      for(let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+        const previous = r[j];
+        const requires = previous.requires;
+        const usesView =  requires.indexOf(removed) >= 0;
+        if (usesView && !compatibilityReplaceView(previous)) {
+          r.splice(j, 1);
+        } else if (previous.f_id === TargidConstants.CMD_CREATE_VIEW && previous.creates[0] === removed) {
+          //found adding remove both
+          r.splice(j, 1);
+          continue outer;
+        }
+      }
+    }
+    if (act.f_id === TargidConstants.CMD_REPLACE_VIEW) {
+      const view = act.requires[1];
+      //changed the view in place can remove all previous set parameter/selection calls till the creation
+      for(let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+        const previous = r[j];
+        const requires = previous.requires;
+        const usesView =  requires.indexOf(view) >= 0;
+        //uses view (setParameter, replace, ...) but not its creation
+        if (usesView && previous.f_id !== TargidConstants.CMD_CREATE_VIEW) {
+          r.splice(j, 1);
+        }
+      }
+    }
+    r.push(act);
+  }
+  return r;
 }
 
 export function compressSetParameter(path: ActionNode[]) {

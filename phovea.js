@@ -25,14 +25,7 @@ module.exports = function (registry) {
     return System.import('./src/cmds');
   }, {
     'factory': 'compressCreateRemove',
-    'matches': '(targidCreateView|targidRemoveView)'
-  });
-
-  registry.push('actionCompressor', 'targidReplaceViewCompressor', function () {
-    return System.import('./src/cmds');
-  }, {
-    'factory': 'compressReplace',
-    'matches': '(targidReplaceView)'
+    'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
   registry.push('actionCompressor', 'targidCompressSetParameter', function () {

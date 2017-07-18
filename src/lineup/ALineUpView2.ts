@@ -80,7 +80,7 @@ export abstract class ALineUpView2 extends AView {
   protected idAccessor = (d) => d._id;
 
 
-  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}, private readonly disableAddingColumns?: boolean) {
+  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}, private readonly disableAddingColumns: boolean = false) {
     super(context, parent, options);
 
     this.$node.classed('lineup', true);

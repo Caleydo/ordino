@@ -80,7 +80,7 @@ export abstract class ALineUpView2 extends AView {
   protected idAccessor = (d) => d._id;
 
 
-  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}) {
+  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}, private readonly disableAddingColumns?: boolean) {
     super(context, parent, options);
 
     this.$node.classed('lineup', true);
@@ -224,6 +224,10 @@ export abstract class ALineUpView2 extends AView {
   }
 
   protected handleSelectionColumnsImpl(selection: ISelection) {
+    if(this.disableAddingColumns) {
+      return;
+    }
+
     const selectedIds = selection.range.dim(0).asList();
 
     const ranking = this.lineup.data.getLastRanking();

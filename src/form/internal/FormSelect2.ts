@@ -262,6 +262,10 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
     }
   }
 
+  focus() {
+    this.$select.select2('open');
+  }
+
 }
 
 /**

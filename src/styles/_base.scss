@@ -452,7 +452,11 @@ div.lu {
   }
 
   .rankingbuttons .dropdown-menu {
-    padding: 10px;
+    padding: 0;
+
+    .form-group {
+      margin-bottom: 0;
+    }
   }
 }
 

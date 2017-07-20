@@ -219,4 +219,8 @@ export default class FormSelect extends AFormElement<IFormSelectDesc> implements
     return this.value !== null;
   }
 
+  focus() {
+    (<HTMLSelectElement>this.$select.node()).focus();
+  }
+
 }

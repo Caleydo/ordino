@@ -114,6 +114,8 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
    * @param v
    */
   abstract set value(v: any);
+
+  abstract focus();
 }
 
 export default AFormElement;

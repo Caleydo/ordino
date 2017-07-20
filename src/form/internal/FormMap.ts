@@ -439,6 +439,11 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.buildMap();
   }
 
+  focus() {
+    // open dropdown
+    $(this.$node.select('.dropdown-menu').node()).show();
+  };
+
 }
 
 function isEqual(a: IFormRow[], b: IFormRow[]) {

@@ -79,4 +79,8 @@ export default class FormCheckBox extends AFormElement<ICheckBoxElementDesc> {
     const options = this.desc.options;
     this.$input.property('value', v === options.checked);
   }
+
+  focus() {
+    (<HTMLInputElement>this.$input.node()).focus();
+  }
 }

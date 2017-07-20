@@ -2,7 +2,7 @@
  * Created by sam on 13.02.2017.
  */
 
-import {createStackDesc, IColumnDesc, createScriptDesc} from 'lineupjs/src/model';
+import {createStackDesc, IColumnDesc, createScriptDesc, Ranking} from 'lineupjs/src/model';
 import * as d3 from 'd3';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
@@ -61,7 +61,7 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private appendDownload() {
-    const listener = (ranking) => {
+    const listener = (ranking: Ranking) => {
       this.lineup.data.exportTable(ranking, {separator: ';', quote: true}).then((content) => {
         const downloadLink = document.createElement('a');
         const blob = new Blob([content], {type: 'text/csv;charset=utf-8'});
@@ -78,7 +78,7 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private appendSaveRanking() {
-    const listener = (ranking) => {
+    const listener = (ranking: Ranking) => {
       (<Event>d3.event).preventDefault();
       (<Event>d3.event).stopPropagation();
 

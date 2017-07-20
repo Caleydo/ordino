@@ -2,7 +2,7 @@
   "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
   "homepage": "https://phovea.caleydo.org",
-  "version": "2.0.1-SNAPSHOT",
+  "version": "2.1.0",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",

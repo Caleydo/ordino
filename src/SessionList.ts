@@ -161,7 +161,7 @@ class TemporarySessionList extends ASessionList {
   </table>`);
 
     const update = (data: IProvenanceGraphDataDescription[]) => {
-      const $tr = $table.select('tbody').selectAll('tr').data(workspaces);
+      const $tr = $table.select('tbody').selectAll('tr').data(data);
 
       const $trEnter = $tr.enter().append('tr').html(`
           <td></td>

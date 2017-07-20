@@ -38,7 +38,10 @@ export abstract class ALineUpView2 extends AView {
       histograms: true
     },
     header: {
-      rankingButtons: ($node: d3.Selection<any>) => {
+      rankingButtons: ($node: d3.Selection<Ranking>) => {
+        if (!this.lineup) {
+          return;
+        }
         const rb = new LineUpRankingButtons(this.lineup, $node, this.rowIDType, this.additionalScoreParameter);
         rb.on(LineUpRankingButtons.SAVE_NAMED_SET, (event, order, name, description, isPublic) => {
           this.saveNamedSet(order, name, description, isPublic);
@@ -49,7 +52,6 @@ export abstract class ALineUpView2 extends AView {
         rb.on(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, (event, scoreId: string, params: any) => {
           this.pushTrackedScoreColumn(scoreId, params);
         });
-        return rb;
       }
     },
     body: {}
@@ -78,7 +80,7 @@ export abstract class ALineUpView2 extends AView {
   protected idAccessor = (d) => d._id;
 
 
-  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}) {
+  constructor(context: IViewContext, protected selection: ISelection, parent: Element, private options?: {}, private readonly disableAddingColumns: boolean = false) {
     super(context, parent, options);
 
     this.$node.classed('lineup', true);
@@ -222,6 +224,10 @@ export abstract class ALineUpView2 extends AView {
   }
 
   protected handleSelectionColumnsImpl(selection: ISelection) {
+    if(this.disableAddingColumns) {
+      return;
+    }
+
     const selectedIds = selection.range.dim(0).asList();
 
     const ranking = this.lineup.data.getLastRanking();
@@ -335,7 +341,9 @@ export abstract class ALineUpView2 extends AView {
           }
         }
         col.setLoaded(true);
-        this.lineup.update();
+        if (this.lineup) {
+          this.lineup.update();
+        }
         return col;
       });
 
@@ -507,10 +515,7 @@ export abstract class ALineUpView2 extends AView {
   }
 
   protected async withoutTracking<T>(f: (lineup: any) => T): Promise<T> {
-    await cmds.untrack(this.context.ref);
-    const r = f(this.lineup);
-    await cmds.clueify(this.context.ref, this.context.graph);
-    return r;
+    return cmds.withoutTracking(this.context.ref, () => f(this.lineup));
   }
 
   /**

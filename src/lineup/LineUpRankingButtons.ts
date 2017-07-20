@@ -8,6 +8,7 @@ import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
+import LineUp from 'lineupjs/src/lineup';
 
 export class LineUpRankingButtons extends EventHandler {
 
@@ -15,7 +16,7 @@ export class LineUpRankingButtons extends EventHandler {
   static readonly ADD_SCORE_COLUMN = 'addScoreColumn';
   static readonly ADD_TRACKED_SCORE_COLUMN = 'addTrackedScoreColumn';
 
-  constructor(private lineup, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
+  constructor(private lineup: LineUp, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
     super();
 
     this.appendDownload();
@@ -81,7 +82,7 @@ export class LineUpRankingButtons extends EventHandler {
 
     const $ul = $div.append('ul').attr('class', 'dropdown-menu');
 
-    const columns = this.lineup.data.getColumns().filter((d) => !d._score);
+    const columns = this.lineup.data.getColumns().filter((d) => !(<any>d)._score);
     columns.push(createStackDesc('Weighted Sum'));
     $ul.selectAll('li.col').data(columns)
       .enter()

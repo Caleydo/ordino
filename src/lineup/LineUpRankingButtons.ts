@@ -190,7 +190,7 @@ export class LineUpRankingButtons extends EventHandler {
       type: FormElementType.SELECT2,
       id: OrdinoFormIds.ADDITIONAL_COLUMN,
       attributes: {
-        style: 'width:200px'
+        style: 'width:250px'
       },
       hideLabel: true,
       options: {

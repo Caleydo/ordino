@@ -34,7 +34,7 @@ export class LineUpRankingButtons extends EventHandler {
   static readonly ADD_SCORE_COLUMN = 'addScoreColumn';
   static readonly ADD_TRACKED_SCORE_COLUMN = 'addTrackedScoreColumn';
 
-  private readonly $ul;
+  private readonly $ul: d3.Selection<HTMLUListElement>;
 
   constructor(private lineup: LineUp, private $node: d3.Selection<any>, private idType: IDType, private extraArgs: any) {
     super();
@@ -47,18 +47,15 @@ export class LineUpRankingButtons extends EventHandler {
     this.appendUpload();
   }
 
-  private createMarkup(title: string = '', linkClass: string = '', linkListener: (param: any) => void | null, liClass: string = '') {
+  private createMarkup(title: string, linkClass: string = '', linkListener: (param: any) => void | null, liClass: string = '') {
     const $li = this.$ul.append('li')
       .classed(liClass, liClass.length > 0);
 
-    const $a = $li.append('a')
+    $li.append('a')
       .attr('title', title)
       .attr('href', '#')
-      .classed(linkClass, linkClass .length> 0);
-
-    if(linkListener) {
-      $a.on('click', linkListener);
-    }
+      .classed(linkClass, linkClass .length > 0)
+      .on('click', linkListener);
 
     return $li;
   }

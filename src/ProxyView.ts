@@ -135,6 +135,9 @@ export class ProxyView extends AView {
         } else if(bak !== null) {
           selectedItemSelect.value = bak;
         }
+
+        // just show if there is more than one
+        selectedItemSelect.setVisible(data.length > 1);
       });
   }
 

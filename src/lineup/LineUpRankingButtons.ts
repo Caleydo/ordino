@@ -2,7 +2,7 @@
  * Created by sam on 13.02.2017.
  */
 
-import {createStackDesc, IColumnDesc} from 'lineupjs/src/model';
+import {createStackDesc, IColumnDesc, createScriptDesc} from 'lineupjs/src/model';
 import * as d3 from 'd3';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
@@ -146,8 +146,8 @@ export class LineUpRankingButtons extends EventHandler {
       .filter((d) => !(<any>d)._score)
       .map((d) => ({ text: d.label, id: (<any>d).column, column: d }));
 
-    const weightedSum = createStackDesc('Weighted Sum');
-    columns.push({ text: weightedSum.label, id: 'weightedSum', column: weightedSum });
+    columns.push({ text: 'Weighted Sum', id: 'weightedSum', column: createStackDesc('Weighted Sum') });
+    columns.push({ text: 'Scripted Combination', id: 'scriptedCombination', column: createScriptDesc('Scripted Combination') });
 
     const columnsWrapper: IColumnWrapper<IScoreLoader|IWrappedColumnDesc>[] = [
       {

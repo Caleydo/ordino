@@ -44,3 +44,20 @@
     }
   }
 }
+
+.rankingbuttons > .ordino-button-group {
+  padding: 0 0 0 2px;
+  max-width: 64px;
+  flex-wrap: wrap;
+
+  > li > a {
+    width: 30px;
+    font-size: x-small;
+    text-align: center;
+    padding: 4px 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten($core_border, 5%);
+    }
+  }
+}

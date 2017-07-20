@@ -1,9 +1,12 @@
 
-.history {
+.ordino-button-group {
   margin: 0;
   padding: 5px 5px;
   list-style: none;
-  overflow: hidden;
+
+  &.history {
+    overflow: hidden;
+  }
 
   //border-bottom: 1px solid $core_colour_selected;
 
@@ -24,8 +27,7 @@
       text-decoration: none;
     }
 
-    // home button
-    &:first-of-type a {
+    &.homeButton a {
       margin-left: 0;
       padding: 5px 18px;
     }
@@ -39,6 +41,23 @@
 
     &.t-context {
       background-color: lighten($core_border, 10%);
+    }
+  }
+}
+
+.rankingbuttons > .ordino-button-group {
+  padding: 0 0 0 2px;
+  max-width: 64px;
+  flex-wrap: wrap;
+
+  > li > a {
+    width: 30px;
+    font-size: x-small;
+    text-align: center;
+    padding: 4px 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten($core_border, 5%);
     }
   }
 }

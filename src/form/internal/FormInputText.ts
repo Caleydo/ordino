@@ -84,4 +84,8 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
   set value(v: string) {
     this.$input.property('value', v);
   }
+
+  focus() {
+    (<HTMLInputElement>this.$input.node()).focus();
+  }
 }

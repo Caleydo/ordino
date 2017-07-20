@@ -122,4 +122,9 @@ export interface IFormElement extends IEventHandler {
    * validates this field
    */
   validate(): boolean;
+
+  /**
+   * sets the focus to the element (e.g. opens a dropdown, etc.)
+   */
+  focus(): void;
 }

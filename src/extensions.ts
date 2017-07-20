@@ -1,5 +1,5 @@
 import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
-import {IScore} from 'ordino/src/lineup/IScore';
+import {IScore} from './lineup/IScore';
 import IDType from 'phovea_core/src/idtype/IDType';
 
 export const EXTENSION_POINT_ORDINO_SCORE = 'ordinoScore';

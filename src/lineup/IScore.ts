@@ -10,6 +10,7 @@ export interface IScoreRow<T> {
 }
 
 export interface IScore<T> {
+  idType: IDType;
   createDesc(): any;
   /**
    * Start the computation of the score for the given ids

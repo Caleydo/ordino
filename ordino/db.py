@@ -19,7 +19,9 @@ def _to_config(p):
   if not connector.dburl:
     connector.dburl = config['dburl']
   if not connector.statement_timeout:
-    connector.statement_timeout = config['statement_timeout']
+    connector.statement_timeout = config.get('statement_timeout', default=None)
+  if not connector.statement_timeout_query:
+    connector.statement_timeout_query = config.get('statement_timeout_query', default=None)
 
   _log.info(connector.dburl)
   engine = sqlalchemy.create_engine(connector.dburl)
@@ -149,7 +151,7 @@ def get_data(database, view_name, replacements=None, arguments=None, extra_sql_a
   with session(engine) as sess:
     if config.statement_timeout is not None:
       _log.info('set statement_timeout to {}'.format(config.statement_timeout))
-      sess.execute('set statement_timeout to {}'.format(config.statement_timeout))
+      sess.execute(config.statement_timeout_query.format(config.statement_timeout))
     if 'i' in arguments:
       kwargs['query'] = arguments['i']
       r = sess.run(view['querySlice'] % replace, **kwargs)
@@ -177,7 +179,7 @@ def get_count(database, view_name, replacements=None, arguments=None, extra_sql_
   with session(engine) as sess:
     if config.statement_timeout is not None:
       _log.info('set statement_timeout to {}'.format(config.statement_timeout))
-      sess.execute('set statement_timeout to {}'.format(config.statement_timeout))
+      sess.execute(config.statement_timeout_query.format(config.statement_timeout))
     r = sess.run(count_query, **kwargs)
   if r:
     return r[0]['count']

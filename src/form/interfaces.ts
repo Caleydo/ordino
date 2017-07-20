@@ -15,7 +15,8 @@ export enum FormElementType {
   SELECT2_MULTIPLE,
   INPUT_TEXT,
   MAP,
-  BUTTON
+  BUTTON,
+  CHECKBOX
 }
 
 /**
@@ -121,4 +122,9 @@ export interface IFormElement extends IEventHandler {
    * validates this field
    */
   validate(): boolean;
+
+  /**
+   * sets the focus to the element (e.g. opens a dropdown, etc.)
+   */
+  focus(): void;
 }

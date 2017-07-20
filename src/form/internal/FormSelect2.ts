@@ -75,6 +75,10 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
 
   private readonly multiple: boolean;
 
+  private readonly listener = () => {
+    this.fire('change', this.value, this.$select);
+  }
+
   /**
    * Constructor
    * @param parent
@@ -106,9 +110,7 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
     this.handleShowIf();
 
     // propagate change action with the data of the selected option
-    this.$select.on('change.propagate', () => {
-      this.fire('change', this.value, this.$select);
-    });
+    this.$select.on('change.propagate', this.listener);
   }
 
   /**
@@ -144,6 +146,7 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
 
     if (this.multiple) {
       select2Options.multiple = true;
+      select2Options.allowClear = true;
     }
     mixin(select2Options, options.ajax ? DEFAULT_AJAX_OPTIONS : DEFAULT_OPTIONS, options);
 
@@ -162,7 +165,7 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
 
     // custom on change function
     if (options.onChange) {
-      this.$select.on('change.customListener', () => {
+      this.on('change', () => {
         options.onChange(this.value, this);
       });
     }
@@ -221,36 +224,46 @@ export default class FormSelect2 extends AFormElement<IFormSelect2> {
    * @param v If string then compares to the option value property. Otherwise compares the object reference.
    */
   set value(v: (ISelect2Option|string)|(ISelect2Option|string)[]) {
-    // if value is undefined or null, clear
-    if (!v) {
-      this.$select.trigger('clear');
-      return;
-    }
-    let r: any = null;
+    try {
+      this.$select.off('change.propagate', this.listener);
 
-    if (this.multiple) {
-      const values = Array.isArray(v) ? v : [v];
-      r = values.map((d: any) => ({id: d.value || d.id, text: d.name || d.text}));
-      const old = <ISelect2Option[]>this.value;
-      if (sameValues(old, r)) {
+      // if value is undefined or null, clear
+      if (!v) {
+        this.$select.val([]).trigger('change');
         return;
       }
-    } else {
-      const vi: any = Array.isArray(v) ? v[0] : v;
-      r = {id: vi, text: vi};
+      let r: any = null;
 
-      if ((vi.name || vi.text) && (vi.value || vi.id)) {
-        r.id = vi.value || vi.id;
-        r.text = vi.name || vi.text;
+      if (this.multiple) {
+        const values = Array.isArray(v) ? v : [v];
+        r = values.map((d: any) => ({id: d.value || d.id, text: d.name || d.text}));
+        const old = <ISelect2Option[]>this.value;
+        if (sameValues(old, r)) {
+          return;
+        }
+      } else {
+        const vi: any = Array.isArray(v) ? v[0] : v;
+        r = {id: vi, text: vi};
+
+        if ((vi.name || vi.text) && (vi.value || vi.id)) {
+          r.id = vi.value || vi.id;
+          r.text = vi.name || vi.text;
+        }
+
+        const old = <ISelect2Option>this.value;
+        if (old.id === r.id) { // no change
+          return;
+        }
       }
 
-      const old = <ISelect2Option>this.value;
-      if (old.id === r.id) { // no change
-        return;
-      }
+      this.$select.val(r).trigger('change');
+    } finally {
+      this.$select.on('change.propagate', this.listener);
     }
+  }
 
-    this.$select.val(r).trigger('change');
+  focus() {
+    this.$select.select2('open');
   }
 
 }

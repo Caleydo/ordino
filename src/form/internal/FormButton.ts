@@ -53,4 +53,8 @@ export default class FormButton extends EventHandler implements IFormElement {
       (<Event>d3.event).stopPropagation();
     });
   }
+
+  focus() {
+    (<HTMLButtonElement>this.$button.node()).focus();
+  }
 }

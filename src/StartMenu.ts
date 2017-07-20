@@ -5,11 +5,16 @@
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import {Targid} from './Targid';
-import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet} from './storage';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet, editDialog} from './storage';
 import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {showErrorModalDialog} from './Dialogs';
 import * as d3 from 'd3';
 import {ENamedSetType} from './storage';
+import {
+  ALL_NONE_NONE, ALL_READ_READ, canWrite, currentUserNameOrAnonymous, DEFAULT_PERMISSION, EEntity,
+  hasPermission
+} from 'phovea_core/src/security';
+import TargidConstants from './constants';
 
 export interface IStartMenuOptions {
   targid: Targid;
@@ -35,6 +40,7 @@ export interface IEntryPointList {
   addNamedSet(namedSet: INamedSet);
   removeNamedSet(namedSet: INamedSet);
   updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet);
+  updateList(): void;
 }
 
 export interface IStartMenuSectionEntry {
@@ -257,6 +263,8 @@ export class AEntryPointList implements IEntryPointList {
 
   protected data: INamedSet[] = [];
 
+  private extensionFilters: (filterConfig: {[key: string]: any}) => boolean;
+
   constructor(protected readonly parent: HTMLElement, public readonly desc: IPluginDesc, protected readonly options: IEntryPointOptions) {
     this.$node = d3.select(parent);
   }
@@ -271,17 +279,17 @@ export class AEntryPointList implements IEntryPointList {
    */
   addNamedSet(namedSet: INamedSet) {
     this.data.push(namedSet);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   removeNamedSet(namedSet: INamedSet) {
     this.data.splice(this.data.indexOf(namedSet), 1);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   updateNamedSet(oldNamedSet: INamedSet, newNamedSet: INamedSet) {
     this.data.splice(this.data.indexOf(oldNamedSet), 1, newNamedSet);
-    this.updateList(this.data);
+    this.updateList();
   }
 
   protected getNamedSets(): Promise<INamedSet[]> {
@@ -296,8 +304,15 @@ export class AEntryPointList implements IEntryPointList {
     // load named sets (stored LineUp sessions)
     const promise = this.getNamedSets()
     // on success
-      .then((namedSets: INamedSet[]) => {
+      .then(async (namedSets: INamedSet[]) => {
         this.$node.html(''); // remove loading element or previous data
+
+        // execute extension filters
+        const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+        this.extensionFilters = function (filterConfig) {
+          return filters.every((filter) => filter.factory(filterConfig));
+        };
+
 
         // convert to data format and append to species data
         this.data.push(...namedSets);
@@ -305,14 +320,19 @@ export class AEntryPointList implements IEntryPointList {
         const wrapper = this.$node.append('div').classed('named-sets-wrapper', true);
 
         const namedSetsWrapper = wrapper.append('div').classed('predefined-named-sets', true);
-        namedSetsWrapper.append('div').classed('header', true).text(`Predefined ${this.desc.description}`);
+        namedSetsWrapper.append('div').classed('header', true).text(`Predefined Sets`);
         namedSetsWrapper.append('ul');
 
         const customNamedSetsWrapper = wrapper.append('div').classed('custom-named-sets', true);
-        customNamedSetsWrapper.append('div').classed('header', true).text(`My ${this.desc.description}`);
+        customNamedSetsWrapper.append('div').classed('header', true).text(`My Sets`);
         customNamedSetsWrapper.append('ul');
 
-        this.updateList(this.data);
+
+        const otherNamedSetsWrapper = wrapper.append('div').classed('other-named-sets', true);
+        otherNamedSetsWrapper.append('div').classed('header', true).text(`Public Sets`);
+        otherNamedSetsWrapper.append('ul');
+
+        this.updateList();
 
         return namedSets;
       });
@@ -331,44 +351,36 @@ export class AEntryPointList implements IEntryPointList {
    * Also binds the click listener that saves the selection to the session, before reloading the page
    * @param data
    */
-  private updateList(data: INamedSet[]) {
+  updateList() {
+    let data = this.data;
     const that = this;
 
+    data = data.filter((datum) => {
+      const f = {[datum.subTypeKey]: datum.subTypeValue};
+      return this.extensionFilters(f);
+    });
+
     const predefinedNamedSets = data.filter((d) => d.type !== ENamedSetType.NAMEDSET);
-    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET);
+    const me = currentUserNameOrAnonymous();
+    const customNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me);
+    const otherNamedSets = data.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me);
 
 
     const namedSetItems = this.$node.select('.predefined-named-sets ul').selectAll('li');
     const customNamedSetItems = this.$node.select('.custom-named-sets ul').selectAll('li');
+    const otherNamedSetItems = this.$node.select('.other-named-sets ul').selectAll('li');
 
     // append the list items
-    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets)];
+    const $options = [namedSetItems.data(predefinedNamedSets), customNamedSetItems.data(customNamedSets), otherNamedSetItems.data(otherNamedSets)];
     $options.forEach((options) => {
       const enter = options.enter()
-      .append('li')
-      .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
+        .append('li')
+        .classed('namedset', (d) => d.type === ENamedSetType.NAMEDSET);
 
       enter.append('a')
         .classed('goto', true)
-        .attr('href', '#');
-
-      enter.append('a')
-        .classed('edit', true)
         .attr('href', '#')
-        .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
-        .attr('title', 'Edit');
-
-      enter.append('a')
-        .classed('delete', true)
-        .attr('href', '#')
-        .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
-        .attr('title', 'Delete');
-
-      options.each(function () {
-        const $this = d3.select(this);
-        $this.select('a.goto')
-          .text((d: any) => d.name.charAt(0).toUpperCase() + d.name.slice(1))
-          .on('click', (namedSet: INamedSet) => {
+        .on('click', (namedSet: INamedSet) => {
             // prevent changing the hash (href)
             (<Event>d3.event).preventDefault();
 
@@ -380,64 +392,71 @@ export class AEntryPointList implements IEntryPointList {
             }
           });
 
-        $this.select('a.delete')
-          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: IStoredNamedSet) => {
-            // prevent changing the hash (href)
-            (<Event>d3.event).preventDefault();
+      const edit = (namedSet: IStoredNamedSet) => {
+        // prevent changing the hash (href)
+        (<Event>d3.event).preventDefault();
 
-            const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
-              {title: `Delete named set`}
-            );
-            if (deleteIt) {
-              await deleteNamedSet(namedSet.id);
-              that.removeNamedSet(namedSet);
-            }
-          });
+        if (!canWrite(namedSet)) {
+          return;
+        }
+        editDialog(namedSet, async (name, description, isPublic) => {
+          const params = {
+            name,
+            description,
+            permissions: isPublic ? ALL_READ_READ: ALL_NONE_NONE
+          };
 
-        $this.select('a.edit')
-          .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET)
-          .on('click', async (namedSet: IStoredNamedSet) => {
-            // prevent changing the hash (href)
-            (<Event>d3.event).preventDefault();
+          const editedSet = await editNamedSet(namedSet.id, params);
+          that.updateNamedSet(namedSet, editedSet);
+        });
+      };
 
-            const dialog = generateDialog('Edit Named Set', 'Edit');
+      enter.append('a')
+        .classed('public', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-fw" aria-hidden="true"></i> <span class="sr-only"></span>`)
+        .on('click', edit);
 
-            const form = document.createElement('form');
+      enter.append('a')
+        .classed('edit', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span class="sr-only">Edit</span>`)
+        .attr('title', 'Edit')
+        .on('click', edit);
 
-            form.innerHTML = `
-              <form id="namedset_form">
-                <div class="form-group">
-                  <label for="namedset_name">Name</label>
-                  <input type="text" class="form-control" id="namedset_name" placeholder="Name" required="required" value="${namedSet.name}">
-                </div>
-                <div class="form-group">
-                  <label for="namedset_description">Description</label>
-                  <textarea class="form-control" id="namedset_description" rows="5" placeholder="Description">${namedSet.description}</textarea>
-                </div>
-              </form>
-            `;
+      enter.append('a')
+        .classed('delete', true)
+        .attr('href', '#')
+        .html(`<i class="fa fa-trash" aria-hidden="true"></i> <span class="sr-only">Delete</span>`)
+        .attr('title', 'Delete')
+        .on('click', async (namedSet: IStoredNamedSet) => {
+          // prevent changing the hash (href)
+          (<Event>d3.event).preventDefault();
 
-            dialog.onHide(() => dialog.destroy());
+          if (!canWrite(namedSet)) {
+            return;
+          }
 
-            dialog.onSubmit(async () => {
-              const name = (<HTMLInputElement>document.getElementById('namedset_name')).value;
-              const description = (<HTMLInputElement>document.getElementById('namedset_description')).value;
+          const deleteIt = await areyousure(`The named set <i>${namedSet.name}</i> will be deleted and cannot be restored. Continue?`,
+            {title: `Delete named set`}
+          );
+          if (deleteIt) {
+            await deleteNamedSet(namedSet.id);
+            that.removeNamedSet(namedSet);
+          }
+        });
 
-              const params = {
-                name,
-                description
-              };
-
-              const editedSet = await editNamedSet(namedSet.id, params);
-              that.updateNamedSet(namedSet, editedSet);
-              dialog.hide();
-            });
-
-            dialog.body.appendChild(form);
-            dialog.show();
-          });
-      });
+      //update
+      options.select('a.goto').text((d) => d.name)
+        .attr('title',(d) => `Name: ${d.name}\nDescription: ${d.description}${d.type === ENamedSetType.NAMEDSET ? `\nCreator: ${(<IStoredNamedSet>d).creator}\nPublic: ${hasPermission(<IStoredNamedSet>d, EEntity.OTHERS)}`: ''}`);
+      options.select('a.delete').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
+      options.select('a.edit').classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d));
+      options.select('a.public')
+        .classed('hidden', (d) => d.type !== ENamedSetType.NAMEDSET || !canWrite(d))
+        .html((d) => {
+          const isPublic = d.type === ENamedSetType.NAMEDSET && hasPermission(<IStoredNamedSet>d, EEntity.OTHERS);
+          return `<i class="fa ${isPublic ? 'fa-users': 'fa-user'}" aria-hidden="true" title="${isPublic ? 'Public': 'Private'}"></i> <span class="sr-only">${isPublic ? 'Public': 'Private'}</span>`;
+        });
 
       options.exit().remove();
     });

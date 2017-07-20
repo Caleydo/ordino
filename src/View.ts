@@ -8,7 +8,7 @@ import {IDType, resolve, defaultSelectionType} from 'phovea_core/src/idtype';
 import {Range, none, parse} from 'phovea_core/src/range';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
-import {TargidConstants} from './Targid';
+import TargidConstants from './constants';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
@@ -74,11 +74,24 @@ export async function findViews(idtype:IDType, selection:Range) : Promise<{enabl
     const pattern = p.idtype ? new RegExp(p.idtype) : /.*/;
     return all.some((i) => pattern.test(i.id)) && !matchLength(p.selection, 0);
   }
+  //disable certain views based on another plugin
+  const disabler = listPlugins(TargidConstants.EXTENSION_POINT_DISABLE_VIEW).map((p: any) => new RegExp(p.filter));
+  function disabled(p: IPluginDesc) {
+    return disabler.some((re) => re.test(p.id));
+  }
   function bySelection(p: any) {
     return (matchLength(p.selection, selectionLength) || (showAsSmallMultiple(p) && selectionLength > 1));
   }
+
+  // execute extension filters
+  const filters = await Promise.all(listPlugins(TargidConstants.FILTERS_EXTENSION_POINT_ID).map((plugin) => plugin.load()));
+  function extensionFilters(p: IPluginDesc) {
+    const f = p.filter || {};
+    return filters.every((filter) => filter.factory(f));
+  }
+
   return listPlugins(TargidConstants.VIEW)
-    .filter(byType)
+    .filter((p) => byType(p) && !disabled(p) && extensionFilters(p))
     .sort((a,b) => d3.ascending(a.name.toLowerCase(), b.name.toLowerCase()))
     .map((v) => ({enabled: bySelection(v), v: toViewPluginDesc(v)}));
 }
@@ -138,10 +151,13 @@ export abstract class AView extends EventHandler implements IView {
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: none() };
 
+  protected readonly idType: IDType;
+
   constructor(public readonly context:IViewContext, parent:Element, options?: {}) {
     super();
     this.$node = d3.select(parent).append('div').datum(this);
     this.$node.append('div').classed('busy', true).classed('hidden', true);
+    this.idType = resolve(context.desc.idtype);
   }
 
   protected setBusy(busy: boolean) {
@@ -466,16 +482,18 @@ export class ViewWrapper extends EventHandler {
       .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
       .datum(this);
 
-    const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline')
-      .datum(this);
-
-    $params.append('button')
-      .attr('class', 'btn btn-default btn-sm btn-close')
-      .html('<i class="fa fa-close"></i>')
+    this.$node.append('button')
+      .attr('type', 'button')
+      .attr('class', 'close')
+      .attr('aria-label','Close')
+      .html(`<span aria-hidden="true">×</span>`)
       .on('click', (d) => {
         this.remove();
       });
+
+    const $params = this.$node.append('div')
+      .attr('class', 'parameters form-inline')
+      .datum(this);
 
     const $inner = this.$node.append('div')
       .classed('inner', true);
@@ -698,6 +716,7 @@ export class ViewWrapper extends EventHandler {
       $buttons.enter().append('button')
         .classed('btn btn-default', true);
 
+      $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
         .on('click', function(d) {
@@ -709,6 +728,18 @@ export class ViewWrapper extends EventHandler {
 
       $buttons.exit().remove();
     });
+  }
+
+  setActiveNextView(viewId?: string) {
+    const chooser = (<HTMLElement>this.$chooser.node());
+    //disable old don't use d3 to don't screw up the data binding
+    Array.from(chooser.querySelectorAll('button.active')).forEach((d: HTMLElement) => d.classList.remove('active'));
+    if (viewId) {
+      const button = chooser.querySelector(`button[data-viewid="${viewId}"]`);
+      if (button) {
+        button.classList.add('active');
+      }
+    }
   }
 
   get desc() {

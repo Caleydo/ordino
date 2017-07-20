@@ -92,3 +92,4 @@ class DBConnector(object):
     self.dburl = None
     self.mappings = mappings
     self.statement_timeout = None
+    self.statement_timeout_query = None

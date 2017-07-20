@@ -1,3 +1,4 @@
+@import './utils';
 
 .startMenu {
   position: absolute;
@@ -133,6 +134,8 @@
           flex-grow: 10;
           font-weight: 500;
 
+          text-transform: capitalize;
+
           &:before {
             margin-right: 8px;
             content: "\f105";
@@ -140,7 +143,7 @@
           }
         }
 
-        > a.delete, > a.edit {
+        > a.delete, > a.edit, > a.public {
           visibility: hidden;
           opacity: 0;
           transition: background ease .2s, color ease .2s, opacity ease .4s;
@@ -156,7 +159,7 @@
         &:active,
         &:hover,
         &:focus {
-          > a.delete, > a.edit {
+          > a.delete, > a.edit, > a.public {
             visibility: visible;
             opacity: 1;
           }
@@ -180,142 +183,28 @@
     overflow-y: auto;
   }
 
-  .speciesSelector {
+
+
+  .targidSessionTemporaryData {
+    > header > h1 > label:before {
+      @include fontAwesome();
+      content: "\f017"; //fa-clock-o
+    }
     .body {
-      .species-wrapper {
-        display: flex;
-        padding-bottom: 15px;
-        border-bottom: 1px solid $core_border;
-        margin-bottom: 5px;
-      }
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  }
 
-      .entry-points-wrapper {
-        margin-top: 15px;
-      }
+  .targidSessionPersistentData {
+    > header > h1 > label:before {
+      @include fontAwesome();
+      content: "\f0c2"; //fa-cloud
+    }
 
-      .species-group {
-        position: relative;
-
-        &.active:before {
-          position: absolute;
-          width: 0;
-          height: 0;
-          bottom: -22%;
-          left: 25%;
-          content: "";
-          border-style: solid;
-          border-width: 0 13px 13.7px 13px;
-          border-color: transparent transparent $header-menu-bg-color transparent;
-          pointer-events: none;
-        }
-
-        &.active:after {
-          position: absolute;
-          width: 0;
-          height: 0;
-          bottom: -23%;
-          left: 26%;
-          content: "";
-          border-style: solid;
-          border-width: 0 12px 12.7px 12px;
-          border-color: transparent transparent #fff transparent;
-          pointer-events: none;
-        }
-      }
-
-      label[for^="speciesSelector"] {
-        cursor: pointer;
-        margin-right: 1em;
-        padding: 0.6em .25em .6em;
-        border: solid .2em $core_border;
-        border-radius: .5em;
-        position: relative;
-        color: $core_colour_selected;
-
-        transition: background-color, color ease 0.2s;
-
-        &:after{
-          display: block;
-          visibility: hidden;
-          position: absolute;
-          bottom: -66%;
-          left: 4%;
-          opacity: 0;
-          content: attr(data-title);
-          height: auto;
-          padding: 5px 8px;
-          z-index: 999;
-          color: #fff;
-          text-decoration: none;
-          text-align: center;
-          background: rgba(0,0,0,1);
-          border-radius: 3px;
-          pointer-events: none;
-          transition: all 0.2s ease-in-out;
-          white-space: nowrap;
-        }
-
-        &:before {
-          position: absolute;
-          visibility: hidden;
-          width: 0;
-          height: 0;
-          bottom: -16%;
-          left: 42%;
-          opacity: 0;
-          content: "";
-          border-style: solid;
-          border-width: 0 5px 8.7px 5px;
-          border-color: transparent transparent rgba(0,0,0,1) transparent;
-          pointer-events: none;
-          transition: all 0.2s ease-in-out;
-        }
-
-        &:active:after,
-        &:active:before,
-        &:focus:after,
-        &:focus:before,
-        &:hover:after,
-        &:hover:before{
-          visibility: visible;
-          opacity: 1;
-        }
-      }
-
-      label:active,
-      label:focus,
-      label:hover,
-      input[type=radio]:checked + label {
-        color: $core_colour_text;
-        border-color: $core_colour_text;
-      }
-
-      input[type=radio] {
-        display: none;
-      }
-
-      .startMenuSearch {
-        margin-top: 10px;
-        display: flex;
-        justify-content: space-between;
-
-        form {
-          width: 80%;
-        }
-
-        // fix select2 placeholder cutoff
-        // https://github.com/select2/select2/issues/291
-        .select2-search__field {
-          width: auto !important;
-        }
-      }
-
-      .named-sets-wrapper {
-        margin-top: 10px;
-        display: flex;
-        justify-content: space-between;
-      }
-
+    .tab-pane {
+      max-height: 300px;
+      overflow-y: auto;
     }
   }
 }

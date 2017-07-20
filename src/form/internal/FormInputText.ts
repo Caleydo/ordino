@@ -51,8 +51,11 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
     this.$input = this.$node.append('input').attr('type', (this.desc.options || {}).type || 'text');
     this.setAttributes(this.$input, this.desc.attributes);
 
+    const defaultValue = (this.desc.options || {}).type === 'number' ? '0' : '';
     if (this.desc.useSession) {
-      this.$input.property('value', session.retrieve(this.id + '_value', ''));
+      this.$input.property('value', session.retrieve(this.id + '_value', defaultValue));
+    } else {
+      this.$input.property('value', defaultValue);
     }
 
     this.handleShowIf();
@@ -80,5 +83,9 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    */
   set value(v: string) {
     this.$input.property('value', v);
+  }
+
+  focus() {
+    (<HTMLInputElement>this.$input.node()).focus();
   }
 }

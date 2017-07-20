@@ -14,7 +14,7 @@ const buildInfo = require('./buildInfo.js');
 
 const now = new Date();
 const prefix = (n) => n < 10 ? ('0' + n) : n.toString();
-const buildId = `${now.getUTCFullYear()}${prefix(now.getUTCMonth())}${prefix(now.getUTCDate())}-${prefix(now.getUTCHours())}${prefix(now.getUTCMinutes())}${prefix(now.getUTCSeconds())}`;
+const buildId = `${now.getUTCFullYear()}${prefix(now.getUTCMonth() + 1)}${prefix(now.getUTCDate())}-${prefix(now.getUTCHours())}${prefix(now.getUTCMinutes())}${prefix(now.getUTCSeconds())}`;
 pkg.version = pkg.version.replace('SNAPSHOT', buildId);
 
 const year = (new Date()).getFullYear();
@@ -88,9 +88,11 @@ function testPhoveaModules(modules) {
   };
 }
 
+
 // use workspace registry file if available
 const isWorkspaceContext = fs.existsSync(resolve(__dirname, '..', 'phovea_registry.js'));
 const registryFile = isWorkspaceContext ? '../phovea_registry.js' : './phovea_registry.js';
+const actMetaData = `file-loader?name=phoveaMetaData.json!${buildInfo.metaDataTmpFile(pkg)}`;
 const actBuildInfoFile = `file-loader?name=buildInfo.json!${buildInfo.tmpFile()}`;
 
 /**
@@ -99,13 +101,14 @@ const actBuildInfoFile = `file-loader?name=buildInfo.json!${buildInfo.tmpFile()}
  * @returns {*}
  */
 function injectRegistry(entry) {
+  const extraFiles = [registryFile, actBuildInfoFile, actMetaData];
   //build also the registry
   if (typeof entry === 'string') {
-    return [registryFile, actBuildInfoFile].concat(entry);
+    return extraFiles.concat(entry);
   } else {
     const transformed = {};
     Object.keys(entry).forEach((eentry) => {
-      transformed[eentry] = [registryFile, actBuildInfoFile].concat(entry[eentry]);
+      transformed[eentry] = extraFiles.concat(entry[eentry]);
     });
     return transformed;
   }
@@ -120,6 +123,7 @@ function generateWebpack(options) {
     output: {
       path: resolve(__dirname, 'build'),
       filename: (options.name || (pkg.name + (options.bundle ? '_bundle' : ''))) + (options.min && !options.nosuffix ? '.min' : '') + '.js',
+      chunkFilename: '[chunkhash].js',
       publicPath: '' //no public path = relative
     },
     resolve: {
@@ -133,15 +137,9 @@ function generateWebpack(options) {
       ] : ['node_modules']
     },
     plugins: [
-      new webpack.BannerPlugin({
-        banner: banner,
-        raw: true
-      }),
       //define magic constants that are replaced
       new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify(options.isProduction ? 'production': 'development')
-        },
+        'process.env.NODE_ENV': JSON.stringify(options.isProduction ? 'production': 'development'),
         __VERSION__: JSON.stringify(pkg.version),
         __LICENSE__: JSON.stringify(pkg.license),
         __BUILD_ID__: buildId,
@@ -149,11 +147,7 @@ function generateWebpack(options) {
         __TEST__: options.isTest,
         __PRODUCTION__: options.isProduction,
         __APP_CONTEXT__: JSON.stringify('/')
-      }),
-      new webpack.optimize.MinChunkSizePlugin({
-        minChunkSize: 10000 //at least 10.000 characters
-      }),
-      new webpack.optimize.AggressiveMergingPlugin()
+      })
       //rest depends on type
     ],
     externals: [],
@@ -180,9 +174,28 @@ function generateWebpack(options) {
           secure: false
         }
       },
-      contentBase: resolve(__dirname, 'build')
+      contentBase: resolve(__dirname, 'build'),
+      watchOptions: {
+        aggregateTimeout: 500,
+        ignored: /node_modules/
+      }
+    },
+    watchOptions: {
+      aggregateTimeout: 500,
+      ignored: /node_modules/
     }
   };
+
+  if (options.isProduction) {
+	  base.plugins.unshift(new webpack.BannerPlugin({
+        banner: banner,
+        raw: true
+      }));
+	  base.plugins.push(new webpack.optimize.MinChunkSizePlugin({
+			minChunkSize: 10000 //at least 10.000 characters
+		  }),
+		  new webpack.optimize.AggressiveMergingPlugin());
+  }
 
   if (options.library) {
     let libName = /phovea_.*/.test(pkg.name) ? ['phovea', pkg.name.slice(7)] : pkg.name;

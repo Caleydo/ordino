@@ -11,7 +11,7 @@ import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
 import {IFormSelectOption} from './FormSelect';
 import {DEFAULT_OPTIONS, DEFAULT_AJAX_OPTIONS} from './FormSelect2';
 import {mixin} from 'phovea_core/src';
-import {IFormElement} from 'ordino/src/form';
+import {IFormElement} from '../';
 
 export interface ISubDesc {
   name: string;
@@ -111,7 +111,7 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
   private updateBadge() {
     const dependent = (this.desc.dependsOn || []).map((id) => this.parent.getElementById(id));
     Promise.resolve(this.desc.options.badgeProvider(this.value, ...dependent)).then((text) => {
-      this.$node.select('span.badge').html(text);
+      this.$node.select('span.badge').html(text).attr('title', `${text} items remaining after filtering`);
     });
   }
 
@@ -189,6 +189,9 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
       d.on('change', () => {
         this.rows = []; // clear old
         this.buildMap();
+        if (this.desc.options.badgeProvider) {
+          this.updateBadge();
+        }
       });
     });
 
@@ -435,6 +438,11 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     this.rows = v;
     this.buildMap();
   }
+
+  focus() {
+    // open dropdown
+    $(this.$node.select('.dropdown-menu').node()).show();
+  };
 
 }
 

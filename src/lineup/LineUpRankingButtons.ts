@@ -8,11 +8,13 @@ import {IDType, resolve} from 'phovea_core/src/idtype';
 import {IPlugin, IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
 import {editDialog} from '../storage';
 import {EventHandler} from 'phovea_core/src/event';
-import {FormElementType, IFormElementDesc} from '../form/interfaces';
+import {FormElementType, IFormElementDesc} from '../form';
 import {OrdinoFormIds} from '../constants';
-import {IScoreLoader, IScoreLoaderExtensionDesc} from '../ScoreLoadingWrapper';
+import {
+  IScoreLoader, EXTENSION_POINT_ORDINO_SCORE_LOADER, EXTENSION_POINT_ORDINO_SCORE, EXTENSION_POINT_ORDINO_RANKING_BUTTON,
+  IScoreLoaderExtensionDesc, IRankingButtonExtension, IRankingButtonExtensionDesc
+} from '../extensions';
 import FormBuilder from '../form/FormBuilder';
-import wrap from '../ScoreLoadingWrapper';
 import LineUp from 'lineupjs/src/lineup';
 import * as $ from 'jquery';
 
@@ -26,6 +28,22 @@ interface IWrappedColumnDesc {
   text: string;
   id: string;
   column: IColumnDesc;
+}
+
+/**
+ * Wraps the ordinoScore such that the plugin is loaded and the score modal opened, when the factory function is called
+ * @param ordinoScore
+ * @returns {IScoreLoader}
+ */
+export default function wrap(ordinoScore: IPluginDesc): IScoreLoader {
+  return {
+    text: ordinoScore.name,
+    id: ordinoScore.id,
+    scoreId: ordinoScore.id,
+    factory(extraArgs: object, count: number) {
+      return ordinoScore.load().then((p) => Promise.resolve(p.factory(ordinoScore, extraArgs, count)));
+    }
+  };
 }
 
 export class LineUpRankingButtons extends EventHandler {
@@ -44,7 +62,7 @@ export class LineUpRankingButtons extends EventHandler {
     this.appendDownload();
     this.appendSaveRanking();
     this.appendMoreColumns();
-    this.appendUpload();
+    this.appendExtraButtons();
   }
 
   private createMarkup(title: string, linkClass: string = '', linkListener: (param: any) => void | null, liClass: string = '') {
@@ -122,11 +140,11 @@ export class LineUpRankingButtons extends EventHandler {
     const builder = new FormBuilder($selectWrapper);
 
     // load plugins, which need to be checked if the IDTypes are mappable
-    const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('ordinoScore'));
-    const metaDataPluginDescs = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins('metaDataColumns'));
+    const ordinoScores: IPluginDesc[] = await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins(EXTENSION_POINT_ORDINO_SCORE));
+    const metaDataPluginDescs = <IScoreLoaderExtensionDesc[]>await LineUpRankingButtons.findMappablePlugins(this.idType, listPlugins(EXTENSION_POINT_ORDINO_SCORE_LOADER));
 
     const metaDataPluginPromises: Promise<IColumnWrapper<IScoreLoader>>[] = metaDataPluginDescs
-      .map((plugin: IPluginDesc) => plugin.load()
+      .map((plugin: IScoreLoaderExtensionDesc) => plugin.load()
         .then((loadedPlugin: IPlugin) => loadedPlugin.factory(plugin))
         .then((scores: IScoreLoader[]) => {
           return this.buildMetaDataDescriptions(plugin, scores);
@@ -217,20 +235,19 @@ export class LineUpRankingButtons extends EventHandler {
     });
   }
 
-  private appendUpload() {
-    const uploaderDesc = listPlugins('ordinoScoreButton')[0];
-
-    if(uploaderDesc) {
+  private appendExtraButtons() {
+    const buttons = <IRankingButtonExtensionDesc[]>listPlugins(EXTENSION_POINT_ORDINO_RANKING_BUTTON);
+    buttons.forEach((button) => {
       const listener = () => {
-        uploaderDesc.load().then((p) => this.scoreColumnDialog(p));
         (<Event>d3.event).preventDefault();
         (<Event>d3.event).stopPropagation();
+        button.load().then((p) => this.scoreColumnDialog(p));
       };
-      const upload = this.createMarkup(uploaderDesc.name,'fa fa-upload', listener);
-    }
+      this.createMarkup(button.name,'fa ' + button.cssClass, listener);
+    });
   }
 
-  private buildMetaDataDescriptions(desc: IPluginDesc, columns: IScoreLoader[]) {
+  private buildMetaDataDescriptions(desc: IScoreLoaderExtensionDesc, columns: IScoreLoader[]) {
     return {
       text: desc.name,
       plugins: columns,
@@ -244,10 +261,10 @@ export class LineUpRankingButtons extends EventHandler {
     };
   }
 
-  private scoreColumnDialog(scorePlugin: IPlugin) {
+  private scoreColumnDialog(scorePlugin: IRankingButtonExtension) {
     //TODO clueify
     // pass dataSource into InvertedAggregatedScore factory method
-    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.extraArgs)) // open modal dialog
+    Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.idType, this.extraArgs)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
         this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
       });

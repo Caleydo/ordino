@@ -12,9 +12,9 @@ import {FormElementType, IFormElementDesc} from '../form/interfaces';
 import {OrdinoFormIds} from '../constants';
 import {IScoreLoader, IScoreLoaderExtensionDesc} from '../ScoreLoadingWrapper';
 import FormBuilder from '../form/FormBuilder';
-import {IButtonElementDesc} from '../form/internal/FormButton';
 import wrap from '../ScoreLoadingWrapper';
 import LineUp from 'lineupjs/src/lineup';
+import * as $ from 'jquery';
 
 interface IColumnWrapper<T> {
   text: string;
@@ -115,13 +115,12 @@ export class LineUpRankingButtons extends EventHandler {
   }
 
   private async appendMoreColumns() {
-    const dropdown = this.createMarkup('Add Column', 'fa fa-plus dropdown-toggle', null, 'dropdown');
+    const $dropdownLi = this.createMarkup('Add Column', 'fa fa-plus dropdown-toggle', null, 'dropdown');
 
-    dropdown.select('a')
+    $dropdownLi.select('a')
       .attr('data-toggle', 'dropdown');
 
-    const $selectWrapper = dropdown.append('div').attr('class', 'dropdown-menu');
-    $selectWrapper.on('click', () => (<Event>d3.event).stopPropagation()); // HACK: don't close the dropdown when clicking Select2
+    const $selectWrapper = $dropdownLi.append('div').attr('class', 'dropdown-menu');
 
     const builder = new FormBuilder($selectWrapper);
 
@@ -172,7 +171,7 @@ export class LineUpRankingButtons extends EventHandler {
       ...metaDataOptions
     ];
 
-    const elements: (IFormElementDesc|IButtonElementDesc)[] = [{
+    const elements: (IFormElementDesc)[] = [{
       type: FormElementType.SELECT2,
       id: OrdinoFormIds.ADDITIONAL_COLUMN,
       attributes: {
@@ -189,20 +188,36 @@ export class LineUpRankingButtons extends EventHandler {
           };
         }),
         onChange: () => {
-          const dropdown = builder.getElementById(OrdinoFormIds.ADDITIONAL_COLUMN);
-          const result = dropdown.value;
-          dropdown.value = null;
-          const [category, scoreID] = result.id.split('-');
+          const select = builder.getElementById(OrdinoFormIds.ADDITIONAL_COLUMN);
+          const result = select.value;
 
+          select.value = null;
+          const [category, scoreID] = result.id.split('-');
           const chosenCategory = columnsWrapper.find((cat) => cat.text === category);
+
           const plugin = chosenCategory.plugins.find((child) => child.id === scoreID);
 
           chosenCategory.action(plugin);
+
+          // close dropdown after selection
+          $($dropdownLi.select('.dropdown-toggle').node()).dropdown('toggle');
         }
       }
     }];
 
     builder.build(elements);
+
+    // HACK: don't close the dropdown when the dropdown itself or Select2 is clicked
+    $selectWrapper.on('click', () => (<Event>d3.event).stopPropagation());
+
+    $($dropdownLi.node()).on('shown.bs.dropdown', () => {
+      // show Select2 options by default when the dropdown is visible to have Select2 calculate the correct position
+      builder.getElementById(OrdinoFormIds.ADDITIONAL_COLUMN).focus();
+
+      // HACK: keep dropdown open even when the input element inside Select2 is clicked
+      // this EventListener can only be applied when the dropdown is shown, because otherwise the element does not exist
+      $('.select2-search__field').on('click', (e) => e.stopPropagation());
+    });
   }
 
   private appendUpload() {

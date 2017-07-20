@@ -16,11 +16,12 @@ input[type="checkbox"].public:after {
     }
   }
 
-  .select2-container--bootstrap .select2-selection--multiple {
-    .select2-selection__choice[data-idtype="#{$idType}"] {
+  .select2-container--bootstrap  {
+    .select2-selection--multiple .select2-selection__choice[data-idtype="#{$idType}"] {
       border-color: $color;
     }
-    &.select2-results__group[data-idtype="#{$idType}"] {
+
+    .select2-results__group[data-idtype="#{$idType}"] {
       background: $color;
       color: complement($color);
     }

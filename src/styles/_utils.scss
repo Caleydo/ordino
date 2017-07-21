@@ -30,4 +30,19 @@ input[type="checkbox"].public:after {
   article.view[data-idtype="#{$idType}"] {
     border-color: $color;
   }
+
+  .nav-pills > li[data-idtype="#{$idType}"] > a {
+    border: 1px solid $color;
+  }
+
+  .nav-tabs > li[data-idtype="#{$idType}"] {
+    > a:hover,
+    &.active > a,
+    &.active > a:hover,
+    &.active > a:focus {
+      border-top-color: $color;
+      border-left-color: $color;
+      border-right-color: $color;
+    }
+  }
 }

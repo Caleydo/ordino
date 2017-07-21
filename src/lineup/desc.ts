@@ -7,7 +7,12 @@ import {extent} from 'd3';
 import {IAnyVector} from 'phovea_core/src/vector';
 import {VALUE_TYPE_STRING, VALUE_TYPE_CATEGORICAL, VALUE_TYPE_REAL, VALUE_TYPE_INT} from 'phovea_core/src/datatype';
 
-export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1) {
+export interface IAdditionalColumnDesc extends IColumnDesc {
+  selectedId: number;
+  selectedSubType?: string;
+}
+
+export function numberCol(col: string, rows: any[], label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'number',
     column: col,
@@ -16,11 +21,12 @@ export function numberCol(col: string, rows: any[], label = col, visible = true,
     color: '',
     visible,
     width,
-    selectedId
+    selectedId,
+    selectedSubtype
   };
 }
 
-export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1) {
+export function numberCol2(col: string, min: number, max: number, label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'number',
     column: col,
@@ -29,11 +35,12 @@ export function numberCol2(col: string, min: number, max: number, label = col, v
     color: '',
     visible,
     width,
-    selectedId
+    selectedId,
+    selectedSubtype
   };
 }
 
-export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1) {
+export function categoricalCol(col: string, categories: (string|{label?: string, name: string, color?: string})[], label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'categorical',
     column: col,
@@ -42,11 +49,12 @@ export function categoricalCol(col: string, categories: (string|{label?: string,
     color: '',
     visible,
     width,
-    selectedId
+    selectedId,
+    selectedSubtype
   };
 }
 
-export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1) {
+export function stringCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'string',
     column: col,
@@ -54,11 +62,12 @@ export function stringCol(col: string, label = col, visible = true, width = -1, 
     color: '',
     visible,
     width,
-    selectedId
+    selectedId,
+    selectedSubtype
   };
 }
 
-export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1) {
+export function booleanCol(col: string, label = col, visible = true, width = -1, selectedId = -1, selectedSubtype?: string) {
   return {
     type: 'boolean',
     column: col,
@@ -66,7 +75,8 @@ export function booleanCol(col: string, label = col, visible = true, width = -1,
     color: '',
     visible,
     width,
-    selectedId
+    selectedId,
+    selectedSubtype
   };
 }
 

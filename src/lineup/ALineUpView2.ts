@@ -249,7 +249,7 @@ export abstract class ALineUpView2 extends AView {
     if(color) {
       this.colorMap.delete(id);
       if(this.colors.indexOf(color) === -1) {
-        this.colors.unshift(color);
+        this.colors.push(color);
       }
     }
   }
@@ -552,7 +552,10 @@ export abstract class ALineUpView2 extends AView {
     const rows = await this.loadRows();
     this.initRows(rows);
     this.initializedLineUp();
-    this.colors = this.getAvailableColumnColors();
+
+    if(!this.colors) {
+      this.colors = this.getAvailableColumnColors();
+    }
     this.setBusy(false);
   }
 

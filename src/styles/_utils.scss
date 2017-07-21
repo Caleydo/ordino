@@ -23,7 +23,7 @@ input[type="checkbox"].public:after {
 
     .select2-results__group[data-idtype="#{$idType}"] {
       background: $color;
-      color: complement($color);
+      color: black;
     }
   }
 

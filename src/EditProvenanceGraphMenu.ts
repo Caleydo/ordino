@@ -10,9 +10,10 @@ import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {FormDialog} from 'phovea_ui/src/dialogs';
 import {mixin, randomId} from 'phovea_core/src';
 import {ALL_READ_NONE, ALL_READ_READ, EEntity, hasPermission, ISecureItem} from 'phovea_core/src/security';
-import {IEvent} from 'phovea_core/src/event';
+import {IEvent, fire as globalFire} from 'phovea_core/src/event';
 
 declare const __DEBUG__;
+export const GLOBAL_EVENT_MANIPULATED = 'provenanceGraphMenuManipulated';
 
 export default class EditProvenanceGraphMenu {
   readonly node: HTMLLIElement;
@@ -89,6 +90,7 @@ export default class EditProvenanceGraphMenu {
             .then((desc) => {
               //update the name
               this.node.querySelector('a span').innerHTML = desc.name;
+              globalFire(GLOBAL_EVENT_MANIPULATED);
             })
             .catch(showErrorModalDialog);
         }
@@ -116,6 +118,7 @@ export default class EditProvenanceGraphMenu {
         if (extras !== null) {
           manager.migrateGraph(this.graph, extras).catch(showErrorModalDialog).then(() => {
             this.updateGraphMetaData(this.graph);
+            globalFire(GLOBAL_EVENT_MANIPULATED);
           });
         }
       });

@@ -389,7 +389,8 @@ export abstract class ALineUpView2 extends AView {
   protected addColumn(colDesc: any, loadPromise: Promise<IScoreRow<any>[]>, id = -1): { col: Column, loaded: Promise<Column>} {
     const ranking = this.lineup.data.getLastRanking();
 
-    colDesc.color = this.getColumnColor(id);
+    // if there is no ID given (id === -1) use the current size of the colorMap, which increments every time
+    colDesc.color = this.getColumnColor(id !== -1? id : this.colorMap.size);
 
     const accessor = createAccessor(colDesc, this.idAccessor);
 

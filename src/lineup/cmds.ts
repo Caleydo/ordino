@@ -23,7 +23,7 @@ let ignoreNext: string = null;
  * set of data provider to ignore
  * @type {Set<ADataProvider>}
  */
-const temporaryUntracked = new Set<ADataProvider>();
+const temporaryUntracked = new Set<string>();
 
 async function addRankingImpl(inputs: IObjectRef<any>[], parameter: any) {
   const p: ADataProvider = await Promise.resolve((await inputs[0].v).data);
@@ -194,7 +194,7 @@ function recordPropertyChange(source: Column | Ranking, provider: ADataProvider,
       ignoreNext = null;
       return;
     }
-    if (temporaryUntracked.has(provider)) {
+    if (temporaryUntracked.has(lineupViewWrapper.hash)) {
       return;
     }
     // console.log(source, property, old, newValue);
@@ -229,7 +229,7 @@ function trackColumn(provider: ADataProvider, lineup: IObjectRef<IViewProvider>,
         ignoreNext = null;
         return;
       }
-      if (temporaryUntracked.has(provider)) {
+      if (temporaryUntracked.has(lineup.hash)) {
         return;
       }
       // console.log(col.fqpath, 'addColumn', column, index);
@@ -246,7 +246,7 @@ function trackColumn(provider: ADataProvider, lineup: IObjectRef<IViewProvider>,
         ignoreNext = null;
         return;
       }
-      if (temporaryUntracked.has(provider)) {
+      if (temporaryUntracked.has(lineup.hash)) {
         return;
       }
       // console.log(col.fqpath, 'addColumn', column, index);
@@ -268,7 +268,7 @@ function trackColumn(provider: ADataProvider, lineup: IObjectRef<IViewProvider>,
         ignoreNext = null;
         return;
       }
-      if (temporaryUntracked.has(provider)) {
+      if (temporaryUntracked.has(lineup.hash)) {
         return;
       }
       // console.log(col.fqpath, 'mapping', old.dump(), newValue.dump());
@@ -309,7 +309,7 @@ function trackRanking(provider: ADataProvider, lineup: IObjectRef<IViewProvider>
       ignoreNext = null;
       return;
     }
-    if (temporaryUntracked.has(provider)) {
+    if (temporaryUntracked.has(lineup.hash)) {
       return;
     }
     // console.log(ranking.id, 'sortCriteriaChanged', old, newValue);
@@ -324,7 +324,7 @@ function trackRanking(provider: ADataProvider, lineup: IObjectRef<IViewProvider>
       ignoreNext = null;
       return;
     }
-    if (temporaryUntracked.has(provider)) {
+    if (temporaryUntracked.has(lineup.hash)) {
       return;
     }
     // console.log(ranking, 'addColumn', column, index);
@@ -340,7 +340,7 @@ function trackRanking(provider: ADataProvider, lineup: IObjectRef<IViewProvider>
       ignoreNext = null;
       return;
     }
-    if (temporaryUntracked.has(provider)) {
+    if (temporaryUntracked.has(lineup.hash)) {
       return;
     }
     // console.log(ranking, 'removeColumn', column, index);
@@ -370,7 +370,7 @@ export async function clueify(lineup: IObjectRef<IViewProvider>, graph: Provenan
       ignoreNext = null;
       return;
     }
-    if (temporaryUntracked.has(p)) {
+    if (temporaryUntracked.has(lineup.hash)) {
       return;
     }
     const d = ranking.dump(p.toDescRef);
@@ -384,7 +384,7 @@ export async function clueify(lineup: IObjectRef<IViewProvider>, graph: Provenan
       ignoreNext = null;
       return;
     }
-    if (temporaryUntracked.has(p)) {
+    if (temporaryUntracked.has(lineup.hash)) {
       return;
     }
     const d = ranking.dump(p.toDescRef);
@@ -404,9 +404,9 @@ export async function untrack(lineup: IObjectRef<IViewProvider>) {
 
 export function withoutTracking<T>(lineup: IObjectRef<IViewProvider>, fun: () => T): Promise<T> {
   return lineup.v.then((d) => Promise.resolve(d.data)).then((p) => {
-    temporaryUntracked.add(p);
+    temporaryUntracked.add(lineup.hash);
     const r = fun();
-    temporaryUntracked.delete(p);
+    temporaryUntracked.delete(lineup.hash);
     return r;
   });
 }

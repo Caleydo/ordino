@@ -249,7 +249,7 @@ export abstract class ALineUpView2 extends AView {
     if(color) {
       this.colorMap.delete(id);
       if(this.colors.indexOf(color) === -1) {
-        this.colors.unshift(color);
+        this.colors.push(color);
       }
     }
   }
@@ -389,7 +389,8 @@ export abstract class ALineUpView2 extends AView {
   protected addColumn(colDesc: any, loadPromise: Promise<IScoreRow<any>[]>, id = -1): { col: Column, loaded: Promise<Column>} {
     const ranking = this.lineup.data.getLastRanking();
 
-    colDesc.color = this.getColumnColor(id);
+    // if there is no ID given (id === -1) use the current size of the colorMap, which increments every time
+    colDesc.color = this.getColumnColor(id !== -1? id : this.colorMap.size);
 
     const accessor = createAccessor(colDesc, this.idAccessor);
 
@@ -552,7 +553,10 @@ export abstract class ALineUpView2 extends AView {
     const rows = await this.loadRows();
     this.initRows(rows);
     this.initializedLineUp();
-    this.colors = this.getAvailableColumnColors();
+
+    if(!this.colors) {
+      this.colors = this.getAvailableColumnColors();
+    }
     this.setBusy(false);
   }
 

@@ -162,6 +162,7 @@ export default class EditProvenanceGraphMenu {
         helper.setAttribute('href', url);
         helper.setAttribute('target', '_blank');
         helper.setAttribute('download', `${this.graph.desc.name}.json`);
+        li.appendChild(helper);
         helper.click();
         helper.remove();
       };

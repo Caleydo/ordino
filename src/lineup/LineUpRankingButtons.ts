@@ -147,7 +147,7 @@ export class LineUpRankingButtons extends EventHandler {
       .map((plugin: IScoreLoaderExtensionDesc) => plugin.load()
         .then((loadedPlugin: IPlugin) => loadedPlugin.factory(plugin))
         .then((scores: IScoreLoader[]) => {
-          return this.buildMetaDataDescriptions(plugin, scores);
+          return this.buildMetaDataDescriptions(plugin, scores.sort((a, b) => a.text.localeCompare(b.text)));
         })
       );
 
@@ -158,7 +158,8 @@ export class LineUpRankingButtons extends EventHandler {
 
     const columns: IWrappedColumnDesc[] = this.lineup.data.getColumns()
       .filter((d) => !(<any>d)._score)
-      .map((d) => ({ text: d.label, id: (<any>d).column, column: d }));
+      .map((d) => ({ text: d.label, id: (<any>d).column, column: d }))
+      .sort((a, b) => a.text.localeCompare(b.text));
 
     columns.push({ text: 'Weighted Sum', id: 'weightedSum', column: createStackDesc('Weighted Sum') });
     columns.push({ text: 'Scripted Combination', id: 'scriptedCombination', column: createScriptDesc('Scripted Combination') });

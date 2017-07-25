@@ -3,15 +3,17 @@
  */
 
 import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
-import {areyousure} from 'phovea_ui/src/dialogs';
+import {areyousure, generateDialog} from 'phovea_ui/src/dialogs';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {showErrorModalDialog} from './Dialogs';
 import {IProvenanceGraphDataDescription} from 'phovea_core/src/provenance';
 import {FormDialog} from 'phovea_ui/src/dialogs';
 import {mixin, randomId} from 'phovea_core/src';
 import {ALL_READ_NONE, ALL_READ_READ, EEntity, hasPermission, ISecureItem} from 'phovea_core/src/security';
-import {IEvent} from 'phovea_core/src/event';
+import {IEvent, fire as globalFire} from 'phovea_core/src/event';
 
+declare const __DEBUG__;
+export const GLOBAL_EVENT_MANIPULATED = 'provenanceGraphMenuManipulated';
 
 export default class EditProvenanceGraphMenu {
   readonly node: HTMLLIElement;
@@ -70,7 +72,10 @@ export default class EditProvenanceGraphMenu {
             <li><a href="#" data-action="clone" title="Clone to Temporary Session"><i class="fa fa-clone" aria-hidden="true"></i> Clone to Temporary Session</a></li>
             <li class="divider"></li>
             <li><a href="#" data-action="persist" title="Persist Session"><i class="fa fa-cloud" aria-hidden="true"></i> Persist Session</a></li>
-            <li><a href="#" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>            
+            <li><a href="#" data-action="delete" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>    
+            <li class="divider${__DEBUG__ ? '': ' hidden'}"></li>
+            <li class="${__DEBUG__ ? '': 'hidden'}"><a href="#" data-action="import" title="Import Graph"><i class="fa fa-upload" aria-hidden="true"></i> Import Session</a></li>
+            <li class="${__DEBUG__ ? '': 'hidden'}"><a href="#" data-action="export" title="Export Graph"><i class="fa fa-download" aria-hidden="true"></i> Export Session</a></li>          
           </ul>`;
 
     (<HTMLLinkElement>li.querySelector('a[data-action="edit"]')).addEventListener('click', (event) => {
@@ -85,6 +90,7 @@ export default class EditProvenanceGraphMenu {
             .then((desc) => {
               //update the name
               this.node.querySelector('a span').innerHTML = desc.name;
+              globalFire(GLOBAL_EVENT_MANIPULATED);
             })
             .catch(showErrorModalDialog);
         }
@@ -112,6 +118,7 @@ export default class EditProvenanceGraphMenu {
         if (extras !== null) {
           manager.migrateGraph(this.graph, extras).catch(showErrorModalDialog).then(() => {
             this.updateGraphMetaData(this.graph);
+            globalFire(GLOBAL_EVENT_MANIPULATED);
           });
         }
       });
@@ -132,6 +139,55 @@ export default class EditProvenanceGraphMenu {
         }
       });
       return false;
+    });
+
+    (<HTMLLinkElement>li.querySelector('a[data-action="export"]')).addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!this.graph) {
+        return false;
+      }
+
+      console.log(this.graph);
+      const r = this.graph.persist();
+      console.log(r);
+
+      const str = JSON.stringify(r, null, '\t');
+      //create blob and save it
+      const blob = new Blob([str], {type: 'application/json;charset=utf-8'});
+      const a = new FileReader();
+      a.onload = (e) => {
+        const url = (<any>e.target).result;
+        const helper = parent.ownerDocument.createElement('a');
+        helper.setAttribute('href', url);
+        helper.setAttribute('target', '_blank');
+        helper.setAttribute('download', `${this.graph.desc.name}.json`);
+        li.appendChild(helper);
+        helper.click();
+        helper.remove();
+      };
+      a.readAsDataURL(blob);
+      return false;
+    });
+
+    (<HTMLLinkElement>li.querySelector('a[data-action="import"]')).addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      //import dialog
+      const d = generateDialog('Select File', 'Upload');
+      d.body.innerHTML = `<input type="file" placeholder="Select File to Upoad">`;
+      (<HTMLInputElement>d.body.querySelector('input')).addEventListener('change', function (evt) {
+        const file = (<HTMLInputElement>evt.target).files[0];
+        const reader = new FileReader();
+        reader.onload = function (e: any) {
+          const dataS = e.target.result;
+          const dump = JSON.parse(dataS);
+          manager.importGraph(dump);
+        };
+        // Read in the image file as a data URL.
+        reader.readAsText(file);
+      });
+      d.show();
     });
 
     return li;

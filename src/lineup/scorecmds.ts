@@ -104,16 +104,23 @@ function shallowEqualObjects(a: any, b: any) {
  * compresses score creation and removal
  */
 export function compress(path:ActionNode[]) {
-  const r = [];
-  for (const p of path) {
-    if (p.f_id === CMD_ADD_SCORE && r.length > 0) {
-      const last = r[r.length - 1];
-      if (last.f_id === CMD_REMOVE_SCORE && shallowEqualObjects(p.parameter, last.parameter)) {
-        r.pop();
-        continue;
+  const manipulate = path.slice();
+  const r: ActionNode[] = [];
+  outer: for (let i = 0; i < manipulate.length; ++i) {
+    const act = manipulate[i];
+    if (act.f_id === CMD_ADD_SCORE) {
+      // try to find its removal
+      for (let j = i + 1; j < manipulate.length; ++j) {
+        const next = manipulate[j];
+        if (next.f_id === CMD_REMOVE_SCORE && shallowEqualObjects(act.parameter, next.parameter)) {
+          //TODO remove lineup actions that uses this score -> how to identify?
+          //found match, delete both
+          manipulate.slice(j, 1); //delete remove cmd
+          continue outer; //skip adding of add cmd
+        }
       }
     }
-    r.push(p);
+    r.push(act);
   }
   return r;
 }

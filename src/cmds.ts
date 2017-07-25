@@ -2,7 +2,17 @@
  * Created by sam on 03.03.2017.
  */
 
-import {IObjectRef, ProvenanceGraph, action, meta, op, cat, ICmdFunction, ActionNode, StateNode} from 'phovea_core/src/provenance';
+import {
+  IObjectRef,
+  ProvenanceGraph,
+  action,
+  meta,
+  op,
+  cat,
+  ICmdFunction,
+  ActionNode,
+  StateNode
+} from 'phovea_core/src/provenance';
 import {get as getPlugin} from 'phovea_core/src/plugin';
 import {Range, parse, none} from 'phovea_core/src/range';
 import {resolve, IDType} from 'phovea_core/src/idtype';
@@ -13,6 +23,8 @@ import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import TargidConstants from './constants';
 import Targid from './Targid';
 import * as session from 'phovea_core/src/session';
+import {createRemove, lastOnly} from 'phovea_clue/src/compress';
+
 /**
  * Creates a view instance and wraps the instance with the inverse action in a CLUE command
  * @param inputs Array with object references, where the first one is the TargId object
@@ -20,16 +32,16 @@ import * as session from 'phovea_core/src/session';
  * @param graph The Provenance graph
  * @returns {Promise<ICmdResult>}
  */
-export async function createViewImpl(inputs:IObjectRef<any>[], parameter:any, graph:ProvenanceGraph):Promise<ICmdResult> {
-  const targid:Targid = inputs[0].value;
-  const viewId:string = parameter.viewId;
+export async function createViewImpl(inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
+  const targid: Targid = inputs[0].value;
+  const viewId: string = parameter.viewId;
   const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
   const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
   const options = parameter.options;
 
   const view = getPlugin(TargidConstants.VIEW, viewId);
 
-  const viewWrapperInstance = await createViewWrapper(graph, { idtype, range: selection }, targid.node, view, options);
+  const viewWrapperInstance = await createViewWrapper(graph, {idtype, range: selection}, targid.node, view, options);
   const oldFocus = await targid.pushImpl(viewWrapperInstance);
   return {
     created: [viewWrapperInstance.ref],
@@ -43,10 +55,10 @@ export async function createViewImpl(inputs:IObjectRef<any>[], parameter:any, gr
  * @param parameter Parameter such idtype, selection and view options
  * @returns {ICmdResult}
  */
-export function removeViewImpl(inputs:IObjectRef<any>[], parameter):ICmdResult {
-  const targid:Targid = inputs[0].value;
-  const view:ViewWrapper = inputs[1].value;
-  const oldFocus:number = parameter.focus;
+export function removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult {
+  const targid: Targid = inputs[0].value;
+  const view: ViewWrapper = inputs[1].value;
+  const oldFocus: number = parameter.focus;
 
   targid.removeImpl(view, oldFocus);
   return {
@@ -64,9 +76,9 @@ export function removeViewImpl(inputs:IObjectRef<any>[], parameter):ICmdResult {
  * @param parameter Parameter such idtype, selection and view options
  * @returns {Promise<ICmdResult>}
  */
-export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):Promise<ICmdResult> {
-  const targid:Targid = inputs[0].value;
-  const existingView:ViewWrapper = inputs[1].value;
+export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
+  const targid: Targid = inputs[0].value;
+  const existingView: ViewWrapper = inputs[1].value;
 
   const oldParams = {
     viewId: existingView.desc.id,
@@ -75,7 +87,7 @@ export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):P
     options: existingView.options
   };
 
-  const viewId:string = parameter.viewId;
+  const viewId: string = parameter.viewId;
   const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
   const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
   const options = parameter.options;
@@ -83,13 +95,12 @@ export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):P
   // create new (inner) view
   const view = getPlugin(TargidConstants.VIEW, viewId);
 
-  await replaceViewWrapper(existingView, { idtype, range: selection }, view, options);
+  await replaceViewWrapper(existingView, {idtype, range: selection}, view, options);
 
   targid.update();
 
   return {
-    created: [existingView.ref],
-    inverse: (inputs, created, removed) => replaceView(inputs[0], created[0], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)
+    inverse: replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)
   };
 }
 
@@ -102,7 +113,7 @@ export async function replaceViewImpl(inputs:IObjectRef<any>[], parameter:any):P
  * @param options
  * @returns {IAction}
  */
-export function createView(targid:IObjectRef<Targid>, viewId:string, idtype:IDType, selection:Range, options?):IAction {
+export function createView(targid: IObjectRef<Targid>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
   const view = getPlugin(TargidConstants.VIEW, viewId);
   // assert view
   return action(meta('Add ' + view.name, cat.visual, op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
@@ -120,7 +131,7 @@ export function createView(targid:IObjectRef<Targid>, viewId:string, idtype:IDTy
  * @param oldFocus
  * @returns {IAction}
  */
-export function removeView(targid:IObjectRef<Targid>, view:IObjectRef<ViewWrapper>, oldFocus = -1):IAction {
+export function removeView(targid: IObjectRef<Targid>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
   // assert view
   return action(meta('Remove ' + view.toString(), cat.visual, op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
     viewId: view.value.desc.id,
@@ -138,7 +149,7 @@ export function removeView(targid:IObjectRef<Targid>, view:IObjectRef<ViewWrappe
  * @param options
  * @returns {IAction}
  */
-export function replaceView(targid:IObjectRef<Targid>, existingView:IObjectRef<ViewWrapper>, viewId:string, idtype:IDType, selection:Range, options?):IAction {
+export function replaceView(targid: IObjectRef<Targid>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
   const view = getPlugin(TargidConstants.VIEW, viewId);
   // assert view
   return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
@@ -167,12 +178,67 @@ export function initSession(map: any) {
   return action(meta('Initialize Session', cat.custom, op.update), TargidConstants.CMD_INIT_SESSION, initSessionImpl, [], map);
 }
 
+
+export async function setParameterImpl(inputs: IObjectRef<any>[], parameter, graph: ProvenanceGraph) {
+  const view: ViewWrapper = await inputs[0].v;
+  const name = parameter.name;
+  const value = parameter.value;
+
+  const bak = view.getParameter(name);
+  view.setParameterImpl(name, value);
+  return {
+    inverse: setParameter(inputs[0], name, bak)
+  };
+}
+
+export function setParameter(view: IObjectRef<ViewWrapper>, name: string, value: any) {
+  //assert view
+  return action(meta('Set Parameter "' + name + '"', cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
+    name,
+    value
+  });
+}
+
+export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
+  const views: ViewWrapper[] = await Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]);
+  const view = views[0];
+  const target = views[1];
+  const idtype = parameter.idtype ? resolve(parameter.idtype) : null;
+  const range = parse(parameter.range);
+
+  const bak = view.getItemSelection();
+  view.setItemSelection({idtype, range});
+  if (target) {
+    target.setParameterSelection({idtype, range});
+  }
+  return {
+    inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range) : setSelection(inputs[0], bak.idtype, bak.range)
+  };
+}
+
+export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+  // assert view
+  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
+    idtype: idtype ? idtype.id : null,
+    range: range.toString()
+  });
+}
+
+export function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+  // assert view
+  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
+    idtype: idtype ? idtype.id : null,
+    range: range.toString()
+  });
+}
+
+
 /**
  * Create a CLUE command by ID
  * @param id
  * @returns {ICmdFunction|null}
  */
-export function createCmd(id):ICmdFunction {
+export function createCmd(id): ICmdFunction {
   switch (id) {
     case TargidConstants.CMD_CREATE_VIEW:
       return createViewImpl;
@@ -182,6 +248,10 @@ export function createCmd(id):ICmdFunction {
       return replaceViewImpl;
     case TargidConstants.CMD_INIT_SESSION:
       return initSessionImpl;
+    case TargidConstants.CMD_SET_PARAMETER:
+      return setParameterImpl;
+    case TargidConstants.CMD_SET_SELECTION:
+      return setSelectionImpl;
   }
   return null;
 }
@@ -193,17 +263,57 @@ export function createCmd(id):ICmdFunction {
  * @param path
  * @returns {Array}
  */
-export function compressCreateRemove(path:ActionNode[]) {
-  const r = [];
-  for (const p of path) {
-    if (p.f_id === TargidConstants.CMD_REMOVE_VIEW && r.length > 0) {
-      const last = r[r.length - 1];
-      if (last.f_id === TargidConstants.CMD_CREATE_VIEW && p.parameter.viewId === last.parameter.viewId) {
-        r.pop();
-        continue;
+export function compressCreateRemove(path: ActionNode[]) {
+  const r: ActionNode[] = [];
+
+  function compatibilityReplaceView(previous: ActionNode) {
+    //old replace view creates a new ref for each new view instead of reusing the old one
+    if (previous.f_id !== TargidConstants.CMD_REPLACE_VIEW) {
+      return false;
+    }
+    // in case of the view created an ref (=old behavior) -> keep it
+    return previous.creates.length > 0;
+  }
+
+  outer: for (const act of path) {
+    if (act.f_id === TargidConstants.CMD_REMOVE_VIEW) {
+      const removed = act.removes[0];
+      //removed view delete intermediate change and optional creation
+      for(let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+        const previous = r[j];
+        const requires = previous.requires;
+        const usesView =  requires.indexOf(removed) >= 0;
+        if (usesView && !compatibilityReplaceView(previous)) {
+          r.splice(j, 1);
+        } else if (previous.f_id === TargidConstants.CMD_CREATE_VIEW && previous.creates[0] === removed) {
+          //found adding remove both
+          r.splice(j, 1);
+          continue outer;
+        }
       }
     }
-    r.push(p);
+    if (act.f_id === TargidConstants.CMD_REPLACE_VIEW) {
+      const view = act.requires[1];
+      //changed the view in place can remove all previous set parameter/selection calls till the creation
+      for(let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+        const previous = r[j];
+        const requires = previous.requires;
+        const usesView =  requires.indexOf(view) >= 0;
+        //uses view (setParameter, replace, ...) but not its creation
+        if (usesView && previous.f_id !== TargidConstants.CMD_CREATE_VIEW) {
+          r.splice(j, 1);
+        }
+      }
+    }
+    r.push(act);
   }
   return r;
+}
+
+export function compressSetParameter(path: ActionNode[]) {
+  return lastOnly(path, TargidConstants.CMD_SET_PARAMETER, (p: ActionNode) => p.requires[0].id + '_' + p.parameter.name);
+}
+
+export function compressSetSelection(path: ActionNode[]) {
+  return lastOnly(path, TargidConstants.CMD_SET_SELECTION, (p: ActionNode) => p.parameter.idtype + '@' + p.requires[0].id);
 }

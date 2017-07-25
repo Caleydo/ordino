@@ -3,7 +3,7 @@
  */
 
 import 'scrollTo';
-import {ProvenanceGraph, IObjectRef, action, meta, op, cat, ActionNode, ref, ICmdFunction} from 'phovea_core/src/provenance';
+import {ProvenanceGraph, IObjectRef, ref, cat} from 'phovea_core/src/provenance';
 import {IDType, resolve, defaultSelectionType} from 'phovea_core/src/idtype';
 import {Range, none, parse} from 'phovea_core/src/range';
 import * as d3 from 'd3';
@@ -12,6 +12,7 @@ import TargidConstants from './constants';
 import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
+import {setParameter} from './cmds';
 
 
 export enum EViewMode {
@@ -265,68 +266,6 @@ export abstract class ASmallMultipleView extends AView {
   }
 }
 
-
-export async function setParameterImpl(inputs:IObjectRef<any>[], parameter, graph:ProvenanceGraph) {
-  const view: ViewWrapper = await inputs[0].v;
-  const name = parameter.name;
-  const value = parameter.value;
-
-  const bak = view.getParameter(name);
-  view.setParameterImpl(name, value);
-  return {
-    inverse: setParameter(inputs[0], name, bak)
-  };
-}
-export function setParameter(view:IObjectRef<ViewWrapper>, name: string, value: any) {
-  //assert view
-  return action(meta('Set Parameter "'+name+'"', cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
-    name,
-    value
-  });
-}
-
-export async function setSelectionImpl(inputs:IObjectRef<any>[], parameter) {
-  const views:ViewWrapper[] = await Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]);
-  const view = views[0];
-  const target = views[1];
-  const idtype = parameter.idtype ? resolve(parameter.idtype) : null;
-  const range = parse(parameter.range);
-
-  const bak = view.getItemSelection();
-  view.setItemSelection({ idtype, range});
-  if (target) {
-    target.setParameterSelection({ idtype, range});
-  }
-  return {
-    inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range): setSelection(inputs[0], bak.idtype, bak.range)
-  };
-}
-export function setSelection(view:IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
-  // assert view
-  return action(meta('Select '+(idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
-    idtype: idtype ? idtype.id : null,
-    range: range.toString()
-  });
-}
-
-export function setAndUpdateSelection(view:IObjectRef<ViewWrapper>, target:IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
-  // assert view
-  return action(meta('Select '+(idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
-    idtype: idtype ? idtype.id : null,
-    range: range.toString()
-  });
-}
-
-export function createCmd(id):ICmdFunction {
-  switch (id) {
-    case TargidConstants.CMD_SET_PARAMETER:
-      return setParameterImpl;
-    case TargidConstants.CMD_SET_SELECTION:
-      return setSelectionImpl;
-  }
-  return null;
-}
-
 function isSameSelection(a: ISelection, b: ISelection) {
   const aNull = (a === null || a.idtype === null);
   const bNull = (b === null || b.idtype === null);
@@ -334,43 +273,6 @@ function isSameSelection(a: ISelection, b: ISelection) {
     return aNull === bNull;
   }
   return a.idtype.id === b.idtype.id && a.range.eq(b.range);
-}
-
-/**
- * compresses the given path by removing redundant focus operations
- * @param path
- * @returns {ActionNode[]}
- */
-export function compressSetParameter(path:ActionNode[]) {
-  const possible = path.filter((p) => p.f_id === TargidConstants.CMD_SET_PARAMETER);
-  //group by view and parameter
-  const toKey = (p: ActionNode) => p.requires[0].id+'_'+p.parameter.name;
-  const last = d3.nest().key(toKey).map(possible);
-  return path.filter((p) => {
-    if (p.f_id !== TargidConstants.CMD_SET_PARAMETER) {
-      return true;
-    }
-    const elems = last[toKey(p)];
-    return elems[elems.length-1] === p; //just the last survives
-  });
-}
-
-export function compressSetSelection(path:ActionNode[]) {
-  const lastByIDType : any = {};
-  path.forEach((p) => {
-    if (p.f_id === TargidConstants.CMD_SET_SELECTION) {
-      const para = p.parameter;
-      lastByIDType[para.idtype+'@'+p.requires[0].id] = p;
-    }
-  });
-  return path.filter((p) => {
-    if (p.f_id !== TargidConstants.CMD_SET_SELECTION) {
-      return true;
-    }
-    const para = p.parameter;
-    //last one remains
-    return lastByIDType[para.idtype+'@'+p.requires[0].id] === p;
-  });
 }
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
@@ -423,7 +325,7 @@ export class ViewWrapper extends EventHandler {
   /**
    * Provenance graph reference of this object
    */
-  ref: IObjectRef<ViewWrapper>;
+  readonly ref: IObjectRef<ViewWrapper>;
 
   /**
    * Provenance graph context
@@ -441,6 +343,9 @@ export class ViewWrapper extends EventHandler {
   constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
     super();
 
+    // create provenance reference
+    this.ref = ref(this, plugin.desc.name, cat.visual, generate_hash(plugin.desc, selection));
+
     this.init(graph, selection, plugin, options);
 
     // create ViewWrapper root node
@@ -457,8 +362,6 @@ export class ViewWrapper extends EventHandler {
    * @param options
    */
   private init(graph: ProvenanceGraph, selection: ISelection, plugin:IPlugin, options?) {
-    // create provenance reference
-    this.ref = ref(this, plugin.desc.name, cat.visual, generate_hash(plugin.desc, selection));
 
     //console.log(graph, generate_hash(plugin.desc, selection, options));
 

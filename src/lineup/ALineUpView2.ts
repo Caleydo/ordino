@@ -560,13 +560,15 @@ export abstract class ALineUpView2 extends AView {
     this.setBusy(false);
   }
 
-  protected async update() {
+  protected update() {
     this.setBusy(true);
     this.initLineUpPromise = this.updateImpl();
     this.initLineUpPromise
       .catch(() => {
         this.setBusy(false);
       });
+
+    return this.initLineUpPromise;
   }
 
   protected loadColumnDesc(): Promise<{idType: string, columns: any[]}> {

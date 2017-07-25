@@ -70,14 +70,6 @@ module.exports = function (registry) {
     priority: 95
   });
 
-  registry.push('idTypeDetector', 'gene_idtype_detector', function () {
-    return System.import('./src/GeneIDTypeDetector');
-  }, {
-    'name': 'IDTypeDetector',
-    'factory': 'geneIDTypeDetector',
-    'idType': 'Ensembl'
-  });
-
   // generator-phovea:end
 };
 

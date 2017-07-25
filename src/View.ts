@@ -25,7 +25,7 @@ export interface IViewPluginDesc extends IPluginDesc {
   mockup?: boolean;
 }
 
-function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
+export function toViewPluginDesc(p : IPluginDesc): IViewPluginDesc {
   const r : any = p;
   r.selection = r.selection || 'none';
   return r;
@@ -44,6 +44,7 @@ export function matchLength(s: any, length: number) {
     case 'small_multiple':
       return length === 1;
     case 'multiple':
+    case 'chooser':
     case 'some':
       return length >= 1;
     case '2':
@@ -53,8 +54,22 @@ export function matchLength(s: any, length: number) {
   }
 }
 
-function showAsSmallMultiple(desc: any) {
+/**
+ * whether the view should be used as small multiple in case of multiple selections
+ * @param desc
+ * @returns {boolean}
+ */
+export function showAsSmallMultiple(desc: any) {
   return desc.selection === 'small_multiple';
+}
+
+/**
+ * whether the view is going to use a chooser for multiple selections
+ * @param desc
+ * @returns {boolean}
+ */
+export function willShowChooser(desc: any) {
+  return desc.selection === 'chooser';
 }
 
 /**

@@ -281,7 +281,7 @@ export abstract class ASmallMultipleView extends AView {
   }
 }
 
-function isSameSelection(a: ISelection, b: ISelection) {
+export function isSameSelection(a: ISelection, b: ISelection) {
   const aNull = (a === null || a.idtype === null);
   const bNull = (b === null || b.idtype === null);
   if (aNull || bNull) {

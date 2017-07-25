@@ -25,6 +25,12 @@ import Targid from './Targid';
 import * as session from 'phovea_core/src/session';
 import {createRemove, lastOnly} from 'phovea_clue/src/compress';
 
+
+interface IParameterAble {
+  getParameter(name: string): any;
+  setParameterImpl(name: string, value: any);
+}
+
 /**
  * Creates a view instance and wraps the instance with the inverse action in a CLUE command
  * @param inputs Array with object references, where the first one is the TargId object
@@ -180,7 +186,7 @@ export function initSession(map: any) {
 
 
 export async function setParameterImpl(inputs: IObjectRef<any>[], parameter, graph: ProvenanceGraph) {
-  const view: ViewWrapper = await inputs[0].v;
+  const view: IParameterAble = await inputs[0].v;
   const name = parameter.name;
   const value = parameter.value;
 
@@ -191,7 +197,7 @@ export async function setParameterImpl(inputs: IObjectRef<any>[], parameter, gra
   };
 }
 
-export function setParameter(view: IObjectRef<ViewWrapper>, name: string, value: any) {
+export function setParameter(view: IObjectRef<IParameterAble>, name: string, value: any) {
   //assert view
   return action(meta('Set Parameter "' + name + '"', cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
     name,

@@ -166,7 +166,7 @@ export class LineUpRankingButtons extends EventHandler {
 
     const columnsWrapper: IColumnWrapper<IScoreLoader|IWrappedColumnDesc>[] = [
       {
-        text: 'Columns',
+        text: 'Database Columns',
         plugins: columns,
         action: (wrappedColumn: IWrappedColumnDesc) => {
           const ranking = this.lineup.data.getLastRanking();

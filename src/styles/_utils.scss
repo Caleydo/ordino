@@ -25,6 +25,11 @@ input[type="checkbox"].public:after {
       background: $color;
       color: black;
     }
+
+    .select2-results__option[data-idtype="#{$idType}"] {
+      background: lighten($color, 22%);
+      color: black;
+    }
   }
 
   article.view[data-idtype="#{$idType}"] {

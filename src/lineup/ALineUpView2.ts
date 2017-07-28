@@ -444,7 +444,14 @@ export abstract class ALineUpView2 extends AView {
             colDesc.domain[1] = d3.max(values, (d) => d.max);
           }
         }
-        col.setLoaded(true);
+
+        // find all columns with the same descriptions (generated snapshots) to set their `setLoaded` value
+        const rankings = this.lineup.data.getRankings();
+        rankings.forEach((ranking) =>  {
+          const columns = ranking.flatColumns.filter((rankCol) => rankCol.desc === col.desc);
+          columns.forEach((column) => (<ValueColumn<any>>column).setLoaded(true));
+        });
+
         if (this.lineup) {
           this.lineup.update();
         }

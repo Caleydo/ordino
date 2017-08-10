@@ -483,7 +483,7 @@ export class ViewWrapper extends EventHandler {
     return this.instance.setParameter(name, value);
   }
 
-  getItemSelection() {
+  getItemSelection(): ISelection {
     return this.instance.getItemSelection();
   }
 

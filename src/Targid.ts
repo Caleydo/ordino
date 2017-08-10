@@ -16,7 +16,7 @@ import TargidConstants from './constants';
 import * as session from 'phovea_core/src/session';
 import {
   categoricalProperty, PropertyType,
-  createPropertyValue, IProperty, IPropertyValue
+  createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 
@@ -401,9 +401,28 @@ export class Targid extends EventHandler implements IVisStateApp {
   }
 
   getCurrVisState(): IPropertyValue[] {
-    return [
-      createPropertyValue(PropertyType.CATEGORICAL, 'first'),
-    ];
+    const views = this.views.map((v) => {
+      return createPropertyValue(PropertyType.CATEGORICAL, {
+        id: String(v.desc.id),
+        text: v.desc.name
+      });
+    });
+
+    const selections:IPropertyValue[] = this.views
+      .map((v) => {
+        const idtype = v.getItemSelection().idtype;
+        const range = v.getItemSelection().range;
+
+        return range.dim(0).asList().map((id) => {
+          return createPropertyValue(PropertyType.SET, {
+            id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${id}`,
+            text: `${idtype.name} ${TAG_VALUE_SEPARATOR} ${id}`
+          });
+        });
+      })
+      .reduce((prev, curr) => prev.concat(curr), []);
+
+    return [...views, ...selections];
   }
 }
 export default Targid;

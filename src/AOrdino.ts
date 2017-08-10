@@ -17,6 +17,8 @@ import ACLUEWrapper, {createStoryVis} from 'phovea_clue/src/ACLUEWrapper';
 import EditProvenanceGraphMenu from './EditProvenanceGraphMenu';
 import {showProveanceGraphNotFoundDialog} from './Dialogs';
 import {mixin} from 'phovea_core/src';
+import {create as createProvRetrievalPanel} from 'phovea_clue/src/provenance_retrieval/ProvRetrievalPanel';
+import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 
 export interface IOrdinoOptions {
   loginForm?: string;
@@ -24,7 +26,7 @@ export interface IOrdinoOptions {
   prefix?: string;
 }
 
-export abstract class AOrdino<T> extends ACLUEWrapper {
+export abstract class AOrdino<T extends IVisStateApp> extends ACLUEWrapper {
   static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
 
   private readonly options: IOrdinoOptions = {
@@ -111,6 +113,13 @@ export abstract class AOrdino<T> extends ACLUEWrapper {
     });
 
     this.app = graph.then((graph) => this.createApp(graph, clueManager, main));
+
+    Promise.all([graph, this.app]).then((args) => {
+      createProvRetrievalPanel(args[0], body.querySelector('div.content'), {
+        app: args[1],
+        captureNonPersistedStates: false
+      });
+    });
 
     const initSession = () => {
       //logged in, so we can resolve the graph for real

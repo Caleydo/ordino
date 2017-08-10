@@ -14,7 +14,11 @@ import {createView, removeView, replaceView, setSelection, setAndUpdateSelection
 import Range from 'phovea_core/src/range/Range';
 import TargidConstants from './constants';
 import * as session from 'phovea_core/src/session';
-
+import {
+  categoricalProperty, PropertyType,
+  createPropertyValue, IProperty, IPropertyValue
+} from 'phovea_core/src/provenance/retrieval/VisStateProperty';
+import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 
 /**
  * The main class for the TargID app
@@ -23,7 +27,7 @@ import * as session from 'phovea_core/src/session';
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class Targid extends EventHandler {
+export class Targid extends EventHandler implements IVisStateApp {
   static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
@@ -388,6 +392,18 @@ export class Targid extends EventHandler {
         view.setActiveNextView(null);
       }
     });
+  }
+
+  getVisStateProps(): Promise<IProperty[]> {
+    return Promise.resolve([
+      categoricalProperty('Test Property', ['first', 'second', 'third']),
+    ]);
+  }
+
+  getCurrVisState(): IPropertyValue[] {
+    return [
+      createPropertyValue(PropertyType.CATEGORICAL, 'first'),
+    ];
   }
 }
 export default Targid;

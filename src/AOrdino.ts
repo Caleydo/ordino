@@ -102,7 +102,7 @@ export abstract class AOrdino<T> extends ACLUEWrapper {
     const storyVis = graph.then((graph) => {
       createProvVis(graph, body.querySelector('div.content'), {
         thumbnails: false,
-        provVisCollapsed: true,
+        provVisCollapsed: false,
         hideCLUEButtonsOnCollapse: true
       });
       return createStoryVis(graph, <HTMLElement>body.querySelector('div.content'), main, {

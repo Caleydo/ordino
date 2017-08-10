@@ -81,7 +81,7 @@
     "d3": "3.5.17",
     "jquery.scrollto": "2.1.2",
     "lineupjs": "github:Caleydo/lineupjs#master",
-    "phovea_clue": "github:phovea/phovea_clue#develop",
+    "phovea_clue": "github:phovea/phovea_clue#thinkh/provenance_retrieval",
     "select2": "4.0.3",
     "select2-bootstrap-theme": "0.1.0-beta.9",
     "@types/jquery": "2.0.33",

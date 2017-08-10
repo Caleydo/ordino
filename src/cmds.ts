@@ -122,7 +122,7 @@ export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any)
 export function createView(targid: IObjectRef<Targid>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
   const view = getPlugin(TargidConstants.VIEW, viewId);
   // assert view
-  return action(meta('Add ' + view.name, cat.visual, op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
+  return action(meta(`Add ${view.name}`, cat.visual, op.create), TargidConstants.CMD_CREATE_VIEW, createViewImpl, [targid], {
     viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : none().toString(),
@@ -139,7 +139,7 @@ export function createView(targid: IObjectRef<Targid>, viewId: string, idtype: I
  */
 export function removeView(targid: IObjectRef<Targid>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
   // assert view
-  return action(meta('Remove ' + view.toString(), cat.visual, op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
+  return action(meta(`Remove ${view.toString()}`, cat.visual, op.remove), TargidConstants.CMD_REMOVE_VIEW, removeViewImpl, [targid, view], {
     viewId: view.value.desc.id,
     focus: oldFocus
   });
@@ -158,7 +158,7 @@ export function removeView(targid: IObjectRef<Targid>, view: IObjectRef<ViewWrap
 export function replaceView(targid: IObjectRef<Targid>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
   const view = getPlugin(TargidConstants.VIEW, viewId);
   // assert view
-  return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
+  return action(meta(`Replace ${existingView.name} with ${view.name}`, cat.visual, op.update), TargidConstants.CMD_REPLACE_VIEW, replaceViewImpl, [targid, existingView], {
     viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : none().toString(),
@@ -199,7 +199,7 @@ export async function setParameterImpl(inputs: IObjectRef<any>[], parameter, gra
 
 export function setParameter(view: IObjectRef<IParameterAble>, name: string, value: any) {
   //assert view
-  return action(meta('Set Parameter "' + name + '"', cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
+  return action(meta(`Set Parameter "${name}"`, cat.visual, op.update), TargidConstants.CMD_SET_PARAMETER, setParameterImpl, [view], {
     name,
     value
   });
@@ -224,7 +224,7 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
 
 export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
   // assert view
-  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
+  return action(meta(`Select ${(idtype ? idtype.name : 'None')}`, cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
@@ -232,7 +232,7 @@ export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, rang
 
 export function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
   // assert view
-  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
+  return action(meta(`Select ${(idtype ? idtype.name : 'None')}`, cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });

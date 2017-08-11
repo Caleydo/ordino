@@ -24,7 +24,7 @@ def _get_data(database, view_name, replacements=None):
 @app.route('/')
 @login_required
 def list_database():
-  return jsonify([v[0].dump(k) for k,v in db.configs.items()])
+  return jsonify([v[0].dump(k) for k, v in db.configs.items()])
 
 
 @app.route('/<database>')
@@ -33,7 +33,7 @@ def list_view(database):
   config_engine = db.resolve(database)
   if not config_engine:
     return 404, 'Not Found'
-  return jsonify([v.dump(k) for k,v in config_engine[0].views.items()])
+  return jsonify([v.dump(k) for k, v in config_engine[0].views.items()])
 
 
 @app.route('/<database>/<view_name>')

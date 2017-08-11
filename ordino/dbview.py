@@ -1,7 +1,6 @@
 import logging
 import re
 
-
 __author__ = 'Samuel Gratzl'
 _log = logging.getLogger(__name__)
 REGEX_TYPE = type(re.compile(''))
@@ -30,9 +29,8 @@ class DBView(object):
     self.filters = {}
     self.table = None
 
-
   def needs_to_fill_up_columns(self):
-    return self.columns_filled_up == False
+    return self.columns_filled_up is False
 
   def dump(self, name):
     from collections import OrderedDict
@@ -48,7 +46,7 @@ class DBView(object):
     if self.filters:
       r['filters'] = self.filters.keys()
     if self.queries:
-      r['queries'] = {k: _clean_query(v) for k,v in self.queries.items()}
+      r['queries'] = {k: _clean_query(v) for k, v in self.queries.items()}
     return r
 
   def is_valid_filter(self, key):
@@ -89,6 +87,7 @@ class DBViewBuilder(object):
   """
   db view builder pattern implementation
   """
+
   def __init__(self):
     self.v = DBView()
 
@@ -277,9 +276,7 @@ def limit_offset(builder):
   :param builder: the current query builder
   :return:
   """
-  return builder.append(' LIMIT {limit} OFFSET {offset}') \
-    .replace('limit', int).replace('offset', int) \
-    .arg('query')
+  return builder.append(' LIMIT {limit} OFFSET {offset}').replace('limit', int).replace('offset', int).arg('query')
 
 
 def append_where(builder):
@@ -290,12 +287,12 @@ def append_where(builder):
   """
   query = builder.v.query
   if ' where ' in query.lower():
-    return builder.query(query + ' {and_where}').replace('and_where')
+    return builder.append(' {and_where}').replace('and_where')
   else:
-    return builder.query(query + ' {where}').replace('where')
+    return builder.append(' {where}').replace('where')
 
 
-def add_common_queries(queries, table, idtype, id_query, columns = None):
+def add_common_queries(queries, table, idtype, id_query, columns=None):
   """
   create a set of common queries
   :param queries: dict where the queries should be stored
@@ -306,21 +303,16 @@ def add_common_queries(queries, table, idtype, id_query, columns = None):
   :return: None
   """
   queries[table] = DBViewBuilder().idtype(idtype).table(table).query("""
-          SELECT {id}, * FROM {table}""".format(id=id_query, table=table))\
-    .derive_columns() \
-    .build()
+          SELECT {id}, * FROM {table}""".format(id=id_query, table=table)).derive_columns().build()
 
   queries[table + '_items'] = DBViewBuilder().idtype(idtype).table(table).query("""
         SELECT {id}, {{column}} AS text
         FROM {table} WHERE LOWER({{column}}) LIKE :query
-        ORDER BY {{column}} ASC""".format(id=id_query, table=table)) \
-    .replace('column', columns).call(limit_offset) \
-    .arg('query').build()
+        ORDER BY {{column}} ASC""".format(id=id_query, table=table)).replace('column', columns).call(limit_offset).arg('query').build()
 
   queries[table + '_items_verify'] = DBViewBuilder().idtype(idtype).table(table).query("""
         SELECT {id}, {table}_name AS text
-        FROM {table}""".format(id=id_query,table=table))\
-    .call(append_where).build()
+        FROM {table}""".format(id=id_query, table=table)).call(append_where).build()
 
   queries[table + '_unique'] = DBViewBuilder().query("""
         SELECT d as id, d as text
@@ -328,27 +320,24 @@ def add_common_queries(queries, table, idtype, id_query, columns = None):
           SELECT distinct {{column}} AS d
           FROM {table} WHERE LOWER({{column}}) LIKE :query
           ) as t
-        ORDER BY d ASC LIMIT {{limit}} OFFSET {{offset}}""".format(table=table)) \
-    .replace('column', columns).replace('limit', int).replace('offset', int) \
-    .arg('query').build()
+        ORDER BY d ASC LIMIT {{limit}} OFFSET {{offset}}""".format(table=table)).replace('column', columns).replace('limit', int).replace('offset', int).arg('query').build()
 
   queries[table + '_unique_all'] = DBViewBuilder().query("""
         SELECT distinct {{column}} AS text
-        FROM {table} ORDER BY {{column}} ASC """.format(table=table)) \
-    .replace('column', columns).build()
+        FROM {table} ORDER BY {{column}} ASC """.format(table=table)).replace('column', columns).build()
 
 
 """
  default aggregation
 """
-default_agg_score = DBViewBuilder().query('{agg}({data_subtype})') \
-    .replace('agg', ['min', 'max', 'avg']).replace('data_subtype').build()
+default_agg_score = DBViewBuilder().query('{agg}({data_subtype})').replace('agg', ['min', 'max', 'avg']).replace('data_subtype').build()
 
 
 class DBMapping(object):
   """
   simple mapping based on a query of the form `select from_id as f, to_id as t from mapping_table where f in :ids`
   """
+
   def __init__(self, from_idtype, to_idtype, query):
     self.from_idtype = from_idtype
     self.to_idtype = to_idtype
@@ -359,7 +348,8 @@ class DBConnector(object):
   """
   basic connector object
   """
-  def __init__(self, views, agg_score = None, mappings=None):
+
+  def __init__(self, views, agg_score=None, mappings=None):
     """
     :param views: the dict of query views
     :param agg_score: optional specify how aggregation should be handled
@@ -372,7 +362,6 @@ class DBConnector(object):
     self.statement_timeout = None
     self.statement_timeout_query = None
     self.description = ''
-
 
   def dump(self, name):
     from collections import OrderedDict

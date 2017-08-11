@@ -230,10 +230,10 @@ def get_count_data(database, view_name):
   return jsonify(r)
 
 
-def _fill_up_columns(view, engine, view_name):
+def _fill_up_columns(view, engine):
   # update the real object
   columns = view.columns
-  for col in db.get_columns(engine, view_name):
+  for col in db.get_columns(engine, view.table):
     name = col['column']
     if name in columns:
       # merge
@@ -274,7 +274,7 @@ def get_desc(database, view_name):
   view = config.views[view_name]
 
   if not view.columns_filled_up:
-    _fill_up_columns(view, engine, view_name)
+    _fill_up_columns(view, engine)
   r = dict(idType=view.idtype, columns=view.columns)
   return jsonify(r)
 

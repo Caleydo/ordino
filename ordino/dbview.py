@@ -33,7 +33,7 @@ class DBView(object):
       return self.filters[key]
     if ('filter_' + key) in self.queries:  # compatibility
       return self.queries['filter_' + key]
-    return key + ' %(operator)s %(value)s'
+    return key + ' {operator} {value}'
 
   def is_valid_replacement(self, key, value):
     if key not in self.replacements:
@@ -96,7 +96,7 @@ class DBViewBuilder(object):
 
   def filter(self, key, replacement=None, alias=None, table=None):
     if table is not None:
-      alias = '{}.{}'.format(talbe, key)
+      alias = '{}.{}'.format(table, key)
     if alias is not None:
       replacement = alias + ' {operator} {value}'
     self.v.filters[key] = replacement

@@ -45,6 +45,12 @@ def resolve(database):
 
 
 def assign_ids(rows, idtype):
+  """
+  assigns unique ids (stored in '_id') based on the 'id' column and given idtype
+  :param rows: the rows having an 'id' column each
+  :param idtype: the idtype to resolve the id
+  :return: the extended rows
+  """
   import phovea_server.plugin
 
   manager = phovea_server.plugin.lookup('idmanager')
@@ -59,25 +65,35 @@ def to_query(q):
 
 class WrappedSession(object):
   def __init__(self, engine):
+    """
+    session wrapper of sql alchemy with auto cleanup
+    :param engine:
+    """
     from sqlalchemy.orm import sessionmaker, scoped_session
     _log.info('creating session')
     self._session = scoped_session(sessionmaker(bind=engine))()
 
   def execute(self, query, **kwargs):
+    """
+    execute the given query with the given args
+    :param query: query
+    :param kwargs: additional args to replace
+    :return: the session result
+    """
     return self._session.execute(to_query(query), kwargs)
 
   def run(self, sql, **kwargs):
+    """
+    runs the given sql statement, in contrast to execute the result will be converted to a list of dicts
+    :param sql: the sql query to execute
+    :param kwargs: args for this query
+    :return: list of dicts
+    """
     sql = to_query(sql)
     _log.info(sql)
     result = self._session.execute(sql, kwargs)
     columns = result.keys()
     return [{c: r[c] for c in columns} for r in result]
-
-  def run_to_index(self, sql, **kwargs):
-    sql = to_query(sql)
-    result = self._session.execute(sql, kwargs)
-
-    return [r['_index'] for r in result]
 
   def __enter__(self):
     return self
@@ -93,6 +109,12 @@ def session(engine):
 
 
 def get_columns(engine, table_name):
+  """
+  returns the set of columns (name, type: (string|categorical|number), categories: string[]) for the given table or view
+  :param engine: underlying engine
+  :param table_name: table name which may include a schema prefix
+  :return: the list of columns
+  """
   schema = None
   if '.' in table_name:
     splitted = table_name.split('.')
@@ -143,6 +165,15 @@ def _handle_aggregated_score(config, replacements, args):
 
 
 def prepare_arguments(view, config, replacements=None, arguments=None, extra_sql_argument=None):
+  """
+  prepares for the given view the kwargs and replacements based on the given input
+  :param view: db view
+  :param config: db connector config
+  :param replacements: dict of generated or resolved replacements
+  :param arguments: dict of arguments or as fallback replacements
+  :param extra_sql_argument: additional unchecked kwargs
+  :return: (kwargs, replace)
+  """
   replacements = replacements or {}
   arguments = arguments or {}
   replacements = _handle_aggregated_score(config, replacements, arguments)
@@ -178,6 +209,15 @@ def prepare_arguments(view, config, replacements=None, arguments=None, extra_sql
 
 
 def get_data(database, view_name, replacements=None, arguments=None, extra_sql_argument=None):
+  """
+  executes the given view name on the given database with the given arguments
+  :param database: db connector name
+  :param view_name: view name
+  :param replacements: dict of replacements
+  :param arguments: dict of arguments
+  :param extra_sql_argument: additional unchecked kwargs for the query
+  :return: (r, view) tuple of the resulting rows and the resolved view
+  """
   config, engine = resolve(database)
   view = config.views[view_name]
 
@@ -192,6 +232,15 @@ def get_data(database, view_name, replacements=None, arguments=None, extra_sql_a
 
 
 def get_count(database, view_name, replacements=None, arguments=None, extra_sql_argument=None):
+  """
+  similar to get_data but returns the count of resulting rows
+  :param database: db connector name
+  :param view_name: view name
+  :param replacements: dict of replacements
+  :param arguments: dict of arguments
+  :param extra_sql_argument: additional unchecked kwargs for the query
+  :return: the count of results
+  """
   config, engine = resolve(database)
   view = config.views[view_name]
 

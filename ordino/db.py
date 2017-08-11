@@ -137,7 +137,7 @@ def _handle_aggregated_score(config, replacements, args):
     for arg in view.replacements:
       replace[arg] = args.get(arg, '')
 
-  replacements['agg_score'] = query % replace
+  replacements['agg_score'] = query.format(**replace)
 
   return replacements
 
@@ -187,13 +187,7 @@ def get_data(database, view_name, replacements=None, arguments=None, extra_sql_a
     if config.statement_timeout is not None:
       _log.info('set statement_timeout to {}'.format(config.statement_timeout))
       sess.execute(config.statement_timeout_query.format(config.statement_timeout))
-    if 'i' in arguments:
-      kwargs['query'] = arguments['i']
-      r = sess.run(view['querySlice'] % replace, **kwargs)
-      indices = map(int, arguments['i'].split(','))
-      r.sort(lambda a, b: indices.index(a['_index']) - indices.index(b['_index']))
-    else:
-      r = sess.run(view.query % replace, **kwargs)
+    r = sess.run(view.query.format(**replace), **kwargs)
   return r, view
 
 
@@ -204,18 +198,15 @@ def get_count(database, view_name, replacements=None, arguments=None, extra_sql_
   kwargs, replace = prepare_arguments(view, config, replacements, arguments, extra_sql_argument)
 
   if 'count' in view.queries:
-    count_query = view.queries['count'] % replace
+    count_query = view.queries['count']
   else:
-    query = view.query % replace
-    # heuristic replace everything before ' FROM ' with a select count(*)
-    from_clause = query.upper().index(' FROM ')
-    count_query = 'SELECT count(*)' + query[from_clause:]
+    count_query = 'SELECT count(*) FROM {table} t {{where}}'.format(table=view.table)
 
   with session(engine) as sess:
     if config.statement_timeout is not None:
       _log.info('set statement_timeout to {}'.format(config.statement_timeout))
       sess.execute(config.statement_timeout_query.format(config.statement_timeout))
-    r = sess.run(count_query, **kwargs)
+    r = sess.run(count_query.format(**replace), **kwargs)
   if r:
     return r[0]['count']
   return 0

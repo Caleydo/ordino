@@ -143,7 +143,7 @@ def _filter_logic(view):
       operator = 'IN'
     # find the sub query to replace, can be injected for more complex filter operations based on the input
     sub_query = view.get_filter_subquery(k)
-    return sub_query % dict(operator=operator, value=':' + kp)
+    return sub_query.format(operator=operator, value=':' + kp)
 
   for key in where_clause.keys():
     if not view.is_valid_filter(key):
@@ -294,7 +294,7 @@ def lookup(database, view_name):
 
   arguments = request.args.copy()
   # replace with wildcard version
-  arguments['query'] = '%' + str(request.args.get('query', '')).lower() + '%'
+  arguments['query'] = '%{}%'.format(str(request.args.get('query', '')).lower())
 
   page = int(request.args.get('page', 0))  # zero based
   limit = int(request.args.get('limit', 30))  # or 'all'
@@ -305,7 +305,7 @@ def lookup(database, view_name):
   kwargs, replace = db.prepare_arguments(view, config, replacements, arguments)
 
   with db.session(engine) as session:
-    r_items = session.run(view.query % replace, **kwargs)
+    r_items = session.run(view.query.format(**replace), **kwargs)
 
   more = len(r_items) > limit
   if more:

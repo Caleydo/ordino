@@ -94,7 +94,11 @@ class DBViewBuilder(object):
         self.v.filters[key] = None
     return self
 
-  def filter(self, key, replacement=None):
+  def filter(self, key, replacement=None, alias=None, table=None):
+    if table is not None:
+      alias = '{}.{}'.format(talbe, key)
+    if alias is not None:
+      replacement = alias + ' {operator} {value}'
     self.v.filters[key] = replacement
     return self
 
@@ -138,8 +142,73 @@ class DBViewBuilder(object):
     self.v.arguments.append(arg)
     return self
 
+  def call(self, f):
+    f(self)
+    return self
+
   def build(self):
     return self.v
+
+
+def limit_offset(builder):
+  """
+  helper function to append the limit and offset suffix
+  :param builder: the current query builder
+  :return:
+  """
+  query = builder.v.query
+  return builder.query(query + ' LIMIT {limit} OFFSET {offset}') \
+    .replace('limit', int).replace('offset', int) \
+    .arg('query')
+
+
+def append_where(builder):
+  """
+  helper function to append to the query the generated where clause
+  :param builder: the current builder
+  :return:
+  """
+  query = builder.v.query
+  if ' where ' in query.lower():
+    return builder.query(query + ' {and_where}').replace('and_where')
+  else:
+    return builder.query(query + ' {where}').replace('where')
+
+
+def add_common_queries(queries, table, idtype, id_query, columns = None):
+  queries[table] = DBViewBuilder().idtype(idtype).table(table).query("""
+          SELECT {id}, * FROM {table}""".format(id=id_query, table=table)).build()
+
+  queries[table + '_items'] = DBViewBuilder().idtype(idtype).table(table).query("""
+        SELECT {id}, {{column}} AS text
+        FROM {table} WHERE LOWER({{column}}) LIKE :query
+        ORDER BY {{column}} ASC""".format(id=id_query, table=table)) \
+    .replace('column', columns).call(limit_offset) \
+    .arg('query').build()
+
+  queries[table + '_items_verify'] = DBViewBuilder().idtype(idtype).table(table).query("""
+        SELECT {id}, {table}_name AS text
+        FROM {table}""".format(id=id_query,table=table))\
+    .call(append_where).build()
+
+  queries[table + '_unique'] = DBViewBuilder().query("""
+        SELECT d as id, d as text
+        FROM (
+          SELECT distinct {{column}} AS d
+          FROM {table} WHERE LOWER({{column}}) LIKE :query
+          ) as t
+        ORDER BY d ASC LIMIT {{limit}} OFFSET {{offset}}""".format(table=table)) \
+    .replace('column', columns).replace('limit', int).replace('offset', int) \
+    .arg('query').build()
+
+  queries[table + '_unique_all'] = DBViewBuilder().query("""
+        SELECT distinct {{column}} AS text
+        FROM {table} ORDER BY {{column}} ASC """.format(table=table)) \
+    .replace('column', columns).build()
+
+
+default_agg_score = DBViewBuilder().query('{agg}({data_subtype})') \
+    .replace('agg', ['min', 'max', 'avg']).replace('data_subtype').build()
 
 
 class DBMapping(object):

@@ -13,17 +13,20 @@ class DBView(object):
     self.query = query
     self.queries = {}
     self.columns = {}
+    self.columns_filled_up = False
     self.replacements = []
     self.valid_replacements = {}
     self.arguments = []
     self.filters = {}
+    self.table = None
 
   def is_valid_filter(self, key):
     if key in self.filters:
       return True
     if key in self.columns:
       return True
-    return not self.filters
+    # if not specified and not the columns completed
+    return not self.filters and not self.columns_filled_up
 
   def get_filter_subquery(self, key):
     if key in self.filters and self.filters[key] is not None:
@@ -68,6 +71,10 @@ class DBViewBuilder(object):
 
   def idtype(self, idtype):
     self.v.idtype = idtype
+    return self
+
+  def table(self, table):
+    self.v.table = table
     return self
 
   def query(self, label, query=None):

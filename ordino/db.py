@@ -92,6 +92,30 @@ def session(engine):
   return WrappedSession(engine)
 
 
+def get_columns(engine, table_name):
+  schema = None
+  if '.' in table_name:
+    splitted = table_name.split('.')
+    schema = splitted[0]
+    table_name = splitted[1]
+  inspector = sqlalchemy.inspect(engine)
+
+  columns = inspector.get_columns(table_name, schema)
+
+  def _normalize_columns(col):
+    from sqlalchemy import types
+    r = dict(label=col['name'], type='string', column=col['name'])
+    t = col['type']
+    if isinstance(t, types.Integer) or isinstance(t, types.Numeric):
+      r['type'] = 'number'
+    elif isinstance(t, types.Enum):
+      r['type'] = 'categorical'
+      r['categories'] = t.enums
+    return r
+
+  return map(_normalize_columns, columns)
+
+
 def _handle_aggregated_score(config, replacements, args):
   """
   Handle aggregation for aggregated (and inverted aggregated) score queries

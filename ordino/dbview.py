@@ -7,18 +7,49 @@ _log = logging.getLogger(__name__)
 REGEX_TYPE = type(re.compile(''))
 
 
+def _clean_query(query):
+  query = query.strip()
+  query = query.replace('\n', '')
+  # remove two spaces till there are no more
+  while '  ' in query:
+    query = query.replace('  ', ' ')
+  return query
+
+
 class DBView(object):
   def __init__(self, idtype=None, query=None):
+    self.description = ''
     self.idtype = idtype
     self.query = query
     self.queries = {}
     self.columns = {}
-    self.columns_filled_up = False
+    self.columns_filled_up = None
     self.replacements = []
     self.valid_replacements = {}
     self.arguments = []
     self.filters = {}
     self.table = None
+
+
+  def needs_to_fill_up_columns(self):
+    return self.columns_filled_up == False
+
+  def dump(self, name):
+    from collections import OrderedDict
+    r = OrderedDict(name=name, description=self.description)
+    if self.idtype:
+      r['idType'] = self.idtype
+    r['query'] = _clean_query(self.query)
+    args = [a for a in self.arguments]
+    args.extend(self.replacements)
+    r['arguments'] = args
+    if self.columns:
+      r['columns'] = self.columns.values()
+    if self.filters:
+      r['filters'] = self.filters.keys()
+    if self.queries:
+      r['queries'] = {k: _clean_query(v) for k,v in self.queries.items()}
+    return r
 
   def is_valid_filter(self, key):
     if key in self.filters:
@@ -68,6 +99,7 @@ class DBViewBuilder(object):
     :return: self
     """
     self.v.idtype = view.idtype
+    self.v.description = view.description
     self.v.query = view.query
     self.v.queries = view.queries.copy()
     self.v.columns = view.columns.copy()
@@ -75,6 +107,15 @@ class DBViewBuilder(object):
     self.v.arguments = list(view.arguments)
     self.v.filters = view.filters.copy()
     self.v.valid_replacements = view.valid_replacements.copy()
+    return self
+
+  def description(self, desc):
+    """
+    optional description of this query
+    :param desc: the description text
+    :return: self
+    """
+    self.v.description = desc
     return self
 
   def idtype(self, idtype):
@@ -171,6 +212,14 @@ class DBViewBuilder(object):
     self.v.queries['categories'] = query
     return self
 
+  def derive_columns(self):
+    """
+    specify that the columns should be automatically derived, requires that 'table' is given
+    :return: self
+    """
+    self.v.columns_filled_up = False
+    return self
+
   def column(self, name, **kwargs):
     """
     specify a column along with a type for the result
@@ -180,6 +229,7 @@ class DBViewBuilder(object):
     """
     if 'label' not in kwargs:
       kwargs['label'] = name
+    kwargs['column'] = name
     self.v.columns[name] = kwargs
     return self
 
@@ -256,7 +306,9 @@ def add_common_queries(queries, table, idtype, id_query, columns = None):
   :return: None
   """
   queries[table] = DBViewBuilder().idtype(idtype).table(table).query("""
-          SELECT {id}, * FROM {table}""".format(id=id_query, table=table)).build()
+          SELECT {id}, * FROM {table}""".format(id=id_query, table=table))\
+    .derive_columns() \
+    .build()
 
   queries[table + '_items'] = DBViewBuilder().idtype(idtype).table(table).query("""
         SELECT {id}, {{column}} AS text
@@ -295,7 +347,7 @@ default_agg_score = DBViewBuilder().query('{agg}({data_subtype})') \
 
 class DBMapping(object):
   """
-  simple mapping based on a query which
+  simple mapping based on a query of the form `select from_id as f, to_id as t from mapping_table where f in :ids`
   """
   def __init__(self, from_idtype, to_idtype, query):
     self.from_idtype = from_idtype
@@ -319,3 +371,9 @@ class DBConnector(object):
     self.mappings = mappings
     self.statement_timeout = None
     self.statement_timeout_query = None
+    self.description = ''
+
+
+  def dump(self, name):
+    from collections import OrderedDict
+    return OrderedDict(name=name, description=self.description)

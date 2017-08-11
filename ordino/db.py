@@ -41,7 +41,15 @@ configs = {p.id: _to_config(p) for p in list_plugins('targid-sql-database-defini
 
 
 def resolve(database):
-  return configs[database]
+  r = configs[database]
+  if r:
+    # derive needed columns
+    connector, engine = r
+    for view in connector.views.values():
+      if view.needs_to_fill_up_columns():
+        view.columns_filled_up = True
+        _fill_up_columns(view, engine)
+  return r
 
 
 def assign_ids(rows, idtype):
@@ -80,7 +88,9 @@ class WrappedSession(object):
     :param kwargs: additional args to replace
     :return: the session result
     """
-    return self._session.execute(to_query(query), kwargs)
+    sql = to_query(query)
+    _log.info(sql)
+    return self._session.execute(sql, kwargs)
 
   def run(self, sql, **kwargs):
     """
@@ -259,3 +269,39 @@ def get_count(database, view_name, replacements=None, arguments=None, extra_sql_
   if r:
     return r[0]['count']
   return 0
+
+
+def _fill_up_columns(view, engine):
+  _log.info('fill up view')
+  # update the real object
+  columns = view.columns
+  for col in get_columns(engine, view.table):
+    name = col['column']
+    if name in columns:
+      # merge
+      old = columns[name]
+      for k, v in col.items():
+        if k not in old:
+          old[k] = v
+    else:
+      columns[name] = col
+
+  # derive the missing domains and categories
+  number_columns = [k for k, col in columns.items() if col['type'] == 'number' and ('min' not in col or 'max' not in col)]
+  categorical_columns = [k for k, col in columns.items() if col['type'] == 'categorical' and 'categories' not in col]
+  if number_columns or categorical_columns:
+    with session(engine) as s:
+      table = view.table
+      if number_columns:
+        template = 'min({col}) as {col}_min, max({col}) as {col}_max'
+        minmax = ', '.join(template.format(col=col) for col in number_columns)
+        row = next(iter(s.execute("""SELECT {minmax} FROM {table}""".format(table=table, minmax=minmax))))
+        for num_col in number_columns:
+          columns[num_col]['min'] = row[num_col + '_min']
+          columns[num_col]['max'] = row[num_col + '_max']
+      for col in categorical_columns:
+        template = """SELECT distinct {col} as cat FROM {table} WHERE {col} <> '' and {col} is not NULL"""
+        cats = s.execute(template.format(col=col, table=table))
+        columns[col]['categories'] = [r['cat'] for r in cats]
+
+  view.columns_filled_up = True

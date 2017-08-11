@@ -555,7 +555,12 @@ export abstract class ALineUpView2 extends AView {
   }
 
   private async updateImpl() {
-    const desc: {idType: string, columns: any[]} = await this.loadColumnDesc();
+    const desc: {idType: string, columns: any, columnList?: any[]} = await this.loadColumnDesc();
+    //convert desc columns to know type of a lookup map
+    desc.columnList = desc.columns;
+    desc.columns = {};
+    desc.columnList.forEach((d) => desc.columns[d.column] = d);
+
     this.initColumns(desc);
     const rows = await this.loadRows();
     this.initRows(rows);

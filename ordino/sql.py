@@ -21,6 +21,21 @@ def _get_data(database, view_name, replacements=None):
   return db.get_data(database, view_name, replacements, request.args)
 
 
+@app.route('/')
+@login_required
+def list_database():
+  return jsonify([v[0].dump(k) for k,v in db.configs.items()])
+
+
+@app.route('/<database>')
+@login_required
+def list_view(database):
+  config_engine = db.resolve(database)
+  if not config_engine:
+    return 404, 'Not Found'
+  return jsonify([v.dump(k) for k,v in config_engine[0].views.items()])
+
+
 @app.route('/<database>/<view_name>')
 @login_required
 def get_data_api(database, view_name):
@@ -230,41 +245,6 @@ def get_count_data(database, view_name):
   return jsonify(r)
 
 
-def _fill_up_columns(view, engine):
-  # update the real object
-  columns = view.columns
-  for col in db.get_columns(engine, view.table):
-    name = col['column']
-    if name in columns:
-      # merge
-      old = columns[name]
-      for k, v in col.items():
-        if k not in old:
-          old[k] = v
-    else:
-      columns[name] = col
-
-  # derive the missing domains and categories
-  number_columns = [k for k, col in columns.items() if col['type'] == 'number' and ('min' not in col or 'max' not in col)]
-  categorical_columns = [k for k, col in columns.items() if col['type'] == 'categorical' and 'categories' not in col]
-  if number_columns or categorical_columns:
-    with db.session(engine) as session:
-      table = view.table
-      if number_columns:
-        template = 'min({col}) as {col}_min, max({col}) as {col}_max'
-        minmax = ', '.join(template.format(col=col) for col in number_columns)
-        row = next(iter(session.run("""SELECT {minmax} FROM {table}""".format(table=table, minmax=minmax))))
-        for num_col in number_columns:
-          columns[num_col]['min'] = row[num_col + '_min']
-          columns[num_col]['max'] = row[num_col + '_max']
-      for col in categorical_columns:
-        template = """SELECT distinct {col} as cat FROM {table} WHERE cat <> '' and cat is not NULL"""
-        cats = session.run(template.format(col=col, table=table))
-        columns[col]['categories'] = [r['cat'] for r in cats]
-
-  view.columns_filled_up = True
-
-
 @app.route('/<database>/<view_name>/desc')
 @login_required
 def get_desc(database, view_name):
@@ -273,10 +253,7 @@ def get_desc(database, view_name):
   # row id start with 1
   view = config.views[view_name]
 
-  if not view.columns_filled_up:
-    _fill_up_columns(view, engine)
-  r = dict(idType=view.idtype, columns=view.columns)
-  return jsonify(r)
+  return jsonify(dict(idType=view.idtype, columns=view.columns.values()))
 
 
 @app.route('/<database>/<view_name>/lookup')

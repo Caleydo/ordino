@@ -17,7 +17,7 @@ tags:
     description: proxy api
 
 paths:
-  /:
+  db/:
     get:
       x-swagger-router-controller: ordino
       operationId: sql.list_databases
@@ -32,7 +32,9 @@ paths:
             type: array
             items:
               $ref: '#/definitions/database'
-  /{database}:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}:
     parameters:
       - $ref: '#/parameters/database'
     get:
@@ -51,7 +53,9 @@ paths:
               $ref: '#/definitions/view'
         '404':
           $ref: '#/responses/notFound'
-  /{database}/{view}:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}/{view}:
     parameters:
       - $ref: '#/parameters/database'
       - $ref: '#/parameters/view'
@@ -74,7 +78,9 @@ paths:
               additionalProperties: true
         '404':
           $ref: '#/responses/notFound'
-  /{database}/{view}/filter:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}/{view}/filter:
     parameters:
       - $ref: '#/parameters/database'
       - $ref: '#/parameters/view'
@@ -97,7 +103,9 @@ paths:
               additionalProperties: true
         '404':
           $ref: '#/responses/notFound'
-  /{database}/{view}/score:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}/{view}/score:
     parameters:
       - $ref: '#/parameters/database'
       - $ref: '#/parameters/view'
@@ -125,7 +133,9 @@ paths:
               additionalProperties: true
         '404':
           $ref: '#/responses/notFound'
-  /{database}/{view}/count:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}/{view}/count:
     parameters:
       - $ref: '#/parameters/database'
       - $ref: '#/parameters/view'
@@ -143,7 +153,9 @@ paths:
             type: integer
         '404':
           $ref: '#/responses/notFound'
-  /{database}/{view}/desc:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}/{view}/desc:
     parameters:
       - $ref: '#/parameters/database'
       - $ref: '#/parameters/view'
@@ -167,7 +179,9 @@ paths:
                 $ref: '#/definitions/columns'
         '404':
           $ref: '#/responses/notFound'
-  /{database}/{view}/lookup:
+        '403':
+          $ref: '#/responses/notAllowed'
+  db/{database}/{view}/lookup:
     parameters:
       - $ref: '#/parameters/database'
       - $ref: '#/parameters/view'
@@ -220,6 +234,204 @@ paths:
                     description: label that matched the given query
         '404':
           $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
+  proxy/{site}:
+    parameters:
+      - name: site
+        in: path
+        type: string
+        required: true
+        description: the site key as defined in the targid_proxy extension point
+    get:
+      x-swagger-router-controller: ordino
+      operationId: proxy.get_details
+      description: proxy to another get another website
+      tags:
+        - proxy
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: the proxied website
+        '404':
+          $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
+  storage/namedsets/:
+    get:
+      x-swagger-router-controller: ordino
+      operationId: storage.list_namedset
+      description: list or add namedsets
+      tags:
+        - storage
+      parameters:
+        - name: idType
+          in: query
+          type: string
+          required: false
+          description: limit list to the given idType
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: list of namedsets
+            type: array
+            items:
+              $ref: '#/definitions/namedset'
+        '404':
+          $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
+    post:
+      x-swagger-router-controller: ordino
+      operationId: storage.list_namedset_post
+      description: add a new namedset
+      tags:
+        - storage
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: name
+          in: query
+          type: string
+          required: true
+        - name: description
+          in: query
+          type: string
+          required: false
+        - name: subTypeKey
+          in: query
+          type: string
+          required: false
+        - name: subTypeValue
+          in: query
+          type: string
+          required: false
+        - name: type
+          in: query
+          type: integer
+          required: false
+          default: 0
+        - name: creator
+          in: query
+          type: string
+          required: false
+          default: currently logged in
+        - name: permissions
+          in: query
+          type: integer
+          required: false
+          default: 740
+        - name: idType
+          in: query
+          type: string
+          required: false
+        - name: ids
+          in: query
+          type: string
+          format: range
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: list of namedsets
+            type: array
+            items:
+              $ref: '#/definitions/namedset'
+        '404':
+          $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
+  storage/namedsets/{namedset}:
+    parameters:
+      - name: namedset
+        in: path
+        required: true
+        type: string
+    get:
+      x-swagger-router-controller: ordino
+      operationId: storage.get_namedset
+      description: get a dataset
+      tags:
+        - storage
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/namedset'
+        '404':
+          $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
+    delete:
+      x-swagger-router-controller: ordino
+      operationId: storage.get_namedset_delete
+      description: deletes the given named set
+      tags:
+        - storage
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: number of removed entries
+            type: integer
+        '404':
+          $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
+    put:
+      x-swagger-router-controller: ordino
+      operationId: storage.get_namedset_put
+      description: update the given namedset
+      tags:
+        - storage
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: name
+          in: query
+          type: string
+          required: true
+        - name: description
+          in: query
+          type: string
+          required: false
+        - name: subTypeKey
+          in: query
+          type: string
+          required: false
+        - name: subTypeValue
+          in: query
+          type: string
+          required: false
+        - name: type
+          in: query
+          type: integer
+          required: false
+          default: 0
+        - name: permissions
+          in: query
+          type: integer
+          required: false
+          default: 740
+        - name: idType
+          in: query
+          type: string
+          required: false
+        - name: ids
+          in: query
+          type: string
+          format: range
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/namedset'
+        '404':
+          $ref: '#/responses/notFound'
+        '403':
+          $ref: '#/responses/notAllowed'
 
 parameters:
   database:
@@ -255,7 +467,7 @@ definitions:
       arguments:
         type: array
         items:
-          - type: string
+          type: string
       query:
         type: string
       columns:
@@ -265,7 +477,7 @@ definitions:
       filters:
         type: array
         items:
-          - type: string
+          type: string
       queries:
         type: object
         additionalProperties: true
@@ -278,7 +490,7 @@ definitions:
     type: array
     description: list of columns
     items:
-      - $ref: '#/definitions/column'
+      $ref: '#/definitions/column'
   column:
     type: object
     properties:
@@ -299,12 +511,48 @@ definitions:
       categories:
         type: array
         items:
-          - type: string
+          type: string
     required:
       - column
       - type
       - label
     additionalProperties: true
+  namedset:
+    type: object
+    properties:
+      name:
+        type: string
+      id:
+        type: string
+      type:
+        type: number
+      creator:
+        type: string
+      permissions:
+        type: integer
+      description:
+        type: string
+      idType:
+        type: string
+      ids:
+        type: array
+        items:
+          type: integer
+      subTypeKey:
+        type: string
+      subTypeValue:
+        type: string
+    required:
+      - name
+      - id
+      - type
+      - creator
+      - permissions
+      - description
+      - idType
+      - ids
+      - subTypeKey
+      - subTypeValue
 
 responses:
   error:
@@ -319,6 +567,11 @@ responses:
       type: string
   notFound:
     description: Not Found
+    schema:
+      title: Error
+      type: string
+  notAllowed:
+    description: Not Allowed to perform the operation, are you logged in?
     schema:
       title: Error
       type: string

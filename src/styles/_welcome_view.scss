@@ -14,10 +14,12 @@
     display: block;
   }
 
-  img {
+  > div {
     width: 200px;
-    height: auto;
+    height: 200px;
     opacity: 0.2;
+    background: transparent url('#{$ordinoAssetDir}/welcome-view-arrow.svg') no-repeat;
+    background-size: contain;
     transform: rotate(60deg) scaleY(-1);
   }
 

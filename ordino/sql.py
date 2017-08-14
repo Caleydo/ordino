@@ -257,7 +257,7 @@ def get_desc(database, view_name):
         infos[num_col]['max'] = row[num_col + '_max']
     for cat_col in categorical_columns:
       cats = [r['cat'] for r in session.execute(view.queries['categories'] % dict(col=cat_col))]
-      infos[view.columns[cat_col]['label']]['categories'] = [str(c) for c in cats if c is not None]
+      infos[view.columns[cat_col]['label']]['categories'] = [unicode(c) for c in cats if c is not None]
 
   r = dict(idType=view.idtype, columns=infos)
   return jsonify(r)

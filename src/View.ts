@@ -126,8 +126,10 @@ export interface IViewContext {
 export interface IView extends IEventHandler {
   //constructor(context: IViewContext, selection: ISelection, parent: Element, options?);
 
-  node: Element;
-  context:IViewContext;
+  readonly node: Element;
+  readonly context:IViewContext;
+  readonly idType: IDType;
+  readonly itemIDType: IDType|null;
 
   init(): void;
 
@@ -167,7 +169,7 @@ export abstract class AView extends EventHandler implements IView {
   protected $node:d3.Selection<IView>;
   private itemSelection: ISelection = { idtype: null, range: none() };
 
-  protected readonly idType: IDType;
+  readonly idType: IDType;
 
   constructor(public readonly context:IViewContext, parent:Element, options?: {}) {
     super();
@@ -186,6 +188,10 @@ export abstract class AView extends EventHandler implements IView {
 
   changeSelection(selection: ISelection) {
     // hook
+  }
+
+  get itemIDType() {
+    return this.itemSelection.idtype;
   }
 
   setItemSelection(selection: ISelection) {

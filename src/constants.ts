@@ -73,6 +73,9 @@ export default class TargidConstants {
   // filter extensions
   static readonly FILTERS_EXTENSION_POINT_ID = 'ordinoListFilters';
 
+  // category name if no view category is set (string is visible in the UI)
+  static readonly VIEW_FALLBACK_CATEGORY_NAME = 'Other';
+
 }
 
 

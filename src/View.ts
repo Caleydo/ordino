@@ -570,7 +570,7 @@ export class ViewWrapper extends EventHandler {
       views.forEach((elem) => {
         if(!elem.v.group) { // fallback category if none is present
           elem.v.group = {
-            name: 'Other'
+            name: TargidConstants.VIEW_FALLBACK_CATEGORY_NAME
           };
         }
         if(!groups.has(elem.v.group.name)) {

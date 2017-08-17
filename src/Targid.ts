@@ -19,6 +19,7 @@ import {
   createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
+import {list as listPlugins} from 'phovea_core/src/plugin';
 
 /**
  * The main class for the TargID app
@@ -406,8 +407,35 @@ export class Targid extends EventHandler implements IVisStateApp {
   }
 
   getVisStateProps(): Promise<IProperty[]> {
+    const groupedViews = new Map<string, {id:string, text:string}[]>();
+    listPlugins(TargidConstants.VIEW)
+      .forEach((v) => {
+        const group = (v.group) ? v.group.name : TargidConstants.VIEW_FALLBACK_CATEGORY_NAME; // fallback category if none is present
+        let views = (groupedViews.has(group)) ? groupedViews.get(group) : [];
+        views = [
+          ...views,
+          {id: String(v.id), text: v.name}
+        ];
+        groupedViews.set(group, views);
+      });
+
+    const viewsProp:IProperty[] = Array.from(groupedViews.entries())
+      .sort((a, b) => {
+        const nameA = a[0].toUpperCase(); // ignore upper and lowercase
+        const nameB = b[0].toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        // names must be equal
+        return 0;
+      })
+      .map((d) => categoricalProperty(`${d[0]} Views`, d[1]));
+
     return Promise.resolve([
-      categoricalProperty('Test Property', ['first', 'second', 'third']),
+      ...viewsProp
     ]);
   }
 

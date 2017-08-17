@@ -411,7 +411,7 @@ export class Targid extends EventHandler implements IVisStateApp {
     ]);
   }
 
-  getCurrVisState(): IPropertyValue[] {
+  getCurrVisState(): Promise<IPropertyValue[]> {
     const views = this.views.map((v) => {
       return createPropertyValue(PropertyType.CATEGORICAL, {
         id: String(v.desc.id),
@@ -433,7 +433,7 @@ export class Targid extends EventHandler implements IVisStateApp {
       })
       .reduce((prev, curr) => prev.concat(curr), []);
 
-    return [...views, ...selections];
+    return Promise.resolve([...views, ...selections]);
   }
 }
 export default Targid;

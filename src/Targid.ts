@@ -419,21 +419,33 @@ export class Targid extends EventHandler implements IVisStateApp {
       });
     });
 
-    const selections:IPropertyValue[] = this.views
+    const selectionPromises:Promise<IPropertyValue[]>[] = this.views
       .map((v) => {
         const idtype = v.getItemSelection().idtype;
         const range = v.getItemSelection().range;
+        const ids = range.dim(0).asList();
 
-        return range.dim(0).asList().map((id) => {
-          return createPropertyValue(PropertyType.SET, {
-            id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${id}`,
-            text: `${idtype.name} ${TAG_VALUE_SEPARATOR} ${id}`
+        if(!idtype) {
+          return Promise.resolve([]);
+        }
+
+        return idtype.unmap(range)
+          .then((names) => {
+            return names.map((name, i) => {
+              const id = ids[i];
+              return createPropertyValue(PropertyType.SET, {
+                id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${id}`,
+                text: `${name}`
+              });
+            });
           });
-        });
-      })
-      .reduce((prev, curr) => prev.concat(curr), []);
+      });
 
-    return Promise.resolve([...views, ...selections]);
+    return Promise.all(selectionPromises)
+      .then((selections:IPropertyValue[][]) => {
+        const flatSelections = selections.reduce((prev, curr) => prev.concat(curr), []);
+        return [...views, ...flatSelections];
+      });
   }
 }
 export default Targid;

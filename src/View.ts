@@ -74,7 +74,7 @@ export function willShowChooser(desc: any) {
 
 /**
  * Find views for a given idtype and number of selected items.
- * The seleted items itself are not considered in this function.
+ * The selected items itself are not considered in this function.
  * @param idtype
  * @param selection
  * @returns {any}

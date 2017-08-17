@@ -24,6 +24,7 @@ import TargidConstants from './constants';
 import Targid from './Targid';
 import * as session from 'phovea_core/src/session';
 import {createRemove, lastOnly} from 'phovea_clue/src/compress';
+import {ActionMetaData} from 'phovea_core/src/provenance/ActionNode';
 
 
 interface IParameterAble {
@@ -217,24 +218,58 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
   if (target) {
     target.setParameterSelection({idtype, range});
   }
+
+  let actionMetaData;
+  if(inputs.length > 1) {
+    actionMetaData = await setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range, range);
+  } else {
+    actionMetaData = await setSelection(inputs[0], bak.idtype, bak.range, range);
+  }
+
   return {
-    inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range) : setSelection(inputs[0], bak.idtype, bak.range)
+    inverse: actionMetaData
   };
 }
 
-export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+export async function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range): Promise<IAction> {
+  const actionMetaData = await selectionMeta(idtype, range, old);
   // assert view
-  return action(meta(`Select ${(idtype ? idtype.name : 'None')}`, cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
+  return action(actionMetaData, TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
 }
 
-export function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+export async function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range): Promise<IAction> {
+  const actionMetaData = await selectionMeta(idtype, range, old);
   // assert view
-  return action(meta(`Select ${(idtype ? idtype.name : 'None')}`, cat.selection, op.update), TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
+  return action(actionMetaData, TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
+  });
+}
+
+function selectionMeta(idtype:IDType, range:Range, old:Range):Promise<ActionMetaData> {
+  const l = range.dim(0).length;
+  let promise;
+
+  if (l === 0 || idtype === null) {
+    promise = Promise.resolve(`Nothing selected`);
+
+  } else if (l === 1) {
+    promise = idtype.unmap(range).then((r) => {
+      return `Selected ${r[0]} (${l} ${idtype.name})`;
+    });
+
+  } else {
+    promise = Promise.all([idtype.unmap(range.without(old)), idtype.unmap(old.without(range))]).then((names) => {
+      // name select/deselect <item>, since the previously added item remains unclear
+      const name = (names[0].length > 0) ? 'Selected ' + names[0][0] : 'Deselected ' + names[1][0];
+      return `${name} (${l} ${idtype.names})`;
+    });
+  }
+  return promise.then((title) => {
+    return meta(title, cat.selection, op.update);
   });
 }
 

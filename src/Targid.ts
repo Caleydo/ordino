@@ -195,7 +195,12 @@ export class Targid extends EventHandler implements IVisStateApp {
   private updateItemSelection(viewWrapper:ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.graph.pushWithResult(setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse : setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
+      Promise.all([
+        setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range, oldSelection.range),
+        setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range, newSelection.range)
+      ]).then((actions) => {
+        this.graph.pushWithResult(actions[0], { inverse : actions[1]});
+      });
 
     // check last view and if it will stay open for the new given selection
     } else {
@@ -205,7 +210,13 @@ export class Targid extends EventHandler implements IVisStateApp {
       // update selection with the last open (= right) view
       if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
         right.setParameterSelection(newSelection);
-        this.graph.pushWithResult(setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse : setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+
+        Promise.all([
+          setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range, oldSelection.range),
+          setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range, newSelection.range)
+        ]).then((actions) => {
+          this.graph.pushWithResult(actions[0], { inverse : actions[1]});
+        });
 
       // the selection does not match with the last open (= right) view --> close view
       } else {

@@ -20,6 +20,7 @@ import {
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {list as listPlugins} from 'phovea_core/src/plugin';
+import {loadGeneList} from '../../targid_boehringer/src/views/utils';
 
 /**
  * The main class for the TargID app
@@ -194,11 +195,24 @@ export class Targid extends EventHandler implements IVisStateApp {
    * @param options
    */
   private updateItemSelection(viewWrapper:ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
+    const mapRangeToNames = (idtype:IDType, range:Range):Promise<string[]> => {
+      let mapper = idtype.unmap(range);
+      if(idtype.id === 'Ensembl') { // special case for genes
+        mapper = mapper.then((names) => loadGeneList(names))
+          .then((idAndSymbols) => idAndSymbols.map((d) => `${d.symbol} (${d.id})`));
+      }
+      return mapper;
+    };
+
+    const selectionOptions = {
+      mapRangeToNames
+    };
+
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
       Promise.all([
-        setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range, oldSelection.range),
-        setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range, newSelection.range)
+        setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range, oldSelection.range, selectionOptions),
+        setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range, newSelection.range, selectionOptions)
       ]).then((actions) => {
         this.graph.pushWithResult(actions[0], { inverse : actions[1]});
       });
@@ -213,8 +227,8 @@ export class Targid extends EventHandler implements IVisStateApp {
         right.setParameterSelection(newSelection);
 
         Promise.all([
-          setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range, oldSelection.range),
-          setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range, newSelection.range)
+          setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range, oldSelection.range, selectionOptions),
+          setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range, newSelection.range, selectionOptions)
         ]).then((actions) => {
           this.graph.pushWithResult(actions[0], { inverse : actions[1]});
         });

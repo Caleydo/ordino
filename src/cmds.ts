@@ -231,8 +231,8 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
   };
 }
 
-export async function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range): Promise<IAction> {
-  const actionMetaData = await selectionMeta(idtype, range, old);
+export async function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range, options?): Promise<IAction> {
+  const actionMetaData = await selectionMeta(idtype, range, old, (options && options.mapRangeToNames));
   // assert view
   return action(actionMetaData, TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
@@ -240,8 +240,8 @@ export async function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType
   });
 }
 
-export async function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range): Promise<IAction> {
-  const actionMetaData = await selectionMeta(idtype, range, old);
+export async function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range, options?): Promise<IAction> {
+  const actionMetaData = await selectionMeta(idtype, range, old, (options && options.mapRangeToNames));
   // assert view
   return action(actionMetaData, TargidConstants.CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
@@ -249,28 +249,26 @@ export async function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, targe
   });
 }
 
-function selectionMeta(idtype:IDType, range:Range, old:Range):Promise<ActionMetaData> {
-  const l = range.dim(0).length;
-  let promise;
+function selectionMeta(idtype:IDType, range:Range, old:Range, mapRangeToNames?:(idtype:IDType, range:Range) => Promise<string[]>):Promise<ActionMetaData> {
+  const rangeLen = range.dim(0).length;
+  let promise = Promise.resolve(`Nothing selected`);
 
-  if (l === 0 || idtype === null) {
-    promise = Promise.resolve(`Nothing selected`);
+  if (idtype !== null && rangeLen > 0) {
+    let prefix = 'Selected';
+    let rangeDiff = range.without(old);
 
-  } else if (l === 1) {
-    promise = idtype.unmap(range).then((r) => {
-      return `Selected ${r[0]} (${l} ${idtype.name})`;
-    });
+    // name select/deselect <item>, since the previously added item remains unclear
+    if(rangeDiff.dim(0).length === 0) {
+      prefix = 'Deselected';
+      rangeDiff = old.without(range);
+    }
 
-  } else {
-    promise = Promise.all([idtype.unmap(range.without(old)), idtype.unmap(old.without(range))]).then((names) => {
-      // name select/deselect <item>, since the previously added item remains unclear
-      const name = (names[0].length > 0) ? 'Selected ' + names[0][0] : 'Deselected ' + names[1][0];
-      return `${name} (${l} ${idtype.names})`;
-    });
+    const defaultMapper = (idtype:IDType, range:Range) => idtype.unmap(range);
+    const mapper = (mapRangeToNames) ? mapRangeToNames : defaultMapper;
+    promise = mapper(idtype, rangeDiff).then((names:string[]) => `${prefix} ${names[0]} (${rangeLen} ${idtype.names})`);
   }
-  return promise.then((title) => {
-    return meta(title, cat.selection, op.update);
-  });
+
+  return promise.then((title) => meta(title, cat.selection, op.update));
 }
 
 

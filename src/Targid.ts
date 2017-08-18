@@ -429,14 +429,16 @@ export class Targid extends EventHandler implements IVisStateApp {
   }
 
   getCurrVisState(): Promise<IPropertyValue[]> {
-    const views = this.views.map((v) => {
+    const views = this.views.slice(-2); // get the focus and context view
+
+    const viewPropVals = views.map((v) => {
       return createPropertyValue(PropertyType.CATEGORICAL, {
         id: String(v.desc.id),
         text: v.desc.name
       });
     });
 
-    const selectionPromises:Promise<IPropertyValue[]>[] = this.views
+    const selectionPromises:Promise<IPropertyValue[]>[] = views
       .map((v) => {
         const idtype = v.getItemSelection().idtype;
         const range = v.getItemSelection().range;
@@ -461,7 +463,7 @@ export class Targid extends EventHandler implements IVisStateApp {
     return Promise.all(selectionPromises)
       .then((selections:IPropertyValue[][]) => {
         const flatSelections = selections.reduce((prev, curr) => prev.concat(curr), []);
-        return [...views, ...flatSelections];
+        return [...viewPropVals, ...flatSelections];
       });
   }
 }

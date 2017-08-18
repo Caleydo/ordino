@@ -385,38 +385,10 @@ div.targid {
         }
       }
     }
+
+    @import './view';
   }
 }
 
-div.lineup {
-  .nodata {
-    margin-top: 40px;
-  }
-}
 
-div.lu {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-
-  .row.selected rect.bg {
-    stroke: $select-data-color;
-    stroke-width: 1;
-  }
-  .row.hover rect.bg {
-    stroke: $hover-data-color;
-    stroke-width: 1;
-  }
-
-  .rankingbuttons .dropdown-menu {
-    padding: 0;
-
-    .form-group {
-      margin-bottom: 0;
-    }
-  }
-}
 

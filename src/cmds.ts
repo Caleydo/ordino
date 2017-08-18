@@ -16,9 +16,7 @@ import {
 import {get as getPlugin} from 'phovea_core/src/plugin';
 import {Range, parse, none} from 'phovea_core/src/range';
 import {resolve, IDType} from 'phovea_core/src/idtype';
-import {
-  ViewWrapper, createViewWrapper, replaceViewWrapper
-} from './View';
+import ViewWrapper, {createViewWrapper, replaceViewWrapper} from './ViewWrapper';
 import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import TargidConstants from './constants';
 import Targid from './Targid';

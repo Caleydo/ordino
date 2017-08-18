@@ -20,7 +20,7 @@ import {
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {list as listPlugins} from 'phovea_core/src/plugin';
-import {loadGeneList} from 'targid_boehringer/src/views/utils';
+//import {loadGeneList} from 'targid_boehringer/src/views/utils';
 
 /**
  * The main class for the TargID app
@@ -471,12 +471,14 @@ export class Targid extends EventHandler implements IVisStateApp {
   }
 
   private mapRangeToNames(idtype:IDType, range:Range):Promise<string[]> {
-    let mapper = idtype.unmap(range);
-    if(idtype.id === 'Ensembl') { // special case for genes
-      mapper = mapper.then((names) => loadGeneList(names))
-        .then((idAndSymbols) => idAndSymbols.map((d) => `${d.symbol} (${d.id})`));
-    }
-    return mapper;
+    // Disabled the gene mapping for now, since the loadGeneList() is not available in this (ordino) repo
+    //let mapper = idtype.unmap(range);
+    //if(idtype.id === 'Ensembl') { // special case for genes
+    //  mapper = mapper.then((names) => loadGeneList(names))
+    //    .then((idAndSymbols) => idAndSymbols.map((d) => `${d.symbol} (${d.id})`));
+    //}
+    //return mapper;
+    return idtype.unmap(range);
   };
 }
 export default Targid;

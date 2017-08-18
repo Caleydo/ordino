@@ -20,7 +20,7 @@ import {
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {list as listPlugins} from 'phovea_core/src/plugin';
-import {loadGeneList} from '../../targid_boehringer/src/views/utils';
+import {loadGeneList} from 'targid_boehringer/src/views/utils';
 
 /**
  * The main class for the TargID app

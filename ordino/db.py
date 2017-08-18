@@ -302,6 +302,6 @@ def _fill_up_columns(view, engine):
       for col in categorical_columns:
         template = """SELECT distinct {col} as cat FROM {table} WHERE {col} <> '' and {col} is not NULL"""
         cats = s.execute(template.format(col=col, table=table))
-        columns[col]['categories'] = [r['cat'] for r in cats]
+        columns[col]['categories'] = [unicode(r['cat']) for r in cats if r['cat'] is not None]
 
   view.columns_filled_up = True

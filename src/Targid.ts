@@ -420,18 +420,7 @@ export class Targid extends EventHandler implements IVisStateApp {
       });
 
     const viewsProp:IProperty[] = Array.from(groupedViews.entries())
-      .sort((a, b) => {
-        const nameA = a[0].toUpperCase(); // ignore upper and lowercase
-        const nameB = b[0].toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        // names must be equal
-        return 0;
-      })
+      .sort((a, b) => a[0].toUpperCase().localeCompare(b[0].toUpperCase())) // ignore upper and lowercase
       .map((d) => categoricalProperty(`${d[0]} Views`, d[1]));
 
     return Promise.resolve([

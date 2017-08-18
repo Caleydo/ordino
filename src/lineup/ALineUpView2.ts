@@ -125,6 +125,10 @@ export abstract class ALineUpView2 extends AView {
     this.handleSelectionColumns(this.selection);
   }
 
+  get itemIDType() {
+    return this.rowIDType || this.getItemSelection().idtype;
+  }
+
   setItemSelection(selection: ISelection) {
     if (this.selectionHelper) {
       this.selectionHelper.setItemSelection(selection);

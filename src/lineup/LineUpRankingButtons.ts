@@ -276,7 +276,11 @@ export class LineUpRankingButtons extends EventHandler {
     // pass dataSource into InvertedAggregatedScore factory method
     Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.idType, this.extraArgs)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
-        this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
+        if(Array.isArray(scoreImpl)) {
+          scoreImpl.forEach((impl) => this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, impl, scorePlugin));
+        } else {
+          this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
+        }
       });
   }
 }

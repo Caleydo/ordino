@@ -195,17 +195,8 @@ export class Targid extends EventHandler implements IVisStateApp {
    * @param options
    */
   private updateItemSelection(viewWrapper:ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
-    const mapRangeToNames = (idtype:IDType, range:Range):Promise<string[]> => {
-      let mapper = idtype.unmap(range);
-      if(idtype.id === 'Ensembl') { // special case for genes
-        mapper = mapper.then((names) => loadGeneList(names))
-          .then((idAndSymbols) => idAndSymbols.map((d) => `${d.symbol} (${d.id})`));
-      }
-      return mapper;
-    };
-
     const selectionOptions = {
-      mapRangeToNames
+      mapRangeToNames: this.mapRangeToNames
     };
 
     // just update the selection for the last open view
@@ -456,18 +447,16 @@ export class Targid extends EventHandler implements IVisStateApp {
       .map((v) => {
         const idtype = v.getItemSelection().idtype;
         const range = v.getItemSelection().range;
-        const ids = range.dim(0).asList();
 
         if(!idtype) {
           return Promise.resolve([]);
         }
 
-        return idtype.unmap(range)
-          .then((names) => {
-            return names.map((name, i) => {
-              const id = ids[i];
+        return Promise.all([this.mapRangeToNames(idtype, range), idtype.unmap(range)])
+          .then((args) => {
+            return args[0].map((name, i) => {
               return createPropertyValue(PropertyType.SET, {
-                id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${id}`,
+                id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${args[1][i]}`,
                 text: `${name}`
               });
             });
@@ -480,6 +469,15 @@ export class Targid extends EventHandler implements IVisStateApp {
         return [...viewPropVals, ...flatSelections];
       });
   }
+
+  private mapRangeToNames(idtype:IDType, range:Range):Promise<string[]> {
+    let mapper = idtype.unmap(range);
+    if(idtype.id === 'Ensembl') { // special case for genes
+      mapper = mapper.then((names) => loadGeneList(names))
+        .then((idAndSymbols) => idAndSymbols.map((d) => `${d.symbol} (${d.id})`));
+    }
+    return mapper;
+  };
 }
 export default Targid;
 

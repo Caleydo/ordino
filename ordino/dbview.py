@@ -253,13 +253,14 @@ class DBViewBuilder(object):
     self.v.arguments.append(arg)
     return self
 
-  def call(self, f):
+  def call(self, f = None):
     """
     shortcut for f(self)
     :param f: the function to call
     :return: self
     """
-    f(self)
+    if f is not None:
+      f(self)
     return self
 
   def build(self):
@@ -279,50 +280,97 @@ def limit_offset(builder):
   return builder.append(' LIMIT {limit} OFFSET {offset}').replace('limit', int).replace('offset', int).arg('query')
 
 
-def append_where(builder):
+def inject_where_clause(builder, clause):
+  """
+    helper function to inject an additional where clause
+    :param builder: the current builder
+    :param clause: the clause to inject
+    :return:
+    """
+  query = builder.v.query
+  lower = query.lower()
+  index = lower.find(' where ')
+  if index >= 0:
+    index += len(' where ')  # get the end
+    builder.query('{} ({}) AND {}'.format(query[:index], clause, query[index:]))
+  else:
+    before = -1
+    for before_q in [' order by', ' group by', ' limit', ' offset']:
+      before = lower.find(before_q)
+      if before >= 0:
+        break
+    if before < 0:
+      # append
+      builder.append(' WHERE ').append(clause)
+    else:
+      builder.query('{} WHERE {} {}'.format(query[:index], clause, query[index:]))
+  return builder
+
+
+def inject_where(builder):
   """
   helper function to append to the query the generated where clause
   :param builder: the current builder
   :return:
   """
   query = builder.v.query
-  if ' where ' in query.lower():
-    return builder.append(' {and_where}').replace('and_where')
+  lower = query.lower()
+  where = lower.find(' where ')
+  before = -1
+  for before_q in [' order by', ' group by', ' limit', ' offset']:
+    before = lower.find(before_q)
+    if before >= 0:
+      break
+
+  if where >= 0:
+    if before < 0:
+      builder.append(' {and_where}')
+    else:
+      builder.query('{} {{and_where}} {}'.format(query[:before], query[before:]))
+    builder.replace('and_where')
   else:
-    return builder.append(' {where}').replace('where')
+    if before < 0:
+      builder.append(' {where}')
+    else:
+      builder.query('{} {{where}} {}'.format(query[:before], query[before:]))
+    builder.replace('where')
+  return builder
 
 
-def add_common_queries(queries, table, idtype, id_query, columns=None):
+def add_common_queries(queries, table, idtype, id_query, columns=None, call_function = None, prefix = None, name_column = 'name'):
   """
   create a set of common queries
   :param queries: dict where the queries should be stored
   :param table: base table name
   :param idtype: idtype of the table
-  :param id_query: the snipplet to create the required 'id' column
+  :param id_query: the snippet to create the required 'id' column
   :param columns: a list of columns for validation
+  :param call_function: another call function
+  :param prefix: optional prefix instead of the table name
+  :param name_column: name of the name column used to verify items
   :return: None
   """
-  queries[table] = DBViewBuilder().idtype(idtype).table(table).query("""
-          SELECT {id}, * FROM {table}""".format(id=id_query, table=table)).derive_columns().build()
+  if prefix is None:
+    prefix = table
 
-  queries[table + '_items'] = DBViewBuilder().idtype(idtype).table(table).query("""
+  queries[prefix + '_items'] = DBViewBuilder().idtype(idtype).table(table).query("""
         SELECT {id}, {{column}} AS text
         FROM {table} WHERE LOWER({{column}}) LIKE :query
-        ORDER BY {{column}} ASC""".format(id=id_query, table=table)).replace('column', columns).call(limit_offset).arg('query').build()
+        ORDER BY {{column}} ASC""".format(id=id_query, table=table)).replace('column', columns).call(call_function).call(limit_offset).arg('query').build()
 
-  queries[table + '_items_verify'] = DBViewBuilder().idtype(idtype).table(table).query("""
-        SELECT {id}, {table}_name AS text
-        FROM {table}""".format(id=id_query, table=table)).call(append_where).build()
+  queries[prefix + '_items_verify'] = DBViewBuilder().idtype(idtype).table(table).query("""
+        SELECT {id}, {name} AS text
+        FROM {table}""".format(id=id_query, table=table, name=name_column)).call(call_function).call(inject_where).build()
 
-  queries[table + '_unique'] = DBViewBuilder().query("""
+  queries[prefix + '_unique'] = DBViewBuilder().query("""
         SELECT d as id, d as text
         FROM (
           SELECT distinct {{column}} AS d
           FROM {table} WHERE LOWER({{column}}) LIKE :query
           ) as t
-        ORDER BY d ASC LIMIT {{limit}} OFFSET {{offset}}""".format(table=table)).replace('column', columns).replace('limit', int).replace('offset', int).arg('query').build()
+        ORDER BY d ASC""".format(table=table)).replace('column', columns).call(limit_offset).arg('query').build()
 
-  queries[table + '_unique_all'] = DBViewBuilder().query("""
+  queries[prefix + '_unique_all'] = DBViewBuilder().query("""
         SELECT distinct {{column}} AS text
         FROM {table} ORDER BY {{column}} ASC """.format(table=table)).replace('column', columns).build()
 

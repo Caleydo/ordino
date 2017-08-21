@@ -12,4 +12,7 @@ import 'phovea_ui/src/_font-awesome';
 import './style.scss';
 
 import Ordino from './Ordino';
-new Ordino();
+new Ordino({
+  prefix: 'ordino',
+  name: 'Ordino'
+});

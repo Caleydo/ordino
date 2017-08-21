@@ -2,12 +2,10 @@
  * Created by sam on 13.11.2016.
  */
 
-
 const spawnSync = require('child_process').spawnSync;
 const path = require('path');
 const resolve = path.resolve;
 const fs = require('fs');
-
 
 function dependencyGraph(cwd) {
   const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
@@ -55,6 +53,7 @@ function resolveWorkspace() {
   const workspaceDeps = dependencyGraph('..').dependencies;
   const modules = new Set(resolveModules());
 
+  let deps = null;
   const resolveModule = (m) => {
     console.log('resolve', m);
     const pkg = require(`../${m}/package.json`);
@@ -63,11 +62,11 @@ function resolveWorkspace() {
     return {
       name: pkg.name,
       version: pkg.version,
-      resolved: head ? `${repo.endsWith('.git') ? repo.slice(0, repo.length-4) : repo}/commit/${head}` : pkg.version,
+      resolved: head ? `${repo.endsWith('.git') ? repo.slice(0, repo.length - 4) : repo}/commit/${head}` : pkg.version,
       dependencies: deps(pkg.dependencies)
     };
   };
-  const deps = (deps) => {
+  deps = (deps) => {
     const r = {};
     Object.keys(deps).forEach((d) => {
       if (d in workspaceDeps) {
@@ -121,21 +120,18 @@ function generate() {
   const isWorkspaceContext = fs.existsSync('../phovea_registry.js');
   if (isWorkspaceContext) {
     return resolveWorkspace();
-  } else {
-    return resolveSingle();
   }
+  return resolveSingle();
 }
-
 
 const IS_WINDOWS = process.platform === 'win32';
 
 function tmpdir() {
   if (IS_WINDOWS) {
     return process.env.TEMP || process.env.TMP ||
-           (process.env.SystemRoot || process.env.windir) + '\\temp';
-  } else {
-    return process.env.TMPDIR || process.env.TMP || process.env.TEMP || '/tmp';
+      (process.env.SystemRoot || process.env.windir) + '\\temp';
   }
+  return process.env.TMPDIR || process.env.TMP || process.env.TEMP || '/tmp';
 }
 
 function resolveScreenshot() {
@@ -159,20 +155,19 @@ function metaData(pkg) {
 }
 
 module.exports.metaData = metaData;
-module.exports.metaDataTmpFile = function(pkg) {
+module.exports.metaDataTmpFile = function (pkg) {
   const s = metaData(pkg);
   const file = `${tmpdir()}/metaData${Math.random().toString(36).slice(-8)}.txt`;
   fs.writeFileSync(file, JSON.stringify(s, null, ' '));
   return file;
 };
 module.exports.generate = generate;
-module.exports.tmpFile = function() {
+module.exports.tmpFile = function () {
   const s = generate();
   const file = `${tmpdir()}/buildInfo${Math.random().toString(36).slice(-8)}.txt`;
   fs.writeFileSync(file, JSON.stringify(s, null, ' '));
   return file;
 };
-
 
 if (require.main === module) {
   fs.writeFile('deps.json', JSON.stringify(generate(), null, ' '));

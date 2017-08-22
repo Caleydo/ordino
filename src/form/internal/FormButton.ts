@@ -1,4 +1,7 @@
-import {FormElementType, IFormElement, IFormElementDesc, IFormParent} from '../interfaces';
+import {
+  FormElementType, IFormElement, IFormElementDesc, IFormSerializedValues, IFormParent,
+  IFormSerializedElement
+} from '../interfaces';
 import * as d3 from 'd3';
 import {EventHandler} from 'phovea_core/src/event';
 
@@ -38,6 +41,13 @@ export default class FormButton extends EventHandler implements IFormElement {
     this.clicked = clicked;
   }
 
+  get serializedValue():IFormSerializedValues[] {
+    return [{
+      key: this.id,
+      value: String(this.value)
+    }];
+  }
+
   validate() {
     return true;
   }
@@ -56,5 +66,16 @@ export default class FormButton extends EventHandler implements IFormElement {
 
   focus() {
     (<HTMLButtonElement>this.$button.node()).focus();
+  }
+
+  /**
+   * Serialize the element to plain object data structure
+   * @returns {IFormSerializedElement}
+   */
+  serialize():IFormSerializedElement {
+    return {
+      id: this.id,
+      values: this.serializedValue
+    };
   }
 }

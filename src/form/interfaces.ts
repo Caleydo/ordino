@@ -93,6 +93,15 @@ export interface IFormElementDesc {
 }
 
 
+export interface IFormSerializedElement {
+  id: string;
+  values: IFormSerializedValues[];
+}
+
+export interface IFormSerializedValues {
+  key: string;
+  value: string;
+}
 
 export interface IFormParent {
   getElementById(id: string): IFormElement;
@@ -113,6 +122,11 @@ export interface IFormElement extends IEventHandler {
   value: any;
 
   /**
+   * Normalized value (type-casted instead of `any`)
+   */
+  readonly serializedValue: IFormSerializedValues[];
+
+  /**
    * Set the visibility of an form element
    * @param visible
    */
@@ -127,4 +141,10 @@ export interface IFormElement extends IEventHandler {
    * sets the focus to the element (e.g. opens a dropdown, etc.)
    */
   focus(): void;
+
+  /**
+   * Serialize the element to plain object data structure
+   * @returns {IFormSerializedElement}
+   */
+  serialize(): IFormSerializedElement;
 }

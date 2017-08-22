@@ -5,7 +5,7 @@
 import * as d3 from 'd3';
 import * as session from 'phovea_core/src/session';
 import AFormElement from './AFormElement';
-import {IFormElementDesc, IFormParent} from '../interfaces';
+import {IFormElementDesc, IFormSerializedValues, IFormParent} from '../interfaces';
 
 
 /**
@@ -83,6 +83,13 @@ export default class FormInputText extends AFormElement<IFormInputTextDesc> {
    */
   set value(v: string) {
     this.$input.property('value', v);
+  }
+
+  get serializedValue():IFormSerializedValues[] {
+    return [{
+      key: this.id,
+      value: this.value
+    }];
   }
 
   focus() {

@@ -5,7 +5,7 @@
 import 'select2';
 import * as d3 from 'd3';
 import {randomId} from 'phovea_core/src/index';
-import {IFormElement, IFormElementDesc} from './interfaces';
+import {IFormElement, IFormElementDesc, IFormSerializedElement, IFormSerializedValues} from './interfaces';
 import {create} from './internal';
 
 /**
@@ -93,6 +93,10 @@ export default class FormBuilder {
       r[key] = (value && value.value) ? value.value : value;
     });
     return r;
+  }
+
+  getSerializedElements(): IFormSerializedElement[] {
+    return Array.from(this.elements.values()).map((e) => e.serialize());
   }
 
   /**

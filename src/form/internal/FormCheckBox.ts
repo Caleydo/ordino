@@ -1,4 +1,4 @@
-import {IFormElementDesc, IFormParent} from '../interfaces';
+import {IFormElementDesc, IFormSerializedValues, IFormParent} from '../interfaces';
 import * as d3 from 'd3';
 import {AFormElement} from './AFormElement';
 import * as session from 'phovea_core/src/session';
@@ -78,6 +78,13 @@ export default class FormCheckBox extends AFormElement<ICheckBoxElementDesc> {
   set value(v: any) {
     const options = this.desc.options;
     this.$input.property('value', v === options.checked);
+  }
+
+  get serializedValue():IFormSerializedValues[] {
+    return [{
+      key: this.id,
+      value: this.value
+    }];
   }
 
   focus() {

@@ -7,7 +7,7 @@ import {event as d3event} from 'd3';
 import * as session from 'phovea_core/src/session';
 import * as $ from 'jquery';
 import AFormElement from './AFormElement';
-import {IFormElementDesc, IFormParent, FormElementType} from '../interfaces';
+import {IFormElementDesc, IFormParent, FormElementType, IFormSerializedValues} from '../interfaces';
 import {IFormSelectOption} from './FormSelect';
 import {DEFAULT_OPTIONS, DEFAULT_AJAX_OPTIONS} from './FormSelect2';
 import {mixin} from 'phovea_core/src';
@@ -437,6 +437,10 @@ export default class FormMap extends AFormElement<IFormMapDesc> {
     }
     this.rows = v;
     this.buildMap();
+  }
+
+  get serializedValue(): IFormSerializedValues[] {
+    return this.value.map((v) => ({key: v.key, value: v.value}));
   }
 
   focus() {

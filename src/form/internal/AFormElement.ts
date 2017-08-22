@@ -4,7 +4,10 @@
 
 import * as d3 from 'd3';
 import {EventHandler} from 'phovea_core/src/event';
-import {IFormElementDesc, IFormParent, IFormElement} from '../interfaces';
+import {
+  IFormElementDesc, IFormParent, IFormElement, IFormSerializedValues,
+  IFormSerializedElement
+} from '../interfaces';
 
 /**
  * Abstract form element class that is used as parent class for other form elements
@@ -115,7 +118,20 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
    */
   abstract set value(v: any);
 
+  abstract get serializedValue():IFormSerializedValues[];
+
   abstract focus();
+
+  /**
+   * Serialize the element to plain object data structure
+   * @returns {IFormSerializedElement}
+   */
+  serialize():IFormSerializedElement {
+    return {
+      id: this.id,
+      values: this.serializedValue
+    };
+  }
 }
 
 export default AFormElement;

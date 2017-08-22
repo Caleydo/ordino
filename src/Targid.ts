@@ -431,7 +431,9 @@ export class Targid extends EventHandler implements IVisStateApp {
     const idtypesMap = new Map<string, Map<string, IPropertyValue>>();
 
     this.graph.states
-      .map((s) => s.visState.propValues)
+      .map((s) => s.visState)
+      .filter((vs) => vs.isPersisted())
+      .map((vs) => vs.propValues)
       .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
       .filter((d) => d && d.type === PropertyType.SET)
       .forEach((p) => {

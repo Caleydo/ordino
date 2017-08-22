@@ -20,6 +20,7 @@ import {
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {list as listPlugins} from 'phovea_core/src/plugin';
+import {IFormSerializedElement} from './form/interfaces';
 //import {loadGeneList} from 'targid_boehringer/src/views/utils';
 
 /**
@@ -456,7 +457,7 @@ export class Targid extends EventHandler implements IVisStateApp {
   }
 
   getCurrVisState(): Promise<IPropertyValue[]> {
-    const views = this.views.slice(-2); // get the focus and context view
+    const views:ViewWrapper[] = this.views.slice(-2); // get the focus and context view
 
     const viewPropVals = views.map((v) => {
       return createPropertyValue(PropertyType.CATEGORICAL, {
@@ -485,10 +486,26 @@ export class Targid extends EventHandler implements IVisStateApp {
           });
       });
 
+    const paramPropVals = views
+      .map((v) => v.getAllParameters())
+      .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
+      .map((param:IFormSerializedElement) => {
+        return param.values.map((v) => {
+          return createPropertyValue(PropertyType.SET, {
+            id: `${param.id} ${TAG_VALUE_SEPARATOR} ${v.key}`,
+            text: `${v.value}`,
+            payload: {
+              paramVal: v
+            }
+          });
+        });
+      })
+      .reduce((prev, curr) => prev.concat(curr), []); // flatten the array;
+
     return Promise.all(selectionPromises)
       .then((selections:IPropertyValue[][]) => {
         const flatSelections = selections.reduce((prev, curr) => prev.concat(curr), []);
-        return [...viewPropVals, ...flatSelections];
+        return [...viewPropVals, ...flatSelections, ...paramPropVals];
       });
   }
 

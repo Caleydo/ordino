@@ -16,7 +16,7 @@ import TargidConstants from './constants';
 import * as session from 'phovea_core/src/session';
 import {
   categoricalProperty, PropertyType,
-  createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR
+  createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR, setProperty
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {list as listPlugins} from 'phovea_core/src/plugin';
@@ -428,8 +428,28 @@ export class Targid extends EventHandler implements IVisStateApp {
       .sort((a, b) => a[0].toUpperCase().localeCompare(b[0].toUpperCase())) // ignore upper and lowercase
       .map((d) => categoricalProperty(`${d[0]} Views`, d[1]));
 
+    const idtypesMap = new Map<string, Map<string, IPropertyValue>>();
+
+    this.graph.states
+      .map((s) => s.visState.propValues)
+      .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
+      .filter((d) => d && d.type === PropertyType.SET)
+      .forEach((p) => {
+        const propvals = idtypesMap.get(p.baseId) || new Map<string, IPropertyValue>();
+        if(!propvals.has(p.id)) {
+          propvals.set(p.id, p);
+        }
+        idtypesMap.set(p.baseId, propvals);
+      });
+
+    const selectionProps = Array.from(idtypesMap.keys())
+      .map((key) => {
+        return setProperty(`Selected ${key}`, Array.from(idtypesMap.get(key).values()));
+      });
+
     return Promise.resolve([
-      ...viewsProp
+      ...viewsProp,
+      ...selectionProps
     ]);
   }
 

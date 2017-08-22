@@ -13,6 +13,7 @@ import {EventHandler, IEventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from './storage';
 import {setParameter} from './cmds';
+import {IFormSerializedElement} from './form/interfaces';
 
 
 export enum EViewMode {
@@ -143,6 +144,8 @@ export interface IView extends IEventHandler {
 
   setParameter(name: string, value: any);
 
+  getAllParameters(): IFormSerializedElement[];
+
   modeChanged(mode:EViewMode);
 
   destroy(): void;
@@ -218,6 +221,11 @@ export abstract class AView extends EventHandler implements IView {
   setParameter(name: string, value: any) {
     // hook
     return null;
+  }
+
+  getAllParameters():IFormSerializedElement[] {
+    // hook
+    return [];
   }
 
   modeChanged(mode:EViewMode) {
@@ -473,6 +481,10 @@ export class ViewWrapper extends EventHandler {
 
   private onParameterChange(name: string, value: any) {
     return this.context.graph.push(setParameter(this.ref, name, value));
+  }
+
+  getAllParameters():IFormSerializedElement[] {
+    return this.instance.getAllParameters();
   }
 
   getParameter(name: string) {

@@ -7,6 +7,7 @@ import {mixin} from 'phovea_core/src/index';
 import {AView, IViewContext, ISelection, EViewMode} from './View';
 import {IPluginDesc} from 'phovea_core/src/plugin';
 import {FormBuilder, IFormSelectDesc, FormElementType, IFormSelectElement, IFormSelectOption} from './FormBuilder';
+import {IFormSerializedElement} from './form/interfaces';
 
 /**
  * helper view for proxying an existing external website
@@ -102,6 +103,10 @@ export class ProxyView extends AView {
   setParameter(name: string, value: any) {
     this.paramForm.getElementById(name).value = value;
     this.updateProxyView();
+  }
+
+  getAllParameters():IFormSerializedElement[] {
+    return this.paramForm.getSerializedElements();
   }
 
   changeSelection(selection:ISelection) {

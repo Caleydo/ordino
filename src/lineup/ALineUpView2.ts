@@ -23,6 +23,7 @@ import IScore, {IScoreRow, createAccessor} from './IScore';
 import {stringCol, useDefaultLayout, IAdditionalColumnDesc} from './desc';
 import {pushScoreAsync} from './scorecmds';
 import {ISelect2Option} from '../form';
+import {IFormSerializedElement} from '../form/interfaces';
 
 export abstract class ALineUpView2 extends AView {
 
@@ -151,6 +152,10 @@ export abstract class ALineUpView2 extends AView {
     this.addDynamicColumns(selectedIds);
     this.removeDynamicColumns(selectedIds);
     return super.setParameter(name, value);
+  }
+
+  getAllParameters(): IFormSerializedElement[] {
+    return super.getAllParameters();
   }
 
   /**

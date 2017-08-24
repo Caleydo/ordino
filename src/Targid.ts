@@ -462,7 +462,8 @@ export class Targid extends EventHandler implements IVisStateApp {
     const viewPropVals = views.map((v) => {
       return createPropertyValue(PropertyType.CATEGORICAL, {
         id: String(v.desc.id),
-        text: v.desc.name
+        text: v.desc.name,
+        group: 'views'
       });
     });
 
@@ -480,7 +481,8 @@ export class Targid extends EventHandler implements IVisStateApp {
             return args[0].map((name, i) => {
               return createPropertyValue(PropertyType.SET, {
                 id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${args[1][i]}`,
-                text: `${name}`
+                text: `${name}`,
+                group: 'selections',
               });
             });
           });
@@ -494,6 +496,7 @@ export class Targid extends EventHandler implements IVisStateApp {
           return createPropertyValue(PropertyType.SET, {
             id: `${param.id} ${TAG_VALUE_SEPARATOR} ${v.key}`,
             text: `${v.value}`,
+            group: 'parameters',
             payload: {
               paramVal: v
             }

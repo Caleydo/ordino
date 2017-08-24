@@ -178,11 +178,7 @@ export abstract class ALineUpView2 extends AView {
           if (!this.dump.has(c.id)) {
             return;
           }
-          if (c instanceof CompositeColumn) {
-            c.setCompressed(false);
-          } else {
-            c.setWidth(<number>this.dump.get(c.id));
-          }
+          c.setWidth(<number>this.dump.get(c.id));
         });
       }
       this.dump = null;
@@ -201,9 +197,6 @@ export abstract class ALineUpView2 extends AView {
           (<any>c.desc).column === 'id' // = Ensembl column
         ) {
           // keep these columns
-        } else if (c instanceof CompositeColumn && !c.getCompressed()) {
-          c.setCompressed(true);
-          this.dump.set(c.id, true);
         } else {
           this.dump.set(c.id, c.getWidth());
           c.hide();

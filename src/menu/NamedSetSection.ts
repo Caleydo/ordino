@@ -3,18 +3,18 @@
  */
 
 import {IDType, resolve} from 'phovea_core/src/idtype';
-import {Targid} from './Targid';
-import {INamedSet} from 'tdp_core/src/storage';
-import {list as listPlugins} from 'phovea_core/src/plugin';
+import {areyousure} from 'phovea_ui/src/dialogs';
+import {Targid} from '../Targid';
+import {listNamedSets, INamedSet, deleteNamedSet, editNamedSet, IStoredNamedSet, editDialog, ENamedSetType} from 'tdp_core/src/storage';
+import {IPluginDesc, list as listPlugins} from 'phovea_core/src/plugin';
+import {showErrorModalDialog} from 'tdp_core/src/dialogs';
 import * as d3 from 'd3';
-import {IStartMenuSection, EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from './extensions';
+import {ALL_NONE_NONE, ALL_READ_READ, canWrite, currentUserNameOrAnonymous, EEntity,  hasPermission} from 'phovea_core/src/security';
+import TargidConstants from '../constants';
+import {IStartMenuSection, EXTENSION_POINT_START_MENU} from '../extensions';
 
 export interface IStartMenuOptions {
   targid: Targid;
-}
-
-function byPriority(a: any, b: any) {
-  return (a.priority || 10) - (b.priority || 10);
 }
 
 const template = `<button class="closeButton">
@@ -76,7 +76,7 @@ export default class StartMenu {
       .reduce((a, b) => a.concat(b), []) // [[0, 1], [2, 3], [4, 5]] -> [0, 1, 2, 3, 4, 5]
       .filter((d) => d.getIdType() === resolved.id)
       .forEach((d) => {
-        d.push(namedSet);
+        d.addNamedSet(namedSet);
       });
   }
 
@@ -101,7 +101,7 @@ export default class StartMenu {
       this.close();
     });
 
-    const sectionEntries = listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSectionDesc>d).sort(byPriority);
+    const sectionEntries = listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSection>d).sort(byPriority);
 
     this.$sections = this.$node.select('.menu').selectAll('section').data(sectionEntries);
 
@@ -127,7 +127,7 @@ export default class StartMenu {
     //this.updateSections();
   }
 
-  private hasEntryPoint(section: IStartMenuSectionDesc) {
+  private hasEntryPoint(section: IStartMenuSection) {
     // do not load entry point again, if already loaded
     return this.entryPoints.find((ep) => ep.desc.id === section.id) != null;
   }
@@ -138,16 +138,16 @@ export default class StartMenu {
   private updateSections() {
     const that = this;
 
-    this.$sections.each(async function (section: IStartMenuSectionDesc) {
+    this.$sections.each(async function (section: IStartMenuSection) {
       // reload the entry points every time the
-      const elem = <HTMLElement>this.querySelector('div.body');
+      const elem = <HTMLElement>d3.select(this).select('div.body').node();
 
       // do not load entry point again, if already loaded
       if (that.hasEntryPoint(section)) {
         return;
       }
 
-      const entryPoint = (await section.load()).factory(elem, section, {session: that.targid.initNewSession.bind(that.targid)});
+      const entryPoint = (await section.load()).factory(elem, section, {targid: that.targid});
       // prevent adding the entryPoint if already in list or undefined
       if (entryPoint === undefined || that.hasEntryPoint(section)) {
         return;
@@ -156,4 +156,68 @@ export default class StartMenu {
     });
   }
 
+}
+
+function byPriority(a: any, b: any) {
+  return (a.priority || 10) - (b.priority || 10);
+}
+
+
+export interface IStartFactory {
+  readonly id: string;
+  readonly name: string;
+  readonly cssClass: string;
+  readonly idType: string;
+  readonly description: string;
+  build(element: HTMLElement);
+  options(): Promise<{viewId: string; options: any}>;
+}
+
+class StartFactory implements IStartFactory {
+  private builder: Promise<() => any> = null;
+
+  constructor(private readonly p: IPluginDesc) {
+
+  }
+
+  get id() {
+    return this.p.id;
+  }
+
+  get name() {
+    return this.p.name;
+  }
+
+  get cssClass() {
+    return this.p.cssClass;
+  }
+
+  get idType() {
+    return this.p.idtype;
+  }
+
+  get description() {
+    return this.p.description;
+  }
+
+  build(element: HTMLElement, options: IEntryPointOptions = {}) {
+    return this.builder = this.p.load().then((i) => {
+      if (i.factory) {
+        return i.factory(element, this.p, options);
+      } else {
+        console.log(`No viewId and/or factory method found for '${i.desc.id}'`);
+        return null;
+      }
+    });
+  }
+
+  options() {
+    return this.builder.then((i) => ({viewId: (<any>this.p).viewId, options: i()}));
+  }
+}
+
+
+export function findViewCreators(type: string): IStartFactory[] {
+  const plugins = listPlugins(type).sort(byPriority);
+  return plugins.map((p: IPluginDesc) => new StartFactory(p));
 }

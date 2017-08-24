@@ -28,29 +28,12 @@ module.exports = function (registry) {
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
-  registry.push('actionCompressor', 'targidCompressSetParameter', function () {
-    return System.import('./src/cmds');
-  }, {
-    'factory': 'compressSetParameter',
-    'matches': '(targidSetParameter)'
-  });
-
   registry.push('actionCompressor', 'targidCompressSetSelection', function () {
     return System.import('./src/cmds');
   }, {
     'factory': 'compressSetSelection',
     'matches': '(targidSetSelection)'
   });
-
-  registry.push('actionFactory', 'ordinoScore', function() { return System.import('./src/lineup/scorecmds'); }, {
-  'factory': 'createCmd',
-  'creates': '(ordinoAddScore|ordinoRemoveScore)'
- });
-
-  registry.push('actionCompressor', 'ordinoScoreCompressor', function() { return System.import('./src/lineup/scorecmds'); }, {
-  'factory': 'compress',
-  'matches': '(ordinoAddScore|ordinoRemoveScore)'
- });
 
   registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
     return System.import('./src/SessionList');

@@ -9,13 +9,12 @@ import * as d3 from 'd3';
 import * as $ from 'jquery';
 import {EventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
-import {INamedSet} from './storage';
-import {setParameter} from './cmds';
+import {INamedSet} from 'tdp_core/src/storage';
+import {setParameter} from 'tdp_core/src/cmds';
 import {
   AView, createContext, EViewMode, findViews, ISelection, isSameSelection, IView, IViewContext, IViewPluginDesc,
-  matchLength,
-  showAsSmallMultiple, toViewPluginDesc
-} from './View';
+  matchLength,  showAsSmallMultiple, toViewPluginDesc
+} from 'tdp_core/src/views';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
@@ -144,8 +143,7 @@ export default class ViewWrapper extends EventHandler {
       .classed('inner', true);
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
-    this.instance.buildParameterUI($params, this.onParameterChange.bind(this));
-    this.instance.init();
+    this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this));
 
     this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
     this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
@@ -231,7 +229,7 @@ export default class ViewWrapper extends EventHandler {
       return;
     }
 
-    this.instance.changeSelection(selection);
+    this.instance.setInputSelection(selection);
   }
 
   getParameterSelection() {
@@ -400,7 +398,6 @@ export default class ViewWrapper extends EventHandler {
   }
 
   remove() {
-    console.log('EVENT_REMOVE');
     this.fire(ViewWrapper.EVENT_REMOVE, this);
   }
 

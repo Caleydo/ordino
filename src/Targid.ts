@@ -7,7 +7,7 @@ import {IObjectRef, ProvenanceGraph, op, cat, StateNode} from 'phovea_core/src/p
 import IDType from 'phovea_core/src/idtype/IDType';
 import {IEvent, EventHandler} from 'phovea_core/src/event';
 import * as d3 from 'd3';
-import {EViewMode, AView, ISelection} from './View';
+import {EViewMode, AView, ISelection} from 'tdp_core/src/views';
 import ViewWrapper from './ViewWrapper';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {createView, removeView, replaceView, setSelection, setAndUpdateSelection} from './cmds';

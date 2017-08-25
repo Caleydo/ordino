@@ -13,13 +13,8 @@ module.exports = function (registry) {
     return System.import('./src/cmds');
   }, {
     'factory': 'createCmd',
-    'creates': '(targidCreateView|targidRemoveView|targidReplaceView|targidInitSession|targidSetParameter|targidSetSelection)'
+    'creates': '(targidCreateView|targidRemoveView|targidReplaceView||targidSetSelection)'
   });
-
-  registry.push('actionFactory', 'ordino', function() { return System.import('./src/lineup/cmds'); }, {
-  'factory': 'createCmd',
-  'creates': '(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)'
- });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
     return System.import('./src/cmds');
@@ -35,17 +30,17 @@ module.exports = function (registry) {
     'matches': '(targidSetSelection)'
   });
 
-  registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
-    return System.import('./src/SessionList');
+  registry.push('ordinoStartMenuSection', 'targid_temporary_session', function () {
+    return System.import('./src/menu/TemporarySessionSection');
   }, {
     name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
     cssClass: 'targidSessionTemporaryData',
-    factory: 'createTemporary',
+    factory: 'new',
     priority: 90
   });
 
-  registry.push('targidStartMenuSection', 'targid_persistent_session', function () {
-    return System.import('./src/SessionList');
+  registry.push('ordinoStartMenuSection', 'targid_persistent_session', function () {
+    return System.import('./src/menu/PersistentSessionSection');
   }, {
     name: 'Persistent Sessions',
     cssClass: 'targidSessionPersistentData',

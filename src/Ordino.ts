@@ -8,7 +8,7 @@ import IDType from 'phovea_core/src/idtype/IDType';
 import * as session from 'phovea_core/src/session';
 import {AView} from 'tdp_core/src/views';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {StartMenu} from './StartMenu';
+import StartMenu from './StartMenu';
 import {INamedSet} from 'tdp_core/src/storage';
 import TargidConstants from './constants';
 import Targid from './Targid';
@@ -33,11 +33,11 @@ export default class Ordino extends ATDPApplication<Targid> {
     const startMenuNode = main.ownerDocument.createElement('div');
     main.appendChild(startMenuNode);
     startMenuNode.classList.add('startMenu');
-    const startMenu = new StartMenu(startMenuNode, {targid});
+    const startMenu = new StartMenu(startMenuNode, targid);
 
     this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
     targid.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-    targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event: IEvent, idtype: IDType | string, namedSet: INamedSet) => startMenu.updateEntryPointList(idtype, namedSet));
+    targid.on(AView.EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
     return targid;
   }
 

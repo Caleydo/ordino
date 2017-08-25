@@ -52,8 +52,8 @@ export default class ViewWrapper extends EventHandler {
    * @param idtype
    * @param namedSet
    */
-  private listenerUpdateEntryPoint = (event: any, idtype: IDType | string, namedSet: INamedSet) => {
-    this.fire(AView.EVENT_UPDATE_ENTRY_POINT, idtype, namedSet);
+  private listenerUpdateEntryPoint = (event: any, namedSet: INamedSet) => {
+    this.fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
   }
 
   /**

@@ -2,20 +2,13 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import {IDType, resolve} from 'phovea_core/src/idtype';
+import {IDType, IDTypeLike, resolve} from 'phovea_core/src/idtype';
 import {Targid} from './Targid';
 import {INamedSet} from 'tdp_core/src/storage';
 import {list as listPlugins} from 'phovea_core/src/plugin';
-import * as d3 from 'd3';
+import {select, Selection, selection, event as d3event} from 'd3';
 import {IStartMenuSection, EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from './extensions';
-
-export interface IStartMenuOptions {
-  targid: Targid;
-}
-
-function byPriority(a: any, b: any) {
-  return (a.priority || 10) - (b.priority || 10);
-}
+import {byPriority} from './menu/internal/StartFactory';
 
 const template = `<button class="closeButton">
       <i class="fa fa-times" aria-hidden="true"></i>
@@ -25,9 +18,9 @@ const template = `<button class="closeButton">
 
 export default class StartMenu {
 
-  private readonly $node: d3.Selection<any>;
-  private entryPoints: IStartMenuSection[] = [];
-  protected $sections;
+  private readonly $node: Selection<any>;
+  private sections: IStartMenuSection[] = [];
+  private $sections: selection.Update<IStartMenuSectionDesc>;
 
   /**
    * Save an old key down listener to restore it later
@@ -35,7 +28,7 @@ export default class StartMenu {
   private restoreKeyDownListener: (ev: KeyboardEvent) => any;
 
   constructor(parent: Element, private readonly targid: Targid) {
-    this.$node = d3.select(parent);
+    this.$node = select(parent);
     this.build();
   }
 
@@ -65,19 +58,10 @@ export default class StartMenu {
 
   /**
    * Update entry point list for a given idType and an additional namedSet that should be appended
-   * @param idType
    * @param namedSet
    */
-  updateEntryPointList(idType: IDType | string, namedSet: INamedSet) {
-    const resolved = resolve(idType);
-    this.entryPoints
-      .map((d) => d.getEntryPointLists())
-      .filter((d) => d !== null && d !== undefined)
-      .reduce((a, b) => a.concat(b), []) // [[0, 1], [2, 3], [4, 5]] -> [0, 1, 2, 3, 4, 5]
-      .filter((d) => d.getIdType() === resolved.id)
-      .forEach((d) => {
-        d.push(namedSet);
-      });
+  pushNamedSet(namedSet: INamedSet) {
+    this.sections.forEach((s) => s.push(namedSet));
   }
 
   /**
@@ -89,14 +73,14 @@ export default class StartMenu {
     this.$node.html(template);
 
     this.$node.on('click', () => {
-      if ((<Event>d3.event).currentTarget === (<Event>d3.event).target) {
+      if ((<Event>d3event).currentTarget === (<Event>d3event).target) {
         this.close();
       }
     });
 
     this.$node.select('.closeButton').on('click', () => {
       // prevent changing the hash (href)
-      (<Event>d3.event).preventDefault();
+      (<Event>d3event).preventDefault();
 
       this.close();
     });
@@ -127,9 +111,8 @@ export default class StartMenu {
     //this.updateSections();
   }
 
-  private hasEntryPoint(section: IStartMenuSectionDesc) {
-    // do not load entry point again, if already loaded
-    return this.entryPoints.find((ep) => ep.desc.id === section.id) != null;
+  private hasSection(desc: IStartMenuSectionDesc) {
+    return this.sections.some((s) => s.desc.id === desc.id);
   }
 
   /**
@@ -138,21 +121,26 @@ export default class StartMenu {
   private updateSections() {
     const that = this;
 
-    this.$sections.each(async function (section: IStartMenuSectionDesc) {
+    const options = {
+      session: this.targid.initNewSession.bind(this.targid),
+      graphManager: this.targid.graphManager
+    };
+
+    this.$sections.each(async function (desc: IStartMenuSectionDesc) {
       // reload the entry points every time the
       const elem = <HTMLElement>this.querySelector('div.body');
 
       // do not load entry point again, if already loaded
-      if (that.hasEntryPoint(section)) {
+      if (that.hasSection(desc)) {
         return;
       }
 
-      const entryPoint = (await section.load()).factory(elem, section, {session: that.targid.initNewSession.bind(that.targid)});
+      const section = (await desc.load()).factory(elem, desc, options);
       // prevent adding the entryPoint if already in list or undefined
-      if (entryPoint === undefined || that.hasEntryPoint(section)) {
+      if (section === undefined || that.hasSection(desc)) {
         return;
       }
-      that.entryPoints.push(entryPoint);
+      that.sections.push(section);
     });
   }
 

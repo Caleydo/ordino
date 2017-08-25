@@ -31,7 +31,7 @@ module.exports = function (registry) {
   });
 
   registry.push('ordinoStartMenuSection', 'targid_temporary_session', function () {
-    return System.import('./src/menu/TemporarySessionSection');
+    return System.import('./src/menu/internal/TemporarySessionSection');
   }, {
     name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
     cssClass: 'targidSessionTemporaryData',
@@ -40,7 +40,7 @@ module.exports = function (registry) {
   });
 
   registry.push('ordinoStartMenuSection', 'targid_persistent_session', function () {
-    return System.import('./src/menu/PersistentSessionSection');
+    return System.import('./src/menu/internal/PersistentSessionSection');
   }, {
     name: 'Persistent Sessions',
     cssClass: 'targidSessionPersistentData',

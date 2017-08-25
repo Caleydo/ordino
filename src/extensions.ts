@@ -2,7 +2,7 @@ import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
 import {INamedSet} from 'tdp_core/src/storage';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 
-export const EXTENSION_POINT_START_MENU = 'targidStartMenuSection';
+export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 
 
 export interface IStartMenuSectionDesc extends IPluginDesc {

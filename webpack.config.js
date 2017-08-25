@@ -4,7 +4,7 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 
-const {libraryAliases, libraryExternals, modules, entries, ignores, type} = require('./.yo-rc.json')['generator-phovea'];
+const {libraryAliases, libraryExternals, modules, entries, ignores, type, registry} = require('./.yo-rc.json')['generator-phovea'];
 const resolve = require('path').resolve;
 const pkg = require('./package.json');
 const webpack = require('webpack');
@@ -23,23 +23,39 @@ const banner = '/*! ' + (pkg.title || pkg.name) + ' - v' + pkg.version + ' - ' +
   '* Copyright (c) ' + year + ' ' + pkg.author.name + ';' +
   ' Licensed ' + pkg.license + '*/\n';
 
+
+const preCompilerFlags = { flags: (registry || {}).flags || {} };
+const includeFeature = !registry ? () => true : (extension, id) => {
+  const exclude = registry.exclude || [];
+  const include = registry.include || [];
+  if (!exclude && !include) {
+    return true;
+  }
+  const test = (f) => Array.isArray(f) ? extension.match(f[0]) && (id || '').match(f[1]) : extension.match(f);
+  return include.every(test) && !exclude.some(test);
+};
+
 // list of loaders and their mappings
 const webpackloaders = [
-  {test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader'},
-  {test: /\.css$/, loader: 'style-loader!css-loader'},
-  {test: /\.tsx?$/, loader: 'awesome-typescript-loader'},
-  {test: /\.json$/, loader: 'json-loader'},
+  {test: /\.scss$/, use: 'style-loader!css-loader!sass-loader'},
+  {test: /\.css$/, use: 'style-loader!css-loader'},
+  {test: /\.tsx?$/, use: 'awesome-typescript-loader'},
+  {test: /phovea(_registry)?\.js$/, use: [{
+	  loader: 'ifdef-loader',
+	  options: Object.assign({ include: includeFeature}, preCompilerFlags)
+  }]},
+  {test: /\.json$/, use: 'json-loader'},
   {
     test: /\.(png|jpg)$/,
     loader: 'url-loader',
-    query: {
+    options: {
       limit: 10000 // inline <= 10kb
     }
   },
   {
     test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
     loader: 'url-loader',
-    query: {
+    options: {
       limit: 10000, // inline <= 10kb
       mimetype: 'application/font-woff'
     }
@@ -47,7 +63,7 @@ const webpackloaders = [
   {
     test: /\.svg(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
     loader: 'url-loader',
-    query: {
+    options: {
       limit: 10000, // inline <= 10kb
       mimetype: 'image/svg+xml'
     }

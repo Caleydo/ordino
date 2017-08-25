@@ -1,4 +1,8 @@
-
+// instead: import the CLUE styles separately
+@import "~phovea_clue/src/styles/base";
+@import "~phovea_clue/src/styles/annotation";
+@import "~phovea_clue/src/styles/provvis";
+@import "~phovea_clue/src/styles/storyvis";
 /**
  * All rules in this file override or directly extend the original clue styles
  */

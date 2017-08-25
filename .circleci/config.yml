@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/phovea
     docker:
-      - image: caleydo/phovea_circle_python:1.0
+      - image: caleydo/phovea_circleci_python:v1.0
     steps:
       - checkout
       - run:

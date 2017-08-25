@@ -7,10 +7,9 @@ import {IObjectRef, ProvenanceGraph, op, cat, StateNode} from 'phovea_core/src/p
 import IDType from 'phovea_core/src/idtype/IDType';
 import {IEvent, EventHandler} from 'phovea_core/src/event';
 import * as d3 from 'd3';
-import * as welcomeArrow from 'url-loader!./images/welcome-view-arrow.svg';
-import {ViewWrapper, EViewMode, AView, ISelection, setSelection, setAndUpdateSelection} from './View';
+import {ViewWrapper, EViewMode, AView, ISelection} from './View';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {createView, removeView, replaceView} from './cmds';
+import {createView, removeView, replaceView, setSelection, setAndUpdateSelection} from './cmds';
 import Range from 'phovea_core/src/range/Range';
 import TargidConstants from './constants';
 import * as session from 'phovea_core/src/session';
@@ -56,7 +55,7 @@ export class Targid extends EventHandler {
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
     this.$node.html(`
     <div class="welcomeView">
-      <img src="${welcomeArrow}">
+      <div></div>
       <h1>Start here</h1>
     </div>`);
   }

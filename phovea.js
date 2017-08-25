@@ -13,7 +13,7 @@ module.exports = function (registry) {
     return System.import('./src/cmds');
   }, {
     'factory': 'createCmd',
-    'creates': '(targidCreateView|targidRemoveView|targidReplaceView|targidInitSession)'
+    'creates': '(targidCreateView|targidRemoveView|targidReplaceView|targidInitSession|targidSetParameter|targidSetSelection)'
   });
 
   registry.push('actionFactory', 'ordino', function() { return System.import('./src/lineup/cmds'); }, {
@@ -28,6 +28,20 @@ module.exports = function (registry) {
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
+  registry.push('actionCompressor', 'targidCompressSetParameter', function () {
+    return System.import('./src/cmds');
+  }, {
+    'factory': 'compressSetParameter',
+    'matches': '(targidSetParameter)'
+  });
+
+  registry.push('actionCompressor', 'targidCompressSetSelection', function () {
+    return System.import('./src/cmds');
+  }, {
+    'factory': 'compressSetSelection',
+    'matches': '(targidSetSelection)'
+  });
+
   registry.push('actionFactory', 'ordinoScore', function() { return System.import('./src/lineup/scorecmds'); }, {
   'factory': 'createCmd',
   'creates': '(ordinoAddScore|ordinoRemoveScore)'
@@ -37,25 +51,6 @@ module.exports = function (registry) {
   'factory': 'compress',
   'matches': '(ordinoAddScore|ordinoRemoveScore)'
  });
-
-  registry.push('actionFactory', 'ordinoParameter', function() { return System.import('./src/View'); }, {
-  'factory': 'createCmd',
-  'creates': '(targidSetParameter|targidSetSelection)'
- });
-
-  registry.push('actionCompressor', 'targidCompressSetParameter', function () {
-    return System.import('./src/View');
-  }, {
-    'factory': 'compressSetParameter',
-    'matches': '(targidSetParameter)'
-  });
-
-  registry.push('actionCompressor', 'targidCompressSetSelection', function () {
-    return System.import('./src/View');
-  }, {
-    'factory': 'compressSetSelection',
-    'matches': '(targidSetSelection)'
-  });
 
   registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
     return System.import('./src/SessionList');
@@ -73,14 +68,6 @@ module.exports = function (registry) {
     cssClass: 'targidSessionPersistentData',
     factory: 'createPersistent',
     priority: 95
-  });
-
-  registry.push('idTypeDetector', 'gene_idtype_detector', function () {
-    return System.import('./src/GeneIDTypeDetector');
-  }, {
-    'name': 'IDTypeDetector',
-    'factory': 'geneIDTypeDetector',
-    'idType': 'Ensembl'
   });
 
   // generator-phovea:end

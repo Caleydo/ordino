@@ -147,7 +147,7 @@ export class LineUpRankingButtons extends EventHandler {
       .map((plugin: IScoreLoaderExtensionDesc) => plugin.load()
         .then((loadedPlugin: IPlugin) => loadedPlugin.factory(plugin))
         .then((scores: IScoreLoader[]) => {
-          return this.buildMetaDataDescriptions(plugin, scores);
+          return this.buildMetaDataDescriptions(plugin, scores.sort((a, b) => a.text.localeCompare(b.text)));
         })
       );
 
@@ -158,19 +158,24 @@ export class LineUpRankingButtons extends EventHandler {
 
     const columns: IWrappedColumnDesc[] = this.lineup.data.getColumns()
       .filter((d) => !(<any>d)._score)
-      .map((d) => ({ text: d.label, id: (<any>d).column, column: d }));
+      .map((d) => ({ text: d.label, id: (<any>d).column, column: d }))
+      .sort((a, b) => a.text.localeCompare(b.text));
 
-    columns.push({ text: 'Weighted Sum', id: 'weightedSum', column: createStackDesc('Weighted Sum') });
-    columns.push({ text: 'Scripted Combination', id: 'scriptedCombination', column: createScriptDesc('Scripted Combination') });
+    const dynamicCombinations: IWrappedColumnDesc[] = [
+      { text: 'Weighted Sum', id: 'weightedSum', column: createStackDesc('Weighted Sum') },
+      { text: 'Scripted Combination', id: 'scriptedCombination', column: createScriptDesc('Scripted Combination') }
+    ];
+
+    const lineUpAction: (wrappedColumn: IWrappedColumnDesc) => void = (wrappedColumn: IWrappedColumnDesc) => {
+      const ranking = this.lineup.data.getLastRanking();
+      this.lineup.data.push(ranking, wrappedColumn.column);
+    };
 
     const columnsWrapper: IColumnWrapper<IScoreLoader|IWrappedColumnDesc>[] = [
       {
-        text: 'Columns',
+        text: 'Database Columns',
         plugins: columns,
-        action: (wrappedColumn: IWrappedColumnDesc) => {
-          const ranking = this.lineup.data.getLastRanking();
-          this.lineup.data.push(ranking, wrappedColumn.column);
-        }
+        action: lineUpAction
       },
       {
         text: 'Parameterized Scores',
@@ -182,6 +187,11 @@ export class LineUpRankingButtons extends EventHandler {
           // the factory function call executes the score's implementation
           scorePlugin.factory(this.extraArgs, amountOfRows).then((params) => this.fire(LineUpRankingButtons.ADD_TRACKED_SCORE_COLUMN, scorePlugin.id, params));
         }
+      },
+      {
+        text: 'Combining Columns',
+        plugins: dynamicCombinations,
+        action: lineUpAction
       },
       ...metaDataOptions
     ];
@@ -266,7 +276,11 @@ export class LineUpRankingButtons extends EventHandler {
     // pass dataSource into InvertedAggregatedScore factory method
     Promise.resolve(scorePlugin.factory(scorePlugin.desc, this.idType, this.extraArgs)) // open modal dialog
       .then((scoreImpl) => { // modal dialog is closed and score created
-        this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
+        if(Array.isArray(scoreImpl)) {
+          scoreImpl.forEach((impl) => this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, impl, scorePlugin));
+        } else {
+          this.fire(LineUpRankingButtons.ADD_SCORE_COLUMN, scoreImpl, scorePlugin);
+        }
       });
   }
 }

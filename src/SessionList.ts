@@ -13,15 +13,21 @@ import {IProvenanceGraphDataDescription, op} from 'phovea_core/src/provenance';
 import {KEEP_ONLY_LAST_X_TEMPORARY_WORKSPACES} from './constants';
 import {showErrorModalDialog} from './Dialogs';
 import {
+  default as EditProvenanceGraphMenu,
   editProvenanceGraphMetaData, isPersistent, isPublic,
   persistProvenanceGraphMetaData
 } from './EditProvenanceGraphMenu';
+import {on as globalOn} from 'phovea_core/src/event';
 import {fromNow} from './utils';
-
+import {GLOBAL_EVENT_MANIPULATED} from './EditProvenanceGraphMenu';
 
 abstract class ASessionList implements IStartMenuSectionEntry {
   constructor(private readonly parent: HTMLElement, public readonly desc: IPluginDesc, private readonly options: IStartMenuOptions) {
-    this.build(options.targid.graphManager);
+
+    const manager = options.targid.graphManager;
+    this.build(manager).then((update) => {
+      globalOn(GLOBAL_EVENT_MANIPULATED, () => update());
+    });
   }
 
   getEntryPointLists() {
@@ -83,7 +89,7 @@ abstract class ASessionList implements IStartMenuSectionEntry {
               //update the name
               nameTd.innerText = desc.name;
               publicI.className = isPublic(desc) ? 'fa fa-users' : 'fa fa-user';
-              publicI.setAttribute('title', isPublic(d) ? 'Public (everyone can see it)': 'Private');
+              publicI.setAttribute('title', isPublic(d) ? 'Public (everyone can see it)' : 'Private');
             })
             .catch(showErrorModalDialog);
         }
@@ -109,7 +115,7 @@ abstract class ASessionList implements IStartMenuSectionEntry {
       </div>`);
   }
 
-  protected async abstract build(manager: CLUEGraphManager);
+  protected abstract async build(manager: CLUEGraphManager): Promise<() => any>;
 }
 
 function byDateDesc(a: any, b: any) {
@@ -119,11 +125,7 @@ function byDateDesc(a: any, b: any) {
 
 class TemporarySessionList extends ASessionList {
 
-  protected async build(manager: CLUEGraphManager) {
-
-    const $parent = this.createLoader();
-
-    //select and sort by date desc
+  protected async getData(manager: CLUEGraphManager) {
     let workspaces = (await manager.list()).filter((d) => !isPersistent(d)).sort(byDateDesc);
 
     // cleanup up temporary ones
@@ -134,6 +136,15 @@ class TemporarySessionList extends ASessionList {
         console.warn('cannot delete old graphs:', error);
       });
     }
+    return workspaces;
+  }
+
+  protected async build(manager: CLUEGraphManager) {
+
+    const $parent = this.createLoader();
+
+    //select and sort by date desc
+    const workspaces = await this.getData(manager);
 
     //replace loading
     const $table = $parent.html(`<table class="table table-striped table-hover table-bordered table-condensed">
@@ -149,36 +160,40 @@ class TemporarySessionList extends ASessionList {
     </tbody>
   </table>`);
 
-    const $tr = $table.select('tbody').selectAll('tr').data(workspaces);
+    const update = (data: IProvenanceGraphDataDescription[]) => {
+      const $tr = $table.select('tbody').selectAll('tr').data(data);
 
-    const $trEnter = $tr.enter().append('tr').html(`
-        <td></td>
-        <td></td>
-        <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('persist')}${this.createButton('delete')}</td>`);
+      const $trEnter = $tr.enter().append('tr').html(`
+          <td></td>
+          <td></td>
+          <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('persist')}${this.createButton('delete')}</td>`);
 
-    this.registerActionListener(manager, $trEnter);
-    $tr.select('td').text((d) => d.name).attr('class', (d) => isPublic(d) ? 'public' : 'private');
-    $tr.select('td:nth-of-type(2)')
-      .text((d) => d.ts ? fromNow(d.ts) : 'Unknown')
-      .attr('title', (d) => d.ts ? new Date(d.ts).toUTCString() : null);
+      this.registerActionListener(manager, $trEnter);
+      $tr.select('td').text((d) => d.name).attr('class', (d) => isPublic(d) ? 'public' : 'private');
+      $tr.select('td:nth-of-type(2)')
+        .text((d) => d.ts ? fromNow(d.ts) : 'Unknown')
+        .attr('title', (d) => d.ts ? new Date(d.ts).toUTCString() : null);
 
-    $tr.exit().remove();
+      $tr.exit().remove();
+    };
+    update(workspaces);
+
+    return () => this.getData(manager).then(update);
   }
 }
 
 class PersistentSessionList extends ASessionList {
 
+  protected async getData(manager: CLUEGraphManager) {
+    return (await manager.list()).filter((d) => isPersistent(d)).sort(byDateDesc);
+  }
 
   protected async build(manager: CLUEGraphManager) {
 
     const $parent = this.createLoader();
 
     //select and sort by date desc
-    const workspaces = (await manager.list()).filter((d) => isPersistent(d)).sort(byDateDesc);
-
-    const me = currentUserNameOrAnonymous();
-    const myworkspaces = workspaces.filter((d) => d.creator === me);
-    const otherworkspaces = workspaces.filter((d) => d.creator !== me);
+    const workspaces = await this.getData(manager);
 
     $parent.html(`
         <ul class="nav nav-tabs" role="tablist">
@@ -223,49 +238,59 @@ class PersistentSessionList extends ASessionList {
       $(this).tab('show');
     });
 
-    {
-      const $tr = $parent.select('#session_mine tbody').selectAll('tr').data(myworkspaces);
+    const update = (data: IProvenanceGraphDataDescription[]) => {
+      const me = currentUserNameOrAnonymous();
+      const myworkspaces = data.filter((d) => d.creator === me);
+      const otherworkspaces = data.filter((d) => d.creator !== me);
 
-      const $trEnter = $tr.enter().append('tr').html(`
-          <td></td>
-          <td class="text-center"><i class="fa"></i></td>
-          <td></td>
-          <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('edit')}${this.createButton('delete')}</td>`);
+      {
+        const $tr = $parent.select('#session_mine tbody').selectAll('tr').data(myworkspaces);
 
-      this.registerActionListener(manager, $trEnter);
-      $tr.select('td').text((d) => d.name);
-      $tr.select('td:nth-of-type(2) i')
-        .attr('class', (d) => isPublic(d) ? 'fa fa-users': 'fa fa-user')
-        .attr('title', (d) => isPublic(d) ? 'Public (everyone can see it)': 'Private');
-      $tr.select('td:nth-of-type(3)')
-        .text((d) => d.ts ? fromNow(d.ts) : 'Unknown')
-        .attr('title', (d) => d.ts ? new Date(d.ts).toUTCString() : null);
+        const $trEnter = $tr.enter().append('tr').html(`
+            <td></td>
+            <td class="text-center"><i class="fa"></i></td>
+            <td></td>
+            <td>${this.createButton('select')}${this.createButton('clone')}${this.createButton('edit')}${this.createButton('delete')}</td>`);
 
-      $tr.exit().remove();
-    }
-    {
-      const $tr = $parent.select('#session_others tbody').selectAll('tr').data(otherworkspaces);
+        this.registerActionListener(manager, $trEnter);
+        $tr.select('td').text((d) => d.name);
+        $tr.select('td:nth-of-type(2) i')
+          .attr('class', (d) => isPublic(d) ? 'fa fa-users' : 'fa fa-user')
+          .attr('title', (d) => isPublic(d) ? 'Public (everyone can see it)' : 'Private');
+        $tr.select('td:nth-of-type(3)')
+          .text((d) => d.ts ? fromNow(d.ts) : 'Unknown')
+          .attr('title', (d) => d.ts ? new Date(d.ts).toUTCString() : null);
 
-      const $trEnter = $tr.enter().append('tr').html(`
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>${this.createButton('clone')}</td>`);
+        $tr.exit().remove();
+      }
+      {
+        const $tr = $parent.select('#session_others tbody').selectAll('tr').data(otherworkspaces);
 
-      this.registerActionListener(manager, $trEnter);
-      $tr.select('td').text((d) => d.name);
-      $tr.select('td:nth-of-type(2)').text((d) => d.creator);
-      $tr.select('td:nth-of-type(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
+        const $trEnter = $tr.enter().append('tr').html(`
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>${this.createButton('clone')}</td>`);
 
-      $tr.exit().remove();
-    }
+        this.registerActionListener(manager, $trEnter);
+        $tr.select('td').text((d) => d.name);
+        $tr.select('td:nth-of-type(2)').text((d) => d.creator);
+        $tr.select('td:nth-of-type(3)').text((d) => d.ts ? new Date(d.ts).toUTCString() : 'Unknown');
 
+        $tr.exit().remove();
+      }
+    };
+
+    update(workspaces);
+
+    return () => this.getData(manager).then(update);
   }
 }
 
 export function createTemporary(parent: HTMLElement, desc: IPluginDesc, options: IStartMenuOptions) {
   return new TemporarySessionList(parent, desc, options);
 }
+
 export function createPersistent(parent: HTMLElement, desc: IPluginDesc, options: IStartMenuOptions) {
   return new PersistentSessionList(parent, desc, options);
 }

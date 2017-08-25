@@ -23,9 +23,8 @@ const banner = '/*! ' + (pkg.title || pkg.name) + ' - v' + pkg.version + ' - ' +
   '* Copyright (c) ' + year + ' ' + pkg.author.name + ';' +
   ' Licensed ' + pkg.license + '*/\n';
 
-
-const preCompilerFlags = { flags: (registry || {}).flags || {} };
-const includeFeature = !registry ? () => true : (extension, id) => {
+const preCompilerFlags = {flags: (registry || {}).flags || {}};
+const includeFeature = registry ? (extension, id) => {
   const exclude = registry.exclude || [];
   const include = registry.include || [];
   if (!exclude && !include) {
@@ -33,7 +32,7 @@ const includeFeature = !registry ? () => true : (extension, id) => {
   }
   const test = (f) => Array.isArray(f) ? extension.match(f[0]) && (id || '').match(f[1]) : extension.match(f);
   return include.every(test) && !exclude.some(test);
-};
+} : () => true;
 
 // list of loaders and their mappings
 const webpackloaders = [
@@ -41,8 +40,8 @@ const webpackloaders = [
   {test: /\.css$/, use: 'style-loader!css-loader'},
   {test: /\.tsx?$/, use: 'awesome-typescript-loader'},
   {test: /phovea(_registry)?\.js$/, use: [{
-	  loader: 'ifdef-loader',
-	  options: Object.assign({ include: includeFeature}, preCompilerFlags)
+    loader: 'ifdef-loader',
+    options: Object.assign({include: includeFeature}, preCompilerFlags)
   }]},
   {test: /\.json$/, use: 'json-loader'},
   {

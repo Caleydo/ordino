@@ -81,7 +81,8 @@
     "typescript": "2.2.0",
     "url-loader": "0.5.7",
     "webpack": "2.2.1",
-    "webpack-dev-server": "2.4.2"
+    "webpack-dev-server": "2.4.2",
+    "ifdef-loader": "github:sgratzl/ifdef-loader"
   },
   "dependencies": {
     "@types/jquery.scrollto": "1.4.27",

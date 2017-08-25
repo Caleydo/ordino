@@ -1,22 +1,28 @@
 {
   "generator-phovea": {
-    "type": "app-slib",
+    "type": "app",
     "name": "ordino",
     "author": "The Caleydo Team",
-    "githubAccount": "caleydo",
+    "githubAccount": "Caleydo",
     "modules": [
       "phovea_clue"
     ],
     "registry": {
-      "exclude": ["bob", ["datatype", "(table|matrix|stratification|vector|atom)"], ["clue", "multiform"]]
+      "exclude": [
+        "bob",
+        [
+          "datatype",
+          "(table|matrix|stratification|vector|atom)"
+        ],
+        [
+          "clue",
+          "multiform"
+        ]
+      ]
     },
     "extensions": [],
     "sextensions": [],
     "libraries": [
-      "d3",
-      "jquery",
-      "lineupjs",
-      "select2",
       "scrollTo",
       "mongodb"
     ],

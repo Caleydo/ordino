@@ -1,4 +1,4 @@
-bob [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+ordino [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 =====================
 
 Ordino Based Data Explorer
@@ -7,8 +7,8 @@ Installation
 ------------
 
 ```
-git clone https://github.com/datvisyn/bob.git
-cd bob
+git clone https://github.com/caleydo/ordino.git
+cd ordino
 npm install
 ```
 
@@ -42,9 +42,9 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 
 [phovea-image]: https://img.shields.io/badge/Phovea-Application-1BA64E.svg
 [phovea-url]: https://phovea.caleydo.org
-[npm-image]: https://badge.fury.io/js/bob.svg
-[npm-url]: https://npmjs.org/package/bob
-[travis-image]: https://travis-ci.org/datvisyn/bob.svg?branch=master
-[travis-url]: https://travis-ci.org/datvisyn/bob
-[daviddm-image]: https://david-dm.org/datvisyn/bob/status.svg
-[daviddm-url]: https://david-dm.org/datvisyn/bob
+[npm-image]: https://badge.fury.io/js/ordino.svg
+[npm-url]: https://npmjs.org/package/ordino
+[travis-image]: https://travis-ci.org/caleydo/ordino.svg?branch=master
+[travis-url]: https://travis-ci.org/caleydo/ordino
+[daviddm-image]: https://david-dm.org/caleydo/ordino/status.svg
+[daviddm-url]: https://david-dm.org/caleydo/ordino

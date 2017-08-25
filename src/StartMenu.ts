@@ -2,13 +2,15 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import {IDType, IDTypeLike, resolve} from 'phovea_core/src/idtype';
 import {Targid} from './Targid';
 import {INamedSet} from 'tdp_core/src/storage';
 import {list as listPlugins} from 'phovea_core/src/plugin';
 import {select, Selection, selection, event as d3event} from 'd3';
 import {IStartMenuSection, EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from './extensions';
-import {byPriority} from './menu/internal/StartFactory';
+
+function byPriority(a: any, b: any) {
+  return (a.priority || 10) - (b.priority || 10);
+}
 
 const template = `<button class="closeButton">
       <i class="fa fa-times" aria-hidden="true"></i>

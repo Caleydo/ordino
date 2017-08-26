@@ -1,10 +1,4 @@
-// include TargID colors instead of CLUE colors
-@import "styles/colors";
-
-// first: do not import the whole CLUE style, because we want do not want to the colored CLUE header
-//@import "../caleydo_clue/style.scss";
-
-$boostrapAssetDir: '~phovea_ui/src/assets';
+@import "~tdp_core/src/styles/tdp";
 
 // extend with TargID specific rules
 @import "styles/ordino";

@@ -1,7 +1,7 @@
-ordino [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+ordino [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![CircleCI][circleci-image]][circleci-url] 
 =====================
 
-Ordino Based Data Explorer
+A target ranking application based on the [Target Discovery Platform](https://gitub.com/datavisyn/tdp_core).
 
 Installation
 ------------
@@ -46,5 +46,5 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 [npm-url]: https://npmjs.org/package/ordino
 [travis-image]: https://travis-ci.org/caleydo/ordino.svg?branch=master
 [travis-url]: https://travis-ci.org/caleydo/ordino
-[daviddm-image]: https://david-dm.org/caleydo/ordino/status.svg
-[daviddm-url]: https://david-dm.org/caleydo/ordino
+[circleci-image]: https://circleci.com/gh/Caleydo/ordino.svg?style=shield
+[circleci-url]: https://circleci.com/gh/Caleydo/ordino

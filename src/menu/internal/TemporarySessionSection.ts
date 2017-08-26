@@ -1,6 +1,6 @@
 
 
-import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from 'ordino/src/extensions';
+import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from '../../extensions';
 import {INamedSet} from 'tdp_core/src/storage';
 import {TemporarySessionList} from 'tdp_core/src/SessionList';
 

@@ -7,19 +7,6 @@ main.targid {
   -webkit-flex-direction: column;
   flex-direction: column;
 
-  svg {
-    // generic axes styles
-    path,
-    .axis path,
-    line,
-    .axis line {
-      fill: none;
-      stroke-width: 1;
-      stroke: black;
-      shape-rendering: crispEdges;
-    }
-  }
-
   > div.wrapper {
     display: flex;
     flex-flow: row wrap;
@@ -387,7 +374,7 @@ div.targid {
       }
     }
 
-    @import './view';
+    @import '~tdp_core/src/styles/view';
   }
 }
 

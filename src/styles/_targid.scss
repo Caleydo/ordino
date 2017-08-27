@@ -289,14 +289,6 @@ div.targid {
         overflow-y: auto;
       }
 
-      .multiple {
-        overflow-y: auto;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        align-content: flex-start;
-      }
-
       > div {
         transition: opacity 0.3s ease;
       }

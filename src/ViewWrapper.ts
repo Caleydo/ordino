@@ -16,6 +16,7 @@ import {
   AView, createContext, EViewMode, findViews, ISelection, isSameSelection, IView, IViewContext, IViewPluginDesc,
   matchLength,  showAsSmallMultiple, toViewPluginDesc
 } from 'tdp_core/src/views';
+import {resolveImmediately} from 'phovea_core/src/internal/promise';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
@@ -74,6 +75,8 @@ export default class ViewWrapper extends EventHandler {
    */
   context: IViewContext;
 
+  built: PromiseLike<any>;
+
   /**
    * Initialize this view, create the root node and the (inner) view
    * @param graph
@@ -93,7 +96,7 @@ export default class ViewWrapper extends EventHandler {
     // create ViewWrapper root node
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
 
-    this.createView(selection, plugin, options);
+    this.built = resolveImmediately(this.createView(selection, plugin, options));
   }
 
   /**
@@ -144,12 +147,12 @@ export default class ViewWrapper extends EventHandler {
       .classed('inner', true);
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
-    this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this));
+    return resolveImmediately(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this))).then(() => {
+      this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+      this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
 
-    this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
-    this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
-
-    this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+      this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+    });
   }
 
   /**
@@ -159,7 +162,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  public replaceView(selection: ISelection, plugin:IPlugin, options?) {
+  replaceView(selection: ISelection, plugin:IPlugin, options?) {
     this.destroyView();
 
     this.selection = selection;
@@ -167,7 +170,7 @@ export default class ViewWrapper extends EventHandler {
     this.options = options;
 
     this.init(this.graph, selection, plugin, options);
-    this.createView(selection, plugin, options);
+    return this.built = this.createView(selection, plugin, options);
   }
 
   /**

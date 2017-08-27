@@ -34,6 +34,9 @@ export async function createViewImpl(inputs: IObjectRef<any>[], parameter: any, 
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
   const viewWrapperInstance = await createViewWrapper(graph, {idtype, range: selection}, targid.node, view, options);
+  if (viewWrapperInstance.built) {
+    await viewWrapperInstance.built;
+  }
   const oldFocus = await targid.pushImpl(viewWrapperInstance);
   return {
     created: [viewWrapperInstance.ref],

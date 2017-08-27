@@ -7,6 +7,7 @@ import {IDType} from 'phovea_core/src/idtype';
 import {Range} from 'phovea_core/src/range';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+import 'jquery.scrollto/jquery.scrollTo.js';
 import {EventHandler} from 'phovea_core/src/event';
 import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
 import {INamedSet} from 'tdp_core/src/storage';

@@ -6,46 +6,46 @@
 
 //register all extensions in the registry following the given pattern
 module.exports = function (registry) {
-  //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
+  //registry.push('extension-type', 'extension-id', function() { return import('./src/extension_impl'); }, {});
   // generator-phovea:begin
 
   registry.push('actionFunction', 'targidCreateView', function () {
-    return System.import('./src/cmds');
+    return import('./src/cmds');
   }, {
     'factory': 'createViewImpl'
   });
   registry.push('actionFunction', 'targidRemoveView', function () {
-    return System.import('./src/cmds');
+    return import('./src/cmds');
   }, {
     'factory': 'removeViewImpl'
   });
   registry.push('actionFunction', 'targidReplaceView', function () {
-    return System.import('./src/cmds');
+    return import('./src/cmds');
   }, {
     'factory': 'replaceViewImpl'
   });
   registry.push('actionFunction', 'targidSetSelection', function () {
-    return System.import('./src/cmds');
+    return import('./src/cmds');
   }, {
     'factory': 'setSelectionImpl'
   });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
-    return System.import('./src/cmds');
+    return import('./src/cmds');
   }, {
     'factory': 'compressCreateRemove',
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
   registry.push('actionCompressor', 'targidCompressSetSelection', function () {
-    return System.import('./src/cmds');
+    return import('./src/cmds');
   }, {
     'factory': 'compressSetSelection',
     'matches': '(targidSetSelection)'
   });
 
   registry.push('ordinoStartMenuSection', 'targid_temporary_session', function () {
-    return System.import('./src/menu/internal/TemporarySessionSection');
+    return import('./src/menu/internal/TemporarySessionSection');
   }, {
     name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
     cssClass: 'tdpSessionTemporaryData',
@@ -54,7 +54,7 @@ module.exports = function (registry) {
   });
 
   registry.push('ordinoStartMenuSection', 'targid_persistent_session', function () {
-    return System.import('./src/menu/internal/PersistentSessionSection');
+    return import('./src/menu/internal/PersistentSessionSection');
   }, {
     name: 'Persistent Sessions',
     cssClass: 'tdpSessionPersistentData',

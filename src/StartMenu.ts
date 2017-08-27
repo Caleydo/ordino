@@ -128,7 +128,7 @@ export default class StartMenu {
       graphManager: this.targid.graphManager
     };
 
-    this.$sections.each(async function (desc: IStartMenuSectionDesc) {
+    this.$sections.each(function (desc: IStartMenuSectionDesc) {
       // reload the entry points every time the
       const elem = <HTMLElement>this.querySelector('div.body');
 
@@ -137,12 +137,15 @@ export default class StartMenu {
         return;
       }
 
-      const section = (await desc.load()).factory(elem, desc, options);
-      // prevent adding the entryPoint if already in list or undefined
-      if (section === undefined || that.hasSection(desc)) {
-        return;
-      }
-      that.sections.push(section);
+      desc.load().then((plugin) => {
+        elem.innerHTML = '';
+        const section = plugin.factory(elem, desc, options);
+          // prevent adding the entryPoint if already in list or undefined
+        if (section === undefined || that.hasSection(desc)) {
+          return;
+        }
+        that.sections.push(section);
+      });
     });
   }
 

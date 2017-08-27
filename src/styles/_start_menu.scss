@@ -187,9 +187,11 @@
 
 
 
-  .targidSessionTemporaryData {
+  .tdpSessionTemporaryData {
     > header > h1 > label:before {
       @include fa-icon();
+      width: (18em / 14);
+      text-align: center;
       content: $fa-var-clock-o;
     }
     .body {
@@ -198,9 +200,11 @@
     }
   }
 
-  .targidSessionPersistentData {
+  .tdpSessionPersistentData {
     > header > h1 > label:before {
       @include fa-icon();
+      width: (18em / 14);
+      text-align: center;
       content: $fa-var-cloud;
     }
 

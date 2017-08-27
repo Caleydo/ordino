@@ -34,7 +34,7 @@ module.exports = function (registry) {
     return System.import('./src/menu/internal/TemporarySessionSection');
   }, {
     name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
-    cssClass: 'targidSessionTemporaryData',
+    cssClass: 'tdpSessionTemporaryData',
     factory: 'new',
     priority: 90
   });
@@ -43,8 +43,8 @@ module.exports = function (registry) {
     return System.import('./src/menu/internal/PersistentSessionSection');
   }, {
     name: 'Persistent Sessions',
-    cssClass: 'targidSessionPersistentData',
-    factory: 'createPersistent',
+    cssClass: 'tdpSessionPersistentData',
+    factory: 'new',
     priority: 95
   });
 

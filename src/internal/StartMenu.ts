@@ -6,7 +6,7 @@ import {Targid} from './Targid';
 import {INamedSet} from 'tdp_core/src/storage';
 import {list as listPlugins} from 'phovea_core/src/plugin';
 import {select, Selection, selection, event as d3event} from 'd3';
-import {IStartMenuSection, EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from './extensions';
+import {IStartMenuSection, EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from '../extensions';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);

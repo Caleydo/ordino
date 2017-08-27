@@ -12,7 +12,7 @@ import ViewWrapper from './ViewWrapper';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {createView, removeView, replaceView, setSelection, setAndUpdateSelection} from './cmds';
 import Range from 'phovea_core/src/range/Range';
-import TargidConstants from './constants';
+import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
 
 
@@ -47,7 +47,8 @@ export class Targid extends EventHandler {
   constructor(public readonly graph:ProvenanceGraph, public readonly graphManager:CLUEGraphManager, parent:HTMLElement) {
     super();
     // add TargId app as (first) object to provenance graph
-    this.ref = graph.findOrAddObject(this, TargidConstants.APP_NAME, cat.visual);
+    // need old name for compatiblity
+    this.ref = graph.findOrAddObject(this, 'Targid', cat.visual);
 
 
     this.$history = this.buildHistory(parent);
@@ -226,7 +227,7 @@ export class Targid extends EventHandler {
 
   initNewSession(view: string, options: any, defaultSessionValues: any = null) {
     // store state to session before creating a new graph
-    session.store(TargidConstants.NEW_ENTRY_POINT, {
+    session.store(SESSION_KEY_NEW_ENTRY_POINT, {
       view,
       options,
       defaultSessionValues

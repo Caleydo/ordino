@@ -4,14 +4,13 @@
 
 import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
 import {IEvent} from 'phovea_core/src/event';
-import IDType from 'phovea_core/src/idtype/IDType';
 import * as session from 'phovea_core/src/session';
 import {AView} from 'tdp_core/src/views';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import StartMenu from './StartMenu';
+import StartMenu from './internal/StartMenu';
 import {INamedSet} from 'tdp_core/src/storage';
-import TargidConstants from './constants';
-import Targid from './Targid';
+import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
+import Targid from './internal/Targid';
 import {initSession} from 'tdp_core/src/cmds';
 import ATDPApplication, {ITDPOptions} from 'tdp_core/src/ATDPApplication';
 
@@ -42,18 +41,18 @@ export default class Ordino extends ATDPApplication<Targid> {
   }
 
   protected initSessionImpl(targid: Targid) {
-    const hasInitScript = session.has(TargidConstants.NEW_ENTRY_POINT);
+    const hasInitScript = session.has(SESSION_KEY_NEW_ENTRY_POINT);
     const graph = targid.graph;
     if (graph.isEmpty && !hasInitScript) {
       this.fire(Ordino.EVENT_OPEN_START_MENU);
     } else if (hasInitScript) {
-      const {view, options, defaultSessionValues} = <any>session.retrieve(TargidConstants.NEW_ENTRY_POINT);
+      const {view, options, defaultSessionValues} = <any>session.retrieve(SESSION_KEY_NEW_ENTRY_POINT);
 
       if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
         graph.push(initSession(defaultSessionValues));
       }
       targid.push(view, null, null, options);
-      session.remove(TargidConstants.NEW_ENTRY_POINT);
+      session.remove(SESSION_KEY_NEW_ENTRY_POINT);
     } else {
       //just if no other option applies jump to the stored state
       this.jumpToStoredOrLastState();

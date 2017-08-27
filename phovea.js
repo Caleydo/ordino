@@ -10,35 +10,35 @@ module.exports = function (registry) {
   // generator-phovea:begin
 
   registry.push('actionFunction', 'targidCreateView', function () {
-    return import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'createViewImpl'
   });
   registry.push('actionFunction', 'targidRemoveView', function () {
-    return import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'removeViewImpl'
   });
   registry.push('actionFunction', 'targidReplaceView', function () {
-    return import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'replaceViewImpl'
   });
   registry.push('actionFunction', 'targidSetSelection', function () {
-    return import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'setSelectionImpl'
   });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
-    return import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'compressCreateRemove',
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
   registry.push('actionCompressor', 'targidCompressSetSelection', function () {
-    return import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'compressSetSelection',
     'matches': '(targidSetSelection)'

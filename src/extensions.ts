@@ -1,4 +1,4 @@
-import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
+import {IPluginDesc} from 'phovea_core/src/plugin';
 import {INamedSet} from 'tdp_core/src/storage';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 

@@ -4,6 +4,8 @@ jobs:
     working_directory: ~/phovea
     docker:
       - image: circleci/node:6-browsers
+    tags:
+      - /v\d+.\d+.\d+.*/
     steps:
       - checkout
       - restore_cache:

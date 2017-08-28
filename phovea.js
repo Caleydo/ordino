@@ -49,7 +49,6 @@ module.exports = function (registry) {
   }, {
     name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
     cssClass: 'tdpSessionTemporaryData',
-    factory: 'new',
     priority: 90
   });
 
@@ -58,7 +57,6 @@ module.exports = function (registry) {
   }, {
     name: 'Persistent Sessions',
     cssClass: 'tdpSessionPersistentData',
-    factory: 'new',
     priority: 95
   });
 

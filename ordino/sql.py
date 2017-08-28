@@ -21,6 +21,21 @@ def _get_data(database, view_name, replacements=None):
   return db.get_data(database, view_name, replacements, request.args)
 
 
+@app.route('/')
+@login_required
+def list_database():
+  return jsonify([v[0].dump(k) for k, v in db.configs.items()])
+
+
+@app.route('/<database>')
+@login_required
+def list_view(database):
+  config_engine = db.resolve(database)
+  if not config_engine:
+    return 404, 'Not Found'
+  return jsonify([v.dump(k) for k, v in config_engine[0].views.items()])
+
+
 @app.route('/<database>/<view_name>')
 @login_required
 def get_data_api(database, view_name):
@@ -143,7 +158,7 @@ def _filter_logic(view):
       operator = 'IN'
     # find the sub query to replace, can be injected for more complex filter operations based on the input
     sub_query = view.get_filter_subquery(k)
-    return sub_query % dict(operator=operator, value=':' + kp)
+    return sub_query.format(operator=operator, value=':' + kp)
 
   for key in where_clause.keys():
     if not view.is_valid_filter(key):
@@ -238,29 +253,7 @@ def get_desc(database, view_name):
   # row id start with 1
   view = config.views[view_name]
 
-  number_columns = []
-  categorical_columns = []
-  infos = {}
-  for k, v in view.columns.items():
-    ttype = v['type']
-    infos[v['label']] = v.copy()
-    if ttype == 'number':
-      number_columns.append(v['label'])
-    elif ttype == 'categorical':
-      categorical_columns.append(k)
-
-  with db.session(engine) as session:
-    if len(number_columns) > 0:
-      row = next(iter(session.execute(view.queries['stats'])))
-      for num_col in number_columns:
-        infos[num_col]['min'] = row[num_col + '_min']
-        infos[num_col]['max'] = row[num_col + '_max']
-    for cat_col in categorical_columns:
-      cats = [r['cat'] for r in session.execute(view.queries['categories'] % dict(col=cat_col))]
-      infos[view.columns[cat_col]['label']]['categories'] = [unicode(c) for c in cats if c is not None]
-
-  r = dict(idType=view.idtype, columns=infos)
-  return jsonify(r)
+  return jsonify(dict(idType=view.idtype, columns=view.columns.values()))
 
 
 @app.route('/<database>/<view_name>/lookup')
@@ -278,7 +271,7 @@ def lookup(database, view_name):
 
   arguments = request.args.copy()
   # replace with wildcard version
-  arguments['query'] = '%' + str(request.args.get('query', '')).lower() + '%'
+  arguments['query'] = '%{}%'.format(str(request.args.get('query', '')).lower())
 
   page = int(request.args.get('page', 0))  # zero based
   limit = int(request.args.get('limit', 30))  # or 'all'
@@ -289,7 +282,7 @@ def lookup(database, view_name):
   kwargs, replace = db.prepare_arguments(view, config, replacements, arguments)
 
   with db.session(engine) as session:
-    r_items = session.run(view.query % replace, **kwargs)
+    r_items = session.run(view.query.format(**replace), **kwargs)
 
   more = len(r_items) > limit
   if more:

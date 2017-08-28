@@ -16,7 +16,7 @@ app = Namespace(__name__)
 
 @app.route('/namedsets/', methods=['GET', 'POST'])
 @etag
-def get_namedsets():
+def list_namedset():
   db = MongoClient(c.host, c.port)[c.database]
 
   if request.method == 'GET':

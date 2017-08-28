@@ -4,11 +4,6 @@
   font-family: "FontAwesome", serif;
 }
 
-input[type="checkbox"].public:after {
-  @include fontAwesome();
-  content: '\f0c0'; //fa-users
-}
-
 @mixin idtype_color($idType, $color) {
   form.search {
     label.checkbox-inline[data-idtype="#{$idType}"] {

@@ -4,21 +4,7 @@
 // first: do not import the whole CLUE style, because we want do not want to the colored CLUE header
 //@import "../caleydo_clue/style.scss";
 
-
 $boostrapAssetDir: '~phovea_ui/src/assets';
 
-// then: override CLUE specific rules
-@import "styles/clue_override";
-
 // extend with TargID specific rules
-@import "styles/base";
-@import "styles/targid";
-@import "styles/utils";
-
-// styles for views
-@import "styles/select2";
-@import "styles/start_menu";
-@import "styles/welcome_view";
-@import "styles/login_first_view";
-@import "styles/button_group";
-@import "styles/form_builder";
+@import "styles/ordino";

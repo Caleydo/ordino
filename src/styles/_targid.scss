@@ -1,23 +1,11 @@
+@import '~tdp_core/src/styles/vars';
+
 
 main.targid {
-  display: -webkit-flex;
   display: flex;
 
   -webkit-flex-direction: column;
   flex-direction: column;
-
-  svg {
-    // generic axes styles
-    path,
-    .axis path,
-    line,
-    .axis line {
-      fill: none;
-      stroke-width: 1;
-      stroke: black;
-      shape-rendering: crispEdges;
-    }
-  }
 
   > div.wrapper {
     display: flex;
@@ -301,14 +289,6 @@ div.targid {
         overflow-y: auto;
       }
 
-      .multiple {
-        overflow-y: auto;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        align-content: flex-start;
-      }
-
       > div {
         transition: opacity 0.3s ease;
       }
@@ -385,38 +365,10 @@ div.targid {
         }
       }
     }
+
+    @import '~tdp_core/src/styles/view';
   }
 }
 
-div.lineup {
-  .nodata {
-    margin-top: 40px;
-  }
-}
 
-div.lu {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-
-  .row.selected rect.bg {
-    stroke: $select-data-color;
-    stroke-width: 1;
-  }
-  .row.hover rect.bg {
-    stroke: $hover-data-color;
-    stroke-width: 1;
-  }
-
-  .rankingbuttons .dropdown-menu {
-    padding: 0;
-
-    .form-group {
-      margin-bottom: 0;
-    }
-  }
-}
 

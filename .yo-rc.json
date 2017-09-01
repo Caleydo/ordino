@@ -1,151 +1,28 @@
 {
   "generator-phovea": {
-    "type": "app-slib",
+    "type": "app",
     "name": "ordino",
     "author": "The Caleydo Team",
-    "githubAccount": "caleydo",
+    "githubAccount": "Caleydo",
     "modules": [
       "phovea_clue"
     ],
-    "extensions": [
-      {
-        "type": "application",
-        "id": "ordino",
-        "module": "",
-        "extras": {
-          "name": "Target Discovery Platform"
-        }
-      },
-      {
-        "type": "targidView",
-        "id": "startMenu",
-        "module": "StartMenu",
-        "extras": {
-          "name": "startMenu",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        }
-      },
-      {
-        "type": "targidView",
-        "id": "login_first",
-        "module": "LoginFirstView",
-        "extras": {
-          "name": "Login First",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        }
-      },
-      {
-        "type": "targidView",
-        "id": "welcome",
-        "module": "WelcomeView",
-        "extras": {
-          "name": "Welcome",
-          "factory": "create",
-          "idtype": "none",
-          "selection": "none"
-        }
-      },
-      {
-        "type": "actionFactory",
-        "id": "ordino",
-        "module": "Targid",
-        "extras": {
-          "factory": "createCmd",
-          "creates": "(targidCreateView|targidRemoveView|targidReplaceView)"
-        }
-      },
-      {
-        "type": "actionFactory",
-        "id": "ordino",
-        "module": "LineUpCommands",
-        "extras": {
-          "factory": "createCmd",
-          "creates": "(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)"
-        }
-      },
-      {
-        "type": "actionCompressor",
-        "id": "targidCreateRemoveCompressor",
-        "module": "Targid",
-        "extras": {
-          "factory": "compressCreateRemove",
-          "matches": "(targidCreateView|targidRemoveView|targidReplaceView)"
-        }
-      },
-      {
-        "type": "actionFactory",
-        "id": "ordino",
-        "module": "View",
-        "extras": {
-          "factory": "createCmd",
-          "creates": "(targidSetParameter|targidSetSelection)"
-        }
-      },
-      {
-        "type": "actionCompressor",
-        "id": "targidCompressSetParameter",
-        "module": "View",
-        "extras": {
-          "factory": "compressSetParameter",
-          "matches": "(targidSetParameter)"
-        }
-      },
-      {
-        "type": "actionCompressor",
-        "id": "targidCompressSetSelection",
-        "module": "View",
-        "extras": {
-          "factory": "compressSetSelection",
-          "matches": "(targidSetSelection)"
-        }
-      },
-      {
-        "type": "targidStartSession",
-        "id": "targid_session_start",
-        "module": "SessionList",
-        "extras": {
-          "name": "Last Sessions",
-          "factory": "createStartFactory",
-          "idtype": "none",
-          "selection": "none"
-        }
-      }
-    ],
-    "sextensions": [
-      {
-        "type": "namespace",
-        "id": "ordino",
-        "module": "proxy",
-        "extras": {
-          "namespace": "/api/targid/proxy"
-        }
-      },
-      {
-        "type": "namespace",
-        "id": "db_connector",
-        "module": "sql",
-        "extras": {
-          "namespace": "/api/targid/db"
-        }
-      },
-      {
-        "type": "namespace",
-        "id": "targid_storage",
-        "module": "storage",
-        "extras": {
-          "namespace": "/api/targid/storage"
-        }
-      }
-    ],
+    "registry": {
+      "exclude": [
+        "bob",
+        [
+          "datatype",
+          "(table|matrix|stratification|vector|atom)"
+        ],
+        [
+          "clue",
+          "multiform"
+        ]
+      ]
+    },
+    "extensions": [],
+    "sextensions": [],
     "libraries": [
-      "d3",
-      "jquery",
-      "lineupjs",
-      "select2",
       "scrollTo",
       "mongodb"
     ],

@@ -1,50 +1,30 @@
-import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
-import {IScore} from './lineup/IScore';
-import IDType from 'phovea_core/src/idtype/IDType';
+import {IPluginDesc} from 'phovea_core/src/plugin';
+import {INamedSet} from 'tdp_core/src/storage';
+import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 
-export const EXTENSION_POINT_ORDINO_SCORE = 'ordinoScore';
-export const EXTENSION_POINT_ORDINO_SCORE_LOADER = 'ordinoScoreLoader';
-export const EXTENSION_POINT_ORDINO_RANKING_BUTTON = 'ordinoRankingButton';
+export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 
-export interface IScoreLoader {
-  /**
-   * unique id of this loader
-   */
-  readonly id: string;
-  /**
-   * name for the entry
-   */
-  readonly text: string;
-  /**
-   * id of the score implementation plugin
-   */
-  readonly scoreId: string;
 
-  /**
-   * @param extraArgs
-   * @param count the current count of visible rows
-   * @returns {Promise<any>} a promise of the score params
-   */
-  factory(extraArgs: object, count: number): Promise<object>;
+export interface IStartMenuSectionDesc extends IPluginDesc {
+  readonly name: string;
+  readonly cssClass: string;
+
+  load(): Promise<IStartMenuSectionPlugin>;
 }
 
-export interface IScoreLoaderExtension {
-  factory(desc: IPluginDesc, extraArgs: object): Promise<IScoreLoader[]>;
+export interface IStartMenuSectionOptions {
+  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
+  graphManager: CLUEGraphManager;
 }
 
-export interface IScoreLoaderExtensionDesc extends IPluginDesc {
-  idtype: string;
+interface IStartMenuSectionPlugin {
+  desc: IStartMenuSectionDesc;
 
-  load(): Promise<IPlugin & IScoreLoaderExtension>;
+  factory(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions): IStartMenuSection;
 }
 
-export interface IRankingButtonExtension {
-  desc: IRankingButtonExtensionDesc;
-  factory(desc: IRankingButtonExtensionDesc, idType: IDType, extraArgs: object): Promise<IScore<any>>;
-}
+export interface IStartMenuSection {
+  readonly desc: IPluginDesc;
 
-export interface IRankingButtonExtensionDesc extends IPluginDesc {
-  cssClass: string;
-
-  load(): Promise<IPlugin & IRankingButtonExtension>;
+  push(namedSet: INamedSet): boolean;
 }

@@ -1,4 +1,6 @@
-@import './utils';
+@import '~tdp_core/src/styles/vars';
+@import '~font-awesome/scss/variables';
+@import '~font-awesome/scss/mixins';
 
 .startMenu {
   position: absolute;
@@ -185,10 +187,12 @@
 
 
 
-  .targidSessionTemporaryData {
+  .tdpSessionTemporaryData {
     > header > h1 > label:before {
-      @include fontAwesome();
-      content: "\f017"; //fa-clock-o
+      @include fa-icon();
+      width: (18em / 14);
+      text-align: center;
+      content: $fa-var-clock-o;
     }
     .body {
       max-height: 300px;
@@ -196,10 +200,12 @@
     }
   }
 
-  .targidSessionPersistentData {
+  .tdpSessionPersistentData {
     > header > h1 > label:before {
-      @include fontAwesome();
-      content: "\f0c2"; //fa-cloud
+      @include fa-icon();
+      width: (18em / 14);
+      text-align: center;
+      content: $fa-var-cloud;
     }
 
     .tab-pane {

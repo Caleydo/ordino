@@ -10,11 +10,11 @@
   },
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/caleydo/ordino/issues"
+    "url": "https://github.com/Caleydo/ordino/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/caleydo/ordino.git"
+    "url": "https://github.com/Caleydo/ordino.git"
   },
   "private": true,
   "files": [
@@ -22,14 +22,7 @@
     "index.js",
     "phovea.js",
     "phovea_registry.js",
-    "build",
-    "ordino",
-    "__init__.py",
-    "__main__.py",
-    "requirements.txt",
-    "requirements_dev.txt",
-    "docker_packages.txt",
-    "redhat_packages.txt"
+    "build"
   ],
   "engines": {
     "npm": ">= 3",
@@ -37,55 +30,26 @@
     "iojs": ">= 3"
   },
   "scripts": {
-    "check": "flake8",
-    "pretest": "echo hybrid",
-    "test": "npm run test:web && npm run test:python",
-    "predist": "echo hybrid",
-    "dist": "npm run dist:web && npm run dist:python",
+    "predist": "npm run build && npm run docs",
+    "predocker": "npm run build",
+    "docker": "docker build -t ordino -f deploy/Dockerfile .",
     "compile": "tsc",
     "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
-    "docs": "npm run docs:web && npm run docs:python",
-    "prebuild": "echo hybrid",
-    "posttest": "echo hybrid",
+    "docs": "typedoc --options typedoc.json src/**.ts",
+    "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
+    "pretest": "npm run compile",
+    "test": "test ! -d tests || karma start",
+    "posttest": "npm run lint",
     "test:watch": "karma start --autoWatch=true --singleRun=false",
     "build:dev": "webpack",
-    "build": "npm run build:web && npm run build:python",
+    "build": "webpack --env prod",
     "start": "webpack-dev-server --inline",
     "start:hot": "webpack-dev-server --inline --hot",
     "watch": "webpack --watch",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "pretest:web": "npm run compile",
-    "pretest:python": "npm run check",
-    "posttest:web": "npm run lint",
-    "test:web": "test ! -d tests || karma start",
-    "test:python": "test ! -d tests || python setup.py test",
-    "predist:web": "npm run build:web && npm run docs:web",
-    "dist:web": "mkdirp dist && cd build && tar cvzf ../dist/ordino.tar.gz *",
-    "dist:python": "python setup.py bdist_egg",
-    "predocker": "npm run build",
-    "docker": "docker build -t ordino -f deploy/Dockerfile .",
-    "docs:web": "typedoc --options typedoc.json src/**.ts",
-    "docs:python": "sphinx-apidoc -o docs -f ./ordino && sphinx-build ./docs build/docs",
-    "build:python": "python build.py",
-    "build:web": "webpack --env prod",
-    "predist:python": "npm run build:python && npm run docs:python",
-    "prebuild:python": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test:python",
-    "prebuild:web": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test:web"
-  },
-  "dependencies": {
-    "@types/d3": "3.5.36",
-    "@types/jquery.scrollto": "1.4.27",
-    "@types/select2": "4.0.30",
-    "d3": "3.5.17",
-    "jquery.scrollto": "2.1.2",
-    "lineupjs": "github:Caleydo/lineupjs#master",
-    "phovea_clue": "github:phovea/phovea_clue#develop",
-    "select2": "4.0.3",
-    "select2-bootstrap-theme": "0.1.0-beta.9",
-    "@types/jquery": "2.0.33",
-    "jquery": "3.1.1"
+    "dist": "mkdirp dist && cd build && tar cvzf ../dist/ordino.tar.gz *"
   },
   "devDependencies": {
     "@types/jasmine": "2.5.41",
@@ -117,6 +81,13 @@
     "typescript": "2.2.0",
     "url-loader": "0.5.7",
     "webpack": "2.2.1",
-    "webpack-dev-server": "2.3.0"
+    "webpack-dev-server": "2.4.2",
+    "ifdef-loader": "2.0.0"
+  },
+  "dependencies": {
+    "@types/jquery.scrollto": "1.4.27",
+    "jquery.scrollto": "2.1.2",
+    "@types/jquery": "2.0.33",
+    "tdp_core": "github:datavisyn/tdp_core#develop"
   }
 }

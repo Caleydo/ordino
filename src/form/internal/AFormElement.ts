@@ -80,7 +80,8 @@ export abstract class AFormElement<T extends IFormElementDesc> extends EventHand
       $node.attr((key === 'clazz') ? 'class' : key, attributes[key]);
     });
 
-    if (this.desc.required) {
+    if (this.desc.required && !this.desc.showIf) {
+      // auto enable just if there is no conditional viewing
       $node.attr('required', 'required');
     }
   }

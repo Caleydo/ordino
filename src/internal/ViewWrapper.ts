@@ -49,7 +49,7 @@ export default class ViewWrapper extends EventHandler {
   }
 
   /**
-   * Forward event from view to Targid instance
+   * Forward event from view to app instance
    * @param event
    * @param idtype
    * @param namedSet
@@ -275,8 +275,8 @@ export default class ViewWrapper extends EventHandler {
   private scrollIntoView() {
     const prev = (<any>this.$viewWrapper.node()).previousSibling;
     const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
-    const $targid = $(this.$viewWrapper.node()).parent();
-    (<any>$targid).scrollTo(scrollToPos, 500, {axis:'x'});
+    const $app = $(this.$viewWrapper.node()).parent();
+    (<any>$app).scrollTo(scrollToPos, 500, {axis:'x'});
   }
 
   /**

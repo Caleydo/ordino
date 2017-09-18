@@ -2,7 +2,7 @@
  * Created by Holger Stitz on 27.07.2016.
  */
 
-import {Targid} from './Targid';
+import OrdinoApp from './OrdinoApp';
 import {INamedSet} from 'tdp_core/src/storage';
 import {list as listPlugins} from 'phovea_core/src/plugin';
 import {select, Selection, selection, event as d3event} from 'd3';
@@ -29,7 +29,7 @@ export default class StartMenu {
    */
   private restoreKeyDownListener: (ev: KeyboardEvent) => any;
 
-  constructor(parent: Element, private readonly targid: Targid) {
+  constructor(parent: Element, private readonly app: OrdinoApp) {
     this.$node = select(parent);
     this.build();
   }
@@ -124,8 +124,8 @@ export default class StartMenu {
     const that = this;
 
     const options = {
-      session: this.targid.initNewSession.bind(this.targid),
-      graphManager: this.targid.graphManager
+      session: this.app.initNewSession.bind(this.app),
+      graphManager: this.app.graphManager
     };
 
     this.$sections.each(function (desc: IStartMenuSectionDesc) {

@@ -133,6 +133,7 @@ export default class StartMenu {
       const elem = <HTMLElement>this.querySelector('div.body');
 
       // do not load entry point again, if already loaded
+      // i.e. when the StartMenu is opened again and sections are already initialized
       if (that.hasSection(desc)) {
         return;
       }
@@ -147,6 +148,9 @@ export default class StartMenu {
         that.sections.push(section);
       });
     });
+
+    // update sections when opening the StartMenu
+    this.sections.forEach((section) => section.update());
   }
 
 }

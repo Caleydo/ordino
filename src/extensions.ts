@@ -27,4 +27,5 @@ export interface IStartMenuSection {
   readonly desc: IPluginDesc;
 
   push(namedSet: INamedSet): boolean;
+  update?(): void;
 }

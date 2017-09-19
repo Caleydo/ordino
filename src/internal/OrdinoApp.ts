@@ -17,13 +17,13 @@ import * as session from 'phovea_core/src/session';
 
 
 /**
- * The main class for the TargID app
+ * The main class for the Ordino app
  * This class ...
  * - handles the creation, removal, and focus of views
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class Targid extends EventHandler {
+export default class OrdinoApp extends EventHandler {
   static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
@@ -32,13 +32,13 @@ export class Targid extends EventHandler {
   private readonly views:ViewWrapper[] = [];
 
   /**
-   * IObjectRef to this Targid instance
-   * @type {IObjectRef<Targid>}
+   * IObjectRef to this OrdinoApp instance
+   * @type {IObjectRef<OrdinoApp>}
    */
-  readonly ref:IObjectRef<Targid>;
+  readonly ref:IObjectRef<OrdinoApp>;
 
   private readonly $history:d3.Selection<any>;
-  private readonly $node:d3.Selection<Targid>;
+  private readonly $node:d3.Selection<OrdinoApp>;
 
   private readonly removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
   private readonly chooseNextView = (event:IEvent, viewId:string, idtype:IDType, selection:Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
@@ -46,8 +46,8 @@ export class Targid extends EventHandler {
 
   constructor(public readonly graph:ProvenanceGraph, public readonly graphManager:CLUEGraphManager, parent:HTMLElement) {
     super();
-    // add TargId app as (first) object to provenance graph
-    // need old name for compatiblity
+    // add OrdinoApp app as (first) object to provenance graph
+    // need old name for compatibility
     this.ref = graph.findOrAddObject(this, 'Targid', cat.visual);
 
 
@@ -72,7 +72,7 @@ export class Targid extends EventHandler {
     $history.select('.homeButton > a').on('click', (d) => {
       // prevent changing the hash (href)
       (<Event>d3.event).preventDefault();
-      this.fire(Targid.EVENT_OPEN_START_MENU);
+      this.fire(OrdinoApp.EVENT_OPEN_START_MENU);
     });
     return $history;
   }
@@ -391,7 +391,6 @@ export class Targid extends EventHandler {
     });
   }
 }
-export default Targid;
 
 /**
  * Helper function to filter views that were created
@@ -401,15 +400,4 @@ export default Targid;
 function isCreateView(stateNode: StateNode) {
   const creator = stateNode.creator;
   return creator != null && creator.meta.category === cat.visual && creator.meta.operation === op.create;
-}
-
-/**
- * Factory method to create a new Targid instance
- * @param graph
- * @param graphManager
- * @param parent
- * @returns {Targid}
- */
-export function create(graph:ProvenanceGraph, graphManager:CLUEGraphManager, parent:HTMLElement) {
-  return new Targid(graph, graphManager, parent);
 }

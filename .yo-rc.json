@@ -12,7 +12,7 @@
         "bob",
         [
           "datatype",
-          "(table|matrix|stratification|vector|atom)"
+          "(matrix|stratification|vector|atom)"
         ],
         [
           "clue",

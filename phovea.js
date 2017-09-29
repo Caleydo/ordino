@@ -47,7 +47,7 @@ module.exports = function (registry) {
   registry.push('ordinoStartMenuSection', 'targid_temporary_session', function () {
     return import('./src/menu/internal/TemporarySessionSection');
   }, {
-    name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 10 recent ones"></i>',
+    name: 'Temporary Sessions',
     cssClass: 'tdpSessionTemporaryData',
     priority: 90
   });

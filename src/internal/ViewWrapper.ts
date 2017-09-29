@@ -200,8 +200,8 @@ export default class ViewWrapper extends EventHandler {
   }
 
 
-  private onParameterChange(name: string, value: any) {
-    return this.context.graph.push(setParameter(this.ref, name, value));
+  private onParameterChange(name: string, value: any, previousValue: any) {
+    return this.context.graph.push(setParameter(this.ref, name, value, previousValue));
   }
 
   getParameter(name: string) {

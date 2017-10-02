@@ -194,7 +194,12 @@
       text-align: center;
       content: $fa-var-clock-o;
     }
-    .body {
+
+    p {
+      max-width: 35vw;
+    }
+
+    .body div {
       max-height: 300px;
       overflow-y: auto;
     }
@@ -206,6 +211,10 @@
       width: (18em / 14);
       text-align: center;
       content: $fa-var-cloud;
+    }
+
+    p {
+      max-width: 35vw;
     }
 
     .tab-pane {

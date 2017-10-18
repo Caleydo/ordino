@@ -1,0 +1,31 @@
+{
+  "tdp_core": {
+    "from": "github:datavisyn/tdp_core#thinkh/provenance_retrieval",
+    "dependencies": {
+      "phovea_clue": {
+        "from": "github:phovea/phovea_clue#thinkh/provenance_retrieval",
+        "dependencies": {
+          "phovea_core": {
+            "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+          },
+          "phovea_ui": {
+            "from": "github:phovea/phovea_ui#develop",
+            "dependencies": {
+              "phovea_core": {
+                "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+              }
+            }
+          },
+          "phovea_security_flask": {
+            "from": "github:phovea/phovea_security_flask#develop",
+            "dependencies": {
+              "phovea_core": {
+                "from": "github:phovea/phovea_core#thinkh/provenance_retrieval"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

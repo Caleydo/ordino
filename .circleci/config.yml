@@ -23,7 +23,9 @@ jobs:
           - ./node_modules
       - run: #install all dependencies
           name: install-npm-wee2
-          command: npm install
+          command: |
+            npm install
+            npm dedupe
       - run:
           name: dist
           command: npm run dist

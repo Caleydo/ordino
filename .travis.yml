@@ -11,4 +11,8 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
 
+install:
+- npm install
+- npm dedupe
+
 script: npm run dist

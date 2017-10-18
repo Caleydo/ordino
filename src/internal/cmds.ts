@@ -11,6 +11,7 @@ import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import OrdinoApp from './OrdinoApp';
 import {EXTENSION_POINT_TDP_VIEW} from 'tdp_core/src/extensions';
 import {lastOnly} from 'phovea_clue/src/compress';
+import {ActionMetaData} from 'phovea_core/src/provenance/ActionNode';
 
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
@@ -111,7 +112,7 @@ export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any)
 export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
-  return action(meta('Add ' + view.name, cat.visual, op.create), CMD_CREATE_VIEW, createViewImpl, [app], {
+  return action(meta(`Add ${view.name}`, cat.visual, op.create), CMD_CREATE_VIEW, createViewImpl, [app], {
     viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : none().toString(),
@@ -128,7 +129,7 @@ export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: I
  */
 export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
   // assert view
-  return action(meta('Remove ' + view.toString(), cat.visual, op.remove), CMD_REMOVE_VIEW, removeViewImpl, [app, view], {
+  return action(meta(`Remove ${view.toString()}`, cat.visual, op.remove), CMD_REMOVE_VIEW, removeViewImpl, [app, view], {
     viewId: view.value.desc.id,
     focus: oldFocus
   });
@@ -147,7 +148,7 @@ export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrap
 export function replaceView(app: IObjectRef<OrdinoApp>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
-  return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), CMD_REPLACE_VIEW, replaceViewImpl, [app, existingView], {
+  return action(meta(`Replace ${existingView.name} with ${view.name}`, cat.visual, op.update), CMD_REPLACE_VIEW, replaceViewImpl, [app, existingView], {
     viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : none().toString(),
@@ -167,25 +168,57 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
   if (target) {
     target.setParameterSelection({idtype, range});
   }
+
+  let actionMetaData;
+  if(inputs.length > 1) {
+    actionMetaData = await setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range, range);
+  } else {
+    actionMetaData = await setSelection(inputs[0], bak.idtype, bak.range, range);
+  }
+
   return {
-    inverse: inputs.length > 1 ? setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range) : setSelection(inputs[0], bak.idtype, bak.range)
+    inverse: actionMetaData
   };
 }
 
-export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+export async function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range, options?): Promise<IAction> {
+  const actionMetaData = await selectionMeta(idtype, range, old, (options && options.mapRangeToNames));
   // assert view
-  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), CMD_SET_SELECTION, setSelectionImpl, [view], {
+  return action(actionMetaData, CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
 }
 
-export function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+export async function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range, old:Range, options?): Promise<IAction> {
+  const actionMetaData = await selectionMeta(idtype, range, old, (options && options.mapRangeToNames));
   // assert view
-  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), CMD_SET_SELECTION, setSelectionImpl, [view, target], {
+  return action(actionMetaData, CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
+}
+
+function selectionMeta(idtype:IDType, range:Range, old:Range, mapRangeToNames?:(idtype:IDType, range:Range) => Promise<string[]>):Promise<ActionMetaData> {
+  const rangeLen = range.dim(0).length;
+  let promise = Promise.resolve(`Nothing selected`);
+
+  if (idtype !== null && rangeLen > 0) {
+    let prefix = 'Selected';
+    let rangeDiff = range.without(old);
+
+    // name select/deselect <item>, since the previously added item remains unclear
+    if(rangeDiff.dim(0).length === 0) {
+      prefix = 'Deselected';
+      rangeDiff = old.without(range);
+    }
+
+    const defaultMapper = (idtype:IDType, range:Range) => idtype.unmap(range);
+    const mapper = (mapRangeToNames) ? mapRangeToNames : defaultMapper;
+    promise = mapper(idtype, rangeDiff).then((names:string[]) => `${prefix} ${names[0]} (${rangeLen} ${idtype.names})`);
+  }
+
+  return promise.then((title) => meta(title, cat.selection, op.update));
 }
 
 /**

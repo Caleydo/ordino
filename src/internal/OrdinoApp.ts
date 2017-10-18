@@ -14,6 +14,14 @@ import {createView, removeView, replaceView, setSelection, setAndUpdateSelection
 import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
+import {
+  categoricalProperty, PropertyType,
+  createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR, setProperty
+} from 'phovea_core/src/provenance/retrieval/VisStateProperty';
+import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
+import {list as listPlugins} from 'phovea_core/src/plugin';
+import {IFormSerializedElement} from 'tdp_core/src/form/interfaces';
+import {EXTENSION_POINT_TDP_VIEW} from 'tdp_core/src/extensions';
 
 
 /**
@@ -23,7 +31,7 @@ import * as session from 'phovea_core/src/session';
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export default class OrdinoApp extends EventHandler {
+export default class OrdinoApp extends EventHandler implements IVisStateApp {
   static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
@@ -190,9 +198,17 @@ export default class OrdinoApp extends EventHandler {
    * @param options
    */
   private updateItemSelection(viewWrapper:ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
+    const selectionOptions = {
+      mapRangeToNames: this.mapRangeToNames
+    };
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.graph.pushWithResult(setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse : setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
+      Promise.all([
+        setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range, oldSelection.range, selectionOptions),
+        setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range, newSelection.range, selectionOptions)
+      ]).then((actions) => {
+        this.graph.pushWithResult(actions[0], { inverse : actions[1]});
+      });
 
     // check last view and if it will stay open for the new given selection
     } else {
@@ -202,7 +218,12 @@ export default class OrdinoApp extends EventHandler {
       // update selection with the last open (= right) view
       if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
         right.setParameterSelection(newSelection);
-        this.graph.pushWithResult(setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse : setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+        Promise.all([
+          setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range, oldSelection.range, selectionOptions),
+          setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range, newSelection.range, selectionOptions)
+        ]).then((actions) => {
+          this.graph.pushWithResult(actions[0], { inverse : actions[1]});
+        });
 
       // the selection does not match with the last open (= right) view --> close view
       } else {
@@ -390,6 +411,117 @@ export default class OrdinoApp extends EventHandler {
       }
     });
   }
+
+  getVisStateProps(): Promise<IProperty[]> {
+    const groupedViews = new Map<string, {id:string, text:string}[]>();
+    listPlugins(EXTENSION_POINT_TDP_VIEW)
+      .forEach((v) => {
+        const group = (v.group) ? v.group.name : 'Other'; // fallback category if none is present
+        let views = (groupedViews.has(group)) ? groupedViews.get(group) : [];
+        views = [
+          ...views,
+          {id: String(v.id), text: v.name}
+        ];
+        groupedViews.set(group, views);
+      });
+
+    const viewsProp:IProperty[] = Array.from(groupedViews.entries())
+      .sort((a, b) => a[0].toUpperCase().localeCompare(b[0].toUpperCase())) // ignore upper and lowercase
+      .map((d) => categoricalProperty(`${d[0]} Views`, d[1]));
+
+    const idtypesMap = new Map<string, Map<string, IPropertyValue>>();
+
+    this.graph.states
+      .map((s) => s.visState)
+      .filter((vs) => vs.isPersisted())
+      .map((vs) => vs.propValues)
+      .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
+      .filter((d) => d && d.type === PropertyType.SET)
+      .forEach((p) => {
+        const propvals = idtypesMap.get(p.baseId) || new Map<string, IPropertyValue>();
+        if(!propvals.has(p.id)) {
+          propvals.set(p.id, p);
+        }
+        idtypesMap.set(p.baseId, propvals);
+      });
+
+    const selectionProps = Array.from(idtypesMap.keys())
+      .map((key) => {
+        return setProperty(`Selected ${key}`, Array.from(idtypesMap.get(key).values()));
+      });
+
+    return Promise.resolve([
+      ...viewsProp,
+      ...selectionProps
+    ]);
+  }
+
+  getCurrVisState(): Promise<IPropertyValue[]> {
+    const views:ViewWrapper[] = this.views.slice(-2); // get the focus and context view
+
+    const viewPropVals = views.map((v) => {
+      return createPropertyValue(PropertyType.CATEGORICAL, {
+        id: String(v.desc.id),
+        text: v.desc.name,
+        group: 'views'
+      });
+    });
+
+    const selectionPromises:Promise<IPropertyValue[]>[] = views
+      .map((v) => {
+        const idtype = v.getItemSelection().idtype;
+        const range = v.getItemSelection().range;
+
+        if(!idtype) {
+          return Promise.resolve([]);
+        }
+
+        return Promise.all([this.mapRangeToNames(idtype, range), idtype.unmap(range)])
+          .then((args) => {
+            return args[0].map((name, i) => {
+              return createPropertyValue(PropertyType.SET, {
+                id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${args[1][i]}`,
+                text: `${name}`,
+                group: 'selections',
+              });
+            });
+          });
+      });
+
+    const paramPropVals = views
+      .map((v) => v.getAllParameters())
+      .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
+      .map((param:IFormSerializedElement) => {
+        return param.values.map((v) => {
+          return createPropertyValue(PropertyType.SET, {
+            id: `${param.id} ${TAG_VALUE_SEPARATOR} ${v.key}`,
+            text: `${v.value}`,
+            group: 'parameters',
+            payload: {
+              paramVal: v
+            }
+          });
+        });
+      })
+      .reduce((prev, curr) => prev.concat(curr), []); // flatten the array;
+
+    return Promise.all(selectionPromises)
+      .then((selections:IPropertyValue[][]) => {
+        const flatSelections = selections.reduce((prev, curr) => prev.concat(curr), []);
+        return [...viewPropVals, ...flatSelections, ...paramPropVals];
+      });
+  }
+
+  private mapRangeToNames(idtype:IDType, range:Range):Promise<string[]> {
+    // Disabled the gene mapping for now, since the loadGeneList() is not available in this (ordino) repo
+    //let mapper = idtype.unmap(range);
+    //if(idtype.id === 'Ensembl') { // special case for genes
+    //  mapper = mapper.then((names) => loadGeneList(names))
+    //    .then((idAndSymbols) => idAndSymbols.map((d) => `${d.symbol} (${d.id})`));
+    //}
+    //return mapper;
+    return idtype.unmap(range);
+  };
 }
 
 /**

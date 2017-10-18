@@ -17,6 +17,7 @@ import {
   matchLength,  showAsSmallMultiple, toViewPluginDesc
 } from 'tdp_core/src/views';
 import {resolveImmediately} from 'phovea_core/src/internal/promise';
+import {IFormSerializedElement} from '../../../tdp_core/src/form/interfaces';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
@@ -202,6 +203,10 @@ export default class ViewWrapper extends EventHandler {
 
   private onParameterChange(name: string, value: any, previousValue: any) {
     return this.context.graph.push(setParameter(this.ref, name, value, previousValue));
+  }
+
+  getAllParameters():IFormSerializedElement[] {
+    return this.instance.getAllParameters();
   }
 
   getParameter(name: string) {

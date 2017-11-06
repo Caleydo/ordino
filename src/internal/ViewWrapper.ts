@@ -18,6 +18,7 @@ import {
 } from 'tdp_core/src/views';
 import {resolveImmediately} from 'phovea_core/src/internal/promise';
 import {IFormSerializedElement} from 'tdp_core/src/form/interfaces';
+import {groupByCategory} from 'tdp_core/src/views/findViews';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
@@ -300,70 +301,15 @@ export default class ViewWrapper extends EventHandler {
     }
 
     findViews(idtype, range).then((views) => {
-      const groups = new Map();
-      views.forEach((elem) => {
-        if(!elem.v.group) { // fallback category if none is present
-          elem.v.group = {
-            name: 'Other'
-          };
-        }
-        if(!groups.has(elem.v.group.name)) {
-          groups.set(elem.v.group.name, [elem]);
-        } else {
-          groups.get(elem.v.group.name).push(elem);
-        }
-      });
+      const groups = groupByCategory(views);
 
-      const groupsArray = Array.from(groups);
+      const $categories = this.$chooser.selectAll('div.category').data(groups);
 
-      const orderDescs = listPlugins('chooserConfig').map((desc) => desc.order);
-
-      function orderAlphabetically(a: string, b: string): number {
-        const firstKey = a.toLowerCase();
-        const secondKey = b.toLowerCase();
-
-        // firstKey alphabetically before secondKey? sort firstKey at lower index or vice versa
-        // else the keys are equal
-        return firstKey < secondKey? -1 : firstKey > secondKey? 1 : 0;
-      }
-
-      let sortedGroups = null;
-      // order groups by defined weights if they exist
-      if(orderDescs.length) {
-        const categoryOrder = Object.assign({}, ...orderDescs);
-        sortedGroups = groupsArray.sort((a, b) => {
-          const firstOrder: number = categoryOrder[a[0]];
-          const secondOrder: number = categoryOrder[b[0]];
-
-          // no order numbers provided -> sort alphabetically by keys
-          if(firstOrder === undefined || secondOrder === undefined || firstOrder === secondOrder) {
-            return orderAlphabetically(a[0], b[0]);
-          }
-
-          return firstOrder - secondOrder;
-        });
-      } else {
-        // order groups alphabetically as a fallback
-        sortedGroups = groupsArray.sort((a, b) => orderAlphabetically(a[0], b[0]));
-      }
-
-      const $categories = this.$chooser.selectAll('div.category').data(sortedGroups);
-
-      $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d[0]);
+      $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d.label);
       $categories.exit().remove();
 
       // sort data that buttons inside groups are sorted
-      const $buttons = $categories.selectAll('button').data((d: [ string, {enabled: boolean, v: IViewPluginDesc}[] ]) => d[1].sort((a, b) => {
-        const firstOrder: number = a.v.group.order;
-        const secondOrder: number = b.v.group.order;
-
-        // no order numbers provided -> sort alphabetically by keys
-        if(firstOrder === undefined || secondOrder === undefined || firstOrder === secondOrder) {
-          return orderAlphabetically(a.v.name, b.v.name);
-        }
-
-        return firstOrder - secondOrder;
-      }));
+      const $buttons = $categories.selectAll('button').data((d) => d.views);
 
       $buttons.enter().append('button')
         .classed('btn btn-default', true);

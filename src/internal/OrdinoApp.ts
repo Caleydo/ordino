@@ -15,8 +15,7 @@ import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
 import {
-  categoricalProperty, PropertyType,
-  createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR, setProperty
+  PropertyType, createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR, setProperty, Property
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {list as listPlugins} from 'phovea_core/src/plugin';
@@ -413,7 +412,22 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
   }
 
   getVisStateProps(): Promise<IProperty[]> {
-    const groupedViews = new Map<string, {id:string, text:string}[]>();
+    const propValues = this.graph.states
+      .map((s) => s.visState)
+      .filter((vs) => vs.isPersisted())
+      .map((vs) => vs.propValues)
+      .reduce((prev, curr) => prev.concat(curr), []); // flatten the array
+
+    // get list of used selected views
+    const viewPropVals =  propValues
+      .filter((d) => d && d.group === 'views')
+      .filter((d, i, arr) => arr.findIndex((e) => e.id === d.id) === arr.lastIndexOf(d)) // make views unique
+      .map((prop) => prop.clone());
+
+    const viewsProp = new Property(PropertyType.CATEGORICAL, 'Views', viewPropVals);
+
+    // get list of all available views
+    /*const groupedViews = new Map<string, {id:string, text:string}[]>();
     listPlugins(EXTENSION_POINT_TDP_VIEW)
       .forEach((v) => {
         const group = (v.group) ? v.group.name : 'Other'; // fallback category if none is present
@@ -427,15 +441,12 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
     const viewsProp:IProperty[] = Array.from(groupedViews.entries())
       .sort((a, b) => a[0].toUpperCase().localeCompare(b[0].toUpperCase())) // ignore upper and lowercase
-      .map((d) => categoricalProperty(`${d[0]} Views`, d[1]));
+      .map((d) => categoricalProperty(`${d[0]} Views`, d[1]));*/
 
+    // get list of used selected items
     const idtypesMap = new Map<string, Map<string, IPropertyValue>>();
 
-    this.graph.states
-      .map((s) => s.visState)
-      .filter((vs) => vs.isPersisted())
-      .map((vs) => vs.propValues)
-      .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
+    propValues
       .filter((d) => d && d.type === PropertyType.SET)
       .forEach((p) => {
         const propvals = idtypesMap.get(p.baseId) || new Map<string, IPropertyValue>();
@@ -451,7 +462,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
       });
 
     return Promise.resolve([
-      ...viewsProp,
+      viewsProp,
       ...selectionProps
     ]);
   }

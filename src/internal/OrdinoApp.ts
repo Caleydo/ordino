@@ -468,9 +468,10 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
   }
 
   getCurrVisState(): Promise<IPropertyValue[]> {
-    const views:ViewWrapper[] = this.views.slice(-2); // get the focus and context view
+    const trippleView = this.views.slice(-3); // get also the view previous to context view for selections
+    const focusAndContextView:ViewWrapper[] = trippleView.slice(-2); // get the focus and context view for parameters and open views
 
-    const viewPropVals = views.map((v) => {
+    const viewPropVals = focusAndContextView.map((v) => {
       return createPropertyValue(PropertyType.CATEGORICAL, {
         id: String(v.desc.id),
         text: v.desc.name,
@@ -478,10 +479,13 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
       });
     });
 
-    const selectionPromises:Promise<IPropertyValue[]>[] = views
+    // capture the item selection of three views back
+    // the item selection of the third view (previous to the context view)
+    // is equal to the input selection of the context view
+    const selectionPromises:Promise<IPropertyValue[]>[] = trippleView
       .map((v) => {
-        const idtype = v.getItemSelection().idtype;
-        const range = v.getItemSelection().range;
+        const idtype = v.getInstance().getItemSelection().idtype;
+        const range = v.getInstance().getItemSelection().range;
 
         if(!idtype) {
           return Promise.resolve([]);
@@ -499,7 +503,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
           });
       });
 
-    const paramPropVals = views
+    const paramPropVals = focusAndContextView
       .map((v) => v.getAllParameters())
       .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
       .map((param:IFormSerializedElement) => {

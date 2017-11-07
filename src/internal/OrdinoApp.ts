@@ -18,9 +18,7 @@ import {
   PropertyType, createPropertyValue, IProperty, IPropertyValue, TAG_VALUE_SEPARATOR, setProperty, Property
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
-import {list as listPlugins} from 'phovea_core/src/plugin';
 import {IFormSerializedElement} from 'tdp_core/src/form/interfaces';
-import {EXTENSION_POINT_TDP_VIEW} from 'tdp_core/src/extensions';
 
 
 /**
@@ -458,7 +456,25 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
     const selectionProps = Array.from(idtypesMap.keys())
       .map((key) => {
-        return setProperty(`Selected ${key}`, Array.from(idtypesMap.get(key).values()));
+        // Ordino specific mapping for VisPeas prototype
+        // At the moment there is no solution to move this code to tdp_gene and use it without adding another dependency
+        let titleKey = key;
+        switch (key) {
+          case 'Ensembl':
+            titleKey = 'Genes';
+            break;
+          case 'Cellline':
+            titleKey = 'Cell Lines';
+            break;
+          case 'Tissue':
+            titleKey = 'Tissues';
+            break;
+          case 'externalItem':
+            titleKey = 'External Items';
+            break;
+        }
+
+        return setProperty(`Selected ${titleKey}`, Array.from(idtypesMap.get(key).values()));
       });
 
     return Promise.resolve([

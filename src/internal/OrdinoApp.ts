@@ -409,6 +409,26 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     });
   }
 
+  /**
+   * Ordino specific mapping for VisPeas prototype
+   * At the moment there is no solution to move this code to tdp_gene and use it without adding another dependency
+   * @param {string} name
+   * @returns {string}
+   */
+  private mapIdTypeName(name:string ):string {
+    switch (name) {
+      case 'Ensembl':
+        return 'Genes';
+      case 'Cellline':
+        return 'Cell Lines';
+      case 'Tissue':
+        return 'Tissues';
+      case 'externalItem':
+        return 'External Items';
+    }
+    return name;
+  }
+
   getVisStateProps(): Promise<IProperty[]> {
     const propValues = this.graph.states
       .map((s) => s.visState)
@@ -456,25 +476,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
     const selectionProps = Array.from(idtypesMap.keys())
       .map((key) => {
-        // Ordino specific mapping for VisPeas prototype
-        // At the moment there is no solution to move this code to tdp_gene and use it without adding another dependency
-        let titleKey = key;
-        switch (key) {
-          case 'Ensembl':
-            titleKey = 'Genes';
-            break;
-          case 'Cellline':
-            titleKey = 'Cell Lines';
-            break;
-          case 'Tissue':
-            titleKey = 'Tissues';
-            break;
-          case 'externalItem':
-            titleKey = 'External Items';
-            break;
-        }
-
-        return setProperty(`Selected ${titleKey}`, Array.from(idtypesMap.get(key).values()));
+        return setProperty(`Selected ${this.mapIdTypeName(key)}`, Array.from(idtypesMap.get(key).values()));
       });
 
     return Promise.resolve([
@@ -491,7 +493,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
       return createPropertyValue(PropertyType.CATEGORICAL, {
         id: String(v.desc.id),
         text: v.desc.name,
-        group: 'views'
+        group: 'Views'
       });
     });
 
@@ -513,7 +515,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
               return createPropertyValue(PropertyType.SET, {
                 id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${args[1][i]}`,
                 text: `${name}`,
-                group: 'selections',
+                group: `Selected ${this.mapIdTypeName(idtype.id)}`,
               });
             });
           });
@@ -527,7 +529,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
           return createPropertyValue(PropertyType.SET, {
             id: `${param.id} ${TAG_VALUE_SEPARATOR} ${v.key}`,
             text: `${v.value}`,
-            group: 'parameters',
+            group: 'Parameters',
             payload: {
               paramVal: v
             }

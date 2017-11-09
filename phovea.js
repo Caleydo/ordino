@@ -6,67 +6,57 @@
 
 //register all extensions in the registry following the given pattern
 module.exports = function (registry) {
-  //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
+  //registry.push('extension-type', 'extension-id', function() { return import('./src/extension_impl'); }, {});
   // generator-phovea:begin
 
-  registry.push('actionFactory', 'ordino', function () {
-    return System.import('./src/cmds');
+  registry.push('actionFunction', 'targidCreateView', function () {
+    return import('./src/internal/cmds');
   }, {
-    'factory': 'createCmd',
-    'creates': '(targidCreateView|targidRemoveView|targidReplaceView|targidInitSession|targidSetParameter|targidSetSelection)'
+    'factory': 'createViewImpl'
+  });
+  registry.push('actionFunction', 'targidRemoveView', function () {
+    return import('./src/internal/cmds');
+  }, {
+    'factory': 'removeViewImpl'
+  });
+  registry.push('actionFunction', 'targidReplaceView', function () {
+    return import('./src/internal/cmds');
+  }, {
+    'factory': 'replaceViewImpl'
+  });
+  registry.push('actionFunction', 'targidSetSelection', function () {
+    return import('./src/internal/cmds');
+  }, {
+    'factory': 'setSelectionImpl'
   });
 
-  registry.push('actionFactory', 'ordino', function() { return System.import('./src/lineup/cmds'); }, {
-  'factory': 'createCmd',
-  'creates': '(lineupAddRanking|lineupSetRankingSortCriteria|lineupSetColumn|lineupAddColumn)'
- });
-
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', function () {
-    return System.import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'compressCreateRemove',
     'matches': '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
-  registry.push('actionCompressor', 'targidCompressSetParameter', function () {
-    return System.import('./src/cmds');
-  }, {
-    'factory': 'compressSetParameter',
-    'matches': '(targidSetParameter)'
-  });
-
   registry.push('actionCompressor', 'targidCompressSetSelection', function () {
-    return System.import('./src/cmds');
+    return import('./src/internal/cmds');
   }, {
     'factory': 'compressSetSelection',
     'matches': '(targidSetSelection)'
   });
 
-  registry.push('actionFactory', 'ordinoScore', function() { return System.import('./src/lineup/scorecmds'); }, {
-  'factory': 'createCmd',
-  'creates': '(ordinoAddScore|ordinoRemoveScore)'
- });
-
-  registry.push('actionCompressor', 'ordinoScoreCompressor', function() { return System.import('./src/lineup/scorecmds'); }, {
-  'factory': 'compress',
-  'matches': '(ordinoAddScore|ordinoRemoveScore)'
- });
-
-  registry.push('targidStartMenuSection', 'targid_temporary_session', function () {
-    return System.import('./src/SessionList');
+  registry.push('ordinoStartMenuSection', 'targid_temporary_session', function () {
+    return import('./src/menu/internal/TemporarySessionSection');
   }, {
-    name: 'Temporary Sessions <i class="fa fa-question-circle-o" title="temporary sessions are stored on your local browser only and are limited to the 5 recent ones"></i>',
-    cssClass: 'targidSessionTemporaryData',
-    factory: 'createTemporary',
+    name: 'Temporary Sessions',
+    cssClass: 'tdpSessionTemporaryData',
     priority: 90
   });
 
-  registry.push('targidStartMenuSection', 'targid_persistent_session', function () {
-    return System.import('./src/SessionList');
+  registry.push('ordinoStartMenuSection', 'targid_persistent_session', function () {
+    return import('./src/menu/internal/PersistentSessionSection');
   }, {
     name: 'Persistent Sessions',
-    cssClass: 'targidSessionPersistentData',
-    factory: 'createPersistent',
+    cssClass: 'tdpSessionPersistentData',
     priority: 95
   });
 

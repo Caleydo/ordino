@@ -415,16 +415,116 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
    * @param {string} name
    * @returns {string}
    */
-  private mapIdTypeName(name:string ):string {
+  private mapName(name:string ):string {
     switch (name) {
+      // IDTypes
+      case 'ensg':
+      case 'gene_symbol':
       case 'Ensembl':
         return 'Genes';
+      case 'cellline_name':
+      case 'celllinename':
       case 'Cellline':
         return 'Cell Lines';
+      case 'tissue_name':
+      case 'tissuename':
       case 'Tissue':
         return 'Tissues';
       case 'externalItem':
         return 'External Items';
+
+      // FormMap Filter @see forms.ts
+      case 'tumortype':
+        return 'Tumor Types';
+      case 'organ':
+        return 'Organs';
+      case 'gender':
+        return 'Gender';
+
+      // TissueSpecificFilter @see forms.ts
+      case 'tumortype_adjacent':
+        return 'Tumor Type adjacent';
+      case 'vendorname':
+        return 'Vendor names';
+      case 'race':
+        return 'Races';
+      case 'ethnicity':
+        return 'Ethnicities';
+      case 'vital_status':
+        return 'Vital status';
+
+      // CelllineSpecificFilter @see forms.ts
+      case 'age_at_surgery':
+        return 'Age at Surgeries';
+      case 'growth_type':
+        return 'Growth Types';
+      case 'histology_type':
+        return 'Histology Types';
+      case 'metastatic_site':
+        return 'Metastatic Sites';
+      case 'morphology':
+        return 'Morphologies';
+
+      // FORM_GENE_FILTER
+      case 'biotype':
+        return 'Bio Types';
+      case 'strand':
+        return 'Strands';
+      case 'chromosome':
+        return 'Chromosomes';
+
+      // Parameter
+      case 'data_subtype':
+        return 'Data Subtypes';
+      case 'data_source':
+        return 'Data Sources';
+      case 'copynumber_subtype':
+        return 'Copy Numbers';
+      case 'expression_subtype':
+        return 'Expressions';
+      case 'referenceGene':
+        return 'Reference Genes';
+      case 'form_color_coding':
+        return 'Color Codings';
+      case 'comparison_cn':
+        return 'Copy Number Classes are';
+      case 'comparison_value':
+        return 'Comparison Values';
+      case 'comparison_operator':
+        return 'Comparison Operators';
+      case 'aggregation':
+        return 'Aggregations';
+      case 'hierarchical_data_subtype':
+        return 'Data Types';
+    }
+
+    // FormMap Filter @see forms.ts
+    if(name.startsWith('panel_')) {
+      return 'Predefined Named Sets';
+
+    } else if(name.startsWith('namedset4')) {
+      return 'My Named Sets';
+    }
+
+    return name;
+  }
+
+  /**
+   * Map FormMap keys from filter parameter to IDType name, so that they can be merged with the selections
+   *
+   * NOTE: Ordino specific mapping for VisPeas prototype
+   * At the moment there is no solution to move this code to tdp_gene and use it without adding another dependency
+   * @param {string} name
+   * @returns {string}
+   */
+  private mapKeyToIdtype(name:string ):string {
+    switch (name) {
+      case 'ensg':
+        return 'Ensembl';
+      case 'celllinename':
+        return 'Cellline';
+      case 'tissuename':
+        return 'Tissue';
     }
     return name;
   }
@@ -438,7 +538,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
     // get list of used selected views
     const viewPropVals =  propValues
-      .filter((d) => d && d.group === 'views')
+      .filter((d) => d && d.group === 'Views')
       .filter((d, i, arr) => arr.findIndex((e) => e.id === d.id) === arr.lastIndexOf(d)) // make views unique
       .map((prop) => prop.clone());
 
@@ -476,7 +576,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
     const selectionProps = Array.from(idtypesMap.keys())
       .map((key) => {
-        return setProperty(`Selected ${this.mapIdTypeName(key)}`, Array.from(idtypesMap.get(key).values()));
+        return setProperty(`Selected ${this.mapName(key)}`, Array.from(idtypesMap.get(key).values()));
       });
 
     return Promise.resolve([
@@ -515,7 +615,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
               return createPropertyValue(PropertyType.SET, {
                 id: `${idtype.id} ${TAG_VALUE_SEPARATOR} ${args[1][i]}`,
                 text: `${name}`,
-                group: `Selected ${this.mapIdTypeName(idtype.id)}`,
+                group: `Selected ${this.mapName(idtype.id)}`,
               });
             });
           });
@@ -524,12 +624,17 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     const paramPropVals = focusAndContextView
       .map((v) => v.getAllParameters())
       .reduce((prev, curr) => prev.concat(curr), []) // flatten the array
+      .filter((param) => param.values.length > 0) // create only properties if values exists
       .map((param:IFormSerializedElement) => {
         return param.values.map((v) => {
+          // for filters (FormMap) try to map key to idtype (e.g., celllinename); for other parameters use form field id
+          const id = (param.id === 'filter') ? `${this.mapKeyToIdtype(v.key)} ${TAG_VALUE_SEPARATOR} ${v.value}` : `${param.id} ${TAG_VALUE_SEPARATOR} ${v.key}`;
+          const group = (param.id === 'filter') ? `Filtered ${this.mapName(v.key)}` : this.mapName(param.id);
+
           return createPropertyValue(PropertyType.SET, {
-            id: `${param.id} ${TAG_VALUE_SEPARATOR} ${v.key}`,
+            id,
             text: `${v.value}`,
-            group: 'Parameters',
+            group,
             payload: {
               paramVal: v
             }
@@ -541,6 +646,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     return Promise.all(selectionPromises)
       .then((selections:IPropertyValue[][]) => {
         const flatSelections = selections.reduce((prev, curr) => prev.concat(curr), []);
+        console.log('paramPropVals', paramPropVals);
         return [...viewPropVals, ...flatSelections, ...paramPropVals];
       });
   }

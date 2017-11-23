@@ -238,7 +238,7 @@ export default class ViewWrapper extends EventHandler {
     if (isSameSelection(this.selection, selection)) {
       return;
     }
-
+    this.selection = selection;
     this.instance.setInputSelection(selection);
   }
 

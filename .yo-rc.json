@@ -9,6 +9,7 @@
     ],
     "registry": {
       "exclude": [
+        "dTiles",
         "bob",
         [
           "datatype",

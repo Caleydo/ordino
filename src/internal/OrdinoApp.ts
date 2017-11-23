@@ -19,6 +19,9 @@ import {
 } from 'phovea_core/src/provenance/retrieval/VisStateProperty';
 import {IVisStateApp} from 'phovea_clue/src/provenance_retrieval/IVisState';
 import {IFormSerializedElement} from 'tdp_core/src/form/interfaces';
+import {CMD_ADD_SCORE, CMD_REMOVE_SCORE} from 'tdp_core/src/lineup/internal/scorecmds';
+import ActionNode from 'phovea_core/src/provenance/ActionNode';
+import {ISelect2Option} from 'tdp_core/src/form/internal/FormSelect2';
 
 
 /**
@@ -478,8 +481,10 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
         return 'Data Subtypes';
       case 'data_source':
         return 'Data Sources';
+      case 'copy_number':
       case 'copynumber_subtype':
         return 'Copy Numbers';
+      case 'expression':
       case 'expression_subtype':
         return 'Expressions';
       case 'referenceGene':
@@ -494,8 +499,37 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
         return 'Comparison Operators';
       case 'aggregation':
         return 'Aggregations';
+      case 'data_type':
       case 'hierarchical_data_subtype':
         return 'Data Types';
+
+      // Score
+      case 'mutation':
+        return 'Mutation';
+      case 'tpm':
+        return 'TPM';
+      case 'counts':
+        return 'Raw Counts';
+      case 'relativecopynumber':
+        return 'Relative Copy Number';
+      case 'totalabscopynumber':
+        return 'Total Absolute Copy Number';
+      case 'aa_mutated':
+        return 'AA Mutated';
+      case 'dna_mutated':
+        return 'DNA Mutated';
+      case 'dnamutation':
+        return 'DNA Mutation';
+      case 'zygosity':
+        return 'Zygosity';
+      case 'depletion':
+        return 'RNAi Screen';
+      case 'rsa':
+        return 'DRIVE RSA (ER McDonald III et al., Cell, 2017)';
+      case 'ataris':
+        return 'DRIVE ATARiS (ER McDonald III et al., Cell, 2017)';
+      case 'ceres':
+        return 'Avana CERES (Robin M. Meyers et al., Nature Genetics, 2017)';
     }
 
     // FormMap Filter @see forms.ts
@@ -520,9 +554,12 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
   private mapKeyToIdtype(name:string ):string {
     switch (name) {
       case 'ensg':
+      case 'gene':
         return 'Ensembl';
+      case 'cellline':
       case 'celllinename':
         return 'Cellline';
+      case 'tissue':
       case 'tissuename':
         return 'Tissue';
     }
@@ -636,7 +673,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
             text: `${v.value}`,
             group,
             payload: {
-              paramVal: v
+              //paramVal: v
             }
           });
         });
@@ -646,9 +683,75 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     return Promise.all(selectionPromises)
       .then((selections:IPropertyValue[][]) => {
         const flatSelections = selections.reduce((prev, curr) => prev.concat(curr), []);
-        console.log('paramPropVals', paramPropVals);
-        return [...viewPropVals, ...flatSelections, ...paramPropVals];
+        return [...viewPropVals, ...flatSelections, ...paramPropVals, ...this.trackScoreColumnsParams()];
       });
+  }
+
+  private trackScoreColumnsParams():IPropertyValue[] {
+    let props = [];
+    const scoreDialog = this.graph.act.outgoing
+        .filter((d) => d.type === 'next')!
+        .map((d) => d.target)
+        .filter((d:ActionNode) => d.f_id === CMD_ADD_SCORE || d.f_id === CMD_REMOVE_SCORE)!
+        .map((d:ActionNode) => d.parameter)[0]!;
+
+    if(scoreDialog && scoreDialog.id.endsWith('_single_score')) {
+      const idtype = this.mapKeyToIdtype(scoreDialog.id.split('_')[1]);
+
+      if(scoreDialog.params.name) {
+        const convertNames = (d:ISelect2Option) => {
+          return createPropertyValue(PropertyType.SET, {
+            id: `${idtype} = ${d.id}`,
+            text: `${d.text}`,
+            group: `Selected ${this.mapName(idtype)}`,
+            payload: {
+              //paramVal: d
+            }
+          });
+        };
+
+        props = [...props, ...scoreDialog.params.name.map(convertNames)];
+      }
+
+      if(scoreDialog.params.data_types) {
+        const convertDataTypes = (d) => {
+          return createPropertyValue(PropertyType.SET, {
+            id: `data_type = ${d[1]}`,
+            text: `${this.mapName(d[1])}`,
+            group: `${this.mapName('data_type')}`,
+            payload: {
+              //paramVal: d
+            }
+          });
+        };
+
+        props = [...props, ...scoreDialog.params.data_types.map(convertDataTypes)];
+      }
+
+      if(scoreDialog.params.data_type) {
+        props = [...props, createPropertyValue(PropertyType.SET, {
+          id: `data_type = ${scoreDialog.params.data_type}`,
+          text: `${this.mapName(scoreDialog.params.data_type)}`,
+          group: `${this.mapName('data_type')}`,
+          payload: {
+            //paramVal: d
+          }
+        })];
+      }
+
+      if(scoreDialog.params.data_subtype) {
+        props = [...props, createPropertyValue(PropertyType.SET, {
+          id: `data_subtype = ${scoreDialog.params.data_subtype}`,
+          text: `${this.mapName(scoreDialog.params.data_subtype)}`,
+          group: `${this.mapName('data_subtype')}`,
+          payload: {
+            //paramVal: d
+          }
+        })];
+      }
+    }
+
+    return props;
   }
 
   private mapRangeToNames(idtype:IDType, range:Range):Promise<string[]> {

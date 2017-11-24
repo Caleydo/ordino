@@ -500,6 +500,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
       case 'aggregation':
         return 'Aggregations';
       case 'data_type':
+      case 'data_types':
       case 'hierarchical_data_subtype':
         return 'Data Types';
 
@@ -671,10 +672,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
           return createPropertyValue(PropertyType.SET, {
             id,
             text: `${v.value}`,
-            group,
-            payload: {
-              //paramVal: v
-            }
+            group
           });
         });
       })
@@ -689,67 +687,69 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
   private trackScoreColumnsParams():IPropertyValue[] {
     let props = [];
+
     const scoreDialog = this.graph.act.outgoing
         .filter((d) => d.type === 'next')!
         .map((d) => d.target)
         .filter((d:ActionNode) => d.f_id === CMD_ADD_SCORE || d.f_id === CMD_REMOVE_SCORE)!
         .map((d:ActionNode) => d.parameter)[0]!;
 
-    if(scoreDialog && scoreDialog.id.endsWith('_single_score')) {
-      const idtype = this.mapKeyToIdtype(scoreDialog.id.split('_')[1]);
-
-      if(scoreDialog.params.name) {
-        const convertNames = (d:ISelect2Option) => {
-          return createPropertyValue(PropertyType.SET, {
-            id: `${idtype} = ${d.id}`,
-            text: `${d.text}`,
-            group: `Selected ${this.mapName(idtype)}`,
-            payload: {
-              //paramVal: d
-            }
-          });
-        };
-
-        props = [...props, ...scoreDialog.params.name.map(convertNames)];
-      }
-
-      if(scoreDialog.params.data_types) {
-        const convertDataTypes = (d) => {
-          return createPropertyValue(PropertyType.SET, {
-            id: `data_type = ${d[1]}`,
-            text: `${this.mapName(d[1])}`,
-            group: `${this.mapName('data_type')}`,
-            payload: {
-              //paramVal: d
-            }
-          });
-        };
-
-        props = [...props, ...scoreDialog.params.data_types.map(convertDataTypes)];
-      }
-
-      if(scoreDialog.params.data_type) {
-        props = [...props, createPropertyValue(PropertyType.SET, {
-          id: `data_type = ${scoreDialog.params.data_type}`,
-          text: `${this.mapName(scoreDialog.params.data_type)}`,
-          group: `${this.mapName('data_type')}`,
-          payload: {
-            //paramVal: d
-          }
-        })];
-      }
-
-      if(scoreDialog.params.data_subtype) {
-        props = [...props, createPropertyValue(PropertyType.SET, {
-          id: `data_subtype = ${scoreDialog.params.data_subtype}`,
-          text: `${this.mapName(scoreDialog.params.data_subtype)}`,
-          group: `${this.mapName('data_subtype')}`,
-          payload: {
-            //paramVal: d
-          }
-        })];
-      }
+    if(!scoreDialog) {
+      return props;
     }
+
+    const createPropValWrapper = (idtype:string, id:string, text:string = null) => {
+      return createPropertyValue(PropertyType.SET, {
+        id: `${idtype} = ${id}`,
+        text: (text) ? text : this.mapName(id),
+        group: `Selected ${this.mapName(idtype)}`
+      });
+    };
+
+    // run through all parameters and convert them to PropertyValues
+    Object.entries(scoreDialog.params).forEach((p) => {
+      const paramName = (p[0] === 'data_types') ? 'data_type' : p[0]; // special case for data_type[s!]
+      const param = p[1];
+
+      // special handling for names to use the idtype as key
+      if(paramName === 'name') {
+        const idtype = this.mapKeyToIdtype(scoreDialog.id.split('_')[1]);
+        param.forEach((d: ISelect2Option) => {
+          props = [...props, createPropValWrapper(idtype, d.id, d.text)];
+        });
+
+      // special handling for filter FormMap
+      } else if(paramName === 'filter') {
+        let filters = [];
+        Object.entries(param)
+          .forEach((d:[string, any]) => {
+            const k = d[0];
+            const v = d[1];
+
+            if (Array.isArray(v)) { // create multiple entries
+              filters = [
+                ...filters,
+                ...v.map((value) => ((value.id) ? {key: k, value: value.id} : {key: k, value}))
+              ];
+
+            } else {
+              filters = [...filters, {key: k, value: v}];
+            }
+          });
+
+        filters.forEach((d) => {
+          props = [...props, createPropValWrapper(d.key, d.value)];
+        });
+
+      } else if(Array.isArray(param)) {
+        param.forEach((d:ISelect2Option) => {
+          props = [...props, createPropValWrapper(paramName, d[1])];
+        });
+
+      } else if(typeof param === 'string') {
+        props = [...props, createPropValWrapper(paramName, param)];
+      }
+    });
 
     return props;
   }

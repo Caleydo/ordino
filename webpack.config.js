@@ -10,6 +10,7 @@ const pkg = require('./package.json');
 const webpack = require('webpack');
 const fs = require('fs');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const buildInfo = require('./buildInfo.js');
 
 const now = new Date();
@@ -34,11 +35,30 @@ const includeFeature = registry ? (extension, id) => {
   return include.every(test) && !exclude.some(test);
 } : () => true;
 
+const tsLoader = {
+    loader: 'ts-loader',
+    options: {
+        happyPackMode: true, // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack,
+        compilerOptions: {
+        }
+    }
+};
+
 // list of loaders and their mappings
 const webpackloaders = [
   {test: /\.scss$/, use: 'style-loader!css-loader!sass-loader'},
   {test: /\.css$/, use: 'style-loader!css-loader'},
-  {test: /\.tsx?$/, use: 'awesome-typescript-loader'},
+  {test: /\.tsx?$/, use: [
+                { loader: 'cache-loader' },
+                {
+                    loader: 'thread-loader',
+                    options: {
+                        // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+                        workers: require('os').cpus().length - 1,
+                    },
+                },
+                tsLoader
+  ]},
   {test: /phovea(_registry)?\.js$/, use: [{
     loader: 'ifdef-loader',
     options: Object.assign({include: includeFeature}, preCompilerFlags)
@@ -160,7 +180,8 @@ function generateWebpack(options) {
         __TEST__: options.isTest,
         __PRODUCTION__: options.isProduction,
         __APP_CONTEXT__: JSON.stringify('/')
-      })
+      }),
+      new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })
       // rest depends on type
     ],
     externals: [],
@@ -209,9 +230,8 @@ function generateWebpack(options) {
     }));
     base.plugins.push(new webpack.optimize.AggressiveMergingPlugin());
   } else if (options.isDev) {
-    // use dev version of tsconfig
-    const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
-    base.plugins.push(new TsConfigPathsPlugin({configFileName: './tsconfig_dev.json'}));
+    // compile to es6
+    tsLoader.options.compilerOptions.target = 'es6';
   }
 
   if (options.library) {
@@ -285,7 +305,7 @@ function generateWebpack(options) {
       new webpack.optimize.UglifyJsPlugin());
   } else {
     // generate source maps
-    base.devtool = 'source-map';
+    base.devtool = 'cheap-module-eval-source-map';
   }
   return base;
 }

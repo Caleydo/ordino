@@ -41,7 +41,7 @@ const tsLoader = [
   {
     loader: 'ts-loader',
     options: {
-      happyPackMode: true, // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack,
+      happyPackMode: true // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack,
     }
   }
 ];
@@ -281,7 +281,7 @@ function generateWebpack(options) {
   }
   if (!options.bundle || options.isApp) {
     // extract the included css file to own file
-    let p = new ExtractTextPlugin({
+    const p = new ExtractTextPlugin({
       filename: (options.isApp || options.moduleBundle ? 'style' : pkg.name) + (options.min && !options.nosuffix ? '.min' : '') + '.css',
       allChunks: true // there seems to be a bug in dynamically loaded chunk styles are not loaded, workaround: extract all styles from all chunks
     });
@@ -317,7 +317,7 @@ function generateWebpack(options) {
       new webpack.optimize.UglifyJsPlugin());
   } else {
     // generate source maps
-    base.devtool = 'cheap-module-eval-source-map';
+    base.devtool = 'inline-source-map';
   }
   return base;
 }

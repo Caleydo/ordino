@@ -193,7 +193,7 @@ function generateWebpack(options) {
         __PRODUCTION__: options.isProduction,
         __APP_CONTEXT__: JSON.stringify('/')
       }),
-      new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })
+      new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, tsconfig: './tsconfig_dev.json' })
       // rest depends on type
     ],
     externals: [],

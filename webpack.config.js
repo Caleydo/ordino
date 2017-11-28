@@ -37,7 +37,6 @@ const includeFeature = registry ? (extension, id) => {
 
 
 const tsLoader = [
-  {loader: 'cache-loader'},
   {loader: 'ts-loader'}
 ];
 

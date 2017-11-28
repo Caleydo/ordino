@@ -38,12 +38,7 @@ const includeFeature = registry ? (extension, id) => {
 
 const tsLoader = [
   {loader: 'cache-loader'},
-  {
-    loader: 'ts-loader',
-    options: {
-      happyPackMode: true // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack,
-    }
-  }
+  {loader: 'ts-loader'}
 ];
 
 const tsLoaderDev = [
@@ -192,8 +187,7 @@ function generateWebpack(options) {
         __TEST__: options.isTest,
         __PRODUCTION__: options.isProduction,
         __APP_CONTEXT__: JSON.stringify('/')
-      }),
-      new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, tsconfig: './tsconfig_dev.json' })
+      })
       // rest depends on type
     ],
     externals: [],
@@ -244,6 +238,7 @@ function generateWebpack(options) {
   } else if (options.isDev) {
     // switch to def settings
     base.module.loaders.find((d) => d.use === tsLoader).use = tsLoaderDev;
+    base.plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, tsconfig: './tsconfig_dev.json' }));
   }
 
   if (options.library) {

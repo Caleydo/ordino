@@ -2,7 +2,7 @@
   "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
   "homepage": "https://phovea.caleydo.org",
-  "version": "3.1.0",
+  "version": "3.1.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -53,7 +53,6 @@
   },
   "devDependencies": {
     "@types/jasmine": "2.5.41",
-    "awesome-typescript-loader": "3.0.3",
     "cache-loader": "1.2.0",
     "css-loader": "0.26.1",
     "extract-text-webpack-plugin": "2.0.0-rc.3",
@@ -93,6 +92,6 @@
     "jquery.scrollto": "2.1.2",
     "@types/jquery": "2.0.33",
     "jquery": "3.1.1",
-    "tdp_core": "github:datavisyn/tdp_core#v3.1.0"
+    "tdp_core": "github:datavisyn/tdp_core#develop"
   }
 }

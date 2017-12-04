@@ -37,7 +37,7 @@ const includeFeature = registry ? (extension, id) => {
 
 
 const tsLoader = [
-  {loader: 'ts-loader'}
+  {loader: 'awesome-typescript-loader'}
 ];
 
 const tsLoaderDev = [

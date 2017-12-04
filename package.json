@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@types/jasmine": "2.5.41",
+    "awesome-typescript-loader": "3.0.3",
     "cache-loader": "1.2.0",
     "css-loader": "0.26.1",
     "extract-text-webpack-plugin": "2.0.0-rc.3",

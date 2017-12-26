@@ -1,30 +1,17 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Ordino</title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <link href="//fonts.googleapis.com/css?family=Yantramanav:700,500,400" rel="stylesheet" type="text/css">
-    <link href="./style.css?cache-bust=${Date.now()}" rel="stylesheet" type="text/css">
     <link rel="icon" href="${require('phovea_ui/src/assets/favicon.png')}">
-    <script src="//cdn.polyfill.io/v2/polyfill.min.js"></script>
+    ${require('html-loader?interpolate!phovea_ui/src/template/_head.html')}
 </head>
 <body>
 
 
-<script>
-  (function() {
-    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-    var isFirefox = /Firefox/.test(navigator.userAgent);
-    if (!isChrome && !isFirefox) {
-      alert('This application was designed to be used in Google Chrome. Running the application in other browsers might result in performance issues or other misbehavior.');
-    }
-  })();
-</script>
-<script src="./common.js?cache-bust=${Date.now()}"></script>
-<script src="./app.js?cache-bust==${Date.now()}"></script>
+
+${require('html-loader?interpolate!phovea_ui/src/template/_body.html')}
 
 </body>
 </html>

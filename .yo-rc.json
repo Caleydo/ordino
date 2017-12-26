@@ -21,6 +21,10 @@
         ]
       ]
     },
+    "vendor": [
+      "node_modules.*(d3|bootstrap|jquery|select2)",
+      "((node_modules.*popper)|lineupjs|lineupengine|tdp_core)"
+    ],
     "extensions": [],
     "sextensions": [],
     "libraries": [

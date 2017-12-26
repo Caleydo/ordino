@@ -5,14 +5,14 @@
 import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
 import {IEvent} from 'phovea_core/src/event';
 import * as session from 'phovea_core/src/session';
-import {AView} from 'tdp_core/src/views';
+import {VIEW_EVENT_UPDATE_ENTRY_POINT} from 'tdp_core/src/views/interfaces';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import StartMenu from './internal/StartMenu';
 import {INamedSet} from 'tdp_core/src/storage';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
 import OrdinoApp from './internal/OrdinoApp';
 import {initSession} from 'tdp_core/src/cmds';
 import ATDPApplication, {ITDPOptions} from 'tdp_core/src/ATDPApplication';
+import StartMenu from 'ordino/src/internal/StartMenu';
 
 export {ITDPOptions as IOrdinoOptions, CLUEGraphManager} from 'tdp_core/src/ATDPApplication';
 
@@ -27,17 +27,21 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
 
   protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
     main.classList.add('targid');
-    const app = new OrdinoApp(graph, manager, main);
-
     const startMenuNode = main.ownerDocument.createElement('div');
-    main.appendChild(startMenuNode);
     startMenuNode.classList.add('startMenu');
-    const startMenu = new StartMenu(startMenuNode, app);
+    main.appendChild(startMenuNode);
 
-    this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-    app.on(OrdinoApp.EVENT_OPEN_START_MENU, () => startMenu.open());
-    app.on(AView.EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
-    return app;
+    // lazy loading
+    return Promise.all([System.import('./internal/OrdinoApp'), System.import('./internal/StartMenu')]).then((modules) => {
+      const app: OrdinoApp = new modules[0].default(graph, manager, main);
+
+      const startMenu: StartMenu = new modules[1].default(startMenuNode, app);
+
+      this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+      app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+      app.on(VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
+      return app;
+    });
   }
 
   protected initSessionImpl(app: OrdinoApp) {

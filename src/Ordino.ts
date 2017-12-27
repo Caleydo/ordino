@@ -31,7 +31,7 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
     startMenuNode.classList.add('startMenu');
     main.appendChild(startMenuNode);
 
-    // lazy loading
+    // lazy loading for better module bundling
     return Promise.all([System.import('./internal/OrdinoApp'), System.import('./internal/StartMenu')]).then((modules) => {
       const app: OrdinoApp = new modules[0].default(graph, manager, main);
 

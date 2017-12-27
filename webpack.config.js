@@ -233,6 +233,9 @@ function generateWebpack(options) {
       banner: banner,
       raw: true
     }));
+    base.plugins.push(new webpack.optimize.MinChunkSizePlugin({
+      minChunkSize: 10000 // at least 10.000 characters
+    }));
 	//base.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
   } else if (options.isDev) {
     // switch to def settings

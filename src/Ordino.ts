@@ -12,7 +12,7 @@ import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
 import OrdinoApp from './internal/OrdinoApp';
 import {initSession} from 'tdp_core/src/cmds';
 import ATDPApplication, {ITDPOptions} from 'tdp_core/src/ATDPApplication';
-import StartMenu from 'ordino/src/internal/StartMenu';
+import StartMenu from './internal/StartMenu';
 
 export {ITDPOptions as IOrdinoOptions, CLUEGraphManager} from 'tdp_core/src/ATDPApplication';
 

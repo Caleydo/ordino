@@ -15,6 +15,9 @@ import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
 
+import logoDatavisyn from '../assets/logos/datavisyn.png';
+import logoJKU from '../assets/logos/johannes-kepler-university-linz.png';
+import logoBI from '../assets/logos/boehringer-ingelheim.jpg';
 
 /**
  * The main class for the Ordino app
@@ -56,10 +59,60 @@ export default class OrdinoApp extends EventHandler {
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
     this.$node.html(`
-    <div class="welcomeView">
-      <div></div>
-      <h1>Start here</h1>
-    </div>`);
+    <div class="container welcomeView">
+    <div class="row">
+      <div class="col-xs-offset-1 col-xs-10 col-sm-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+        <div class="alert alert-warning text-center" role="alert">
+          <strong>Disclaimer</strong> This software is <strong>for research purpose and non-commercial use only</strong>.
+        </div>
+      </div>
+    </div>
+    <div class="row wizard">
+    
+      <div class="col-xs-4 wizard-step">
+        <div class="text-center wizard-stepnum">Step 1</div>
+        <div class="progress"></div>
+        <div class="wizard-dot"></div>
+        <h1 class="wizard-info text-center">Select a Species and Entity</h1>
+        <div class="wizard-thumbnail step1"></div>
+      </div>
+      
+      <div class="col-xs-4 wizard-step">
+        <div class="text-center wizard-stepnum">Step 2</div>
+        <div class="progress"></div>
+        <div href="#" class="wizard-dot"></div>
+        <h1 class="wizard-info text-center">Rank, Filter, and Select</h1>
+        <div class="wizard-thumbnail step2"></div>
+      </div>
+      
+      <div class="col-xs-4 wizard-step">
+        <div class="text-center wizard-stepnum">Step 3</div>
+        <div class="progress"></div>
+        <div class="wizard-dot"></div>
+        <h1 class="wizard-info text-center">Obtain Detailed Information</h1>
+        <div class="wizard-thumbnail step3"></div>
+      </div>
+    </div>
+    <div class="row footer">
+      <div class="col-xs-12 footer-content text-center">
+        <p>
+          Ordino is developed by
+        </p>
+        <ul>
+          <li>
+            <a href="http://datavisyn.io" target="_blank" rel="noopener"><img src="${logoDatavisyn}" alt="datavisyn.io" style="height: 30px;"></a>
+          </li>
+          <li>
+            <a href="http://www.cg.jku.at" target="_blank" rel="noopener"><img src="${logoJKU}" alt="Johannes Kepler University Linz"></a>
+          </li>
+          <li>
+            <a href="https://www.boehringer-ingelheim.com" target="_blank" rel="noopener"><img src="${logoBI}" alt="Boehringer Ingelheim"></a> 
+          </li>
+        </ul>
+      </div>
+    </div>
+    </div>
+    `);
   }
 
   private buildHistory(parent: HTMLElement) {

@@ -3,34 +3,165 @@
  */
 
 .welcomeView {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  z-index: 1;
+  width: 100%;
 
-  display: none;
-
-  &:only-child {
-    display: block;
-  }
-
-  > div {
-    width: 200px;
+  &:before {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 6%; // depended on the container width
     height: 200px;
-    opacity: 0.2;
+    content: '';
     background: transparent url('./assets/welcome-view-arrow.svg') no-repeat;
     background-size: contain;
-    transform: rotate(60deg) scaleY(-1);
+    display: block;
+    z-index: 1;
+  }
+}
+
+
+
+.wizard {
+  margin-top: 40px;
+
+  > .wizard-step {
+    padding: 0;
+    position: relative;
+
+    .wizard-stepnum {
+      color: #aaaaaa;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .wizard-info {
+      color: #595959;
+      font-size: 1.8em;
+    }
+
+    > .wizard-dot {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      display: block;
+      background-color: #eaeaea;
+      top: 45px;
+      left: 50%;
+      margin-top: -15px;
+      margin-left: -15px;
+      border-radius: 50%;
+      transition: background-color 0.5s ease;
+
+      &:after {
+        content: ' ';
+        width: 14px;
+        height: 14px;
+        background-color: #aaaaaa;
+        border-radius: 50px;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        transition: background-color 0.5s ease;
+      }
+    }
+
+    > .progress {
+      position: relative;
+      border-radius: 0;
+      height: 8px;
+      box-shadow: none;
+      margin: 20px 0;
+      //background-color: #eaeaea;
+    }
+
+    &:first-child > .progress {
+      left: 50%;
+      width: 50%;
+    }
+
+    &:last-child > .progress {
+      width: 50%;
+    }
+
+    > .wizard-thumbnail {
+      background: transparent no-repeat top left;
+      background-size: cover;
+      margin: 20px;
+      height: 350px;
+      filter: grayscale(100%);
+      transition: filter 0.5s ease;
+
+      &.step1 {
+        background-image: url('./assets/welcome-view-step1.png');
+        background-position: top center;
+      }
+      &.step2 {
+        background-image: url('./assets/welcome-view-step2.png');
+      }
+      &.step3 {
+        background-image: url('./assets/welcome-view-step3.png');
+      }
+    }
+
+    &:hover {
+      > .wizard-thumbnail {
+        filter: grayscale(0%);
+      }
+
+      > .wizard-dot {
+        background-color: lighten($select-color, 30%);
+
+        &:after {
+          background-color: $select-color;
+        }
+      }
+    }
+
+  }
+}
+
+.footer {
+  margin-top: 60px;
+  color: #595959;
+  font-size: 1.2em;
+
+  p {
+    margin: 0 0 20px;
   }
 
-  h1 {
-    position: absolute;
-    left: 240px;
-    top: 90px;
+  ul {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
     margin: 0;
     padding: 0;
-    width: 400px;
-    color: #999;
-    font-size: 4em;
+    list-style: none;
+
+    li{
+
+      &:not(:first-child) {
+        margin-left: 60px;
+      }
+
+      img {
+        height: 40px;
+        margin: 0;
+        max-width: 100%;
+      }
+    }
   }
+
+  a {
+    color: #444;
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.2s ease-in-out;
+
+    &:active,
+    &:focus,
+    &:hover {
+      opacity: 1;
+    }
+  }
+
 }

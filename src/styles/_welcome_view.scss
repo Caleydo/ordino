@@ -151,10 +151,11 @@
     padding: 0;
     list-style: none;
 
-    li{
+    li {
+      margin-left: 60px;
 
-      &:not(:first-child) {
-        margin-left: 60px;
+      &:first-child {
+        margin-left: 45px;
       }
 
       img {

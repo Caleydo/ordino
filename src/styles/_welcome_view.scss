@@ -9,8 +9,8 @@
     position: absolute;
     top: 0;
     left: 20px;
-    width: 6%; // depended on the container width
-    height: 200px;
+    width: 7%; // depended on the container width
+    height: 300px;
     content: '';
     background: transparent url('./assets/welcome-view-arrow.svg') no-repeat;
     background-size: contain;
@@ -19,6 +19,16 @@
   }
 }
 
+
+.intro {
+  h1 {
+    color: #595959;
+  }
+  p {
+    color: #595959;
+    font-size: 1.2em;
+  }
+}
 
 
 .wizard {
@@ -120,8 +130,12 @@
   }
 }
 
-.footer {
-  margin-top: 60px;
+.disclaimer {
+  margin-top: 40px;
+}
+
+.logos {
+  margin-top: 40px;
   color: #595959;
   font-size: 1.2em;
 
@@ -154,14 +168,6 @@
   a {
     color: #444;
     text-decoration: none;
-    opacity: 0.5;
-    transition: opacity 0.2s ease-in-out;
-
-    &:active,
-    &:focus,
-    &:hover {
-      opacity: 1;
-    }
   }
 
 }

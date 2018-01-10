@@ -23,6 +23,8 @@ import {CMD_ADD_SCORE, CMD_REMOVE_SCORE} from 'tdp_core/src/lineup/internal/scor
 import ActionNode from 'phovea_core/src/provenance/ActionNode';
 import {ISelect2Option} from 'tdp_core/src/form/internal/FormSelect2';
 
+import WelcomeViewTemplate from 'html-loader!../welcome_view.html';
+
 
 /**
  * The main class for the Ordino app
@@ -63,11 +65,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
 
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    this.$node.html(`
-    <div class="welcomeView">
-      <div></div>
-      <h1>Start here</h1>
-    </div>`);
+    this.$node.html(WelcomeViewTemplate);
   }
 
   private buildHistory(parent: HTMLElement) {

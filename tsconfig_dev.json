@@ -2,5 +2,15 @@
   "extends": "./tsconfig",
   "compilerOptions": {
     "target": "es6"
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "tests/**/*.ts",
+    "index.ts",
+    "tsd.d.ts",
+    "../*/src/**/*.ts",
+    "../**/src/**/*.tsx",
+    "../*/tests/**/*.ts"
+  ]
 }

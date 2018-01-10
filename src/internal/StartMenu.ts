@@ -150,7 +150,11 @@ export default class StartMenu {
     });
 
     // update sections when opening the StartMenu
-    this.sections.forEach((section) => section.update());
+    this.sections.forEach((section) => {
+      if (typeof section.update === 'function') {
+        section.update();
+      }
+    });
   }
 
 }

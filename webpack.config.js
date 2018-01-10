@@ -4,12 +4,13 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 
-const {libraryAliases, libraryExternals, modules, entries, ignores, type, registry} = require('./.yo-rc.json')['generator-phovea'];
+const {libraryAliases, libraryExternals, modules, entries, ignores, type, registry, vendor} = require('./.yo-rc.json')['generator-phovea'];
 const resolve = require('path').resolve;
 const pkg = require('./package.json');
 const webpack = require('webpack');
 const fs = require('fs');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const buildInfo = require('./buildInfo.js');
 
 const now = new Date();
@@ -34,11 +35,38 @@ const includeFeature = registry ? (extension, id) => {
   return include.every(test) && !exclude.some(test);
 } : () => true;
 
+
+const tsLoader = [
+  {
+    loader: 'awesome-typescript-loader'
+  }
+];
+
+const tsLoaderDev = [
+  {loader: 'cache-loader'},
+  {
+    loader: 'thread-loader',
+    options: {
+      // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+      workers: require('os').cpus().length - 1
+    }
+  },
+  {
+    loader: 'ts-loader',
+    options: {
+      happyPackMode: true, // IMPORTANT! use happyPackMode mode to speed-up compilation and reduce errors reported to webpack,
+      compilerOptions: {
+        target: 'es6'
+      }
+    }
+  }
+];
+
 // list of loaders and their mappings
 const webpackloaders = [
   {test: /\.scss$/, use: 'style-loader!css-loader!sass-loader'},
   {test: /\.css$/, use: 'style-loader!css-loader'},
-  {test: /\.tsx?$/, use: 'awesome-typescript-loader'},
+  {test: /\.tsx?$/, use: tsLoader},
   {test: /phovea(_registry)?\.js$/, use: [{
     loader: 'ifdef-loader',
     options: Object.assign({include: includeFeature}, preCompilerFlags)
@@ -143,6 +171,7 @@ function generateWebpack(options) {
       // add `.ts` and `.tsx` as a resolvable extension.
       extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
       alias: Object.assign({}, options.libs || {}),
+      symlinks: false,
       // fallback to the directory above if they are siblings just in the workspace context
       modules: isWorkspaceContext ? [
         resolve(__dirname, '../'),
@@ -207,11 +236,11 @@ function generateWebpack(options) {
     base.plugins.push(new webpack.optimize.MinChunkSizePlugin({
       minChunkSize: 10000 // at least 10.000 characters
     }));
-    base.plugins.push(new webpack.optimize.AggressiveMergingPlugin());
+	//base.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
   } else if (options.isDev) {
-    // use dev version of tsconfig
-    const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
-    base.plugins.push(new TsConfigPathsPlugin({configFileName: './tsconfig_dev.json'}));
+    // switch to def settings
+    base.module.loaders.find((d) => d.use === tsLoader).use = tsLoaderDev;
+    base.plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, tsconfig: './tsconfig_dev.json' }));
   }
 
   if (options.library) {
@@ -249,7 +278,7 @@ function generateWebpack(options) {
   }
   if (!options.bundle || options.isApp) {
     // extract the included css file to own file
-    let p = new ExtractTextPlugin({
+    const p = new ExtractTextPlugin({
       filename: (options.isApp || options.moduleBundle ? 'style' : pkg.name) + (options.min && !options.nosuffix ? '.min' : '') + '.css',
       allChunks: true // there seems to be a bug in dynamically loaded chunk styles are not loaded, workaround: extract all styles from all chunks
     });
@@ -271,9 +300,20 @@ function generateWebpack(options) {
     // build a commons plugin
     base.plugins.push(new webpack.optimize.CommonsChunkPlugin({
       // The order of this array matters
-      names: ['common'],
+      name: "common",
+      filename: "common.js",
       minChunks: 2
     }));
+  }
+  if (options.vendor) {
+    (Array.isArray(options.vendor) ? options.vendor : [options.vendor]).forEach((reg) => {
+      base.plugins.push(new webpack.optimize.CommonsChunkPlugin({
+        async: true,
+        children: true,
+        deepChildren: true,
+        minChunks: (module, count) => new RegExp(reg, 'i').test(module.resource) && count >= 2,
+      }));
+    });
   }
   if (options.min) {
     // use a minifier
@@ -285,7 +325,7 @@ function generateWebpack(options) {
       new webpack.optimize.UglifyJsPlugin());
   } else {
     // generate source maps
-    base.devtool = 'source-map';
+    base.devtool = 'inline-source-map';
   }
   return base;
 }
@@ -300,6 +340,7 @@ function generateWebpackConfig(env) {
     libs: libraryAliases,
     externals: libraryExternals,
     modules: modules,
+    vendor: vendor,
     ignore: ignores,
     isProduction: isProduction,
     isDev: isDev,

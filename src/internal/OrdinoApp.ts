@@ -15,6 +15,8 @@ import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
 
+import WelcomeViewTemplate from 'html-loader!../welcome_view.html';
+
 
 /**
  * The main class for the Ordino app
@@ -55,11 +57,7 @@ export default class OrdinoApp extends EventHandler {
 
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    this.$node.html(`
-    <div class="welcomeView">
-      <div></div>
-      <h1>Start here</h1>
-    </div>`);
+    this.$node.html(WelcomeViewTemplate);
   }
 
   private buildHistory(parent: HTMLElement) {

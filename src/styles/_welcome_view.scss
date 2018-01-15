@@ -58,24 +58,24 @@
       width: 30px;
       height: 30px;
       display: block;
-      background-color: #eaeaea;
+      //background-color: #eaeaea;
+      background-color: lighten($select-color, 30%);
       top: 45px;
       left: 50%;
       margin-top: -15px;
       margin-left: -15px;
       border-radius: 50%;
-      transition: background-color 0.5s ease;
 
       &:after {
         content: ' ';
         width: 14px;
         height: 14px;
-        background-color: #aaaaaa;
+        //background-color: #aaaaaa;
+        background-color: $select-color;
         border-radius: 50px;
         position: absolute;
         top: 8px;
         left: 8px;
-        transition: background-color 0.5s ease;
       }
     }
 
@@ -102,8 +102,6 @@
       background-size: cover;
       margin: 20px;
       height: 350px;
-      filter: grayscale(100%);
-      transition: filter 0.5s ease;
 
       &.step1 {
         background-image: url('./assets/welcome-view-step1.png');
@@ -116,21 +114,6 @@
         background-image: url('./assets/welcome-view-step3.png');
       }
     }
-
-    &:hover {
-      > .wizard-thumbnail {
-        filter: grayscale(0%);
-      }
-
-      > .wizard-dot {
-        background-color: lighten($select-color, 30%);
-
-        &:after {
-          background-color: $select-color;
-        }
-      }
-    }
-
   }
 }
 

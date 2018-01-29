@@ -24,11 +24,6 @@
     "phovea_registry.js",
     "build"
   ],
-  "engines": {
-    "npm": ">= 3",
-    "node": ">= 6",
-    "iojs": ">= 3"
-  },
   "scripts": {
     "predist": "npm run build && npm run docs",
     "predocker": "npm run build",

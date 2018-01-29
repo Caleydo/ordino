@@ -48,7 +48,13 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
     const hasInitScript = session.has(SESSION_KEY_NEW_ENTRY_POINT);
     const graph = app.graph;
     if (graph.isEmpty && !hasInitScript) {
-      this.fire(Ordino.EVENT_OPEN_START_MENU);
+      const hasSeenWelcomePage = `${this.options.prefix}_has_seen_welcome_page`;
+      // open start menu only if the user has the welcome page once
+      if(localStorage.getItem(hasSeenWelcomePage) === '1') {
+        this.fire(Ordino.EVENT_OPEN_START_MENU);
+      } else {
+        localStorage.setItem(hasSeenWelcomePage, '1');
+      }
     } else if (hasInitScript) {
       const {view, options, defaultSessionValues} = <any>session.retrieve(SESSION_KEY_NEW_ENTRY_POINT);
 

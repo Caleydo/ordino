@@ -4,7 +4,7 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 
-const {libraryAliases, libraryExternals, modules, entries, ignores, type, registry} = require('./.yo-rc.json')['generator-phovea'];
+const {libraryAliases, libraryExternals, modules, entries, ignores, type, registry, vendor} = require('./.yo-rc.json')['generator-phovea'];
 const resolve = require('path').resolve;
 const pkg = require('./package.json');
 const webpack = require('webpack');
@@ -37,7 +37,9 @@ const includeFeature = registry ? (extension, id) => {
 
 
 const tsLoader = [
-  {loader: 'awesome-typescript-loader'}
+  {
+    loader: 'awesome-typescript-loader'
+  }
 ];
 
 const tsLoaderDev = [
@@ -169,6 +171,7 @@ function generateWebpack(options) {
       // add `.ts` and `.tsx` as a resolvable extension.
       extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
       alias: Object.assign({}, options.libs || {}),
+      symlinks: false,
       // fallback to the directory above if they are siblings just in the workspace context
       modules: isWorkspaceContext ? [
         resolve(__dirname, '../'),
@@ -233,7 +236,7 @@ function generateWebpack(options) {
     base.plugins.push(new webpack.optimize.MinChunkSizePlugin({
       minChunkSize: 10000 // at least 10.000 characters
     }));
-    base.plugins.push(new webpack.optimize.AggressiveMergingPlugin());
+	//base.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
   } else if (options.isDev) {
     // switch to def settings
     base.module.loaders.find((d) => d.use === tsLoader).use = tsLoaderDev;
@@ -297,9 +300,20 @@ function generateWebpack(options) {
     // build a commons plugin
     base.plugins.push(new webpack.optimize.CommonsChunkPlugin({
       // The order of this array matters
-      names: ['common'],
+      name: "common",
+      filename: "common.js",
       minChunks: 2
     }));
+  }
+  if (options.vendor) {
+    (Array.isArray(options.vendor) ? options.vendor : [options.vendor]).forEach((reg) => {
+      base.plugins.push(new webpack.optimize.CommonsChunkPlugin({
+        async: true,
+        children: true,
+        deepChildren: true,
+        minChunks: (module, count) => new RegExp(reg, 'i').test(module.resource) && count >= 2,
+      }));
+    });
   }
   if (options.min) {
     // use a minifier
@@ -326,6 +340,7 @@ function generateWebpackConfig(env) {
     libs: libraryAliases,
     externals: libraryExternals,
     modules: modules,
+    vendor: vendor,
     ignore: ignores,
     isProduction: isProduction,
     isDev: isDev,

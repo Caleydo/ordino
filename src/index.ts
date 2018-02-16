@@ -10,4 +10,5 @@ import 'file-loader?name=robots.txt!./robots.txt';
 import './style.scss';
 
 import Ordino from './Ordino';
+
 new Ordino();

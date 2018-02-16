@@ -50,7 +50,7 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
     if (graph.isEmpty && !hasInitScript) {
       const hasSeenWelcomePage = `${this.options.prefix}_has_seen_welcome_page`;
       // open start menu only if the user has the welcome page once
-      if(localStorage.getItem(hasSeenWelcomePage) === '1') {
+      if (localStorage.getItem(hasSeenWelcomePage) === '1') {
         this.fire(Ordino.EVENT_OPEN_START_MENU);
       } else {
         localStorage.setItem(hasSeenWelcomePage, '1');

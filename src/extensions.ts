@@ -13,7 +13,8 @@ export interface IStartMenuSectionDesc extends IPluginDesc {
 }
 
 export interface IStartMenuSectionOptions {
-  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
+  session?(viewId: string, options: { namedSet?: INamedSet, [key: string]: any }, defaultSessionValues: any): void;
+
   graphManager: CLUEGraphManager;
 }
 
@@ -27,5 +28,6 @@ export interface IStartMenuSection {
   readonly desc: IPluginDesc;
 
   push(namedSet: INamedSet): boolean;
+
   update?(): void;
 }

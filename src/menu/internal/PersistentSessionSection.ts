@@ -1,5 +1,3 @@
-
-
 import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from '../../extensions';
 import {INamedSet} from 'tdp_core/src/storage';
 import {PersistentSessionList} from 'tdp_core/src/SessionList';

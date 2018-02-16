@@ -2,26 +2,36 @@
  * Created by Samuel Gratzl on 29.01.2016.
  */
 
-import {ProvenanceGraph, IObjectRef, ref, cat} from 'phovea_core/src/provenance';
+import {cat, IObjectRef, ProvenanceGraph, ref} from 'phovea_core/src/provenance';
 import {IDType} from 'phovea_core/src/idtype';
 import {Range} from 'phovea_core/src/range';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
 import {EventHandler} from 'phovea_core/src/event';
-import {IPluginDesc, IPlugin, list as listPlugins} from 'phovea_core/src/plugin';
+import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
 import {INamedSet} from 'tdp_core/src/storage';
 import {setParameter} from 'tdp_core/src/cmds';
 import {
-  AView, createContext, EViewMode, findViews, ISelection, isSameSelection, IView, IViewContext, IViewPluginDesc,
-  matchLength,  showAsSmallMultiple, toViewPluginDesc
+  AView,
+  createContext,
+  EViewMode,
+  findViews,
+  ISelection,
+  isSameSelection,
+  IView,
+  IViewContext,
+  IViewPluginDesc,
+  matchLength,
+  showAsSmallMultiple,
+  toViewPluginDesc
 } from 'tdp_core/src/views';
 import {resolveImmediately} from 'phovea_core/src/internal/promise';
 import {groupByCategory} from 'tdp_core/src/views/findViews';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
-  const s = (selection.idtype ? selection.idtype.id : '')+'r' + (selection.range.toString());
-  return desc.id+'_'+s;
+  const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.range.toString());
+  return desc.id + '_' + s;
 }
 
 export default class ViewWrapper extends EventHandler {
@@ -29,13 +39,13 @@ export default class ViewWrapper extends EventHandler {
   static EVENT_FOCUS = 'focus';
   static EVENT_REMOVE = 'remove';
 
-  private $viewWrapper:d3.Selection<ViewWrapper>;
-  private $node:d3.Selection<ViewWrapper>;
-  private $chooser:d3.Selection<ViewWrapper>;
+  private $viewWrapper: d3.Selection<ViewWrapper>;
+  private $node: d3.Selection<ViewWrapper>;
+  private $chooser: d3.Selection<ViewWrapper>;
 
-  private _mode:EViewMode = null;
+  private _mode: EViewMode = null;
 
-  private instance:IView = null;
+  private instance: IView = null;
 
   /**
    * Listens to the AView.EVENT_ITEM_SELECT event and decided if the chooser should be visible.
@@ -86,7 +96,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent:Element, private plugin:IPlugin, public options?) {
+  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent: Element, private plugin: IPlugin, public options?) {
     super();
 
     // create provenance reference
@@ -107,7 +117,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  private init(graph: ProvenanceGraph, selection: ISelection, plugin:IPlugin, options?) {
+  private init(graph: ProvenanceGraph, selection: ISelection, plugin: IPlugin, options?) {
 
     //console.log(graph, generate_hash(plugin.desc, selection, options));
 
@@ -121,7 +131,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  private createView(selection: ISelection, plugin:IPlugin, options?) {
+  private createView(selection: ISelection, plugin: IPlugin, options?) {
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)
       .datum(this);
@@ -134,7 +144,7 @@ export default class ViewWrapper extends EventHandler {
     this.$node.append('button')
       .attr('type', 'button')
       .attr('class', 'close')
-      .attr('aria-label','Close')
+      .attr('aria-label', 'Close')
       .html(`<span aria-hidden="true">×</span>`)
       .on('click', (d) => {
         this.remove();
@@ -163,7 +173,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  replaceView(selection: ISelection, plugin:IPlugin, options?) {
+  replaceView(selection: ISelection, plugin: IPlugin, options?) {
     this.destroyView();
 
     this.selection = selection;
@@ -242,10 +252,10 @@ export default class ViewWrapper extends EventHandler {
   }
 
   matchSelectionLength(length: number) {
-    return matchLength(this.desc.selection, length) ||(showAsSmallMultiple(this.desc) && length > 1);
+    return matchLength(this.desc.selection, length) || (showAsSmallMultiple(this.desc) && length > 1);
   }
 
-  set mode(mode:EViewMode) {
+  set mode(mode: EViewMode) {
     if (this._mode === mode) {
       return;
     }
@@ -254,7 +264,7 @@ export default class ViewWrapper extends EventHandler {
     this.fire('modeChanged', this._mode = mode, b);
   }
 
-  protected modeChanged(mode:EViewMode) {
+  protected modeChanged(mode: EViewMode) {
     // update css classes
     this.$viewWrapper
       .classed('t-hide', mode === EViewMode.HIDDEN)
@@ -268,7 +278,7 @@ export default class ViewWrapper extends EventHandler {
     this.instance.modeChanged(mode);
 
     // on focus view scroll into view
-    if(mode === EViewMode.FOCUS) {
+    if (mode === EViewMode.FOCUS) {
       this.scrollIntoView();
     }
   }
@@ -277,7 +287,7 @@ export default class ViewWrapper extends EventHandler {
     const prev = (<any>this.$viewWrapper.node()).previousSibling;
     const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
     const $app = $(this.$viewWrapper.node()).parent();
-    (<any>$app).scrollTo(scrollToPos, 500, {axis:'x'});
+    (<any>$app).scrollTo(scrollToPos, 500, {axis: 'x'});
   }
 
   /**
@@ -291,7 +301,7 @@ export default class ViewWrapper extends EventHandler {
     // show chooser if selection available
     this.$chooser.classed('hidden', range.isNone);
 
-    if(range.isNone) {
+    if (range.isNone) {
       this.$chooser.selectAll('button').classed('active', false);
     }
 
@@ -312,7 +322,7 @@ export default class ViewWrapper extends EventHandler {
       $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
-        .on('click', function(d) {
+        .on('click', function (d) {
           $buttons.classed('active', false);
           d3.select(this).classed('active', true);
 
@@ -356,10 +366,10 @@ export default class ViewWrapper extends EventHandler {
   }
 }
 
-export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, parent:Element, plugin:IPluginDesc, options?) {
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, parent: Element, plugin: IPluginDesc, options?) {
   return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
 }
 
-export function replaceViewWrapper(existingView:ViewWrapper, selection: ISelection, plugin:IPluginDesc, options?) {
+export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, plugin: IPluginDesc, options?) {
   return plugin.load().then((p) => existingView.replaceView(selection, p, options));
 }

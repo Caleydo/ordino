@@ -1,6 +1,11 @@
-/**
- * Created by Samuel Gratzl on 29.01.2016.
- */
+/********************************************************************
+ * Copyright (c) The Caleydo Team, http://caleydo.org
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ ********************************************************************/
+
 
 import {cat, IObjectRef, ProvenanceGraph, ref} from 'phovea_core/src/provenance';
 import {IDType} from 'phovea_core/src/idtype';

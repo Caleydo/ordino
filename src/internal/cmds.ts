@@ -1,13 +1,27 @@
-/**
- * Created by sam on 03.03.2017.
- */
+/********************************************************************
+ * Copyright (c) The Caleydo Team, http://caleydo.org
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ ********************************************************************/
 
-import {  IObjectRef,  ProvenanceGraph,  action,  meta,  op,  cat,  ActionNode} from 'phovea_core/src/provenance';
+
+import {
+  action,
+  ActionNode,
+  cat,
+  IAction,
+  ICmdResult,
+  IObjectRef,
+  meta,
+  op,
+  ProvenanceGraph
+} from 'phovea_core/src/provenance';
 import {get as getPlugin} from 'phovea_core/src/plugin';
-import {Range, parse, none} from 'phovea_core/src/range';
-import {resolve, IDType} from 'phovea_core/src/idtype';
+import {none, parse, Range} from 'phovea_core/src/range';
+import {IDType, resolve} from 'phovea_core/src/idtype';
 import ViewWrapper, {createViewWrapper, replaceViewWrapper} from './ViewWrapper';
-import {ICmdResult, IAction} from 'phovea_core/src/provenance';
 import OrdinoApp from './OrdinoApp';
 import {EXTENSION_POINT_TDP_VIEW} from 'tdp_core/src/extensions';
 import {lastOnly} from 'phovea_clue/src/compress';
@@ -244,10 +258,10 @@ export function compressCreateRemove(path: ActionNode[]) {
     if (act.f_id === CMD_REMOVE_VIEW) {
       const removed = act.removes[0];
       //removed view delete intermediate change and optional creation
-      for(let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+      for (let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
         const previous = r[j];
         const requires = previous.requires;
-        const usesView =  requires.indexOf(removed) >= 0;
+        const usesView = requires.indexOf(removed) >= 0;
         if (usesView && !compatibilityReplaceView(previous)) {
           r.splice(j, 1);
         } else if (previous.f_id === CMD_CREATE_VIEW && previous.creates[0] === removed) {
@@ -260,10 +274,10 @@ export function compressCreateRemove(path: ActionNode[]) {
     if (act.f_id === CMD_REPLACE_VIEW) {
       const view = act.requires[1];
       //changed the view in place can remove all previous set parameter/selection calls till the creation
-      for(let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+      for (let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
         const previous = r[j];
         const requires = previous.requires;
-        const usesView =  requires.indexOf(view) >= 0;
+        const usesView = requires.indexOf(view) >= 0;
         //uses view (setParameter, replace, ...) but not its creation
         if (usesView && previous.f_id !== CMD_CREATE_VIEW) {
           r.splice(j, 1);

@@ -1,16 +1,21 @@
-/**
- * Created by Samuel Gratzl on 29.01.2016.
- */
+/********************************************************************
+ * Copyright (c) The Caleydo Team, http://caleydo.org
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ ********************************************************************/
+
 
 import {resolveIn} from 'phovea_core/src/index';
-import {IObjectRef, ProvenanceGraph, op, cat, StateNode} from 'phovea_core/src/provenance';
+import {cat, IObjectRef, op, ProvenanceGraph, StateNode} from 'phovea_core/src/provenance';
 import IDType from 'phovea_core/src/idtype/IDType';
-import {IEvent, EventHandler} from 'phovea_core/src/event';
+import {EventHandler, IEvent} from 'phovea_core/src/event';
 import * as d3 from 'd3';
-import {EViewMode, AView, ISelection} from 'tdp_core/src/views';
+import {AView, EViewMode, ISelection} from 'tdp_core/src/views';
 import ViewWrapper from './ViewWrapper';
 import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {createView, removeView, replaceView, setSelection, setAndUpdateSelection} from './cmds';
+import {createView, removeView, replaceView, setAndUpdateSelection, setSelection} from './cmds';
 import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
@@ -39,22 +44,22 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
    */
-  private readonly views:ViewWrapper[] = [];
+  private readonly views: ViewWrapper[] = [];
 
   /**
    * IObjectRef to this OrdinoApp instance
    * @type {IObjectRef<OrdinoApp>}
    */
-  readonly ref:IObjectRef<OrdinoApp>;
+  readonly ref: IObjectRef<OrdinoApp>;
 
-  private readonly $history:d3.Selection<any>;
-  private readonly $node:d3.Selection<OrdinoApp>;
+  private readonly $history: d3.Selection<any>;
+  private readonly $node: d3.Selection<OrdinoApp>;
 
-  private readonly removeWrapper = (event:any, view:ViewWrapper) => this.remove(view);
-  private readonly chooseNextView = (event:IEvent, viewId:string, idtype:IDType, selection:Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
-  private readonly updateSelection = (event:IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, newValue);
+  private readonly removeWrapper = (event: any, view: ViewWrapper) => this.remove(view);
+  private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(<ViewWrapper>event.target, viewId, idtype, selection);
+  private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(<ViewWrapper>event.target, old, newValue);
 
-  constructor(public readonly graph:ProvenanceGraph, public readonly graphManager:CLUEGraphManager, parent:HTMLElement) {
+  constructor(public readonly graph: ProvenanceGraph, public readonly graphManager: CLUEGraphManager, parent: HTMLElement) {
     super();
     // add OrdinoApp app as (first) object to provenance graph
     // need old name for compatibility
@@ -97,15 +102,15 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
    * @param selection
    * @param options
    */
-  private handleNextView(viewWrapper:ViewWrapper, viewId:string, idtype:IDType, selection:Range, options?) {
+  private handleNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
     const index = this.views.indexOf(viewWrapper);
-    const nextView = this.views[index+1];
+    const nextView = this.views[index + 1];
 
     // close instead of "re-open" the same view again
-    if(nextView !== undefined && nextView.desc.id === viewId) {
+    if (nextView !== undefined && nextView.desc.id === viewId) {
       this.remove(nextView);
 
-    // open or replace the new view to the right
+      // open or replace the new view to the right
     } else {
       this.openOrReplaceNextView(viewWrapper, viewId, idtype, selection, options);
     }
@@ -120,7 +125,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
    * @param selection
    * @param options
    */
-  private openOrReplaceNextView(viewWrapper:ViewWrapper, viewId:string, idtype:IDType, selection:Range, options?) {
+  private openOrReplaceNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
     const mode = 2; // select opener mode
     switch (mode) {
       /**
@@ -160,21 +165,21 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
        */
       case 2:
         // the opener is the last view, then nothing to replace --> just open the new view
-        if(this.lastView === viewWrapper) {
+        if (this.lastView === viewWrapper) {
           this.pushView(viewId, idtype, selection, options);
           break;
         }
 
         // find the next view
         const index = this.views.lastIndexOf(viewWrapper);
-        if(index === -1) {
+        if (index === -1) {
           console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
           return;
         }
         const nextView = this.views[index + 1];
 
         // if there are more views open, then close them first, before replacing the next view
-        if(nextView !== this.lastView) {
+        if (nextView !== this.lastView) {
           this.remove(this.views[index + 2]);
         }
 
@@ -195,7 +200,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
    * @param newSelection
    * @param options
    */
-  private updateItemSelection(viewWrapper:ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
+  private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     const selectionOptions = {
       mapRangeToNames: this.mapRangeToNames
     };
@@ -208,10 +213,10 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
         this.graph.pushWithResult(actions[0], { inverse : actions[1]});
       });
 
-    // check last view and if it will stay open for the new given selection
+      // check last view and if it will stay open for the new given selection
     } else {
       const i = this.views.indexOf(viewWrapper);
-      const right = this.views[i+1];
+      const right = this.views[i + 1];
 
       // update selection with the last open (= right) view
       if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
@@ -223,7 +228,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
           this.graph.pushWithResult(actions[0], { inverse : actions[1]});
         });
 
-      // the selection does not match with the last open (= right) view --> close view
+        // the selection does not match with the last open (= right) view --> close view
       } else {
         this.remove(right);
       }
@@ -231,12 +236,12 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
   }
 
   get lastView() {
-    return this.views[this.views.length-1];
+    return this.views[this.views.length - 1];
   }
 
-  push(viewId:string, idtype:IDType, selection:Range, options?) {
+  push(viewId: string, idtype: IDType, selection: Range, options?) {
     // create the first view without changing the focus for the (non existing) previous view
-    if(this.views.length === 0) {
+    if (this.views.length === 0) {
       return this.pushView(viewId, idtype, selection, options);
 
     } else {
@@ -255,7 +260,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     this.graphManager.newGraph();
   }
 
-  private pushView(viewId:string, idtype:IDType, selection:Range, options?) {
+  private pushView(viewId: string, idtype: IDType, selection: Range, options?) {
     return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
   }
 
@@ -263,7 +268,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
    * Removes a view, and if there are multiple open (following) views, close them in reverse order.
    * @param viewWrapper
    */
-  remove(indexOrView:number|ViewWrapper) {
+  remove(indexOrView: number | ViewWrapper) {
     const viewWrapper = typeof indexOrView === 'number' ? this.views[<number>indexOrView] : <ViewWrapper>indexOrView;
     const index = this.views.indexOf(viewWrapper);
 
@@ -273,7 +278,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
       .forEach((view) => {
         //this.remove(d);
         const viewRef = this.graph.findObject(view);
-        if(viewRef === null) {
+        if (viewRef === null) {
           console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
           return;
         }
@@ -281,12 +286,12 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
       });
 
     // no views available, then open start menu
-    if(index === 0) {
+    if (index === 0) {
       this.fire('openStartMenu');
     }
   }
 
-  pushImpl(view:ViewWrapper) {
+  pushImpl(view: ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
@@ -296,7 +301,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     return resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
   }
 
-  removeImpl(view:ViewWrapper, focus:number = -1) {
+  removeImpl(view: ViewWrapper, focus: number = -1) {
     const i = this.views.indexOf(view);
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
@@ -315,7 +320,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     return Promise.resolve(NaN);
   }
 
-  private replaceView(existingView:IObjectRef<ViewWrapper>, viewId:string, idtype:IDType, selection:Range, options?) {
+  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?) {
     return this.graph.push(replaceView(this.ref, existingView, viewId, idtype, selection, options))
       .then((r) => {
         this.update();
@@ -332,18 +337,19 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     const creators = this.graph.act.path.filter(isCreateView).map((d) => d.creator);
     const createdBy = this.graph.findOrAddJustObject(view.ref).createdBy;
     const i = creators.indexOf(createdBy);
-    if ( i === (creators.length-1)) {
+    if (i === (creators.length - 1)) {
       //we are in focus - or should be
       return Promise.resolve(null);
     } else {
       //jump to the last state this view was in focus
-      return this.graph.jumpTo(creators[i+1].previous);
+      return this.graph.jumpTo(creators[i + 1].previous);
     }
   }
 
   /**
    * Jumps back to the root of the provenance graph and consequentially removes all open views (undo)
    */
+
   /*focusOnStart() {
     const creators = this.graph.act.path.filter((d) => d.creator === null); // null => start StateNode
     if(creators.length > 0) {
@@ -359,7 +365,7 @@ export default class OrdinoApp extends EventHandler implements IVisStateApp {
     this.focusImpl(this.views.indexOf(d));
   }
 
-  focusImpl(index:number) {
+  focusImpl(index: number) {
     let old = -1;
     this.views.forEach((v, i) => {
       if (v.mode === EViewMode.FOCUS) {

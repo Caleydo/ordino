@@ -325,7 +325,7 @@ function generateWebpack(options) {
       new webpack.optimize.UglifyJsPlugin());
   } else {
     // generate source maps
-    base.devtool = 'inline-source-map';
+    base.devtool = 'source-map';
   }
   return base;
 }

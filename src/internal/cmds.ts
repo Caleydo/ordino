@@ -178,9 +178,9 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
   const range = parse(parameter.range);
 
   const bak = view.getItemSelection();
-  view.setItemSelection({idtype, range});
+  await Promise.resolve(view.setItemSelection({idtype, range}));
   if (target) {
-    target.setParameterSelection({idtype, range});
+    await Promise.resolve(target.setParameterSelection({idtype, range}));
   }
 
   let actionMetaData;

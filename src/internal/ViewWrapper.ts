@@ -241,12 +241,12 @@ export default class ViewWrapper extends EventHandler {
     // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
 
-    this.instance.setItemSelection(sel);
+    return resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
+      this.chooseNextViews(sel.idtype, sel.range);
 
-    this.chooseNextViews(sel.idtype, sel.range);
-
-    // turn listener on again
-    this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+      // turn listener on again
+      this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+    });
   }
 
   setParameterSelection(selection: ISelection) {
@@ -254,7 +254,7 @@ export default class ViewWrapper extends EventHandler {
       return;
     }
     this.selection = selection;
-    this.instance.setInputSelection(selection);
+    return resolveImmediately(this.instance.setInputSelection(selection));
   }
 
   getParameterSelection() {

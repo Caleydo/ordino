@@ -1,12 +1,17 @@
-/**
- * Created by Holger Stitz on 27.07.2016.
- */
+/********************************************************************
+ * Copyright (c) The Caleydo Team, http://caleydo.org
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ ********************************************************************/
+
 
 import OrdinoApp from './OrdinoApp';
 import {INamedSet} from 'tdp_core/src/storage';
 import {list as listPlugins} from 'phovea_core/src/plugin';
-import {select, Selection, selection, event as d3event} from 'd3';
-import {IStartMenuSection, EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from '../extensions';
+import {event as d3event, select, selection, Selection} from 'd3';
+import {EXTENSION_POINT_START_MENU, IStartMenuSection, IStartMenuSectionDesc} from '../extensions';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
@@ -141,7 +146,7 @@ export default class StartMenu {
       desc.load().then((plugin) => {
         elem.innerHTML = '';
         const section = plugin.factory(elem, desc, options);
-          // prevent adding the entryPoint if already in list or undefined
+        // prevent adding the entryPoint if already in list or undefined
         if (section === undefined || that.hasSection(desc)) {
           return;
         }

@@ -1,6 +1,11 @@
-/**
- * Created by sam on 03.03.2017.
- */
+/********************************************************************
+ * Copyright (c) The Caleydo Team, http://caleydo.org
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ ********************************************************************/
+
 
 import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
 import {IEvent} from 'phovea_core/src/event';
@@ -50,7 +55,7 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
     if (graph.isEmpty && !hasInitScript) {
       const hasSeenWelcomePage = `${this.options.prefix}_has_seen_welcome_page`;
       // open start menu only if the user has the welcome page once
-      if(localStorage.getItem(hasSeenWelcomePage) === '1') {
+      if (localStorage.getItem(hasSeenWelcomePage) === '1') {
         this.fire(Ordino.EVENT_OPEN_START_MENU);
       } else {
         localStorage.setItem(hasSeenWelcomePage, '1');

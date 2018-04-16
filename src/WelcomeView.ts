@@ -1,5 +1,3 @@
-import * as d3 from 'd3';
-
 import WelcomeViewTemplate from 'html-loader!./welcome_view.html';
 
 export interface IWelcomeView {
@@ -7,13 +5,12 @@ export interface IWelcomeView {
 }
 
 export default class WelcomeView implements IWelcomeView {
-  private $node: d3.Selection<any>;
 
-  constructor(parent: HTMLElement) {
-    this.$node = d3.select(parent);
+  constructor(private parent: HTMLElement) {
+    //
   }
 
   build() {
-    this.$node.html(WelcomeViewTemplate);
+    this.parent.innerHTML = WelcomeViewTemplate;
   }
 }

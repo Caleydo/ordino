@@ -295,6 +295,11 @@ div.targid {
         left: 0;
         right: 0;
         overflow-y: auto;
+        display: flex;
+
+        > .tdp-view {
+          flex: 1 1 auto;
+        }
       }
 
       > div {

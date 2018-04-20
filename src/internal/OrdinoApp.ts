@@ -19,8 +19,10 @@ import {createView, removeView, replaceView, setAndUpdateSelection, setSelection
 import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import * as session from 'phovea_core/src/session';
+import {list as listPlugins} from 'phovea_core/src/plugin';
+import {IWelcomeView} from '../WelcomeView';
 
-import WelcomeViewTemplate from 'html-loader!../welcome_view.html';
+export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
 
 
 /**
@@ -62,7 +64,29 @@ export default class OrdinoApp extends EventHandler {
 
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    this.$node.html(WelcomeViewTemplate);
+    this.buildWelcomeView(<HTMLElement>this.$node.node());
+  }
+
+  /**
+   * Loads registered welcome pages from the extension points.
+   * The welcome page with the highest priority is loaded and shown.
+   *
+   * @param {HTMLElement} parent
+   */
+  private buildWelcomeView(parent: HTMLElement) {
+    const welcomeViews = listPlugins(EXTENSION_POINT_WELCOME_PAGE)
+      .sort((a: any, b: any) => ((b.priority || 10) - (a.priority || 10))); // descending
+
+    if(welcomeViews.length === 0) {
+      console.warn('No registered welcome page found!');
+      return;
+    }
+
+    welcomeViews[0].load()
+      .then((p) => {
+        const welcomeView: IWelcomeView = p.factory(parent);
+        welcomeView.build();
+      });
   }
 
   private buildHistory(parent: HTMLElement) {

@@ -97,11 +97,12 @@ export default class ViewWrapper extends EventHandler {
    * Initialize this view, create the root node and the (inner) view
    * @param graph
    * @param selection
+   * @param itemSelection
    * @param parent
    * @param plugin
    * @param options
    */
-  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent: Element, private plugin: IPlugin, public options?) {
+  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, itemSelection: ISelection|null, parent: Element, private plugin: IPlugin, public options?) {
     super();
 
     // create provenance reference
@@ -112,7 +113,7 @@ export default class ViewWrapper extends EventHandler {
     // create ViewWrapper root node
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
 
-    this.built = resolveImmediately(this.createView(selection, plugin, options));
+    this.built = resolveImmediately(this.createView(selection, itemSelection, plugin, options));
   }
 
   /**
@@ -136,7 +137,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  private createView(selection: ISelection, plugin: IPlugin, options?) {
+  private createView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)
       .datum(this);
@@ -164,6 +165,10 @@ export default class ViewWrapper extends EventHandler {
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
     return resolveImmediately(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this))).then(() => {
+      if (itemSelection) {
+        return this.instance.setItemSelection(itemSelection);
+      }
+    }).then(() => {
       this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
       this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
 
@@ -178,7 +183,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  replaceView(selection: ISelection, plugin: IPlugin, options?) {
+  replaceView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
     this.destroyView();
 
     this.selection = selection;
@@ -186,7 +191,7 @@ export default class ViewWrapper extends EventHandler {
     this.options = options;
 
     this.init(this.graph, selection, plugin, options);
-    return this.built = this.createView(selection, plugin, options);
+    return this.built = this.createView(selection, itemSelection, plugin, options);
   }
 
   /**
@@ -371,10 +376,10 @@ export default class ViewWrapper extends EventHandler {
   }
 }
 
-export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, parent: Element, plugin: IPluginDesc, options?) {
-  return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, options?) {
+  return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, options));
 }
 
-export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, plugin: IPluginDesc, options?) {
-  return plugin.load().then((p) => existingView.replaceView(selection, p, options));
+export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, options?) {
+  return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, options));
 }

@@ -52,7 +52,7 @@ function serializeSelection(selection?: ISelection) {
  * @param graph The Provenance graph
  * @returns {Promise<ICmdResult>}
  */
-export async function createViewImpl(inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
+export async function createViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
   const app: OrdinoApp = inputs[0].value;
   const viewId: string = parameter.viewId;
   const selection = asSelection(parameter);
@@ -61,7 +61,7 @@ export async function createViewImpl(inputs: IObjectRef<any>[], parameter: any, 
 
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, options);
+  const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
   if (viewWrapperInstance.built) {
     await viewWrapperInstance.built;
   }
@@ -99,7 +99,7 @@ export function removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult
  * @param parameter Parameter such idtype, selection and view options
  * @returns {Promise<ICmdResult>}
  */
-export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
+export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
   const app: OrdinoApp = inputs[0].value;
   const existingView: ViewWrapper = inputs[1].value;
 
@@ -119,7 +119,7 @@ export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any)
   // create new (inner) view
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  await replaceViewWrapper(existingView, selection, itemSelection, view, options);
+  await replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
 
   app.update();
 

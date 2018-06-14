@@ -102,7 +102,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, itemSelection: ISelection|null, parent: Element, private plugin: IPlugin, public options?) {
+  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, itemSelection: ISelection|null, parent: Element, private plugin: IPlugin, private firstTime: boolean, public options?) {
     super();
 
     // create provenance reference
@@ -183,12 +183,13 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  replaceView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
+  replaceView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, firstTime: boolean, options?) {
     this.destroyView();
 
     this.selection = selection;
     this.plugin = plugin;
     this.options = options;
+    this.firstTime = firstTime;
 
     this.init(this.graph, selection, plugin, options);
     return this.built = this.createView(selection, itemSelection, plugin, options);
@@ -221,11 +222,14 @@ export default class ViewWrapper extends EventHandler {
   }
 
 
-  private onParameterChange(name: string, value: any, previousValue: any, pushWithResult: boolean) {
-    if (pushWithResult) {
-      return this.context.graph.pushWithResult(setParameter(this.ref, name, value, previousValue), {
-        inverse: setParameter(this.ref, name, previousValue, value)
-      });
+  private onParameterChange(name: string, value: any, previousValue: any, isInitializion: boolean) {
+    if (isInitializion) {
+      if (this.firstTime) {
+        return this.context.graph.pushWithResult(setParameter(this.ref, name, value, previousValue), {
+          inverse: setParameter(this.ref, name, previousValue, value)
+        });
+      }
+      return; // dummy;
     }
     return this.context.graph.push(setParameter(this.ref, name, value, previousValue));
   }
@@ -381,10 +385,10 @@ export default class ViewWrapper extends EventHandler {
   }
 }
 
-export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, options?) {
-  return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, options));
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
+  return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
 }
 
-export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, options?) {
-  return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, options));
+export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, firstTime: boolean, options?) {
+  return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
 }

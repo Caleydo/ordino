@@ -1,7 +1,7 @@
 ordino [![Phovea][phovea-image]][phovea-url] [![License: MPL 2.0][mpl-image]][mpl-url] [![CircleCI][circleci-image]][circleci-url] 
 =====================
 
-A target ranking application based on the [Target Discovery Platform](https://gitub.com/datavisyn/tdp_core).
+A target ranking application based on the [Target Discovery Platform](https://github.com/datavisyn/tdp_core).
 
 Installation
 ------------

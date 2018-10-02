@@ -26,13 +26,13 @@ import {
   isSameSelection,
   IView,
   IViewContext,
-  IViewPluginDesc,
   matchLength,
   showAsSmallMultiple,
   toViewPluginDesc
 } from 'tdp_core/src/views';
 import {resolveImmediately} from 'phovea_core/src/internal/promise';
 import {groupByCategory} from 'tdp_core/src/views/findViews';
+import {MODE_ANIMATION_TIME} from './constants';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.range.toString());
@@ -296,10 +296,23 @@ export default class ViewWrapper extends EventHandler {
     // trigger modeChanged
     this.instance.modeChanged(mode);
 
+    this.updateAfterAnimation();
+
     // on focus view scroll into view
     if (mode === EViewMode.FOCUS) {
       this.scrollIntoView();
     }
+  }
+
+  private updateAfterAnimation() {
+    if (!this.instance || typeof (<any>this.instance).update !== 'function') {
+      return;
+    }
+    setTimeout(() => {
+      if ((<any>this.instance) && typeof (<any>this.instance).update === 'function') {
+        (<any>this.instance).update();
+      }
+    }, MODE_ANIMATION_TIME);
   }
 
   private scrollIntoView() {

@@ -12,3 +12,6 @@
  * @type {string}
  */
 export const SESSION_KEY_NEW_ENTRY_POINT = 'ordinoNewEntryPoint';
+
+// see src/styles/_targid.scss + 100ms delay
+export const MODE_ANIMATION_TIME = 500 + 100;

@@ -212,6 +212,10 @@ nav.mainNavi {
 }
 
 
+// see also src/internal/constants
+$mode-animation-time: 500ms;
+
+
 div.targid {
   flex: 1;
 
@@ -234,7 +238,7 @@ div.targid {
 
     width: 50%;
     overflow: hidden;
-    transition: width 0.5s ease;
+    transition: width $mode-animation-time ease;
 
     // first view should have width:100%
     &:nth-child(2):last-child {

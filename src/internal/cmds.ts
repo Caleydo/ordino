@@ -23,13 +23,27 @@ import {none, parse, Range} from 'phovea_core/src/range';
 import {IDType, resolve} from 'phovea_core/src/idtype';
 import ViewWrapper, {createViewWrapper, replaceViewWrapper} from './ViewWrapper';
 import OrdinoApp from './OrdinoApp';
-import {EXTENSION_POINT_TDP_VIEW} from 'tdp_core/src/extensions';
+import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core/src/extensions';
 import {lastOnly} from 'phovea_clue/src/compress';
 
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
 const CMD_REPLACE_VIEW = 'targidReplaceView';
 const CMD_SET_SELECTION = 'targidSetSelection';
+
+function asSelection(data: {idtype: string, selection: string}): ISelection {
+  return {
+    range: data.selection ? parse(data.selection) : none(),
+    idtype: data.idtype ? resolve(data.idtype) : null
+  };
+}
+
+function serializeSelection(selection?: ISelection) {
+  if (!selection || !selection.idtype || !selection.range || selection.range.isNone) {
+    return null;
+  }
+  return { idtype: selection.idtype.id, selection: selection.range.toString() };
+}
 
 /**
  * Creates a view instance and wraps the instance with the inverse action in a CLUE command
@@ -38,16 +52,16 @@ const CMD_SET_SELECTION = 'targidSetSelection';
  * @param graph The Provenance graph
  * @returns {Promise<ICmdResult>}
  */
-export async function createViewImpl(inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
+export async function createViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
   const app: OrdinoApp = inputs[0].value;
   const viewId: string = parameter.viewId;
-  const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
-  const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
+  const selection = asSelection(parameter);
+  const itemSelection = parameter.itemSelection ? asSelection(parameter.itemSelection) : null;
   const options = parameter.options;
 
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  const viewWrapperInstance = await createViewWrapper(graph, {idtype, range: selection}, app.node, view, options);
+  const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
   if (viewWrapperInstance.built) {
     await viewWrapperInstance.built;
   }
@@ -72,7 +86,7 @@ export function removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult
   app.removeImpl(view, oldFocus);
   return {
     removed: [inputs[1]],
-    inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range, view.options)
+    inverse: createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range, view.options, view.getItemSelection())
   };
 }
 
@@ -85,7 +99,7 @@ export function removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult
  * @param parameter Parameter such idtype, selection and view options
  * @returns {Promise<ICmdResult>}
  */
-export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
+export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
   const app: OrdinoApp = inputs[0].value;
   const existingView: ViewWrapper = inputs[1].value;
 
@@ -93,23 +107,24 @@ export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any)
     viewId: existingView.desc.id,
     idtype: existingView.selection.idtype,
     selection: existingView.selection.range,
+    itemSelection: existingView.getItemSelection(),
     options: existingView.options
   };
 
   const viewId: string = parameter.viewId;
-  const idtype = parameter.idtype ? resolve(parameter.idtype) : null; // creates a new object
-  const selection = parameter.selection ? parse(parameter.selection) : none(); // creates a new object
+  const selection = asSelection(parameter);
+  const itemSelection = parameter.itemSelection ? asSelection(parameter.itemSelection) : null;
   const options = parameter.options;
 
   // create new (inner) view
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  await replaceViewWrapper(existingView, {idtype, range: selection}, view, options);
+  await replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
 
   app.update();
 
   return {
-    inverse: replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options)
+    inverse: replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
   };
 }
 
@@ -122,13 +137,14 @@ export async function replaceViewImpl(inputs: IObjectRef<any>[], parameter: any)
  * @param options
  * @returns {IAction}
  */
-export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
+export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
   return action(meta('Add ' + view.name, cat.visual, op.create), CMD_CREATE_VIEW, createViewImpl, [app], {
     viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : none().toString(),
+    itemSelection: serializeSelection(itemSelection),
     options
   });
 }
@@ -158,13 +174,14 @@ export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrap
  * @param options
  * @returns {IAction}
  */
-export function replaceView(app: IObjectRef<OrdinoApp>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): IAction {
+export function replaceView(app: IObjectRef<OrdinoApp>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
   const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
   return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), CMD_REPLACE_VIEW, replaceViewImpl, [app, existingView], {
     viewId,
     idtype: idtype ? idtype.id : null,
     selection: selection ? selection.toString() : none().toString(),
+    itemSelection: serializeSelection(itemSelection),
     options
   });
 }

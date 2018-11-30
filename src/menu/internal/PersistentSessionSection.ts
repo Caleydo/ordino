@@ -12,7 +12,7 @@ import {PersistentSessionList} from 'tdp_core/src/SessionList';
 
 export default class TemporarySessionSection implements IStartMenuSection {
   constructor(parent: HTMLElement, public readonly desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions) {
-    new PersistentSessionList(parent, options.graphManager);
+    const _ = new PersistentSessionList(parent, options.graphManager);
   }
 
   push(namedSet: INamedSet) {

@@ -16,4 +16,4 @@ import './style.scss';
 
 import Ordino from './Ordino';
 
-new Ordino();
+const _ = new Ordino();

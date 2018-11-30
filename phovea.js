@@ -60,6 +60,9 @@ module.exports = function (registry) {
     priority: 95
   });
 
+  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', function() { return import('./src/WelcomeView'); }, {
+    priority: 10
+  });
   // generator-phovea:end
 };
 

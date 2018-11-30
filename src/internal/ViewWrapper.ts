@@ -26,13 +26,13 @@ import {
   isSameSelection,
   IView,
   IViewContext,
-  IViewPluginDesc,
   matchLength,
   showAsSmallMultiple,
   toViewPluginDesc
 } from 'tdp_core/src/views';
 import {resolveImmediately} from 'phovea_core/src/internal/promise';
 import {groupByCategory} from 'tdp_core/src/views/findViews';
+import {MODE_ANIMATION_TIME} from './constants';
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.range.toString());
@@ -97,11 +97,12 @@ export default class ViewWrapper extends EventHandler {
    * Initialize this view, create the root node and the (inner) view
    * @param graph
    * @param selection
+   * @param itemSelection
    * @param parent
    * @param plugin
    * @param options
    */
-  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, parent: Element, private plugin: IPlugin, public options?) {
+  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, itemSelection: ISelection|null, parent: Element, private plugin: IPlugin, private firstTime: boolean, public options?) {
     super();
 
     // create provenance reference
@@ -112,7 +113,7 @@ export default class ViewWrapper extends EventHandler {
     // create ViewWrapper root node
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
 
-    this.built = resolveImmediately(this.createView(selection, plugin, options));
+    this.built = resolveImmediately(this.createView(selection, itemSelection, plugin, options));
   }
 
   /**
@@ -136,7 +137,7 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  private createView(selection: ISelection, plugin: IPlugin, options?) {
+  private createView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)
       .datum(this);
@@ -164,6 +165,10 @@ export default class ViewWrapper extends EventHandler {
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
     return resolveImmediately(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this))).then(() => {
+      if (itemSelection) {
+        return this.instance.setItemSelection(itemSelection);
+      }
+    }).then(() => {
       this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
       this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
 
@@ -178,15 +183,16 @@ export default class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  replaceView(selection: ISelection, plugin: IPlugin, options?) {
+  replaceView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, firstTime: boolean, options?) {
     this.destroyView();
 
     this.selection = selection;
     this.plugin = plugin;
     this.options = options;
+    this.firstTime = firstTime;
 
     this.init(this.graph, selection, plugin, options);
-    return this.built = this.createView(selection, plugin, options);
+    return this.built = this.createView(selection, itemSelection, plugin, options);
   }
 
   /**
@@ -216,7 +222,15 @@ export default class ViewWrapper extends EventHandler {
   }
 
 
-  private onParameterChange(name: string, value: any, previousValue: any) {
+  private onParameterChange(name: string, value: any, previousValue: any, isInitializion: boolean) {
+    if (isInitializion) {
+      if (this.firstTime) {
+        return this.context.graph.pushWithResult(setParameter(this.ref, name, value, previousValue), {
+          inverse: setParameter(this.ref, name, previousValue, value)
+        });
+      }
+      return; // dummy;
+    }
     return this.context.graph.push(setParameter(this.ref, name, value, previousValue));
   }
 
@@ -282,10 +296,23 @@ export default class ViewWrapper extends EventHandler {
     // trigger modeChanged
     this.instance.modeChanged(mode);
 
+    this.updateAfterAnimation();
+
     // on focus view scroll into view
     if (mode === EViewMode.FOCUS) {
       this.scrollIntoView();
     }
+  }
+
+  private updateAfterAnimation() {
+    if (!this.instance || typeof (<any>this.instance).update !== 'function') {
+      return;
+    }
+    setTimeout(() => {
+      if ((<any>this.instance) && typeof (<any>this.instance).update === 'function') {
+        (<any>this.instance).update();
+      }
+    }, MODE_ANIMATION_TIME);
   }
 
   private scrollIntoView() {
@@ -371,10 +398,10 @@ export default class ViewWrapper extends EventHandler {
   }
 }
 
-export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, parent: Element, plugin: IPluginDesc, options?) {
-  return plugin.load().then((p) => new ViewWrapper(graph, selection, parent, p, options));
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
+  return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
 }
 
-export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, plugin: IPluginDesc, options?) {
-  return plugin.load().then((p) => existingView.replaceView(selection, p, options));
+export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, firstTime: boolean, options?) {
+  return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
 }

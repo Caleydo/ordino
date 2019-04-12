@@ -11,6 +11,6 @@ export default class WelcomeView implements IWelcomeView {
   }
 
   build() {
-    this.parent.innerHTML = WelcomeViewTemplate;
+    this.parent.insertAdjacentHTML('afterbegin', WelcomeViewTemplate);
   }
 }

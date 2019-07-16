@@ -18,6 +18,8 @@ import OrdinoApp from './internal/OrdinoApp';
 import {initSession} from 'tdp_core/src/cmds';
 import ATDPApplication, {ITDPOptions} from 'tdp_core/src/ATDPApplication';
 import StartMenu from './internal/StartMenu';
+import {trackApp, ITrackableAction} from 'tdp_matomo/src/matomo';
+import parseRange from 'phovea_core/src/range/parser';
 
 export {ITDPOptions as IOrdinoOptions, CLUEGraphManager} from 'tdp_core/src/ATDPApplication';
 
@@ -31,6 +33,8 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
   }
 
   protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
+    this.matomoTracking();
+
     main.classList.add('targid');
     const startMenuNode = main.ownerDocument.createElement('div');
     startMenuNode.classList.add('startMenu');
@@ -72,5 +76,26 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
       //just if no other option applies jump to the stored state
       this.jumpToStoredOrLastState();
     }
+  }
+
+  /**
+   * Track actions (from the provenance graph) using Matomo from `tdp_matomo`.
+   * See documentation of `tdp_matomo` for further configuration.
+   *
+   * Note: Requires a valid URL + site id to a Matomo backend in the config.json!
+   * The tracking is disabled (even though this function is called)
+   * until a valid URL is set in the config.json.
+   */
+  protected matomoTracking() {
+    // add ordino specific actions
+    const trackableActions: ITrackableAction[] = [
+      // id = phovea extension id
+      {id: 'targidCreateView', event: {category:'view', action: 'create'}},
+      {id: 'targidRemoveView', event: {category:'view', action: 'remove'}},
+      {id: 'targidReplaceView', event: {category:'view', action: 'replace'}},
+      {id: 'targidSetSelection', event: {category:'view', action: 'setSelection', value: (node) => parseRange(node.parameter.range).dim(0).length}},
+    ];
+
+    trackApp(this, trackableActions);
   }
 }

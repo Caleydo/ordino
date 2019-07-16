@@ -30,11 +30,11 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
       prefix: 'ordino',
       name: 'Ordino'
     }, options));
+
+    this.matomoTracking(); // enable matomo tracking before createApp()
   }
 
   protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
-    this.matomoTracking();
-
     main.classList.add('targid');
     const startMenuNode = main.ownerDocument.createElement('div');
     startMenuNode.classList.add('startMenu');

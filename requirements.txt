@@ -1,0 +1,1 @@
+-e git+https://github.com/datavisyn/tdp_core.git@develop#egg=tdp_core

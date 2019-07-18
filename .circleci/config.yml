@@ -3,9 +3,12 @@ jobs:
   build:
     working_directory: ~/phovea
     docker:
-      - image: circleci/node:8-browsers
+      - image: caleydo/phovea_circleci_python:v2.0
     steps:
       - checkout
+      - run:
+          command: |
+            (!(test -f docker_packages.txt) || (cat docker_packages.txt | xargs sudo apt-get install -y))
       - restore_cache:
           key: deps1-{{ checksum "package.json" }}
       - run:
@@ -22,11 +25,29 @@ jobs:
       - run: #install all dependencies
           name: install-npm-wee2
           command: npm install
+      - restore_cache:
+          key: deps1-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
       - run:
-          name: dist
-          command: npm run dist
-      - store_artifacts:
-          path: dist
+          name: install-pip-wee
+          command: |
+            virtualenv ~/venv
+            . ~/venv/bin/activate
+            pip install -r requirements_dev.txt
+            pip install -r requirements.txt
+      - save_cache:
+          key: deps1-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
+          paths:
+          - ~/venv
+      - run: #force update of VCS dependencies?
+          name: update-pip-vcs-dependencies
+          command: |
+            . ~/venv/bin/activate
+            pip install --upgrade --upgrade-strategy=only-if-needed -r requirements.txt
+      - run:
+          name: build
+          command: |
+            . ~/venv/bin/activate
+            npm run build
 
 workflows:
   version: 2

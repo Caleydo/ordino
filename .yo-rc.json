@@ -1,11 +1,12 @@
 {
   "generator-phovea": {
-    "type": "app",
+    "type": "app-slib",
     "name": "ordino",
     "author": "The Caleydo Team",
     "githubAccount": "Caleydo",
     "modules": [
-      "phovea_clue"
+      "phovea_clue",
+      "tdp_core"
     ],
     "registry": {
       "exclude": [
@@ -47,7 +48,7 @@
       "debianPackages": [],
       "redhatPackages": []
     },
-    "app": "",
+    "app": "ordino",
     "entries": {
       "app": "./src/index.ts"
     },
@@ -65,7 +66,7 @@
       "marked"
     ],
     "ignores": [],
-    "today": "Sun, 06 Nov 2016 15:02:36 GMT",
+    "today": "Thu, 18 Jul 2019 07:28:26 GMT",
     "clientOnly": false
   }
 }

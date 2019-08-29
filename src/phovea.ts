@@ -4,25 +4,44 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 import {IRegistry} from 'phovea_core/src/plugin';
+import parseRange from 'phovea_core/src/range/parser';
+import ActionNode from 'phovea_core/src/provenance/ActionNode';
 
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
   // generator-phovea:begin
 
   registry.push('actionFunction', 'targidCreateView', () => System.import('./internal/cmds'), {
-    factory: 'createViewImpl'
+    factory: 'createViewImpl',
+    tdp_matomo: {
+      category: 'view',
+      action: 'create'
+    }
   });
 
   registry.push('actionFunction', 'targidRemoveView', () => System.import('./internal/cmds'), {
-    factory: 'removeViewImpl'
+    factory: 'removeViewImpl',
+    tdp_matomo: {
+      category: 'view',
+      action: 'remove'
+    }
   });
 
   registry.push('actionFunction', 'targidReplaceView', () => System.import('./internal/cmds'), {
-    factory: 'replaceViewImpl'
+    factory: 'replaceViewImpl',
+    tdp_matomo: {
+      category: 'view',
+      action: 'replace'
+    }
   });
 
   registry.push('actionFunction', 'targidSetSelection', () => System.import('./internal/cmds'), {
-    factory: 'setSelectionImpl'
+    factory: 'setSelectionImpl',
+    tdp_matomo: {
+      category: 'view',
+      action: 'setSelection',
+      value: (node: ActionNode) => parseRange(node.parameter.range).dim(0).length // retrieve the number of selected items
+    }
   });
 
   registry.push('actionCompressor', 'targidCreateRemoveCompressor', () => System.import('./internal/cmds'), {

@@ -13,7 +13,7 @@ export default function (registry: IRegistry) {
 
   registry.push('actionFunction', 'targidCreateView', () => System.import('./internal/cmds'), {
     factory: 'createViewImpl',
-    tdp_matomo: {
+    analytics: {
       category: 'view',
       action: 'create'
     }
@@ -21,7 +21,7 @@ export default function (registry: IRegistry) {
 
   registry.push('actionFunction', 'targidRemoveView', () => System.import('./internal/cmds'), {
     factory: 'removeViewImpl',
-    tdp_matomo: {
+    analytics: {
       category: 'view',
       action: 'remove'
     }
@@ -29,7 +29,7 @@ export default function (registry: IRegistry) {
 
   registry.push('actionFunction', 'targidReplaceView', () => System.import('./internal/cmds'), {
     factory: 'replaceViewImpl',
-    tdp_matomo: {
+    analytics: {
       category: 'view',
       action: 'replace'
     }
@@ -37,7 +37,7 @@ export default function (registry: IRegistry) {
 
   registry.push('actionFunction', 'targidSetSelection', () => System.import('./internal/cmds'), {
     factory: 'setSelectionImpl',
-    tdp_matomo: {
+    analytics: {
       category: 'view',
       action: 'setSelection',
       value: (node: ActionNode) => parseRange(node.parameter.range).dim(0).length // retrieve the number of selected items

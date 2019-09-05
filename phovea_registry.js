@@ -5,6 +5,7 @@
  **************************************************************************** */
 
 import {register} from 'phovea_core/src/plugin';
+import reg from './src/phovea';
 
 /**
  * build a registry by registering all phovea modules
@@ -12,4 +13,4 @@ import {register} from 'phovea_core/src/plugin';
 //other modules
 import 'tdp_core/phovea_registry.js';
 //self
-register('ordino',require('./phovea.js'));
+register('ordino', reg);

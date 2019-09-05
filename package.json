@@ -88,7 +88,6 @@
     "jquery.scrollto": "2.1.2",
     "@types/jquery": "2.0.33",
     "jquery": "3.1.1",
-    "tdp_core": "github:datavisyn/tdp_core#develop",
-    "tdp_matomo": "github:datavisyn/tdp_matomo#develop"
+    "tdp_core": "github:datavisyn/tdp_core#develop"
   }
 }

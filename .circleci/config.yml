@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps1-{{ checksum "package.json" }}
+          key: deps2-{{ checksum "package.json" }}
       - run:
           name: install-npm-wee
           command: npm install
@@ -16,7 +16,7 @@ jobs:
           command: |
             (grep -l '._resolved.: .\(git[^:]*\|bitbucket\):' ./node_modules/*/package.json || true) | xargs -r dirname | xargs -r rm -rf
       - save_cache:
-          key: deps1-{{ checksum "package.json" }}
+          key: deps2-{{ checksum "package.json" }}
           paths:
           - ./node_modules
       - run: #install all dependencies

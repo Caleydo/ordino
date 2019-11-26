@@ -69,6 +69,18 @@ export default function (registry: IRegistry) {
   registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => System.import('./WelcomeView'), {
     priority: 10
   });
+
+  registry.push('epPhoveaCoreLocale', 'phoveaCoreLocaleEN', function () {
+    return System.import('./assets/locales/en/tdp.json').then(function (json) {
+      return {
+        create: () => json
+      };
+    });
+  }, {
+    order: 1,
+    ns: 'tdp',
+    lng: 'en'
+  });
   // generator-phovea:end
 
 }

@@ -8,7 +8,7 @@
     "url": "https://caleydo.org"
   },
   "license": "MPL",
-  "homepage": "https://phovea.caleydo.org",
+  "homepage": "https://caleydo.org",
   "bugs": {
     "url": "https://github.com/Caleydo/ordino/issues"
   },
@@ -24,12 +24,16 @@
     "phovea_registry.js",
     "build"
   ],
+  "engines": {
+    "npm": ">= 6.12",
+    "node": ">= 12.13"
+  },
   "scripts": {
     "predist": "npm run build && npm run docs",
     "predocker": "npm run build",
     "docker": "docker build -t ordino -f deploy/Dockerfile .",
     "compile": "tsc",
-    "lint": "tslint -c tslint.json -p .",
+    "lint": "tslint -c tslint.json -p . 'src/**/*.ts?(x)' 'tests/**/*.ts?(x)'",
     "docs": "typedoc --options typedoc.json src/**.ts",
     "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
     "pretest": "npm run compile",
@@ -73,7 +77,7 @@
     "tslib": "1.9.0",
     "tslint": "5.9.1",
     "typedoc": "0.11.1",
-    "typescript": "2.7.2",
+    "typescript": "2.8.1",
     "url-loader": "0.5.8",
     "webpack": "2.3.3",
     "webpack-dev-server": "2.4.2",
@@ -84,8 +88,8 @@
     "ts-loader": "4.0.1"
   },
   "dependencies": {
-    "@types/jquery.scrollto": "1.4.27",
-    "jquery.scrollto": "2.1.2",
+    "@types/jquery.scrollto": "~1.4.27",
+    "jquery.scrollto": "~2.1.2",
     "@types/jquery": "2.0.33",
     "jquery": "3.1.1",
     "tdp_core": "github:datavisyn/tdp_core#develop"

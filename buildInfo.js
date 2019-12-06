@@ -35,7 +35,7 @@ function gitHead(cwd) {
 
 function resolveModules() {
   const reg = fs.readFileSync('../phovea_registry.js').toString();
-  const regex = /import '(.*)\/phovea_registry.js'/g;
+  const regex = /^import '(.*)\/phovea_registry.js'/gm;
   const modules = [];
   let r;
   while ((r = regex.exec(reg)) !== null) {
@@ -56,7 +56,7 @@ function resolveWorkspace() {
   let deps = null;
   const resolveModule = (m) => {
     console.log('resolve', m);
-    const pkg = require(`../${m}/package.json`);
+    const pkg = JSON.parse(fs.readFileSync(`../${m}/package.json`).toString());
     const head = gitHead('../' + m);
     const repo = pkg.repository.url;
     return {
@@ -139,7 +139,7 @@ function resolveScreenshot() {
   if (!fs.existsSync(f)) {
     return null;
   }
-  const buffer = new Buffer(fs.readFileSync(f)).toString('base64');
+  const buffer = Buffer.from(fs.readFileSync(f)).toString('base64');
   return `data:image/png;base64,${buffer}`;
 }
 
@@ -147,8 +147,10 @@ function metaData(pkg) {
   pkg = pkg || require(`./package.json`);
   return {
     name: pkg.name,
+    displayName: pkg.displayName,
     version: pkg.version,
     repository: pkg.repository.url,
+    homepage: pkg.homepage,
     description: pkg.description,
     screenshot: resolveScreenshot()
   };

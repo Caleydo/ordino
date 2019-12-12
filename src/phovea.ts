@@ -71,10 +71,10 @@ export default function (registry: IRegistry) {
     priority: 10
   });
 
-  registry.push(EP_PHOVEA_CORE_LOCALE, 'bioinfodbLocaleEN', function () {
+  registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
     return System.import('./assets/locales/en/tdp.json').then(asResource);
   }, <ILocaleEPDesc>{
-    order:1,
+    order: 1,
     ns: 'tdp',
   });
   // generator-phovea:end

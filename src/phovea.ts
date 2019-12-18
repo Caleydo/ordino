@@ -3,9 +3,10 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import {IRegistry} from 'phovea_core/src/plugin';
+import {IRegistry, asResource} from 'phovea_core/src/plugin';
 import parseRange from 'phovea_core/src/range/parser';
 import ActionNode from 'phovea_core/src/provenance/ActionNode';
+import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core/src/extensions';
 
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
@@ -68,6 +69,13 @@ export default function (registry: IRegistry) {
 
   registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => System.import('./WelcomeView'), {
     priority: 10
+  });
+
+  registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
+    return System.import('./assets/locales/en/tdp.json').then(asResource);
+  }, <ILocaleEPDesc>{
+    order: 1,
+    ns: 'tdp',
   });
   // generator-phovea:end
 

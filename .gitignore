@@ -10,3 +10,4 @@ node_modules/
 *.log
 /.awcache
 /.cache-loader
+package-lock.json

@@ -92,6 +92,6 @@
     "@types/jquery.scrollto": "~1.4.27",
     "jquery": "~3.3.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "^8.0.0"
+    "tdp_core": "github:datavisyn/tdp_core#semver:^8.0.0"
   }
 }

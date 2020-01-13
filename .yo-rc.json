@@ -35,8 +35,7 @@
     ],
     "sextensions": [],
     "libraries": [
-      "scrollTo",
-      "mongodb"
+      "scrollTo"
     ],
     "unknown": {
       "requirements": [
@@ -47,7 +46,7 @@
       "debianPackages": [],
       "redhatPackages": []
     },
-    "app": "",
+    "app": "ordino",
     "entries": {
       "app": "./src/index.ts"
     },
@@ -61,11 +60,16 @@
       "lineupjs",
       "select2",
       "scrollTo",
-      "mongodb",
       "marked"
     ],
     "ignores": [],
     "today": "Sun, 06 Nov 2016 15:02:36 GMT",
-    "clientOnly": false
+    "clientOnly": false,
+    "promptValues": {
+      "authorName": "The Caleydo Team",
+      "authorEmail": "contact@caleydo.org",
+      "authorUrl": "https://caleydo.org",
+      "githubAccount": "Caleydo"
+    }
   }
 }

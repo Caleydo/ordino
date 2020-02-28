@@ -48,7 +48,7 @@
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "dist": "mkdirp dist && cd build && tar cvzf ../dist/ordino.tar.gz *"
+    "dist": "mkdir dist && cd build && tar cvzf ../dist/ordino.tar.gz *"
   },
   "devDependencies": {
     "@types/jasmine": "2.5.47",
@@ -68,7 +68,6 @@
     "karma-junit-reporter": "2.0.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "2.0.3",
-    "mkdirp": "0.5.1",
     "node-sass": "^4.12.0",
     "null-loader": "0.1.1",
     "raw-loader": "0.5.1",

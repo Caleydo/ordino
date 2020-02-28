@@ -88,7 +88,7 @@
   },
   "dependencies": {
     "@types/jquery": "~3.3.33",
-    "@types/jquery.scrollto": "~1.4.27",
+    "@types/jquery.scrollto": "~1.4.28",
     "jquery": "~3.4.1",
     "jquery.scrollto": "~2.1.2",
     "tdp_core": "github:datavisyn/tdp_core#update_dependencies_38"

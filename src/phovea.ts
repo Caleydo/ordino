@@ -7,13 +7,14 @@ import {IRegistry, asResource} from 'phovea_core/src/plugin';
 import parseRange from 'phovea_core/src/range/parser';
 import ActionNode from 'phovea_core/src/provenance/ActionNode';
 import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core/src/extensions';
+import {EXTENSION_POINT_TDP_APP_EXTENSION} from 'tdp_core/src/extensions';
 
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
   // generator-phovea:begin
 
   /// #if include('tdp_comments')
-  registry.push('tdpAppExtension', 'comment', function () {return import('./adapter/tdp_comments/AppExtension');})
+  registry.push(EXTENSION_POINT_TDP_APP_EXTENSION, 'ordinoComment', () => System.import('./adapter/tdp_comments/AppExtension'));
   /// #endif
 
   registry.push('actionFunction', 'targidCreateView', () => System.import('./internal/cmds'), {

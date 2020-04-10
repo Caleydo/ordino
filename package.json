@@ -89,5 +89,8 @@
     "jquery": "~3.4.1",
     "jquery.scrollto": "~2.1.2",
     "tdp_core": "github:datavisyn/tdp_core#develop"
+  },
+  "optionalDependencies": {
+    "tdp_comments": "github:datavisyn/tdp_comments#develop"
   }
 }

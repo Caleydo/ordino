@@ -12,6 +12,10 @@ export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
   // generator-phovea:begin
 
+  /// #if include('tdp_comments')
+  registry.push('tdpAppExtension', 'comment', function () {return import('./adapter/tdp_comments/AppExtension');})
+  /// #endif
+
   registry.push('actionFunction', 'targidCreateView', () => System.import('./internal/cmds'), {
     factory: 'createViewImpl',
     analytics: {

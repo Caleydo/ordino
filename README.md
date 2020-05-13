@@ -1,6 +1,6 @@
 Ordino 
 =====================
-[![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm-url] [![CircleCI][circleci-image]][circleci-url] 
+[![Phovea][phovea-image]][phovea-url] [![CircleCI][circleci-image]][circleci-url] 
 
 
 A target ranking application based on the [Target Discovery Platform](https://github.com/datavisyn/tdp_core).
@@ -45,7 +45,5 @@ This repository is part of **[Phovea](http://phovea.caleydo.org/)**, a platform 
 
 [phovea-image]: https://img.shields.io/badge/Phovea-Application-1BA64E.svg
 [phovea-url]: https://phovea.caleydo.org
-[npm-image]: https://badge.fury.io/js/ordino.svg
-[npm-url]: https://npmjs.org/package/ordino
 [circleci-image]: https://circleci.com/gh/Caleydo/ordino.svg?style=shield
 [circleci-url]: https://circleci.com/gh/Caleydo/ordino

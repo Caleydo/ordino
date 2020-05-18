@@ -15,7 +15,7 @@ import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
 import {INamedSet} from 'tdp_core/src/storage';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
 import OrdinoApp from './internal/OrdinoApp';
-import {initSession} from 'tdp_core/src/cmds';
+import {initSession} from 'tdp_core/src/utils/cmds';
 import ATDPApplication, {ITDPOptions} from 'tdp_core/src/ATDPApplication';
 import StartMenu from './internal/StartMenu';
 

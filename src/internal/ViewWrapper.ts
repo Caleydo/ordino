@@ -16,7 +16,7 @@ import 'jquery.scrollto/jquery.scrollTo.js';
 import {EventHandler} from 'phovea_core/src/event';
 import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
 import {INamedSet} from 'tdp_core/src/storage';
-import {setParameter} from 'tdp_core/src/cmds';
+import {setParameter} from 'tdp_core/src/utils/cmds';
 import {
   AView,
   createContext,

@@ -88,6 +88,6 @@
     "@types/jquery.scrollto": "~1.4.28",
     "jquery": "~3.4.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "github:datavisyn/tdp_core#develop"
+    "tdp_core": "github:datavisyn/tdp_core#vstoiber/refactoring"
   }
 }

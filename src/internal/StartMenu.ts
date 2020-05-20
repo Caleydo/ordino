@@ -8,7 +8,7 @@
 
 
 import OrdinoApp from './OrdinoApp';
-import {INamedSet} from 'tdp_core/src/storage';
+import {INamedSet} from 'tdp_core/src/storage/interfaces';
 import {list as listPlugins} from 'phovea_core/src/plugin';
 import {event as d3event, select, selection, Selection} from 'd3';
 import {EXTENSION_POINT_START_MENU, IStartMenuSection, IStartMenuSectionDesc} from '../extensions';

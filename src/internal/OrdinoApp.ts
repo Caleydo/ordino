@@ -12,9 +12,10 @@ import {cat, IObjectRef, op, ProvenanceGraph, StateNode} from 'phovea_core/src/p
 import IDType from 'phovea_core/src/idtype/IDType';
 import {EventHandler, IEvent} from 'phovea_core/src/event';
 import * as d3 from 'd3';
-import {AView, EViewMode, ISelection} from 'tdp_core/src/views';
+import {AView} from 'tdp_core/src/views/AView';
+import {EViewMode, ISelection} from 'tdp_core/src/views/interfaces';
 import ViewWrapper from './ViewWrapper';
-import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
+import {CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 import {createView, removeView, replaceView, setAndUpdateSelection, setSelection} from './cmds';
 import Range from 'phovea_core/src/range/Range';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';

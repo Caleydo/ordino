@@ -11,15 +11,13 @@ import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
 import {IEvent} from 'phovea_core/src/event';
 import * as session from 'phovea_core/src/session';
 import {VIEW_EVENT_UPDATE_ENTRY_POINT} from 'tdp_core/src/views/interfaces';
-import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {INamedSet} from 'tdp_core/src/storage';
+import {CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
+import {INamedSet} from 'tdp_core/src/storage/interfaces';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
 import OrdinoApp from './internal/OrdinoApp';
 import {initSession} from 'tdp_core/src/utils/cmds';
-import ATDPApplication, {ITDPOptions} from 'tdp_core/src/ATDPApplication';
+import {ATDPApplication, ITDPOptions} from 'tdp_core/src/ATDPApplication';
 import StartMenu from './internal/StartMenu';
-
-export {ITDPOptions as IOrdinoOptions, CLUEGraphManager} from 'tdp_core/src/ATDPApplication';
 
 export default class Ordino extends ATDPApplication<OrdinoApp> {
 

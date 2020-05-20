@@ -7,8 +7,8 @@
  ********************************************************************/
 
 import {IPluginDesc} from 'phovea_core/src/plugin';
-import {INamedSet} from 'tdp_core/src/storage';
-import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
+import {INamedSet} from 'tdp_core/src/storage/interfaces';
+import {CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
 
 export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 

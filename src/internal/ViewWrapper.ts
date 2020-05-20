@@ -15,13 +15,12 @@ import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
 import {EventHandler} from 'phovea_core/src/event';
 import {IPlugin, IPluginDesc} from 'phovea_core/src/plugin';
-import {INamedSet} from 'tdp_core/src/storage';
+import {INamedSet} from 'tdp_core/src/storage/interfaces';
 import {setParameter} from 'tdp_core/src/utils/cmds';
+import {AView} from 'tdp_core/src/views/AView';
 import {
-  AView,
   createContext,
   EViewMode,
-  findViews,
   ISelection,
   isSameSelection,
   IView,
@@ -29,10 +28,11 @@ import {
   matchLength,
   showAsSmallMultiple,
   toViewPluginDesc
-} from 'tdp_core/src/views';
+} from 'tdp_core/src/views/interfaces';
 import {resolveImmediately} from 'phovea_core/src/internal/promise';
-import {groupByCategory} from 'tdp_core/src/views/findViews';
+import {findViews, groupByCategory} from 'tdp_core/src/views/findViews';
 import {MODE_ANIMATION_TIME} from './constants';
+
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
   const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.range.toString());

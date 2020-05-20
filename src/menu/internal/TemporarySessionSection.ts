@@ -7,7 +7,7 @@
  ********************************************************************/
 
 import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from '../../extensions';
-import {INamedSet} from 'tdp_core/src/storage';
+import {INamedSet} from 'tdp_core/src/storage/interfaces';
 import {TemporarySessionList} from 'tdp_core/src/SessionList';
 
 export default class TemporarySessionSection implements IStartMenuSection {

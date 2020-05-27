@@ -7,8 +7,8 @@
  ********************************************************************/
 
 import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from '../../extensions';
-import {INamedSet} from 'tdp_core/src/storage/interfaces';
-import {PersistentSessionList} from 'tdp_core/src/SessionList';
+import {INamedSet} from 'tdp_core';
+import {PersistentSessionList} from 'tdp_core';
 
 export default class TemporarySessionSection implements IStartMenuSection {
   constructor(parent: HTMLElement, public readonly desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions) {

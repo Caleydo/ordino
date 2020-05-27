@@ -8,8 +8,8 @@
 
 
 import OrdinoApp from './OrdinoApp';
-import {INamedSet} from 'tdp_core/src/storage/interfaces';
-import {list as listPlugins} from 'phovea_core/src/plugin';
+import {INamedSet} from 'tdp_core';
+import {PluginRegistry} from 'phovea_core';
 import {event as d3event, select, selection, Selection} from 'd3';
 import {EXTENSION_POINT_START_MENU, IStartMenuSection, IStartMenuSectionDesc} from '../extensions';
 
@@ -92,7 +92,7 @@ export default class StartMenu {
       this.close();
     });
 
-    const sectionEntries = listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSectionDesc>d).sort(byPriority);
+    const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSectionDesc>d).sort(byPriority);
 
     this.$sections = this.$node.select('.menu').selectAll('section').data(sectionEntries);
 

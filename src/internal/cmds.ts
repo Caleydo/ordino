@@ -8,23 +8,22 @@
 
 
 import {
-  action,
+  ActionUtils,
   ActionNode,
-  cat,
+  ActionMetaData,
   IAction,
+  ObjectRefUtils,
   ICmdResult,
   IObjectRef,
-  meta,
-  op,
   ProvenanceGraph
-} from 'phovea_core/src/provenance';
-import {get as getPlugin} from 'phovea_core/src/plugin';
-import {none, parse, Range} from 'phovea_core/src/range';
-import {IDType, resolve} from 'phovea_core/src/idtype';
+} from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
+import {Range, ParseRangeUtils} from 'phovea_core';
+import {IDTypeManager, IDType} from 'phovea_core';
 import ViewWrapper, {createViewWrapper, replaceViewWrapper} from './ViewWrapper';
 import OrdinoApp from './OrdinoApp';
-import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core/src/extensions';
-import {lastOnly} from 'phovea_clue/src/compress';
+import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core';
+import {Compression} from 'phovea_clue';
 
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
@@ -33,8 +32,8 @@ const CMD_SET_SELECTION = 'targidSetSelection';
 
 function asSelection(data: {idtype: string, selection: string}): ISelection {
   return {
-    range: data.selection ? parse(data.selection) : none(),
-    idtype: data.idtype ? resolve(data.idtype) : null
+    range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
+    idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
   };
 }
 
@@ -59,7 +58,7 @@ export async function createViewImpl(this: ActionNode, inputs: IObjectRef<any>[]
   const itemSelection = parameter.itemSelection ? asSelection(parameter.itemSelection) : null;
   const options = parameter.options;
 
-  const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+  const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
   const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
   if (viewWrapperInstance.built) {
@@ -117,7 +116,7 @@ export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[
   const options = parameter.options;
 
   // create new (inner) view
-  const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+  const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
   await replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
 
@@ -138,12 +137,12 @@ export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[
  * @returns {IAction}
  */
 export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
-  const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+  const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
-  return action(meta('Add ' + view.name, cat.visual, op.create), CMD_CREATE_VIEW, createViewImpl, [app], {
+  return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, createViewImpl, [app], {
     viewId,
     idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : none().toString(),
+    selection: selection ? selection.toString() : Range.none().toString(),
     itemSelection: serializeSelection(itemSelection),
     options
   });
@@ -158,7 +157,7 @@ export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: I
  */
 export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
   // assert view
-  return action(meta('Remove ' + view.toString(), cat.visual, op.remove), CMD_REMOVE_VIEW, removeViewImpl, [app, view], {
+  return ActionUtils.action(ActionMetaData.actionMeta('Remove ' + view.toString(), ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, removeViewImpl, [app, view], {
     viewId: view.value.desc.id,
     focus: oldFocus
   });
@@ -175,12 +174,12 @@ export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrap
  * @returns {IAction}
  */
 export function replaceView(app: IObjectRef<OrdinoApp>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
-  const view = getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+  const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
-  return action(meta('Replace ' + existingView.name + ' with ' + view.name, cat.visual, op.update), CMD_REPLACE_VIEW, replaceViewImpl, [app, existingView], {
+  return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, replaceViewImpl, [app, existingView], {
     viewId,
     idtype: idtype ? idtype.id : null,
-    selection: selection ? selection.toString() : none().toString(),
+    selection: selection ? selection.toString() : Range.none().toString(),
     itemSelection: serializeSelection(itemSelection),
     options
   });
@@ -190,8 +189,8 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
   const views: ViewWrapper[] = await Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]);
   const view = views[0];
   const target = views[1];
-  const idtype = parameter.idtype ? resolve(parameter.idtype) : null;
-  const range = parse(parameter.range);
+  const idtype = parameter.idtype ? IDTypeManager.getInstance().resolveIdType(parameter.idtype) : null;
+  const range = ParseRangeUtils.parseRangeLike(parameter.range);
 
   const bak = view.getItemSelection();
   await Promise.resolve(view.setItemSelection({idtype, range}));
@@ -205,7 +204,7 @@ export async function setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
 
 export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
   // assert view
-  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), CMD_SET_SELECTION, setSelectionImpl, [view], {
+  return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, setSelectionImpl, [view], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
@@ -213,7 +212,7 @@ export function setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, rang
 
 export function setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
   // assert view
-  return action(meta('Select ' + (idtype ? idtype.name : 'None'), cat.selection, op.update), CMD_SET_SELECTION, setSelectionImpl, [view, target], {
+  return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, setSelectionImpl, [view, target], {
     idtype: idtype ? idtype.id : null,
     range: range.toString()
   });
@@ -274,5 +273,5 @@ export function compressCreateRemove(path: ActionNode[]) {
 }
 
 export function compressSetSelection(path: ActionNode[]) {
-  return lastOnly(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
+  return Compression.lastOnly(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
 }

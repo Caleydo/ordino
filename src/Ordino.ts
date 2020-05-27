@@ -7,16 +7,16 @@
  ********************************************************************/
 
 
-import ProvenanceGraph from 'phovea_core/src/provenance/ProvenanceGraph';
-import {IEvent} from 'phovea_core/src/event';
-import * as session from 'phovea_core/src/session';
-import {VIEW_EVENT_UPDATE_ENTRY_POINT} from 'tdp_core/src/views/interfaces';
-import {CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
-import {INamedSet} from 'tdp_core/src/storage/interfaces';
+import {ProvenanceGraph} from 'phovea_core';
+import {IEvent} from 'phovea_core';
+import {UserSession} from 'phovea_core';
+import {ViewUtils} from 'tdp_core';
+import {CLUEGraphManager} from 'phovea_clue';
+import {INamedSet} from 'tdp_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
 import OrdinoApp from './internal/OrdinoApp';
-import {initSession} from 'tdp_core/src/utils/cmds';
-import {ATDPApplication, ITDPOptions} from 'tdp_core/src/ATDPApplication';
+import {TDPApplicationUtils} from 'tdp_core';
+import {ATDPApplication, ITDPOptions} from 'tdp_core';
 import StartMenu from './internal/StartMenu';
 
 export default class Ordino extends ATDPApplication<OrdinoApp> {
@@ -42,13 +42,13 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
 
       this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
       app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-      app.on(VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
+      app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
       return app;
     });
   }
 
   protected initSessionImpl(app: OrdinoApp) {
-    const hasInitScript = session.has(SESSION_KEY_NEW_ENTRY_POINT);
+    const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);
     const graph = app.graph;
     if (graph.isEmpty && !hasInitScript) {
       const hasSeenWelcomePage = `${this.options.prefix}_has_seen_welcome_page`;
@@ -59,13 +59,13 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
         localStorage.setItem(hasSeenWelcomePage, '1');
       }
     } else if (hasInitScript) {
-      const {view, options, defaultSessionValues} = <any>session.retrieve(SESSION_KEY_NEW_ENTRY_POINT);
+      const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(SESSION_KEY_NEW_ENTRY_POINT);
 
       if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-        graph.push(initSession(defaultSessionValues));
+        graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
       }
       app.push(view, null, null, options);
-      session.remove(SESSION_KEY_NEW_ENTRY_POINT);
+      UserSession.getInstance().remove(SESSION_KEY_NEW_ENTRY_POINT);
     } else {
       //just if no other option applies jump to the stored state
       this.jumpToStoredOrLastState();

@@ -6,9 +6,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-import {IPluginDesc} from 'phovea_core/src/plugin';
-import {INamedSet} from 'tdp_core/src/storage/interfaces';
-import {CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
+import {IPluginDesc} from 'phovea_core';
+import {INamedSet} from 'tdp_core';
+import {CLUEGraphManager} from 'phovea_clue';
 
 export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 

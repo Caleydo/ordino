@@ -7,20 +7,20 @@
  ********************************************************************/
 
 
-import {resolveIn} from 'phovea_core/src/index';
-import {cat, IObjectRef, op, ProvenanceGraph, StateNode} from 'phovea_core/src/provenance';
-import IDType from 'phovea_core/src/idtype/IDType';
-import {EventHandler, IEvent} from 'phovea_core/src/event';
+import {BaseUtils, NodeUtils} from 'phovea_core';
+import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode} from 'phovea_core';
+import {IDType} from 'phovea_core';
+import {EventHandler, IEvent} from 'phovea_core';
 import * as d3 from 'd3';
-import {AView} from 'tdp_core/src/views/AView';
-import {EViewMode, ISelection} from 'tdp_core/src/views/interfaces';
+import {AView} from 'tdp_core';
+import {EViewMode, ISelection} from 'tdp_core';
 import ViewWrapper from './ViewWrapper';
-import {CLUEGraphManager} from 'phovea_clue/src/CLUEGraphManager';
+import {CLUEGraphManager} from 'phovea_clue';
 import {createView, removeView, replaceView, setAndUpdateSelection, setSelection} from './cmds';
-import Range from 'phovea_core/src/range/Range';
+import {Range} from 'phovea_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
-import * as session from 'phovea_core/src/session';
-import {list as listPlugins} from 'phovea_core/src/plugin';
+import {UserSession} from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
 import {IWelcomeView} from '../WelcomeView';
 
 export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
@@ -58,7 +58,7 @@ export default class OrdinoApp extends EventHandler {
     super();
     // add OrdinoApp app as (first) object to provenance graph
     // need old name for compatibility
-    this.ref = graph.findOrAddObject(this, 'Targid', cat.visual);
+    this.ref = graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
 
 
     this.$history = this.buildHistory(parent);
@@ -75,7 +75,7 @@ export default class OrdinoApp extends EventHandler {
    * @param {HTMLElement} parent
    */
   private buildWelcomeView(parent: HTMLElement) {
-    const welcomeViews = listPlugins(EXTENSION_POINT_WELCOME_PAGE)
+    const welcomeViews = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_WELCOME_PAGE)
       .sort((a: any, b: any) => ((b.priority || 10) - (a.priority || 10))); // descending
 
     if(welcomeViews.length === 0) {
@@ -255,7 +255,7 @@ export default class OrdinoApp extends EventHandler {
 
   initNewSession(view: string, options: any, defaultSessionValues: any = null) {
     // store state to session before creating a new graph
-    session.store(SESSION_KEY_NEW_ENTRY_POINT, {
+    UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
       view,
       options,
       defaultSessionValues
@@ -302,7 +302,7 @@ export default class OrdinoApp extends EventHandler {
     this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
     this.views.push(view);
     this.update();
-    return resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
+    return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
   }
 
   removeImpl(view: ViewWrapper, focus: number = -1) {
@@ -387,7 +387,7 @@ export default class OrdinoApp extends EventHandler {
       return Promise.resolve(old);
     }
     this.update();
-    return resolveIn(1000).then(() => old);
+    return BaseUtils.resolveIn(1000).then(() => old);
   }
 
   /**
@@ -428,5 +428,5 @@ export default class OrdinoApp extends EventHandler {
  */
 function isCreateView(stateNode: StateNode) {
   const creator = stateNode.creator;
-  return creator != null && creator.meta.category === cat.visual && creator.meta.operation === op.create;
+  return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
 }

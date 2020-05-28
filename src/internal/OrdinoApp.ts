@@ -339,14 +339,14 @@ export default class OrdinoApp extends EventHandler {
    */
   focus(view: ViewWrapper) {
     const creators = this.graph.act.path.filter(isCreateView).map((d) => d.creator);
-    const createdBy = this.graph.findOrAddJustObject(view.ref).createdBy;
+    const createdBy = NodeUtils.createdBy(this.graph.findOrAddJustObject(view.ref));
     const i = creators.indexOf(createdBy);
     if (i === (creators.length - 1)) {
       //we are in focus - or should be
       return Promise.resolve(null);
     } else {
       //jump to the last state this view was in focus
-      return this.graph.jumpTo(creators[i + 1].previous);
+      return this.graph.jumpTo(NodeUtils.previous(creators[i + 1]));
     }
   }
 

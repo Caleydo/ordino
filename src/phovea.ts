@@ -12,7 +12,7 @@ export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
   // generator-phovea:begin
 
-  registry.push('actionFunction', 'targidCreateView', () => System.import('./internal/cmds'), {
+  registry.push('actionFunction', 'targidCreateView', () => import('./internal/cmds'), {
     factory: 'createViewImpl',
     analytics: {
       category: 'view',
@@ -20,7 +20,7 @@ export default function (registry: IRegistry) {
     }
   });
 
-  registry.push('actionFunction', 'targidRemoveView', () => System.import('./internal/cmds'), {
+  registry.push('actionFunction', 'targidRemoveView', () => import('./internal/cmds'), {
     factory: 'removeViewImpl',
     analytics: {
       category: 'view',
@@ -28,7 +28,7 @@ export default function (registry: IRegistry) {
     }
   });
 
-  registry.push('actionFunction', 'targidReplaceView', () => System.import('./internal/cmds'), {
+  registry.push('actionFunction', 'targidReplaceView', () => import('./internal/cmds'), {
     factory: 'replaceViewImpl',
     analytics: {
       category: 'view',
@@ -36,7 +36,7 @@ export default function (registry: IRegistry) {
     }
   });
 
-  registry.push('actionFunction', 'targidSetSelection', () => System.import('./internal/cmds'), {
+  registry.push('actionFunction', 'targidSetSelection', () => import('./internal/cmds'), {
     factory: 'setSelectionImpl',
     analytics: {
       category: 'view',
@@ -45,34 +45,34 @@ export default function (registry: IRegistry) {
     }
   });
 
-  registry.push('actionCompressor', 'targidCreateRemoveCompressor', () => System.import('./internal/cmds'), {
+  registry.push('actionCompressor', 'targidCreateRemoveCompressor', () => import('./internal/cmds'), {
     factory: 'compressCreateRemove',
     matches: '(targidCreateView|targidRemoveView|targidReplaceView)'
   });
 
-  registry.push('actionCompressor', 'targidCompressSetSelection', () => System.import('./internal/cmds'), {
+  registry.push('actionCompressor', 'targidCompressSetSelection', () => import('./internal/cmds'), {
     factory: 'compressSetSelection',
     matches: '(targidSetSelection)'
   });
 
-  registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => System.import('./menu/internal/TemporarySessionSection'), {
+  registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => import('./menu/internal/TemporarySessionSection'), {
     name: 'Temporary Sessions',
     cssClass: 'tdpSessionTemporaryData',
     priority: 90
   });
 
-  registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => System.import('./menu/internal/PersistentSessionSection'), {
+  registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection'), {
     name: 'Persistent Sessions',
     cssClass: 'tdpSessionPersistentData',
     priority: 95
   });
 
-  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => System.import('./WelcomeView'), {
+  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./WelcomeView'), {
     priority: 10
   });
 
   registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
-    return System.import('./assets/locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+    return import('./assets/locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
   }, <ILocaleEPDesc>{
     order: 1,
     ns: 'tdp',

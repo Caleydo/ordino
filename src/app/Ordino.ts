@@ -13,13 +13,13 @@ import {UserSession} from 'phovea_core';
 import {ViewUtils} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
 import {INamedSet} from 'tdp_core';
-import {SESSION_KEY_NEW_ENTRY_POINT} from './internal/constants';
-import OrdinoApp from './internal/OrdinoApp';
+import {SESSION_KEY_NEW_ENTRY_POINT} from '../internal/constants';
+import {OrdinoApp} from '../internal/OrdinoApp';
 import {TDPApplicationUtils} from 'tdp_core';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
-import StartMenu from './internal/StartMenu';
+import {StartMenu} from '../internal/StartMenu';
 
-export default class Ordino extends ATDPApplication<OrdinoApp> {
+export class Ordino extends ATDPApplication<OrdinoApp> {
 
   constructor(options: Partial<ITDPOptions> = {}) {
     super(Object.assign({
@@ -35,10 +35,10 @@ export default class Ordino extends ATDPApplication<OrdinoApp> {
     main.appendChild(startMenuNode);
 
     // lazy loading for better module bundling
-    return Promise.all([import('./internal/OrdinoApp'), import('./internal/StartMenu')]).then((modules) => {
-      const app: OrdinoApp = new modules[0].default(graph, manager, main);
+    return Promise.all([import('../internal/OrdinoApp'), import('../internal/StartMenu')]).then((modules) => {
+      const app: OrdinoApp = new modules[0].OrdinoApp(graph, manager, main);
 
-      const startMenu: StartMenu = new modules[1].default(startMenuNode, app);
+      const startMenu: StartMenu = new modules[1].StartMenu(startMenuNode, app);
 
       this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
       app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());

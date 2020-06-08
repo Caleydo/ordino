@@ -1,3 +1,4 @@
+
 {
   "compilerOptions": {
     "module": "ES2020",
@@ -20,7 +21,7 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true // required for i18next
+    "allowSyntheticDefaultImports": true // required for i18next,
   },
   "include": [
     "dist/index.d.ts",

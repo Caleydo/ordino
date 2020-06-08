@@ -20,10 +20,11 @@ import {
 import {PluginRegistry} from 'phovea_core';
 import {Range, ParseRangeUtils} from 'phovea_core';
 import {IDTypeManager, IDType} from 'phovea_core';
-import ViewWrapper, {createViewWrapper, replaceViewWrapper} from './ViewWrapper';
-import OrdinoApp from './OrdinoApp';
+import {ViewWrapper} from './ViewWrapper';
 import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core';
 import {Compression} from 'phovea_clue';
+import { IOrdinoApp } from './IOrdinoApp';
+
 
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
@@ -52,7 +53,7 @@ function serializeSelection(selection?: ISelection) {
  * @returns {Promise<ICmdResult>}
  */
 export async function createViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
-  const app: OrdinoApp = inputs[0].value;
+  const app: IOrdinoApp = inputs[0].value;
   const viewId: string = parameter.viewId;
   const selection = asSelection(parameter);
   const itemSelection = parameter.itemSelection ? asSelection(parameter.itemSelection) : null;
@@ -60,7 +61,7 @@ export async function createViewImpl(this: ActionNode, inputs: IObjectRef<any>[]
 
   const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
+  const viewWrapperInstance = await ViewWrapper.createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
   if (viewWrapperInstance.built) {
     await viewWrapperInstance.built;
   }
@@ -78,7 +79,7 @@ export async function createViewImpl(this: ActionNode, inputs: IObjectRef<any>[]
  * @returns {ICmdResult}
  */
 export function removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult {
-  const app: OrdinoApp = inputs[0].value;
+  const app: IOrdinoApp = inputs[0].value;
   const view: ViewWrapper = inputs[1].value;
   const oldFocus: number = parameter.focus;
 
@@ -99,7 +100,7 @@ export function removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult
  * @returns {Promise<ICmdResult>}
  */
 export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
-  const app: OrdinoApp = inputs[0].value;
+  const app: IOrdinoApp = inputs[0].value;
   const existingView: ViewWrapper = inputs[1].value;
 
   const oldParams = {
@@ -118,7 +119,7 @@ export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[
   // create new (inner) view
   const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  await replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
+  await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
 
   app.update();
 
@@ -136,7 +137,7 @@ export async function replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[
  * @param options
  * @returns {IAction}
  */
-export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
+export function createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
   const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
   return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, createViewImpl, [app], {
@@ -155,7 +156,7 @@ export function createView(app: IObjectRef<OrdinoApp>, viewId: string, idtype: I
  * @param oldFocus
  * @returns {IAction}
  */
-export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
+export function removeView<T extends IOrdinoApp>(app: IObjectRef<T>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
   // assert view
   return ActionUtils.action(ActionMetaData.actionMeta('Remove ' + view.toString(), ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, removeViewImpl, [app, view], {
     viewId: view.value.desc.id,
@@ -173,7 +174,7 @@ export function removeView(app: IObjectRef<OrdinoApp>, view: IObjectRef<ViewWrap
  * @param options
  * @returns {IAction}
  */
-export function replaceView(app: IObjectRef<OrdinoApp>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
+export function replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
   const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
   // assert view
   return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, replaceViewImpl, [app, existingView], {

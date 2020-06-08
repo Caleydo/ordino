@@ -15,7 +15,7 @@ import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
 import {EventHandler} from 'phovea_core';
 import {IPlugin, IPluginDesc} from 'phovea_core';
-import {INamedSet} from 'tdp_core/src/storage/interfaces';
+import {INamedSet} from 'tdp_core';
 import {TDPApplicationUtils} from 'tdp_core';
 import {AView} from 'tdp_core';
 import {
@@ -35,7 +35,7 @@ function generate_hash(desc: IPluginDesc, selection: ISelection) {
   return desc.id + '_' + s;
 }
 
-export default class ViewWrapper extends EventHandler {
+export class ViewWrapper extends EventHandler {
   static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
   static EVENT_REMOVE = 'remove';
@@ -392,12 +392,12 @@ export default class ViewWrapper extends EventHandler {
   focus() {
     this.fire(ViewWrapper.EVENT_FOCUS, this);
   }
-}
 
-export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
-  return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
-}
+  static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
+    return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
+  }
 
-export function replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, firstTime: boolean, options?) {
-  return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
+  static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, firstTime: boolean, options?) {
+    return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
+  }
 }

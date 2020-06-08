@@ -14,14 +14,15 @@ import {EventHandler, IEvent} from 'phovea_core';
 import * as d3 from 'd3';
 import {AView} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
-import ViewWrapper from './ViewWrapper';
+import {ViewWrapper} from './ViewWrapper';
 import {CLUEGraphManager} from 'phovea_clue';
 import {createView, removeView, replaceView, setAndUpdateSelection, setSelection} from './cmds';
 import {Range} from 'phovea_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import {UserSession} from 'phovea_core';
 import {PluginRegistry} from 'phovea_core';
-import {IWelcomeView} from '../WelcomeView';
+import {IWelcomeView} from '../base/IWelcomeView';
+import { IOrdinoApp } from './IOrdinoApp';
 
 export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
 
@@ -33,7 +34,7 @@ export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export default class OrdinoApp extends EventHandler {
+export class OrdinoApp extends EventHandler implements IOrdinoApp  {
   static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
@@ -422,7 +423,7 @@ export default class OrdinoApp extends EventHandler {
 }
 
 /**
- * Helper function to filter views that were created
+ * Helper function to filter views that were created: should be moved to NodeUtils
  * @param stateNode
  * @returns {boolean}
  */

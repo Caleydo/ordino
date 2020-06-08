@@ -6,7 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-@import "~tdp_core/src/styles/tdp";
 
-// extend with TargID specific rules
-@import "styles/ordino";
+// Determine the order of css files manually
+
+import 'file-loader?name=index.html!extract-loader!html-loader?interpolate!./index.html';
+import 'file-loader?name=404.html!./404.html';
+import 'file-loader?name=robots.txt!./robots.txt';
+import './styles/main.scss';
+
+import {Ordino} from './app/Ordino';
+
+const _ = new Ordino();

@@ -21,8 +21,6 @@
   "types": "dist/index.d.ts",
   "files": [
     "src",
-    "index.js",
-    "phovea.js",
     "phovea_registry.js",
     "dist"
   ],
@@ -31,15 +29,16 @@
     "node": ">= 12.13"
   },
   "scripts": {
-    "clean": "rimraf lib dist && npm run clean:compile",
+    "clean": "rimraf dist lib && npm run clean:compile",
     "clean:compile": "rimraf src/**/*.map src/**/*.js src/**/*.d.ts tests/**/*.js tests/**/*.map tests/**/*.d.ts demo/**/*.js demo/**/*.map demo/**/*.d.ts",
     "compile": "tsc",
     "lint": "tslint -c tslint.json -p . 'src/**/*.ts?(x)' 'tests/**/*.ts?(x)'",
     "docs": "typedoc --options typedoc.json src/**.ts",
     "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
-    "test": "jest --passWithNoTests",
+    "test": "test ! $(find tests -name \"*.ts\") || jest",
     "test:watch": "jest --watch",
     "posttest": "npm run lint",
+    "build:dev": "tsc",
     "build": "npm run clean && npm run compile && npm run copy-assets && npm run copy-styles",
     "copy-assets": "if [ -d src/assets ]; then shx --verbose cp -R src/assets/ dist/assets/; fi",
     "copy-styles": "if [ -d src/scss ]; then shx --verbose cp -R src/scss/ dist/scss/; fi",
@@ -50,20 +49,17 @@
     "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *"
   },
   "devDependencies": {
+    "@types/jquery": "~3.3.33",
+    "@types/jquery.scrollto": "~1.4.28",
     "@types/jest": "25.1.4",
-    "css-loader": "0.28.0",
-    "extract-loader": "0.1.0",
     "file-loader": "0.11.1",
-    "html-loader": "0.4.5",
     "identity-obj-proxy": "^3.0.0",
-    "ifdef-loader": "2.0.0",
     "imports-loader": "0.7.1",
     "jest": "25.1.0",
     "jest-raw-loader": "1.0.1",
     "node-sass": "^4.13.1",
-    "null-loader": "0.1.1",
     "raw-loader": "0.5.1",
-    "rimraf": "^3.0.0",
+    "rimraf": "^3.0.2",
     "shx": "^0.3.2",
     "ts-jest": "25.2.1",
     "tslib": "~1.11.0",
@@ -73,8 +69,6 @@
     "url-loader": "0.5.8"
   },
   "dependencies": {
-    "@types/jquery": "~3.3.33",
-    "@types/jquery.scrollto": "~1.4.28",
     "jquery": "~3.4.1",
     "jquery.scrollto": "~2.1.2",
     "tdp_core": "github:datavisyn/tdp_core#vstoiber/refactoring"

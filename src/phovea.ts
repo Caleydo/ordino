@@ -67,7 +67,7 @@ export default function (registry: IRegistry) {
     priority: 95
   });
 
-  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./WelcomeView'), {
+  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./base/WelcomeView'), {
     priority: 10
   });
 

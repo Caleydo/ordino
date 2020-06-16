@@ -5,13 +5,22 @@
     <title>Ordino</title>
     <meta name="description" content="">
     <link rel="icon" href="${require('phovea_ui/src/assets/favicon.png')}">
-    ${require('html-loader?interpolate!phovea_ui/src/template/_head.html')}
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width">
+    <script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
 </head>
 <body>
 
+  <script>
+    (function () {
+        var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        var isFirefox = /Firefox/.test(navigator.userAgent);
+        if (!isChrome && !isFirefox) {
+            alert('This application was designed to be used in Google Chrome and Mozilla Firefox and does not work in Internet Explorer. Running the application in other browsers might result in performance issues or other misbehavior.');
+        }
+    })();
+</script>
 
-
-${require('html-loader?interpolate!phovea_ui/src/template/_body.html')}
 
 </body>
 </html>

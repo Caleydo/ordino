@@ -9,10 +9,10 @@
 
 // Determine the order of css files manually
 
-import 'file-loader?name=index.html!extract-loader!html-loader?interpolate!./index.html';
-import 'file-loader?name=404.html!./404.html';
-import 'file-loader?name=robots.txt!./robots.txt';
-import './styles/main.scss';
+import './index.html';
+import './404.html';
+import './robots.txt';
+import './scss/main.scss';
 
 import {Ordino} from './app/Ordino';
 

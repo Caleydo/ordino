@@ -7,7 +7,7 @@
  ********************************************************************/
 import { IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions } from '../../base/extensions';
 import { INamedSet } from 'tdp_core';
-export declare class TemporarySessionSection implements IStartMenuSection {
+export declare class PersistentSessionSection implements IStartMenuSection {
     readonly desc: IStartMenuSectionDesc;
     constructor(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions);
     push(namedSet: INamedSet): boolean;

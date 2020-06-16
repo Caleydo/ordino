@@ -10,7 +10,7 @@ import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from
 import {INamedSet} from 'tdp_core';
 import {PersistentSessionList} from 'tdp_core';
 
-export class TemporarySessionSection implements IStartMenuSection {
+export class PersistentSessionSection implements IStartMenuSection {
   constructor(parent: HTMLElement, public readonly desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions) {
     const _ = new PersistentSessionList(parent, options.graphManager);
   }

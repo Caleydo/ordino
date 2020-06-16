@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import { PersistentSessionList } from 'tdp_core';
-export class TemporarySessionSection {
+export class PersistentSessionSection {
     constructor(parent, desc, options) {
         this.desc = desc;
         const _ = new PersistentSessionList(parent, options.graphManager);

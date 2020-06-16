@@ -16,7 +16,7 @@ import {AView} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {CLUEGraphManager} from 'phovea_clue';
-import {createView, removeView, replaceView, setAndUpdateSelection, setSelection} from './cmds';
+import {CmdUtils} from './cmds';
 import {Range} from 'phovea_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import {UserSession} from 'phovea_core';
@@ -221,7 +221,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
   private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.graph.pushWithResult(setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
+      this.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
 
       // check last view and if it will stay open for the new given selection
     } else {
@@ -231,7 +231,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
       // update selection with the last open (= right) view
       if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
         right.setParameterSelection(newSelection);
-        this.graph.pushWithResult(setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+        this.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
 
         // the selection does not match with the last open (= right) view --> close view
       } else {
@@ -266,7 +266,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
   }
 
   private pushView(viewId: string, idtype: IDType, selection: Range, options?) {
-    return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
+    return this.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));
   }
 
   /**
@@ -287,7 +287,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
           console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
           return;
         }
-        return this.graph.push(removeView(this.ref, viewRef));
+        return this.graph.push(CmdUtils.removeView(this.ref, viewRef));
       });
 
     // no views available, then open start menu
@@ -326,7 +326,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
   }
 
   private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?) {
-    return this.graph.push(replaceView(this.ref, existingView, viewId, idtype, selection, options))
+    return this.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options))
       .then((r) => {
         this.update();
         return r;

@@ -55,19 +55,22 @@ export default function (registry: IRegistry) {
     matches: '(targidSetSelection)'
   });
 
-  registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => import('./menu/internal/TemporarySessionSection').then((t) => t.TemporarySessionSection), {
+  registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => import('./menu/internal/TemporarySessionSection'), {
+    factory: 'new TemporarySessionSection',
     name: 'Temporary Sessions',
     cssClass: 'tdpSessionTemporaryData',
     priority: 90
   });
 
-  registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection').then((p) => p.PersistentSessionSection), {
+  registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection'), {
+    factory: 'new PersistentSessionSection',
     name: 'Persistent Sessions',
     cssClass: 'tdpSessionPersistentData',
     priority: 95
   });
 
-  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./base/WelcomeView').then((w) => w.WelcomeView), {
+  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./base/WelcomeView'), {
+    factory: 'new WelcomeView',
     priority: 10
   });
 

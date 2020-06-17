@@ -21,10 +21,12 @@
         ]
       ]
     },
-    "vendor": [
-      "node_modules.*(d3|bootstrap|jquery|select2)",
-      "((node_modules.*popper)|lineupjs|lineupengine|tdp_core)"
-    ],
+    "vendors": {
+      "others": "phovea_.*|tdp_.*",
+      "phovea": "phovea_.*",
+      "tdp": "tdp_.*",
+      "dv": "ordino*|dTiles*|jamborees|snpology|patentbay|triage|festival*"
+    },
     "extensions": [
       {
         "type": "ordinoWelcomeView",
@@ -52,7 +54,8 @@
     },
     "libraryAliases": {
       "d3": "d3/d3",
-      "scrollTo": "jquery.scrollto/jquery.scrollTo.js"
+      "scrollTo": "jquery.scrollto/jquery.scrollTo.js",
+      "jquery": "jquery/dist/jquery"
     },
     "libraryExternals": [
       "d3",

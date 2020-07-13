@@ -1,4 +1,4 @@
-import WelcomeViewTemplate from '../welcome_view.html';
+import WelcomeViewTemplate from '../templates/welcome_view.html';
 import { IWelcomeView } from './IWelcomeView';
 
 export class WelcomeView implements IWelcomeView {

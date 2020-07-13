@@ -9,8 +9,8 @@
 
 // Determine the order of css files manually
 
-import './index.html';
-import './404.html';
+import './templates/index.html';
+import './templates/404.html';
 import './robots.txt';
 import './scss/main.scss';
 

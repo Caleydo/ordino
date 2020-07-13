@@ -6,8 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 // Determine the order of css files manually
-import './index.html';
-import './404.html';
+import './templates/index.html';
+import './templates/404.html';
 import './robots.txt';
 import './scss/main.scss';
 import { Ordino } from './app/Ordino';

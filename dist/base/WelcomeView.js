@@ -1,4 +1,4 @@
-import WelcomeViewTemplate from '../welcome_view.html';
+import WelcomeViewTemplate from '../templates/welcome_view.html';
 export class WelcomeView {
     constructor(parent) {
         this.parent = parent;

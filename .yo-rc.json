@@ -22,10 +22,10 @@
       ]
     },
     "vendors": {
-      "others": "phovea_.*|tdp_.*",
-      "phovea": "phovea_.*",
-      "tdp": "tdp_.*",
-      "dv": "ordino*|dTiles*|jamborees|snpology|patentbay|triage|festival*"
+      "others": "phovea.*|tdp_.*|tdp-.*|datavisyn.*",
+      "phovea": "phovea.*",
+      "tdp": "tdp_.|tdp-.*",
+      "dv": "datavisyn.*"
     },
     "extensions": [
       {
@@ -50,21 +50,19 @@
     },
     "app": "ordino",
     "entries": {
-      "app": "./src/index.ts"
+      "app": {
+        "js": "dist/initial.js",
+        "template": "dist/index.template.ejs",
+        "html": "index.html",
+        "chunkName": "app"
+      }
     },
     "libraryAliases": {
       "d3": "d3/d3",
       "scrollTo": "jquery.scrollto/jquery.scrollTo.js",
       "jquery": "jquery/dist/jquery"
     },
-    "libraryExternals": [
-      "d3",
-      "jquery",
-      "lineupjs",
-      "select2",
-      "scrollTo",
-      "marked"
-    ],
+    "libraryExternals": [],
     "ignores": [],
     "today": "Sun, 06 Nov 2016 15:02:36 GMT",
     "clientOnly": false,

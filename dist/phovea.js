@@ -63,7 +63,7 @@ export default function (registry) {
         priority: 10
     });
     registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
-        return import('./assets/locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+        return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
     }, {
         order: 1,
         ns: 'tdp',

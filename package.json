@@ -30,6 +30,7 @@
   },
   "scripts": {
     "clean": "rimraf dist lib",
+    "delete-dependencies": "rimraf node_modules",
     "compile": "tsc",
     "compile:watch": "tsc -w",
     "postcompile": "npm run copy",
@@ -39,7 +40,6 @@
     "test": "test ! $(find tests -name \"*.ts\") || jest",
     "test:watch": "jest --watch",
     "posttest": "npm run lint",
-    "build:dev": "tsc",
     "copy": "npm run copy-assets && npm run copy-styles && npm run copy-app-assets",
     "build": "npm run clean && npm run compile",
     "copy-assets": "if [ -d src/assets ]; then shx --verbose cp -R src/assets/. dist/assets/; fi && if [ -d src/templates ]; then shx --verbose cp -R src/templates/. dist/templates/; fi",
@@ -69,6 +69,6 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "github:datavisyn/tdp_core#vstoiber/refactoring"
+    "tdp_core": "github:datavisyn/tdp_core#develop"
   }
 }

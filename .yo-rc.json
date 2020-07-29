@@ -27,6 +27,9 @@
       "tdp": "tdp_.|tdp-.*",
       "dv": "datavisyn.*"
     },
+    "filesToLoad": {
+      "file-loader": "404|robots"
+    },
     "extensions": [
       {
         "type": "ordinoWelcomeView",

@@ -7,20 +7,22 @@
  ********************************************************************/
 
 
-import {resolveIn} from 'phovea_core/src/index';
-import {cat, IObjectRef, op, ProvenanceGraph, StateNode} from 'phovea_core/src/provenance';
-import IDType from 'phovea_core/src/idtype/IDType';
-import {EventHandler, IEvent} from 'phovea_core/src/event';
+import {BaseUtils, NodeUtils} from 'phovea_core';
+import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode} from 'phovea_core';
+import {IDType} from 'phovea_core';
+import {EventHandler, IEvent} from 'phovea_core';
 import * as d3 from 'd3';
-import {AView, EViewMode, ISelection} from 'tdp_core/src/views';
-import ViewWrapper from './ViewWrapper';
-import CLUEGraphManager from 'phovea_clue/src/CLUEGraphManager';
-import {createView, removeView, replaceView, setAndUpdateSelection, setSelection} from './cmds';
-import Range from 'phovea_core/src/range/Range';
+import {AView} from 'tdp_core';
+import {EViewMode, ISelection} from 'tdp_core';
+import {ViewWrapper} from './ViewWrapper';
+import {CLUEGraphManager} from 'phovea_clue';
+import {CmdUtils} from './cmds';
+import {Range} from 'phovea_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
-import * as session from 'phovea_core/src/session';
-import {list as listPlugins} from 'phovea_core/src/plugin';
-import {IWelcomeView} from '../WelcomeView';
+import {UserSession} from 'phovea_core';
+import {PluginRegistry} from 'phovea_core';
+import {IWelcomeView} from '../base/IWelcomeView';
+import { IOrdinoApp } from './IOrdinoApp';
 
 export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
 
@@ -32,7 +34,7 @@ export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export default class OrdinoApp extends EventHandler {
+export class OrdinoApp extends EventHandler implements IOrdinoApp  {
   static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
@@ -57,7 +59,7 @@ export default class OrdinoApp extends EventHandler {
     super();
     // add OrdinoApp app as (first) object to provenance graph
     // need old name for compatibility
-    this.ref = graph.findOrAddObject(this, 'Targid', cat.visual);
+    this.ref = graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
 
 
     this.$history = this.buildHistory(parent);
@@ -74,7 +76,7 @@ export default class OrdinoApp extends EventHandler {
    * @param {HTMLElement} parent
    */
   private buildWelcomeView(parent: HTMLElement) {
-    const welcomeViews = listPlugins(EXTENSION_POINT_WELCOME_PAGE)
+    const welcomeViews = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_WELCOME_PAGE)
       .sort((a: any, b: any) => ((b.priority || 10) - (a.priority || 10))); // descending
 
     if(welcomeViews.length === 0) {
@@ -219,7 +221,7 @@ export default class OrdinoApp extends EventHandler {
   private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.graph.pushWithResult(setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
+      this.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
 
       // check last view and if it will stay open for the new given selection
     } else {
@@ -229,7 +231,7 @@ export default class OrdinoApp extends EventHandler {
       // update selection with the last open (= right) view
       if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
         right.setParameterSelection(newSelection);
-        this.graph.pushWithResult(setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+        this.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
 
         // the selection does not match with the last open (= right) view --> close view
       } else {
@@ -254,7 +256,7 @@ export default class OrdinoApp extends EventHandler {
 
   initNewSession(view: string, options: any, defaultSessionValues: any = null) {
     // store state to session before creating a new graph
-    session.store(SESSION_KEY_NEW_ENTRY_POINT, {
+    UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
       view,
       options,
       defaultSessionValues
@@ -264,7 +266,7 @@ export default class OrdinoApp extends EventHandler {
   }
 
   private pushView(viewId: string, idtype: IDType, selection: Range, options?) {
-    return this.graph.push(createView(this.ref, viewId, idtype, selection, options));
+    return this.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));
   }
 
   /**
@@ -285,7 +287,7 @@ export default class OrdinoApp extends EventHandler {
           console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
           return;
         }
-        return this.graph.push(removeView(this.ref, viewRef));
+        return this.graph.push(CmdUtils.removeView(this.ref, viewRef));
       });
 
     // no views available, then open start menu
@@ -301,7 +303,7 @@ export default class OrdinoApp extends EventHandler {
     this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
     this.views.push(view);
     this.update();
-    return resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
+    return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
   }
 
   removeImpl(view: ViewWrapper, focus: number = -1) {
@@ -324,7 +326,7 @@ export default class OrdinoApp extends EventHandler {
   }
 
   private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?) {
-    return this.graph.push(replaceView(this.ref, existingView, viewId, idtype, selection, options))
+    return this.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options))
       .then((r) => {
         this.update();
         return r;
@@ -338,14 +340,14 @@ export default class OrdinoApp extends EventHandler {
    */
   focus(view: ViewWrapper) {
     const creators = this.graph.act.path.filter(isCreateView).map((d) => d.creator);
-    const createdBy = this.graph.findOrAddJustObject(view.ref).createdBy;
+    const createdBy = NodeUtils.createdBy(this.graph.findOrAddJustObject(view.ref));
     const i = creators.indexOf(createdBy);
     if (i === (creators.length - 1)) {
       //we are in focus - or should be
       return Promise.resolve(null);
     } else {
       //jump to the last state this view was in focus
-      return this.graph.jumpTo(creators[i + 1].previous);
+      return this.graph.jumpTo(NodeUtils.previous(creators[i + 1]));
     }
   }
 
@@ -386,7 +388,7 @@ export default class OrdinoApp extends EventHandler {
       return Promise.resolve(old);
     }
     this.update();
-    return resolveIn(1000).then(() => old);
+    return BaseUtils.resolveIn(1000).then(() => old);
   }
 
   /**
@@ -421,11 +423,11 @@ export default class OrdinoApp extends EventHandler {
 }
 
 /**
- * Helper function to filter views that were created
+ * Helper function to filter views that were created: should be moved to NodeUtils
  * @param stateNode
  * @returns {boolean}
  */
 function isCreateView(stateNode: StateNode) {
   const creator = stateNode.creator;
-  return creator != null && creator.meta.category === cat.visual && creator.meta.operation === op.create;
+  return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
 }

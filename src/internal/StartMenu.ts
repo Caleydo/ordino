@@ -7,11 +7,11 @@
  ********************************************************************/
 
 
-import OrdinoApp from './OrdinoApp';
-import {INamedSet} from 'tdp_core/src/storage';
-import {list as listPlugins} from 'phovea_core/src/plugin';
+import {OrdinoApp} from './OrdinoApp';
+import {INamedSet} from 'tdp_core';
+import {PluginRegistry} from 'phovea_core';
 import {event as d3event, select, selection, Selection} from 'd3';
-import {EXTENSION_POINT_START_MENU, IStartMenuSection, IStartMenuSectionDesc} from '../extensions';
+import {EXTENSION_POINT_START_MENU, IStartMenuSection, IStartMenuSectionDesc} from '../base/extensions';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
@@ -23,7 +23,7 @@ const template = `<button class="closeButton">
     </button>
     <div class="menu"></div>`;
 
-export default class StartMenu {
+export class StartMenu {
 
   private readonly $node: Selection<any>;
   private sections: IStartMenuSection[] = [];
@@ -92,7 +92,7 @@ export default class StartMenu {
       this.close();
     });
 
-    const sectionEntries = listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSectionDesc>d).sort(byPriority);
+    const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSectionDesc>d).sort(byPriority);
 
     this.$sections = this.$node.select('.menu').selectAll('section').data(sectionEntries);
 

@@ -21,10 +21,15 @@
         ]
       ]
     },
-    "vendor": [
-      "node_modules.*(d3|bootstrap|jquery|select2)",
-      "((node_modules.*popper)|lineupjs|lineupengine|tdp_core)"
-    ],
+    "vendors": {
+      "others": "phovea.*|tdp_.*|tdp-.*|datavisyn.*",
+      "phovea": "phovea.*",
+      "tdp": "tdp_.|tdp-.*",
+      "dv": "datavisyn.*"
+    },
+    "filesToLoad": {
+      "file-loader": "404|robots"
+    },
     "extensions": [
       {
         "type": "ordinoWelcomeView",
@@ -48,20 +53,19 @@
     },
     "app": "ordino",
     "entries": {
-      "app": "./src/index.ts"
+      "app": {
+        "js": "dist/initial.js",
+        "template": "dist/index.template.ejs",
+        "html": "index.html",
+        "chunkName": "app"
+      }
     },
     "libraryAliases": {
       "d3": "d3/d3",
-      "scrollTo": "jquery.scrollto/jquery.scrollTo.js"
+      "scrollTo": "jquery.scrollto/jquery.scrollTo.js",
+      "jquery": "jquery/dist/jquery"
     },
-    "libraryExternals": [
-      "d3",
-      "jquery",
-      "lineupjs",
-      "select2",
-      "scrollTo",
-      "marked"
-    ],
+    "libraryExternals": [],
     "ignores": [],
     "today": "Sun, 06 Nov 2016 15:02:36 GMT",
     "clientOnly": false,

@@ -5,7 +5,7 @@
  **************************************************************************** */
 
 import {PluginRegistry} from 'phovea_core';
-import reg from './src/phovea';
+import reg from './dist/phovea';
 
 /**
  * build a registry by registering all phovea modules

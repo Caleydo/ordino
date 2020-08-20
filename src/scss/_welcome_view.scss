@@ -8,7 +8,7 @@
 
 
 .welcomeView {
-  width: 100%;
+  width: 100% !important; // see https://github.com/Caleydo/ordino/issues/246
 
   &:before {
     position: absolute;
@@ -81,4 +81,3 @@
 .disclaimer {
   margin-top: 40px;
 }
-

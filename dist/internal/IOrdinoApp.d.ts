@@ -20,13 +20,15 @@ export interface IOrdinoApp extends EventHandler {
      */
     pushImpl(view: ViewWrapper): Promise<number>;
     /**
+     * Remove the given and focus on the view with the given index.
+     * If the focus index is -1 the previous view of the given view will be focused.
      *
-     * @param view
-     * @param focus
+     * @param view View instance to remove
+     * @param focus Index of the view in the view list (default: -1)
      */
     removeImpl(view: ViewWrapper, focus: number): Promise<number>;
     /**
-     * updates the views information, e.g. history
+     * Updates the views information, e.g. history
      */
     update(): void;
 }

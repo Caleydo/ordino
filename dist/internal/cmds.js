@@ -41,7 +41,7 @@ export class CmdUtils {
         const viewId = parameter.viewId;
         const selection = CmdUtils.asSelection(parameter);
         const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
-        const options = parameter.options;
+        const options = { ...parameter.options, app };
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
         const viewWrapperInstance = await ViewWrapper.createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
         if (viewWrapperInstance.built) {

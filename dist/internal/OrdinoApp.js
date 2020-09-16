@@ -199,6 +199,9 @@ export class OrdinoApp extends EventHandler {
             }
         }
     }
+    /**
+     * The last view of the list of open views
+     */
     get lastView() {
         return this.views[this.views.length - 1];
     }

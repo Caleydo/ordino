@@ -40,7 +40,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
    */
-  private readonly views: ViewWrapper[] = [];
+  readonly views: ViewWrapper[] = [];
 
   /**
    * IObjectRef to this OrdinoApp instance
@@ -240,7 +240,10 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
     }
   }
 
-  get lastView() {
+  /**
+   * The last view of the list of open views
+   */
+  get lastView(): ViewWrapper {
     return this.views[this.views.length - 1];
   }
 

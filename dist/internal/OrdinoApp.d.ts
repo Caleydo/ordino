@@ -28,7 +28,7 @@ export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
      * List of open views (e.g., to show in the history)
      * @type {ViewWrapper[]}
      */
-    private readonly views;
+    readonly views: ViewWrapper[];
     /**
      * IObjectRef to this OrdinoApp instance
      * @type {IObjectRef<OrdinoApp>}
@@ -78,6 +78,9 @@ export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
      * @param options
      */
     private updateItemSelection;
+    /**
+     * The last view of the list of open views
+     */
     get lastView(): ViewWrapper;
     push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<import("phovea_core").ICmdResult> | PromiseLike<Promise<import("phovea_core").ICmdResult>>;
     initNewSession(view: string, options: any, defaultSessionValues?: any): void;

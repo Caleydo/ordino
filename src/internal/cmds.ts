@@ -59,7 +59,7 @@ export class CmdUtils {
     const viewId: string = parameter.viewId;
     const selection = CmdUtils.asSelection(parameter);
     const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
-    const options: any & { app: IOrdinoApp } = {...parameter.options, app};
+    const options: any & { app: IOrdinoApp } = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
 
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
@@ -82,13 +82,16 @@ export class CmdUtils {
    */
   static removeViewImpl(inputs: IObjectRef<any>[], parameter): ICmdResult {
     const app: IOrdinoApp = inputs[0].value;
-    const view: ViewWrapper = inputs[1].value;
+    const existingView: ViewWrapper = inputs[1].value;
     const oldFocus: number = parameter.focus;
 
-    app.removeImpl(view, oldFocus);
+    const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
+    delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
+
+    app.removeImpl(existingView, oldFocus);
     return {
       removed: [inputs[1]],
-      inverse: CmdUtils.createView(inputs[0], view.desc.id, view.selection.idtype, view.selection.range, view.options, view.getItemSelection())
+      inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
     };
   }
 
@@ -105,18 +108,21 @@ export class CmdUtils {
     const app: IOrdinoApp = inputs[0].value;
     const existingView: ViewWrapper = inputs[1].value;
 
+    const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
+    delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
+
     const oldParams = {
       viewId: existingView.desc.id,
       idtype: existingView.selection.idtype,
       selection: existingView.selection.range,
       itemSelection: existingView.getItemSelection(),
-      options: existingView.options
+      options: existingViewOptions
     };
 
     const viewId: string = parameter.viewId;
     const selection = CmdUtils.asSelection(parameter);
     const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
-    const options = parameter.options;
+    const options: any & { app: IOrdinoApp } = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
 
     // create new (inner) view
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);

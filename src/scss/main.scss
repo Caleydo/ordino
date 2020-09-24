@@ -6,7 +6,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-@import "~tdp_core/dist/scss/tdp";
+@import "~tdp_core/dist/scss/main";
 
 // extend with TargID specific rules
-@import "./ordino";
+@import './login_first_view';
+@import './start_menu';
+@import './targid';
+@import './welcome_view';

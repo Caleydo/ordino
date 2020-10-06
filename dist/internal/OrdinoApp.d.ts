@@ -28,7 +28,7 @@ export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
      * List of open views (e.g., to show in the history)
      * @type {ViewWrapper[]}
      */
-    private readonly views;
+    readonly views: ViewWrapper[];
     /**
      * IObjectRef to this OrdinoApp instance
      * @type {IObjectRef<OrdinoApp>}
@@ -78,6 +78,9 @@ export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
      * @param options
      */
     private updateItemSelection;
+    /**
+     * The last view of the list of open views
+     */
     get lastView(): ViewWrapper;
     push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<import("phovea_core").ICmdResult> | PromiseLike<Promise<import("phovea_core").ICmdResult>>;
     initNewSession(view: string, options: any, defaultSessionValues?: any): void;
@@ -87,7 +90,19 @@ export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
      * @param viewWrapper
      */
     remove(indexOrView: number | ViewWrapper): void;
+    /**
+     * Add a new view wrapper to the list of open views.
+     * The return value is index in the list of views.
+     * @param view ViewWrapper
+     */
     pushImpl(view: ViewWrapper): Promise<number>;
+    /**
+     * Remove the given and focus on the view with the given index.
+     * If the focus index is -1 the previous view of the given view will be focused.
+     *
+     * @param view View instance to remove
+     * @param focus Index of the view in the view list (default: -1)
+     */
     removeImpl(view: ViewWrapper, focus?: number): Promise<number>;
     private replaceView;
     /**

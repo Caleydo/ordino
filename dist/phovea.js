@@ -54,7 +54,7 @@ export default function (registry) {
     });
     registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection'), {
         factory: 'new PersistentSessionSection',
-        name: 'Persistent Sessions',
+        name: 'Saved Sessions',
         cssClass: 'tdpSessionPersistentData',
         priority: 95
     });

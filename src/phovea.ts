@@ -64,7 +64,7 @@ export default function (registry: IRegistry) {
 
   registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection'), {
     factory: 'new PersistentSessionSection',
-    name: 'Persistent Sessions',
+    name: 'Saved Sessions',
     cssClass: 'tdpSessionPersistentData',
     priority: 95
   });

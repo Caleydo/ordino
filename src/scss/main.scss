@@ -6,10 +6,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
+@import "./abstracts/variables.scss";
+
 @import "~tdp_core/dist/scss/main";
 
 // extend with TargID specific rules
-@import './login_first_view';
-@import './start_menu';
-@import './targid';
-@import './welcome_view';
+@import './components/login_first_view';
+@import './components/start_menu';
+@import './components/targid';
+@import './components/welcome_view';

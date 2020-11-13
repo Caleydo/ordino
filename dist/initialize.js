@@ -7,7 +7,6 @@
  ********************************************************************/
 import './templates/404.html';
 import './robots.txt';
-import './scss/main.scss';
 import { Ordino } from './app/Ordino';
 const _ = new Ordino();
 //# sourceMappingURL=initialize.js.map

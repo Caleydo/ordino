@@ -7,4 +7,3 @@
  ********************************************************************/
 import './templates/404.html';
 import './robots.txt';
-import './scss/main.scss';

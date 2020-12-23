@@ -30,7 +30,7 @@
     margin: 5px 4px;
     background: #fff;
     border: 1px solid $core_border;
-    padding: 5px 19px;
+    padding: 5px 21px;
   }
 
   .menu {
@@ -144,8 +144,8 @@
 
           &:before {
             margin-right: 8px;
-            content: "\f105";
-            font-family: "FontAwesome", serif;
+            @extend .fas;
+            content: fa-content($fa-var-angle-right);
           }
         }
 
@@ -193,10 +193,10 @@
 
   .tdpSessionTemporaryData {
     > header > h1 > label:before {
-      @include fa-icon();
-      width: (18em / 14);
+      @extend .fas;
+      content: fa-content($fa-var-clock);
+      width: 1.8em;
       text-align: center;
-      content: $fa-var-clock-o;
     }
 
     p {
@@ -211,10 +211,10 @@
 
   .tdpSessionPersistentData {
     > header > h1 > label:before {
-      @include fa-icon();
-      width: (18em / 14);
+      @extend .fas;
+      content: fa-content($fa-var-cloud);
+      width: 1.8em;
       text-align: center;
-      content: $fa-var-cloud;
     }
 
     p {

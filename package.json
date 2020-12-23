@@ -69,6 +69,6 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "github:datavisyn/tdp_core#dmoitzi/refactor_stylesheets_organiation_and_imports"
+    "tdp_core": "github:datavisyn/tdp_core#fontawesome-v5"
   }
 }

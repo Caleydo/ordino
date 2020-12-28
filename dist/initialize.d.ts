@@ -5,9 +5,5 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
-
-
-@import './login_first_view';
-@import './start_menu';
-@import './targid';
-@import './welcome_view';
+import './templates/404.html';
+import './robots.txt';

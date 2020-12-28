@@ -68,7 +68,7 @@ export class OrdinoApp extends EventHandler {
         const $history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
         $history.append('li').classed('homeButton', true)
             .html(`<a href="#">
-        <i class="fa fa-home" aria-hidden="true"></i>
+        <i class="fas fa-home" aria-hidden="true"></i>
         <span class="sr-only">Start</span>
       </a>`);
         $history.select('.homeButton > a').on('click', (d) => {

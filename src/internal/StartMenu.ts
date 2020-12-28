@@ -18,7 +18,7 @@ function byPriority(a: any, b: any) {
 }
 
 const template = `<button class="closeButton">
-      <i class="fa fa-times" aria-hidden="true"></i>
+      <i class="fas fa-times" aria-hidden="true"></i>
       <span class="sr-only">Close</span>
     </button>
     <div class="menu"></div>`;
@@ -106,7 +106,7 @@ export class StartMenu {
             <div class="item">
               <div class="body">
                 <div class="loading">
-                  <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                  <i class="fas fa-spinner fa-pulse fa-fw"></i>
                   <span class="sr-only">Loading...</span>
                 </div>
               </div>

@@ -69,6 +69,6 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "github:datavisyn/tdp_core#add_react_support"
+    "tdp_core": "github:datavisyn/tdp_core#add_react_support_with_bootstrap_v4_only"
   }
 }

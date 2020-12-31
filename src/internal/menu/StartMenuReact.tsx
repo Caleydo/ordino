@@ -1,10 +1,10 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import Tab from 'react-bootstrap/Tab'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Nav from 'react-bootstrap/Nav'
+import Tab from 'react-bootstrap/Tab';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Nav from 'react-bootstrap/Nav';
 
 export function StartMenu(parentElement) {
 

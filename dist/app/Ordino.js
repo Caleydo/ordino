@@ -6,7 +6,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import { UserSession } from 'phovea_core';
-import { ViewUtils } from 'tdp_core';
 import { SESSION_KEY_NEW_ENTRY_POINT } from '../internal/constants';
 import { TDPApplicationUtils } from 'tdp_core';
 import { ATDPApplication } from 'tdp_core';
@@ -20,15 +19,15 @@ export class Ordino extends ATDPApplication {
     createApp(graph, manager, main) {
         main.classList.add('targid');
         const startMenuNode = main.ownerDocument.createElement('div');
-        startMenuNode.classList.add('startMenu');
+        startMenuNode.classList.add('startMenu', 'open');
         main.appendChild(startMenuNode);
         // lazy loading for better module bundling
-        return Promise.all([import('../internal/OrdinoApp'), import('../internal/StartMenu')]).then((modules) => {
+        return Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]).then((modules) => {
             const app = new modules[0].OrdinoApp(graph, manager, main);
-            const startMenu = new modules[1].StartMenu(startMenuNode, app);
-            this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-            app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-            app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event, namedSet) => startMenu.pushNamedSet(namedSet));
+            modules[1].StartMenu(startMenuNode);
+            // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+            // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+            // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
             return app;
         });
     }

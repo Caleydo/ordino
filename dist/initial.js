@@ -9,7 +9,7 @@
 import './templates/index.html';
 import './templates/404.html';
 import './robots.txt';
-import './scss/main.scss';
+import './scss/main.scss'; // TODO: remove?
 import { Ordino } from './app/Ordino';
 const _ = new Ordino();
 //# sourceMappingURL=initial.js.map

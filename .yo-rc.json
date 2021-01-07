@@ -54,7 +54,7 @@
     "app": "ordino",
     "entries": {
       "app": {
-        "js": "dist/initial.js",
+        "js": "dist/initialize.js",
         "template": "dist/index.template.ejs",
         "html": "index.html",
         "chunkName": "app"

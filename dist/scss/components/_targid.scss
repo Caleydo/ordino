@@ -6,9 +6,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-@import '~tdp_core/dist/scss/vars';
-
-
 main.targid {
   display: flex;
 
@@ -383,9 +380,6 @@ div.targid {
       }
     }
 
-    @import '~tdp_core/dist/scss/view';
+    @import '~tdp_core/dist/scss/components/view';
   }
 }
-
-
-

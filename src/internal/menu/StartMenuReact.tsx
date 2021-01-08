@@ -9,8 +9,7 @@ interface IStartMenuTab {
   key?: string;
 }
 
-// @ts-ignore
-const StartMenuContext = React.createContext(null);
+const startMenuContext = React.createContext(null);
 
 function StartMenuProvider({ children }) {
   const [open, setOpen] = React.useState(false);
@@ -24,7 +23,7 @@ function StartMenuProvider({ children }) {
   };
 
   return (
-    <StartMenuContext.Provider value={store}>{children}</StartMenuContext.Provider>
+    <startMenuContext.Provider value={store}>{children}</startMenuContext.Provider>
   );
 }
 
@@ -64,7 +63,7 @@ interface IStartMenuTabProps {
 }
 
 function StartMenu(props: IStartMenuTabProps) {
-  const {open, active} = React.useContext(StartMenuContext);
+  const {open, active} = React.useContext(startMenuContext);
   console.log(active, open);
 
   return (
@@ -78,7 +77,7 @@ function StartMenu(props: IStartMenuTabProps) {
 
 
 function MainMenuLinks(props: IStartMenuTabProps) {
-  const {active, setActive, open, setOpen} = React.useContext(StartMenuContext);
+  const {active, setActive, open, setOpen} = React.useContext(startMenuContext);
 
   return (
     <>

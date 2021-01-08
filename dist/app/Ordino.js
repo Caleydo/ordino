@@ -16,20 +16,20 @@ export class Ordino extends ATDPApplication {
             name: 'Ordino'
         }, options));
     }
-    createApp(graph, manager, main) {
+    async createApp(graph, manager, main) {
         main.classList.add('targid');
-        const startMenuNode = main.ownerDocument.createElement('div');
-        startMenuNode.classList.add('startMenu', 'open');
-        main.appendChild(startMenuNode);
         // lazy loading for better module bundling
-        return Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]).then((modules) => {
-            const app = new modules[0].OrdinoApp(graph, manager, main);
-            modules[1].StartMenu(startMenuNode);
-            // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-            // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-            // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
-            return app;
-        });
+        const modules = await Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]);
+        const app = new modules[0].OrdinoApp(graph, manager, main);
+        const startMenuElement = main.ownerDocument.createElement('div');
+        modules[1].StartMenuWrapper(startMenuElement, this.header);
+        // add the react element (= firstElementChild) on the same level as the main element (= main.parentElement)
+        // TODO: is there a better way to use React here?
+        main.parentElement.append(startMenuElement.firstElementChild);
+        // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+        // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+        // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
+        return app;
     }
     initSessionImpl(app) {
         const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);

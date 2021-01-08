@@ -1,0 +1,14 @@
+.ordino-start-menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: map-get($theme-colors, 'ordino-gray-1');
+  z-index: 99; // above all other content
+
+  &.ordino-start-menu-open {
+    display: block;
+  }
+}

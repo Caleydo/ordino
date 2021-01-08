@@ -1,0 +1,19 @@
+
+$theme-colors: (
+  "ordino-white": #FFFFFF,
+  "ordino-white-hover": #FFFFFFBF, // add some alpha on hover
+  "ordino-gray-1": #F1F2F4,
+  "ordino-gray-2": #2F353A,
+  "ordino-gray-3": #6c757d,
+);
+
+// Override spacing (Bootstrap default: 1 rem)
+// @see https://getbootstrap.com/docs/4.5/getting-started/theming/#sass-options
+$spacer: 1.25rem;
+
+// Override some default spacers
+// @see https://getbootstrap.com/docs/4.0/utilities/spacing/
+$spacers: (
+  5: ($spacer * 2),
+  6: ($spacer * 3)
+)

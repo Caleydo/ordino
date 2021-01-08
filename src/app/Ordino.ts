@@ -8,16 +8,12 @@
 
 
 import {ProvenanceGraph} from 'phovea_core';
-import {IEvent} from 'phovea_core';
 import {UserSession} from 'phovea_core';
-import {ViewUtils} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
-import {INamedSet} from 'tdp_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from '../internal/constants';
 import {OrdinoApp} from '../internal/OrdinoApp';
 import {TDPApplicationUtils} from 'tdp_core';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
-import {StartMenu} from '../internal/StartMenu';
 
 export class Ordino extends ATDPApplication<OrdinoApp> {
 
@@ -28,23 +24,25 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
     }, options));
   }
 
-  protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
+  protected async createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
     main.classList.add('targid');
-    const startMenuNode = main.ownerDocument.createElement('div');
-    startMenuNode.classList.add('startMenu', 'open');
-    main.appendChild(startMenuNode);
 
     // lazy loading for better module bundling
-    return Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]).then((modules) => {
-      const app: OrdinoApp = new modules[0].OrdinoApp(graph, manager, main);
+    const modules = await Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]);
 
-      modules[1].StartMenu(startMenuNode);
+    const app: OrdinoApp = new modules[0].OrdinoApp(graph, manager, main);
 
-      // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-      // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-      // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
-      return app;
-    });
+    const startMenuElement = main.ownerDocument.createElement('div');
+    modules[1].StartMenuWrapper(startMenuElement, this.header);
+    // add the react element (= firstElementChild) on the same level as the main element (= main.parentElement)
+    // TODO: is there a better way to use React here?
+    main.parentElement.append(startMenuElement.firstElementChild);
+
+    // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+    // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+    // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
+
+    return app;
   }
 
   protected initSessionImpl(app: OrdinoApp) {

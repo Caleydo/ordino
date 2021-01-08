@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BaseUtils } from 'phovea_core';
+// @ts-ignore
 const StartMenuContext = React.createContext(null);
 function StartMenuProvider({ children }) {
     const [open, setOpen] = React.useState(false);

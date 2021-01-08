@@ -9,6 +9,7 @@ interface IStartMenuTab {
   key?: string;
 }
 
+// @ts-ignore
 const StartMenuContext = React.createContext(null);
 
 function StartMenuProvider({ children }) {

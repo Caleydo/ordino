@@ -1,2 +1,4 @@
-import { AppHeader } from 'phovea_ui';
-export declare function StartMenuWrapper(parentElement: any, header: AppHeader): void;
+/// <reference types="react" />
+export declare function StartMenuComponent({ headerMainMenu }: {
+    headerMainMenu: HTMLElement;
+}): JSX.Element;

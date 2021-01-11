@@ -1,48 +1,30 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BaseUtils } from 'phovea_core';
-const startMenuContext = React.createContext(null);
-function StartMenuProvider({ children }) {
-    const [open, setOpen] = React.useState(false);
+const tabs = [
+    { id: 'datasets', title: 'Datasets' },
+    { id: 'sessions', title: 'Analysis Sessions' },
+    { id: 'tours', title: 'Tours' },
+];
+export function StartMenuComponent({ headerMainMenu }) {
     const [active, setActive] = React.useState(null);
-    const store = {
-        open,
-        setOpen,
-        active,
-        setActive,
-    };
-    return (React.createElement(startMenuContext.Provider, { value: store }, children));
-}
-export function StartMenuWrapper(parentElement, header) {
-    let tabs = [
-        { id: 'datasets', title: 'Datasets' },
-        { id: 'sessions', title: 'Analysis Sessions' },
-        { id: 'tours', title: 'Tours' },
-    ];
-    tabs = tabs.map((tab) => {
-        tab.key = `${tab.id}-${BaseUtils.randomId(3)}`;
-        return tab;
-    });
-    // TODO: two indpendent ReactDOM.render() seem to be odd -> is there a better way?
-    ReactDOM.render(React.createElement(StartMenuProvider, null,
-        React.createElement(MainMenuLinks, { tabs: tabs })), header.mainMenu);
-    return ReactDOM.render(React.createElement(StartMenuProvider, null,
-        React.createElement(StartMenu, { tabs: tabs })), parentElement);
-}
-function StartMenu(props) {
-    const { open, active } = React.useContext(startMenuContext);
-    console.log(active, open);
-    return (React.createElement("div", { className: `ordino-start-menu tab-content ${open ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${active === tab ? `active show` : ''}`, id: tab.key, role: "tabpanel", "aria-labelledby": `${tab.key}-tab`, key: tab.id }, tab.title)))));
+    return (React.createElement(React.Fragment, null,
+        ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: setActive }), headerMainMenu),
+        React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive })));
 }
 function MainMenuLinks(props) {
-    const { active, setActive, open, setOpen } = React.useContext(startMenuContext);
-    return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: "nav-item", key: tab.key },
-        React.createElement("a", { className: "nav-link", href: `#${tab.key}`, id: `${tab.key}-tab`, role: "tab", "aria-controls": tab.key, "aria-selected": (active === tab), onClick: (evt) => {
+    return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: "nav-item", key: tab.id },
+        React.createElement("a", { className: "nav-link", href: `#${tab.id}`, id: `${tab.id}-tab`, role: "tab", "aria-controls": tab.id, "aria-selected": (props.active === tab), onClick: (evt) => {
                 evt.preventDefault();
-                console.log(open, active);
-                setOpen(!open);
-                setActive(tab);
+                if (props.active === tab) {
+                    props.setActive(null);
+                }
+                else {
+                    props.setActive(tab);
+                }
                 return false;
             } }, tab.title))))));
+}
+function StartMenu(props) {
+    return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.active ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.active === tab ? `active show` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` }, tab.title)))));
 }
 //# sourceMappingURL=StartMenuReact.js.map

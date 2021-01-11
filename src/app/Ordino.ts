@@ -6,7 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {ProvenanceGraph} from 'phovea_core';
 import {UserSession} from 'phovea_core';
 import {CLUEGraphManager} from 'phovea_clue';
@@ -33,10 +34,8 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
     const app: OrdinoApp = new modules[0].OrdinoApp(graph, manager, main);
 
     const startMenuElement = main.ownerDocument.createElement('div');
-    modules[1].StartMenuWrapper(startMenuElement, this.header);
-    // add the react element (= firstElementChild) on the same level as the main element (= main.parentElement)
-    // TODO: is there a better way to use React here?
-    main.parentElement.append(startMenuElement.firstElementChild);
+    main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
+    ReactDOM.render(React.createElement(modules[1].StartMenuComponent, { headerMainMenu: this.header.mainMenu }), startMenuElement);
 
     // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
     // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());

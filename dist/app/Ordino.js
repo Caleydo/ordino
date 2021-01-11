@@ -5,6 +5,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { UserSession } from 'phovea_core';
 import { SESSION_KEY_NEW_ENTRY_POINT } from '../internal/constants';
 import { TDPApplicationUtils } from 'tdp_core';
@@ -22,10 +24,8 @@ export class Ordino extends ATDPApplication {
         const modules = await Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]);
         const app = new modules[0].OrdinoApp(graph, manager, main);
         const startMenuElement = main.ownerDocument.createElement('div');
-        modules[1].StartMenuWrapper(startMenuElement, this.header);
-        // add the react element (= firstElementChild) on the same level as the main element (= main.parentElement)
-        // TODO: is there a better way to use React here?
-        main.parentElement.append(startMenuElement.firstElementChild);
+        main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
+        ReactDOM.render(React.createElement(modules[1].StartMenuComponent, { headerMainMenu: this.header.mainMenu }), startMenuElement);
         // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
         // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
         // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));

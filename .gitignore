@@ -3,8 +3,7 @@
 /.idea
 /lib/
 /build/
-/dist/
-/tsBuildInfoFile/
+/dist/tsBuildInfoFile
 *.egg-info/
 *.egg
 *.py[cod]

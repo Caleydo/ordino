@@ -6,8 +6,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-import './templates/404.html';
-import './robots.txt';
 
 import {Ordino} from './app/Ordino';
 

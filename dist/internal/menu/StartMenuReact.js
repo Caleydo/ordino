@@ -1,5 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { SessionsTab } from './SessionsTab';
+import { DatasetsTab } from './Datasets';
+import { ToursTab } from './ToursTab';
 const tabs = [
     { id: 'datasets', title: 'Datasets' },
     { id: 'sessions', title: 'Analysis Sessions' },
@@ -7,8 +10,11 @@ const tabs = [
 ];
 export function StartMenuComponent({ headerMainMenu }) {
     const [active, setActive] = React.useState(null);
+    React.useEffect(() => {
+        console.log("Menu is rerendering");
+    });
     return (React.createElement(React.Fragment, null,
-        ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: setActive }), headerMainMenu),
+        ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
         React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive })));
 }
 function MainMenuLinks(props) {
@@ -25,6 +31,9 @@ function MainMenuLinks(props) {
             } }, tab.title))))));
 }
 function StartMenu(props) {
-    return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.active ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.active === tab ? `active show` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` }, tab.title)))));
+    return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.active ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab, index) => (React.createElement("div", { className: `tab-pane fade ${props.active === tab ? `active show` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
+        index === 0 ? React.createElement(DatasetsTab, null) : null,
+        index === 1 ? React.createElement(SessionsTab, null) : null,
+        index === 2 ? React.createElement(ToursTab, null) : null)))));
 }
 //# sourceMappingURL=StartMenuReact.js.map

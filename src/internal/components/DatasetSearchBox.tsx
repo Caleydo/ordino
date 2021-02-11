@@ -1,12 +1,12 @@
 import React from 'react';
 import Select from 'react-select';
-import {Container, Button, ButtonGroup, Card, Col, Dropdown, Nav, Row, Tab} from 'react-bootstrap';
+import {Button, Col, Row} from 'react-bootstrap';
 
 interface IDatasetSearchBoxProps {
-
+    name?: 'string';
 }
 
-export function DatasetSearchBox({ }: IDatasetSearchBoxProps) {
+export function DatasetSearchBox(props: IDatasetSearchBoxProps) {
     const options = [
         {value: 'ABCD3', label: 'ABCD3'},
         {value: 'ABCD1', label: 'ABCF3'},

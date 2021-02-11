@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import { Button, Col, Row } from 'react-bootstrap';
-export function DatasetSearchBox({}) {
+export function DatasetSearchBox(props) {
     const options = [
         { value: 'ABCD3', label: 'ABCD3' },
         { value: 'ABCD1', label: 'ABCF3' },

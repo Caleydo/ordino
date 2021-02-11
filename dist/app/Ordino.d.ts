@@ -11,6 +11,6 @@ import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication, ITDPOptions } from 'tdp_core';
 export declare class Ordino extends ATDPApplication<OrdinoApp> {
     constructor(options?: Partial<ITDPOptions>);
-    protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<any>;
+    protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<OrdinoApp>;
     protected initSessionImpl(app: OrdinoApp): void;
 }

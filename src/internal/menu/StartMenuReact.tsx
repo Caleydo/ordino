@@ -3,7 +3,7 @@ import {Row, Col, Nav, Container, Button, Form, Card, ListGroup, Navbar} from 'r
 import * as ReactDOM from 'react-dom';
 import {TourCard} from '../components/TourCard';
 import {SessionsTab} from './SessionsTab';
-import {DatasetsTab} from './Datasets';
+import {DatasetsTab} from './DatasetsTab';
 import {ToursTab} from './ToursTab';
 
 
@@ -29,9 +29,6 @@ const tabs: IStartMenuTab[] = [
 export function StartMenuComponent({headerMainMenu}: {headerMainMenu: HTMLElement}) {
   const [active, setActive] = React.useState(null);
 
-  React.useEffect(()=>{
-    console.log("Menu is rerendering")
-  })
   return (
     <>
       {ReactDOM.createPortal(

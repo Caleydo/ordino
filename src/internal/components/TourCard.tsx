@@ -14,13 +14,13 @@ export function TourCard({image, title, text, onClickHandler}: ITourCardProps) {
     return (
         <Col>
             <Card className="ordino-tour-card shadow-sm">
-                <Card.Img variant="top" className="p-2" src={image} />
+                <Card.Img style={{height: '200px'}} variant="top" className="p-2" src={image} />
                 <Card.Body className="p-2">
                     <Card.Title>{title}</Card.Title>
                     <Card.Text>
                         {text}
                     </Card.Text>
-                    <Button variant="secondary" onClick={onClickHandler}>Start</Button>
+                    <Button className="btn btn-light"><i className="mr-1 fas fa-angle-right"></i> Start Tour</Button>
                 </Card.Body>
             </Card>
         </Col>

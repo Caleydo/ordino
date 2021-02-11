@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { SessionsTab } from './SessionsTab';
-import { DatasetsTab } from './Datasets';
+import { DatasetsTab } from './DatasetsTab';
 import { ToursTab } from './ToursTab';
 const tabs = [
     { id: 'datasets', title: 'Datasets' },
@@ -10,9 +10,6 @@ const tabs = [
 ];
 export function StartMenuComponent({ headerMainMenu }) {
     const [active, setActive] = React.useState(null);
-    React.useEffect(() => {
-        console.log("Menu is rerendering");
-    });
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
         React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive })));

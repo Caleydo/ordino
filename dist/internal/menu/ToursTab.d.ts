@@ -1,1 +1,1 @@
-export declare const ToursTab: () => JSX.Element;
+export declare function ToursTab(): JSX.Element;

@@ -19,7 +19,7 @@
   .ordino-icon-1 {
     font-size: 2rem;
   }
-  
+
   .ordino-icon-2 {
     background-color: map-get($theme-colors, "ordino-gray-2");
     color: map-get($theme-colors, "ordino-white");
@@ -34,16 +34,17 @@
 
   .scrollspy-nav {
     position: fixed;
-  
+
     .nav-link {
       color: map-get($theme-colors, "ordino-gray-4");
       font-size: 1.12em;
-  
-      &.nav-active {
+      padding-left: 2.5rem;
+
+      &.active {
         color: inherit;
         font-weight: 500;
         position: relative;
-  
+
         &:before {
           @extend .fas;
           content: fa-content($fa-var-angle-right);
@@ -84,17 +85,39 @@
     }
   }
 
+  .dataset-entry:not(:first-child) {
+    border-left: 1px solid map-get($theme-colors, "ordino-gray-5");
+  }
+
+  .dataset-entry  .btn-group:hover .session-dropdown {
+    visibility: visible;
+  }
+
+  .uploaded-dataset-item:hover .session-dropdown {
+    visibility: visible;
+  }
+
   .session-dropdown {
+    visibility: hidden;
+
+    .dropdown-toggle {
+      color: map-get($theme-colors, "ordino-gray-4");
+    }
+
     .dropdown-toggle::after {
       display: none;
     }
-    .dropdown-item:last-child:hover {
-      background-color: rgb(255, 233, 233);
+    .dropdown-delete {
+      color: red;
+      &:hover {
+        background-color: rgb(255, 233, 233);
+      }
     }
   }
 
   .session-tab {
     height: 46px;
+    border-bottom: 2px solid map-get($theme-colors, "ordino-gray-5");
 
     &.card-header-pills {
       margin-left: 0 !important;

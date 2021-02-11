@@ -1,237 +1,115 @@
-import React from "react"
-import {Container, Button, ButtonGroup, Card, Col, Dropdown, Nav, Row, Tab} from 'react-bootstrap'
-import {ImportSession} from './ImportSession'
-import {TempSessions} from './TempSession'
-import {Link, Element} from 'react-scroll'
+import React from 'react';
+import {Container, Card, Col, Nav, Row, Tab} from 'react-bootstrap';
+import {Link, Element} from 'react-scroll';
+import {UniqueIdManager} from 'phovea_core';
+import {CurrentItem, SavedItem} from '../components/UploadedItem';
+import {SessionDropzone} from '../components/SessionDropzone';
 
-export const SessionsTab = () => {
+export function SessionsTab() {
+    const suffix = UniqueIdManager.getInstance().uniqueId();
     return (
         <Container fluid className="my-4 analysis-tab">
             <Row>
                 <Col md={3}>
-                    <Nav style={{position: 'fixed'}} className="scrollspy-nav flex-column">
-
-                        <Link className="nav-link pl-5" role="button" activeClass="nav-active" to={`element-${1}`} spy={true} smooth={true} offset={-180} duration={500}>
-                            Current Session
-                        </Link>
-                        <Link className="nav-link pl-5" role="button" activeClass="nav-active" to={`element-${2}`} spy={true} smooth={true} offset={-180} duration={500}>
-                            Saved Session
-                        </Link>
-                        <Link className="nav-link pl-5" role="button" activeClass="nav-active" to={`element-${3}`} spy={true} smooth={true} offset={-180} duration={500}>
-                            Temporary Session
-                        </Link>
-                        <Link className="nav-link pl-5" role="button" activeClass="nav-active" to={`element-${4}`} spy={true} smooth={true} offset={-200} duration={500}>
-                            Import Session
-                        </Link>
+                    <Nav  className="scrollspy-nav flex-column">
+                        <Link className="nav-link" role="button" to={`current-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Current Session</Link>
+                        <Link className="nav-link" role="button" to={`saved-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Saved Session</Link>
+                        <Link className="nav-link" role="button" to={`temporary-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Temporary Session</Link>
+                        <Link className="nav-link" role="button" to={`import-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Import Session</Link>
                     </Nav>
                 </Col>
                 <Col md={6}>
-                    <Row>
-                        <Col >
-                            <h4 className="text-left d-flex align-items-center mt-4 mb-3"><i className="mr-2 ordino-icon-2 fas fa-history" ></i> Current Session</h4>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col >
-                            <Card style={{}} className="shadow-sm">
-                                <Card.Body className="p-3">
-                                    <Card.Text>
-                                        Save the current session to open it later again or share it with other users.
-                         </Card.Text>
-                                    <Row className="align-items-center">
-                                        <Col md={10}>
-                                            <Button variant="link" >
-                                                <i className="mr-2 fas fa-history" ></i>Temporary Session 159
-                                        </Button>
-                                        </Col>
-                                        <Col md={2} className="d-flex justify-content-end">
-                                            <Button variant="outline-secondary" className="mr-2 pt-1 pb-1">Save</Button>
-                                            <Dropdown className="session-dropdown" as={ButtonGroup}>
-                                                <Dropdown.Toggle style={{color: "#6c757d", }} variant="link"><i className="fas fa-ellipsis-v " ></i></Dropdown.Toggle>
-                                                <Dropdown.Menu className="super-colors">
-                                                    <Dropdown.Item eventKey="1">Clone</Dropdown.Item>
-                                                    <Dropdown.Item eventKey="2">Export</Dropdown.Item>
-                                                    <Dropdown.Item style={{color: "red"}} eventKey="3" >Delete</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>{' '}
-                                        </Col>
+                    <Element name={`current-${suffix}`}>
+                        <h4 className="text-left d-flex align-items-center mt-3 mb-3"><i className="mr-2 ordino-icon-2 fas fa-history" ></i> Current Session</h4>
+                        <Card className="shadow-sm">
+                            <Card.Body className="p-3">
+                                <Card.Text>
+                                    Save the current session to open it later again or share it with other users.
+                                </Card.Text>
+                                <CurrentItem name="Temporary Session 159" uploadedDate="a minute ago" />
+                            </Card.Body>
+                        </Card>
+                    </Element>
 
-                                    </Row>
-                                    <Row>
-                                        <Col >
-                                            <Card.Text className="ml-5 text-muted">
-                                                an hour ago
-                         </Card.Text>
-                                        </Col >
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </Col >
-                    </Row>
-                    <Row className="mt-4">
-                        <p className="mt-4 " style={{color: "#72818d", fontSize: "1.2em"}}> Load a previous analysis session</p>
-                    </Row>
-                    <Row>
-                        <h4 className="text-left mt-2 mb-3"><i className="mr-2 fas fa-cloud" ></i> Saved Session</h4>
-                    </Row>
-                    <Row md={1}>
-                        <Card style={{}} className="shadow-sm">
+                    <Element className="pt-6" name={`saved-${suffix}`}>
+                        <p className="ordino-info-text mt-4 "> Load a previous analysis session</p>
+                        <h4 className="text-left mt-2 mb-3"><i className="mr-2 ordino-icon-2 fas fa-cloud" ></i> Saved Session</h4>
+                        <Card className="shadow-sm">
                             <Card.Body className="p-3">
                                 <Card.Text>
                                     The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link.
-                         </Card.Text>
-                                {/* ----------------------------------------- */}
-                                <Row>
-                                    <Col >
-                                        <Tab.Container defaultActiveKey="first">
-                                            <Row>
-                                                <Col >
-                                                    <Nav className="session-tab" variant="pills" style={{borderBottom: "2px solid #D4D7DD"}}>
-                                                        <Nav.Item >
-                                                            <Nav.Link eventKey="first"><i className="mr-2 fas fa-user"></i>My sessions</Nav.Link>
-                                                        </Nav.Item>
-                                                        <Nav.Item>
-                                                            <Nav.Link eventKey="second"> <i className="mr-2 fas fa-users"></i>Public sessions</Nav.Link>
-                                                        </Nav.Item>
-                                                    </Nav>
-                                                </Col>
-                                            </Row>
-                                            <Row className="pt-4">
-                                                <Col >
-                                                    <Tab.Content>
-                                                        <Tab.Pane eventKey="first">
-                                                            <Row className="align-items-center">
-                                                                <Col md={10}>
-                                                                    <Button variant="link" >
-                                                                        <i className="mr-2 fas fa-cloud" ></i>Ordino NMC Case Study 1
-                                                                     </Button>
-                                                                </Col>
-                                                                <Col md={2} className="d-flex justify-content-end">
-                                                                    <Button variant="outline-secondary" className="mr-2 pt-1 pb-1">Edit</Button>
-                                                                    <Dropdown className="session-dropdown" as={ButtonGroup}>
-                                                                        <Dropdown.Toggle style={{color: "#6c757d", }} variant="link"><i className="fas fa-ellipsis-v " ></i></Dropdown.Toggle>
-                                                                        <Dropdown.Menu className="super-colors">
-                                                                            <Dropdown.Item eventKey="1">Clone</Dropdown.Item>
-                                                                            <Dropdown.Item eventKey="2">Export</Dropdown.Item>
-                                                                            <Dropdown.Item style={{color: "red"}} eventKey="3" >Delete</Dropdown.Item>
-                                                                        </Dropdown.Menu>
-                                                                    </Dropdown>{' '}
-                                                                </Col>
-                                                            </Row>
-                                                            <Row className="ml-4">
-                                                                <Col md={12}>
-                                                                    <p>
-                                                                        This is an optional description for a saved session
-                                                            </p>
-                                                                </Col >
-                                                                <Col md={3}>
-                                                                    <p className="text-muted">
-                                                                        1 hour ago
-                                                            </p>
-                                                                </Col >
-                                                                <Col md={3}>
-                                                                    <p className="text-muted">
-                                                                        <i className="mr-2 fas fa-users"></i>Public access
-                                                            </p>
-                                                                </Col >
-                                                            </Row>
-                                                            <hr />
-                                                            <Row className="align-items-center">
-                                                                <Col md={10}>
-                                                                    <Button variant="link" >
-                                                                        <i className="mr-2 fas fa-cloud" ></i>Saved session 8
-                                                                     </Button>
-                                                                </Col>
-                                                                <Col md={2} className="d-flex justify-content-end">
-                                                                    <Button variant="outline-secondary" className="mr-2 pt-1 pb-1">Edit</Button>
-                                                                    <Dropdown className="session-dropdown" as={ButtonGroup}>
-                                                                        <Dropdown.Toggle style={{color: "#6c757d", }} variant="link"><i className="fas fa-ellipsis-v " ></i></Dropdown.Toggle>
-                                                                        <Dropdown.Menu className="super-colors">
-                                                                            <Dropdown.Item eventKey="1">Clone</Dropdown.Item>
-                                                                            <Dropdown.Item eventKey="2">Export</Dropdown.Item>
-                                                                            <Dropdown.Item style={{color: "red"}} eventKey="3" >Delete</Dropdown.Item>
-                                                                        </Dropdown.Menu>
-                                                                    </Dropdown>{' '}
-                                                                </Col>
-                                                            </Row>
-                                                            <Row className="ml-4">
-                                                                <Col md={3}>
-                                                                    <p className="text-muted">
-                                                                        1 hour ago
-                                                            </p>
-                                                                </Col >
-                                                                <Col md={3}>
-                                                                    <p className="text-muted">
-                                                                        <i className="mr-2 fas fa-users"></i>Public access
-                                                            </p>
-                                                                </Col >
-                                                            </Row>
-                                                            <hr />
-                                                            <Row className="align-items-center">
-                                                                <Col md={10}>
-                                                                    <Button variant="link" >
-                                                                        <i className="mr-2 fas fa-cloud" ></i>Saved session 7
-                                                                     </Button>
-                                                                </Col>
-                                                                <Col md={2} className="d-flex justify-content-end">
-                                                                    <Button variant="outline-secondary" className="mr-2 pt-1 pb-1">Edit</Button>
-                                                                    <Dropdown className="session-dropdown" as={ButtonGroup}>
-                                                                        <Dropdown.Toggle style={{color: "#6c757d", }} variant="link"><i className="fas fa-ellipsis-v " ></i></Dropdown.Toggle>
-                                                                        <Dropdown.Menu className="super-colors">
-                                                                            <Dropdown.Item eventKey="1">Clone</Dropdown.Item>
-                                                                            <Dropdown.Item eventKey="2">Export</Dropdown.Item>
-                                                                            <Dropdown.Item style={{color: "red"}} eventKey="3" >Delete</Dropdown.Item>
-                                                                        </Dropdown.Menu>
-                                                                    </Dropdown>{' '}
-                                                                </Col>
-                                                            </Row>
-                                                            <Row className="ml-4">
-                                                                <Col md={12}>
-                                                                    <p>
-                                                                        This is an optional description for a saved session
-                                                            </p>
-                                                                </Col >
-                                                                <Col md={3}>
-                                                                    <p className="text-muted">
-                                                                        20 minutes ago
-                                                            </p>
-                                                                </Col >
-                                                                <Col md={3}>
-                                                                    <p className="text-muted">
-                                                                        <i className="mr-2 fas fa-user"></i>Private access
-                                                            </p>
-                                                                </Col >
-                                                            </Row>
-                                                        </Tab.Pane>
-                                                        <Tab.Pane eventKey="second">
-                                                            Public sessions
+                                </Card.Text>
+                                <Tab.Container defaultActiveKey="mySessions">
+                                    <Nav className="session-tab" variant="pills">
+                                        <Nav.Item >
+                                            <Nav.Link eventKey="mySessions"><i className="mr-2 fas fa-user"></i>My sessions</Nav.Link>
+                                        </Nav.Item>
+                                        <Nav.Item>
+                                            <Nav.Link eventKey={`publicSessions}`}> <i className="mr-2 fas fa-users"></i>Public sessions</Nav.Link>
+                                        </Nav.Item>
+                                    </Nav>
+                                    <Row className="pt-4">
+                                        <Col >
+                                            <Tab.Content>
+                                                <Tab.Pane eventKey="mySessions">
+                                                    <SavedItem name="Ordino NMC Case Study 1" uploadedDate="20 minutes ago" accessType="private" />
+                                                    <SavedItem name="Saved Session 1" uploadedDate="20 minutes ago" accessType="private" />
+                                                    <SavedItem name="Saved Session 5" description="This is an optional description for the saved session" uploadedDate="1 hour ago" accessType="public" />
+                                                    <SavedItem name="Saved Session 22" uploadedDate="2 days ago" accessType="public" />
                                                 </Tab.Pane>
-                                                    </Tab.Content>
+                                                <Tab.Pane eventKey={`publicSessions}`}>
+                                                    <SavedItem name="Saved Session 1" uploadedDate="20 minutes ago" accessType="public" />
+                                                    <SavedItem name="Saved Session 33" uploadedDate="20 minutes ago" accessType="public" />
+                                                    <SavedItem name="Saved Session 50" uploadedDate="1 hour ago" accessType="public" />
+                                                    <SavedItem name="Saved Session 90" uploadedDate="2 days ago" accessType="public" />
+                                                </Tab.Pane>
+                                            </Tab.Content>
 
-                                                </Col>
-                                            </Row>
-                                        </Tab.Container>
-                                    </Col >
+                                        </Col>
+                                    </Row>
+                                </Tab.Container>
+                            </Card.Body>
+                        </Card>
+                    </Element>
+                    <Element className="pt-6" name={`temporary-${suffix}`}>
+                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 ordino-icon-2 fas fa-history" ></i>Temporary Sessions</h4>
+                        <Card className="shadow-sm">
+                            <Card.Body className="p-3">
+                                <Card.Text>
+                                    A temporary session will only be stored in your local browser cache.It is not possible to share a link to states
+                                    of this session with others. Only the 10 most recent sessions will be stored.
+                                </Card.Text>
+                                <CurrentItem name="Temporary session 20" uploadedDate="a minute ago" />
+                                <CurrentItem name="Temporary session 19" uploadedDate="5 minutes ago" />
+                                <CurrentItem name="Temporary session 18" uploadedDate="10 minutes ago" />
+                                <CurrentItem name="Temporary session 17" uploadedDate="15 minutes ago" />
+                            </Card.Body>
+                        </Card>
+                    </Element>
+
+                    <Element className="py-6" name={`import-${suffix}`}>
+                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 fas ordino-icon-2 fa-file-upload" ></i> Import Session</h4>
+                        <Card style={{}} className="shadow-sm">
+                            <Card.Body className="p-3">
+                                <Card.Text>
+                                    You can import sessions as temporary sessions and continue the analysis afterwards.
+                                </Card.Text>
+                                <SessionDropzone />
+                                <hr />
+                                <Row md={1}>
+                                    <Col className="p-6"></Col>
+                                </Row>
+                                <Row md={1}>
+                                    <Col className="p-6"></Col>
                                 </Row>
                             </Card.Body>
                         </Card>
-                    </Row>
-                    <Row>
-                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 fas fa-history" ></i>Temporary Sessions</h4>
-                    </Row>
-                    <Row md={1}>
-                        <TempSessions />
-                    </Row>
-                    <Row>
-                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 fas fa-file-upload" ></i> Import Session</h4>
-                    </Row>
-                    <Row md={1}>
-                        <ImportSession />
-                    </Row>
 
+
+                    </Element>
                 </Col>
             </Row>
-
+u
         </Container >
-    )
+    );
 }

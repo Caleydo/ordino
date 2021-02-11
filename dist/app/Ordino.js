@@ -22,7 +22,7 @@ export class Ordino extends ATDPApplication {
         main.classList.add('targid');
         // lazy loading for better module bundling
         const modules = await Promise.all([import('../internal/OrdinoApp'), import('../internal/menu/StartMenuReact')]);
-        const app = new modules[0].OrdinoApp(graph, manager, main);
+        // const app: OrdinoApp = new modules[0].OrdinoApp(graph, manager, main);
         const startMenuElement = main.ownerDocument.createElement('div');
         main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
         ReactDOM.render(React.createElement(modules[1].StartMenuComponent, { headerMainMenu: this.header.mainMenu }), startMenuElement);

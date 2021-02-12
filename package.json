@@ -1,7 +1,7 @@
 {
   "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "version": "8.0.1",
+  "version": "9.0.0",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -52,23 +52,23 @@
     "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *"
   },
   "devDependencies": {
-    "@types/jquery": "~3.5.0",
+    "@types/jquery": "~3.5.5",
     "@types/jquery.scrollto": "~1.4.28",
-    "@types/jest": "~26.0.5",
+    "@types/jest": "~26.0.20",
     "identity-obj-proxy": "~3.0.0",
-    "jest": "~26.1.0",
+    "jest": "~26.6.3",
     "jest-raw-loader": "~1.0.1",
     "rimraf": "~3.0.2",
-    "shx": "~0.3.2",
-    "ts-jest": "~26.1.3",
-    "tslib": "~2.0.0",
+    "shx": "~0.3.3",
+    "ts-jest": "~26.4.4",
+    "tslib": "~2.0.3",
     "tslint": "~5.20.1",
-    "typedoc": "~0.17.8",
+    "typedoc": "~0.19.2",
     "typescript": "~3.9.7"
   },
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "^10.0.1"
+    "tdp_core": "^11.0.0"
   }
 }

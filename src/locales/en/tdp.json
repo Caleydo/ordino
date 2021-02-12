@@ -2,7 +2,7 @@
   "core": {
     "lineup": {
       "LineupPanelActions": {
-        "databaseColumns": "Annotations Columns",
+        "databaseColumns": "Annotation Columns",
         "columnTitle": "{{text}}",
         "addText": "Add {{text}}"
       }

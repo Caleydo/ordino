@@ -40,7 +40,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
    */
-  private readonly views: ViewWrapper[] = [];
+  readonly views: ViewWrapper[] = [];
 
   /**
    * IObjectRef to this OrdinoApp instance
@@ -95,7 +95,7 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
     const $history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
     $history.append('li').classed('homeButton', true)
       .html(`<a href="#">
-        <i class="fa fa-home" aria-hidden="true"></i>
+        <i class="fas fa-home" aria-hidden="true"></i>
         <span class="sr-only">Start</span>
       </a>`);
     $history.select('.homeButton > a').on('click', (d) => {
@@ -240,7 +240,10 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
     }
   }
 
-  get lastView() {
+  /**
+   * The last view of the list of open views
+   */
+  get lastView(): ViewWrapper {
     return this.views[this.views.length - 1];
   }
 
@@ -296,6 +299,11 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
     }
   }
 
+  /**
+   * Add a new view wrapper to the list of open views.
+   * The return value is index in the list of views.
+   * @param view ViewWrapper
+   */
   pushImpl(view: ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
@@ -306,6 +314,13 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
     return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
   }
 
+  /**
+   * Remove the given and focus on the view with the given index.
+   * If the focus index is -1 the previous view of the given view will be focused.
+   *
+   * @param view View instance to remove
+   * @param focus Index of the view in the view list (default: -1)
+   */
   removeImpl(view: ViewWrapper, focus: number = -1) {
     const i = this.views.indexOf(view);
     view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);

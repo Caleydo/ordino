@@ -68,7 +68,7 @@ export class OrdinoApp extends EventHandler {
         const $history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
         $history.append('li').classed('homeButton', true)
             .html(`<a href="#">
-        <i class="fa fa-home" aria-hidden="true"></i>
+        <i class="fas fa-home" aria-hidden="true"></i>
         <span class="sr-only">Start</span>
       </a>`);
         $history.select('.homeButton > a').on('click', (d) => {
@@ -199,6 +199,9 @@ export class OrdinoApp extends EventHandler {
             }
         }
     }
+    /**
+     * The last view of the list of open views
+     */
     get lastView() {
         return this.views[this.views.length - 1];
     }
@@ -248,6 +251,11 @@ export class OrdinoApp extends EventHandler {
             this.fire('openStartMenu');
         }
     }
+    /**
+     * Add a new view wrapper to the list of open views.
+     * The return value is index in the list of views.
+     * @param view ViewWrapper
+     */
     pushImpl(view) {
         view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
         view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
@@ -257,6 +265,13 @@ export class OrdinoApp extends EventHandler {
         this.update();
         return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
     }
+    /**
+     * Remove the given and focus on the view with the given index.
+     * If the focus index is -1 the previous view of the given view will be focused.
+     *
+     * @param view View instance to remove
+     * @param focus Index of the view in the view list (default: -1)
+     */
     removeImpl(view, focus = -1) {
         const i = this.views.indexOf(view);
         view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);

@@ -8,7 +8,7 @@
 
 
 .welcomeView {
-  width: 100%;
+  width: 100% !important; // see https://github.com/Caleydo/ordino/issues/246
 
   &:before {
     position: absolute;
@@ -17,7 +17,7 @@
     width: 8%; // depends on the container width
     height: 300px;
     content: '';
-    background: transparent url('../assets/welcome-view-arrow.svg') no-repeat;
+    background: transparent url('~ordino/dist/assets/welcome-view-arrow.svg') no-repeat;
     background-size: contain;
     display: block;
     z-index: 1;
@@ -81,4 +81,3 @@
 .disclaimer {
   margin-top: 40px;
 }
-

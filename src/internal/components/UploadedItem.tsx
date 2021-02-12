@@ -18,14 +18,14 @@ interface IUploadedItemProps {
 export function UploadedItem({name, accessType, uploadedDate, description}: IUploadedItemProps) {
     return (
         <>
-            <Row className="dropdown-parent align-items-center">
-                <Col md={11} className="d-flex flex-column align-items-start">
-                    <Button variant="link" style={{color: '#337AB7'}} >
+            <Row className="dropdown-parent session-item mx-0 align-items-center">
+                <Col md={11} className="d-flex px-0 flex-column align-items-start">
+                    <Button variant="link" className="pl-0" style={{color: '#337AB7'}} >
                         <i className="mr-2 fas fa-file-csv" ></i>{name}
                     </Button>
 
-                    {description ? <p className="pl-2">{description} </p> : null}
-                    <Row className="pl-4 justify-content-start  align-self-stretch">
+                    {description ? <p className="pl-3">{description} </p> : null}
+                    <Row className="pl-5 justify-content-start  align-self-stretch">
                         {uploadedDate ? <p className="flex-grow-1 text-muted">{uploadedDate} </p> : null}
                         {accessType === 'public' ?
                             <p className="text-muted flex-grow-1">
@@ -36,14 +36,13 @@ export function UploadedItem({name, accessType, uploadedDate, description}: IUpl
                             </p>}
                     </Row>
                 </Col>
-                <Col md={1} className="d-flex align-self-center">
+                <Col md={1} className="d-flex px-0 align-self-center">
                     < DatasetEntryDropdown>
                         <Dropdown.Item >Edit</Dropdown.Item>
                         <Dropdown.Item className="dropdown-delete" >Delete</Dropdown.Item>
                     </ DatasetEntryDropdown>
                 </Col>
             </Row>
-            <hr className="mb-1 mt-0" />
         </>
     );
 }
@@ -62,15 +61,15 @@ interface ICurrentItemProps {
 export function CurrentItem({name, uploadedDate, description}: ICurrentItemProps) {
     return (
         <>
-            <Row className="dropdown-parent align-items-center">
-                <Col md={10} className="d-flex flex-column align-items-start">
+            <Row className="dropdown-parent session-item mx-0 align-items-center">
+                <Col md={10} className="d-flex flex-column px-0  align-items-start">
                     <Button className="pl-0" style={{color: '#337AB7'}} variant="link" >
                         <i className="mr-2 fas fa-history" ></i>{name}
                     </Button>
                     {description ? <p className="ml-4">{description} </p> : null}
                     {uploadedDate ? <p className="ml-4 text-muted">{uploadedDate} </p> : null}
                 </Col>
-                <Col md={2} className="d-flex align-self-center">
+                <Col md={2} className="d-flex px-0 align-self-center">
                     <Button variant="outline-secondary" className="mr-2 pt-1 pb-1">Save</Button>
                     < DatasetEntryDropdown>
                         <Dropdown.Item >Clone</Dropdown.Item>
@@ -79,7 +78,6 @@ export function CurrentItem({name, uploadedDate, description}: ICurrentItemProps
                     </ DatasetEntryDropdown>
                 </Col>
             </Row>
-            <hr className="mb-1 mt-0" />
         </>
     );
 }
@@ -98,13 +96,13 @@ interface ISavedItemProps {
 export function SavedItem({name, uploadedDate, accessType, description}: ISavedItemProps) {
     return (
         <>
-            <Row className="dropdown-parent align-items-center">
-                <Col md={10} className="d-flex flex-column align-items-start">
-                    <Button variant="link" style={{color: '#337AB7'}}>
+            <Row className="dropdown-parent session-item mx-0 align-items-center">
+                <Col md={10} className="d-flex flex-column px-0 align-items-start">
+                    <Button variant="link" className="pl-0" style={{color: '#337AB7'}}>
                         <i className="mr-2 fas fa-cloud" ></i>{name}
                     </Button>
                     {description ? <p className="ml-4">{description} </p> : null}
-                    <Row className="ml-4 justify-content-start  align-self-stretch">
+                    <Row className="pr-0 pl-4 justify-content-start  align-self-stretch">
                         <Col md={6}>
                             {uploadedDate ? <p className="flex-grow-1 text-muted">{uploadedDate} </p> : null}
                         </Col>
@@ -119,7 +117,7 @@ export function SavedItem({name, uploadedDate, accessType, description}: ISavedI
                         </Col>
                     </Row>
                 </Col>
-                <Col md={2} className="d-flex align-self-center">
+                <Col md={2} className="d-flex px-0 align-self-center">
                     <Button variant="outline-secondary" className="mr-2 pt-1 pb-1">Edit</Button>
                     < DatasetEntryDropdown>
                         <Dropdown.Item >Clone</Dropdown.Item>
@@ -128,7 +126,6 @@ export function SavedItem({name, uploadedDate, accessType, description}: ISavedI
                     </ DatasetEntryDropdown>
                 </Col>
             </Row>
-            <hr className="mb-1 mt-0" />
         </>
     );
 }

@@ -70,15 +70,9 @@ export function SessionsTab() {
                     React.createElement("h4", { className: "text-left mt-4 mb-3" },
                         React.createElement("i", { className: "mr-2 fas ordino-icon-2 fa-file-upload" }),
                         " Import Session"),
-                    React.createElement(Card, { style: {}, className: "shadow-sm" },
+                    React.createElement(Card, { className: "shadow-sm" },
                         React.createElement(Card.Body, { className: "p-3" },
                             React.createElement(Card.Text, null, "You can import sessions as temporary sessions and continue the analysis afterwards."),
-                            React.createElement(SessionDropzone, null),
-                            React.createElement("hr", null),
-                            React.createElement(Row, { md: 1 },
-                                React.createElement(Col, { className: "p-6" })),
-                            React.createElement(Row, { md: 1 },
-                                React.createElement(Col, { className: "p-6" }))))))),
-        "u"));
+                            React.createElement(SessionDropzone, null))))))));
 }
 //# sourceMappingURL=SessionsTab.js.map

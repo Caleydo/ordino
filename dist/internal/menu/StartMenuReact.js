@@ -18,6 +18,7 @@ function MainMenuLinks(props) {
     return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: "nav-item", key: tab.id },
         React.createElement("a", { className: "nav-link", href: `#${tab.id}`, id: `${tab.id}-tab`, role: "tab", "aria-controls": tab.id, "aria-selected": (props.active === tab), onClick: (evt) => {
                 evt.preventDefault();
+                window.scrollTo(0, 0);
                 if (props.active === tab) {
                     props.setActive(null);
                 }

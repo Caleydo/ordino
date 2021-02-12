@@ -53,6 +53,7 @@ function MainMenuLinks(props: IStartMenuTabProps) {
             aria-selected={(props.active === tab)}
             onClick={(evt) => {
               evt.preventDefault();
+              window.scrollTo(0, 0);
               if (props.active === tab) {
                 props.setActive(null);
               } else {

@@ -36,7 +36,7 @@ interface IDatasetEntriesProps {
 
 function DatasetEntries({headerIcon, headerText, entries, readonly}: IDatasetEntriesProps) {
     return (
-        <Col md={4} className="dataset-entry d-flex flex-column" >
+        <Col md={4} className="dataset-entry dropdown-parent d-flex flex-column" >
             <header ><i className={`mr-2 ${headerIcon}`}></i>{headerText}</header>
             <ButtonGroup vertical>
                 {entries.map((entry, i) => {

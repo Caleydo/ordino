@@ -3,7 +3,7 @@ import { Button, Col, Dropdown, Row } from 'react-bootstrap';
 import { DatasetEntryDropdown } from './DatasetSection';
 export function UploadedItem({ name, accessType, uploadedDate, description }) {
     return (React.createElement(React.Fragment, null,
-        React.createElement(Row, { className: "uploaded-dataset-item align-items-center" },
+        React.createElement(Row, { className: "dropdown-parent align-items-center" },
             React.createElement(Col, { md: 11, className: "d-flex flex-column align-items-start" },
                 React.createElement(Button, { variant: "link", style: { color: '#337AB7' } },
                     React.createElement("i", { className: "mr-2 fas fa-file-csv" }),
@@ -30,7 +30,7 @@ export function UploadedItem({ name, accessType, uploadedDate, description }) {
 }
 export function CurrentItem({ name, uploadedDate, description }) {
     return (React.createElement(React.Fragment, null,
-        React.createElement(Row, { className: "uploaded-dataset-item align-items-center" },
+        React.createElement(Row, { className: "dropdown-parent align-items-center" },
             React.createElement(Col, { md: 10, className: "d-flex flex-column align-items-start" },
                 React.createElement(Button, { className: "pl-0", style: { color: '#337AB7' }, variant: "link" },
                     React.createElement("i", { className: "mr-2 fas fa-history" }),
@@ -51,7 +51,7 @@ export function CurrentItem({ name, uploadedDate, description }) {
 }
 export function SavedItem({ name, uploadedDate, accessType, description }) {
     return (React.createElement(React.Fragment, null,
-        React.createElement(Row, { className: "uploaded-dataset-item align-items-center" },
+        React.createElement(Row, { className: "dropdown-parent align-items-center" },
             React.createElement(Col, { md: 10, className: "d-flex flex-column align-items-start" },
                 React.createElement(Button, { variant: "link", style: { color: '#337AB7' } },
                     React.createElement("i", { className: "mr-2 fas fa-cloud" }),

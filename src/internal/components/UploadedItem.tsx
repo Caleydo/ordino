@@ -18,7 +18,7 @@ interface IUploadedItemProps {
 export function UploadedItem({name, accessType, uploadedDate, description}: IUploadedItemProps) {
     return (
         <>
-            <Row className="uploaded-dataset-item align-items-center">
+            <Row className="dropdown-parent align-items-center">
                 <Col md={11} className="d-flex flex-column align-items-start">
                     <Button variant="link" style={{color: '#337AB7'}} >
                         <i className="mr-2 fas fa-file-csv" ></i>{name}
@@ -62,7 +62,7 @@ interface ICurrentItemProps {
 export function CurrentItem({name, uploadedDate, description}: ICurrentItemProps) {
     return (
         <>
-            <Row className="uploaded-dataset-item align-items-center">
+            <Row className="dropdown-parent align-items-center">
                 <Col md={10} className="d-flex flex-column align-items-start">
                     <Button className="pl-0" style={{color: '#337AB7'}} variant="link" >
                         <i className="mr-2 fas fa-history" ></i>{name}
@@ -98,7 +98,7 @@ interface ISavedItemProps {
 export function SavedItem({name, uploadedDate, accessType, description}: ISavedItemProps) {
     return (
         <>
-            <Row className="uploaded-dataset-item align-items-center">
+            <Row className="dropdown-parent align-items-center">
                 <Col md={10} className="d-flex flex-column align-items-start">
                     <Button variant="link" style={{color: '#337AB7'}}>
                         <i className="mr-2 fas fa-cloud" ></i>{name}

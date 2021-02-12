@@ -89,12 +89,11 @@
     border-left: 1px solid map-get($theme-colors, "ordino-gray-5");
   }
 
-  .dataset-entry  .btn-group:hover .session-dropdown {
-    visibility: visible;
-  }
-
-  .uploaded-dataset-item:hover .session-dropdown {
-    visibility: visible;
+  .dropdown-parent:hover,
+  .dropdown-parent:focus-within {
+    .session-dropdown {
+      visibility: visible;
+    }
   }
 
   .session-dropdown {

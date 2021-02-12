@@ -17,7 +17,7 @@ const mySets = [
     'Research Focus 2'
 ];
 function DatasetEntries({ headerIcon, headerText, entries, readonly }) {
-    return (React.createElement(Col, { md: 4, className: "dataset-entry d-flex flex-column" },
+    return (React.createElement(Col, { md: 4, className: "dataset-entry dropdown-parent d-flex flex-column" },
         React.createElement("header", null,
             React.createElement("i", { className: `mr-2 ${headerIcon}` }),
             headerText),

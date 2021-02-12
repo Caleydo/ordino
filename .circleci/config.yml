@@ -1,13 +1,71 @@
 version: 2.1
 
 executors:
+  python-executor:
+    working_directory: ~/phovea-python
+    docker:
+      - image: circleci/python:3.7-buster-node-browsers # for node version see Dockerfile on https://hub.docker.com/r/circleci/python
   node-executor:
-    working_directory: ~/phovea
+    working_directory: ~/phovea-web
     docker:
       - image: circleci/node:12.13-buster-browsers
 
 jobs:
-  build:
+  python-build:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Show Node.js and npm version
+          command: |
+            node -v
+            npm -v
+      - run:
+          name: Show Python and pip version
+          command: |
+            python --version
+            pip --version
+      - run:
+          name: Install Docker packages from docker_packages.txt
+          command: |
+            (!(test -f docker_packages.txt) || (cat docker_packages.txt | xargs sudo apt-get install -y))
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
+      - run:
+          name: Install pip requirements
+          command: |
+            virtualenv ~/venv
+            . ~/venv/bin/activate
+            pip install -r requirements_dev.txt
+            pip install -r requirements.txt
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
+          paths:
+          - ~/venv
+      - run:
+          name: Force an update of pip dependencies from git repositories # not sure if this is working ?
+          command: |
+            . ~/venv/bin/activate
+            pip install --upgrade --upgrade-strategy=only-if-needed -r requirements.txt
+      - run:
+          name: Show installed pip packages
+          command: pip list || true
+      - run:
+          name: Remove all from dist folder
+          command: |
+            rm -rf dist && mkdir dist          
+      - run:
+          name: Build
+          command: |
+            . ~/venv/bin/activate
+            npm run dist:python
+      - store_artifacts:
+          path: dist
+          destination: dist-python
+      - persist_to_workspace:
+          root: ~/.
+          paths: phovea-python
+  web-build:
     executor: node-executor
     steps:
       - checkout
@@ -36,12 +94,13 @@ jobs:
           command: npm list --depth=1 || true
       - run:
           name: Build
-          command: npm run dist
+          command: npm run dist:web
       - store_artifacts:
           path: dist
+          destination: dist-web
       - persist_to_workspace:
-          root: ~/phovea
-          paths: .
+          root: ~/.
+          paths: phovea-web
 workflows:
   version: 2.1
 #  build-nightly:
@@ -53,7 +112,16 @@ workflows:
 #              only:
 #                - develop
 #    jobs:
-#      - build
+#      - python-build
+#      - web-build
   build-branches-and-tags:
     jobs:
-      - build
+      - python-build:
+          filters:
+            tags:
+              only: /.*/      
+      - web-build:
+          filters:
+            tags:
+              only: /.*/      
+      

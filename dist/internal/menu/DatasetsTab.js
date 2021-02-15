@@ -22,7 +22,7 @@ const mySets = [
 ];
 export function DatasetsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
-    return (React.createElement(Container, { fluid: true, className: "my-4 datasets-tab" },
+    return (React.createElement(Container, { fluid: true, className: "mb-4 datasets-tab" },
         React.createElement(Row, null,
             React.createElement(Col, { className: "d-flex justify-content-end" },
                 React.createElement(Button, { className: "start-menu-close", variant: "link" },

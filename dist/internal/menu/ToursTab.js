@@ -3,7 +3,7 @@ import { Row, Col, Container, Button } from 'react-bootstrap';
 import tour1Img from 'ordino/dist/assets/tour_1.png';
 import { TourCard } from '../components/TourCard';
 export function ToursTab() {
-    return (React.createElement(Container, { fluid: true, className: "mt-4  mb-6 tours-tab" },
+    return (React.createElement(Container, { fluid: true, className: "mb-6 tours-tab" },
         React.createElement(Row, null,
             React.createElement(Col, { className: "d-flex justify-content-end" },
                 React.createElement(Button, { className: "start-menu-close", variant: "link" },

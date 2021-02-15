@@ -30,7 +30,7 @@ export function DatasetsTab() {
 
     return (
 
-        <Container fluid className="my-4 datasets-tab">
+        <Container fluid className="mb-4 datasets-tab">
             <Row>
                 <Col className="d-flex justify-content-end">
                     <Button className="start-menu-close" variant="link" >

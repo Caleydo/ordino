@@ -8,7 +8,7 @@ import {SessionDropzone} from '../components/SessionDropzone';
 export function SessionsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
     return (
-        <Container fluid className="my-4 analysis-tab">
+        <Container fluid className="mb-4 analysis-tab">
             <Row>
                 <Col className="d-flex justify-content-end">
                     <Button className="start-menu-close" variant="link" >

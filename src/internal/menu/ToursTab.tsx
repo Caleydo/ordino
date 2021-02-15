@@ -6,7 +6,7 @@ import {TourCard} from '../components/TourCard';
 
 export function ToursTab() {
   return (
-    <Container fluid className="mt-4  mb-6 tours-tab">
+    <Container fluid className="mb-6 tours-tab">
       <Row>
         <Col className="d-flex justify-content-end">
           <Button className="start-menu-close" variant="link" >

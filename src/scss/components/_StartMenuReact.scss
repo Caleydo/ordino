@@ -4,7 +4,7 @@
   }
 
   .ordino-info-text {
-    color: #72818d;
+    color: map-get($theme-colors, "ordino-gray-4");
     font-size: 1.2em;
   }
 
@@ -73,7 +73,7 @@
 
   .nav-link {
     position: relative;
-    color: #72818d;
+    color: map-get($theme-colors, "ordino-gray-4");
     font-size: 1.12em;
     .active {
       color: inherit;
@@ -145,7 +145,7 @@
           left: 0;
           width: 0px;
           height: 0px;
-          background: #000;
+          background: black;
           transition: width 0.3s;
         }
         &.active::after {
@@ -160,16 +160,16 @@
   }
 
   .session-dropzone {
-    border: 1px dashed #72818d;
+    border: 1px dashed map-get($theme-colors, "ordino-gray-4");
     border-radius: 6px;
     padding: 0.6rem;
 
     p:nth-child(1) {
       font-weight: 500;
-      color: #72818d;
+      color: map-get($theme-colors, "ordino-gray-4");
     }
     p:nth-child(2) {
-      color: #aab3bb;
+      color: map-get($theme-colors, "ordino-gray-6");
     }
   }
 }
@@ -179,6 +179,9 @@
 }
 
 .start-menu-close {
-  color: map-get($theme-colors, "ordino-gray-5");
+  color: map-get($theme-colors, "ordino-gray-4");
   font-size: 1.2em;
+  &:hover {
+    color: darken($color: map-get($theme-colors, "ordino-gray-4"), $amount: 20);
+  }
 }

@@ -11,8 +11,8 @@ export function SessionsTab() {
         <Container fluid className="my-4 analysis-tab">
             <Row>
                 <Col className="d-flex justify-content-end">
-                    <Button className="start-menu-close" style={{color: '#72818D'}} variant="link" >
-                        <i className="fas fa-times" ></i>{name}
+                    <Button className="start-menu-close" variant="link" >
+                        <i className="fas fa-times" ></i>
                     </Button>
                 </Col>
             </Row>

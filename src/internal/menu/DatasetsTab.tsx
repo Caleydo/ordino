@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Card, Col, Nav, Row, Tab} from 'react-bootstrap';
+import {Container, Card, Col, Nav, Row, Tab, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
 import {DatasetSection} from '../components/DatasetSection';
@@ -31,6 +31,13 @@ export function DatasetsTab() {
     return (
 
         <Container fluid className="my-4 datasets-tab">
+            <Row>
+                <Col className="d-flex justify-content-end">
+                    <Button className="start-menu-close" style={{color: '#72818D'}} variant="link" >
+                        <i className="fas fa-times" ></i>{name}
+                    </Button>
+                </Col>
+            </Row>
             <Row>
                 <Col md={3}>
                     <Nav className="scrollspy-nav flex-column">

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Row, Col, Container} from 'react-bootstrap';
+import {Row, Col, Container, Button} from 'react-bootstrap';
 import tour1Img from 'ordino/dist/assets/tour_1.png';
 import {TourCard} from '../components/TourCard';
 
@@ -7,7 +7,13 @@ import {TourCard} from '../components/TourCard';
 export function ToursTab() {
   return (
     <Container className="mt-4 mb-6 tours-tab">
-
+      <Row>
+        <Col className="d-flex justify-content-end">
+          <Button className="start-menu-close" style={{color: '#72818D'}} variant="link" >
+            <i className="fas fa-times" ></i>{name}
+          </Button>
+        </Col>
+      </Row>
       <p className="ordino-info-text"> Learn more about Ordino by taking an interactive guided tour</p>
       <h4 className="text-left mt-4 mb-3  d-flex align-items-center "><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right" ></i> Beginner</h4>
       <Row className="mb-4" md={3}>

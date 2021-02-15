@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Card, Col, Nav, Row, Tab } from 'react-bootstrap';
+import { Container, Card, Col, Nav, Row, Tab, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
 import { CurrentItem, SavedItem } from '../components/UploadedItem';
@@ -7,6 +7,11 @@ import { SessionDropzone } from '../components/SessionDropzone';
 export function SessionsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
     return (React.createElement(Container, { fluid: true, className: "my-4 analysis-tab" },
+        React.createElement(Row, null,
+            React.createElement(Col, { className: "d-flex justify-content-end" },
+                React.createElement(Button, { className: "start-menu-close", style: { color: '#72818D' }, variant: "link" },
+                    React.createElement("i", { className: "fas fa-times" }),
+                    name))),
         React.createElement(Row, null,
             React.createElement(Col, { md: 3 },
                 React.createElement(Nav, { className: "scrollspy-nav flex-column" },

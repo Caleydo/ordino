@@ -177,3 +177,8 @@
 .session-item:not(:last-child) {
   border-bottom: 1px solid map-get($theme-colors, "ordino-gray-5");
 }
+
+.start-menu-close {
+  color: map-get($theme-colors, "ordino-gray-5");
+  font-size: 1.2em;
+}

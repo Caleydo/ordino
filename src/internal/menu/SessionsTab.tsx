@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Card, Col, Nav, Row, Tab} from 'react-bootstrap';
+import {Container, Card, Col, Nav, Row, Tab, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
 import {CurrentItem, SavedItem} from '../components/UploadedItem';
@@ -10,8 +10,15 @@ export function SessionsTab() {
     return (
         <Container fluid className="my-4 analysis-tab">
             <Row>
+                <Col className="d-flex justify-content-end">
+                    <Button className="start-menu-close" style={{color: '#72818D'}} variant="link" >
+                        <i className="fas fa-times" ></i>{name}
+                    </Button>
+                </Col>
+            </Row>
+            <Row>
                 <Col md={3}>
-                    <Nav  className="scrollspy-nav flex-column">
+                    <Nav className="scrollspy-nav flex-column">
                         <Link className="nav-link" role="button" to={`current-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Current Session</Link>
                         <Link className="nav-link" role="button" to={`saved-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Saved Session</Link>
                         <Link className="nav-link" role="button" to={`temporary-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>Temporary Session</Link>
@@ -89,7 +96,7 @@ export function SessionsTab() {
 
                     <Element className="py-6" name={`import-${suffix}`}>
                         <h4 className="text-left mt-4 mb-3"><i className="mr-2 fas ordino-icon-2 fa-file-upload" ></i> Import Session</h4>
-                        <Card  className="shadow-sm">
+                        <Card className="shadow-sm">
                             <Card.Body className="p-3">
                                 <Card.Text>
                                     You can import sessions as temporary sessions and continue the analysis afterwards.

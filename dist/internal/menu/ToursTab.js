@@ -1,9 +1,14 @@
 import * as React from 'react';
-import { Row, Container } from 'react-bootstrap';
+import { Row, Col, Container, Button } from 'react-bootstrap';
 import tour1Img from 'ordino/dist/assets/tour_1.png';
 import { TourCard } from '../components/TourCard';
 export function ToursTab() {
     return (React.createElement(Container, { className: "mt-4 mb-6 tours-tab" },
+        React.createElement(Row, null,
+            React.createElement(Col, { className: "d-flex justify-content-end" },
+                React.createElement(Button, { className: "start-menu-close", style: { color: '#72818D' }, variant: "link" },
+                    React.createElement("i", { className: "fas fa-times" }),
+                    name))),
         React.createElement("p", { className: "ordino-info-text" }, " Learn more about Ordino by taking an interactive guided tour"),
         React.createElement("h4", { className: "text-left mt-4 mb-3  d-flex align-items-center " },
             React.createElement("i", { className: "mr-2 ordino-icon-1 fas fa-chevron-circle-right" }),

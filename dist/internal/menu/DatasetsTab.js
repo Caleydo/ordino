@@ -3,21 +3,6 @@ import { Container, Card, Col, Nav, Row, Tab, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
 import { DatasetDropzone, DatasetSection, UploadedItem } from '../components';
-const genSets = [
-    'All',
-    'Cancer Gene Census',
-    'Essential Genes',
-];
-const publicSets = [
-    'Dd',
-    'TP53 Predictor Score',
-    'List'
-];
-const mySets = [
-    'My Collection',
-    'Research Focus 1',
-    'Research Focus 2'
-];
 export function DatasetsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
     return (React.createElement(Container, { fluid: true, className: "mb-4 datasets-tab" },

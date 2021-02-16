@@ -1,6 +1,5 @@
-export * from './DatasetDropzone';
 export * from './DatasetCard';
 export * from './SessionDropzone';
 export * from './TourCard';
-export * from './UploadedItem';
+export * from './UploadDatasetCard';
 //# sourceMappingURL=index.js.map

@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {Row, Col, Nav, Container, Button, Form, Card, ListGroup, Navbar} from 'react-bootstrap';
 import * as ReactDOM from 'react-dom';
-import {TourCard} from '../components/TourCard';
 import {SessionsTab} from './SessionsTab';
 import {DatasetsTab} from './DatasetsTab';
 import {ToursTab} from './ToursTab';

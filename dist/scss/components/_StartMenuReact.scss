@@ -36,8 +36,15 @@
     font-size: 1rem;
   }
 
+  @media only screen and (max-width: 1500px) {
+    .scrollspy-nav {
+      display: none;
+    }
+  }
+
   .scrollspy-nav {
     position: fixed;
+    top: 6em;
 
     .nav-link {
       color: map-get($theme-colors, "ordino-gray-4");

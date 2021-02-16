@@ -2,9 +2,7 @@ import React from 'react';
 import { Container, Card, Col, Nav, Row, Tab, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
-import { DatasetSection } from '../components/DatasetSection';
-import { UploadedItem } from '../components/UploadedItem';
-import { DatasetDropzone } from '../components/DatasetDropzone';
+import { DatasetDropzone, DatasetSection, UploadedItem } from '../components';
 const genSets = [
     'All',
     'Cancer Gene Census',

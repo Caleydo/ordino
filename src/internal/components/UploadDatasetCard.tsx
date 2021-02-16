@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, Nav, Tab} from 'react-bootstrap';
 import {DatasetDropzone} from './DatasetDropzone';
-import {UploadedItem} from './UploadedItem';
+import {UploadDatasetListItem} from './UploadDatasetListItem';
 
 interface IUploadDatasetCardProps {
   id: string;
@@ -27,12 +27,12 @@ export function UploadDatasetCard({headerText, headerIcon}: IUploadDatasetCardPr
                       </Nav>
                       <Tab.Content>
                           <Tab.Pane eventKey="myDatasets" className="mt-4">
-                              <UploadedItem accessType="public" name="anylysis_dataset" uploadedDate="Mon, 10 Aug 2020" />
-                              <UploadedItem accessType="private" name="crispr_dataset" uploadedDate="Mon, 10 Sep 2020" description="This is an optional description for the dataset file" />
-                              <UploadedItem accessType="public" uploadedDate="Mon, 10 Nov 2020" name="crispr_dataset" />
+                              <UploadDatasetListItem accessType="public" name="anylysis_dataset" uploadedDate="Mon, 10 Aug 2020" />
+                              <UploadDatasetListItem accessType="private" name="crispr_dataset" uploadedDate="Mon, 10 Sep 2020" description="This is an optional description for the dataset file" />
+                              <UploadDatasetListItem accessType="public" uploadedDate="Mon, 10 Nov 2020" name="crispr_dataset" />
                           </Tab.Pane>
                           <Tab.Pane eventKey="publicDatasets" className="mt-4" >
-                              <UploadedItem accessType="public" name="crispr_dataset" uploadedDate="Mon, 10 Aug 2020" />
+                              <UploadDatasetListItem accessType="public" name="crispr_dataset" uploadedDate="Mon, 10 Aug 2020" />
                           </Tab.Pane>
                       </Tab.Content>
                   </Tab.Container>

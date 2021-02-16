@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Nav, Tab } from 'react-bootstrap';
 import { DatasetDropzone } from './DatasetDropzone';
-import { UploadedItem } from './UploadedItem';
+import { UploadDatasetListItem } from './UploadDatasetListItem';
 export function UploadDatasetCard({ headerText, headerIcon }) {
     return (React.createElement(React.Fragment, null,
         React.createElement("h4", { className: "text-left mt-4 mb-3" },
@@ -24,10 +24,10 @@ export function UploadDatasetCard({ headerText, headerIcon }) {
                                 "Public Datasets"))),
                     React.createElement(Tab.Content, null,
                         React.createElement(Tab.Pane, { eventKey: "myDatasets", className: "mt-4" },
-                            React.createElement(UploadedItem, { accessType: "public", name: "anylysis_dataset", uploadedDate: "Mon, 10 Aug 2020" }),
-                            React.createElement(UploadedItem, { accessType: "private", name: "crispr_dataset", uploadedDate: "Mon, 10 Sep 2020", description: "This is an optional description for the dataset file" }),
-                            React.createElement(UploadedItem, { accessType: "public", uploadedDate: "Mon, 10 Nov 2020", name: "crispr_dataset" })),
+                            React.createElement(UploadDatasetListItem, { accessType: "public", name: "anylysis_dataset", uploadedDate: "Mon, 10 Aug 2020" }),
+                            React.createElement(UploadDatasetListItem, { accessType: "private", name: "crispr_dataset", uploadedDate: "Mon, 10 Sep 2020", description: "This is an optional description for the dataset file" }),
+                            React.createElement(UploadDatasetListItem, { accessType: "public", uploadedDate: "Mon, 10 Nov 2020", name: "crispr_dataset" })),
                         React.createElement(Tab.Pane, { eventKey: "publicDatasets", className: "mt-4" },
-                            React.createElement(UploadedItem, { accessType: "public", name: "crispr_dataset", uploadedDate: "Mon, 10 Aug 2020" }))))))));
+                            React.createElement(UploadDatasetListItem, { accessType: "public", name: "crispr_dataset", uploadedDate: "Mon, 10 Aug 2020" }))))))));
 }
 //# sourceMappingURL=UploadDatasetCard.js.map

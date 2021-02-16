@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Col, Dropdown, Row } from 'react-bootstrap';
-import { DatasetEntryDropdown } from './DatasetSection';
-export function UploadedItem({ name, accessType, uploadedDate, description }) {
+import { ListItemDropdown } from './ListItemDropdown';
+export function UploadDatasetListItem({ name, accessType, uploadedDate, description }) {
     return (React.createElement(React.Fragment, null,
         React.createElement(Row, { className: "dropdown-parent session-item mx-0 mb-1 align-items-start" },
             React.createElement(Col, { md: 11, className: "d-flex px-0 flex-column align-items-start" },
@@ -23,8 +23,8 @@ export function UploadedItem({ name, accessType, uploadedDate, description }) {
                             React.createElement("i", { className: "mr-2 fas fa-user" }),
                             "Private access"))),
             React.createElement(Col, { md: 1, className: "d-flex px-0 mt-1 justify-content-end" },
-                React.createElement(DatasetEntryDropdown, null,
+                React.createElement(ListItemDropdown, null,
                     React.createElement(Dropdown.Item, null, "Edit"),
                     React.createElement(Dropdown.Item, { className: "dropdown-delete" }, "Delete"))))));
 }
-//# sourceMappingURL=UploadedItem.js.map
+//# sourceMappingURL=UploadDatasetListItem.js.map

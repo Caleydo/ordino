@@ -58,7 +58,7 @@ export function DatasetsTab() {
                     React.createElement(Element, null,
                         React.createElement("p", { className: "ordino-info-text" }, "Start a new analysis session by loading a dataset")),
                     cards.map((card) => {
-                        return (React.createElement(Element, { className: "pt-6", name: `${card.id}_${suffix}` },
+                        return (React.createElement(Element, { key: card.id, className: "pt-6", name: `${card.id}_${suffix}` },
                             React.createElement(DatasetCard, Object.assign({ key: card.id }, card))));
                     }),
                     React.createElement(Element, { className: "py-6", name: `upload_${suffix}` },

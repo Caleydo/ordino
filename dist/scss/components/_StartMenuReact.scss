@@ -102,12 +102,12 @@
 
   .dropdown-parent:hover,
   .dropdown-parent:focus-within {
-    .session-dropdown {
+    .list-item-dropdown {
       visibility: visible;
     }
   }
 
-  .session-dropdown {
+  .list-item-dropdown {
     visibility: hidden;
 
     .dropdown-toggle {

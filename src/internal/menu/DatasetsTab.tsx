@@ -77,7 +77,7 @@ export function DatasetsTab() {
             </Element>
             {cards.map((card) => {
               return (
-                <Element className="pt-6" name={`${card.id}_${suffix}`}>
+                <Element key={card.id} className="pt-6" name={`${card.id}_${suffix}`}>
                   <DatasetCard key={card.id} {...card}></DatasetCard>
                 </Element>
               );

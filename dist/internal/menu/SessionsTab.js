@@ -2,7 +2,8 @@ import React from 'react';
 import { Container, Card, Col, Nav, Row, Tab, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
-import { CurrentItem, SavedItem } from '../components/UploadedItem';
+import { CurrentSessionListItem } from '../components/CurrentSessionListItem';
+import { SavedSessionListItem } from '../components/SavedSessionListItem';
 import { SessionDropzone } from '../components/SessionDropzone';
 export function SessionsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
@@ -26,7 +27,7 @@ export function SessionsTab() {
                         React.createElement(Card, { className: "shadow-sm" },
                             React.createElement(Card.Body, { className: "p-3" },
                                 React.createElement(Card.Text, null, "Save the current session to open it later again or share it with other users."),
-                                React.createElement(CurrentItem, { name: "Temporary Session 159", uploadedDate: "a minute ago" })))),
+                                React.createElement(CurrentSessionListItem, { name: "Temporary Session 159", uploadedDate: "a minute ago" })))),
                     React.createElement(Element, { className: "pt-6", name: `saved-${suffix}` },
                         React.createElement("p", { className: "ordino-info-text mt-4 " }, " Load a previous analysis session"),
                         React.createElement("h4", { className: "text-left mt-2 mb-3" },
@@ -50,15 +51,15 @@ export function SessionsTab() {
                                         React.createElement(Col, null,
                                             React.createElement(Tab.Content, null,
                                                 React.createElement(Tab.Pane, { eventKey: "mySessions" },
-                                                    React.createElement(SavedItem, { name: "Ordino NMC Case Study 1", uploadedDate: "20 minutes ago", accessType: "private" }),
-                                                    React.createElement(SavedItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "private" }),
-                                                    React.createElement(SavedItem, { name: "Saved Session 5", description: "This is an optional description for the saved session", uploadedDate: "1 hour ago", accessType: "public" }),
-                                                    React.createElement(SavedItem, { name: "Saved Session 22", uploadedDate: "2 days ago", accessType: "public" })),
+                                                    React.createElement(SavedSessionListItem, { name: "Ordino NMC Case Study 1", uploadedDate: "20 minutes ago", accessType: "private" }),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "private" }),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 5", description: "This is an optional description for the saved session", uploadedDate: "1 hour ago", accessType: "public" }),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 22", uploadedDate: "2 days ago", accessType: "public" })),
                                                 React.createElement(Tab.Pane, { eventKey: `publicSessions}` },
-                                                    React.createElement(SavedItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "public" }),
-                                                    React.createElement(SavedItem, { name: "Saved Session 33", uploadedDate: "20 minutes ago", accessType: "public" }),
-                                                    React.createElement(SavedItem, { name: "Saved Session 50", uploadedDate: "1 hour ago", accessType: "public" }),
-                                                    React.createElement(SavedItem, { name: "Saved Session 90", uploadedDate: "2 days ago", accessType: "public" }))))))))),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "public" }),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 33", uploadedDate: "20 minutes ago", accessType: "public" }),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 50", uploadedDate: "1 hour ago", accessType: "public" }),
+                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 90", uploadedDate: "2 days ago", accessType: "public" }))))))))),
                     React.createElement(Element, { className: "pt-6", name: `temporary-${suffix}` },
                         React.createElement("h4", { className: "text-left mt-4 mb-3" },
                             React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-history" }),
@@ -66,10 +67,10 @@ export function SessionsTab() {
                         React.createElement(Card, { className: "shadow-sm" },
                             React.createElement(Card.Body, { className: "p-3" },
                                 React.createElement(Card.Text, null, "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states of this session with others. Only the 10 most recent sessions will be stored."),
-                                React.createElement(CurrentItem, { name: "Temporary session 20", uploadedDate: "a minute ago" }),
-                                React.createElement(CurrentItem, { name: "Temporary session 19", uploadedDate: "5 minutes ago" }),
-                                React.createElement(CurrentItem, { name: "Temporary session 18", uploadedDate: "10 minutes ago" }),
-                                React.createElement(CurrentItem, { name: "Temporary session 17", uploadedDate: "15 minutes ago" })))),
+                                React.createElement(CurrentSessionListItem, { name: "Temporary session 20", uploadedDate: "a minute ago" }),
+                                React.createElement(CurrentSessionListItem, { name: "Temporary session 19", uploadedDate: "5 minutes ago" }),
+                                React.createElement(CurrentSessionListItem, { name: "Temporary session 18", uploadedDate: "10 minutes ago" }),
+                                React.createElement(CurrentSessionListItem, { name: "Temporary session 17", uploadedDate: "15 minutes ago" })))),
                     React.createElement(Element, { className: "py-6", name: `import-${suffix}` },
                         React.createElement("h4", { className: "text-left mt-4 mb-3" },
                             React.createElement("i", { className: "mr-2 fas ordino-icon-2 fa-file-upload" }),

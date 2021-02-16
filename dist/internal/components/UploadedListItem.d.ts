@@ -1,4 +1,4 @@
-interface IUploadedItemProps {
+interface IUploadedListItemProps {
     name: string;
     accessType: 'public' | 'private';
     description?: string;
@@ -6,5 +6,5 @@ interface IUploadedItemProps {
     fileIcon?: string;
     onClick?: () => void;
 }
-export declare function UploadedItem({ name, accessType, uploadedDate, description }: IUploadedItemProps): JSX.Element;
+export declare function UploadedListItem({ name, accessType, uploadedDate, description }: IUploadedListItemProps): JSX.Element;
 export {};

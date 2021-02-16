@@ -25,7 +25,7 @@ const tabs: IStartMenuTab[] = [
 ];
 
 export function StartMenuComponent({headerMainMenu}: {headerMainMenu: HTMLElement}) {
-  const [active, setActive] = React.useState(null);
+  const [active, setActive] = React.useState(tabs[0]);
 
   return (
     <>

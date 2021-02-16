@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, Nav, Tab } from 'react-bootstrap';
 import { DatasetDropzone } from './DatasetDropzone';
 import { UploadedItem } from './UploadedItem';
-export function UploadDatasetCard({ title, faIcon }) {
+export function UploadDatasetCard({ headerText, headerIcon }) {
     return (React.createElement(React.Fragment, null,
         React.createElement("h4", { className: "text-left mt-4 mb-3" },
-            React.createElement("i", { className: 'mr-2 ordino-icon-2 ' + faIcon }),
+            React.createElement("i", { className: 'mr-2 ordino-icon-2 ' + headerIcon }),
             " ",
-            title),
+            headerText),
         React.createElement(Card, { className: "shadow-sm" },
             React.createElement(Card.Body, { className: "p-3" },
                 React.createElement(DatasetDropzone, null),

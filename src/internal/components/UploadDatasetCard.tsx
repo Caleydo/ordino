@@ -5,14 +5,14 @@ import {UploadedItem} from './UploadedItem';
 
 interface IUploadDatasetCardProps {
   id: string;
-  title: string;
-  faIcon: string;
+  headerText: string;
+  headerIcon: string;
 }
 
-export function UploadDatasetCard({title, faIcon}: IUploadDatasetCardProps) {
+export function UploadDatasetCard({headerText, headerIcon}: IUploadDatasetCardProps) {
   return (
       <>
-          <h4 className="text-left mt-4 mb-3"><i className={'mr-2 ordino-icon-2 ' + faIcon}></i> {title}</h4>
+          <h4 className="text-left mt-4 mb-3"><i className={'mr-2 ordino-icon-2 ' + headerIcon}></i> {headerText}</h4>
           <Card className="shadow-sm">
               <Card.Body className="p-3">
                   <DatasetDropzone />

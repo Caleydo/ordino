@@ -9,7 +9,7 @@ const tabs = [
     { id: 'tours', title: 'Tours' },
 ];
 export function StartMenuComponent({ headerMainMenu }) {
-    const [active, setActive] = React.useState(null);
+    const [active, setActive] = React.useState(tabs[0]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
         React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive })));

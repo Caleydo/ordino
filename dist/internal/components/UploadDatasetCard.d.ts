@@ -1,7 +1,7 @@
 interface IUploadDatasetCardProps {
     id: string;
-    title: string;
-    faIcon: string;
+    headerText: string;
+    headerIcon: string;
 }
-export declare function UploadDatasetCard({ title, faIcon }: IUploadDatasetCardProps): JSX.Element;
+export declare function UploadDatasetCard({ headerText, headerIcon }: IUploadDatasetCardProps): JSX.Element;
 export {};

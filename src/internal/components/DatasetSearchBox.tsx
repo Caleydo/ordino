@@ -29,4 +29,3 @@ export function DatasetSearchBox(props: IDatasetSearchBoxProps) {
         </Row>
     );
 }
-

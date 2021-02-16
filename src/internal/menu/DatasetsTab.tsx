@@ -2,14 +2,13 @@ import React from 'react';
 import {Container, Card, Col, Nav, Row, Tab, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
-import {DatasetDropzone, DatasetSection, UploadedItem} from '../components';
+import {DatasetDropzone, DatasetCard, UploadedItem} from '../components';
 
 
 export function DatasetsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
 
     return (
-
         <Container fluid className="mb-4 datasets-tab">
             <Row>
                 <Col className="d-flex justify-content-end">
@@ -30,81 +29,15 @@ export function DatasetsTab() {
                 <Col md={6}>
                     <Element name={`genes_${suffix}`}>
                         <p className="ordino-info-text">Start a new analysis session by loading a dataset</p>
-                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 ordino-icon-2 fas fa-database" ></i> Genes</h4>
-                        <Card className="shadow-sm">
-                            <Card.Body className="p-3">
-                                <Tab.Container defaultActiveKey="human">
-                                    <Nav className="session-tab" variant="pills" >
-                                        <Nav.Item >
-                                            <Nav.Link eventKey="human"><i className="mr-2 fas fa-male"></i>Human</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item>
-                                            <Nav.Link disabled eventKey="mouse"> <i className="mr-2 fa fa-fw mouse-icon"></i>Mouse</Nav.Link>
-                                        </Nav.Item>
-                                    </Nav>
-                                    <Tab.Content>
-                                        <Tab.Pane eventKey="human" className="mt-4">
-                                            <DatasetSection />
-                                        </Tab.Pane>
-                                    </Tab.Content>
-                                </Tab.Container>
-                            </Card.Body>
-                        </Card>
+                        <DatasetCard id="genes" title="Genes" faIcon="fas fa-database"></DatasetCard>
                     </Element>
 
-                    <Element className="pt-6" name={`cellline_${suffix}`}>
-                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 fas ordino-icon-2 fa-database" ></i> Cell Lines</h4>
-                        <Card className="shadow-sm">
-                            <Card.Body className="p-3">
-                                <Tab.Container defaultActiveKey="human">
-                                    <Nav className="session-tab" variant="pills">
-                                        <Nav.Item >
-                                            <Nav.Link eventKey="human"><i className="mr-2 fas fa-male"></i>Human</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item>
-                                            <Nav.Link disabled eventKey="mouse"> <i className="mr-2 fa fa-fw mouse-icon"></i>Mouse</Nav.Link>
-                                        </Nav.Item>
-                                    </Nav>
-                                    <Row className="pt-4">
-                                        <Col >
-                                            <Tab.Content>
-                                                <Tab.Pane eventKey="human">
-                                                    <DatasetSection />
-                                                </Tab.Pane>
-                                            </Tab.Content>
-
-                                        </Col>
-                                    </Row>
-                                </Tab.Container>
-                            </Card.Body>
-                        </Card>
+                    <Element className="pt-6" name={`celllines_${suffix}`}>
+                        <DatasetCard id="celllines" title="Cell Lines" faIcon="fas fa-database"></DatasetCard>
                     </Element>
 
-                    <Element className="pt-6" name={`tissue_${suffix}`}>
-                        <h4 className="text-left mt-4 mb-3"><i className="mr-2 ordino-icon-2 fas fa-database" ></i> Tissues</h4>
-                        <Card className="shadow-sm">
-                            <Card.Body className="p-3">
-                                <Tab.Container defaultActiveKey="human">
-                                    <Nav className="session-tab" variant="pills">
-                                        <Nav.Item >
-                                            <Nav.Link eventKey="human"><i className="mr-2 fas fa-male"></i>Human</Nav.Link>
-                                        </Nav.Item>
-                                        <Nav.Item>
-                                            <Nav.Link disabled eventKey="mouse"> <i className="mr-2 fa fa-fw mouse-icon"></i>Mouse</Nav.Link>
-                                        </Nav.Item>
-                                    </Nav>
-                                    <Row className="pt-4">
-                                        <Col >
-                                            <Tab.Content>
-                                                <Tab.Pane eventKey="human">
-                                                    <DatasetSection />
-                                                </Tab.Pane>
-                                            </Tab.Content>
-                                        </Col>
-                                    </Row>
-                                </Tab.Container>
-                            </Card.Body>
-                        </Card>
+                    <Element className="pt-6" name={`tissues_${suffix}`}>
+                        <DatasetCard id="tissues" title="Tissues" faIcon="fas fa-database"></DatasetCard>
                     </Element>
 
                     <Element className="py-6" name={`upload_${suffix}`}>

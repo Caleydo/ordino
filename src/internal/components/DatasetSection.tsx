@@ -5,7 +5,7 @@ import {DatasetSearchBox} from './DatasetSearchBox';
 
 
 
-const genSets = [
+const predefinedSets = [
     'All',
     'Cancer Gene Census',
     'Essential Genes',
@@ -17,13 +17,11 @@ const publicSets = [
     'List'
 ];
 
-const mySets = [
+const privateSets = [
     'My Collection',
     'Research Focus 1',
     'Research Focus 2'
 ];
-
-
 
 
 interface IDatasetEntriesProps {
@@ -65,7 +63,7 @@ interface IDatasetEntryDropdown {
 export function DatasetEntryDropdown(props: IDatasetEntryDropdown) {
     return (
         <Dropdown vertical className="session-dropdown" as={ButtonGroup}>
-            <Dropdown.Toggle variant="link"><i className="fas fa-ellipsis-v " ></i></Dropdown.Toggle>
+            <Dropdown.Toggle variant="link"><i className="fas fa-ellipsis-v "></i></Dropdown.Toggle>
             <Dropdown.Menu>
                 {props.children}
             </Dropdown.Menu>
@@ -78,8 +76,8 @@ export function DatasetSection() {
         <>
             <DatasetSearchBox></DatasetSearchBox>
             <Row className="mt-4">
-                <DatasetEntries headerIcon="fas fa-database" headerText="Predifined Sets" entries={genSets} readonly />
-                <DatasetEntries headerIcon="fas fa-user" headerText="My Sets" entries={mySets} />
+                <DatasetEntries headerIcon="fas fa-database" headerText="Predefined Sets" entries={predefinedSets} readonly />
+                <DatasetEntries headerIcon="fas fa-user" headerText="My Sets" entries={privateSets} />
                 <DatasetEntries headerIcon="fas fa-users" headerText="Public Sets" entries={publicSets} readonly />
             </Row>
         </>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, ButtonGroup, Col, Dropdown, Row, } from 'react-bootstrap';
 import { DatasetSearchBox } from './DatasetSearchBox';
-const genSets = [
+const predefinedSets = [
     'All',
     'Cancer Gene Census',
     'Essential Genes',
@@ -11,7 +11,7 @@ const publicSets = [
     'TP53 Predictor Score',
     'List'
 ];
-const mySets = [
+const privateSets = [
     'My Collection',
     'Research Focus 1',
     'Research Focus 2'
@@ -40,8 +40,8 @@ export function DatasetSection() {
     return (React.createElement(React.Fragment, null,
         React.createElement(DatasetSearchBox, null),
         React.createElement(Row, { className: "mt-4" },
-            React.createElement(DatasetEntries, { headerIcon: "fas fa-database", headerText: "Predifined Sets", entries: genSets, readonly: true }),
-            React.createElement(DatasetEntries, { headerIcon: "fas fa-user", headerText: "My Sets", entries: mySets }),
+            React.createElement(DatasetEntries, { headerIcon: "fas fa-database", headerText: "Predefined Sets", entries: predefinedSets, readonly: true }),
+            React.createElement(DatasetEntries, { headerIcon: "fas fa-user", headerText: "My Sets", entries: privateSets }),
             React.createElement(DatasetEntries, { headerIcon: "fas fa-users", headerText: "Public Sets", entries: publicSets, readonly: true }))));
 }
 //# sourceMappingURL=DatasetSection.js.map

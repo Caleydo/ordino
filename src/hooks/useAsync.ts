@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from 'react';
 
 /**
  * Execute an async function without side effects
@@ -6,27 +6,31 @@ import {useCallback, useEffect, useState} from "react";
  * @param asyncFunction Async function call
  * @param immediate Execute the function immediately
  */
-export function useAsync<V = any, E = any>(asyncFunction, immediate = true) {
-  const [status, setStatus] = useState('idle');
-  const [value, setValue] = useState<V>(null);
-  const [error, setError] = useState<E>(null);
+export const useAsync = <T, E = string>(
+  asyncFunction: () => Promise<T>,
+  immediate = true
+) => {
+  const [status, setStatus] = useState<
+    'idle' | 'pending' | 'success' | 'error'
+  >('idle');
+  const [value, setValue] = useState<T | null>(null);
+  const [error, setError] = useState<E | null>(null);
 
   // The execute function wraps asyncFunction and
   // handles setting state for pending, value, and error.
   // useCallback ensures the below useEffect is not called
   // on every render, but only if asyncFunction changes.
-
   const execute = useCallback(() => {
     setStatus('pending');
     setValue(null);
     setError(null);
 
     return asyncFunction()
-      .then(response => {
+      .then((response: any) => {
         setValue(response);
         setStatus('success');
       })
-      .catch(error => {
+      .catch((error: any) => {
         setError(error);
         setStatus('error');
       });

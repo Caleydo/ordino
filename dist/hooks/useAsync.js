@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 /**
  * Execute an async function without side effects
  * @see https://usehooks.com/useAsync/
  * @param asyncFunction Async function call
  * @param immediate Execute the function immediately
  */
-export function useAsync(asyncFunction, immediate = true) {
+export const useAsync = (asyncFunction, immediate = true) => {
     const [status, setStatus] = useState('idle');
     const [value, setValue] = useState(null);
     const [error, setError] = useState(null);
@@ -18,11 +18,11 @@ export function useAsync(asyncFunction, immediate = true) {
         setValue(null);
         setError(null);
         return asyncFunction()
-            .then(response => {
+            .then((response) => {
             setValue(response);
             setStatus('success');
         })
-            .catch(error => {
+            .catch((error) => {
             setError(error);
             setStatus('error');
         });
@@ -36,6 +36,5 @@ export function useAsync(asyncFunction, immediate = true) {
         }
     }, [execute, immediate]);
     return { execute, status, value, error };
-}
-;
+};
 //# sourceMappingURL=useAsync.js.map

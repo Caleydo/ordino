@@ -2,9 +2,7 @@ import React from 'react';
 import {Container, Card, Col, Nav, Row, Tab, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
-import {CurrentSessionListItem} from '../components/CurrentSessionListItem';
-import {SavedSessionListItem} from '../components/SavedSessionListItem';
-import {SessionDropzone} from '../components/SessionDropzone';
+import {CurrentSessionListItem, SavedSessionListItem, SessionDropzone} from '../../components';
 
 export function SessionsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();

@@ -2,7 +2,7 @@ import React from 'react';
 import {Container, Col, Nav, Row, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
-import {DatasetCard, UploadDatasetCard} from '../components';
+import {DatasetCard, UploadDatasetCard} from '../../components';
 
 
 export function DatasetsTab() {

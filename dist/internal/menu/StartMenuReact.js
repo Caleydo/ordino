@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SessionsTab } from './SessionsTab';
-import { DatasetsTab } from './DatasetsTab';
-import { ToursTab } from './ToursTab';
+import { SessionsTab } from './tabs/SessionsTab';
+import { DatasetsTab } from './tabs/DatasetsTab';
+import { ToursTab } from './tabs/ToursTab';
 const tabs = [
     { id: 'datasets', title: 'Datasets' },
     { id: 'sessions', title: 'Analysis Sessions' },

@@ -1,9 +1,10 @@
 import React from 'react';
 import {Card, Nav, Tab, Row} from 'react-bootstrap';
 import {DatasetSearchBox} from './DatasetSearchBox';
-import {INamedSet, ENamedSetType, RestBaseUtils} from 'tdp_core';
+import {INamedSet, ENamedSetType, RestBaseUtils, RestStorageUtils, IStoredNamedSet} from 'tdp_core';
 import {NamedSetList} from './NamedSetList';
 import {useAsync} from '../../../hooks';
+import {UserSession} from 'phovea_core';
 
 interface IDatasetTab {
   id: string;
@@ -32,31 +33,37 @@ export function DatasetCard({headerText, headerIcon, database, dbViewBase, idTyp
 
   const loadPredefinedSet = React.useMemo(() => {
     return () => RestBaseUtils.getTDPData(database, `${dbViewBase}_panel`)
-      .then((panels: { id: string, description: string, species: string }[]) => {
+      .then((panels: {id: string, description: string, species: string}[]) => {
         return panels
           // .filter((panel) => panel.species === species) // filter is done below in the JSX code
           .map(function panel2NamedSet({id, description, species}): INamedSet {
             return {
-            type: ENamedSetType.PANEL,
-            id,
-            name: id,
-            description,
-            subTypeKey,
-            subTypeFromSession: false,
-            subTypeValue: species,
-            idType: ''
+              type: ENamedSetType.PANEL,
+              id,
+              name: id,
+              description,
+              subTypeKey,
+              subTypeFromSession: false,
+              subTypeValue: species,
+              idType: ''
             };
           });
       });
   }, [database, dbViewBase, idType]);
 
-  // TODO: implement named sets
-  // const loadNamedSets = React.useMemo(() => {
-  //   return () => RestStorageUtils.listNamedSets(idType);
-  // }, [database, dbViewBase, idType]);
+  const loadNamedSets = React.useMemo(() => {
+    return () => RestStorageUtils.listNamedSets(idType);
+  }, [database, dbViewBase, idType]);
 
-  const { status, value, error } = useAsync<INamedSet[]>(loadPredefinedSet);
-  // const { status, value, error } = useAsync<INamedSet[]>(loadNamedSets);
+
+  const predefinedNamedSets = useAsync<INamedSet[]>(loadPredefinedSet);
+  const me = UserSession.getInstance().currentUserNameOrAnonymous();
+  const namedSets = useAsync<INamedSet[]>(loadNamedSets);
+  const myNamedSets = {...namedSets, ...{value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me)}}
+  const publicNamedSets = {...namedSets, ...{value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me)}};
+
+
+  const filterValue = (value: INamedSet[], tab: string) => value?.filter((entry) => entry.subTypeValue === tab);
 
   return (
     <>
@@ -75,16 +82,13 @@ export function DatasetCard({headerText, headerIcon, database, dbViewBase, idTyp
             </Nav>
             <Tab.Content>
               {tabs.map((tab) => {
-                // TODO: const filteredValue = value?.filter((entry) => entry.species === tab.id);
-                const filteredValue = value;
-
                 return (
                   <Tab.Pane key={tab.id} eventKey={tab.id} className="mt-4">
                     <DatasetSearchBox></DatasetSearchBox>
                     <Row className="mt-4">
-                      <NamedSetList headerIcon="fas fa-database" headerText="Predefined Sets" status={status} error={error} value={filteredValue} readonly />
-                      <NamedSetList headerIcon="fas fa-user" headerText="My Sets" status={status} error={error} value={filteredValue} />
-                      <NamedSetList headerIcon="fas fa-users" headerText="Public Sets" status={status} error={error} value={filteredValue} readonly />
+                      <NamedSetList headerIcon="fas fa-database" headerText="Predefined Sets" status={predefinedNamedSets.status} error={predefinedNamedSets.error} value={filterValue(predefinedNamedSets.value, tab.id)} readonly />
+                      <NamedSetList headerIcon="fas fa-user" headerText="My Sets" status={myNamedSets.status} error={myNamedSets.error} value={filterValue(myNamedSets.value, tab.id)} />
+                      <NamedSetList headerIcon="fas fa-users" headerText="Public Sets" status={publicNamedSets.status} error={publicNamedSets.error} value={filterValue(publicNamedSets.value, tab.id)} readonly />
                     </Row>
                   </Tab.Pane>
                 );

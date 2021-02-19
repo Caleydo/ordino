@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, Nav, Tab, Row } from 'react-bootstrap';
 import { DatasetSearchBox } from './DatasetSearchBox';
-import { ENamedSetType, RestBaseUtils } from 'tdp_core';
+import { ENamedSetType, RestBaseUtils, RestStorageUtils } from 'tdp_core';
 import { NamedSetList } from './NamedSetList';
 import { useAsync } from '../../../hooks';
+import { UserSession } from 'phovea_core';
 export function DatasetCard({ headerText, headerIcon, database, dbViewBase, idType, tabs }) {
     const subTypeKey = 'species';
     const loadPredefinedSet = React.useMemo(() => {
@@ -25,12 +26,15 @@ export function DatasetCard({ headerText, headerIcon, database, dbViewBase, idTy
             });
         });
     }, [database, dbViewBase, idType]);
-    // TODO: implement named sets
-    // const loadNamedSets = React.useMemo(() => {
-    //   return () => RestStorageUtils.listNamedSets(idType);
-    // }, [database, dbViewBase, idType]);
-    const { status, value, error } = useAsync(loadPredefinedSet);
-    // const { status, value, error } = useAsync<INamedSet[]>(loadNamedSets);
+    const loadNamedSets = React.useMemo(() => {
+        return () => RestStorageUtils.listNamedSets(idType);
+    }, [database, dbViewBase, idType]);
+    const predefinedNamedSets = useAsync(loadPredefinedSet);
+    const me = UserSession.getInstance().currentUserNameOrAnonymous();
+    const namedSets = useAsync(loadNamedSets);
+    const myNamedSets = { ...namedSets, ...{ value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me) } };
+    const publicNamedSets = { ...namedSets, ...{ value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me) } };
+    const filterValue = (value, tab) => value === null || value === void 0 ? void 0 : value.filter((entry) => entry.subTypeValue === tab);
     return (React.createElement(React.Fragment, null,
         React.createElement("h4", { className: "text-left mt-4 mb-3" },
             React.createElement("i", { className: 'mr-2 ordino-icon-2 ' + headerIcon }),
@@ -46,14 +50,12 @@ export function DatasetCard({ headerText, headerIcon, database, dbViewBase, idTy
                                 tab.tabText)));
                     })),
                     React.createElement(Tab.Content, null, tabs.map((tab) => {
-                        // TODO: const filteredValue = value?.filter((entry) => entry.species === tab.id);
-                        const filteredValue = value;
                         return (React.createElement(Tab.Pane, { key: tab.id, eventKey: tab.id, className: "mt-4" },
                             React.createElement(DatasetSearchBox, null),
                             React.createElement(Row, { className: "mt-4" },
-                                React.createElement(NamedSetList, { headerIcon: "fas fa-database", headerText: "Predefined Sets", status: status, error: error, value: filteredValue, readonly: true }),
-                                React.createElement(NamedSetList, { headerIcon: "fas fa-user", headerText: "My Sets", status: status, error: error, value: filteredValue }),
-                                React.createElement(NamedSetList, { headerIcon: "fas fa-users", headerText: "Public Sets", status: status, error: error, value: filteredValue, readonly: true }))));
+                                React.createElement(NamedSetList, { headerIcon: "fas fa-database", headerText: "Predefined Sets", status: predefinedNamedSets.status, error: predefinedNamedSets.error, value: filterValue(predefinedNamedSets.value, tab.id), readonly: true }),
+                                React.createElement(NamedSetList, { headerIcon: "fas fa-user", headerText: "My Sets", status: myNamedSets.status, error: myNamedSets.error, value: filterValue(myNamedSets.value, tab.id) }),
+                                React.createElement(NamedSetList, { headerIcon: "fas fa-users", headerText: "Public Sets", status: publicNamedSets.status, error: publicNamedSets.error, value: filterValue(publicNamedSets.value, tab.id), readonly: true }))));
                     })))))));
 }
 //# sourceMappingURL=DatasetCard.js.map

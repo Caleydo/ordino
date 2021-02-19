@@ -8,11 +8,14 @@ const tabs = [
     { id: 'sessions', title: 'Analysis Sessions' },
     { id: 'tours', title: 'Tours' },
 ];
-export function StartMenuComponent({ headerMainMenu }) {
+// tslint:disable-next-line: variable-name
+export const GraphContext = React.createContext({ manager: null });
+export function StartMenuComponent({ headerMainMenu, manager }) {
     const [active, setActive] = React.useState(tabs[0]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
-        React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive })));
+        React.createElement(GraphContext.Provider, { value: { manager } },
+            React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive }))));
 }
 function MainMenuLinks(props) {
     return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: "nav-item", key: tab.id },

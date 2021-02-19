@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import {SessionsTab} from './tabs/SessionsTab';
 import {DatasetsTab} from './tabs/DatasetsTab';
 import {ToursTab} from './tabs/ToursTab';
+import {CLUEGraphManager} from 'phovea_clue';
 
 
 
@@ -24,16 +25,21 @@ const tabs: IStartMenuTab[] = [
   {id: 'tours', title: 'Tours'},
 ];
 
-export function StartMenuComponent({headerMainMenu}: {headerMainMenu: HTMLElement}) {
-  const [active, setActive] = React.useState(tabs[0]);
+// tslint:disable-next-line: variable-name
+export const GraphContext = React.createContext<{manager: CLUEGraphManager}>({manager: null});
 
+export function StartMenuComponent({headerMainMenu, manager}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager}) {
+  const [active, setActive] = React.useState(tabs[0]);
   return (
     <>
       {ReactDOM.createPortal(
-        <MainMenuLinks tabs={tabs} active={active} setActive={(a)=>setActive(a)}></MainMenuLinks>,
+
+        <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)}></MainMenuLinks>,
         headerMainMenu
       )}
-      <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
+      <GraphContext.Provider value={{manager}}>
+        <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
+      </GraphContext.Provider>
     </>
   );
 }

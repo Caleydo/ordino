@@ -1,15 +1,23 @@
 import React from 'react';
 import {Card} from 'react-bootstrap';
+import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {TemporarySessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
 
 
+
+export function byDateDesc(a: any, b: any) {
+    return -((a.ts || 0) - (b.ts || 0));
+}
+
 export function TemporarySessionCard() {
 
+    // Todo merge CurrentSessionCard with TemorarySessionCard
     const {manager} = React.useContext(GraphContext);
     const listSessions = React.useMemo(() => () => manager.list(), []);
-    const {status, value, error} = useAsync(listSessions);
+    const {status, value: sessions, error} = useAsync(listSessions);
+    const tempSessions = sessions?.filter((d) => !ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
 
     return (
         <>
@@ -21,7 +29,7 @@ export function TemporarySessionCard() {
                         of this session with others. Only the 10 most recent sessions will be stored.
                     </Card.Text>
                     {
-                        value?.map((tempSession) => <TemporarySessionListItem status={status} value={tempSession} error={error} />)
+                        tempSessions?.map((tempSession) => <TemporarySessionListItem status={status} value={tempSession} error={error} />)
                     }
                 </Card.Body>
             </Card>

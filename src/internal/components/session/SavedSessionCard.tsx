@@ -1,9 +1,19 @@
 import React from 'react';
 import {Card, Tab, Nav, Row, Col} from 'react-bootstrap';
-import {SavedSessionListItem} from '..';
+import {ProvenanceGraphMenuUtils} from 'tdp_core';
+import {byDateDesc, SavedSessionListItem} from '..';
+import {useAsync} from '../../../hooks';
+import {GraphContext} from '../../menu/StartMenuReact';
 
 
 export function SavedSessionCard() {
+  // Todo merge CurrentSessionCard with TemorarySessionCard
+  const {manager} = React.useContext(GraphContext);
+  const listSessions = React.useMemo(() => () => manager.list(), []);
+  const {status, value: sessions, error} = useAsync(listSessions);
+  const savedSession = sessions?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+  // Todo get SavedSessionListItem dynamically
+
   return (
     <>
       <p className="ordino-info-text mt-4 "> Load a previous analysis session</p>

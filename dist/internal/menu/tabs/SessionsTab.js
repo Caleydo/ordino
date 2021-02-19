@@ -7,6 +7,7 @@ import { CurrentSessionCard } from '../../components/session/CurrentSessionCard'
 import { SavedSessionCard } from '../../components/session/SavedSessionCard';
 import { TemporarySessionCard } from '../../components/session/TemporarySessionCard';
 export function SessionsTab() {
+    // Tody merge the cards CurrentSessionCard, SavedSessionCard, TemporarySessionCard
     const cards = [
         {
             id: 'current',

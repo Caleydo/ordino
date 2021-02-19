@@ -14,6 +14,7 @@ import {TemporarySessionCard} from '../../components/session/TemporarySessionCar
 
 export function SessionsTab() {
 
+  // Tody merge the cards CurrentSessionCard, SavedSessionCard, TemporarySessionCard
   const cards = [
     {
       id: 'current',

@@ -1,81 +1,45 @@
 import React from 'react';
-import { Container, Card, Col, Nav, Row, Tab, Button } from 'react-bootstrap';
+import { Container, Col, Nav, Row, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
-import { CurrentSessionListItem, SavedSessionListItem, SessionDropzone } from '../../components';
+import { UploadSessionCard } from '../../components';
+import { CurrentSessionCard } from '../../components/session/CurrentSessionCard';
+import { SavedSessionCard } from '../../components/session/SavedSessionCard';
+import { TemporarySessionCard } from '../../components/session/TemporarySessionCard';
 export function SessionsTab() {
+    const cards = [
+        {
+            id: 'current',
+            headerText: 'Current Session',
+            getElement: () => React.createElement(CurrentSessionCard, null)
+        },
+        {
+            id: 'saved',
+            headerText: 'Saved Session',
+            getElement: () => React.createElement(SavedSessionCard, null)
+        },
+        {
+            id: 'temporary',
+            headerText: 'Temporary Session',
+            getElement: () => React.createElement(TemporarySessionCard, null)
+        },
+        {
+            id: 'import',
+            headerText: 'Import Session',
+            getElement: () => React.createElement(UploadSessionCard, null)
+        }
+    ];
     const suffix = UniqueIdManager.getInstance().uniqueId();
     return (React.createElement(React.Fragment, null,
         React.createElement(Row, null,
             React.createElement(Col, { className: "d-flex justify-content-end" },
                 React.createElement(Button, { className: "start-menu-close", variant: "link" },
                     React.createElement("i", { className: "fas fa-times" })))),
-        React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" },
-            React.createElement(Link, { className: "nav-link", role: "button", to: `current-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, "Current Session"),
-            React.createElement(Link, { className: "nav-link", role: "button", to: `saved-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, "Saved Session"),
-            React.createElement(Link, { className: "nav-link", role: "button", to: `temporary-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, "Temporary Session"),
-            React.createElement(Link, { className: "nav-link", role: "button", to: `import-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, "Import Session")),
+        React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" }, cards.map((card) => React.createElement(Link, { className: "nav-link", key: card.id, role: "button", to: `${card.id}-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, card.headerText))),
         React.createElement(Container, { className: "mb-4 analysis-tab" },
             React.createElement(Row, null,
-                React.createElement(Col, null,
-                    React.createElement(Element, { name: `current-${suffix}` },
-                        React.createElement("h4", { className: "text-left d-flex align-items-center mb-3" },
-                            React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-history" }),
-                            " Current Session"),
-                        React.createElement(Card, { className: "shadow-sm" },
-                            React.createElement(Card.Body, { className: "p-3" },
-                                React.createElement(Card.Text, null, "Save the current session to open it later again or share it with other users."),
-                                React.createElement(CurrentSessionListItem, { name: "Temporary Session 159", uploadedDate: "a minute ago" })))),
-                    React.createElement(Element, { className: "pt-6", name: `saved-${suffix}` },
-                        React.createElement("p", { className: "ordino-info-text mt-4 " }, " Load a previous analysis session"),
-                        React.createElement("h4", { className: "text-left mt-2 mb-3" },
-                            React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-cloud" }),
-                            " Saved Session"),
-                        React.createElement(Card, { className: "shadow-sm" },
-                            React.createElement(Card.Body, { className: "p-3" },
-                                React.createElement(Card.Text, null, "The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link."),
-                                React.createElement(Tab.Container, { defaultActiveKey: "mySessions" },
-                                    React.createElement(Nav, { className: "session-tab", variant: "pills" },
-                                        React.createElement(Nav.Item, null,
-                                            React.createElement(Nav.Link, { eventKey: "mySessions" },
-                                                React.createElement("i", { className: "mr-2 fas fa-user" }),
-                                                "My sessions")),
-                                        React.createElement(Nav.Item, null,
-                                            React.createElement(Nav.Link, { eventKey: `publicSessions}` },
-                                                " ",
-                                                React.createElement("i", { className: "mr-2 fas fa-users" }),
-                                                "Public sessions"))),
-                                    React.createElement(Row, { className: "pt-4" },
-                                        React.createElement(Col, null,
-                                            React.createElement(Tab.Content, null,
-                                                React.createElement(Tab.Pane, { eventKey: "mySessions" },
-                                                    React.createElement(SavedSessionListItem, { name: "Ordino NMC Case Study 1", uploadedDate: "20 minutes ago", accessType: "private" }),
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "private" }),
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 5", description: "This is an optional description for the saved session", uploadedDate: "1 hour ago", accessType: "public" }),
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 22", uploadedDate: "2 days ago", accessType: "public" })),
-                                                React.createElement(Tab.Pane, { eventKey: `publicSessions}` },
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "public" }),
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 33", uploadedDate: "20 minutes ago", accessType: "public" }),
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 50", uploadedDate: "1 hour ago", accessType: "public" }),
-                                                    React.createElement(SavedSessionListItem, { name: "Saved Session 90", uploadedDate: "2 days ago", accessType: "public" }))))))))),
-                    React.createElement(Element, { className: "pt-6", name: `temporary-${suffix}` },
-                        React.createElement("h4", { className: "text-left mt-4 mb-3" },
-                            React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-history" }),
-                            "Temporary Sessions"),
-                        React.createElement(Card, { className: "shadow-sm" },
-                            React.createElement(Card.Body, { className: "p-3" },
-                                React.createElement(Card.Text, null, "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states of this session with others. Only the 10 most recent sessions will be stored."),
-                                React.createElement(CurrentSessionListItem, { name: "Temporary session 20", uploadedDate: "a minute ago" }),
-                                React.createElement(CurrentSessionListItem, { name: "Temporary session 19", uploadedDate: "5 minutes ago" }),
-                                React.createElement(CurrentSessionListItem, { name: "Temporary session 18", uploadedDate: "10 minutes ago" }),
-                                React.createElement(CurrentSessionListItem, { name: "Temporary session 17", uploadedDate: "15 minutes ago" })))),
-                    React.createElement(Element, { className: "py-6", name: `import-${suffix}` },
-                        React.createElement("h4", { className: "text-left mt-4 mb-3" },
-                            React.createElement("i", { className: "mr-2 fas ordino-icon-2 fa-file-upload" }),
-                            " Import Session"),
-                        React.createElement(Card, { className: "shadow-sm" },
-                            React.createElement(Card.Body, { className: "p-3" },
-                                React.createElement(Card.Text, null, "You can import sessions as temporary sessions and continue the analysis afterwards."),
-                                React.createElement(SessionDropzone, null)))))))));
+                React.createElement(Col, null, cards.map((card, i) => {
+                    return React.createElement(Element, { className: `${i === 0 || 'pt-6'}`, key: card.id, name: `${card.id}-${suffix}` }, card.getElement());
+                }))))));
 }
 //# sourceMappingURL=SessionsTab.js.map

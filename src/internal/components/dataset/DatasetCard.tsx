@@ -59,9 +59,8 @@ export function DatasetCard({headerText, headerIcon, database, dbViewBase, idTyp
   const predefinedNamedSets = useAsync<INamedSet[]>(loadPredefinedSet);
   const me = UserSession.getInstance().currentUserNameOrAnonymous();
   const namedSets = useAsync<INamedSet[]>(loadNamedSets);
-  const myNamedSets = {...namedSets, ...{value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me)}}
-  const publicNamedSets = {...namedSets, ...{value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me)}};
-
+  const myNamedSets = {...namedSets, ...{value: namedSets.value?.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me)}};
+  const publicNamedSets = {...namedSets, ...{value: namedSets.value?.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me)}};
 
   const filterValue = (value: INamedSet[], tab: string) => value?.filter((entry) => entry.subTypeValue === tab);
 

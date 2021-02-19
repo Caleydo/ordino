@@ -6,6 +6,7 @@ import { NamedSetList } from './NamedSetList';
 import { useAsync } from '../../../hooks';
 import { UserSession } from 'phovea_core';
 export function DatasetCard({ headerText, headerIcon, database, dbViewBase, idType, tabs }) {
+    var _a, _b;
     const subTypeKey = 'species';
     const loadPredefinedSet = React.useMemo(() => {
         return () => RestBaseUtils.getTDPData(database, `${dbViewBase}_panel`)
@@ -32,8 +33,8 @@ export function DatasetCard({ headerText, headerIcon, database, dbViewBase, idTy
     const predefinedNamedSets = useAsync(loadPredefinedSet);
     const me = UserSession.getInstance().currentUserNameOrAnonymous();
     const namedSets = useAsync(loadNamedSets);
-    const myNamedSets = { ...namedSets, ...{ value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me) } };
-    const publicNamedSets = { ...namedSets, ...{ value: namedSets.value.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me) } };
+    const myNamedSets = { ...namedSets, ...{ value: (_a = namedSets.value) === null || _a === void 0 ? void 0 : _a.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me) } };
+    const publicNamedSets = { ...namedSets, ...{ value: (_b = namedSets.value) === null || _b === void 0 ? void 0 : _b.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me) } };
     const filterValue = (value, tab) => value === null || value === void 0 ? void 0 : value.filter((entry) => entry.subTypeValue === tab);
     return (React.createElement(React.Fragment, null,
         React.createElement("h4", { className: "text-left mt-4 mb-3" },

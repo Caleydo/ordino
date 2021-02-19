@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card} from 'react-bootstrap';
-import {CurrentSessionListItem, SessionDropzone} from '..';
+import {SessionDropzone} from '..';
 
 
 export function UploadSessionCard() {

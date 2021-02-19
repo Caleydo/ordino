@@ -2,14 +2,16 @@ import { I18nextManager } from 'phovea_core';
 import React from 'react';
 import { Button, Col, Dropdown, Row } from 'react-bootstrap';
 import { TDPApplicationUtils } from 'tdp_core';
+import { GraphContext } from '../../menu/StartMenuReact';
 import { ListItemDropdown } from '../common/ListItemDropdown';
-export function CurrentSessionListItem({ status, value, error, description }) {
+export function TemporarySessionListItem({ status, value, error, description }) {
+    const { manager } = React.useContext(GraphContext);
     const dateFromNow = (value === null || value === void 0 ? void 0 : value.ts) ? TDPApplicationUtils.fromNow(value.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
     return (React.createElement(React.Fragment, null,
         status === 'success' &&
             React.createElement(Row, { className: "dropdown-parent session-item mx-0 mb-1  align-items-start" },
                 React.createElement(Col, { md: 10, className: "d-flex flex-column px-0  align-items-start" },
-                    React.createElement(Button, { className: "pl-0", style: { color: '#337AB7' }, variant: "link" },
+                    React.createElement(Button, { onClick: () => manager.loadGraph(value), className: "pl-0", style: { color: '#337AB7' }, variant: "link" },
                         React.createElement("i", { className: "mr-2 fas fa-history" }),
                         value.name),
                     description ? React.createElement("p", { className: "ml-4" },
@@ -26,4 +28,4 @@ export function CurrentSessionListItem({ status, value, error, description }) {
                         React.createElement(Dropdown.Item, { className: "dropdown-delete" }, "Delete")))),
         status === 'error' && React.createElement("div", null, error)));
 }
-//# sourceMappingURL=CurrentSessionListItem.js.map
+//# sourceMappingURL=TemporarySessionListItem.js.map

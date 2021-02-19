@@ -2,7 +2,7 @@ import React from 'react';
 import {Container, Card, Col, Nav, Row, Tab, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
-import {CurrentSessionListItem, SavedSessionListItem, SessionDropzone, UploadSessionCard} from '../../components';
+import {UploadSessionCard} from '../../components';
 import {CurrentSessionCard} from '../../components/session/CurrentSessionCard';
 import {SavedSessionCard} from '../../components/session/SavedSessionCard';
 import {TemporarySessionCard} from '../../components/session/TemporarySessionCard';

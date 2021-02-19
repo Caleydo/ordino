@@ -4,7 +4,7 @@ export * from './dataset/DatasetSearchBox';
 export * from './dataset/NamedSetList';
 export * from './dataset/UploadDatasetCard';
 export * from './dataset/UploadDatasetListItem';
-export * from './session/CurrentSessionListItem';
+export * from './session/TemporarySessionListItem';
 export * from './session/SavedSessionListItem';
 export * from './session/CurrentSessionCard';
 export * from './session/SavedSessionCard';

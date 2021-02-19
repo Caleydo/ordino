@@ -1,10 +1,9 @@
 import { IProvenanceGraphDataDescription } from 'phovea_core';
-interface ICurrentSessionListItemProps {
+interface ITemporarySessionListItemProps {
     value: IProvenanceGraphDataDescription | null;
     status: 'idle' | 'pending' | 'success' | 'error';
     error: string | null;
     description?: string;
-    onClick?: () => void;
 }
-export declare function CurrentSessionListItem({ status, value, error, description }: ICurrentSessionListItemProps): JSX.Element;
+export declare function TemporarySessionListItem({ status, value, error, description }: ITemporarySessionListItemProps): JSX.Element;
 export {};

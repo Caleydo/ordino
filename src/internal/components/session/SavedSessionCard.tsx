@@ -1,3 +1,4 @@
+import {UserSession} from 'phovea_core';
 import React from 'react';
 import {Card, Tab, Nav, Row, Col} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
@@ -11,8 +12,10 @@ export function SavedSessionCard() {
   const {manager} = React.useContext(GraphContext);
   const listSessions = React.useMemo(() => () => manager.list(), []);
   const {status, value: sessions, error} = useAsync(listSessions);
-  const savedSession = sessions?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
-  // Todo get SavedSessionListItem dynamically
+  const savedSessions = sessions?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+  const me = UserSession.getInstance().currentUserNameOrAnonymous();
+  const myworkspaces = savedSessions?.filter((d) => d.creator === me);
+  const otherworkspaces = savedSessions?.filter((d) => d.creator !== me);
 
   return (
     <>
@@ -36,19 +39,12 @@ export function SavedSessionCard() {
               <Col >
                 <Tab.Content>
                   <Tab.Pane eventKey="mySessions">
-                    <SavedSessionListItem name="Ordino NMC Case Study 1" uploadedDate="20 minutes ago" accessType="private" />
-                    <SavedSessionListItem name="Saved Session 1" uploadedDate="20 minutes ago" accessType="private" />
-                    <SavedSessionListItem name="Saved Session 5" description="This is an optional description for the saved session" uploadedDate="1 hour ago" accessType="public" />
-                    <SavedSessionListItem name="Saved Session 22" uploadedDate="2 days ago" accessType="public" />
+                    {myworkspaces?.map((session) => <SavedSessionListItem key={session.id} status={status} value={session} error={error} />)}
                   </Tab.Pane>
                   <Tab.Pane eventKey={`publicSessions}`}>
-                    <SavedSessionListItem name="Saved Session 1" uploadedDate="20 minutes ago" accessType="public" />
-                    <SavedSessionListItem name="Saved Session 33" uploadedDate="20 minutes ago" accessType="public" />
-                    <SavedSessionListItem name="Saved Session 50" uploadedDate="1 hour ago" accessType="public" />
-                    <SavedSessionListItem name="Saved Session 90" uploadedDate="2 days ago" accessType="public" />
+                    {otherworkspaces?.map((session) => <SavedSessionListItem key={session.id} status={status} value={session} error={error} />)}
                   </Tab.Pane>
                 </Tab.Content>
-
               </Col>
             </Row>
           </Tab.Container>

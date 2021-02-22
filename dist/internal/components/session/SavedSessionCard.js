@@ -1,3 +1,4 @@
+import { UserSession } from 'phovea_core';
 import React from 'react';
 import { Card, Tab, Nav, Row, Col } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
@@ -9,8 +10,10 @@ export function SavedSessionCard() {
     const { manager } = React.useContext(GraphContext);
     const listSessions = React.useMemo(() => () => manager.list(), []);
     const { status, value: sessions, error } = useAsync(listSessions);
-    const savedSession = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
-    // Todo get SavedSessionListItem dynamically
+    const savedSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+    const me = UserSession.getInstance().currentUserNameOrAnonymous();
+    const myworkspaces = savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.filter((d) => d.creator === me);
+    const otherworkspaces = savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.filter((d) => d.creator !== me);
     return (React.createElement(React.Fragment, null,
         React.createElement("p", { className: "ordino-info-text mt-4 " }, " Load a previous analysis session"),
         React.createElement("h4", { className: "text-left mt-2 mb-3" },
@@ -33,15 +36,7 @@ export function SavedSessionCard() {
                     React.createElement(Row, { className: "pt-4" },
                         React.createElement(Col, null,
                             React.createElement(Tab.Content, null,
-                                React.createElement(Tab.Pane, { eventKey: "mySessions" },
-                                    React.createElement(SavedSessionListItem, { name: "Ordino NMC Case Study 1", uploadedDate: "20 minutes ago", accessType: "private" }),
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "private" }),
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 5", description: "This is an optional description for the saved session", uploadedDate: "1 hour ago", accessType: "public" }),
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 22", uploadedDate: "2 days ago", accessType: "public" })),
-                                React.createElement(Tab.Pane, { eventKey: `publicSessions}` },
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 1", uploadedDate: "20 minutes ago", accessType: "public" }),
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 33", uploadedDate: "20 minutes ago", accessType: "public" }),
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 50", uploadedDate: "1 hour ago", accessType: "public" }),
-                                    React.createElement(SavedSessionListItem, { name: "Saved Session 90", uploadedDate: "2 days ago", accessType: "public" }))))))))));
+                                React.createElement(Tab.Pane, { eventKey: "mySessions" }, myworkspaces === null || myworkspaces === void 0 ? void 0 : myworkspaces.map((session) => React.createElement(SavedSessionListItem, { key: session.id, status: status, value: session, error: error }))),
+                                React.createElement(Tab.Pane, { eventKey: `publicSessions}` }, otherworkspaces === null || otherworkspaces === void 0 ? void 0 : otherworkspaces.map((session) => React.createElement(SavedSessionListItem, { key: session.id, status: status, value: session, error: error })))))))))));
 }
 //# sourceMappingURL=SavedSessionCard.js.map

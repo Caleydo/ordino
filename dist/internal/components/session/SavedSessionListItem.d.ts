@@ -1,10 +1,9 @@
+import { IProvenanceGraphDataDescription } from 'phovea_core';
 interface ISavedSessionListItemProps {
-    name: string;
+    value: IProvenanceGraphDataDescription | null;
+    status: 'idle' | 'pending' | 'success' | 'error';
+    error: string | null;
     description?: string;
-    uploadedDate?: string;
-    accessType: 'public' | 'private';
-    fileIcon?: string;
-    onClick?: () => void;
 }
-export declare function SavedSessionListItem({ name, uploadedDate, accessType, description }: ISavedSessionListItemProps): JSX.Element;
+export declare function SavedSessionListItem({ status, value, error, description }: ISavedSessionListItemProps): JSX.Element;
 export {};

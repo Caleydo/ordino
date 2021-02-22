@@ -4,6 +4,8 @@ import {SessionsTab} from './tabs/SessionsTab';
 import {DatasetsTab} from './tabs/DatasetsTab';
 import {ToursTab} from './tabs/ToursTab';
 import {CLUEGraphManager} from 'phovea_clue';
+import {GlobalEventHandler} from 'phovea_core';
+import {Ordino} from '../..';
 
 
 
@@ -29,7 +31,16 @@ const tabs: IStartMenuTab[] = [
 export const GraphContext = React.createContext<{manager: CLUEGraphManager}>({manager: null});
 
 export function StartMenuComponent({headerMainMenu, manager}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager}) {
-  const [active, setActive] = React.useState(tabs[0]);
+  const [active, setActive] = React.useState(null);
+
+  React.useEffect(() => {
+    const listener = () => setActive(tabs[0]);
+    GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
+
+    return () => GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+  }, []);
+
+
   return (
     <>
       {ReactDOM.createPortal(

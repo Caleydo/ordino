@@ -3,6 +3,8 @@ import * as ReactDOM from 'react-dom';
 import { SessionsTab } from './tabs/SessionsTab';
 import { DatasetsTab } from './tabs/DatasetsTab';
 import { ToursTab } from './tabs/ToursTab';
+import { GlobalEventHandler } from 'phovea_core';
+import { Ordino } from '../..';
 const tabs = [
     { id: 'datasets', title: 'Datasets' },
     { id: 'sessions', title: 'Analysis Sessions' },
@@ -11,7 +13,12 @@ const tabs = [
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext({ manager: null });
 export function StartMenuComponent({ headerMainMenu, manager }) {
-    const [active, setActive] = React.useState(tabs[0]);
+    const [active, setActive] = React.useState(null);
+    React.useEffect(() => {
+        const listener = () => setActive(tabs[0]);
+        GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
+        return () => GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+    }, []);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
         React.createElement(GraphContext.Provider, { value: { manager } },

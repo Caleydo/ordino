@@ -4,7 +4,7 @@ import { Button, Col, Dropdown, Row } from 'react-bootstrap';
 import { TDPApplicationUtils } from 'tdp_core';
 import { GraphContext } from '../../menu/StartMenuReact';
 import { ListItemDropdown } from '../common/ListItemDropdown';
-export function TemporarySessionListItem({ status, value, error, saveSession, cloneSession, deleteSession }) {
+export function TemporarySessionListItem({ status, value, error, saveSession, cloneSession, deleteSession, exportSession }) {
     const { manager } = React.useContext(GraphContext);
     const dateFromNow = (value === null || value === void 0 ? void 0 : value.ts) ? TDPApplicationUtils.fromNow(value.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
     return (React.createElement(React.Fragment, null,
@@ -24,7 +24,7 @@ export function TemporarySessionListItem({ status, value, error, saveSession, cl
                     React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, value) }, "Save"),
                     React.createElement(ListItemDropdown, null,
                         React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, value) }, "Clone"),
-                        React.createElement(Dropdown.Item, null, "Export"),
+                        React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, value) }, "Export"),
                         React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, value) }, "Delete")))),
         status === 'error' && React.createElement("div", null, error)));
 }

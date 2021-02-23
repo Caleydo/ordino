@@ -4,7 +4,7 @@ import {SessionsTab} from './tabs/SessionsTab';
 import {DatasetsTab} from './tabs/DatasetsTab';
 import {ToursTab} from './tabs/ToursTab';
 import {CLUEGraphManager} from 'phovea_clue';
-import {GlobalEventHandler} from 'phovea_core';
+import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
 import {Ordino} from '../..';
 
 
@@ -28,9 +28,9 @@ const tabs: IStartMenuTab[] = [
 ];
 
 // tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext<{manager: CLUEGraphManager}>({manager: null});
+export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
-export function StartMenuComponent({headerMainMenu, manager}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager}) {
+export function StartMenuComponent({headerMainMenu, manager, graph}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager, graph: ProvenanceGraph}) {
   const [active, setActive] = React.useState(null);
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ export function StartMenuComponent({headerMainMenu, manager}: {headerMainMenu: H
         <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)}></MainMenuLinks>,
         headerMainMenu
       )}
-      <GraphContext.Provider value={{manager}}>
+      <GraphContext.Provider value={{manager, graph}}>
         <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
       </GraphContext.Provider>
     </>

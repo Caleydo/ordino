@@ -1,11 +1,29 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import Dropzone from 'react-dropzone';
+import {GraphContext} from '../../menu/StartMenuReact';
 
 
 
 export function SessionDropzone() {
+    const {graph, manager} = React.useContext(GraphContext);
+
+    const onDrop = (acceptedFile) => {
+        const reader = new FileReader()
+        reader.onload = (e: any) => {
+            const dataS = e.target.result;
+            const dump = JSON.parse(dataS);
+            manager.importGraph(dump);
+        };
+        reader.readAsText(acceptedFile);
+    }
+
     return (
-        <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+        <Dropzone
+            multiple={false}
+            maxFiles={1}
+            accept={'.json'}
+            onDrop={onDrop}
+        >
             {({getRootProps, getInputProps}) => (
                 <section>
                     <div {...getRootProps()}>

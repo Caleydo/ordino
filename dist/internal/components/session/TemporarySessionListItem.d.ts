@@ -8,6 +8,7 @@ interface ITemporarySessionListItemProps {
     deleteSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
     saveSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
     cloneSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+    exportSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
 }
-export declare function TemporarySessionListItem({ status, value, error, saveSession, cloneSession, deleteSession }: ITemporarySessionListItemProps): JSX.Element;
+export declare function TemporarySessionListItem({ status, value, error, saveSession, cloneSession, deleteSession, exportSession }: ITemporarySessionListItemProps): JSX.Element;
 export {};

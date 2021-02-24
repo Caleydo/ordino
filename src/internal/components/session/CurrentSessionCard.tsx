@@ -1,6 +1,6 @@
 import {I18nextManager, IProvenanceGraphDataDescription} from 'phovea_core';
 import React, {useRef} from 'react';
-import {Button, Card, Dropdown} from 'react-bootstrap';
+import {Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
 import {byDateDesc, ListItemDropdown, SessionListItem, } from '..';
@@ -15,7 +15,6 @@ export function CurrentSessionCard() {
         event.preventDefault();
         event.stopPropagation();
     };
-
     const parent = useRef(null);
     const [currentSession, setCurrentSession] = React.useState(null);
     const {graph, manager} = React.useContext(GraphContext);

@@ -2,7 +2,7 @@ import { I18nextManager } from 'phovea_core';
 import React from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
-export function SessionListItem({ status, value, error, editSession, cloneSession, exportSession, deleteSession, children }) {
+export function SessionListItem({ status, value, error, children }) {
     const dateFromNow = (value === null || value === void 0 ? void 0 : value.ts) ? TDPApplicationUtils.fromNow(value.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
     return (React.createElement(React.Fragment, null,
         status === 'success' &&

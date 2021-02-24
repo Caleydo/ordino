@@ -1,22 +1,16 @@
 import {I18nextManager, IProvenanceGraphDataDescription} from 'phovea_core';
 import React from 'react';
-import {Button, Col, Dropdown, Row} from 'react-bootstrap';
-import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
+import {Button, Col, Row} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
-import {ListItemDropdown} from '../common/ListItemDropdown';
 
 interface ISessionListItemProps {
   value: IProvenanceGraphDataDescription | null;
   status: 'idle' | 'pending' | 'success' | 'error';
   error: string | null;
-  deleteSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-  editSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-  cloneSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-  exportSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
   children?: React.ReactNode;
 }
 
-export function SessionListItem({status, value, error, editSession, cloneSession, exportSession, deleteSession, children}: ISessionListItemProps) {
+export function SessionListItem({status, value, error, children}: ISessionListItemProps) {
   const dateFromNow = value?.ts ? TDPApplicationUtils.fromNow(value.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
   return (
     <>

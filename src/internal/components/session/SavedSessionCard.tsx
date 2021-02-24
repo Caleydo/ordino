@@ -1,9 +1,9 @@
 import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
 import React, {useRef} from 'react';
-import {Card, Tab, Nav, Row, Col} from 'react-bootstrap';
+import {Card, Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
-import {byDateDesc, SavedSessionListItem} from '..';
+import {byDateDesc, ListItemDropdown, SessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
 
@@ -56,9 +56,9 @@ export function SavedSessionCard() {
           .then((desc) => {
 
             setSavedSessions((savedSessions) => {
-              const copy=[...savedSessions];
+              const copy = [...savedSessions];
               const i = copy.findIndex((s) => s.id === value.id);
-              copy[i]=desc;
+              copy[i] = desc;
               return copy;
             });
             GlobalEventHandler.getInstance().fire(ProvenanceGraphMenuUtils.GLOBAL_EVENT_MANIPULATED);
@@ -131,10 +131,28 @@ export function SavedSessionCard() {
               <Col >
                 <Tab.Content>
                   <Tab.Pane eventKey="mySessions">
-                    {savedSessions?.map((session) => <SavedSessionListItem key={session.id} status={status} value={session} error={error} exportSession={exportSession} editSession={editSession} cloneSession={cloneSession} deleteSession={deleteSession} />)}
+                    {savedSessions?.map((session) => {
+                      return <SessionListItem key={session.id} status={status} value={session} error={error} exportSession={exportSession} editSession={editSession} cloneSession={cloneSession} deleteSession={deleteSession}>
+                        <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
+                        <ListItemDropdown>
+                          <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
+                          <Dropdown.Item onClick={(event) => exportSession(event, session)}>Export</Dropdown.Item>
+                          <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, session)}>Delete</Dropdown.Item>
+                        </ListItemDropdown>
+                      </SessionListItem>;
+                    })}
                   </Tab.Pane>
                   <Tab.Pane eventKey={`publicSessions}`}>
-                    {otherSessions?.map((session) => <SavedSessionListItem key={session.id} status={status} value={session} error={error} />)}
+                    {otherSessions?.map((session) => {
+                      return <SessionListItem key={session.id} status={status} value={session} error={error} exportSession={exportSession} editSession={editSession} cloneSession={cloneSession} deleteSession={deleteSession}>
+                        <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
+                        <ListItemDropdown>
+                          <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
+                          <Dropdown.Item onClick={(event) => exportSession(event, session)}>Export</Dropdown.Item>
+                          <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, session)}>Delete</Dropdown.Item>
+                        </ListItemDropdown>
+                      </SessionListItem>;
+                    })}
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

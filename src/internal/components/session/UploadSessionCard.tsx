@@ -1,8 +1,6 @@
-import {I18nextManager} from 'phovea_core';
 import React from 'react';
 import {Card} from 'react-bootstrap';
 import {SessionDropzone} from '..';
-import {GraphContext} from '../../menu/StartMenuReact';
 
 
 export function UploadSessionCard() {

@@ -1,8 +1,8 @@
 import { GlobalEventHandler, I18nextManager, UserSession } from 'phovea_core';
 import React, { useRef } from 'react';
-import { Card, Tab, Nav, Row, Col } from 'react-bootstrap';
+import { Card, Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
-import { byDateDesc, SavedSessionListItem } from '..';
+import { byDateDesc, ListItemDropdown, SessionListItem } from '..';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
 export function SavedSessionCard() {
@@ -112,7 +112,21 @@ export function SavedSessionCard() {
                     React.createElement(Row, { className: "pt-4" },
                         React.createElement(Col, null,
                             React.createElement(Tab.Content, null,
-                                React.createElement(Tab.Pane, { eventKey: "mySessions" }, savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => React.createElement(SavedSessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession }))),
-                                React.createElement(Tab.Pane, { eventKey: `publicSessions}` }, otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => React.createElement(SavedSessionListItem, { key: session.id, status: status, value: session, error: error })))))))))));
+                                React.createElement(Tab.Pane, { eventKey: "mySessions" }, savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
+                                    return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
+                                        React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
+                                        React.createElement(ListItemDropdown, null,
+                                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
+                                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
+                                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
+                                })),
+                                React.createElement(Tab.Pane, { eventKey: `publicSessions}` }, otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
+                                    return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
+                                        React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
+                                        React.createElement(ListItemDropdown, null,
+                                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
+                                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
+                                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
+                                }))))))))));
 }
 //# sourceMappingURL=SavedSessionCard.js.map

@@ -1,8 +1,8 @@
 import { I18nextManager } from 'phovea_core';
 import React, { useRef } from 'react';
-import { Card } from 'react-bootstrap';
+import { Button, Card, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
-import { TemporarySessionListItem } from '..';
+import { ListItemDropdown, SessionListItem } from '..';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
 export function byDateDesc(a, b) {
@@ -80,6 +80,13 @@ export function TemporarySessionCard() {
         React.createElement(Card, { ref: parent, className: "shadow-sm" },
             React.createElement(Card.Body, { className: "p-3" },
                 React.createElement(Card.Text, null, "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states of this session with others. Only the 10 most recent sessions will be stored."), tempSessions === null || tempSessions === void 0 ? void 0 :
-                tempSessions.map((tempSession) => React.createElement(TemporarySessionListItem, { key: tempSession.id, status: status, value: tempSession, error: error, exportSession: exportSession, saveSession: saveSession, cloneSession: cloneSession, deleteSession: deleteSession }))))));
+                tempSessions.map((session) => {
+                    return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error },
+                        React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, session) }, "Save"),
+                        React.createElement(ListItemDropdown, null,
+                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
+                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
+                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
+                })))));
 }
 //# sourceMappingURL=TemporarySessionCard.js.map

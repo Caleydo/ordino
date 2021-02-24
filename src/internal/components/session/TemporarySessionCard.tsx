@@ -1,9 +1,9 @@
 import {IProvenanceGraphDataDescription, I18nextManager} from 'phovea_core';
 import React, {useRef} from 'react';
-import {Card} from 'react-bootstrap';
+import {Button, Card, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
-import {TemporarySessionListItem} from '..';
+import {ListItemDropdown, SessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
 
@@ -21,7 +21,7 @@ export function TemporarySessionCard() {
         event.preventDefault();
         event.stopPropagation();
     };
-    const [tempSessions, setTempSessions] = React.useState(null);
+    const [tempSessions, setTempSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
     const {graph, manager} = React.useContext(GraphContext);
 
     const listSessions = React.useMemo(() => async () => {
@@ -98,7 +98,16 @@ export function TemporarySessionCard() {
                         of this session with others. Only the 10 most recent sessions will be stored.
                     </Card.Text>
                     {
-                        tempSessions?.map((tempSession) => <TemporarySessionListItem key={tempSession.id} status={status} value={tempSession} error={error} exportSession={exportSession} saveSession={saveSession} cloneSession={cloneSession} deleteSession={deleteSession} />)
+                        tempSessions?.map((session) => {
+                            return <SessionListItem key={session.id} status={status} value={session} error={error}>
+                                <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => saveSession(event, session)}>Save</Button>
+                                <ListItemDropdown>
+                                    <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
+                                    <Dropdown.Item onClick={(event) => exportSession(event, session)}>Export</Dropdown.Item>
+                                    <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, session)}>Delete</Dropdown.Item>
+                                </ListItemDropdown>
+                            </SessionListItem>;
+                        })
                     }
                 </Card.Body>
             </Card>

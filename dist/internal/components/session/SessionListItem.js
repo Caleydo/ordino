@@ -29,4 +29,4 @@ export function SessionListItem({ status, value, error, editSession, cloneSessio
                 React.createElement(Col, { md: 2, className: "d-flex justify-content-end mt-1 px-0" }, children)),
         status === 'error' && React.createElement("div", null, error)));
 }
-//# sourceMappingURL=SavedSessionListItem.js.map
+//# sourceMappingURL=SessionListItem.js.map

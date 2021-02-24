@@ -1,7 +1,7 @@
 import { IProvenanceGraphDataDescription } from 'phovea_core';
 import React from 'react';
 import { DropdownItemProps } from 'react-bootstrap/esm/DropdownItem';
-interface ISavedSessionListItemProps {
+interface ISessionListItemProps {
     value: IProvenanceGraphDataDescription | null;
     status: 'idle' | 'pending' | 'success' | 'error';
     error: string | null;
@@ -11,5 +11,5 @@ interface ISavedSessionListItemProps {
     exportSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
     children?: React.ReactNode;
 }
-export declare function SavedSessionListItem({ status, value, error, editSession, cloneSession, exportSession, deleteSession, children }: ISavedSessionListItemProps): JSX.Element;
+export declare function SessionListItem({ status, value, error, editSession, cloneSession, exportSession, deleteSession, children }: ISessionListItemProps): JSX.Element;
 export {};

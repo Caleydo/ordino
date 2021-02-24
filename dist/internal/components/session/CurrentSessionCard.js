@@ -57,7 +57,6 @@ export function CurrentSessionCard() {
         const blob = new Blob([str], { type: 'application/json;charset=utf-8' });
         const a = new FileReader();
         a.onload = (e) => {
-            console.log('hello');
             const url = (e.target).result;
             const helper = parent.current.ownerDocument.createElement('a');
             helper.setAttribute('href', url);

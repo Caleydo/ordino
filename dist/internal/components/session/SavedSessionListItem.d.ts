@@ -5,10 +5,10 @@ interface ISavedSessionListItemProps {
     value: IProvenanceGraphDataDescription | null;
     status: 'idle' | 'pending' | 'success' | 'error';
     error: string | null;
-    deleteSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-    editSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-    cloneSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-    exportSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+    deleteSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+    editSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+    cloneSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+    exportSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
 }
 export declare function SavedSessionListItem({ status, value, error, editSession, cloneSession, exportSession, deleteSession }: ISavedSessionListItemProps): JSX.Element;
 export {};

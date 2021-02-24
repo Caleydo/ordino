@@ -5,7 +5,6 @@ import { ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
 import { ListItemDropdown } from '../common/ListItemDropdown';
 export function SavedSessionListItem({ status, value, error, editSession, cloneSession, exportSession, deleteSession }) {
     const dateFromNow = (value === null || value === void 0 ? void 0 : value.ts) ? TDPApplicationUtils.fromNow(value.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
-    console.log(value.name);
     return (React.createElement(React.Fragment, null,
         status === 'success' &&
             React.createElement(Row, { className: "dropdown-parent session-item mx-0 mb-1 align-items-start" },

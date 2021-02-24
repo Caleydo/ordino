@@ -9,15 +9,14 @@ interface ISavedSessionListItemProps {
   value: IProvenanceGraphDataDescription | null;
   status: 'idle' | 'pending' | 'success' | 'error';
   error: string | null;
-  deleteSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-  editSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-  cloneSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
-  exportSession: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+  deleteSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+  editSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+  cloneSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
+  exportSession?: (event: React.MouseEvent<DropdownItemProps>, value: IProvenanceGraphDataDescription) => void;
 }
 
 export function SavedSessionListItem({status, value, error, editSession,cloneSession,exportSession,deleteSession}: ISavedSessionListItemProps) {
   const dateFromNow = value?.ts ? TDPApplicationUtils.fromNow(value.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
-console.log(value.name)
   return (
     <>
       {status === 'success' &&

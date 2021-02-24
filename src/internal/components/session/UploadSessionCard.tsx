@@ -6,7 +6,6 @@ import {GraphContext} from '../../menu/StartMenuReact';
 
 
 export function UploadSessionCard() {
-
     return (
         <>  <h4 className="text-left mt-4 mb-3"><i className="mr-2 fas ordino-icon-2 fa-file-upload" ></i> Import Session</h4>
             <Card className="shadow-sm">

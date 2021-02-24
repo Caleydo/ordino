@@ -14,7 +14,7 @@ export function CurrentSessionCard() {
         event.preventDefault();
         event.stopPropagation();    };
 
-    const parent = useRef(null)
+    const parent = useRef(null);
     const [currentSession, setCurrentSession] = React.useState(null);
     const {graph, manager} = React.useContext(GraphContext);
 
@@ -70,7 +70,6 @@ export function CurrentSessionCard() {
           const blob = new Blob([str], {type: 'application/json;charset=utf-8'});
           const a = new FileReader();
           a.onload = (e) => {
-              console.log('hello')
             const url = (e.target).result as string;
             const helper = parent.current.ownerDocument.createElement('a');
             helper.setAttribute('href', url);

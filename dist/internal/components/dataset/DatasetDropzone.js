@@ -1,7 +1,10 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 export function DatasetDropzone() {
-    return (React.createElement(Dropzone, { onDrop: (acceptedFiles) => console.log(acceptedFiles) }, ({ getRootProps, getInputProps }) => (React.createElement("section", null,
+    const onDrop = (acceptedFiles) => {
+        //
+    };
+    return (React.createElement(Dropzone, { multiple: false, maxFiles: 1, accept: ['.txt', '.csv', '.tsv', '.xlsx'], onDrop: (acceptedFiles) => console.log(acceptedFiles) }, ({ getRootProps, getInputProps }) => (React.createElement("section", null,
         React.createElement("div", Object.assign({}, getRootProps()),
             React.createElement("input", Object.assign({}, getInputProps())),
             React.createElement("div", { className: "session-dropzone " },

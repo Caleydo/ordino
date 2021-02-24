@@ -3,8 +3,18 @@ import Dropzone from 'react-dropzone';
 
 
 export function DatasetDropzone() {
+
+    const onDrop = (acceptedFiles) => {
+//
+    };
+
     return (
-        <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+        <Dropzone
+            multiple={false}
+            maxFiles={1}
+            accept={['.txt','.csv','.tsv','.xlsx']}
+            onDrop={(acceptedFiles) => console.log(acceptedFiles)}
+        >
             {({getRootProps, getInputProps}) => (
                 <section>
                     <div {...getRootProps()}>

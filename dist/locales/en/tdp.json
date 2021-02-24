@@ -7,5 +7,10 @@
                 "addText": "Add {{text}}"
             }
         }
+    },
+    "ordino": {
+        "startMenu": {
+            "currentCardInfo": "Save the current session to open it later again or share it with other users."
+        }
     }
 }

@@ -6,6 +6,7 @@ import {ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuU
 import {byDateDesc, ListItemDropdown, SessionListItem, } from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
+import {CommonSessionCard} from './CommonSessionCard';
 
 
 export function CurrentSessionCard() {
@@ -86,24 +87,16 @@ export function CurrentSessionCard() {
 
 
     return (
-        <>
-            <h4 className="text-left d-flex align-items-center mb-3"><i className="mr-2 ordino-icon-2 fas fa-history" ></i>Current Session</h4>
-            <Card ref={parent} className="shadow-sm">
-                <Card.Body className="p-3">
-                    <Card.Text>
-                        Save the current session to open it later again or share it with other users.
-                </Card.Text>
-                    <SessionListItem  status={status} value={currentSession} error={error}>
-                        <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => saveSession(event, currentSession)}>Save</Button>
-                        <ListItemDropdown>
-                            <Dropdown.Item onClick={(event) => cloneSession(event, currentSession)}>Clone</Dropdown.Item>
-                            <Dropdown.Item onClick={(event) => exportSession(event, currentSession)}>Export</Dropdown.Item>
-                            <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, currentSession)}>Delete</Dropdown.Item>
-                        </ListItemDropdown>
-                    </SessionListItem>
-                </Card.Body>
-            </Card>
-        </>
+        <CommonSessionCard cardName="Current Session" faIcon="fa-history" cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo')}>
+            <SessionListItem status={status} value={currentSession} error={error}>
+                <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => saveSession(event, currentSession)}>Save</Button>
+                <ListItemDropdown ref={parent} >
+                    <Dropdown.Item onClick={(event) => cloneSession(event, currentSession)}>Clone</Dropdown.Item>
+                    <Dropdown.Item onClick={(event) => exportSession(event, currentSession)}>Export</Dropdown.Item>
+                    <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, currentSession)}>Delete</Dropdown.Item>
+                </ListItemDropdown>
+            </SessionListItem>
+        </CommonSessionCard>
     );
 
 }

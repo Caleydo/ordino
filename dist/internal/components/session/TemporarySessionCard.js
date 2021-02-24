@@ -1,10 +1,11 @@
 import { I18nextManager } from 'phovea_core';
 import React, { useRef } from 'react';
-import { Button, Card, Dropdown } from 'react-bootstrap';
+import { Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 import { ListItemDropdown, SessionListItem } from '..';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
+import { CommonSessionCard } from './CommonSessionCard';
 export function byDateDesc(a, b) {
     return -((a.ts || 0) - (b.ts || 0));
 }
@@ -74,19 +75,13 @@ export function TemporarySessionCard() {
         return false;
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement("h4", { className: "text-left mt-4 mb-3" },
-            React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-history" }),
-            "Temporary Sessions"),
-        React.createElement(Card, { ref: parent, className: "shadow-sm" },
-            React.createElement(Card.Body, { className: "p-3" },
-                React.createElement(Card.Text, null, "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states of this session with others. Only the 10 most recent sessions will be stored."), tempSessions === null || tempSessions === void 0 ? void 0 :
-                tempSessions.map((session) => {
-                    return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error },
-                        React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, session) }, "Save"),
-                        React.createElement(ListItemDropdown, null,
-                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
-                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
-                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
-                })))));
+        React.createElement(CommonSessionCard, { cardName: "Temporary Sessions", faIcon: "fa-history", cardInfo: "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states\n                            of this session with others. Only the 10 most recent sessions will be stored." }, tempSessions === null || tempSessions === void 0 ? void 0 : tempSessions.map((session) => {
+            return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error },
+                React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, session) }, "Save"),
+                React.createElement(ListItemDropdown, { ref: parent },
+                    React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
+                    React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
+                    React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
+        }))));
 }
 //# sourceMappingURL=TemporarySessionCard.js.map

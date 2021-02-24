@@ -1,10 +1,11 @@
 import { GlobalEventHandler, I18nextManager, UserSession } from 'phovea_core';
 import React, { useRef } from 'react';
-import { Card, Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
+import { Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 import { byDateDesc, ListItemDropdown, SessionListItem } from '..';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
+import { CommonSessionCard } from './CommonSessionCard';
 export function SavedSessionCard() {
     const parent = useRef(null);
     const stopEvent = (event) => {
@@ -92,41 +93,36 @@ export function SavedSessionCard() {
     };
     return (React.createElement(React.Fragment, null,
         React.createElement("p", { className: "ordino-info-text mt-4 " }, " Load a previous analysis session"),
-        React.createElement("h4", { className: "text-left mt-2 mb-3" },
-            React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-cloud" }),
-            " Saved Session"),
-        React.createElement(Card, { className: "shadow-sm" },
-            React.createElement(Card.Body, { className: "p-3" },
-                React.createElement(Card.Text, null, "The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link."),
-                React.createElement(Tab.Container, { defaultActiveKey: "mySessions" },
-                    React.createElement(Nav, { className: "session-tab", variant: "pills" },
-                        React.createElement(Nav.Item, null,
-                            React.createElement(Nav.Link, { eventKey: "mySessions" },
-                                React.createElement("i", { className: "mr-2 fas fa-user" }),
-                                "My sessions")),
-                        React.createElement(Nav.Item, null,
-                            React.createElement(Nav.Link, { eventKey: `publicSessions}` },
-                                " ",
-                                React.createElement("i", { className: "mr-2 fas fa-users" }),
-                                "Public sessions"))),
-                    React.createElement(Row, { className: "pt-4" },
-                        React.createElement(Col, null,
-                            React.createElement(Tab.Content, null,
-                                React.createElement(Tab.Pane, { eventKey: "mySessions" }, savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
-                                    return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
-                                        React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
-                                        React.createElement(ListItemDropdown, null,
-                                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
-                                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
-                                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
-                                })),
-                                React.createElement(Tab.Pane, { eventKey: `publicSessions}` }, otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
-                                    return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
-                                        React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
-                                        React.createElement(ListItemDropdown, null,
-                                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
-                                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
-                                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
-                                }))))))))));
+        React.createElement(CommonSessionCard, { cardName: "Saved Session", faIcon: "fa-cloud", cardInfo: " The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link." },
+            React.createElement(Tab.Container, { defaultActiveKey: "mySessions" },
+                React.createElement(Nav, { className: "session-tab", variant: "pills" },
+                    React.createElement(Nav.Item, null,
+                        React.createElement(Nav.Link, { eventKey: "mySessions" },
+                            React.createElement("i", { className: "mr-2 fas fa-user" }),
+                            "My sessions")),
+                    React.createElement(Nav.Item, null,
+                        React.createElement(Nav.Link, { eventKey: `publicSessions}` },
+                            " ",
+                            React.createElement("i", { className: "mr-2 fas fa-users" }),
+                            "Public sessions"))),
+                React.createElement(Row, { className: "pt-4" },
+                    React.createElement(Col, null,
+                        React.createElement(Tab.Content, null,
+                            React.createElement(Tab.Pane, { eventKey: "mySessions" }, savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
+                                return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
+                                    React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
+                                    React.createElement(ListItemDropdown, { ref: parent },
+                                        React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
+                                        React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
+                                        React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
+                            })),
+                            React.createElement(Tab.Pane, { eventKey: `publicSessions}` }, otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
+                                return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
+                                    React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
+                                    React.createElement(ListItemDropdown, null,
+                                        React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
+                                        React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
+                                        React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
+                            })))))))));
 }
 //# sourceMappingURL=SavedSessionCard.js.map

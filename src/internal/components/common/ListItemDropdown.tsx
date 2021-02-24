@@ -5,13 +5,14 @@ interface IListItemDropdownProps {
   children?: Dropdown['Item'] | Dropdown['Item'][] | React.ReactNode;
 }
 
-export function ListItemDropdown(props: IListItemDropdownProps) {
+// tslint:disable-next-line: variable-name
+export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps, ref) => {
   return (
-    <Dropdown vertical className="list-item-dropdown" as={ButtonGroup}>
+    <Dropdown ref={ref} vertical className="list-item-dropdown" as={ButtonGroup}>
       <Dropdown.Toggle variant="link"><i className="fas fa-ellipsis-v "></i></Dropdown.Toggle>
-      <Dropdown.Menu>
+      <Dropdown.Menu >
         {props.children}
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+});

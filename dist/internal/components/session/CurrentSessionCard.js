@@ -1,10 +1,11 @@
 import { I18nextManager } from 'phovea_core';
 import React, { useRef } from 'react';
-import { Button, Card, Dropdown } from 'react-bootstrap';
+import { Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 import { byDateDesc, ListItemDropdown, SessionListItem, } from '..';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
+import { CommonSessionCard } from './CommonSessionCard';
 export function CurrentSessionCard() {
     const stopEvent = (event) => {
         event.preventDefault();
@@ -69,18 +70,12 @@ export function CurrentSessionCard() {
         a.readAsDataURL(blob);
         return false;
     };
-    return (React.createElement(React.Fragment, null,
-        React.createElement("h4", { className: "text-left d-flex align-items-center mb-3" },
-            React.createElement("i", { className: "mr-2 ordino-icon-2 fas fa-history" }),
-            "Current Session"),
-        React.createElement(Card, { ref: parent, className: "shadow-sm" },
-            React.createElement(Card.Body, { className: "p-3" },
-                React.createElement(Card.Text, null, "Save the current session to open it later again or share it with other users."),
-                React.createElement(SessionListItem, { status: status, value: currentSession, error: error },
-                    React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, currentSession) }, "Save"),
-                    React.createElement(ListItemDropdown, null,
-                        React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, currentSession) }, "Clone"),
-                        React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, currentSession) }, "Export"),
-                        React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, currentSession) }, "Delete")))))));
+    return (React.createElement(CommonSessionCard, { cardName: "Current Session", faIcon: "fa-history", cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo') },
+        React.createElement(SessionListItem, { status: status, value: currentSession, error: error },
+            React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, currentSession) }, "Save"),
+            React.createElement(ListItemDropdown, { ref: parent },
+                React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, currentSession) }, "Clone"),
+                React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, currentSession) }, "Export"),
+                React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, currentSession) }, "Delete")))));
 }
 //# sourceMappingURL=CurrentSessionCard.js.map

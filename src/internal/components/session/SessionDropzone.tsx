@@ -6,7 +6,6 @@ import {GraphContext} from '../../menu/StartMenuReact';
 
 export function SessionDropzone() {
     const {graph, manager} = React.useContext(GraphContext);
-
     const onDrop = (acceptedFile) => {
         const reader = new FileReader();
         reader.onload = (e: any) => {

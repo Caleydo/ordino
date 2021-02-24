@@ -17,7 +17,9 @@ export function StartMenuComponent({ headerMainMenu, manager, graph }) {
     React.useEffect(() => {
         const listener = () => setActive(tabs[0]);
         GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
-        return () => GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+        return () => {
+            GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+        };
     }, []);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),

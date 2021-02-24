@@ -75,7 +75,7 @@ export function TemporarySessionCard() {
         return false;
     };
     return (React.createElement(React.Fragment, null,
-        React.createElement(CommonSessionCard, { cardName: "Temporary Sessions", faIcon: "fa-history", cardInfo: "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states\n                            of this session with others. Only the 10 most recent sessions will be stored." }, tempSessions === null || tempSessions === void 0 ? void 0 : tempSessions.map((session) => {
+        React.createElement(CommonSessionCard, { cardName: "Temporary Sessions", faIcon: "fa-history", cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo') }, tempSessions === null || tempSessions === void 0 ? void 0 : tempSessions.map((session) => {
             return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error },
                 React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, session) }, "Save"),
                 React.createElement(ListItemDropdown, { ref: parent },

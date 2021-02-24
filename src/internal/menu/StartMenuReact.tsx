@@ -37,7 +37,9 @@ export function StartMenuComponent({headerMainMenu, manager, graph}: {headerMain
     const listener = () => setActive(tabs[0]);
     GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
 
-    return () => GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+    return () => {
+      GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+    };
   }, []);
 
 

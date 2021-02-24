@@ -91,8 +91,7 @@ export function TemporarySessionCard() {
 
     return (
         <>
-            <CommonSessionCard cardName="Temporary Sessions" faIcon="fa-history" cardInfo="A temporary session will only be stored in your local browser cache.It is not possible to share a link to states
-                            of this session with others. Only the 10 most recent sessions will be stored.">
+            <CommonSessionCard cardName="Temporary Sessions" faIcon="fa-history" cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo')}>
                 {
                     tempSessions?.map((session) => {
                         return <SessionListItem key={session.id} status={status} value={session} error={error}>
@@ -109,3 +108,5 @@ export function TemporarySessionCard() {
         </>
     );
 }
+
+

@@ -93,7 +93,7 @@ export function SavedSessionCard() {
     };
     return (React.createElement(React.Fragment, null,
         React.createElement("p", { className: "ordino-info-text mt-4 " }, " Load a previous analysis session"),
-        React.createElement(CommonSessionCard, { cardName: "Saved Session", faIcon: "fa-cloud", cardInfo: " The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link." },
+        React.createElement(CommonSessionCard, { cardName: "Saved Session", faIcon: "fa-cloud", cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo') },
             React.createElement(Tab.Container, { defaultActiveKey: "mySessions" },
                 React.createElement(Nav, { className: "session-tab", variant: "pills" },
                     React.createElement(Nav.Item, null,
@@ -109,7 +109,7 @@ export function SavedSessionCard() {
                     React.createElement(Col, null,
                         React.createElement(Tab.Content, null,
                             React.createElement(Tab.Pane, { eventKey: "mySessions" }, savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
-                                return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
+                                return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error },
                                     React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
                                     React.createElement(ListItemDropdown, { ref: parent },
                                         React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
@@ -117,7 +117,7 @@ export function SavedSessionCard() {
                                         React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session) }, "Delete")));
                             })),
                             React.createElement(Tab.Pane, { eventKey: `publicSessions}` }, otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
-                                return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error, exportSession: exportSession, editSession: editSession, cloneSession: cloneSession, deleteSession: deleteSession },
+                                return React.createElement(SessionListItem, { key: session.id, status: status, value: session, error: error },
                                     React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
                                     React.createElement(ListItemDropdown, null,
                                         React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),

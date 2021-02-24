@@ -16,8 +16,8 @@ export function SavedSessionCard() {
     event.preventDefault();
     event.stopPropagation();
   };
-  const [savedSessions, setSavedSessions] = React.useState(null);
-  const [otherSessions, setOtherSessions] = React.useState(null);
+  const [savedSessions, setSavedSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
+  const [otherSessions, setOtherSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
   const {graph, manager} = React.useContext(GraphContext);
 
   const listSessions = React.useMemo(() => async () => {
@@ -113,7 +113,7 @@ export function SavedSessionCard() {
   return (
     <>
       <p className="ordino-info-text mt-4 "> Load a previous analysis session</p>
-      <CommonSessionCard cardName="Saved Session" faIcon="fa-cloud" cardInfo=" The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link.">
+      <CommonSessionCard cardName="Saved Session" faIcon="fa-cloud" cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo')}>
         <Tab.Container defaultActiveKey="mySessions">
           <Nav className="session-tab" variant="pills">
             <Nav.Item >
@@ -128,7 +128,7 @@ export function SavedSessionCard() {
               <Tab.Content>
                 <Tab.Pane eventKey="mySessions">
                   {savedSessions?.map((session) => {
-                    return <SessionListItem key={session.id} status={status} value={session} error={error} exportSession={exportSession} editSession={editSession} cloneSession={cloneSession} deleteSession={deleteSession}>
+                    return <SessionListItem key={session.id} status={status} value={session} error={error}>
                       <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
                       <ListItemDropdown ref={parent}>
                         <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
@@ -140,7 +140,7 @@ export function SavedSessionCard() {
                 </Tab.Pane>
                 <Tab.Pane eventKey={`publicSessions}`}>
                   {otherSessions?.map((session) => {
-                    return <SessionListItem key={session.id} status={status} value={session} error={error} exportSession={exportSession} editSession={editSession} cloneSession={cloneSession} deleteSession={deleteSession}>
+                    return <SessionListItem key={session.id} status={status} value={session} error={error}>
                       <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
                       <ListItemDropdown>
                         <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>

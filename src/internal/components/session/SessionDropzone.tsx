@@ -8,14 +8,14 @@ export function SessionDropzone() {
     const {graph, manager} = React.useContext(GraphContext);
 
     const onDrop = (acceptedFile) => {
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onload = (e: any) => {
             const dataS = e.target.result;
             const dump = JSON.parse(dataS);
             manager.importGraph(dump);
         };
-        reader.readAsText(acceptedFile);
-    }
+        reader.readAsText(acceptedFile[0]);
+    };
 
     return (
         <Dropzone

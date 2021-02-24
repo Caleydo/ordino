@@ -10,7 +10,7 @@ export function SessionDropzone() {
             const dump = JSON.parse(dataS);
             manager.importGraph(dump);
         };
-        reader.readAsText(acceptedFile);
+        reader.readAsText(acceptedFile[0]);
     };
     return (React.createElement(Dropzone, { multiple: false, maxFiles: 1, accept: '.json', onDrop: onDrop }, ({ getRootProps, getInputProps }) => (React.createElement("section", null,
         React.createElement("div", Object.assign({}, getRootProps()),

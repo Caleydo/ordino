@@ -3,7 +3,7 @@ import React, {useRef} from 'react';
 import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
-import {ListItemDropdown, SessionListItem} from '..';
+import {byDateDesc, ListItemDropdown, SessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
 import {stopEvent} from '../../menu/utils';
@@ -11,13 +11,12 @@ import {CommonSessionCard} from './CommonSessionCard';
 
 
 export function SavedSessionCard() {
-  const parent = useRef(null);
   const [savedSessions, setSavedSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
   const [otherSessions, setOtherSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
   const {manager} = React.useContext(GraphContext);
 
   const listSessions = React.useMemo(() => async () => {
-    const sessions = (await manager.list());
+    const sessions = (await manager.list())?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
     const me = UserSession.getInstance().currentUserNameOrAnonymous();
     const mine = sessions?.filter((d) => d.creator === me);
     const other = sessions?.filter((d) => d.creator !== me);

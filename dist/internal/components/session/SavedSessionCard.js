@@ -1,19 +1,19 @@
 import { GlobalEventHandler, I18nextManager, UserSession } from 'phovea_core';
-import React, { useRef } from 'react';
+import React from 'react';
 import { Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
-import { ListItemDropdown, SessionListItem } from '..';
+import { byDateDesc, ListItemDropdown, SessionListItem } from '..';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
 import { stopEvent } from '../../menu/utils';
 import { CommonSessionCard } from './CommonSessionCard';
 export function SavedSessionCard() {
-    const parent = useRef(null);
     const [savedSessions, setSavedSessions] = React.useState(null);
     const [otherSessions, setOtherSessions] = React.useState(null);
     const { manager } = React.useContext(GraphContext);
     const listSessions = React.useMemo(() => async () => {
-        const sessions = (await manager.list());
+        var _a;
+        const sessions = (_a = (await manager.list())) === null || _a === void 0 ? void 0 : _a.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
         const me = UserSession.getInstance().currentUserNameOrAnonymous();
         const mine = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator === me);
         const other = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator !== me);

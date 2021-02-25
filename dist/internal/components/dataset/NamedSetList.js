@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, ButtonGroup, Col, Dropdown } from 'react-bootstrap';
 import { SESSION_KEY_NEW_ENTRY_POINT } from '../..';
 import { GraphContext } from '../../menu/StartMenuReact';
-import { ListItemDropdown } from '../common/ListItemDropdown';
+import { ListItemDropdown } from '../common';
 export function NamedSetList({ headerIcon, headerText, value, status, error, readonly }) {
     const { manager } = React.useContext(GraphContext);
     const initNewSession = (event, view, options, defaultSessionValues = null) => {

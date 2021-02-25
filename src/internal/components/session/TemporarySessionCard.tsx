@@ -2,17 +2,12 @@ import {IProvenanceGraphDataDescription, I18nextManager} from 'phovea_core';
 import React from 'react';
 import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
-import {ListItemDropdown, SessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
+import {ListItemDropdown} from '../common';
 import {CommonSessionCard} from './CommonSessionCard';
-
-
-
-export function byDateDesc(a: any, b: any) {
-    return -((a.ts || 0) - (b.ts || 0));
-}
-
+import {SessionListItem} from './SessionListItem';
+import {byDateDesc} from './utils';
 
 export function TemporarySessionCard() {
     const [tempSessions, setTempSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);

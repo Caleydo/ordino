@@ -1,10 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SessionsTab } from './tabs/SessionsTab';
-import { DatasetsTab } from './tabs/DatasetsTab';
-import { ToursTab } from './tabs/ToursTab';
 import { GlobalEventHandler } from 'phovea_core';
 import { Ordino } from '../..';
+import { DatasetsTab, SessionsTab, ToursTab } from './tabs';
 const tabs = [
     { id: 'datasets', title: 'Datasets' },
     { id: 'sessions', title: 'Analysis Sessions' },

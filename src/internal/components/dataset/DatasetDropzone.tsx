@@ -5,7 +5,7 @@ import Dropzone from 'react-dropzone';
 export function DatasetDropzone() {
 
     const onDrop = (acceptedFiles) => {
-//
+      // TODO: Implement logic
     };
 
     return (
@@ -19,7 +19,7 @@ export function DatasetDropzone() {
                 <section>
                     <div {...getRootProps()}>
                         <input {...getInputProps()} />
-                        <div className="session-dropzone ">
+                        <div className="session-dropzone">
                             <p className="text-center mt-2 mb-1">Drop session file here or click to upload</p>
                             <p className="text-center" >Accepted file formats: Microsoft Excel (XLSX), comma or tab-seperated text file</p>
                         </div>

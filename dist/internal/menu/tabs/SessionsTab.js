@@ -2,10 +2,7 @@ import React from 'react';
 import { Container, Col, Nav, Row, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
-import { UploadSessionCard } from '../../components';
-import { CurrentSessionCard } from '../../components/session/CurrentSessionCard';
-import { SavedSessionCard } from '../../components/session/SavedSessionCard';
-import { TemporarySessionCard } from '../../components/session/TemporarySessionCard';
+import { CurrentSessionCard, SavedSessionCard, TemporarySessionCard, UploadSessionCard } from '../../components';
 export function SessionsTab() {
     // Tody merge the cards CurrentSessionCard, SavedSessionCard, TemporarySessionCard
     const cards = [

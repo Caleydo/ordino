@@ -55,7 +55,7 @@ function StartMenu(props) {
             React.createElement(Container, { fluid: true },
                 React.createElement(Row, null,
                     React.createElement(Col, { className: "d-flex justify-content-end" },
-                        React.createElement(Button, { className: "start-menu-close", variant: "link" },
+                        React.createElement(Button, { className: "start-menu-close", variant: "link", onClick: () => { props.setActive(null); } },
                             React.createElement("i", { className: "fas fa-times" }))))),
         index === 0 ? React.createElement(DatasetsTab, null) : null,
         index === 1 ? React.createElement(SessionsTab, null) : null,

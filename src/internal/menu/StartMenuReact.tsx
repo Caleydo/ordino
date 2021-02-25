@@ -132,7 +132,7 @@ function StartMenu(props: IStartMenuTabProps) {
           <Container fluid>
             <Row>
               <Col className="d-flex justify-content-end">
-                <Button className="start-menu-close" variant="link">
+                <Button className="start-menu-close" variant="link" onClick={() => { props.setActive(null); }}>
                   <i className="fas fa-times"></i>
                 </Button>
               </Col>

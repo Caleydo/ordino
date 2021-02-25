@@ -68,7 +68,7 @@ export function StartMenuComponent({headerMainMenu, manager, graph, modePromise}
       console.log('set mode', mode);
       setMode(mode);
       setActive((mode === 'start') ? tabs[0] : null);
-    })
+    });
   }, [modePromise]);
 
   console.log('start menu component');

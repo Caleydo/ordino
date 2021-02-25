@@ -5,7 +5,6 @@ import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
-import {stopEvent} from '../../menu/utils';
 import {ListItemDropdown} from '../common';
 import {CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
@@ -28,10 +27,11 @@ export function SavedSessionCard() {
 
   const {status, error} = useAsync(listSessions);
 
-
-  // TODO why is the check for the graph necessary here?
   const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
-    stopEvent(event);
+    event.preventDefault();
+    event.stopPropagation();
+
+    // TODO: why is the check for the graph necessary here?
     // if (graph) {
     //   return false;
     // }

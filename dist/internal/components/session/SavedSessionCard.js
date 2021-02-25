@@ -4,7 +4,6 @@ import { Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
-import { stopEvent } from '../../menu/utils';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
@@ -23,9 +22,10 @@ export function SavedSessionCard() {
         setOtherSessions(other);
     }, []);
     const { status, error } = useAsync(listSessions);
-    // TODO why is the check for the graph necessary here?
     const editSession = (event, desc) => {
-        stopEvent(event);
+        event.preventDefault();
+        event.stopPropagation();
+        // TODO: why is the check for the graph necessary here?
         // if (graph) {
         //   return false;
         // }

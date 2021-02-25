@@ -12,7 +12,7 @@ export function CurrentSessionCard() {
     const {manager} = React.useContext(GraphContext);
 
 
-    //TODO the list session function is similar for all the three cards, we should maybe try to extract it
+    //TODO the list session function is similar for all three cards, we should maybe try to extract it
     const listSessions = React.useMemo(() => async () => {
         const tempSessions = (await manager.list())?.filter((d) => !ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
         setCurrentSession(tempSessions?.[0]);

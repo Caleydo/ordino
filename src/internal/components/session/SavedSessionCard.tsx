@@ -1,5 +1,5 @@
 import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
-import React, {useRef} from 'react';
+import React from 'react';
 import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
@@ -27,7 +27,7 @@ export function SavedSessionCard() {
   const {status, error} = useAsync(listSessions);
 
 
-  // why is the check for the graph necessary here
+  // TODO why is the check for the graph necessary here?
   const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
     stopEvent(event);
     // if (graph) {

@@ -21,7 +21,7 @@ export function SavedSessionCard() {
         setOtherSessions(other);
     }, []);
     const { status, error } = useAsync(listSessions);
-    // why is the check for the graph necessary here
+    // TODO why is the check for the graph necessary here?
     const editSession = (event, desc) => {
         stopEvent(event);
         // if (graph) {

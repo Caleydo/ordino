@@ -17,6 +17,7 @@ export function TemporarySessionCard() {
         const tempSessions = (_a = (await manager.list())) === null || _a === void 0 ? void 0 : _a.filter((d) => !ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
         setTempSessions(tempSessions);
     }, []);
+    // TODO the status, error should not be passed to the children
     const { status, error } = useAsync(listSessions);
     return (React.createElement(React.Fragment, null,
         React.createElement(CommonSessionCard, { cardName: "Temporary Sessions", faIcon: "fa-history", cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo') }, (exportSession, cloneSession, saveSession, deleteSession) => {

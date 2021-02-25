@@ -1,5 +1,5 @@
 import {IProvenanceGraphDataDescription, I18nextManager} from 'phovea_core';
-import React, {useRef} from 'react';
+import React from 'react';
 import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {ListItemDropdown, SessionListItem} from '..';
@@ -22,6 +22,7 @@ export function TemporarySessionCard() {
         setTempSessions(tempSessions);
     }, []);
 
+    // TODO the status, error should not be passed to the children
     const {status, error} = useAsync(listSessions);
 
     return (

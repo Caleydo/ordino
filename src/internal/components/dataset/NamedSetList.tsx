@@ -11,7 +11,7 @@ interface INamedSetListProps {
   headerText: string;
   value: INamedSet[] | null;
   status: 'idle' | 'pending' | 'success' | 'error';
-  error: string | null;
+  error: Error | string | null;
   onclick?: () => null;
   readonly?: boolean;
 }
@@ -30,11 +30,18 @@ export function NamedSetList({headerIcon, headerText, value, status, error, read
     manager.newGraph();
   };
 
-
   return (
     <Col md={4} className="dataset-entry d-flex flex-column" >
       <header><i className={`mr-2 ${headerIcon}`}></i>{headerText}</header>
+      {status === 'pending' &&
+        <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
+      }
       {status === 'success' &&
+        value.length === 0 &&
+        <p>No sets available</p>
+      }
+      {status === 'success' &&
+        value.length > 0 &&
         <ButtonGroup vertical>
           {value.map((entry, i) => {
             return (
@@ -50,7 +57,8 @@ export function NamedSetList({headerIcon, headerText, value, status, error, read
           })}
         </ButtonGroup>
       }
-      {status === 'error' && <div>{error}</div>}
+      {/* {status === 'error' && <p>{(typeof error === 'string') ? error : (error as Error)?.message}</p>} */}
+      {status === 'error' && <p>Error when loading sets</p>}
     </Col>
   );
 }

@@ -4,7 +4,7 @@ interface INamedSetListProps {
     headerText: string;
     value: INamedSet[] | null;
     status: 'idle' | 'pending' | 'success' | 'error';
-    error: string | null;
+    error: Error | string | null;
     onclick?: () => null;
     readonly?: boolean;
 }

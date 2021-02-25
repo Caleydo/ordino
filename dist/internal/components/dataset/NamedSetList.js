@@ -19,7 +19,15 @@ export function NamedSetList({ headerIcon, headerText, value, status, error, rea
         React.createElement("header", null,
             React.createElement("i", { className: `mr-2 ${headerIcon}` }),
             headerText),
+        status === 'pending' &&
+            React.createElement("p", null,
+                React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                " Loading sets..."),
         status === 'success' &&
+            value.length === 0 &&
+            React.createElement("p", null, "No sets available"),
+        status === 'success' &&
+            value.length > 0 &&
             React.createElement(ButtonGroup, { vertical: true }, value.map((entry, i) => {
                 return (React.createElement(ButtonGroup, { key: i, className: "dropdown-parent justify-content-between" },
                     React.createElement(Button, { className: "text-left pl-0", style: { color: '#337AB7' }, variant: "link", onClick: (event) => initNewSession(event, 'celllinedb_start', value) }, entry.name),
@@ -28,6 +36,6 @@ export function NamedSetList({ headerIcon, headerText, value, status, error, rea
                             React.createElement(Dropdown.Item, null, "Edit"),
                             React.createElement(Dropdown.Item, { className: "dropdown-delete" }, "Delete"))));
             })),
-        status === 'error' && React.createElement("div", null, error)));
+        status === 'error' && React.createElement("p", null, "Error when loading sets")));
 }
 //# sourceMappingURL=NamedSetList.js.map

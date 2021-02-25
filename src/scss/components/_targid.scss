@@ -238,7 +238,7 @@ div.targid {
     transition: width $mode-animation-time ease;
 
     // first view should have width:100%
-    &:nth-child(2):last-child {
+    &:nth-child(1):last-child {
       width: 100%;
     }
 
@@ -342,6 +342,10 @@ div.targid {
       padding: 8px 0;
       font-size: 12px;
 
+      &.hidden {
+        display: none;
+      }
+
       .category {
         &:not(:first-child) {
           margin-top: 4px;
@@ -353,6 +357,7 @@ div.targid {
           margin: 0;
         }
       }
+
       button {
         width: 100%;
         padding: 10px 0;

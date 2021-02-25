@@ -35,10 +35,12 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
 
     const startMenuElement = main.ownerDocument.createElement('div');
     main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
-    ReactDOM.render(React.createElement(modules[1].StartMenuComponent, { headerMainMenu: this.header.mainMenu }), startMenuElement);
+    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {headerMainMenu: this.header.mainMenu, manager, graph}), startMenuElement);
 
-    // this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-    // app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
+    renderStartMenu();
+
+    // this.on(Ordino.EVENT_OPEN_START_MENU, () => renderStartMenu());
+    // app.on(Ordino.EVENT_OPEN_START_MENU, () => renderStartMenu());
     // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
 
     return app;

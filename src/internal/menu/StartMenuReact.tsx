@@ -1,5 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {CLUEGraphManager} from 'phovea_clue';
+import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
+import {Ordino} from '../..';
+import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
+
+
+
 
 interface IStartMenuTab {
   id: string;
@@ -13,20 +20,37 @@ interface IStartMenuTabProps {
 }
 
 const tabs: IStartMenuTab[] = [
-  { id: 'datasets', title: 'Datasets' },
-  { id: 'sessions', title: 'Analysis Sessions' },
-  { id: 'tours', title: 'Tours' },
+  {id: 'datasets', title: 'Datasets'},
+  {id: 'sessions', title: 'Analysis Sessions'},
+  {id: 'tours', title: 'Tours'},
 ];
 
-export function StartMenuComponent({headerMainMenu}: { headerMainMenu: HTMLElement }) {
+// tslint:disable-next-line: variable-name
+export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
+
+export function StartMenuComponent({headerMainMenu, manager, graph}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager, graph: ProvenanceGraph}) {
   const [active, setActive] = React.useState(null);
+
+  React.useEffect(() => {
+    const listener = () => setActive(tabs[0]);
+    GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
+
+    return () => {
+      GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
+    };
+  }, []);
+
+
   return (
     <>
       {ReactDOM.createPortal(
-        <MainMenuLinks tabs={tabs} active={active} setActive={setActive}></MainMenuLinks>,
+
+        <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)}></MainMenuLinks>,
         headerMainMenu
       )}
-      <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
+      <GraphContext.Provider value={{manager, graph}}>
+        <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
+      </GraphContext.Provider>
     </>
   );
 }
@@ -44,7 +68,8 @@ function MainMenuLinks(props: IStartMenuTabProps) {
             aria-selected={(props.active === tab)}
             onClick={(evt) => {
               evt.preventDefault();
-              if(props.active === tab) {
+              window.scrollTo(0, 0);
+              if (props.active === tab) {
                 props.setActive(null);
               } else {
                 props.setActive(tab);
@@ -60,17 +85,20 @@ function MainMenuLinks(props: IStartMenuTabProps) {
   );
 }
 
+
 function StartMenu(props: IStartMenuTabProps) {
   return (
     <div className={`ordino-start-menu tab-content ${props.active ? 'ordino-start-menu-open' : ''}`}>
-      {props.tabs.map((tab) => (
+      {props.tabs.map((tab, index) => (
         <div className={`tab-pane fade ${props.active === tab ? `active show` : ''}`}
           key={tab.id}
           id={tab.id}
           role="tabpanel"
           aria-labelledby={`${tab.id}-tab`}
         >
-          {tab.title}
+          {index === 0 ? <DatasetsTab /> : null}
+          {index === 1 ? <SessionsTab /> : null}
+          {index === 2 ? <ToursTab /> : null}
         </div>
       ))}
     </div>

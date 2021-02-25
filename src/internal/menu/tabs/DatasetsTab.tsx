@@ -54,13 +54,6 @@ export function DatasetsTab() {
 
   return (
     <>
-      <Row>
-        <Col className="d-flex justify-content-end">
-          <Button className="start-menu-close" variant="link">
-            <i className="fas fa-times"></i>
-          </Button>
-        </Col>
-      </Row>
       <Nav className="scrollspy-nav flex-column ml-4">
         {cards.map((card) => {
           return (

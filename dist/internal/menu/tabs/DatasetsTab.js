@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Col, Nav, Row, Button } from 'react-bootstrap';
+import { Container, Col, Nav, Row } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { UniqueIdManager } from 'phovea_core';
 import { DatasetCard, UploadDatasetCard } from '../../components';
@@ -43,10 +43,6 @@ export function DatasetsTab() {
         },
     ];
     return (React.createElement(React.Fragment, null,
-        React.createElement(Row, null,
-            React.createElement(Col, { className: "d-flex justify-content-end" },
-                React.createElement(Button, { className: "start-menu-close", variant: "link" },
-                    React.createElement("i", { className: "fas fa-times" })))),
         React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" },
             cards.map((card) => {
                 return (React.createElement(Link, { key: card.id, className: "nav-link", role: "button", to: `${card.id}_${suffix}`, spy: true, smooth: true, offset: -250, duration: 500 }, card.headerText));

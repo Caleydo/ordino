@@ -39,13 +39,6 @@ export function SessionsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();
   return (
     <>
-      <Row>
-        <Col className="d-flex justify-content-end">
-          <Button className="start-menu-close" variant="link" >
-            <i className="fas fa-times" ></i>
-          </Button>
-        </Col>
-      </Row>
       <Nav className="scrollspy-nav flex-column ml-4">
         {
           cards.map((card) => <Link className="nav-link" key={card.id} role="button" to={`${card.id}-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>{card.headerText}</Link>)

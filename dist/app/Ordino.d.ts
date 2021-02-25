@@ -10,6 +10,7 @@ import { CLUEGraphManager } from 'phovea_clue';
 import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication, ITDPOptions } from 'tdp_core';
 export declare class Ordino extends ATDPApplication<OrdinoApp> {
+    private modeResolver;
     constructor(options?: Partial<ITDPOptions>);
     protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<OrdinoApp>;
     protected initSessionImpl(app: OrdinoApp): void;

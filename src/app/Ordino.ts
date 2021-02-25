@@ -18,6 +18,8 @@ import {ATDPApplication, ITDPOptions} from 'tdp_core';
 
 export class Ordino extends ATDPApplication<OrdinoApp> {
 
+  private modeResolver = null;
+
   constructor(options: Partial<ITDPOptions> = {}) {
     super(Object.assign({
       prefix: 'ordino',
@@ -33,39 +35,40 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
 
     const app: OrdinoApp = new modules[0].OrdinoApp(graph, manager, main);
 
+    const modePromise = new Promise<'start'|'overlay'>((resolve, reject) => {
+      this.modeResolver = resolve;
+    });
+
     const startMenuElement = main.ownerDocument.createElement('div');
     main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
-    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {headerMainMenu: this.header.mainMenu, manager, graph}), startMenuElement);
+    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {headerMainMenu: this.header.mainMenu, manager, graph, modePromise}), startMenuElement);
 
     renderStartMenu();
 
-    // this.on(Ordino.EVENT_OPEN_START_MENU, () => renderStartMenu());
-    // app.on(Ordino.EVENT_OPEN_START_MENU, () => renderStartMenu());
     // app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event: IEvent, namedSet: INamedSet) => startMenu.pushNamedSet(namedSet));
 
     return app;
   }
 
   protected initSessionImpl(app: OrdinoApp) {
+    console.log('init session');
     const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);
-    const graph = app.graph;
-    if (graph.isEmpty && !hasInitScript) {
-      const hasSeenWelcomePage = `${this.options.prefix}_has_seen_welcome_page`;
-      // open start menu only if the user has the welcome page once
-      if (localStorage.getItem(hasSeenWelcomePage) === '1') {
-        this.fire(Ordino.EVENT_OPEN_START_MENU);
-      } else {
-        localStorage.setItem(hasSeenWelcomePage, '1');
-      }
+
+    if (app.graph.isEmpty && !hasInitScript) {
+      this.modeResolver('start');
+
     } else if (hasInitScript) {
+      this.modeResolver('overlay');
+
       const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(SESSION_KEY_NEW_ENTRY_POINT);
 
       if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-        graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+        app.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
       }
       app.push(view, null, null, options);
       UserSession.getInstance().remove(SESSION_KEY_NEW_ENTRY_POINT);
     } else {
+      this.modeResolver('overlay');
       //just if no other option applies jump to the stored state
       this.jumpToStoredOrLastState();
     }

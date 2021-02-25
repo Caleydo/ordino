@@ -1,9 +1,9 @@
 import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
 import React, {useRef} from 'react';
-import {Card, Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
+import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
-import {ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
-import {byDateDesc, ListItemDropdown, SessionListItem} from '..';
+import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
+import {ListItemDropdown, SessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
 import {stopEvent} from '../../menu/utils';
@@ -14,7 +14,7 @@ export function SavedSessionCard() {
   const parent = useRef(null);
   const [savedSessions, setSavedSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
   const [otherSessions, setOtherSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
-  const {graph, manager} = React.useContext(GraphContext);
+  const {manager} = React.useContext(GraphContext);
 
   const listSessions = React.useMemo(() => async () => {
     const sessions = (await manager.list());
@@ -27,6 +27,8 @@ export function SavedSessionCard() {
 
   const {status, error} = useAsync(listSessions);
 
+
+  // why is the check for the graph necessary here
   const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
     stopEvent(event);
     // if (graph) {
@@ -73,7 +75,7 @@ export function SavedSessionCard() {
                     {savedSessions?.map((session) => {
                       return <SessionListItem key={session.id} status={status} desc={session} error={error}>
                         <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
-                        <ListItemDropdown ref={parent}>
+                        <ListItemDropdown >
                           <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
                           <Dropdown.Item onClick={(event) => exportSession(event, session)}>Export</Dropdown.Item>
                           <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, session, setSavedSessions)}>Delete</Dropdown.Item>

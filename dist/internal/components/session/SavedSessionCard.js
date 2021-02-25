@@ -11,7 +11,7 @@ export function SavedSessionCard() {
     const parent = useRef(null);
     const [savedSessions, setSavedSessions] = React.useState(null);
     const [otherSessions, setOtherSessions] = React.useState(null);
-    const { graph, manager } = React.useContext(GraphContext);
+    const { manager } = React.useContext(GraphContext);
     const listSessions = React.useMemo(() => async () => {
         const sessions = (await manager.list());
         const me = UserSession.getInstance().currentUserNameOrAnonymous();
@@ -21,6 +21,7 @@ export function SavedSessionCard() {
         setOtherSessions(other);
     }, []);
     const { status, error } = useAsync(listSessions);
+    // why is the check for the graph necessary here
     const editSession = (event, desc) => {
         stopEvent(event);
         // if (graph) {
@@ -63,7 +64,7 @@ export function SavedSessionCard() {
                             React.createElement(Tab.Pane, { eventKey: "mySessions" }, savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
                                 return React.createElement(SessionListItem, { key: session.id, status: status, desc: session, error: error },
                                     React.createElement(Button, { variant: "outline-secondary", onClick: (event) => editSession(event, session), className: "mr-2 pt-1 pb-1" }, "Edit"),
-                                    React.createElement(ListItemDropdown, { ref: parent },
+                                    React.createElement(ListItemDropdown, null,
                                         React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
                                         React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
                                         React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session, setSavedSessions) }, "Delete")));

@@ -4,7 +4,6 @@ import { Button, Col, Row } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
 export function SessionListItem({ status, desc, error, children }) {
     const dateFromNow = (desc === null || desc === void 0 ? void 0 : desc.ts) ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
-    console.log(desc);
     return (React.createElement(React.Fragment, null,
         status === 'success' &&
             React.createElement(Row, { className: "dropdown-parent session-item mx-0 mb-1 align-items-start" },

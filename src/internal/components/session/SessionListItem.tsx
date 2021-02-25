@@ -1,9 +1,9 @@
 import {I18nextManager, IProvenanceGraphDataDescription} from 'phovea_core';
-import React, {useRef} from 'react';
+import React from 'react';
 import {Button, Col, Row} from 'react-bootstrap';
-import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
-import {ErrorAlertHandler, FormDialog, NotificationHandler, ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
+import { ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
 
+// TODO error and status props should probably not be passed here
 interface ISessionListItemProps {
   desc: IProvenanceGraphDataDescription | null;
   status: 'idle' | 'pending' | 'success' | 'error';
@@ -13,7 +13,6 @@ interface ISessionListItemProps {
 
 export function SessionListItem({status, desc, error, children}: ISessionListItemProps) {
   const dateFromNow = desc?.ts ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
-  console.log(desc);
   return (
     <>
       {status === 'success' &&

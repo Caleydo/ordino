@@ -22,6 +22,7 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
         manager.cloneLocal(desc);
         return false;
     };
+    // TODO refactor this to export the correct graph. Now it exports the current one.
     const exportSession = (event, desc) => {
         stopEvent(event);
         if (!graph) {

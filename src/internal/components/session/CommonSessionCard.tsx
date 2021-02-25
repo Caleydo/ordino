@@ -39,6 +39,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         return false;
     };
 
+    // TODO refactor this to export the correct graph. Now it exports the current one.
     const exportSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
         stopEvent(event);
         if (!graph) {

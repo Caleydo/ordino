@@ -11,7 +11,7 @@ const tabs = [
 ];
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext({ graph: null, manager: null });
-export function StartMenuComponent({ headerMainMenu, manager, graph, modePromise }) {
+export function StartMenuComponent({ header, manager, graph, modePromise }) {
     const [mode, setMode] = React.useState('start');
     const [active, setActive] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
     React.useEffect(() => {
@@ -28,9 +28,13 @@ export function StartMenuComponent({ headerMainMenu, manager, graph, modePromise
             setActive((mode === 'start') ? tabs[0] : null);
         });
     }, [modePromise]);
+    React.useEffect(() => {
+        // switch header to dark theme when a tab is active
+        header.toggleDarkTheme((active) ? true : false);
+    }, [header, active]);
     console.log('start menu component');
     return (React.createElement(React.Fragment, null,
-        ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a), mode: mode }), headerMainMenu),
+        ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a), mode: mode }), header.mainMenu),
         React.createElement(GraphContext.Provider, { value: { manager, graph } },
             React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive, mode: mode }))));
 }

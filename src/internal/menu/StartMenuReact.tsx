@@ -5,7 +5,7 @@ import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
 import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
-import {useAsync} from '../../hooks';
+import {AppHeader} from 'phovea_ui';
 
 
 export type StartMenuMode = 'start' | 'overlay';
@@ -50,7 +50,7 @@ const tabs: IStartMenuTab[] = [
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
-export function StartMenuComponent({headerMainMenu, manager, graph, modePromise}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager, graph: ProvenanceGraph, modePromise: Promise<StartMenuMode>}) {
+export function StartMenuComponent({header, manager, graph, modePromise}: {header: AppHeader, manager: CLUEGraphManager, graph: ProvenanceGraph, modePromise: Promise<StartMenuMode>}) {
   const [mode, setMode] = React.useState<'start'|'overlay'>('start');
   const [active, setActive] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
 
@@ -71,13 +71,18 @@ export function StartMenuComponent({headerMainMenu, manager, graph, modePromise}
     });
   }, [modePromise]);
 
+  React.useEffect(() => {
+    // switch header to dark theme when a tab is active
+    header.toggleDarkTheme((active) ? true : false);
+  }, [header, active]);
+
   console.log('start menu component');
 
   return (
     <>
       {ReactDOM.createPortal(
         <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)} mode={mode}></MainMenuLinks>,
-        headerMainMenu
+        header.mainMenu
       )}
       <GraphContext.Provider value={{manager, graph}}>
         <StartMenu tabs={tabs} active={active} setActive={setActive} mode={mode}></StartMenu>

@@ -41,7 +41,7 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
 
     const startMenuElement = main.ownerDocument.createElement('div');
     main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
-    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {headerMainMenu: this.header.mainMenu, manager, graph, modePromise}), startMenuElement);
+    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {header: this.header, manager, graph, modePromise}), startMenuElement);
 
     renderStartMenu();
 

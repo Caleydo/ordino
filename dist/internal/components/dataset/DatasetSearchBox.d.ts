@@ -1,4 +1,4 @@
-import { IDataSourceConfig } from '../../../../../tdp_publicdb/dist/common/config';
+import { IDataSourceConfig } from 'tdp_publicdb';
 interface IDatasetSearchBoxProps extends IDataSourceConfig {
     placeholder: string;
     dbViewSuffix: string;

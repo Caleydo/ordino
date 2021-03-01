@@ -1,21 +1,21 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {Button, Col, Row} from 'react-bootstrap';
 import {RestBaseUtils, RestStorageUtils, StoreUtils} from 'tdp_core';
-import {Species, SpeciesUtils} from 'tdp_gene/dist/common/common';
+import {Species, SpeciesUtils} from 'tdp_gene';
 import {FormatOptionLabelMeta} from 'react-select';
 import {AsyncPaginate} from 'react-select-async-paginate';
 import Highlighter from 'react-highlight-words';
 import {I18nextManager, IDTypeManager, UserSession} from 'phovea_core';
 import {GraphContext} from '../../menu/StartMenuReact';
 import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
-import {IDataSourceConfig} from '../../../../../tdp_publicdb/dist/common/config';
+import {IDataSourceConfig} from 'tdp_publicdb';
 
 interface IDatasetSearchBoxProps extends IDataSourceConfig {
     placeholder: string;
     dbViewSuffix: string;
 }
 
-export function DatasetSearchBox({placeholder, dbViewSuffix, idType: idtype, db, base, entityName}: IDatasetSearchBoxProps) {
+export function DatasetSearchBox({placeholder, dbViewSuffix, idType:idtype, db, base, entityName}: IDatasetSearchBoxProps) {
     const [items, setItems] = React.useState<IdTextPair[]>(null);
     const {graph, manager, app} = React.useContext(GraphContext);
     const search = (query: string): Promise<{more: boolean, items: Readonly<IdTextPair>[]}> => {

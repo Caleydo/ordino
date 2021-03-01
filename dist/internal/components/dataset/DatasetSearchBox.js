@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import { RestBaseUtils, RestStorageUtils, StoreUtils } from 'tdp_core';
-import { Species, SpeciesUtils } from 'tdp_gene/dist/common/common';
+import { Species, SpeciesUtils } from 'tdp_gene';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import Highlighter from 'react-highlight-words';
 import { I18nextManager, IDTypeManager, UserSession } from 'phovea_core';

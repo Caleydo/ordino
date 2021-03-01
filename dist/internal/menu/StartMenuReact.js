@@ -11,8 +11,8 @@ const tabs = [
     { id: 'tours', title: 'Tours' },
 ];
 // tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext({ graph: null, manager: null });
-export function StartMenuComponent({ headerMainMenu, manager, graph }) {
+export const GraphContext = React.createContext({ graph: null, manager: null, app: null });
+export function StartMenuComponent({ headerMainMenu, manager, graph, app }) {
     const [active, setActive] = React.useState(null);
     React.useEffect(() => {
         const listener = () => setActive(tabs[0]);
@@ -23,7 +23,7 @@ export function StartMenuComponent({ headerMainMenu, manager, graph }) {
     }, []);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
-        React.createElement(GraphContext.Provider, { value: { manager, graph } },
+        React.createElement(GraphContext.Provider, { value: { manager, graph, app } },
             React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive }))));
 }
 function MainMenuLinks(props) {

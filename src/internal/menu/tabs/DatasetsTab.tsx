@@ -3,19 +3,44 @@ import {Container, Col, Nav, Row, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {UniqueIdManager} from 'phovea_core';
 import {DatasetCard, UploadDatasetCard} from '../../components';
+import {IDataSourceConfig} from '../../../../../tdp_publicdb/dist/common/config';
+import {gene, cellline, tissue} from 'tdp_publicdb/dist/common/config';
 
+
+export interface IStartMenuCard {
+  id: string;
+  headerText: string;
+  headerIcon: string;
+  datasource: IDataSourceConfig;
+  // TODO temporary fix
+  dbViewSuffix: string;
+  tabs: IStartMenuSectionTab[];
+}
+
+
+export interface IStartMenuSectionTab {
+  id: string;
+  tabText: string;
+  tabIcon: string;
+}
 
 export function DatasetsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();
 
-  const cards = [
+  //  cards, setCards to load the cards from extension point
+  // React.useEffect(() => {
+  //   Registry.listPlugins
+  // }, [])
+
+
+  // TODO generate from extension point
+  const cards: IStartMenuCard[] = [
     {
       id: 'genes',
-      idType: 'Ensembl',
       headerText: 'Genes',
       headerIcon: 'fas fa-database',
-      database: 'publicdb',
-      dbViewBase: 'gene',
+      dbViewSuffix: `_gene_items`,
+      datasource: gene,
       tabs: [
         {id: 'human', tabText: 'Human', tabIcon: 'fas fa-male'},
         {id: 'mouse', tabText: 'Mouse', tabIcon: 'fas fa-fw mouse-icon'}
@@ -23,11 +48,10 @@ export function DatasetsTab() {
     },
     {
       id: 'celllines',
-      idType: 'Cellline',
       headerText: 'Cell Lines',
       headerIcon: 'fas fa-database',
-      database: 'publicdb',
-      dbViewBase: 'cellline',
+      dbViewSuffix: `_items`,
+      datasource: cellline,
       tabs: [
         {id: 'human', tabText: 'Human', tabIcon: 'fas fa-male'},
         {id: 'mouse', tabText: 'Mouse', tabIcon: 'fas fa-fw mouse-icon'}
@@ -35,11 +59,10 @@ export function DatasetsTab() {
     },
     {
       id: 'tissues',
-      idType: 'Tissue',
       headerText: 'Tissues',
       headerIcon: 'fas fa-database',
-      database: 'publicdb',
-      dbViewBase: 'tissue',
+      datasource: tissue,
+      dbViewSuffix: `_items`,
       tabs: [
         {id: 'human', tabText: 'Human', tabIcon: 'fas fa-male'},
         // {id: 'mouse', tabText: 'Mouse', tabIcon: 'fas fa-fw mouse-icon'}

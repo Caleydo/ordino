@@ -5,37 +5,18 @@ import {INamedSet, ENamedSetType, RestBaseUtils, RestStorageUtils, IStoredNamedS
 import {NamedSetList} from './NamedSetList';
 import {useAsync} from '../../../hooks';
 import {UserSession} from 'phovea_core';
+import {IStartMenuCard} from '../../menu/tabs/DatasetsTab';
 
-interface IDatasetTab {
-  id: string;
-  tabText: string;
-  tabIcon: string;
-}
 
-interface IDatasetCardProps {
-  id: string;
 
-  headerText: string;
 
-  headerIcon: string;
-
-  database: string;
-
-  dbViewBase: string;
-
-  idType: string;
-
-  tabs: IDatasetTab[];
-}
-
-export function DatasetCard({headerText, headerIcon, database, dbViewBase, idType, tabs}: IDatasetCardProps) {
+export function DatasetCard({headerText, headerIcon, tabs, dbViewSuffix, datasource}: IStartMenuCard) {
   const subTypeKey = 'species';
 
   const loadPredefinedSet = React.useMemo(() => {
-    return () => RestBaseUtils.getTDPData(database, `${dbViewBase}_panel`)
+    return () => RestBaseUtils.getTDPData(datasource.db, `${datasource.base}_panel`)
       .then((panels: {id: string, description: string, species: string}[]) => {
         return panels
-          // .filter((panel) => panel.species === species) // filter is done below in the JSX code
           .map(function panel2NamedSet({id, description, species}): INamedSet {
             return {
               type: ENamedSetType.PANEL,
@@ -49,19 +30,17 @@ export function DatasetCard({headerText, headerIcon, database, dbViewBase, idTyp
             };
           });
       });
-  }, [database, dbViewBase, idType]);
+  }, [datasource.db, datasource.base, datasource.idType]);
 
   const loadNamedSets = React.useMemo(() => {
-    return () => RestStorageUtils.listNamedSets(idType);
-  }, [database, dbViewBase, idType]);
-
+    return () => RestStorageUtils.listNamedSets(datasource.idType);
+  }, [datasource.db, datasource.base, datasource.idType]);
 
   const predefinedNamedSets = useAsync<INamedSet[], Error>(loadPredefinedSet);
   const me = UserSession.getInstance().currentUserNameOrAnonymous();
   const namedSets = useAsync<INamedSet[], Error>(loadNamedSets);
   const myNamedSets = {...namedSets, ...{value: namedSets.value?.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator === me)}};
   const publicNamedSets = {...namedSets, ...{value: namedSets.value?.filter((d) => d.type === ENamedSetType.NAMEDSET && d.creator !== me)}};
-
   const filterValue = (value: INamedSet[], tab: string) => value?.filter((entry) => entry.subTypeValue === tab);
 
   return (
@@ -83,7 +62,7 @@ export function DatasetCard({headerText, headerIcon, database, dbViewBase, idTyp
               {tabs.map((tab) => {
                 return (
                   <Tab.Pane key={tab.id} eventKey={tab.id} className="mt-4">
-                    <DatasetSearchBox></DatasetSearchBox>
+                    <DatasetSearchBox placeholder={`Add ${headerText}`} {...datasource} dbViewSuffix={dbViewSuffix}></DatasetSearchBox>
                     <Row className="mt-4">
                       <NamedSetList headerIcon="fas fa-database" headerText="Predefined Sets" status={predefinedNamedSets.status} error={predefinedNamedSets.error} value={filterValue(predefinedNamedSets.value, tab.id)} readonly />
                       <NamedSetList headerIcon="fas fa-user" headerText="My Sets" status={myNamedSets.status} error={myNamedSets.error} value={filterValue(myNamedSets.value, tab.id)} />

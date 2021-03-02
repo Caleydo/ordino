@@ -1,6 +1,5 @@
-import { EventHandler } from 'phovea_core';
 import { ViewWrapper } from './ViewWrapper';
-export interface IOrdinoApp extends EventHandler {
+export interface IOrdinoApp {
     /**
      * Root HTML node of the Ordino App
      */
@@ -28,7 +27,9 @@ export interface IOrdinoApp extends EventHandler {
      */
     removeImpl(view: ViewWrapper, focus: number): Promise<number>;
     /**
-     * Updates the views information, e.g. history
+     * Start a new analysis session with the given view
+     * @param viewId ID of the registered view in phovea.ts
+     * @param options Options that that should be passed to the new view
      */
-    update(): void;
+    startSessionWithView(viewId: string, options: any): any;
 }

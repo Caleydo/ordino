@@ -1,40 +1,41 @@
-import {EventHandler, ICmdResult, IDType} from 'phovea_core';
 import {ViewWrapper} from './ViewWrapper';
 
-export interface IOrdinoApp extends EventHandler {
-    /**
-     * Root HTML node of the Ordino App
-     */
-    readonly node: Element;
+export interface IOrdinoApp {
+  /**
+   * Root HTML node of the Ordino App
+   */
+  readonly node: Element;
 
-    /**
-     * List of all view wrappers / views that are currently open
-     */
-    readonly views: ViewWrapper[];
+  /**
+   * List of all view wrappers / views that are currently open
+   */
+  readonly views: ViewWrapper[];
 
-    /**
-     * The last view of the list of open views
-     */
-    readonly lastView: ViewWrapper;
+  /**
+   * The last view of the list of open views
+   */
+  readonly lastView: ViewWrapper;
 
-    /**
-     * Add a new view wrapper to the list of open views.
-     * The return value is index in the list of views.
-     * @param view ViewWrapper
-     */
-    pushImpl(view: ViewWrapper): Promise<number>;
+  /**
+   * Add a new view wrapper to the list of open views.
+   * The return value is index in the list of views.
+   * @param view ViewWrapper
+   */
+  pushImpl(view: ViewWrapper): Promise<number>;
 
-    /**
-     * Remove the given and focus on the view with the given index.
-     * If the focus index is -1 the previous view of the given view will be focused.
-     *
-     * @param view View instance to remove
-     * @param focus Index of the view in the view list (default: -1)
-     */
-    removeImpl(view: ViewWrapper, focus: number): Promise<number>;
+  /**
+   * Remove the given and focus on the view with the given index.
+   * If the focus index is -1 the previous view of the given view will be focused.
+   *
+   * @param view View instance to remove
+   * @param focus Index of the view in the view list (default: -1)
+   */
+  removeImpl(view: ViewWrapper, focus: number): Promise<number>;
 
-    /**
-     * Updates the views information, e.g. history
-     */
-    update(): void;
-  }
+  /**
+   * Start a new analysis session with the given view
+   * @param viewId ID of the registered view in phovea.ts
+   * @param options Options that that should be passed to the new view
+   */
+  startSessionWithView(viewId: string, options: any);
+}

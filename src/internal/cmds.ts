@@ -129,7 +129,7 @@ export class CmdUtils {
 
     await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
 
-    app.update();
+    // app.update(); // TODO: use setState to rerender app component
 
     return {
       inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)

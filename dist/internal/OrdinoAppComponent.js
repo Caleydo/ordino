@@ -17,6 +17,8 @@ import { UserSession } from 'phovea_core';
 import { EStartMenuMode, StartMenuComponent } from './menu/StartMenuReact';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext({ app: null });
+// tslint:disable-next-line: variable-name
+export const GraphContext = React.createContext({ graph: null, manager: null });
 /**
  * The main class for the Ordino app
  * This class ...
@@ -338,17 +340,18 @@ export class OrdinoAppComponent extends React.Component {
             [EViewMode.FOCUS]: 't-focus'
         };
         return (React.createElement(React.Fragment, null,
-            React.createElement(StartMenuComponent, { header: this.props.header, manager: this.props.graphManager, graph: this.props.graph, mode: this.state.mode }),
-            React.createElement("ul", { className: "tdp-button-group history" }, this.state.views.map((view) => {
-                return (React.createElement("li", { key: view.desc.id, className: `hview ${historyClassNames[view.mode]}` },
-                    React.createElement("a", { href: "#", onClick: (event) => {
-                            event.preventDefault();
-                            this.showInFocus(view);
-                        } }, view.desc.name)));
-            })),
-            React.createElement(OrdinoContext.Provider, { value: { app: this } },
-                React.createElement("div", { className: "wrapper" },
-                    React.createElement("div", { className: "targid", ref: this.nodeRef })))));
+            React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
+                React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode }),
+                React.createElement("ul", { className: "tdp-button-group history" }, this.state.views.map((view) => {
+                    return (React.createElement("li", { key: view.desc.id, className: `hview ${historyClassNames[view.mode]}` },
+                        React.createElement("a", { href: "#", onClick: (event) => {
+                                event.preventDefault();
+                                this.showInFocus(view);
+                            } }, view.desc.name)));
+                })),
+                React.createElement(OrdinoContext.Provider, { value: { app: this } },
+                    React.createElement("div", { className: "wrapper" },
+                        React.createElement("div", { className: "targid", ref: this.nodeRef }))))));
     }
 }
 /**

@@ -3,7 +3,7 @@ import React from 'react';
 import { Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
 import { ErrorAlertHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 import { useAsync } from '../../../hooks';
-import { GraphContext } from '../../menu/StartMenuReact';
+import { GraphContext } from '../../OrdinoAppComponent';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';

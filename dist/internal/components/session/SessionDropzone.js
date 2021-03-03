@@ -1,6 +1,6 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import { GraphContext } from '../../menu/StartMenuReact';
+import { GraphContext } from '../../OrdinoAppComponent';
 export function SessionDropzone() {
     const { graph, manager } = React.useContext(GraphContext);
     const onDrop = (acceptedFile) => {

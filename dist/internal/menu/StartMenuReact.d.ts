@@ -1,6 +1,3 @@
-import * as React from 'react';
-import { CLUEGraphManager } from 'phovea_clue';
-import { ProvenanceGraph } from 'phovea_core';
 import { AppHeader } from 'phovea_ui';
 export declare enum EStartMenuMode {
     /**
@@ -12,13 +9,7 @@ export declare enum EStartMenuMode {
      */
     OVERLAY = "overlay"
 }
-export declare const GraphContext: React.Context<{
-    graph: ProvenanceGraph;
-    manager: CLUEGraphManager;
-}>;
-export declare function StartMenuComponent({ header, manager, graph, mode }: {
+export declare function StartMenuComponent({ header, mode }: {
     header: AppHeader;
-    manager: CLUEGraphManager;
-    graph: ProvenanceGraph;
     mode: EStartMenuMode;
 }): JSX.Element;

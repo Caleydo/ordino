@@ -24,6 +24,9 @@ import {AppHeader} from 'phovea_ui';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null});
 
+// tslint:disable-next-line: variable-name
+export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
+
 interface IOrdinoAppComponentProps {
   graph: ProvenanceGraph;
   graphManager: CLUEGraphManager;
@@ -410,24 +413,26 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
 
     return(
       <>
-        <StartMenuComponent header={this.props.header} manager={this.props.graphManager} graph={this.props.graph} mode={this.state.mode}></StartMenuComponent>
-        <ul className="tdp-button-group history">
-          {this.state.views.map((view) => {
-            return (
-              <li key={view.desc.id} className={`hview ${historyClassNames[view.mode]}`}>
-                <a href="#" onClick={(event) => {
-                  event.preventDefault();
-                  this.showInFocus(view);
-                }}>{view.desc.name}</a>
-              </li>
-            );
-          })}
-        </ul>
-        <OrdinoContext.Provider value={{app: this}}>
-        <div className="wrapper">
-          <div className="targid" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
-        </div>
-        </OrdinoContext.Provider>
+        <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
+          <StartMenuComponent header={this.props.header} mode={this.state.mode}></StartMenuComponent>
+          <ul className="tdp-button-group history">
+            {this.state.views.map((view) => {
+              return (
+                <li key={view.desc.id} className={`hview ${historyClassNames[view.mode]}`}>
+                  <a href="#" onClick={(event) => {
+                    event.preventDefault();
+                    this.showInFocus(view);
+                  }}>{view.desc.name}</a>
+                </li>
+              );
+            })}
+          </ul>
+          <OrdinoContext.Provider value={{app: this}}>
+          <div className="wrapper">
+            <div className="targid" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
+          </div>
+          </OrdinoContext.Provider>
+        </GraphContext.Provider>
       </>
     );
   }

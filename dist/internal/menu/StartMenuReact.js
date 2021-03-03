@@ -20,9 +20,7 @@ const tabs = [
     { id: 'sessions', title: 'Analysis Sessions' },
     { id: 'tours', title: 'Tours' },
 ];
-// tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext({ graph: null, manager: null });
-export function StartMenuComponent({ header, manager, graph, mode }) {
+export function StartMenuComponent({ header, mode }) {
     const [active, setActive] = React.useState((mode === EStartMenuMode.START) ? tabs[0] : null); // first tab in overlay mode OR close all tabs in overlay mode
     React.useEffect(() => {
         const listener = () => setActive(tabs[0]);
@@ -37,8 +35,7 @@ export function StartMenuComponent({ header, manager, graph, mode }) {
     }, [header, active]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a), mode: mode }), header.mainMenu),
-        React.createElement(GraphContext.Provider, { value: { manager, graph } },
-            React.createElement(StartMenuTabs, { tabs: tabs, active: active, setActive: setActive, mode: mode }))));
+        React.createElement(StartMenuTabs, { tabs: tabs, active: active, setActive: setActive, mode: mode })));
 }
 function MainMenuLinks(props) {
     return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.active === tab ? 'active' : ''}`, key: tab.id },

@@ -17,6 +17,10 @@ import { AppHeader } from 'phovea_ui';
 export declare const OrdinoContext: React.Context<{
     app: IOrdinoApp;
 }>;
+export declare const GraphContext: React.Context<{
+    graph: ProvenanceGraph;
+    manager: CLUEGraphManager;
+}>;
 interface IOrdinoAppComponentProps {
     graph: ProvenanceGraph;
     graphManager: CLUEGraphManager;

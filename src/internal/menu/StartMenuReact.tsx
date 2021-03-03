@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {CLUEGraphManager} from 'phovea_clue';
-import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
@@ -55,10 +54,8 @@ const tabs: IStartMenuTab[] = [
   {id: 'tours', title: 'Tours'},
 ];
 
-// tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
-export function StartMenuComponent({header, manager, graph, mode}: {header: AppHeader, manager: CLUEGraphManager, graph: ProvenanceGraph, mode: EStartMenuMode}) {
+export function StartMenuComponent({header, mode}: {header: AppHeader, mode: EStartMenuMode}) {
   const [active, setActive] = React.useState((mode === EStartMenuMode.START) ? tabs[0] : null); // first tab in overlay mode OR close all tabs in overlay mode
 
   React.useEffect(() => {
@@ -81,9 +78,7 @@ export function StartMenuComponent({header, manager, graph, mode}: {header: AppH
         <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <GraphContext.Provider value={{manager, graph}}>
-        <StartMenuTabs tabs={tabs} active={active} setActive={setActive} mode={mode}></StartMenuTabs>
-      </GraphContext.Provider>
+      <StartMenuTabs tabs={tabs} active={active} setActive={setActive} mode={mode}></StartMenuTabs>
     </>
   );
 }

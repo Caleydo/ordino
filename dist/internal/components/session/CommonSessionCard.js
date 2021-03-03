@@ -1,4 +1,4 @@
-import { I18nextManager } from 'phovea_core';
+import { GlobalEventHandler, I18nextManager, UserSession } from 'phovea_core';
 import { FormDialog } from 'phovea_ui';
 import React, { useRef } from 'react';
 import { Card } from 'react-bootstrap';
@@ -7,12 +7,47 @@ import { GraphContext } from '../../menu/StartMenuReact';
 export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
     const parent = useRef(null);
     const { graph, manager } = React.useContext(GraphContext);
+    const selectSession = (event, desc) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (UserSession.getInstance().canWrite(desc)) {
+            manager.loadGraph(desc);
+        }
+        else {
+            manager.cloneLocal(desc);
+        }
+        return false;
+    };
     const saveSession = (event, desc) => {
         event.preventDefault();
         event.stopPropagation();
         ProvenanceGraphMenuUtils.persistProvenanceGraphMetaData(desc).then((extras) => {
             if (extras !== null) {
                 manager.importExistingGraph(desc, extras, true).catch(ErrorAlertHandler.getInstance().errorAlert);
+            }
+        });
+        return false;
+    };
+    // TODO why is the check for the graph necessary here?
+    const editSession = (event, desc, callback) => {
+        event.preventDefault();
+        event.stopPropagation();
+        // if (graph) {
+        //   return false;
+        // }
+        ProvenanceGraphMenuUtils.editProvenanceGraphMetaData(desc, { permission: ProvenanceGraphMenuUtils.isPersistent(desc) }).then((extras) => {
+            if (extras !== null) {
+                Promise.resolve(manager.editGraphMetaData(desc, extras))
+                    .then((desc) => {
+                    callback((sessions) => {
+                        const copy = [...sessions];
+                        const i = copy.findIndex((s) => s.id === desc.id);
+                        copy[i] = desc;
+                        return copy;
+                    });
+                    GlobalEventHandler.getInstance().fire(ProvenanceGraphMenuUtils.GLOBAL_EVENT_MANIPULATED);
+                })
+                    .catch(ErrorAlertHandler.getInstance().errorAlert);
             }
         });
         return false;
@@ -68,6 +103,22 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
         }
         return false;
     };
+    const sessionAction = (type, event, desc, updateSessions) => {
+        switch (type) {
+            case "select" /* SELECT */:
+                return selectSession(event, desc);
+            case "save" /* SAVE */:
+                return saveSession(event, desc);
+            case "edit" /* EDIT */:
+                return editSession(event, desc, updateSessions);
+            case "clone" /* CLONE */:
+                return cloneSession(event, desc);
+            case "epxport" /* EXPORT */:
+                return exportSession(event, desc);
+            case "delete" /* DELETE */:
+                return deleteSession(event, desc, updateSessions);
+        }
+    };
     return React.createElement(React.Fragment, null,
         React.createElement("h4", { className: "text-left d-flex align-items-center mb-3" },
             React.createElement("i", { className: `mr-2 ordino-icon-2 fas ${faIcon}` }),
@@ -75,6 +126,6 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
         React.createElement(Card, { ref: parent, className: "shadow-sm" },
             React.createElement(Card.Body, { className: "p-3" },
                 cardInfo || React.createElement(Card.Text, null, cardInfo),
-                children(exportSession, cloneSession, saveSession, deleteSession))));
+                children(sessionAction))));
 }
 //# sourceMappingURL=CommonSessionCard.js.map

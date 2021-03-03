@@ -1,4 +1,4 @@
-import {I18nextManager, IProvenanceGraphDataDescription} from 'phovea_core';
+import {I18nextManager} from 'phovea_core';
 import React from 'react';
 import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';

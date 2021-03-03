@@ -4,32 +4,38 @@ import { Button, Dropdown } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../menu/StartMenuReact';
+import { byDateDesc } from '../../menu/tabs/SessionsTab';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
-import { byDateDesc } from './utils';
-export function TemporarySessionCard() {
-    const [tempSessions, setTempSessions] = React.useState(null);
-    const { manager } = React.useContext(GraphContext);
+export default function TemporarySessionCard({ name, faIcon, cssClass }) {
+    const { app } = React.useContext(GraphContext);
+    const [sessions, setSessions] = React.useState(null);
     const listSessions = React.useMemo(() => async () => {
         var _a;
-        const tempSessions = (_a = (await manager.list())) === null || _a === void 0 ? void 0 : _a.filter((d) => !ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
-        setTempSessions(tempSessions);
+        const all = (_a = (await app.graphManager.list())) === null || _a === void 0 ? void 0 : _a.filter((d) => !ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+        setSessions(all);
     }, []);
-    // TODO the status, error should not be passed to the children
-    const { status, error } = useAsync(listSessions);
+    const { status } = useAsync(listSessions);
     return (React.createElement(React.Fragment, null,
-        React.createElement(CommonSessionCard, { cardName: "Temporary Sessions", faIcon: "fa-history", cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo') }, (exportSession, cloneSession, saveSession, deleteSession) => {
+        React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo') }, (sessionAction) => {
             return React.createElement(React.Fragment, null,
-                " ", tempSessions === null || tempSessions === void 0 ? void 0 :
-                tempSessions.map((session) => {
-                    return React.createElement(SessionListItem, { key: session.id, status: status, desc: session, error: error },
-                        React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => saveSession(event, session) }, "Save"),
+                status === 'pending' &&
+                    React.createElement("p", null,
+                        React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                        " Loading sets..."),
+                status === 'success' &&
+                    sessions.length === 0 &&
+                    React.createElement("p", null, "No sets available"),
+                status === 'success' && sessions.length > 0 && (sessions === null || sessions === void 0 ? void 0 : sessions.map((session) => {
+                    return React.createElement(SessionListItem, { key: session.id, desc: session, selectSession: (event) => sessionAction("select" /* SELECT */, event, session) },
+                        React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", onClick: (event) => sessionAction("save" /* SAVE */, event, session) }, "Save"),
                         React.createElement(ListItemDropdown, null,
-                            React.createElement(Dropdown.Item, { onClick: (event) => cloneSession(event, session) }, "Clone"),
-                            React.createElement(Dropdown.Item, { onClick: (event) => exportSession(event, session) }, "Export"),
-                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteSession(event, session, setTempSessions) }, "Delete")));
-                }));
+                            React.createElement(Dropdown.Item, { onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, "Clone"),
+                            React.createElement(Dropdown.Item, { onClick: (event) => sessionAction("epxport" /* EXPORT */, event, session) }, "Export"),
+                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, setSessions) }, "Delete")));
+                })),
+                status === 'error' && React.createElement("p", null, "Error when loading sets"));
         })));
 }
 //# sourceMappingURL=TemporarySessionCard.js.map

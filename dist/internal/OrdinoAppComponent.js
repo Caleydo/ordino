@@ -264,11 +264,7 @@ export class OrdinoAppComponent extends React.Component {
         return Promise.resolve(NaN);
     }
     replaceView(existingView, viewId, idtype, selection, options) {
-        return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options))
-            .then((r) => {
-            // this.update(); // TODO: -> use state to trigger rerender
-            return r;
-        });
+        return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
     }
     /**
      * Jumps to a given viewWrapper in the provenance graph

@@ -7,7 +7,7 @@
  ********************************************************************/
 
 import * as React from 'react';
-import {BaseUtils, NodeUtils} from 'phovea_core';
+import {BaseUtils, NodeUtils, ICmdResult} from 'phovea_core';
 import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'phovea_core';
 import {AView} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
@@ -262,7 +262,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
    * Removes a view, and if there are multiple open (following) views, close them in reverse order.
    * @param viewWrapper
    */
-  remove(indexOrView: number | ViewWrapper) {
+  private remove(indexOrView: number | ViewWrapper) {
     const viewWrapper = typeof indexOrView === 'number' ? this.state.views[indexOrView as number] : indexOrView as ViewWrapper;
     const index = this.state.views.indexOf(viewWrapper);
 
@@ -327,12 +327,8 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     return Promise.resolve(NaN);
   }
 
-  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?) {
-    return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options))
-      .then((r) => {
-        // this.update(); // TODO: -> use state to trigger rerender
-        return r;
-      });
+  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): Promise<ICmdResult> {
+    return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
   }
 
   /**

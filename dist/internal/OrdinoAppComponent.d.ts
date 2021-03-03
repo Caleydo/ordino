@@ -6,6 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import * as React from 'react';
+import { ICmdResult } from 'phovea_core';
 import { IObjectRef, ProvenanceGraph, IDType } from 'phovea_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CLUEGraphManager } from 'phovea_clue';
@@ -86,14 +87,14 @@ export declare class OrdinoAppComponent extends React.Component<IOrdinoAppCompon
      * The last view of the list of open views
      */
     get lastView(): ViewWrapper;
-    push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<import("phovea_core").ICmdResult> | PromiseLike<Promise<import("phovea_core").ICmdResult>>;
+    push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
     initNewSession(viewId: string, options: any, defaultSessionValues?: any): void;
     private pushView;
     /**
      * Removes a view, and if there are multiple open (following) views, close them in reverse order.
      * @param viewWrapper
      */
-    remove(indexOrView: number | ViewWrapper): void;
+    private remove;
     /**
      * Add a new view wrapper to the list of open views.
      * The return value is index in the list of views.

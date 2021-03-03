@@ -43,7 +43,7 @@ export default function TemporarySessionCard({name, faIcon, cssClass}: IStartMen
                                     <ListItemDropdown>
                                         <Dropdown.Item onClick={(event) => sessionAction(Action.CLONE, event, session)}>Clone</Dropdown.Item>
                                         <Dropdown.Item onClick={(event) => sessionAction(Action.EXPORT, event, session)}>Export</Dropdown.Item>
-                                        <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(Action.DELETE, event, setSessions)}>Delete</Dropdown.Item>
+                                        <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(Action.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
                                     </ListItemDropdown>
                                 </SessionListItem>;
                             })

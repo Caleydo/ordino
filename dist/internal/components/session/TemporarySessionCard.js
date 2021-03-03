@@ -33,7 +33,7 @@ export default function TemporarySessionCard({ name, faIcon, cssClass }) {
                         React.createElement(ListItemDropdown, null,
                             React.createElement(Dropdown.Item, { onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, "Clone"),
                             React.createElement(Dropdown.Item, { onClick: (event) => sessionAction("epxport" /* EXPORT */, event, session) }, "Export"),
-                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, setSessions) }, "Delete")));
+                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, "Delete")));
                 })),
                 status === 'error' && React.createElement("p", null, "Error when loading sets"));
         })));

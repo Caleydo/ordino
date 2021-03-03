@@ -1,8 +1,6 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import Dropzone from 'react-dropzone';
 import {GraphContext} from '../../menu/StartMenuReact';
-
-
 
 export function SessionDropzone() {
     const {graph, manager} = React.useContext(GraphContext);

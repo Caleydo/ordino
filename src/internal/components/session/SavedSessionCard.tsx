@@ -3,11 +3,12 @@ import React from 'react';
 import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
-import {byDateDesc, ListItemDropdown, SessionListItem} from '..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../menu/StartMenuReact';
-import {stopEvent} from '../../menu/utils';
+import {ListItemDropdown} from '../common';
 import {CommonSessionCard} from './CommonSessionCard';
+import {SessionListItem} from './SessionListItem';
+import {byDateDesc} from './utils';
 
 
 export function SavedSessionCard() {
@@ -26,10 +27,11 @@ export function SavedSessionCard() {
 
   const {status, error} = useAsync(listSessions);
 
-
-  // TODO why is the check for the graph necessary here?
   const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
-    stopEvent(event);
+    event.preventDefault();
+    event.stopPropagation();
+
+    // TODO: why is the check for the graph necessary here?
     // if (graph) {
     //   return false;
     // }
@@ -74,7 +76,7 @@ export function SavedSessionCard() {
                     {savedSessions?.map((session) => {
                       return <SessionListItem key={session.id} status={status} desc={session} error={error}>
                         <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
-                        <ListItemDropdown >
+                        <ListItemDropdown>
                           <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
                           <Dropdown.Item onClick={(event) => exportSession(event, session)}>Export</Dropdown.Item>
                           <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, session, setSavedSessions)}>Delete</Dropdown.Item>

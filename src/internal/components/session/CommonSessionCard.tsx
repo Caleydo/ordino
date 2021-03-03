@@ -5,7 +5,6 @@ import {Card} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
 import {GraphContext} from '../../menu/StartMenuReact';
-import {stopEvent} from '../../menu/utils';
 
 interface ICommonSessionCardProps {
     cardName: string;
@@ -23,7 +22,9 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
     const {graph, manager} = React.useContext(GraphContext);
 
     const saveSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
-        stopEvent(event);
+        event.preventDefault();
+        event.stopPropagation();
+
         ProvenanceGraphMenuUtils.persistProvenanceGraphMetaData(desc).then((extras: any) => {
             if (extras !== null) {
                 manager.importExistingGraph(desc, extras, true).catch(ErrorAlertHandler.getInstance().errorAlert);
@@ -34,21 +35,25 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
 
 
     const cloneSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
-        stopEvent(event);
+        event.preventDefault();
+        event.stopPropagation();
+
         manager.cloneLocal(desc);
         return false;
     };
 
     // TODO refactor this to export the correct graph. Now it exports the current one.
     const exportSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
-        stopEvent(event);
+        event.preventDefault();
+        event.stopPropagation();
+
         if (!graph) {
             return false;
         }
 
-        console.log(graph);
+        // console.log(graph);
         const r = graph.persist();
-        console.log(r);
+        // console.log(r);
         const str = JSON.stringify(r, null, '\t');
         //create blob and save it
         const blob = new Blob([str], {type: 'application/json;charset=utf-8'});
@@ -70,7 +75,9 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
 
 
     const deleteSession = async (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription, callback?: (value: React.SetStateAction<IProvenanceGraphDataDescription[]>) => void) => {
-        stopEvent(event);
+        event.preventDefault();
+        event.stopPropagation();
+
         const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', {name: desc.name}));
         if (deleteIt) {
             await Promise.resolve(manager.delete(desc)).then((r) => {

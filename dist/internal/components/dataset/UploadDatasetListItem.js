@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Col, Dropdown, Row } from 'react-bootstrap';
-import { ListItemDropdown } from '../common/ListItemDropdown';
+import { ListItemDropdown } from '../common';
 export function UploadDatasetListItem({ name, accessType, uploadedDate, description }) {
     return (React.createElement(React.Fragment, null,
         React.createElement(Row, { className: "dropdown-parent session-item mx-0 mb-1 align-items-start" },

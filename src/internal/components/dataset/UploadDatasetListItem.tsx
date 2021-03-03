@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Col, Dropdown, Row} from 'react-bootstrap';
-import {ListItemDropdown} from '../common/ListItemDropdown';
+import {ListItemDropdown} from '../common';
 
 interface IUploadDatasetListItemProps {
   name: string;

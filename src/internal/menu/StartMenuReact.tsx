@@ -1,11 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {SessionsTab} from './tabs/SessionsTab';
-import {DatasetsTab} from './tabs/DatasetsTab';
-import {ToursTab} from './tabs/ToursTab';
 import {CLUEGraphManager} from 'phovea_clue';
 import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
 import {Ordino, OrdinoApp} from '../..';
+import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 
 
 

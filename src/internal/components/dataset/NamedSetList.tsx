@@ -4,7 +4,7 @@ import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {INamedSet} from 'tdp_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
 import {GraphContext} from '../../menu/StartMenuReact';
-import {ListItemDropdown} from '../common/ListItemDropdown';
+import {ListItemDropdown} from '../common';
 
 interface INamedSetListProps {
   headerIcon: string;

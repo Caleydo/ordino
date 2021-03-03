@@ -1,6 +1,6 @@
 import React from 'react';
-import {SessionDropzone} from '..';
 import {CommonSessionCard} from './CommonSessionCard';
+import {SessionDropzone} from './SessionDropzone';
 
 
 export function UploadSessionCard() {

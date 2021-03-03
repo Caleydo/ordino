@@ -1,11 +1,12 @@
 import React from 'react';
+import {IStartMenuSectionDesc} from '../../..';
 import {CommonSessionCard} from './CommonSessionCard';
 import {SessionDropzone} from './SessionDropzone';
 
 
-export function UploadSessionCard() {
+export default function UploadSessionCard({name, faIcon, cssClass}: IStartMenuSectionDesc) {
     return (
-        <CommonSessionCard cardName="Import Session" faIcon="fa-file-upload" cardInfo="You can import sessions as temporary sessions and continue the analysis afterwards.">
+        <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo="You can import sessions as temporary sessions and continue the analysis afterwards.">
             {() => <SessionDropzone />}
         </CommonSessionCard>
     );

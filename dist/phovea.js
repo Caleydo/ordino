@@ -46,17 +46,29 @@ export default function (registry) {
         factory: 'compressSetSelection',
         matches: '(targidSetSelection)'
     });
-    registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => import('./menu/internal/TemporarySessionSection'), {
-        factory: 'new TemporarySessionSection',
+    registry.push('ordinoStartMenuSection', 'targid_current_session', () => import('./internal/components/session/CurrentSessionCard'), {
+        name: 'Current Sessions',
+        cssClass: 'tdpSessionCurrentData',
+        faIcon: 'fa-history',
+        priority: 10
+    });
+    registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => import('./internal/components/session/TemporarySessionCard'), {
         name: 'Temporary Sessions',
         cssClass: 'tdpSessionTemporaryData',
-        priority: 90
+        faIcon: 'fa-history',
+        priority: 95
     });
-    registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection'), {
-        factory: 'new PersistentSessionSection',
+    registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./internal/components/session/SavedSessionCard'), {
         name: 'Saved Sessions',
         cssClass: 'tdpSessionPersistentData',
-        priority: 95
+        faIcon: 'fa-cloud',
+        priority: 90
+    });
+    registry.push('ordinoStartMenuSection', 'targid_import_session', () => import('./internal/components/session/UploadSessionCard'), {
+        name: 'Import Session',
+        cssClass: 'tdpSessionUploadtData',
+        faIcon: 'fa-file-upload',
+        priority: 100
     });
     registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./base/WelcomeView'), {
         factory: 'new WelcomeView',

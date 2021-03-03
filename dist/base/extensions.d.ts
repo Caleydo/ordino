@@ -12,6 +12,7 @@ export declare const EXTENSION_POINT_START_MENU = "ordinoStartMenuSection";
 export interface IStartMenuSectionDesc extends IPluginDesc {
     readonly name: string;
     readonly cssClass: string;
+    readonly faIcon: string;
     load(): Promise<IStartMenuSectionPlugin>;
 }
 export interface IStartMenuSectionOptions {
@@ -23,7 +24,7 @@ export interface IStartMenuSectionOptions {
 }
 interface IStartMenuSectionPlugin {
     desc: IStartMenuSectionDesc;
-    factory(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions): IStartMenuSection;
+    factory(props: IStartMenuSectionDesc): JSX.Element;
 }
 export interface IStartMenuSection {
     readonly desc: IPluginDesc;

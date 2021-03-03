@@ -5,8 +5,17 @@ interface ICommonSessionCardProps {
     cardName: string;
     faIcon: string;
     cardInfo?: string;
-    children?: (exportSession: SessionAction, cloneSession: SessionAction, saveSession?: SessionAction, deleteSession?: SessionAction) => React.ReactNode;
+    children?: (sessionAction: SessionActionChooser) => React.ReactNode;
 }
-declare type SessionAction = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription, callback?: (value: React.SetStateAction<IProvenanceGraphDataDescription[]>) => void) => boolean | Promise<boolean>;
+export declare const enum Action {
+    SELECT = "select",
+    SAVE = "save",
+    EDIT = "edit",
+    CLONE = "clone",
+    EXPORT = "epxport",
+    DELETE = "delete"
+}
+export declare type SessionActionChooser = (type: Action, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export declare type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children }: ICommonSessionCardProps): JSX.Element;
 export {};

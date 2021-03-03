@@ -16,12 +16,12 @@ export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 export interface IStartMenuSectionDesc extends IPluginDesc {
   readonly name: string;
   readonly cssClass: string;
-
+  readonly faIcon: string;
   load(): Promise<IStartMenuSectionPlugin>;
 }
 
 export interface IStartMenuSectionOptions {
-  session?(viewId: string, options: { namedSet?: INamedSet, [key: string]: any }, defaultSessionValues: any): void;
+  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
 
   graphManager: CLUEGraphManager;
 }
@@ -29,7 +29,7 @@ export interface IStartMenuSectionOptions {
 interface IStartMenuSectionPlugin {
   desc: IStartMenuSectionDesc;
 
-  factory(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions): IStartMenuSection;
+  factory(props: IStartMenuSectionDesc): JSX.Element;
 }
 
 export interface IStartMenuSection {

@@ -1,16 +1,26 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { GlobalEventHandler } from 'phovea_core';
+import { BaseUtils, GlobalEventHandler } from 'phovea_core';
 import { Ordino } from '../..';
 import { DatasetsTab, SessionsTab, ToursTab } from './tabs';
-const tabs = [
-    { id: 'datasets', title: 'Datasets' },
-    { id: 'sessions', title: 'Analysis Sessions' },
-    { id: 'tours', title: 'Tours' },
-];
 // tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext({ graph: null, manager: null });
-export function StartMenuComponent({ headerMainMenu, manager, graph }) {
+export const GraphContext = React.createContext(null);
+export function StartMenuComponent({ headerMainMenu, manager, graph, options }) {
+    const defaultConfig = {
+        enableDatasetsTab: true,
+        enableSessionsTab: true,
+        enableToursTab: true,
+        enableOtherTab: true
+    };
+    const { enableDatasetsTab, enableToursTab, enableSessionsTab, enableOtherTab } = BaseUtils.mixin(defaultConfig, options.clientConfig || {});
+    const [tabs] = React.useState([
+        { id: 'datasets', title: 'Datasets', enabled: enableDatasetsTab },
+        { id: 'sessions', title: 'Analysis Sessions', enabled: enableSessionsTab },
+        { id: 'tours', title: 'Tours', enabled: enableToursTab },
+        { id: 'more', title: 'More', enabled: enableOtherTab },
+    ].filter((t) => {
+        return t.enabled;
+    }));
     const [active, setActive] = React.useState(null);
     React.useEffect(() => {
         const listener = () => setActive(tabs[0]);
@@ -21,7 +31,7 @@ export function StartMenuComponent({ headerMainMenu, manager, graph }) {
     }, []);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a) }), headerMainMenu),
-        React.createElement(GraphContext.Provider, { value: { manager, graph } },
+        React.createElement(GraphContext.Provider, { value: { manager, graph, options } },
             React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive }))));
 }
 function MainMenuLinks(props) {

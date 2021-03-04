@@ -65,6 +65,7 @@
       "scrollTo": "jquery.scrollto/jquery.scrollTo.js",
       "jquery": "jquery/dist/jquery"
     },
+    "--copyFiles": ["dist/clientConfig.json"],
     "libraryExternals": [],
     "ignores": [],
     "today": "Sun, 06 Nov 2016 15:02:36 GMT",

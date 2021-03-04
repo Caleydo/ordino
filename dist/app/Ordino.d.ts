@@ -9,8 +9,15 @@ import { ProvenanceGraph } from 'phovea_core';
 import { CLUEGraphManager } from 'phovea_clue';
 import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication, ITDPOptions } from 'tdp_core';
+export interface IOrdinoOptions extends ITDPOptions {
+    clientConfig?: {
+        enableDatasetsTab?: boolean;
+        enableToursTab?: boolean;
+        enableSessionsTab?: boolean;
+    };
+}
 export declare class Ordino extends ATDPApplication<OrdinoApp> {
-    constructor(options?: Partial<ITDPOptions>);
+    constructor(options?: Partial<IOrdinoOptions>);
     protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<OrdinoApp>;
     protected initSessionImpl(app: OrdinoApp): void;
 }

@@ -16,16 +16,27 @@ import {OrdinoApp} from '../internal/OrdinoApp';
 import {TDPApplicationUtils} from 'tdp_core';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
 
+
+export interface IOrdinoOptions extends ITDPOptions {
+  clientConfig?: {
+    enableDatasetsTab?: boolean;
+    enableToursTab?: boolean;
+    enableSessionsTab?: boolean;
+  };
+}
+
 export class Ordino extends ATDPApplication<OrdinoApp> {
 
-  constructor(options: Partial<ITDPOptions> = {}) {
+  constructor(options: Partial<IOrdinoOptions> = {}) {
     super(Object.assign({
       prefix: 'ordino',
       name: 'Ordino'
     }, options));
+    console.log('options',options)
   }
 
   protected async createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
+
     main.classList.add('targid');
 
     // lazy loading for better module bundling
@@ -35,7 +46,7 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
 
     const startMenuElement = main.ownerDocument.createElement('div');
     main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
-    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {headerMainMenu: this.header.mainMenu, manager, graph}), startMenuElement);
+    const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, {headerMainMenu: this.header.mainMenu, manager, graph, options: this.options}), startMenuElement);
 
     renderStartMenu();
 

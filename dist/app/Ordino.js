@@ -17,6 +17,7 @@ export class Ordino extends ATDPApplication {
             prefix: 'ordino',
             name: 'Ordino'
         }, options));
+        console.log('options', options);
     }
     async createApp(graph, manager, main) {
         main.classList.add('targid');
@@ -25,7 +26,7 @@ export class Ordino extends ATDPApplication {
         const app = new modules[0].OrdinoApp(graph, manager, main);
         const startMenuElement = main.ownerDocument.createElement('div');
         main.parentElement.append(startMenuElement); // append element before ReactDOM.render()
-        const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, { headerMainMenu: this.header.mainMenu, manager, graph }), startMenuElement);
+        const renderStartMenu = () => ReactDOM.render(React.createElement(modules[1].StartMenuComponent, { headerMainMenu: this.header.mainMenu, manager, graph, options: this.options }), startMenuElement);
         renderStartMenu();
         // this.on(Ordino.EVENT_OPEN_START_MENU, () => renderStartMenu());
         // app.on(Ordino.EVENT_OPEN_START_MENU, () => renderStartMenu());

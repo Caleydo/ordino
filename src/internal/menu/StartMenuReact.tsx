@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {CLUEGraphManager} from 'phovea_clue';
-import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
-import {Ordino} from '../..';
+import {BaseUtils, GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
+import {IOrdinoOptions, Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 
 
@@ -11,6 +11,7 @@ import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 interface IStartMenuTab {
   id: string;
   title: string;
+  enabled: boolean;
 }
 
 interface IStartMenuTabProps {
@@ -19,16 +20,36 @@ interface IStartMenuTabProps {
   setActive: React.Dispatch<React.SetStateAction<IStartMenuTab>>;
 }
 
-const tabs: IStartMenuTab[] = [
-  {id: 'datasets', title: 'Datasets'},
-  {id: 'sessions', title: 'Analysis Sessions'},
-  {id: 'tours', title: 'Tours'},
-];
 
 // tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
+export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager, options: IOrdinoOptions}>(null);
 
-export function StartMenuComponent({headerMainMenu, manager, graph}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager, graph: ProvenanceGraph}) {
+export function StartMenuComponent({headerMainMenu, manager, graph, options}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager, graph: ProvenanceGraph, options: IOrdinoOptions}) {
+
+  const defaultConfig = {
+    enableDatasetsTab: true,
+    enableSessionsTab: true,
+    enableToursTab: true,
+    enableOtherTab: true
+  }
+
+  const {
+    enableDatasetsTab,
+    enableToursTab,
+    enableSessionsTab,
+    enableOtherTab
+  } = BaseUtils.mixin(defaultConfig, options.clientConfig || {});
+
+  const [tabs] = React.useState<IStartMenuTab[]>([
+    {id: 'datasets', title: 'Datasets', enabled: enableDatasetsTab},
+    {id: 'sessions', title: 'Analysis Sessions', enabled: enableSessionsTab},
+    {id: 'tours', title: 'Tours', enabled: enableToursTab},
+    {id: 'more', title: 'More', enabled: enableOtherTab},
+  ].filter((t) => {
+    return t.enabled;
+  }))
+
+
   const [active, setActive] = React.useState(null);
 
   React.useEffect(() => {
@@ -48,7 +69,7 @@ export function StartMenuComponent({headerMainMenu, manager, graph}: {headerMain
         <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)}></MainMenuLinks>,
         headerMainMenu
       )}
-      <GraphContext.Provider value={{manager, graph}}>
+      <GraphContext.Provider value={{manager, graph, options}}>
         <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
       </GraphContext.Provider>
     </>

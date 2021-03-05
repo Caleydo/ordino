@@ -30,4 +30,21 @@ export interface IStartMenuSection {
     push(namedSet: INamedSet): boolean;
     update?(): void;
 }
+export declare const EXTENSION_POINT_STARTMENU_DATASET = "ordinoStartMenuDataset";
+export interface IStartMenuDatasetDesc extends IPluginDesc {
+    readonly id: string;
+    readonly name: string;
+    readonly cssClass: string;
+    readonly idType: string;
+    readonly description: string;
+    load(): Promise<IStartMenuDatasetPlugin>;
+}
+interface IStartMenuDatasetPlugin {
+    desc: IStartMenuDatasetDesc;
+    factory(parent: HTMLElement, desc: IStartMenuDatasetDesc, options: IStartMenuSectionOptions): IStartMenuDataset;
+}
+export interface IStartMenuDataset {
+    push(namedSet: INamedSet): boolean;
+    update(): void;
+}
 export {};

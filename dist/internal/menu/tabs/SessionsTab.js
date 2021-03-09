@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Container, Col, Nav, Row, Button } from 'react-bootstrap';
+import { Container, Col, Nav, Row } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { useAsync } from '../../../hooks';
@@ -18,10 +18,6 @@ export function SessionsTab() {
     }, []);
     const { status, value: sections } = useAsync(loadSections);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Row, null,
-            React.createElement(Col, { className: "d-flex justify-content-end" },
-                React.createElement(Button, { className: "start-menu-close", variant: "link" },
-                    React.createElement("i", { className: "fas fa-times" })))),
         React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" }, sections === null || sections === void 0 ? void 0 : sections.map((section) => React.createElement(Link, { className: "nav-link", key: section.desc.id, role: "button", to: `${section.desc.id}-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, section.desc.name))),
         React.createElement(Container, { className: "mb-4 analysis-tab" },
             React.createElement(Row, null,

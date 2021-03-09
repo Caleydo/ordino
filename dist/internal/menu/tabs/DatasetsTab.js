@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Container, Col, Nav, Row, Button } from 'react-bootstrap';
+import { Container, Col, Nav, Row } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { UploadDatasetCard } from '../../components';
@@ -13,10 +13,6 @@ export function DatasetsTab() {
     }, []);
     const { status, value: cards } = useAsync(loadCards);
     return (React.createElement(React.Fragment, null,
-        React.createElement(Row, null,
-            React.createElement(Col, { className: "d-flex justify-content-end" },
-                React.createElement(Button, { className: "start-menu-close", variant: "link" },
-                    React.createElement("i", { className: "fas fa-times" })))),
         React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" },
             status === 'success' ?
                 cards.map((card) => {

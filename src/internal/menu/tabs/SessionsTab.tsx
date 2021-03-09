@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Container, Card, Col, Nav, Row, Tab, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
-import {UniqueIdManager} from 'phovea_core';
+import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {UploadSessionCard} from '../../components';
 import {CurrentSessionCard} from '../../components/session/CurrentSessionCard';
 import {SavedSessionCard} from '../../components/session/SavedSessionCard';

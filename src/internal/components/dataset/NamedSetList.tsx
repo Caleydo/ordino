@@ -10,13 +10,14 @@ interface INamedSetListProps {
   headerIcon: string;
   headerText: string;
   value: INamedSet[] | null;
+  viewId: string;
   status: 'idle' | 'pending' | 'success' | 'error';
   error: Error | string | null;
   onclick?: () => null;
   readonly?: boolean;
 }
 
-export function NamedSetList({headerIcon, headerText, value, status, error, readonly}: INamedSetListProps) {
+export function NamedSetList({headerIcon, headerText, viewId, value, status, error, readonly}: INamedSetListProps) {
 
   const {manager} = React.useContext(GraphContext);
 
@@ -46,7 +47,7 @@ export function NamedSetList({headerIcon, headerText, value, status, error, read
           {value.map((entry, i) => {
             return (
               <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
-                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => initNewSession(event, 'celllinedb_start', value)} >{entry.name}</Button>
+                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => initNewSession(event, viewId, value)} >{entry.name}</Button>
                 { readonly ||
                   <ListItemDropdown>
                     <Dropdown.Item>Edit</Dropdown.Item>

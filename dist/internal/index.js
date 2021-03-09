@@ -5,4 +5,5 @@ export * from './cmds';
 export * from './OrdinoApp';
 export * from './StartMenu';
 export * from './menu';
+export * from './components';
 //# sourceMappingURL=index.js.map

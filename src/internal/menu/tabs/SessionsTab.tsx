@@ -25,13 +25,6 @@ export function SessionsTab() {
 
   return (
     <>
-      <Row>
-        <Col className="d-flex justify-content-end">
-          <Button className="start-menu-close" variant="link" >
-            <i className="fas fa-times" ></i>
-          </Button>
-        </Col>
-      </Row>
       <Nav className="scrollspy-nav flex-column ml-4">
         {
           sections?.map((section) => <Link className="nav-link" key={section.desc.id} role="button" to={`${section.desc.id}-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>{section.desc.name}</Link>)

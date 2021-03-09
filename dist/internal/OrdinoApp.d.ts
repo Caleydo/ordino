@@ -23,7 +23,6 @@ export declare const EXTENSION_POINT_WELCOME_PAGE = "ordinoWelcomeView";
 export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
     readonly graph: ProvenanceGraph;
     readonly graphManager: CLUEGraphManager;
-    static readonly EVENT_OPEN_START_MENU = "openStartMenu";
     /**
      * List of open views (e.g., to show in the history)
      * @type {ViewWrapper[]}
@@ -40,14 +39,6 @@ export declare class OrdinoApp extends EventHandler implements IOrdinoApp {
     private readonly chooseNextView;
     private readonly updateSelection;
     constructor(graph: ProvenanceGraph, graphManager: CLUEGraphManager, parent: HTMLElement);
-    /**
-     * Loads registered welcome pages from the extension points.
-     * The welcome page with the highest priority is loaded and shown.
-     *
-     * @param {HTMLElement} parent
-     */
-    private buildWelcomeView;
-    private buildHistory;
     get node(): Element;
     /**
      * Decide if a new view should be opened or an existing (right) detail view should be closed.

@@ -3,13 +3,13 @@ import React from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
 import { useAsync } from '../../../hooks';
-import { GraphContext } from '../../menu/StartMenuReact';
+import { AppContext } from '../../menu/StartMenuReact';
 import { byDateDesc } from '../../menu/tabs/SessionsTab';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
 export default function TemporarySessionCard({ name, faIcon, cssClass }) {
-    const { app } = React.useContext(GraphContext);
+    const { app } = React.useContext(AppContext);
     const [sessions, setSessions] = React.useState(null);
     const listSessions = React.useMemo(() => async () => {
         var _a;

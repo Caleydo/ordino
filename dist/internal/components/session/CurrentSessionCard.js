@@ -2,12 +2,12 @@ import { I18nextManager } from 'phovea_core';
 import React from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
-import { GraphContext } from '../../menu/StartMenuReact';
+import { AppContext } from '../../menu/StartMenuReact';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
 export default function CurrentSessionCard({ name, faIcon, cssClass }) {
-    const { app } = React.useContext(GraphContext);
+    const { app } = React.useContext(AppContext);
     const desc = app.graph.desc;
     return (React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo') }, (sessionAction) => {
         return React.createElement(SessionListItem, { desc: desc, selectSession: (event) => sessionAction("select" /* SELECT */, event, desc) },

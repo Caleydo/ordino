@@ -66,7 +66,7 @@ export default function (registry) {
     });
     registry.push('ordinoStartMenuSection', 'targid_import_session', () => import('./internal/components/session/UploadSessionCard'), {
         name: 'Import Session',
-        cssClass: 'tdpSessionUploadtData',
+        cssClass: 'tdpSessionUploadedData',
         faIcon: 'fa-file-upload',
         priority: 100
     });

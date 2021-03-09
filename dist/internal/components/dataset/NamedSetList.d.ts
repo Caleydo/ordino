@@ -5,8 +5,7 @@ interface INamedSetListProps {
     value: INamedSet[] | null;
     viewId: string;
     status: 'idle' | 'pending' | 'success' | 'error';
-    error: Error | string | null;
     readonly?: boolean;
 }
-export declare function NamedSetList({ headerIcon, headerText, viewId, value, status, error, readonly }: INamedSetListProps): JSX.Element;
+export declare function NamedSetList({ headerIcon, headerText, viewId, value, status, readonly }: INamedSetListProps): JSX.Element;
 export {};

@@ -26,9 +26,9 @@ const tabs: IStartMenuTab[] = [
 ];
 
 // tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager, app: OrdinoApp}>({graph: null, manager: null, app: null});
+export const AppContext = React.createContext<{app: OrdinoApp}>({app: null});
 
-export function StartMenuComponent({headerMainMenu, manager, graph, app}: {headerMainMenu: HTMLElement, manager: CLUEGraphManager, graph: ProvenanceGraph, app: OrdinoApp}) {
+export function StartMenuComponent({headerMainMenu, app}: {headerMainMenu: HTMLElement, app: OrdinoApp}) {
   const [active, setActive] = React.useState(null);
 
   React.useEffect(() => {
@@ -48,9 +48,9 @@ export function StartMenuComponent({headerMainMenu, manager, graph, app}: {heade
         <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)}></MainMenuLinks>,
         headerMainMenu
       )}
-      <GraphContext.Provider value={{manager, graph, app}}>
+      <AppContext.Provider value={{app}}>
         <StartMenu tabs={tabs} active={active} setActive={setActive}></StartMenu>
-      </GraphContext.Provider>
+      </AppContext.Provider>
     </>
   );
 }

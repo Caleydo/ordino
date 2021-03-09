@@ -5,11 +5,11 @@ import { Species, SpeciesUtils } from 'tdp_gene';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import Highlighter from 'react-highlight-words';
 import { I18nextManager, IDTypeManager, UserSession } from 'phovea_core';
-import { GraphContext } from '../../menu/StartMenuReact';
+import { AppContext } from '../../menu/StartMenuReact';
 import { SESSION_KEY_NEW_ENTRY_POINT } from '../..';
 export function DatasetSearchBox({ placeholder, dbViewSuffix, idType: idtype, db, base, entityName }) {
     const [items, setItems] = React.useState(null);
-    const { graph, manager, app } = React.useContext(GraphContext);
+    const { graph, manager, app } = React.useContext(AppContext);
     const search = (query) => {
         return RestBaseUtils.getTDPLookup(db, base + dbViewSuffix, {
             column: entityName,

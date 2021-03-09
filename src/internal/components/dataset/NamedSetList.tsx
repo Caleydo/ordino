@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {INamedSet} from 'tdp_core';
-import {GraphContext} from '../../menu/StartMenuReact';
+import {AppContext} from '../../menu/StartMenuReact';
 import {ListItemDropdown} from '../common';
 
 interface INamedSetListProps {
@@ -10,16 +10,15 @@ interface INamedSetListProps {
   value: INamedSet[] | null;
   viewId: string;
   status: 'idle' | 'pending' | 'success' | 'error';
-  error: Error | string | null;
   readonly?: boolean;
 }
 
-export function NamedSetList({headerIcon, headerText, viewId, value, status, error, readonly}: INamedSetListProps) {
+export function NamedSetList({headerIcon, headerText, viewId, value, status, readonly}: INamedSetListProps) {
 
-  const {app} = React.useContext(GraphContext);
+  const {app} = React.useContext(AppContext);
   const open = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
-    app.initNewSession(viewId, value)
+    app.initNewSession(viewId, value);
   };
 
   return (

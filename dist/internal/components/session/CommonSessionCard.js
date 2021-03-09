@@ -3,10 +3,10 @@ import { FormDialog } from 'phovea_ui';
 import React, { useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
-import { GraphContext } from '../../menu/StartMenuReact';
+import { AppContext } from '../../menu/StartMenuReact';
 export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
     const parent = useRef(null);
-    const { graph, manager } = React.useContext(GraphContext);
+    const { graph, manager } = React.useContext(AppContext);
     const selectSession = (event, desc) => {
         event.preventDefault();
         event.stopPropagation();

@@ -14,7 +14,7 @@ import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
 import { SESSION_KEY_NEW_ENTRY_POINT } from './constants';
 import { UserSession } from 'phovea_core';
-import { EStartMenuMode, StartMenuComponent } from './menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenuReact';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name
@@ -38,6 +38,7 @@ export class OrdinoAppComponent extends React.Component {
         this.ref = this.props.graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
         this.state = {
             mode: EStartMenuMode.START,
+            open: EStartMenuOpen.CLOSED,
             views: []
         };
     }
@@ -45,8 +46,15 @@ export class OrdinoAppComponent extends React.Component {
         // this function can be used to load some initial content async
         return null;
     }
-    setStartMenuMode(mode) {
+    /**
+     * Set the mode and open/close state of the start menu.
+     * Set both options at once to avoid multiple rerender.
+     * @param open Open/close state
+     * @param mode Overlay/start mode
+     */
+    setStartMenuState(open, mode) {
         this.setState({
+            open,
             mode
         });
     }
@@ -339,9 +347,10 @@ export class OrdinoAppComponent extends React.Component {
             [EViewMode.HIDDEN]: 't-hide',
             [EViewMode.FOCUS]: 't-focus'
         };
+        console.log(this.state.mode, this.state.open);
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
-                React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: (this.state.views.length === 0) }),
+                React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
                 React.createElement("ul", { className: "tdp-button-group history" }, this.state.views.map((view) => {
                     return (React.createElement("li", { key: view.desc.id, className: `hview ${historyClassNames[view.mode]}` },
                         React.createElement("a", { href: "#", onClick: (event) => {

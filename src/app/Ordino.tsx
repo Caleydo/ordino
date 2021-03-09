@@ -15,7 +15,7 @@ import {SESSION_KEY_NEW_ENTRY_POINT} from '../internal/constants';
 import {OrdinoAppComponent} from '../internal/OrdinoAppComponent';
 import {TDPApplicationUtils} from 'tdp_core';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
-import {EStartMenuMode} from '../internal/menu/StartMenuReact';
+import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenuReact';
 
 export class Ordino extends ATDPApplication<OrdinoAppComponent> {
 
@@ -60,10 +60,10 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
       const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);
 
       if (app.props.graph.isEmpty && !hasInitScript) {
-        app.setStartMenuMode(EStartMenuMode.START);
+        app.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
 
       } else if (hasInitScript) {
-        app.setStartMenuMode(EStartMenuMode.OVERLAY);
+        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
 
         const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(SESSION_KEY_NEW_ENTRY_POINT);
 
@@ -73,7 +73,7 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
         app.push(view, null, null, options);
         UserSession.getInstance().remove(SESSION_KEY_NEW_ENTRY_POINT);
       } else {
-        app.setStartMenuMode(EStartMenuMode.OVERLAY);
+        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         //just if no other option applies jump to the stored state
         this.jumpToStoredOrLastState();
       }

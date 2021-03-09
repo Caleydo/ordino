@@ -15,14 +15,27 @@ export var EStartMenuMode;
      */
     EStartMenuMode["OVERLAY"] = "overlay";
 })(EStartMenuMode || (EStartMenuMode = {}));
+export var EStartMenuOpen;
+(function (EStartMenuOpen) {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    EStartMenuOpen["OPEN"] = "open";
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    EStartMenuOpen["CLOSED"] = "closed";
+})(EStartMenuOpen || (EStartMenuOpen = {}));
 const tabs = [
     { id: 'datasets', title: 'Datasets' },
     { id: 'sessions', title: 'Analysis Sessions' },
     { id: 'tours', title: 'Tours' },
 ];
 export function StartMenuComponent({ header, mode, open }) {
-    const [activeTab, setActiveTab] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
+    // no active tab until `open` is set OR a link in the header navigation is clicked
+    const [activeTab, setActiveTab] = React.useState(null);
     React.useEffect(() => {
+        // legacy event from ATDPApplication
         const listener = () => setActiveTab(tabs[0]);
         GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
         return () => {
@@ -30,7 +43,8 @@ export function StartMenuComponent({ header, mode, open }) {
         };
     }, []);
     React.useEffect(() => {
-        setActiveTab((open) ? tabs[0] : null);
+        // set the active tab when the start menu should be opened
+        setActiveTab((open === EStartMenuOpen.OPEN) ? tabs[0] : null);
     }, [open]);
     React.useEffect(() => {
         // switch header to dark theme when a tab is active

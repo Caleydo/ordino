@@ -19,6 +19,18 @@ export enum EStartMenuMode {
   OVERLAY = 'overlay'
 }
 
+export enum EStartMenuOpen {
+  /**
+   * no analysis in the background, the start menu cannot be closed
+   */
+  OPEN = 'open',
+
+  /**
+   * an analysis in the background, the start menu can be closed
+   */
+  CLOSED = 'closed'
+}
+
 interface IStartMenuTab {
   id: string;
   title: string;
@@ -55,10 +67,12 @@ const tabs: IStartMenuTab[] = [
 ];
 
 
-export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: boolean}) {
-  const [activeTab, setActiveTab] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
+export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: EStartMenuOpen}) {
+  // no active tab until `open` is set OR a link in the header navigation is clicked
+  const [activeTab, setActiveTab] = React.useState(null);
 
   React.useEffect(() => {
+    // legacy event from ATDPApplication
     const listener = () => setActiveTab(tabs[0]);
     GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
 
@@ -68,7 +82,8 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
   }, []);
 
   React.useEffect(() => {
-    setActiveTab((open) ? tabs[0] : null);
+    // set the active tab when the start menu should be opened
+    setActiveTab((open === EStartMenuOpen.OPEN) ? tabs[0] : null);
   }, [open]);
 
   React.useEffect(() => {

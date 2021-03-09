@@ -12,7 +12,7 @@ import { ViewWrapper } from './ViewWrapper';
 import { CLUEGraphManager } from 'phovea_clue';
 import { Range } from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
-import { EStartMenuMode } from './menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenuReact';
 import { AppHeader } from 'phovea_ui';
 export declare const OrdinoContext: React.Context<{
     app: IOrdinoApp;
@@ -28,6 +28,7 @@ interface IOrdinoAppComponentProps {
 }
 interface IOrdinoAppComponentState {
     mode: EStartMenuMode;
+    open: EStartMenuOpen;
     views: ViewWrapper[];
 }
 /**
@@ -52,7 +53,13 @@ export declare class OrdinoAppComponent extends React.Component<IOrdinoAppCompon
     private readonly updateSelection;
     constructor(props: any);
     initApp(): Promise<any>;
-    setStartMenuMode(mode: EStartMenuMode): void;
+    /**
+     * Set the mode and open/close state of the start menu.
+     * Set both options at once to avoid multiple rerender.
+     * @param open Open/close state
+     * @param mode Overlay/start mode
+     */
+    setStartMenuState(open: EStartMenuOpen, mode: EStartMenuMode): void;
     /**
      * List of open views (e.g., to show in the history)
      */

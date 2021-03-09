@@ -18,7 +18,7 @@ import {Range} from 'phovea_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import {UserSession} from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
-import {EStartMenuMode, StartMenuComponent} from './menu/StartMenuReact';
+import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenuReact';
 import {AppHeader} from 'phovea_ui';
 
 // tslint:disable-next-line: variable-name
@@ -35,6 +35,7 @@ interface IOrdinoAppComponentProps {
 
 interface IOrdinoAppComponentState {
   mode: EStartMenuMode;
+  open: EStartMenuOpen;
   views: ViewWrapper[];
 }
 
@@ -72,6 +73,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
 
     this.state = {
       mode: EStartMenuMode.START,
+      open: EStartMenuOpen.CLOSED,
       views: []
     };
   }
@@ -81,8 +83,15 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     return null;
   }
 
-  setStartMenuMode(mode: EStartMenuMode) {
+  /**
+   * Set the mode and open/close state of the start menu.
+   * Set both options at once to avoid multiple rerender.
+   * @param open Open/close state
+   * @param mode Overlay/start mode
+   */
+  setStartMenuState(open: EStartMenuOpen, mode: EStartMenuMode) {
     this.setState({
+      open,
       mode
     });
   }
@@ -411,10 +420,12 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
       [EViewMode.FOCUS]: 't-focus'
     };
 
+    console.log(this.state.mode, this.state.open);
+
     return(
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
-          <StartMenuComponent header={this.props.header} mode={this.state.mode} open={(this.state.views.length === 0)}></StartMenuComponent>
+          <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
           <ul className="tdp-button-group history">
             {this.state.views.map((view) => {
               return (

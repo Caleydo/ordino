@@ -10,7 +10,7 @@ const tabs = [
     { id: 'tours', title: 'Tours' },
 ];
 // tslint:disable-next-line: variable-name
-export const AppContext = React.createContext({ app: null });
+export const OrdinoAppContext = React.createContext({ app: null });
 export function StartMenuComponent({ header, app, modePromise }) {
     const [mode, setMode] = React.useState('start');
     const [active, setActive] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
@@ -35,7 +35,7 @@ export function StartMenuComponent({ header, app, modePromise }) {
     console.log('start menu component');
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, active: active, setActive: (a) => setActive(a), mode: mode }), header.mainMenu),
-        React.createElement(AppContext.Provider, { value: { app } },
+        React.createElement(OrdinoAppContext.Provider, { value: { app } },
             React.createElement(StartMenu, { tabs: tabs, active: active, setActive: setActive, mode: mode }))));
 }
 function MainMenuLinks(props) {

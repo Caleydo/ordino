@@ -4,7 +4,7 @@ import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
-import {AppContext} from '../../menu/StartMenuReact';
+import {OrdinoAppContext} from '../../menu/StartMenuReact';
 import {byDateDesc} from '../../menu/tabs/SessionsTab';
 import {ListItemDropdown} from '../common';
 import {Action, CommonSessionCard} from './CommonSessionCard';
@@ -12,7 +12,7 @@ import {SessionListItem} from './SessionListItem';
 
 
 export default function SavedSessionCard({name, faIcon, cssClass}: IStartMenuSectionDesc) {
-  const {app} = React.useContext(AppContext);
+  const {app} = React.useContext(OrdinoAppContext);
   const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 
   const listSessions = React.useMemo(() => async () => {

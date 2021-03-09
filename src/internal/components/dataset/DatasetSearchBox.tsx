@@ -6,18 +6,19 @@ import {FormatOptionLabelMeta} from 'react-select';
 import {AsyncPaginate} from 'react-select-async-paginate';
 import Highlighter from 'react-highlight-words';
 import {I18nextManager, IDTypeManager, UserSession} from 'phovea_core';
-import {AppContext} from '../../menu/StartMenuReact';
-import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
+import {OrdinoAppContext, SESSION_KEY_NEW_ENTRY_POINT} from '../..';
 import {IDataSourceConfig} from 'tdp_publicdb';
 
-interface IDatasetSearchBoxProps extends IDataSourceConfig {
+interface IDatasetSearchBoxProps {
     placeholder: string;
-    dbViewSuffix: string;
+    viewId: string;
+    datasource: IDataSourceConfig;
 }
 
-export function DatasetSearchBox({placeholder, dbViewSuffix, idType:idtype, db, base, entityName}: IDatasetSearchBoxProps) {
+export function DatasetSearchBox({placeholder, datasource, viewId}: IDatasetSearchBoxProps) {
+    const {db, base, dbViewSuffix, entityName, idType: idtype} = datasource;
     const [items, setItems] = React.useState<IdTextPair[]>(null);
-    const {graph, manager, app} = React.useContext(AppContext);
+    const {app} = React.useContext(OrdinoAppContext);
     const search = (query: string): Promise<{more: boolean, items: Readonly<IdTextPair>[]}> => {
         return RestBaseUtils.getTDPLookup(db, base + dbViewSuffix, {
             column: entityName,
@@ -52,19 +53,17 @@ export function DatasetSearchBox({placeholder, dbViewSuffix, idType:idtype, db, 
         );
     }
 
-
-    // Todo load view id from extension point
-    const initNewSession = (event, view: string, options: any, defaultSessionValues: any = null) => {
+    const open = (event: React.MouseEvent<HTMLElement, MouseEvent>, view: string, options: any) => {
         event.preventDefault();
         UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
             view,
             options,
-            defaultSessionValues
         });
-        manager.newGraph();
+        app.graphManager.newGraph();
     };
 
 
+    // Todo push named sets
     const saveDataset = () => {
         StoreUtils.editDialog(null, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, isPublic) => {
             const idStrings = items?.map((i) => i.id);
@@ -105,7 +104,7 @@ export function DatasetSearchBox({placeholder, dbViewSuffix, idType:idtype, db, 
                     }}
                 />
             </Col>
-            <Button variant="secondary" disabled={!items?.length} className="mr-2 pt-1 pb-1" onClick={(event) => app.initNewSession('celllinedb_start', extra)}>Open</Button>
+            <Button variant="secondary" disabled={!items?.length} className="mr-2 pt-1 pb-1" onClick={(event) => open(event, viewId, extra)}>Open</Button>
             <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" disabled={!items?.length} onClick={saveDataset}>Save as set</Button>
         </Row>
     );

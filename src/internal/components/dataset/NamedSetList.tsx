@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {INamedSet} from 'tdp_core';
-import {AppContext} from '../../menu/StartMenuReact';
+import {OrdinoAppContext} from '../../menu/StartMenuReact';
 import {ListItemDropdown} from '../common';
 
 interface INamedSetListProps {
@@ -15,7 +15,7 @@ interface INamedSetListProps {
 
 export function NamedSetList({headerIcon, headerText, viewId, value, status, readonly}: INamedSetListProps) {
 
-  const {app} = React.useContext(AppContext);
+  const {app} = React.useContext(OrdinoAppContext);
   const open = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
     app.initNewSession(viewId, value);

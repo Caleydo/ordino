@@ -1,8 +1,8 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import { AppContext } from '../../menu/StartMenuReact';
+import { OrdinoAppContext } from '../../menu/StartMenuReact';
 export function SessionDropzone() {
-    const { app } = React.useContext(AppContext);
+    const { app } = React.useContext(OrdinoAppContext);
     const onDrop = (acceptedFile) => {
         const reader = new FileReader();
         reader.onload = (e) => {

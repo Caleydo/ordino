@@ -2,7 +2,7 @@ import {I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phov
 import React from 'react';
 import {Button, Col, Row} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
-import {AppContext} from '../../menu/StartMenuReact';
+import {OrdinoAppContext} from '../../menu/StartMenuReact';
 import {SessionAction} from './CommonSessionCard';
 
 

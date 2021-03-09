@@ -1,7 +1,8 @@
 import { IDataSourceConfig } from 'tdp_publicdb';
-interface IDatasetSearchBoxProps extends IDataSourceConfig {
+interface IDatasetSearchBoxProps {
     placeholder: string;
-    dbViewSuffix: string;
+    viewId: string;
+    datasource: IDataSourceConfig;
 }
-export declare function DatasetSearchBox({ placeholder, dbViewSuffix, idType: idtype, db, base, entityName }: IDatasetSearchBoxProps): JSX.Element;
+export declare function DatasetSearchBox({ placeholder, datasource, viewId }: IDatasetSearchBoxProps): JSX.Element;
 export {};

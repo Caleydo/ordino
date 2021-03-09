@@ -3,13 +3,13 @@ import { FormDialog } from 'phovea_ui';
 import React, { useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
-import { AppContext } from '../../menu/StartMenuReact';
+import { OrdinoAppContext } from '../../menu/StartMenuReact';
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
 export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
     const parent = useRef(null);
-    const { app } = React.useContext(AppContext);
+    const { app } = React.useContext(OrdinoAppContext);
     const selectSession = (event, desc) => {
         event.preventDefault();
         event.stopPropagation();

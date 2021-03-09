@@ -5,11 +5,11 @@ import { Species, SpeciesUtils } from 'tdp_gene';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import Highlighter from 'react-highlight-words';
 import { I18nextManager, IDTypeManager, UserSession } from 'phovea_core';
-import { AppContext } from '../../menu/StartMenuReact';
-import { SESSION_KEY_NEW_ENTRY_POINT } from '../..';
-export function DatasetSearchBox({ placeholder, dbViewSuffix, idType: idtype, db, base, entityName }) {
+import { OrdinoAppContext, SESSION_KEY_NEW_ENTRY_POINT } from '../..';
+export function DatasetSearchBox({ placeholder, datasource, viewId }) {
+    const { db, base, dbViewSuffix, entityName, idType: idtype } = datasource;
     const [items, setItems] = React.useState(null);
-    const { graph, manager, app } = React.useContext(AppContext);
+    const { app } = React.useContext(OrdinoAppContext);
     const search = (query) => {
         return RestBaseUtils.getTDPLookup(db, base + dbViewSuffix, {
             column: entityName,
@@ -33,16 +33,15 @@ export function DatasetSearchBox({ placeholder, dbViewSuffix, idType: idtype, db
         }
         return (React.createElement(Highlighter, { highlightClassName: "YourHighlightClass", searchWords: [ctx.inputValue], autoEscape: true, textToHighlight: option.text }));
     }
-    // Todo load view id from extension point
-    const initNewSession = (event, view, options, defaultSessionValues = null) => {
+    const open = (event, view, options) => {
         event.preventDefault();
         UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
             view,
             options,
-            defaultSessionValues
         });
-        manager.newGraph();
+        app.graphManager.newGraph();
     };
+    // Todo push named sets
     const saveDataset = () => {
         StoreUtils.editDialog(null, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, isPublic) => {
             const idStrings = items === null || items === void 0 ? void 0 : items.map((i) => i.id);
@@ -66,7 +65,7 @@ export function DatasetSearchBox({ placeholder, dbViewSuffix, idType: idtype, db
             React.createElement(AsyncPaginate, { placeholder: placeholder, noOptionsMessage: () => 'No results found', isMulti: true, loadOptions: loadOptions, onChange: setItems, defaultOptions: true, formatOptionLabel: formatOptionLabel, getOptionLabel: (option) => option.text, getOptionValue: (option) => option.id, captureMenuScroll: false, additional: {
                     page: 1
                 } })),
-        React.createElement(Button, { variant: "secondary", disabled: !(items === null || items === void 0 ? void 0 : items.length), className: "mr-2 pt-1 pb-1", onClick: (event) => app.initNewSession('celllinedb_start', extra) }, "Open"),
+        React.createElement(Button, { variant: "secondary", disabled: !(items === null || items === void 0 ? void 0 : items.length), className: "mr-2 pt-1 pb-1", onClick: (event) => open(event, viewId, extra) }, "Open"),
         React.createElement(Button, { variant: "outline-secondary", className: "mr-2 pt-1 pb-1", disabled: !(items === null || items === void 0 ? void 0 : items.length), onClick: saveDataset }, "Save as set")));
 }
 //# sourceMappingURL=DatasetSearchBox.js.map

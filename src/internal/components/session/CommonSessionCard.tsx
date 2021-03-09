@@ -4,7 +4,7 @@ import React, {useRef} from 'react';
 import {Card} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
-import {AppContext} from '../../menu/StartMenuReact';
+import {OrdinoAppContext} from '../../menu/StartMenuReact';
 
 interface ICommonSessionCardProps {
     cardName: string;
@@ -36,7 +36,7 @@ export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLEle
 export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommonSessionCardProps) {
 
     const parent = useRef(null);
-    const {app} = React.useContext(AppContext);
+    const {app} = React.useContext(OrdinoAppContext);
 
     const selectSession = (event: React.MouseEvent<DropdownItemProps | HTMLElement, MouseEvent>, desc: IProvenanceGraphDataDescription) => {
         event.preventDefault();

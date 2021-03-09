@@ -62,7 +62,7 @@ export default function DatasetCard({name, headerIcon, tabs, viewId, datasource}
               {tabs.map((tab) => {
                 return (
                   <Tab.Pane key={tab.id} eventKey={tab.id} className="mt-4">
-                    <DatasetSearchBox placeholder={`Add ${name}`} {...datasource} dbViewSuffix={datasource.dbViewSuffix}></DatasetSearchBox>
+                    <DatasetSearchBox placeholder={`Add ${name}`} viewId={viewId} datasource={datasource} ></DatasetSearchBox>
                     <Row className="mt-4">
                       <NamedSetList headerIcon="fas fa-database" headerText="Predefined Sets" viewId={viewId} status={predefinedNamedSets.status} value={filterValue(predefinedNamedSets.value, tab.id)} readonly />
                       <NamedSetList headerIcon="fas fa-user" headerText="My Sets" viewId={viewId} status={myNamedSets.status} value={filterValue(myNamedSets.value, tab.id)} />

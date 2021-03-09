@@ -48,7 +48,7 @@ const tabs: IStartMenuTab[] = [
 ];
 
 // tslint:disable-next-line: variable-name
-export const AppContext = React.createContext<{app: OrdinoApp}>({app: null});
+export const OrdinoAppContext = React.createContext<{app: OrdinoApp}>({app: null});
 
 export function StartMenuComponent({header, app, modePromise}: {header: AppHeader, app: OrdinoApp, modePromise: Promise<StartMenuMode>}) {
   const [mode, setMode] = React.useState<'start' | 'overlay'>('start');
@@ -84,9 +84,9 @@ export function StartMenuComponent({header, app, modePromise}: {header: AppHeade
         <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <AppContext.Provider value={{app}}>
+      <OrdinoAppContext.Provider value={{app}}>
         <StartMenu tabs={tabs} active={active} setActive={setActive} mode={mode}></StartMenu>
-      </AppContext.Provider>
+      </OrdinoAppContext.Provider>
     </>
   );
 }

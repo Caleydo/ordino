@@ -1,9 +1,8 @@
 import React, {useMemo} from 'react';
-import {Container, Col, Nav, Row, Button} from 'react-bootstrap';
+import {Container, Col, Nav, Row} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {UploadDatasetCard} from '../../components';
-import {IDataSourceConfig} from '../../../../../tdp_publicdb/dist/common/config';
 import {EXTENSION_POINT_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 

@@ -4,7 +4,7 @@ import { SessionAction } from './CommonSessionCard';
 interface ISessionListItemProps {
     desc: IProvenanceGraphDataDescription | null;
     /**
-     * Opens the session. If not provided then the session can be only cloned to temporary.
+     * Opens the session. If not provided then the session can only be cloned to a temporary session.
      */
     selectSession?: SessionAction;
     children?: React.ReactNode;

@@ -7,17 +7,6 @@ import {IDataSourceConfig} from '../../../../../tdp_publicdb/dist/common/config'
 import {EXTENSION_POINT_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 
-
-export interface IStartMenuCard {
-  id: string;
-  name: string;
-  headerIcon: string;
-  viewId: string;
-  datasource: IDataSourceConfig;
-  tabs: IStartMenuSectionTab[];
-}
-
-
 export interface IStartMenuSectionTab {
   id: string;
   tabText: string;

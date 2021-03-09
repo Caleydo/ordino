@@ -1,2 +1,2 @@
-import { IStartMenuCard } from '../../menu/tabs/DatasetsTab';
-export default function DatasetCard({ name, headerIcon, tabs, viewId, datasource }: IStartMenuCard): JSX.Element;
+import { IStartMenuDatasetDesc } from '../../..';
+export default function DatasetCard({ name, headerIcon, tabs, viewId, datasource }: IStartMenuDatasetDesc): JSX.Element;

@@ -2,7 +2,6 @@ import React, {useMemo} from 'react';
 import {Container, Col, Nav, Row, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
-
 import {useAsync} from '../../../hooks';
 import {EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from '../../..';
 

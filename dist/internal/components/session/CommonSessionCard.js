@@ -4,6 +4,9 @@ import React, { useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
 import { AppContext } from '../../menu/StartMenuReact';
+/**
+ * Wrapper component that exposes actions to be used in children components.
+ */
 export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
     const parent = useRef(null);
     const { app } = React.useContext(AppContext);
@@ -81,7 +84,7 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
             parent.current.appendChild(helper);
             helper.click();
             helper.remove();
-            NotificationHandler.pushNotification('success', I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successMessage', { name: graph.desc.name }), NotificationHandler.DEFAULT_SUCCESS_AUTO_HIDE);
+            NotificationHandler.pushNotification('success', I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successMessage', { name: app.graph.desc.name }), NotificationHandler.DEFAULT_SUCCESS_AUTO_HIDE);
         };
         a.readAsDataURL(blob);
         return false;

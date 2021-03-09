@@ -14,6 +14,9 @@ interface ICommonSessionCardProps {
 }
 
 
+/**
+ * Types of actions exposed by the CommonSessionCard component
+ */
 export const enum Action {
     SELECT = 'select',
     SAVE = 'save',
@@ -27,6 +30,9 @@ export type SessionActionChooser = (type: Action, event: React.MouseEvent<Dropdo
 export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 
 
+/**
+ * Wrapper component that exposes actions to be used in children components.
+ */
 export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommonSessionCardProps) {
 
     const parent = useRef(null);
@@ -116,7 +122,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
             parent.current.appendChild(helper);
             helper.click();
             helper.remove();
-            NotificationHandler.pushNotification('success', I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successMessage', {name: graph.desc.name}), NotificationHandler.DEFAULT_SUCCESS_AUTO_HIDE);
+            NotificationHandler.pushNotification('success', I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successMessage', {name: app.graph.desc.name}), NotificationHandler.DEFAULT_SUCCESS_AUTO_HIDE);
         };
         a.readAsDataURL(blob);
         return false;
@@ -140,6 +146,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         return false;
     };
 
+
     const sessionAction = (type: Action, event: React.MouseEvent<HTMLElement | DropdownItemProps, MouseEvent>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => {
         switch (type) {
             case Action.SELECT:
@@ -156,7 +163,6 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
                 return deleteSession(event, desc, updateSessions);
         }
     };
-
 
     return <>
         <h4 className="text-left d-flex align-items-center mb-3"><i className={`mr-2 ordino-icon-2 fas ${faIcon}`} ></i>{cardName}</h4>

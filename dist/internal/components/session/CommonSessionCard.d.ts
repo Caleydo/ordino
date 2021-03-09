@@ -7,6 +7,9 @@ interface ICommonSessionCardProps {
     cardInfo?: string;
     children?: (sessionAction: SessionActionChooser) => React.ReactNode;
 }
+/**
+ * Types of actions exposed by the CommonSessionCard component
+ */
 export declare const enum Action {
     SELECT = "select",
     SAVE = "save",
@@ -17,5 +20,8 @@ export declare const enum Action {
 }
 export declare type SessionActionChooser = (type: Action, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 export declare type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+/**
+ * Wrapper component that exposes actions to be used in children components.
+ */
 export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children }: ICommonSessionCardProps): JSX.Element;
 export {};

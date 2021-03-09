@@ -17,6 +17,9 @@ export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 
 export interface IStartMenuSectionDesc extends IPluginDesc {
   readonly name: string;
+  /**
+   * TODO See if cssClass is still necessary in session cards.
+   */
   readonly cssClass: string;
   readonly faIcon: string;
   load(): Promise<IStartMenuSectionPlugin>;

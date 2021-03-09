@@ -5,12 +5,12 @@ import {INamedSet, ENamedSetType, RestBaseUtils, RestStorageUtils, IStoredNamedS
 import {NamedSetList} from './NamedSetList';
 import {useAsync} from '../../../hooks';
 import {UserSession} from 'phovea_core';
-import {IStartMenuCard} from '../../menu/tabs/DatasetsTab';
+import {IStartMenuDatasetDesc} from '../../..';
 
 
 
 
-export default function DatasetCard({name, headerIcon, tabs, viewId, datasource}: IStartMenuCard) {
+export default function DatasetCard({name, headerIcon, tabs, viewId, datasource}: IStartMenuDatasetDesc) {
   const subTypeKey = 'species';
 
   const loadPredefinedSet = React.useMemo(() => {
@@ -64,9 +64,9 @@ export default function DatasetCard({name, headerIcon, tabs, viewId, datasource}
                   <Tab.Pane key={tab.id} eventKey={tab.id} className="mt-4">
                     <DatasetSearchBox placeholder={`Add ${name}`} {...datasource} dbViewSuffix={datasource.dbViewSuffix}></DatasetSearchBox>
                     <Row className="mt-4">
-                      <NamedSetList headerIcon="fas fa-database" headerText="Predefined Sets" viewId={viewId} status={predefinedNamedSets.status} error={predefinedNamedSets.error} value={filterValue(predefinedNamedSets.value, tab.id)} readonly />
-                      <NamedSetList headerIcon="fas fa-user" headerText="My Sets" viewId={viewId} status={myNamedSets.status} error={myNamedSets.error} value={filterValue(myNamedSets.value, tab.id)} />
-                      <NamedSetList headerIcon="fas fa-users" headerText="Public Sets" viewId={viewId} status={publicNamedSets.status} error={publicNamedSets.error} value={filterValue(publicNamedSets.value, tab.id)} readonly />
+                      <NamedSetList headerIcon="fas fa-database" headerText="Predefined Sets" viewId={viewId} status={predefinedNamedSets.status} value={filterValue(predefinedNamedSets.value, tab.id)} readonly />
+                      <NamedSetList headerIcon="fas fa-user" headerText="My Sets" viewId={viewId} status={myNamedSets.status} value={filterValue(myNamedSets.value, tab.id)} />
+                      <NamedSetList headerIcon="fas fa-users" headerText="Public Sets" viewId={viewId} status={publicNamedSets.status} value={filterValue(publicNamedSets.value, tab.id)} readonly />
                     </Row>
                   </Tab.Pane>
                 );

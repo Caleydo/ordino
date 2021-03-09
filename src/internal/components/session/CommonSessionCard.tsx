@@ -1,7 +1,7 @@
 import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
 import {FormDialog} from 'phovea_ui';
 import React, {useRef} from 'react';
-import {Button, Card} from 'react-bootstrap';
+import {Card} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
 import {AppContext} from '../../menu/StartMenuReact';
@@ -30,15 +30,15 @@ export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLEle
 export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommonSessionCardProps) {
 
     const parent = useRef(null);
-    const {graph, manager} = React.useContext(AppContext);
+    const {app} = React.useContext(AppContext);
 
     const selectSession = (event: React.MouseEvent<DropdownItemProps | HTMLElement, MouseEvent>, desc: IProvenanceGraphDataDescription) => {
         event.preventDefault();
         event.stopPropagation();
         if (UserSession.getInstance().canWrite(desc)) {
-            manager.loadGraph(desc);
+            app.graphManager.loadGraph(desc);
         } else {
-            manager.cloneLocal(desc);
+            app.graphManager.cloneLocal(desc);
         }
         return false;
     };
@@ -49,7 +49,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
 
         ProvenanceGraphMenuUtils.persistProvenanceGraphMetaData(desc).then((extras: any) => {
             if (extras !== null) {
-                manager.importExistingGraph(desc, extras, true).catch(ErrorAlertHandler.getInstance().errorAlert);
+                app.graphManager.importExistingGraph(desc, extras, true).catch(ErrorAlertHandler.getInstance().errorAlert);
             }
         });
         return false;
@@ -65,7 +65,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         // }
         ProvenanceGraphMenuUtils.editProvenanceGraphMetaData(desc, {permission: ProvenanceGraphMenuUtils.isPersistent(desc)}).then((extras) => {
             if (extras !== null) {
-                Promise.resolve(manager.editGraphMetaData(desc, extras))
+                Promise.resolve(app.graphManager.editGraphMetaData(desc, extras))
                     .then((desc) => {
 
                         callback((sessions) => {
@@ -87,7 +87,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         event.preventDefault();
         event.stopPropagation();
 
-        manager.cloneLocal(desc);
+        app.graphManager.cloneLocal(desc);
         return false;
     };
 
@@ -96,12 +96,12 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         event.preventDefault();
         event.stopPropagation();
 
-        if (!graph) {
+        if (!app.graph) {
             return false;
         }
 
         // console.log(graph);
-        const r = graph.persist();
+        const r = app.graph.persist();
         // console.log(r);
         const str = JSON.stringify(r, null, '\t');
         //create blob and save it
@@ -112,7 +112,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
             const helper = parent.current.ownerDocument.createElement('a');
             helper.setAttribute('href', url);
             helper.setAttribute('target', '_blank');
-            helper.setAttribute('download', `${graph.desc.name}.json`);
+            helper.setAttribute('download', `${app.graph.desc.name}.json`);
             parent.current.appendChild(helper);
             helper.click();
             helper.remove();
@@ -128,12 +128,12 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         event.stopPropagation();
         const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', {name: desc.name}));
         if (deleteIt) {
-            await Promise.resolve(manager.delete(desc)).then((r) => {
+            await Promise.resolve(app.graphManager.delete(desc)).then((r) => {
                 if (callback) {
                     NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.session'), desc.name);
                     callback((sessions) => sessions?.filter((t) => t.id !== desc.id));
                 } else {
-                    manager.startFromScratch();
+                    app.graphManager.startFromScratch();
                 }
             }).catch(ErrorAlertHandler.getInstance().errorAlert);
         }

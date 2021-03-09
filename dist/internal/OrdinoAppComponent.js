@@ -341,7 +341,7 @@ export class OrdinoAppComponent extends React.Component {
         };
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
-                React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode }),
+                React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: (this.state.views.length === 0) }),
                 React.createElement("ul", { className: "tdp-button-group history" }, this.state.views.map((view) => {
                     return (React.createElement("li", { key: view.desc.id, className: `hview ${historyClassNames[view.mode]}` },
                         React.createElement("a", { href: "#", onClick: (event) => {

@@ -57,7 +57,7 @@ export declare class OrdinoAppComponent extends React.Component<IOrdinoAppCompon
      * List of open views (e.g., to show in the history)
      */
     get views(): ViewWrapper[];
-    get node(): Element;
+    get node(): HTMLDivElement;
     /**
      * Decide if a new view should be opened or an existing (right) detail view should be closed.
      * Closed: When the view to the right is equal to the new one

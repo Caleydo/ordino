@@ -34,13 +34,13 @@ interface IStartMenuTabProps {
    * The currently active (i.e., visible tab)
    * `null` = all tabs are closed
    */
-  active: IStartMenuTab;
+  activeTab: IStartMenuTab;
 
   /**
    * Set the active tab
    * `null` closes all tabs
    */
-  setActive: React.Dispatch<React.SetStateAction<IStartMenuTab>>;
+  setActiveTab: React.Dispatch<React.SetStateAction<IStartMenuTab>>;
 
   /**
    * Define the mode of the start menu
@@ -55,11 +55,11 @@ const tabs: IStartMenuTab[] = [
 ];
 
 
-export function StartMenuComponent({header, mode}: {header: AppHeader, mode: EStartMenuMode}) {
-  const [active, setActive] = React.useState((mode === EStartMenuMode.START) ? tabs[0] : null); // first tab in overlay mode OR close all tabs in overlay mode
+export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: boolean}) {
+  const [activeTab, setActiveTab] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
 
   React.useEffect(() => {
-    const listener = () => setActive(tabs[0]);
+    const listener = () => setActiveTab(tabs[0]);
     GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
 
     return () => {
@@ -68,17 +68,21 @@ export function StartMenuComponent({header, mode}: {header: AppHeader, mode: ESt
   }, []);
 
   React.useEffect(() => {
+    setActiveTab((open) ? tabs[0] : null);
+  }, [open]);
+
+  React.useEffect(() => {
     // switch header to dark theme when a tab is active
-    header.toggleDarkTheme((active) ? true : false);
-  }, [header, active]);
+    header.toggleDarkTheme((activeTab) ? true : false);
+  }, [header, activeTab]);
 
   return (
     <>
       {ReactDOM.createPortal(
-        <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)} mode={mode}></MainMenuLinks>,
+        <MainMenuLinks tabs={tabs} activeTab={activeTab} setActiveTab={(a) => setActiveTab(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <StartMenuTabs tabs={tabs} active={active} setActive={setActive} mode={mode}></StartMenuTabs>
+      <StartMenuTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabs>
     </>
   );
 }
@@ -87,21 +91,21 @@ function MainMenuLinks(props: IStartMenuTabProps) {
   return (
     <>
       {props.tabs.map((tab) => (
-        <li className={`nav-item ${props.active === tab ? 'active' : ''}`} key={tab.id}>
+        <li className={`nav-item ${props.activeTab === tab ? 'active' : ''}`} key={tab.id}>
           <a className="nav-link"
             href={`#${tab.id}`}
             id={`${tab.id}-tab`}
             role="tab"
             aria-controls={tab.id}
-            aria-selected={(props.active === tab)}
+            aria-selected={(props.activeTab === tab)}
             onClick={(evt) => {
               evt.preventDefault();
               window.scrollTo(0, 0);
-              if (props.mode === EStartMenuMode.OVERLAY && props.active === tab) {
+              if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
                 // close tab only in overlay mode
-                props.setActive(null);
+                props.setActiveTab(null);
               } else {
-                props.setActive(tab);
+                props.setActiveTab(tab);
               }
               return false;
             }}
@@ -116,10 +120,14 @@ function MainMenuLinks(props: IStartMenuTabProps) {
 
 
 function StartMenuTabs(props: IStartMenuTabProps) {
+  if(props.activeTab === null) {
+    return null;
+  }
+
   return (
-    <div className={`ordino-start-menu tab-content ${props.active ? 'ordino-start-menu-open' : ''}`}>
+    <div className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
       {props.tabs.map((tab, index) => (
-        <div className={`tab-pane fade ${props.active === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
+        <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
           key={tab.id}
           id={tab.id}
           role="tabpanel"
@@ -129,7 +137,7 @@ function StartMenuTabs(props: IStartMenuTabProps) {
           <Container fluid>
             <Row>
               <Col className="d-flex justify-content-end">
-                <Button className="start-menu-close" variant="link" onClick={() => { props.setActive(null); }}>
+                <Button className="start-menu-close" variant="link" onClick={() => { props.setActiveTab(null); }}>
                   <i className="fas fa-times"></i>
                 </Button>
               </Col>

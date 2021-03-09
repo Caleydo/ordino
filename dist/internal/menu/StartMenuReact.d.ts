@@ -9,7 +9,8 @@ export declare enum EStartMenuMode {
      */
     OVERLAY = "overlay"
 }
-export declare function StartMenuComponent({ header, mode }: {
+export declare function StartMenuComponent({ header, mode, open }: {
     header: AppHeader;
     mode: EStartMenuMode;
+    open: boolean;
 }): JSX.Element;

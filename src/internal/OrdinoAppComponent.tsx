@@ -414,7 +414,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     return(
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
-          <StartMenuComponent header={this.props.header} mode={this.state.mode}></StartMenuComponent>
+          <StartMenuComponent header={this.props.header} mode={this.state.mode} open={(this.state.views.length === 0)}></StartMenuComponent>
           <ul className="tdp-button-group history">
             {this.state.views.map((view) => {
               return (

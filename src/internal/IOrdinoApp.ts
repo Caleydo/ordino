@@ -31,11 +31,4 @@ export interface IOrdinoApp {
    * @param focus Index of the view in the view list (default: -1)
    */
   removeImpl(view: ViewWrapper, focus: number): Promise<number>;
-
-  /**
-   * Start a new analysis session with the given view
-   * @param viewId ID of the registered view in phovea.ts
-   * @param options Options that that should be passed to the new view
-   */
-  startSessionWithView(viewId: string, options: any);
 }

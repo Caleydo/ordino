@@ -19,9 +19,6 @@ import {ATDPApplication, ITDPOptions} from 'tdp_core';
 
 export interface IOrdinoOptions extends ITDPOptions {
   clientConfig?: {
-    enableDatasetsTab?: boolean;
-    enableToursTab?: boolean;
-    enableSessionsTab?: boolean;
   };
 }
 

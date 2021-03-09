@@ -56,21 +56,21 @@ export function StartMenuComponent({header, app, options, modePromise}: {header:
     enableDatasetsTab: true,
     enableSessionsTab: true,
     enableToursTab: true,
-    enableOtherTab: true
+    enableMoreTab: true
   }
 
   const {
     enableDatasetsTab,
     enableToursTab,
     enableSessionsTab,
-    enableOtherTab
+    enableMoreTab
   } = BaseUtils.mixin(defaultConfig, options.clientConfig || {});
 
   const [tabs] = React.useState<IStartMenuTab[]>([
     {id: 'datasets', title: 'Datasets', enabled: enableDatasetsTab},
     {id: 'sessions', title: 'Analysis Sessions', enabled: enableSessionsTab},
     {id: 'tours', title: 'Tours', enabled: enableToursTab},
-    {id: 'more', title: 'More', enabled: enableOtherTab},
+    {id: 'more', title: 'More', enabled: enableMoreTab},
   ].filter((t) => {
     return t.enabled;
   }))

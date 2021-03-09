@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { CLUEGraphManager } from 'phovea_clue';
-import { ProvenanceGraph } from 'phovea_core';
-import { IOrdinoOptions } from '../..';
-export declare const GraphContext: React.Context<{
-    graph: ProvenanceGraph;
-    manager: CLUEGraphManager;
-    options: IOrdinoOptions;
+import { IOrdinoOptions, OrdinoApp } from '../..';
+import { AppHeader } from 'phovea_ui';
+export declare type StartMenuMode = 'start' | 'overlay';
+export declare const OrdinoAppContext: React.Context<{
+    app: OrdinoApp;
 }>;
-export declare function StartMenuComponent({ headerMainMenu, manager, graph, options }: {
-    headerMainMenu: HTMLElement;
-    manager: CLUEGraphManager;
-    graph: ProvenanceGraph;
+export declare function StartMenuComponent({ header, app, options, modePromise }: {
+    header: AppHeader;
+    app: OrdinoApp;
     options: IOrdinoOptions;
+    modePromise: Promise<StartMenuMode>;
 }): JSX.Element;

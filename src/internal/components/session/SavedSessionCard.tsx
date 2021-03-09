@@ -4,7 +4,7 @@ import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
 import {useAsync} from '../../../hooks';
-import {GraphContext} from '../../menu/StartMenuReact';
+import {GraphContext} from '../../OrdinoAppComponent';
 import {ListItemDropdown} from '../common';
 import {CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';

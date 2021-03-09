@@ -4,7 +4,7 @@ import React, {useRef} from 'react';
 import {Card} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
-import {GraphContext} from '../../menu/StartMenuReact';
+import {GraphContext} from '../../OrdinoAppComponent';
 
 interface ICommonSessionCardProps {
     cardName: string;

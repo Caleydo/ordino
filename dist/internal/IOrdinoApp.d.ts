@@ -1,6 +1,5 @@
-import { EventHandler } from 'phovea_core';
 import { ViewWrapper } from './ViewWrapper';
-export interface IOrdinoApp extends EventHandler {
+export interface IOrdinoApp {
     /**
      * Root HTML node of the Ordino App
      */
@@ -27,8 +26,4 @@ export interface IOrdinoApp extends EventHandler {
      * @param focus Index of the view in the view list (default: -1)
      */
     removeImpl(view: ViewWrapper, focus: number): Promise<number>;
-    /**
-     * Updates the views information, e.g. history
-     */
-    update(): void;
 }

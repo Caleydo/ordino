@@ -1,14 +1,35 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {CLUEGraphManager} from 'phovea_clue';
-import {GlobalEventHandler, ProvenanceGraph} from 'phovea_core';
+import {GlobalEventHandler} from 'phovea_core';
 import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
 
 
-export type StartMenuMode = 'start' | 'overlay';
+export enum EStartMenuMode {
+  /**
+   * no analysis in the background, the start menu cannot be closed
+   */
+  START = 'start',
+
+  /**
+   * an analysis in the background, the start menu can be closed
+   */
+  OVERLAY = 'overlay'
+}
+
+export enum EStartMenuOpen {
+  /**
+   * no analysis in the background, the start menu cannot be closed
+   */
+  OPEN = 'open',
+
+  /**
+   * an analysis in the background, the start menu can be closed
+   */
+  CLOSED = 'closed'
+}
 
 interface IStartMenuTab {
   id: string;
@@ -25,20 +46,18 @@ interface IStartMenuTabProps {
    * The currently active (i.e., visible tab)
    * `null` = all tabs are closed
    */
-  active: IStartMenuTab;
+  activeTab: IStartMenuTab;
 
   /**
    * Set the active tab
    * `null` closes all tabs
    */
-  setActive: React.Dispatch<React.SetStateAction<IStartMenuTab>>;
+  setActiveTab: React.Dispatch<React.SetStateAction<IStartMenuTab>>;
 
   /**
    * Define the mode of the start menu
-   * `start` = no analysis in the background, the start menu cannot be closed
-   * `overlay` = an analysis in the background, the start menu can be closed
    */
-  mode: StartMenuMode;
+  mode: EStartMenuMode;
 }
 
 const tabs: IStartMenuTab[] = [
@@ -47,15 +66,14 @@ const tabs: IStartMenuTab[] = [
   {id: 'tours', title: 'Tours'},
 ];
 
-// tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
-export function StartMenuComponent({header, manager, graph, modePromise}: {header: AppHeader, manager: CLUEGraphManager, graph: ProvenanceGraph, modePromise: Promise<StartMenuMode>}) {
-  const [mode, setMode] = React.useState<'start'|'overlay'>('start');
-  const [active, setActive] = React.useState(null); // first tab in overlay mode OR close all tabs in overlay mode
+export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: EStartMenuOpen}) {
+  // no active tab until `open` is set OR a link in the header navigation is clicked
+  const [activeTab, setActiveTab] = React.useState(null);
 
   React.useEffect(() => {
-    const listener = () => setActive(tabs[0]);
+    // legacy event from ATDPApplication
+    const listener = () => setActiveTab(tabs[0]);
     GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
 
     return () => {
@@ -64,29 +82,22 @@ export function StartMenuComponent({header, manager, graph, modePromise}: {heade
   }, []);
 
   React.useEffect(() => {
-    modePromise.then((mode) => {
-      console.log('set mode', mode);
-      setMode(mode);
-      setActive((mode === 'start') ? tabs[0] : null);
-    });
-  }, [modePromise]);
+    // set the active tab when the start menu should be opened
+    setActiveTab((open === EStartMenuOpen.OPEN) ? tabs[0] : null);
+  }, [open]);
 
   React.useEffect(() => {
     // switch header to dark theme when a tab is active
-    header.toggleDarkTheme((active) ? true : false);
-  }, [header, active]);
-
-  console.log('start menu component');
+    header.toggleDarkTheme((activeTab) ? true : false);
+  }, [header, activeTab]);
 
   return (
     <>
       {ReactDOM.createPortal(
-        <MainMenuLinks tabs={tabs} active={active} setActive={(a) => setActive(a)} mode={mode}></MainMenuLinks>,
+        <MainMenuLinks tabs={tabs} activeTab={activeTab} setActiveTab={(a) => setActiveTab(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <GraphContext.Provider value={{manager, graph}}>
-        <StartMenu tabs={tabs} active={active} setActive={setActive} mode={mode}></StartMenu>
-      </GraphContext.Provider>
+      <StartMenuTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabs>
     </>
   );
 }
@@ -95,21 +106,21 @@ function MainMenuLinks(props: IStartMenuTabProps) {
   return (
     <>
       {props.tabs.map((tab) => (
-        <li className={`nav-item ${props.active === tab ? 'active' : ''}`} key={tab.id}>
+        <li className={`nav-item ${props.activeTab === tab ? 'active' : ''}`} key={tab.id}>
           <a className="nav-link"
             href={`#${tab.id}`}
             id={`${tab.id}-tab`}
             role="tab"
             aria-controls={tab.id}
-            aria-selected={(props.active === tab)}
+            aria-selected={(props.activeTab === tab)}
             onClick={(evt) => {
               evt.preventDefault();
               window.scrollTo(0, 0);
-              if (props.mode === 'overlay' && props.active === tab) {
+              if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
                 // close tab only in overlay mode
-                props.setActive(null);
+                props.setActiveTab(null);
               } else {
-                props.setActive(tab);
+                props.setActiveTab(tab);
               }
               return false;
             }}
@@ -123,21 +134,25 @@ function MainMenuLinks(props: IStartMenuTabProps) {
 }
 
 
-function StartMenu(props: IStartMenuTabProps) {
+function StartMenuTabs(props: IStartMenuTabProps) {
+  if(props.activeTab === null) {
+    return null;
+  }
+
   return (
-    <div className={`ordino-start-menu tab-content ${props.active ? 'ordino-start-menu-open' : ''}`}>
+    <div className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
       {props.tabs.map((tab, index) => (
-        <div className={`tab-pane fade ${props.active === tab ? `active show` : ''} ${props.mode === 'start' ? `pt-5` : ''}`}
+        <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
           key={tab.id}
           id={tab.id}
           role="tabpanel"
           aria-labelledby={`${tab.id}-tab`}
         >
-          {props.mode === 'overlay' &&
+          {props.mode === EStartMenuMode.OVERLAY &&
           <Container fluid>
             <Row>
               <Col className="d-flex justify-content-end">
-                <Button className="start-menu-close" variant="link" onClick={() => { props.setActive(null); }}>
+                <Button className="start-menu-close" variant="link" onClick={() => { props.setActiveTab(null); }}>
                   <i className="fas fa-times"></i>
                 </Button>
               </Col>

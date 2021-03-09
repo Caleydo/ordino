@@ -5,12 +5,6 @@ import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {useAsync} from '../../../hooks';
 import {EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from '../../..';
 
-
-
-export function byDateDesc(a: any, b: any) {
-  return -((a.ts || 0) - (b.ts || 0));
-}
-
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
 }

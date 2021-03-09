@@ -1,15 +1,15 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import {OrdinoAppContext} from '../../menu/StartMenuReact';
+import {GraphContext} from '../../OrdinoAppComponent';
 
 export function SessionDropzone() {
-    const {app} = React.useContext(OrdinoAppContext);
+    const {manager} = React.useContext(GraphContext);
     const onDrop = (acceptedFile) => {
         const reader = new FileReader();
         reader.onload = (e: any) => {
             const dataS = e.target.result;
             const dump = JSON.parse(dataS);
-            app.graphManager.importGraph(dump);
+            manager.importGraph(dump);
         };
         reader.readAsText(acceptedFile[0]);
     };

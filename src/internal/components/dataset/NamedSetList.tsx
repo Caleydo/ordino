@@ -1,8 +1,9 @@
 import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {INamedSet} from 'tdp_core';
-import {OrdinoAppContext} from '../../menu/StartMenuReact';
+import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
 import {ListItemDropdown} from '../common';
+import {GraphContext} from '../../OrdinoAppComponent';
 
 interface INamedSetListProps {
   headerIcon: string;
@@ -15,10 +16,21 @@ interface INamedSetListProps {
 
 export function NamedSetList({headerIcon, headerText, viewId, value, status, readonly}: INamedSetListProps) {
 
-  const {app} = React.useContext(OrdinoAppContext);
-  const open = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const {manager} = React.useContext(GraphContext);
+
+  // TODO: refactor init session handling
+  const initNewSession = (event, viewId: string, namedSet: INamedSet) => {
     event.preventDefault();
-    app.initNewSession(viewId, value);
+    const defaultSessionValues = {
+      ['species']: 'human' // TODO: refactor to get the value as props
+    };
+
+    UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
+      view: viewId,
+      options: {namedSet},
+      defaultSessionValues
+    });
+    manager.newGraph();
   };
 
   return (
@@ -37,7 +49,7 @@ export function NamedSetList({headerIcon, headerText, viewId, value, status, rea
           {value.map((entry, i) => {
             return (
               <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
-                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={open} >{entry.name}</Button>
+                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => initNewSession(event, 'celllinedb_start', entry)} >{entry.name}</Button>
                 { readonly ||
                   <ListItemDropdown>
                     <Dropdown.Item>Edit</Dropdown.Item>

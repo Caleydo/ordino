@@ -4,9 +4,6 @@ import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { useAsync } from '../../../hooks';
 import { EXTENSION_POINT_START_MENU } from '../../..';
-export function byDateDesc(a, b) {
-    return -((a.ts || 0) - (b.ts || 0));
-}
 function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }

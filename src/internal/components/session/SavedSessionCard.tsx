@@ -4,19 +4,19 @@ import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
-import {OrdinoAppContext} from '../../menu/StartMenuReact';
-import {byDateDesc} from '../../menu/tabs/SessionsTab';
+import {GraphContext} from '../../OrdinoAppComponent';
 import {ListItemDropdown} from '../common';
 import {Action, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
+import {byDateDesc} from './utils';
 
 
 export default function SavedSessionCard({name, faIcon, cssClass}: IStartMenuSectionDesc) {
-  const {app} = React.useContext(OrdinoAppContext);
+  const {manager} = React.useContext(GraphContext);
   const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 
   const listSessions = React.useMemo(() => async () => {
-    const all = (await app.graphManager.list())?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+    const all = (await manager.list())?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
     setSessions(all);
   }, []);
 

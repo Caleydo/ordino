@@ -1,12 +1,26 @@
-import * as React from 'react';
-import { OrdinoApp } from '../..';
 import { AppHeader } from 'phovea_ui';
-export declare type StartMenuMode = 'start' | 'overlay';
-export declare const OrdinoAppContext: React.Context<{
-    app: OrdinoApp;
-}>;
-export declare function StartMenuComponent({ header, app, modePromise }: {
+export declare enum EStartMenuMode {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    START = "start",
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    OVERLAY = "overlay"
+}
+export declare enum EStartMenuOpen {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    OPEN = "open",
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    CLOSED = "closed"
+}
+export declare function StartMenuComponent({ header, mode, open }: {
     header: AppHeader;
-    app: OrdinoApp;
-    modePromise: Promise<StartMenuMode>;
+    mode: EStartMenuMode;
+    open: EStartMenuOpen;
 }): JSX.Element;

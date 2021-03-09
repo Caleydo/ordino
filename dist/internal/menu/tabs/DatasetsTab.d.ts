@@ -1,10 +1,10 @@
 import { IDataSourceConfig } from '../../../../../tdp_publicdb/dist/common/config';
 export interface IStartMenuCard {
     id: string;
-    headerText: string;
+    name: string;
     headerIcon: string;
+    viewId: string;
     datasource: IDataSourceConfig;
-    dbViewSuffix: string;
     tabs: IStartMenuSectionTab[];
 }
 export interface IStartMenuSectionTab {

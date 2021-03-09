@@ -6,4 +6,5 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
+export const EXTENSION_POINT_STARTMENU_DATASET = 'ordinoStartMenuDataset';
 //# sourceMappingURL=extensions.js.map

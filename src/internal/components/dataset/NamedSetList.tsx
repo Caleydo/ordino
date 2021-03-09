@@ -1,8 +1,6 @@
-import {UserSession} from 'phovea_core';
 import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {INamedSet} from 'tdp_core';
-import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
 import {GraphContext} from '../../menu/StartMenuReact';
 import {ListItemDropdown} from '../common';
 
@@ -10,24 +8,18 @@ interface INamedSetListProps {
   headerIcon: string;
   headerText: string;
   value: INamedSet[] | null;
+  viewId: string;
   status: 'idle' | 'pending' | 'success' | 'error';
   error: Error | string | null;
-  onclick?: () => null;
   readonly?: boolean;
 }
 
-export function NamedSetList({headerIcon, headerText, value, status, error, readonly}: INamedSetListProps) {
+export function NamedSetList({headerIcon, headerText, viewId, value, status, error, readonly}: INamedSetListProps) {
 
-  const {manager} = React.useContext(GraphContext);
-
-  const initNewSession = (event, view: string, options: any, defaultSessionValues: any = null) => {
+  const {app} = React.useContext(GraphContext);
+  const open = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
-    UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
-      view,
-      options,
-      defaultSessionValues
-    });
-    manager.newGraph();
+    app.initNewSession(viewId, value)
   };
 
   return (
@@ -46,7 +38,7 @@ export function NamedSetList({headerIcon, headerText, value, status, error, read
           {value.map((entry, i) => {
             return (
               <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
-                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => initNewSession(event, 'celllinedb_start', value)} >{entry.name}</Button>
+                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={open} >{entry.name}</Button>
                 { readonly ||
                   <ListItemDropdown>
                     <Dropdown.Item>Edit</Dropdown.Item>

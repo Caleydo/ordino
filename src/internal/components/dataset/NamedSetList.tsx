@@ -4,6 +4,7 @@ import {INamedSet} from 'tdp_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
 import {ListItemDropdown} from '../common';
 import {GraphContext} from '../../OrdinoAppComponent';
+import {UserSession} from 'phovea_core';
 
 interface INamedSetListProps {
   headerIcon: string;

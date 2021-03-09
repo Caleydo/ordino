@@ -3,6 +3,7 @@ import { Button, ButtonGroup, Col, Dropdown } from 'react-bootstrap';
 import { SESSION_KEY_NEW_ENTRY_POINT } from '../..';
 import { ListItemDropdown } from '../common';
 import { GraphContext } from '../../OrdinoAppComponent';
+import { UserSession } from 'phovea_core';
 export function NamedSetList({ headerIcon, headerText, viewId, value, status, readonly }) {
     const { manager } = React.useContext(GraphContext);
     // TODO: refactor init session handling

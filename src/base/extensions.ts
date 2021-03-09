@@ -9,19 +9,23 @@
 import {IPluginDesc} from 'phovea_core';
 import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
+import {IStartMenuSectionTab} from '../internal/menu/tabs/DatasetsTab';
 
 export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
 
 
 export interface IStartMenuSectionDesc extends IPluginDesc {
   readonly name: string;
+  /**
+   * TODO See if cssClass is still necessary in session cards.
+   */
   readonly cssClass: string;
-
+  readonly faIcon: string;
   load(): Promise<IStartMenuSectionPlugin>;
 }
 
 export interface IStartMenuSectionOptions {
-  session?(viewId: string, options: { namedSet?: INamedSet, [key: string]: any }, defaultSessionValues: any): void;
+  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
 
   graphManager: CLUEGraphManager;
 }
@@ -29,7 +33,7 @@ export interface IStartMenuSectionOptions {
 interface IStartMenuSectionPlugin {
   desc: IStartMenuSectionDesc;
 
-  factory(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions): IStartMenuSection;
+  factory(props: IStartMenuSectionDesc): JSX.Element;
 }
 
 export interface IStartMenuSection {
@@ -38,4 +42,29 @@ export interface IStartMenuSection {
   push(namedSet: INamedSet): boolean;
 
   update?(): void;
+}
+
+
+export const EXTENSION_POINT_STARTMENU_DATASET = 'ordinoStartMenuDataset';
+
+export interface IStartMenuDatasetDesc extends IPluginDesc {
+  id: string;
+  name: string;
+  headerIcon: string;
+  viewId: string;
+  datasource: any;
+  tabs: IStartMenuSectionTab[];
+
+  load(): Promise<IStartMenuDatasetPlugin>;
+}
+
+interface IStartMenuDatasetPlugin {
+  desc: IStartMenuDatasetDesc;
+
+  factory(props: IStartMenuDatasetDesc): JSX.Element;
+}
+
+export interface IStartMenuDataset {
+  push(namedSet: INamedSet): boolean;
+  update(): void;
 }

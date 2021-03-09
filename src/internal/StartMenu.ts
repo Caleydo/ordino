@@ -126,40 +126,40 @@ export class StartMenu {
    * Loops through all sections and updates them (or the entry points) if necessary
    */
   private updateSections() {
-    const that = this;
+    // const that = this;
 
-    const options = {
-      session: this.app.initNewSession.bind(this.app),
-      graphManager: this.app.graphManager
-    };
+    // const options = {
+    //   session: this.app.initNewSession.bind(this.app),
+    //   graphManager: this.app.graphManager
+    // };
 
-    this.$sections.each(function (desc: IStartMenuSectionDesc) {
-      // reload the entry points every time the
-      const elem = <HTMLElement>this.querySelector('div.body');
+    // this.$sections.each(function (desc: IStartMenuSectionDesc) {
+    //   // reload the entry points every time the
+    //   const elem = <HTMLElement>this.querySelector('div.body');
 
-      // do not load entry point again, if already loaded
-      // i.e. when the StartMenu is opened again and sections are already initialized
-      if (that.hasSection(desc)) {
-        return;
-      }
+    //   // do not load entry point again, if already loaded
+    //   // i.e. when the StartMenu is opened again and sections are already initialized
+    //   if (that.hasSection(desc)) {
+    //     return;
+    //   }
 
-      desc.load().then((plugin) => {
-        elem.innerHTML = '';
-        const section = plugin.factory(elem, desc, options);
-        // prevent adding the entryPoint if already in list or undefined
-        if (section === undefined || that.hasSection(desc)) {
-          return;
-        }
-        that.sections.push(section);
-      });
-    });
+    //   desc.load().then((plugin) => {
+    //     elem.innerHTML = '';
+    //     const section = plugin.factory(elem, desc, options);
+    //     // prevent adding the entryPoint if already in list or undefined
+    //     if (section === undefined || that.hasSection(desc)) {
+    //       return;
+    //     }
+    //     that.sections.push(section);
+    //   });
+    // });
 
-    // update sections when opening the StartMenu
-    this.sections.forEach((section) => {
-      if (typeof section.update === 'function') {
-        section.update();
-      }
-    });
+    // // update sections when opening the StartMenu
+    // this.sections.forEach((section) => {
+    //   if (typeof section.update === 'function') {
+    //     section.update();
+    //   }
+    // });
   }
 
 }

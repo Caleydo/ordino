@@ -35,7 +35,7 @@ export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
  * - provides a reference to the provenance graph
  */
 export class OrdinoApp extends EventHandler implements IOrdinoApp  {
-  static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
+  // static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
   /**
    * List of open views (e.g., to show in the history)
    * @type {ViewWrapper[]}
@@ -62,48 +62,10 @@ export class OrdinoApp extends EventHandler implements IOrdinoApp  {
     this.ref = graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
 
 
-    this.$history = this.buildHistory(parent);
+    this.$history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
 
     const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
     this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-    this.buildWelcomeView(<HTMLElement>this.$node.node());
-  }
-
-  /**
-   * Loads registered welcome pages from the extension points.
-   * The welcome page with the highest priority is loaded and shown.
-   *
-   * @param {HTMLElement} parent
-   */
-  private buildWelcomeView(parent: HTMLElement) {
-    const welcomeViews = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_WELCOME_PAGE)
-      .sort((a: any, b: any) => ((b.priority || 10) - (a.priority || 10))); // descending
-
-    if(welcomeViews.length === 0) {
-      console.warn('No registered welcome page found!');
-      return;
-    }
-
-    welcomeViews[0].load()
-      .then((p) => {
-        const welcomeView: IWelcomeView = p.factory(parent);
-        welcomeView.build();
-      });
-  }
-
-  private buildHistory(parent: HTMLElement) {
-    const $history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
-    $history.append('li').classed('homeButton', true)
-      .html(`<a href="#">
-        <i class="fas fa-home" aria-hidden="true"></i>
-        <span class="sr-only">Start</span>
-      </a>`);
-    $history.select('.homeButton > a').on('click', (d) => {
-      // prevent changing the hash (href)
-      (<Event>d3.event).preventDefault();
-      this.fire(OrdinoApp.EVENT_OPEN_START_MENU);
-    });
-    return $history;
   }
 
   get node() {

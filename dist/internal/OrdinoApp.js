@@ -15,7 +15,6 @@ import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
 import { SESSION_KEY_NEW_ENTRY_POINT } from './constants';
 import { UserSession } from 'phovea_core';
-import { PluginRegistry } from 'phovea_core';
 export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
 /**
  * The main class for the Ordino app
@@ -29,6 +28,7 @@ export class OrdinoApp extends EventHandler {
         super();
         this.graph = graph;
         this.graphManager = graphManager;
+        // static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
         /**
          * List of open views (e.g., to show in the history)
          * @type {ViewWrapper[]}
@@ -40,43 +40,9 @@ export class OrdinoApp extends EventHandler {
         // add OrdinoApp app as (first) object to provenance graph
         // need old name for compatibility
         this.ref = graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
-        this.$history = this.buildHistory(parent);
+        this.$history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
         const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
         this.$node = $wrapper.append('div').classed('targid', true).datum(this);
-        this.buildWelcomeView(this.$node.node());
-    }
-    /**
-     * Loads registered welcome pages from the extension points.
-     * The welcome page with the highest priority is loaded and shown.
-     *
-     * @param {HTMLElement} parent
-     */
-    buildWelcomeView(parent) {
-        const welcomeViews = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_WELCOME_PAGE)
-            .sort((a, b) => ((b.priority || 10) - (a.priority || 10))); // descending
-        if (welcomeViews.length === 0) {
-            console.warn('No registered welcome page found!');
-            return;
-        }
-        welcomeViews[0].load()
-            .then((p) => {
-            const welcomeView = p.factory(parent);
-            welcomeView.build();
-        });
-    }
-    buildHistory(parent) {
-        const $history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
-        $history.append('li').classed('homeButton', true)
-            .html(`<a href="#">
-        <i class="fas fa-home" aria-hidden="true"></i>
-        <span class="sr-only">Start</span>
-      </a>`);
-        $history.select('.homeButton > a').on('click', (d) => {
-            // prevent changing the hash (href)
-            d3.event.preventDefault();
-            this.fire(OrdinoApp.EVENT_OPEN_START_MENU);
-        });
-        return $history;
     }
     get node() {
         return this.$node.node();
@@ -379,7 +345,6 @@ export class OrdinoApp extends EventHandler {
         });
     }
 }
-OrdinoApp.EVENT_OPEN_START_MENU = 'openStartMenu';
 /**
  * Helper function to filter views that were created: should be moved to NodeUtils
  * @param stateNode

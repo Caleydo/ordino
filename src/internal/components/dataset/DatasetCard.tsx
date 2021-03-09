@@ -10,7 +10,7 @@ import {IStartMenuCard} from '../../menu/tabs/DatasetsTab';
 
 
 
-export function DatasetCard({name, headerIcon, tabs, viewId, datasource}: IStartMenuCard) {
+export default function DatasetCard({name, headerIcon, tabs, viewId, datasource}: IStartMenuCard) {
   const subTypeKey = 'species';
 
   const loadPredefinedSet = React.useMemo(() => {

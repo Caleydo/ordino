@@ -59,7 +59,7 @@ export interface IStartMenuDatasetDesc extends IPluginDesc {
 interface IStartMenuDatasetPlugin {
   desc: IStartMenuDatasetDesc;
 
-  factory(parent: HTMLElement, desc: IStartMenuDatasetDesc, options: IStartMenuSectionOptions): IStartMenuDataset;
+  factory(props:IStartMenuDatasetDesc): JSX.Element;
 }
 
 export interface IStartMenuDataset {

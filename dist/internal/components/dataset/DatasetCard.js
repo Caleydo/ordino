@@ -5,7 +5,7 @@ import { ENamedSetType, RestBaseUtils, RestStorageUtils } from 'tdp_core';
 import { NamedSetList } from './NamedSetList';
 import { useAsync } from '../../../hooks';
 import { UserSession } from 'phovea_core';
-export function DatasetCard({ name, headerIcon, tabs, viewId, datasource }) {
+export default function DatasetCard({ name, headerIcon, tabs, viewId, datasource }) {
     var _a, _b;
     const subTypeKey = 'species';
     const loadPredefinedSet = React.useMemo(() => {

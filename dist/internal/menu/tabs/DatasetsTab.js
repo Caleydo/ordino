@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Container, Col, Nav, Row, Button } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
-import { DatasetCard, UploadDatasetCard } from '../../components';
+import { UploadDatasetCard } from '../../components';
 import { EXTENSION_POINT_STARTMENU_DATASET } from '../../..';
 import { useAsync } from '../../../hooks';
 export function DatasetsTab() {
@@ -12,7 +12,6 @@ export function DatasetsTab() {
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
     const { status, value: cards } = useAsync(loadCards);
-    console.log('sections', cards);
     return (React.createElement(React.Fragment, null,
         React.createElement(Row, null,
             React.createElement(Col, { className: "d-flex justify-content-end" },
@@ -32,7 +31,7 @@ export function DatasetsTab() {
                     status === 'success' ?
                         cards.map((card) => {
                             return (React.createElement(Element, { key: card.desc.id, className: "pt-6", name: `${card.desc.id}_${suffix}` },
-                                React.createElement(DatasetCard, Object.assign({ key: card.desc.id }, card.desc))));
+                                React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
                         }) : null,
                     React.createElement(Element, { className: "py-6", name: `upload_${suffix}` },
                         React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" })))))));

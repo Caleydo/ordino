@@ -2,9 +2,8 @@ import React, {useMemo} from 'react';
 import {Container, Col, Nav, Row, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
-import {DatasetCard, UploadDatasetCard} from '../../components';
+import {UploadDatasetCard} from '../../components';
 import {IDataSourceConfig} from '../../../../../tdp_publicdb/dist/common/config';
-import {gene, cellline, tissue} from 'tdp_publicdb/dist/common/config';
 import {EXTENSION_POINT_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 
@@ -27,14 +26,11 @@ export interface IStartMenuSectionTab {
 
 export function DatasetsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();
-
   const loadCards = useMemo(() => () => {
     const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_STARTMENU_DATASET).map((d) => d as IStartMenuDatasetDesc);
     return Promise.all(sectionEntries.map((section) => section.load()));
   }, []);
   const {status, value: cards} = useAsync(loadCards);
-  console.log('sections', cards)
-
 
   return (
     <>
@@ -64,7 +60,7 @@ export function DatasetsTab() {
               cards.map((card) => {
                 return (
                   <Element key={card.desc.id} className="pt-6" name={`${card.desc.id}_${suffix}`}>
-                    <DatasetCard key={card.desc.id} {...card.desc}></DatasetCard>
+                    <card.factory key={card.desc.id} {...card.desc} />
                   </Element>
                 );
               }) : null}

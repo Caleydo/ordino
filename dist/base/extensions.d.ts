@@ -8,7 +8,6 @@
 import { IPluginDesc } from 'phovea_core';
 import { INamedSet } from 'tdp_core';
 import { CLUEGraphManager } from 'phovea_clue';
-import { IDataSourceConfig } from 'tdp_publicdb';
 import { IStartMenuSectionTab } from '../internal/menu/tabs/DatasetsTab';
 export declare const EXTENSION_POINT_START_MENU = "ordinoStartMenuSection";
 export interface IStartMenuSectionDesc extends IPluginDesc {
@@ -42,7 +41,7 @@ export interface IStartMenuDatasetDesc extends IPluginDesc {
     name: string;
     headerIcon: string;
     viewId: string;
-    datasource: IDataSourceConfig;
+    datasource: any;
     tabs: IStartMenuSectionTab[];
     load(): Promise<IStartMenuDatasetPlugin>;
 }

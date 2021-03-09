@@ -55,7 +55,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
   /**
    * React DOM node reference
    */
-  private readonly nodeRef: React.RefObject<Element>;
+  private readonly nodeRef: React.RefObject<HTMLDivElement>;
 
   private readonly removeWrapper = (event: any, view: ViewWrapper) => this.remove(view);
   private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);

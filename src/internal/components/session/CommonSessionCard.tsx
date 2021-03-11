@@ -62,7 +62,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
     };
 
 
-    // TODO why is the check for the graph necessary here?
+    // TODO: why is the check for the graph necessary here?
     const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription, callback?: any) => {
         event.preventDefault();
         event.stopPropagation();

@@ -420,8 +420,6 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
       [EViewMode.FOCUS]: 't-focus'
     };
 
-    console.log(this.state.mode, this.state.open);
-
     return(
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>

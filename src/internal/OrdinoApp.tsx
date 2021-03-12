@@ -26,13 +26,13 @@ export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null})
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
-interface IOrdinoAppComponentProps {
+interface IOrdinoAppProps {
   graph: ProvenanceGraph;
   graphManager: CLUEGraphManager;
   header: AppHeader;
 }
 
-interface IOrdinoAppComponentState {
+interface IOrdinoAppState {
   mode: EStartMenuMode;
   open: EStartMenuOpen;
   views: ViewWrapper[];
@@ -45,7 +45,7 @@ interface IOrdinoAppComponentState {
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps, IOrdinoAppComponentState> implements IOrdinoApp  {
+export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp  {
   /**
    * Key for the session storage that is temporarily used when starting a new analysis session
    */
@@ -55,7 +55,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
    * IObjectRef to this OrdinoApp instance
    * @type {IObjectRef<OrdinoApp>}
    */
-  readonly ref: IObjectRef<OrdinoAppComponent>;
+  readonly ref: IObjectRef<OrdinoApp>;
 
   /**
    * React DOM node reference
@@ -285,7 +285,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     }
 
     // store state to session before creating a new graph
-    UserSession.getInstance().store(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION, {
+    UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
       view: viewId,
       options,
       defaultSessionValues
@@ -304,16 +304,16 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
    * If no initial data is avaialble the start menu will be opened.
    */
   initNewSession() {
-    if (UserSession.getInstance().has(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION)) {
+    if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
       this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
 
-      const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION);
+      const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
 
       if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
         this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
       }
       this.push(view, null, null, options);
-      UserSession.getInstance().remove(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION);
+      UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
 
     } else {
       this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);

@@ -10,11 +10,11 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {ProvenanceGraph} from 'phovea_core';
 import {CLUEGraphManager} from 'phovea_clue';
-import {OrdinoAppComponent} from '../internal/OrdinoAppComponent';
+import {OrdinoApp} from '../internal/OrdinoApp';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
 import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenuReact';
 
-export class Ordino extends ATDPApplication<OrdinoAppComponent> {
+export class Ordino extends ATDPApplication<OrdinoApp> {
 
   constructor(options: Partial<ITDPOptions> = {}) {
     super(Object.assign({
@@ -28,11 +28,11 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
     manager: CLUEGraphManager,
     main: HTMLElement
   ) {
-    return new Promise<OrdinoAppComponent>(async (resolve) => {
+    return new Promise<OrdinoApp>(async (resolve) => {
       main.classList.add('targid');
 
       ReactDOM.render(
-        <OrdinoAppComponent
+        <OrdinoApp
           header={this.header}
           graph={graph}
           graphManager={manager}
@@ -45,7 +45,7 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
     });
   }
 
-  protected initSessionImpl(app: OrdinoAppComponent) {
+  protected initSessionImpl(app: OrdinoApp) {
     app.initApp().then(() => {
       if (app.props.graph.isEmpty) {
         app.initNewSession();

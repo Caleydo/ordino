@@ -7,7 +7,7 @@
  ********************************************************************/
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { OrdinoAppComponent } from '../internal/OrdinoAppComponent';
+import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication } from 'tdp_core';
 import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenuReact';
 export class Ordino extends ATDPApplication {
@@ -20,7 +20,7 @@ export class Ordino extends ATDPApplication {
     createApp(graph, manager, main) {
         return new Promise(async (resolve) => {
             main.classList.add('targid');
-            ReactDOM.render(React.createElement(OrdinoAppComponent, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
+            ReactDOM.render(React.createElement(OrdinoApp, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
                     resolve(instance); // Promise is resolved when the component is intialized
                 } }), main);
         });

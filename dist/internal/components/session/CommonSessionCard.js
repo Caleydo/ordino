@@ -3,7 +3,7 @@ import { FormDialog } from 'phovea_ui';
 import React, { useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
-import { GraphContext } from '../../OrdinoAppComponent';
+import { GraphContext } from '../../OrdinoApp';
 /**
  * Wrapper component that exposes actions to be used in children components.
  */

@@ -25,7 +25,7 @@ export const GraphContext = React.createContext({ graph: null, manager: null });
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class OrdinoAppComponent extends React.Component {
+export class OrdinoApp extends React.Component {
     constructor(props) {
         super(props);
         this.removeWrapper = (event, view) => this.remove(view);
@@ -225,7 +225,7 @@ export class OrdinoAppComponent extends React.Component {
             return;
         }
         // store state to session before creating a new graph
-        UserSession.getInstance().store(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION, {
+        UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
             view: viewId,
             options,
             defaultSessionValues
@@ -242,14 +242,14 @@ export class OrdinoAppComponent extends React.Component {
      * If no initial data is avaialble the start menu will be opened.
      */
     initNewSession() {
-        if (UserSession.getInstance().has(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION)) {
+        if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
             this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
-            const { view, options, defaultSessionValues } = UserSession.getInstance().retrieve(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION);
+            const { view, options, defaultSessionValues } = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
             if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
                 this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
             }
             this.push(view, null, null, options);
-            UserSession.getInstance().remove(OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION);
+            UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
         }
         else {
             this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
@@ -410,7 +410,7 @@ export class OrdinoAppComponent extends React.Component {
 /**
  * Key for the session storage that is temporarily used when starting a new analysis session
  */
-OrdinoAppComponent.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
+OrdinoApp.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
 /**
  * Helper function to filter views that were created: should be moved to NodeUtils
  * @param stateNode
@@ -420,4 +420,4 @@ function isCreateView(stateNode) {
     const creator = stateNode.creator;
     return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
 }
-//# sourceMappingURL=OrdinoAppComponent.js.map
+//# sourceMappingURL=OrdinoApp.js.map

@@ -21,12 +21,12 @@ export declare const GraphContext: React.Context<{
     graph: ProvenanceGraph;
     manager: CLUEGraphManager;
 }>;
-interface IOrdinoAppComponentProps {
+interface IOrdinoAppProps {
     graph: ProvenanceGraph;
     graphManager: CLUEGraphManager;
     header: AppHeader;
 }
-interface IOrdinoAppComponentState {
+interface IOrdinoAppState {
     mode: EStartMenuMode;
     open: EStartMenuOpen;
     views: ViewWrapper[];
@@ -38,7 +38,7 @@ interface IOrdinoAppComponentState {
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export declare class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps, IOrdinoAppComponentState> implements IOrdinoApp {
+export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp {
     /**
      * Key for the session storage that is temporarily used when starting a new analysis session
      */
@@ -47,7 +47,7 @@ export declare class OrdinoAppComponent extends React.Component<IOrdinoAppCompon
      * IObjectRef to this OrdinoApp instance
      * @type {IObjectRef<OrdinoApp>}
      */
-    readonly ref: IObjectRef<OrdinoAppComponent>;
+    readonly ref: IObjectRef<OrdinoApp>;
     /**
      * React DOM node reference
      */

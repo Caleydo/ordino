@@ -9,11 +9,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {ProvenanceGraph} from 'phovea_core';
-import {UserSession} from 'phovea_core';
 import {CLUEGraphManager} from 'phovea_clue';
-import {SESSION_KEY_NEW_ENTRY_POINT} from '../internal/constants';
 import {OrdinoAppComponent} from '../internal/OrdinoAppComponent';
-import {TDPApplicationUtils} from 'tdp_core';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
 import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenuReact';
 

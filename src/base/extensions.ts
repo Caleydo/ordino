@@ -13,7 +13,6 @@ import {IStartMenuDatasetSectionTab} from '../internal/menu/tabs/DatasetsTab';
 
 export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 
-
 /**
  * Register a new section in the start menu sessions tab
  */

@@ -31,10 +31,10 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
         });
         return false;
     };
-    // TODO: why is the check for the graph necessary here?
     const editSession = (event, desc, callback) => {
         event.preventDefault();
         event.stopPropagation();
+        // TODO: why is the check for the graph necessary here?
         // if (graph) {
         //   return false;
         // }

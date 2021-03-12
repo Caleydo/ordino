@@ -17,7 +17,7 @@ interface ICommonSessionCardProps {
 /**
  * Types of actions exposed by the CommonSessionCard component
  */
-export const enum Action {
+export const enum EAction {
     SELECT = 'select',
     SAVE = 'save',
     EDIT = 'edit',
@@ -26,7 +26,7 @@ export const enum Action {
     DELETE = 'delete',
 }
 
-export type SessionActionChooser = (type: Action, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export type SessionActionChooser = (type: EAction, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 
 
@@ -147,19 +147,19 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
     };
 
 
-    const sessionAction = (type: Action, event: React.MouseEvent<HTMLElement | DropdownItemProps, MouseEvent>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => {
+    const sessionAction = (type: EAction, event: React.MouseEvent<HTMLElement | DropdownItemProps, MouseEvent>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => {
         switch (type) {
-            case Action.SELECT:
+            case EAction.SELECT:
                 return selectSession(event, desc);
-            case Action.SAVE:
+            case EAction.SAVE:
                 return saveSession(event, desc);
-            case Action.EDIT:
+            case EAction.EDIT:
                 return editSession(event, desc, updateSessions);
-            case Action.CLONE:
+            case EAction.CLONE:
                 return cloneSession(event, desc);
-            case Action.EXPORT:
+            case EAction.EXPORT:
                 return exportSession(event, desc);
-            case Action.DELETE:
+            case EAction.DELETE:
                 return deleteSession(event, desc, updateSessions);
         }
     };

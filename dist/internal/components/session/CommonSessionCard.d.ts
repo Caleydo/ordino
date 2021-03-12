@@ -10,7 +10,7 @@ interface ICommonSessionCardProps {
 /**
  * Types of actions exposed by the CommonSessionCard component
  */
-export declare const enum Action {
+export declare const enum EAction {
     SELECT = "select",
     SAVE = "save",
     EDIT = "edit",
@@ -18,7 +18,7 @@ export declare const enum Action {
     EXPORT = "epxport",
     DELETE = "delete"
 }
-export declare type SessionActionChooser = (type: Action, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export declare type SessionActionChooser = (type: EAction, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 export declare type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 /**
  * Wrapper component that exposes actions to be used in children components.

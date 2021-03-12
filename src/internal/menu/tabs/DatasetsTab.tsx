@@ -3,10 +3,10 @@ import {Container, Col, Nav, Row} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {UploadDatasetCard} from '../../components';
-import {EP_ORDINO_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSectionDesc} from '../../..';
+import {EP_ORDINO_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 
-export interface IStartMenuSectionTab {
+export interface IStartMenuSessionSectionTab {
   id: string;
   tabText: string;
   tabIcon: string;

@@ -2,7 +2,7 @@ import {IProvenanceGraphDataDescription, I18nextManager} from 'phovea_core';
 import React from 'react';
 import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
-import {IStartMenuSectionDesc} from '../../..';
+import {IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../OrdinoAppComponent';
 import {ListItemDropdown} from '../common';
@@ -12,7 +12,7 @@ import {byDateDesc} from './utils';
 
 
 
-export default function TemporarySessionCard({name, faIcon, cssClass}: IStartMenuSectionDesc) {
+export default function TemporarySessionCard({name, faIcon, cssClass}: IStartMenuSessionSectionDesc) {
     const {manager} = React.useContext(GraphContext);
     const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 

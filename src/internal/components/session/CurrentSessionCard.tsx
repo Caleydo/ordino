@@ -2,14 +2,14 @@ import {I18nextManager} from 'phovea_core';
 import React from 'react';
 import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
-import {IStartMenuSectionDesc} from '../../..';
+import {IStartMenuSessionSectionDesc} from '../../..';
 import {GraphContext} from '../../OrdinoAppComponent';
 import {ListItemDropdown} from '../common';
 import {Action, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
 
 
-export default function CurrentSessionCard({name, faIcon, cssClass}: IStartMenuSectionDesc) {
+export default function CurrentSessionCard({name, faIcon, cssClass}: IStartMenuSessionSectionDesc) {
     const {graph} = React.useContext(GraphContext);
     const desc = graph.desc;
     return (

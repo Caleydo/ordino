@@ -8,7 +8,7 @@
 import { IPluginDesc } from 'phovea_core';
 import { INamedSet } from 'tdp_core';
 import { CLUEGraphManager } from 'phovea_clue';
-import { IStartMenuSectionTab } from '../internal/menu/tabs/DatasetsTab';
+import { IStartMenuSessionSectionTab } from '../internal/menu/tabs/DatasetsTab';
 export declare const EP_ORDINO_STARTMENU_SESSION_SECTION = "epOrdinoStartMenuSessionSection";
 /**
  * Register a new section in the start menu sessions tab
@@ -18,7 +18,7 @@ export interface IStartMenuSessionSectionDesc extends IPluginDesc {
     readonly faIcon: string;
     load(): Promise<IStartMenuSessionSectionPlugin>;
 }
-export interface IStartMenuSectionOptions {
+export interface IStartMenuSessionSectionOptions {
     session?(viewId: string, options: {
         namedSet?: INamedSet;
         [key: string]: any;
@@ -43,7 +43,7 @@ export interface IStartMenuDatasetDesc extends IPluginDesc {
     name: string;
     headerIcon: string;
     viewId: string;
-    tabs: IStartMenuSectionTab[];
+    tabs: IStartMenuSessionSectionTab[];
     load(): Promise<IStartMenuDatasetPlugin>;
 }
 interface IStartMenuDatasetPlugin {

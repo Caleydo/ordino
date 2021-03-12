@@ -3,14 +3,14 @@ import { Container, Col, Nav, Row } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { useAsync } from '../../../hooks';
-import { EXTENSION_POINT_START_MENU } from '../../..';
+import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '../../..';
 function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
 export function SessionsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
     const loadSections = useMemo(() => () => {
-        const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_START_MENU).map((d) => d).sort(byPriority);
+        const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_SESSION_SECTION).map((d) => d).sort(byPriority);
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
     const { status, value: sections } = useAsync(loadSections);

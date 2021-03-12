@@ -7,7 +7,7 @@
  ********************************************************************/
 import { PluginRegistry } from 'phovea_core';
 import { event as d3event, select } from 'd3';
-import { EXTENSION_POINT_START_MENU } from '../base/extensions';
+import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '../base/extensions';
 function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
@@ -67,7 +67,7 @@ export class StartMenu {
             d3event.preventDefault();
             this.close();
         });
-        const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_START_MENU).map((d) => d).sort(byPriority);
+        const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_SESSION_SECTION).map((d) => d).sort(byPriority);
         this.$sections = this.$node.select('.menu').selectAll('section').data(sectionEntries);
         this.$sections.enter()
             .append('section')
@@ -101,7 +101,7 @@ export class StartMenu {
         //   session: this.app.initNewSession.bind(this.app),
         //   graphManager: this.app.graphManager
         // };
-        // this.$sections.each(function (desc: IStartMenuSectionDesc) {
+        // this.$sections.each(function (desc: IStartMenuSessionSectionDesc) {
         //   // reload the entry points every time the
         //   const elem = <HTMLElement>this.querySelector('div.body');
         //   // do not load entry point again, if already loaded

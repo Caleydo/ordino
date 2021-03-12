@@ -6,12 +6,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from '../../base/extensions';
+import {IStartMenuSessionSection, IStartMenuSessionSectionDesc, IStartMenuSessionSectionOptions} from '../../base/extensions';
 import {INamedSet} from 'tdp_core';
 import {TemporarySessionList} from 'tdp_core';
 
-export class TemporarySessionSection implements IStartMenuSection {
-  constructor(parent: HTMLElement, public readonly desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions) {
+export class TemporarySessionSection implements IStartMenuSessionSection {
+  constructor(parent: HTMLElement, public readonly desc: IStartMenuSessionSectionDesc, options: IStartMenuSessionSectionOptions) {
     const _ = new TemporarySessionList(parent, options.graphManager);
   }
 

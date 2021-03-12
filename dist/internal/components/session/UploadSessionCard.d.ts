@@ -1,2 +1,2 @@
-import { IStartMenuSectionDesc } from '../../..';
-export default function UploadSessionCard({ name, faIcon, cssClass }: IStartMenuSectionDesc): JSX.Element;
+import { IStartMenuSessionSectionDesc } from '../../..';
+export default function UploadSessionCard({ name, faIcon, cssClass }: IStartMenuSessionSectionDesc): JSX.Element;

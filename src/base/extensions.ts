@@ -9,7 +9,7 @@
 import {IPluginDesc} from 'phovea_core';
 import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
-import {IStartMenuSectionTab} from '../internal/menu/tabs/DatasetsTab';
+import {IStartMenuSessionSectionTab} from '../internal/menu/tabs/DatasetsTab';
 
 export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 
@@ -23,7 +23,7 @@ export interface IStartMenuSessionSectionDesc extends IPluginDesc {
   load(): Promise<IStartMenuSessionSectionPlugin>;
 }
 
-export interface IStartMenuSectionOptions {
+export interface IStartMenuSessionSectionOptions {
   session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
   graphManager: CLUEGraphManager;
 }
@@ -52,7 +52,7 @@ export interface IStartMenuDatasetDesc extends IPluginDesc {
   name: string;
   headerIcon: string;
   viewId: string;
-  tabs: IStartMenuSectionTab[];
+  tabs: IStartMenuSessionSectionTab[];
 
   load(): Promise<IStartMenuDatasetPlugin>;
 }

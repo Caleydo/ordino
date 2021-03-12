@@ -3,7 +3,7 @@ import {Container, Col, Nav, Row, Button} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {useAsync} from '../../../hooks';
-import {EXTENSION_POINT_START_MENU, IStartMenuSectionDesc} from '../../..';
+import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
@@ -12,7 +12,7 @@ function byPriority(a: any, b: any) {
 export function SessionsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();
   const loadSections = useMemo(() => () => {
-    const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_START_MENU).map((d) => d as IStartMenuSectionDesc).sort(byPriority);
+    const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_SESSION_SECTION).map((d) => d as IStartMenuSessionSectionDesc).sort(byPriority);
     return Promise.all(sectionEntries.map((section) => section.load()));
   }, []);
   const {status, value: sections} = useAsync(loadSections);

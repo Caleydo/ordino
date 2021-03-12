@@ -48,7 +48,7 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
   protected initSessionImpl(app: OrdinoApp) {
     app.initApp().then(() => {
       if (app.props.graph.isEmpty) {
-        app.initNewSession();
+        app.initNewSessionAfterPageReload();
       } else {
         //just if no other option applies jump to the stored state
         app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);

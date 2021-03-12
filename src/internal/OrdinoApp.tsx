@@ -287,19 +287,19 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       defaultSessionValues
     });
 
-    // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+    // create new graph and apply new view after window.reload
     this.props.graphManager.newGraph();
   }
 
   /**
-   * This function initializes the new session with the empty provenance graph which
-   * is created with the page reload (see `startNewSession`).
+   * This function is the counter part to `startNewSession()`.
+   * It initializes the new session with the empty provenance graph which is created with the page reload.
    * If initial data is available in the session storage (stored before page reload),
    * it is used to store the default session values into the session storage
    * and push the first view.
    * If no initial data is avaialble the start menu will be opened.
    */
-  initNewSession() {
+  initNewSessionAfterPageReload() {
     if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
       const {startViewId, startViewOptions, defaultSessionValues} = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
 

@@ -28,7 +28,7 @@ export class Ordino extends ATDPApplication {
     initSessionImpl(app) {
         app.initApp().then(() => {
             if (app.props.graph.isEmpty) {
-                app.initNewSession();
+                app.initNewSessionAfterPageReload();
             }
             else {
                 //just if no other option applies jump to the stored state

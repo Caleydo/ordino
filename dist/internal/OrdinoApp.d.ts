@@ -121,14 +121,14 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues?: any): void;
     /**
-     * This function initializes the new session with the empty provenance graph which
-     * is created with the page reload (see `startNewSession`).
+     * This function is the counter part to `startNewSession()`.
+     * It initializes the new session with the empty provenance graph which is created with the page reload.
      * If initial data is available in the session storage (stored before page reload),
      * it is used to store the default session values into the session storage
      * and push the first view.
      * If no initial data is avaialble the start menu will be opened.
      */
-    initNewSession(): void;
+    initNewSessionAfterPageReload(): void;
     /**
      * Push availabe default session values to provenance graph first.
      * Then push the first view and close the start menu.

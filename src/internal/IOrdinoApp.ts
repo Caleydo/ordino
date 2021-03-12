@@ -33,7 +33,7 @@ export interface IOrdinoApp {
   removeImpl(view: ViewWrapper, focus: number): Promise<number>;
 
   /**
-   * Initializes a new analysis session with a given view and additional options.
+   * Starts a new analysis session with a given view and additional options.
    * The default session values are permanently stored in the provenance graph and the session storage.
    *
    * All provided parameters are persisted to the session storage.
@@ -41,9 +41,9 @@ export interface IOrdinoApp {
    * After the page load a new session is available and new actions for the initial view
    * are pushed to the provenance graph (see `initNewSession()`).
    *
-   * @param viewId First view of the analysis session
-   * @param options Options that are passed to the initial view (e.g. a NamedSet)
+   * @param startViewId First view of the analysis session
+   * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
    * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
    */
-   startNewSession(viewId: string, options: any, defaultSessionValues?: any);
+   startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any);
 }

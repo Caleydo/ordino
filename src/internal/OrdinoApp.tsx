@@ -261,7 +261,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   }
 
   /**
-   * Initializes a new analysis session with a given view and additional options.
+   * Starts a new analysis session with a given view and additional options.
    * The default session values are permanently stored in the provenance graph and the session storage.
    *
    * All provided parameters are persisted to the session storage.
@@ -269,25 +269,21 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * After the page load a new session is available and new actions for the initial view
    * are pushed to the provenance graph (see `initNewSession()`).
    *
-   * @param viewId First view of the analysis session
-   * @param options Options that are passed to the initial view (e.g. a NamedSet)
+   * @param startViewId First view of the analysis session
+   * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
    * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
    */
-  startNewSession(viewId: string, options: any, defaultSessionValues: any = null) {
+  startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any = null) {
     // use current emtpy session to start analysis and skip reload to create a new provenance graph
     if(this.props.graph.isEmpty) {
-      this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
-      if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-        this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
-      }
-      this.push(viewId, null, null, options);
+      this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
       return;
     }
 
     // store state to session before creating a new graph
     UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
-      view: viewId,
-      options,
+      startViewId,
+      startViewOptions,
       defaultSessionValues
     });
 
@@ -305,19 +301,33 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   initNewSession() {
     if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
-      this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
+      const {startViewId, startViewOptions, defaultSessionValues} = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
 
-      const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+      this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
 
-      if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-        this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
-      }
-      this.push(view, null, null, options);
       UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
 
     } else {
       this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
     }
+  }
+
+  /**
+   * Push availabe default session values to provenance graph first.
+   * Then push the first view and close the start menu.
+   *
+   * @param startViewId First view of the analysis session
+   * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+   * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
+   */
+  private pushStartViewToSession(startViewId, viewOptions, defaultSessionValues?) {
+    this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
+
+    if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
+      this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+    }
+
+    this.push(startViewId, null, null, viewOptions);
   }
 
   private pushView(viewId: string, idtype: IDType, selection: Range, options?) {

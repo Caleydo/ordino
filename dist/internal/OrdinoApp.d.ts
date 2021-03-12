@@ -107,7 +107,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     get lastView(): ViewWrapper;
     push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
     /**
-     * Initializes a new analysis session with a given view and additional options.
+     * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.
      *
      * All provided parameters are persisted to the session storage.
@@ -115,11 +115,11 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * After the page load a new session is available and new actions for the initial view
      * are pushed to the provenance graph (see `initNewSession()`).
      *
-     * @param viewId First view of the analysis session
-     * @param options Options that are passed to the initial view (e.g. a NamedSet)
+     * @param startViewId First view of the analysis session
+     * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
      * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
      */
-    startNewSession(viewId: string, options: any, defaultSessionValues?: any): void;
+    startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues?: any): void;
     /**
      * This function initializes the new session with the empty provenance graph which
      * is created with the page reload (see `startNewSession`).
@@ -129,6 +129,15 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * If no initial data is avaialble the start menu will be opened.
      */
     initNewSession(): void;
+    /**
+     * Push availabe default session values to provenance graph first.
+     * Then push the first view and close the start menu.
+     *
+     * @param startViewId First view of the analysis session
+     * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+     * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
+     */
+    private pushStartViewToSession;
     private pushView;
     /**
      * Removes a view, and if there are multiple open (following) views, close them in reverse order.

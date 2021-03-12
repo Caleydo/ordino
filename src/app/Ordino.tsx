@@ -50,31 +50,11 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
 
   protected initSessionImpl(app: OrdinoAppComponent) {
     app.initApp().then(() => {
-      // if (!app.graph.isEmpty) {
-      //   //just if no other option applies jump to the stored state
-      //   this.jumpToStoredOrLastState();
-      // } else {
-      //   app.initEmptySession();
-      // }
-
-      const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);
-
-      if (app.props.graph.isEmpty && !hasInitScript) {
-        app.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
-
-      } else if (hasInitScript) {
-        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
-
-        const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(SESSION_KEY_NEW_ENTRY_POINT);
-
-        if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-          app.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
-        }
-        app.push(view, null, null, options);
-        UserSession.getInstance().remove(SESSION_KEY_NEW_ENTRY_POINT);
+      if (app.props.graph.isEmpty) {
+        app.initNewSession();
       } else {
-        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         //just if no other option applies jump to the stored state
+        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         this.jumpToStoredOrLastState();
       }
     });

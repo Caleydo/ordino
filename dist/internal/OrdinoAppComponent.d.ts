@@ -40,6 +40,10 @@ interface IOrdinoAppComponentState {
  */
 export declare class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps, IOrdinoAppComponentState> implements IOrdinoApp {
     /**
+     * Key for the session storage that is temporarily used when starting a new analysis session
+     */
+    private static SESSION_KEY_START_NEW_SESSION;
+    /**
      * IObjectRef to this OrdinoApp instance
      * @type {IObjectRef<OrdinoApp>}
      */
@@ -52,6 +56,9 @@ export declare class OrdinoAppComponent extends React.Component<IOrdinoAppCompon
     private readonly chooseNextView;
     private readonly updateSelection;
     constructor(props: any);
+    /**
+     * This function can be used to load some initial content async
+     */
     initApp(): Promise<any>;
     /**
      * Set the mode and open/close state of the start menu.
@@ -99,7 +106,29 @@ export declare class OrdinoAppComponent extends React.Component<IOrdinoAppCompon
      */
     get lastView(): ViewWrapper;
     push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
-    initNewSession(viewId: string, options: any, defaultSessionValues?: any): void;
+    /**
+     * Initializes a new analysis session with a given view and additional options.
+     * The default session values are permanently stored in the provenance graph and the session storage.
+     *
+     * All provided parameters are persisted to the session storage.
+     * Then a new analysis session (provenance graph) is created by reloading the page.
+     * After the page load a new session is available and new actions for the initial view
+     * are pushed to the provenance graph (see `initNewSession()`).
+     *
+     * @param viewId First view of the analysis session
+     * @param options Options that are passed to the initial view (e.g. a NamedSet)
+     * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
+     */
+    startNewSession(viewId: string, options: any, defaultSessionValues?: any): void;
+    /**
+     * This function initializes the new session with the empty provenance graph which
+     * is created with the page reload (see `startNewSession`).
+     * If initial data is available in the session storage (stored before page reload),
+     * it is used to store the default session values into the session storage
+     * and push the first view.
+     * If no initial data is avaialble the start menu will be opened.
+     */
+    initNewSession(): void;
     private pushView;
     /**
      * Removes a view, and if there are multiple open (following) views, close them in reverse order.

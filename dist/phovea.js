@@ -49,25 +49,21 @@ export default function (registry) {
     });
     registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_current_session', () => import('./internal/components/session/CurrentSessionCard'), {
         name: 'Current Sessions',
-        cssClass: 'tdpSessionCurrentData',
         faIcon: 'fa-history',
         priority: 10
     });
     registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_temporary_session', () => import('./internal/components/session/TemporarySessionCard'), {
         name: 'Temporary Sessions',
-        cssClass: 'tdpSessionTemporaryData',
         faIcon: 'fa-history',
         priority: 95
     });
     registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_persistent_session', () => import('./internal/components/session/SavedSessionCard'), {
         name: 'Saved Sessions',
-        cssClass: 'tdpSessionPersistentData',
         faIcon: 'fa-cloud',
         priority: 90
     });
     registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_import_session', () => import('./internal/components/session/UploadSessionCard'), {
         name: 'Import Session',
-        cssClass: 'tdpSessionUploadedData',
         faIcon: 'fa-file-upload',
         priority: 100
     });

@@ -11,32 +11,30 @@ import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
 import {IStartMenuSectionTab} from '../internal/menu/tabs/DatasetsTab';
 
-export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
+export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 
 
-export interface IStartMenuSectionDesc extends IPluginDesc {
+/**
+ * Register a new section in the start menu sessions tab
+ */
+export interface IStartMenuSessionSectionDesc extends IPluginDesc {
   readonly name: string;
-  /**
-   * TODO See if cssClass is still necessary in session cards.
-   */
-  readonly cssClass: string;
   readonly faIcon: string;
-  load(): Promise<IStartMenuSectionPlugin>;
+  load(): Promise<IStartMenuSessionSectionPlugin>;
 }
 
 export interface IStartMenuSectionOptions {
   session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
-
   graphManager: CLUEGraphManager;
 }
 
-interface IStartMenuSectionPlugin {
-  desc: IStartMenuSectionDesc;
+interface IStartMenuSessionSectionPlugin {
+  desc: IStartMenuSessionSectionDesc;
 
-  factory(props: IStartMenuSectionDesc): JSX.Element;
+  factory(props: IStartMenuSessionSectionDesc): JSX.Element;
 }
 
-export interface IStartMenuSection {
+export interface IStartMenuSessionSection {
   readonly desc: IPluginDesc;
 
   push(namedSet: INamedSet): boolean;
@@ -44,7 +42,9 @@ export interface IStartMenuSection {
   update?(): void;
 }
 
-
+/**
+ * Register a new section in the start menu datasets tab
+ */
 export const EP_ORDINO_STARTMENU_DATASET = 'epOrdinoStartMenuDataset';
 
 export interface IStartMenuDatasetDesc extends IPluginDesc {

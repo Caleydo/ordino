@@ -9,5 +9,5 @@ export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSect
 /**
  * Register a new section in the start menu datasets tab
  */
-export const EP_ORDINO_STARTMENU_DATASET = 'epOrdinoStartMenuDataset';
+export const EP_ORDINO_STARTMENU_DATASET_SECTION = 'epOrdinoStartMenuDatasetSection';
 //# sourceMappingURL=extensions.js.map

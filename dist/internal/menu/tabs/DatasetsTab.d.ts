@@ -1,4 +1,4 @@
-export interface IStartMenuSessionSectionTab {
+export interface IStartMenuDatasetSectionTab {
     id: string;
     tabText: string;
     tabIcon: string;

@@ -8,7 +8,7 @@
 import { IPluginDesc } from 'phovea_core';
 import { INamedSet } from 'tdp_core';
 import { CLUEGraphManager } from 'phovea_clue';
-import { IStartMenuSessionSectionTab } from '../internal/menu/tabs/DatasetsTab';
+import { IStartMenuDatasetSectionTab } from '../internal/menu/tabs/DatasetsTab';
 export declare const EP_ORDINO_STARTMENU_SESSION_SECTION = "epOrdinoStartMenuSessionSection";
 /**
  * Register a new section in the start menu sessions tab
@@ -37,20 +37,20 @@ export interface IStartMenuSessionSection {
 /**
  * Register a new section in the start menu datasets tab
  */
-export declare const EP_ORDINO_STARTMENU_DATASET = "epOrdinoStartMenuDataset";
-export interface IStartMenuDatasetDesc extends IPluginDesc {
+export declare const EP_ORDINO_STARTMENU_DATASET_SECTION = "epOrdinoStartMenuDatasetSection";
+export interface IStartMenuDatasetSectionDesc extends IPluginDesc {
     id: string;
     name: string;
     headerIcon: string;
     viewId: string;
-    tabs: IStartMenuSessionSectionTab[];
-    load(): Promise<IStartMenuDatasetPlugin>;
+    tabs: IStartMenuDatasetSectionTab[];
+    load(): Promise<IStartMenuDatasetSectionPlugin>;
 }
-interface IStartMenuDatasetPlugin {
-    desc: IStartMenuDatasetDesc;
-    factory(props: IStartMenuDatasetDesc): JSX.Element;
+interface IStartMenuDatasetSectionPlugin {
+    desc: IStartMenuDatasetSectionDesc;
+    factory(props: IStartMenuDatasetSectionDesc): JSX.Element;
 }
-export interface IStartMenuDataset {
+export interface IStartMenuDatasetSection {
     push(namedSet: INamedSet): boolean;
     update(): void;
 }

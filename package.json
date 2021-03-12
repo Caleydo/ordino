@@ -66,16 +66,17 @@
     "tslint": "~5.20.1",
     "typedoc": "~0.19.2",
     "typescript": "~3.9.7",
+    "@types/react-highlight-words": "^0.16.1"
+  },
+  "dependencies": {
+    "jquery": "~3.5.1",
+    "jquery.scrollto": "~2.1.2",
+    "tdp_core": "github:datavisyn/tdp_core#bootstrap-v4",
     "react-select": "^4.1.0",
     "react-dropzone": "^11.3.1",
     "react-scroll": "^1.8.1",
     "react-virtualized": "^9.22.3",
     "react-select-async-paginate": "^0.5.3",
     "react-highlight-words": "^0.17.0"
-  },
-  "dependencies": {
-    "jquery": "~3.5.1",
-    "jquery.scrollto": "~2.1.2",
-    "tdp_core": "github:datavisyn/tdp_core#bootstrap-v4"
   }
 }

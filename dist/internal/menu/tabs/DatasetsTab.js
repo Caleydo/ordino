@@ -3,12 +3,12 @@ import { Container, Col, Nav, Row } from 'react-bootstrap';
 import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { UploadDatasetCard } from '../../components';
-import { EP_ORDINO_STARTMENU_DATASET } from '../../..';
+import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../..';
 import { useAsync } from '../../../hooks';
 export function DatasetsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
     const loadCards = useMemo(() => () => {
-        const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_DATASET).map((d) => d);
+        const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_DATASET_SECTION).map((d) => d);
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
     const { status, value: cards } = useAsync(loadCards);

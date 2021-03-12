@@ -3,9 +3,9 @@ interface INamedSetListProps {
     headerIcon: string;
     headerText: string;
     value: INamedSet[] | null;
-    viewId: string;
+    onOpen: (event: any, namedSet: INamedSet) => void;
     status: 'idle' | 'pending' | 'success' | 'error';
     readonly?: boolean;
 }
-export declare function NamedSetList({ headerIcon, headerText, viewId, value, status, readonly }: INamedSetListProps): JSX.Element;
+export declare function NamedSetList({ headerIcon, headerText, onOpen, value, status, readonly }: INamedSetListProps): JSX.Element;
 export {};

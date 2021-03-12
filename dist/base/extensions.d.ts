@@ -41,7 +41,6 @@ export interface IStartMenuDatasetDesc extends IPluginDesc {
     name: string;
     headerIcon: string;
     viewId: string;
-    datasource: any;
     tabs: IStartMenuSectionTab[];
     load(): Promise<IStartMenuDatasetPlugin>;
 }

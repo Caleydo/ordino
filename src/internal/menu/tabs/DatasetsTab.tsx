@@ -3,7 +3,7 @@ import {Container, Col, Nav, Row} from 'react-bootstrap';
 import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {UploadDatasetCard} from '../../components';
-import {EXTENSION_POINT_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSectionDesc} from '../../..';
+import {EP_ORDINO_STARTMENU_DATASET, IStartMenuDatasetDesc, IStartMenuSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 
 export interface IStartMenuSectionTab {
@@ -15,7 +15,7 @@ export interface IStartMenuSectionTab {
 export function DatasetsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();
   const loadCards = useMemo(() => () => {
-    const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_STARTMENU_DATASET).map((d) => d as IStartMenuDatasetDesc);
+    const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_DATASET).map((d) => d as IStartMenuDatasetDesc);
     return Promise.all(sectionEntries.map((section) => section.load()));
   }, []);
   const {status, value: cards} = useAsync(loadCards);

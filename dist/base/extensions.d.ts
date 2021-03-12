@@ -35,7 +35,7 @@ export interface IStartMenuSection {
     push(namedSet: INamedSet): boolean;
     update?(): void;
 }
-export declare const EXTENSION_POINT_STARTMENU_DATASET = "ordinoStartMenuDataset";
+export declare const EP_ORDINO_STARTMENU_DATASET = "epOrdinoStartMenuDataset";
 export interface IStartMenuDatasetDesc extends IPluginDesc {
     id: string;
     name: string;

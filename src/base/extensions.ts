@@ -45,7 +45,7 @@ export interface IStartMenuSection {
 }
 
 
-export const EXTENSION_POINT_STARTMENU_DATASET = 'ordinoStartMenuDataset';
+export const EP_ORDINO_STARTMENU_DATASET = 'epOrdinoStartMenuDataset';
 
 export interface IStartMenuDatasetDesc extends IPluginDesc {
   id: string;

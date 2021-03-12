@@ -6,7 +6,7 @@ import { GraphContext } from '../../OrdinoAppComponent';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
-export default function CurrentSessionCard({ name, faIcon, cssClass }) {
+export default function CurrentSessionCard({ name, faIcon }) {
     const { graph } = React.useContext(GraphContext);
     const desc = graph.desc;
     return (React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo') }, (sessionAction) => {

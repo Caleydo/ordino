@@ -6,13 +6,13 @@ import {IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../OrdinoAppComponent';
 import {ListItemDropdown} from '../common';
-import {Action, CommonSessionCard} from './CommonSessionCard';
+import {EAction, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
 import {byDateDesc} from './utils';
 
 
 
-export default function TemporarySessionCard({name, faIcon, cssClass}: IStartMenuSessionSectionDesc) {
+export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSectionDesc) {
     const {manager} = React.useContext(GraphContext);
     const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 
@@ -38,12 +38,12 @@ export default function TemporarySessionCard({name, faIcon, cssClass}: IStartMen
                         {
                             status === 'success' && sessions.length > 0 &&
                             sessions?.map((session) => {
-                                return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(Action.SELECT, event, session)}>
-                                    <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => sessionAction(Action.SAVE, event, session)}>Save</Button>
+                                return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
+                                    <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => sessionAction(EAction.SAVE, event, session)}>Save</Button>
                                     <ListItemDropdown>
-                                        <Dropdown.Item onClick={(event) => sessionAction(Action.CLONE, event, session)}>Clone</Dropdown.Item>
-                                        <Dropdown.Item onClick={(event) => sessionAction(Action.EXPORT, event, session)}>Export</Dropdown.Item>
-                                        <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(Action.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
+                                        <Dropdown.Item onClick={(event) => sessionAction(EAction.CLONE, event, session)}>Clone</Dropdown.Item>
+                                        <Dropdown.Item onClick={(event) => sessionAction(EAction.EXPORT, event, session)}>Export</Dropdown.Item>
+                                        <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
                                     </ListItemDropdown>
                                 </SessionListItem>;
                             })

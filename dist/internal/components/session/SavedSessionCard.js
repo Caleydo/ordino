@@ -8,7 +8,7 @@ import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
 import { byDateDesc } from './utils';
-export default function SavedSessionCard({ name, faIcon, cssClass }) {
+export default function SavedSessionCard({ name, faIcon }) {
     const { manager } = React.useContext(GraphContext);
     const [sessions, setSessions] = React.useState(null);
     const listSessions = React.useMemo(() => async () => {

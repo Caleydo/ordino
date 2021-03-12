@@ -9,7 +9,7 @@ import {EAction, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
 
 
-export default function CurrentSessionCard({name, faIcon, cssClass}: IStartMenuSessionSectionDesc) {
+export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSectionDesc) {
     const {graph} = React.useContext(GraphContext);
     const desc = graph.desc;
     return (

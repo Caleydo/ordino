@@ -11,7 +11,7 @@ import {SessionListItem} from './SessionListItem';
 import {byDateDesc} from './utils';
 
 
-export default function SavedSessionCard({name, faIcon, cssClass}: IStartMenuSessionSectionDesc) {
+export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectionDesc) {
   const {manager} = React.useContext(GraphContext);
   const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 

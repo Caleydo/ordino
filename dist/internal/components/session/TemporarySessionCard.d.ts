@@ -1,2 +1,2 @@
 import { IStartMenuSessionSectionDesc } from '../../..';
-export default function TemporarySessionCard({ name, faIcon, cssClass }: IStartMenuSessionSectionDesc): JSX.Element;
+export default function TemporarySessionCard({ name, faIcon }: IStartMenuSessionSectionDesc): JSX.Element;

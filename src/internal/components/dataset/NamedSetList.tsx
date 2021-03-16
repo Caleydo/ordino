@@ -9,25 +9,24 @@ import {UserSession} from 'phovea_core';
 interface INamedSetListProps {
   headerIcon: string;
   headerText: string;
-  value: INamedSet[] | null;
-  viewId: string;
+  namedSets: INamedSet[] | null;
+  startViewId: string;
   status: 'idle' | 'pending' | 'success' | 'error';
   readonly?: boolean;
 }
 
-export function NamedSetList({headerIcon, headerText, viewId, value, status, readonly}: INamedSetListProps) {
-
+export function NamedSetList({headerIcon, headerText, startViewId, namedSets, status, readonly}: INamedSetListProps) {
   const {manager} = React.useContext(GraphContext);
 
   // TODO: refactor init session handling
-  const initNewSession = (event, viewId: string, namedSet: INamedSet) => {
+  const startAnalyis = (event: React.MouseEvent<HTMLElement, MouseEvent>, namedSet: INamedSet) => {
     event.preventDefault();
     const defaultSessionValues = {
       ['species']: 'human' // TODO: refactor to get the value as props
     };
 
     UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
-      view: viewId,
+      view: startViewId,
       options: {namedSet},
       defaultSessionValues
     });
@@ -41,16 +40,16 @@ export function NamedSetList({headerIcon, headerText, viewId, value, status, rea
         <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
       }
       {status === 'success' &&
-        value.length === 0 &&
+        namedSets.length === 0 &&
         <p>No sets available</p>
       }
       {status === 'success' &&
-        value.length > 0 &&
+        namedSets.length > 0 &&
         <ButtonGroup vertical>
-          {value.map((entry, i) => {
+          {namedSets.map((namedSet, i) => {
             return (
               <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
-                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => initNewSession(event, 'celllinedb_start', entry)} >{entry.name}</Button>
+                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => startAnalyis(event, namedSet)} >{namedSet.name}</Button>
                 { readonly ||
                   <ListItemDropdown>
                     <Dropdown.Item>Edit</Dropdown.Item>

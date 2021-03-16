@@ -1,1 +1,2 @@
-export declare function SavedSessionCard(): JSX.Element;
+import { IStartMenuSessionSectionDesc } from '../../..';
+export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc): JSX.Element;

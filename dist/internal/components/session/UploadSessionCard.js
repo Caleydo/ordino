@@ -1,7 +1,8 @@
+import { I18nextManager } from 'phovea_core';
 import React from 'react';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionDropzone } from './SessionDropzone';
-export function UploadSessionCard() {
-    return (React.createElement(CommonSessionCard, { cardName: "Import Session", faIcon: "fa-file-upload", cardInfo: "You can import sessions as temporary sessions and continue the analysis afterwards." }, () => React.createElement(SessionDropzone, null)));
+export default function UploadSessionCard({ name, faIcon }) {
+    return (React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.uploadCardInfo') }, () => React.createElement(SessionDropzone, null)));
 }
 //# sourceMappingURL=UploadSessionCard.js.map

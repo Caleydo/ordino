@@ -1,22 +1,21 @@
-import {UserSession} from 'phovea_core';
 import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {INamedSet} from 'tdp_core';
 import {SESSION_KEY_NEW_ENTRY_POINT} from '../..';
 import {ListItemDropdown} from '../common';
 import {GraphContext} from '../../OrdinoAppComponent';
+import {UserSession} from 'phovea_core';
 
 interface INamedSetListProps {
   headerIcon: string;
   headerText: string;
   value: INamedSet[] | null;
+  viewId: string;
   status: 'idle' | 'pending' | 'success' | 'error';
-  error: Error | string | null;
-  onclick?: () => null;
   readonly?: boolean;
 }
 
-export function NamedSetList({headerIcon, headerText, value, status, error, readonly}: INamedSetListProps) {
+export function NamedSetList({headerIcon, headerText, viewId, value, status, readonly}: INamedSetListProps) {
 
   const {manager} = React.useContext(GraphContext);
 

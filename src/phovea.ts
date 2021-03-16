@@ -7,6 +7,7 @@ import {IRegistry, PluginRegistry} from 'phovea_core';
 import {ParseRangeUtils} from 'phovea_core';
 import {ActionNode} from 'phovea_core';
 import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core';
+import {EP_ORDINO_STARTMENU_SESSION_SECTION} from '.';
 
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
@@ -55,18 +56,28 @@ export default function (registry: IRegistry) {
     matches: '(targidSetSelection)'
   });
 
-  registry.push('ordinoStartMenuSection', 'targid_temporary_session', () => import('./menu/internal/TemporarySessionSection'), {
-    factory: 'new TemporarySessionSection',
+  registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_current_session', () => import('./internal/components/session/CurrentSessionCard'), {
+    name: 'Current Sessions',
+    faIcon:'fa-history',
+    priority: 10
+  });
+
+  registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_temporary_session', () => import('./internal/components/session/TemporarySessionCard'), {
     name: 'Temporary Sessions',
-    cssClass: 'tdpSessionTemporaryData',
+    faIcon:'fa-history',
+    priority: 95
+  });
+
+  registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_persistent_session', () => import('./internal/components/session/SavedSessionCard'), {
+    name: 'Saved Sessions',
+    faIcon:'fa-cloud',
     priority: 90
   });
 
-  registry.push('ordinoStartMenuSection', 'targid_persistent_session', () => import('./menu/internal/PersistentSessionSection'), {
-    factory: 'new PersistentSessionSection',
-    name: 'Saved Sessions',
-    cssClass: 'tdpSessionPersistentData',
-    priority: 95
+  registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_import_session', () => import('./internal/components/session/UploadSessionCard'), {
+    name: 'Import Session',
+    faIcon:'fa-file-upload',
+    priority: 100
   });
 
   registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./base/WelcomeView'), {

@@ -9,33 +9,60 @@
 import {IPluginDesc} from 'phovea_core';
 import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
+import {IStartMenuDatasetSectionTab} from '../internal/menu/tabs/DatasetsTab';
 
-export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
+export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 
-
-export interface IStartMenuSectionDesc extends IPluginDesc {
+/**
+ * Register a new section in the start menu sessions tab
+ */
+export interface IStartMenuSessionSectionDesc extends IPluginDesc {
   readonly name: string;
-  readonly cssClass: string;
-
-  load(): Promise<IStartMenuSectionPlugin>;
+  readonly faIcon: string;
+  load(): Promise<IStartMenuSessionSectionPlugin>;
 }
 
-export interface IStartMenuSectionOptions {
-  session?(viewId: string, options: { namedSet?: INamedSet, [key: string]: any }, defaultSessionValues: any): void;
-
+export interface IStartMenuSessionSectionOptions {
+  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
   graphManager: CLUEGraphManager;
 }
 
-interface IStartMenuSectionPlugin {
-  desc: IStartMenuSectionDesc;
+interface IStartMenuSessionSectionPlugin {
+  desc: IStartMenuSessionSectionDesc;
 
-  factory(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions): IStartMenuSection;
+  factory(props: IStartMenuSessionSectionDesc): JSX.Element;
 }
 
-export interface IStartMenuSection {
+export interface IStartMenuSessionSection {
   readonly desc: IPluginDesc;
 
   push(namedSet: INamedSet): boolean;
 
   update?(): void;
+}
+
+/**
+ * Register a new section in the start menu datasets tab
+ */
+export const EP_ORDINO_STARTMENU_DATASET_SECTION = 'epOrdinoStartMenuDatasetSection';
+
+export interface IStartMenuDatasetSectionDesc extends IPluginDesc {
+  id: string;
+  name: string;
+  headerIcon: string;
+  viewId: string;
+  tabs: IStartMenuDatasetSectionTab[];
+
+  load(): Promise<IStartMenuDatasetSectionPlugin>;
+}
+
+interface IStartMenuDatasetSectionPlugin {
+  desc: IStartMenuDatasetSectionDesc;
+
+  factory(props: IStartMenuDatasetSectionDesc): JSX.Element;
+}
+
+export interface IStartMenuDatasetSection {
+  push(namedSet: INamedSet): boolean;
+  update(): void;
 }

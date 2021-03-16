@@ -1,65 +1,36 @@
-import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
+import {I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
 import React from 'react';
 import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
-import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
-import {ErrorAlertHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
+import {ProvenanceGraphMenuUtils} from 'tdp_core';
+import {IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../OrdinoAppComponent';
 import {ListItemDropdown} from '../common';
-import {CommonSessionCard} from './CommonSessionCard';
+import {EAction, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
 import {byDateDesc} from './utils';
 
 
-export function SavedSessionCard() {
-  const [savedSessions, setSavedSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
-  const [otherSessions, setOtherSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
+export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectionDesc) {
   const {manager} = React.useContext(GraphContext);
+  const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 
   const listSessions = React.useMemo(() => async () => {
-    const sessions = (await manager.list())?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
-    const me = UserSession.getInstance().currentUserNameOrAnonymous();
-    const mine = sessions?.filter((d) => d.creator === me);
-    const other = sessions?.filter((d) => d.creator !== me);
-    setSavedSessions(mine);
-    setOtherSessions(other);
+    const all = (await manager.list())?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+    setSessions(all);
   }, []);
 
-  const {status, error} = useAsync(listSessions);
+  const me = UserSession.getInstance().currentUserNameOrAnonymous();
+  const savedSessions = sessions?.filter((d) => d.creator === me);
+  const otherSessions = sessions?.filter((d) => d.creator !== me);
 
-  const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    // TODO: why is the check for the graph necessary here?
-    // if (graph) {
-    //   return false;
-    // }
-    ProvenanceGraphMenuUtils.editProvenanceGraphMetaData(desc, {permission: ProvenanceGraphMenuUtils.isPersistent(desc)}).then((extras) => {
-      if (extras !== null) {
-        Promise.resolve(manager.editGraphMetaData(desc, extras))
-          .then((desc) => {
-
-            setSavedSessions((savedSessions) => {
-              const copy = [...savedSessions];
-              const i = copy.findIndex((s) => s.id === desc.id);
-              copy[i] = desc;
-              return copy;
-            });
-            GlobalEventHandler.getInstance().fire(ProvenanceGraphMenuUtils.GLOBAL_EVENT_MANIPULATED);
-          })
-          .catch(ErrorAlertHandler.getInstance().errorAlert);
-      }
-    });
-    return false;
-  };
-
+  const {status} = useAsync(listSessions);
 
   return (
     <>
       <p className="ordino-info-text mt-4 "> Load a previous analysis session</p>
-      <CommonSessionCard cardName="Saved Session" faIcon="fa-cloud" cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo')}>
-        {(exportSession, cloneSession, _, deleteSession) => {
+      <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo')}>
+        {(sessionAction) => {
           return <Tab.Container defaultActiveKey="mySessions">
             <Nav className="session-tab" variant="pills">
               <Nav.Item >
@@ -73,23 +44,42 @@ export function SavedSessionCard() {
               <Col >
                 <Tab.Content>
                   <Tab.Pane eventKey="mySessions">
-                    {savedSessions?.map((session) => {
-                      return <SessionListItem key={session.id} status={status} desc={session} error={error}>
-                        <Button variant="outline-secondary" onClick={(event) => editSession(event, session)} className="mr-2 pt-1 pb-1">Edit</Button>
-                        <ListItemDropdown>
-                          <Dropdown.Item onClick={(event) => cloneSession(event, session)}>Clone</Dropdown.Item>
-                          <Dropdown.Item onClick={(event) => exportSession(event, session)}>Export</Dropdown.Item>
-                          <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteSession(event, session, setSavedSessions)}>Delete</Dropdown.Item>
-                        </ListItemDropdown>
-                      </SessionListItem>;
-                    })}
+                    {status === 'pending' &&
+                      <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
+                    }
+                    {status === 'success' &&
+                      savedSessions.length === 0 &&
+                      <p>No sets available</p>
+                    }
+                    {
+                      status === 'success' && savedSessions.length > 0 &&
+                      savedSessions?.map((session) => {
+                        return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
+                          <Button variant="outline-secondary" onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)} className="mr-2 pt-1 pb-1">Edit</Button>
+                          <ListItemDropdown >
+                            <Dropdown.Item onClick={(event) => sessionAction(EAction.EXPORT, event, session)}>Export</Dropdown.Item>
+                            <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
+                          </ListItemDropdown>
+                        </SessionListItem>;
+                      })}
+                    {status === 'error' && <p>Error when loading sets</p>}
                   </Tab.Pane>
                   <Tab.Pane eventKey={`publicSessions}`}>
-                    {otherSessions?.map((session) => {
-                      return <SessionListItem key={session.id} status={status} desc={session} error={error}>
-                        <Button variant="outline-secondary" onClick={(event) => cloneSession(event, session)} className="mr-2 pt-1 pb-1">Clone</Button>
-                      </SessionListItem>;
-                    })}
+                    {status === 'pending' &&
+                      <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
+                    }
+                    {status === 'success' &&
+                      otherSessions.length === 0 &&
+                      <p>No sets available</p>
+                    }
+                    {
+                      status === 'success' && otherSessions.length > 0 &&
+                      otherSessions?.map((session) => {
+                        return <SessionListItem key={session.id} desc={session}>
+                          <Button variant="outline-secondary" title="Clone to Temporary Session" onClick={(event) => sessionAction(EAction.CLONE, event, session)} className="mr-2 pt-1 pb-1">Clone</Button>
+                        </SessionListItem>;
+                      })}
+                    {status === 'error' && <p>Error when loading sets</p>}
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

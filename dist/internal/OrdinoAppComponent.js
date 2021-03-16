@@ -347,7 +347,6 @@ export class OrdinoAppComponent extends React.Component {
             [EViewMode.HIDDEN]: 't-hide',
             [EViewMode.FOCUS]: 't-focus'
         };
-        console.log(this.state.mode, this.state.open);
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
                 React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),

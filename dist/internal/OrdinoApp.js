@@ -227,6 +227,9 @@ export class OrdinoApp extends React.Component {
             defaultSessionValues
         });
         // create new graph and apply new view after window.reload
+        // TODO: The page reload is necessary to update all CLUE user interface.
+        //       If CLUE is refactored at some point and the page reload is gone,
+        //       we can refactor our session handling here and remove the session storage bypass.
         this.props.graphManager.newGraph();
     }
     /**

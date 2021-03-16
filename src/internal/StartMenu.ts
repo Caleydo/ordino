@@ -11,7 +11,7 @@ import {OrdinoApp} from './OrdinoApp';
 import {INamedSet} from 'tdp_core';
 import {PluginRegistry} from 'phovea_core';
 import {event as d3event, select, selection, Selection} from 'd3';
-import {EXTENSION_POINT_START_MENU, IStartMenuSection, IStartMenuSectionDesc} from '../base/extensions';
+import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSection, IStartMenuSessionSectionDesc} from '../base/extensions';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
@@ -26,8 +26,8 @@ const template = `<button class="closeButton">
 export class StartMenu {
 
   private readonly $node: Selection<any>;
-  private sections: IStartMenuSection[] = [];
-  private $sections: selection.Update<IStartMenuSectionDesc>;
+  private sections: IStartMenuSessionSection[] = [];
+  private $sections: selection.Update<IStartMenuSessionSectionDesc>;
 
   /**
    * Save an old key down listener to restore it later
@@ -92,7 +92,7 @@ export class StartMenu {
       this.close();
     });
 
-    const sectionEntries = PluginRegistry.getInstance().listPlugins(EXTENSION_POINT_START_MENU).map((d) => <IStartMenuSectionDesc>d).sort(byPriority);
+    const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_SESSION_SECTION).map((d) => <IStartMenuSessionSectionDesc>d).sort(byPriority);
 
     this.$sections = this.$node.select('.menu').selectAll('section').data(sectionEntries);
 
@@ -118,7 +118,7 @@ export class StartMenu {
     //this.updateSections();
   }
 
-  private hasSection(desc: IStartMenuSectionDesc) {
+  private hasSection(desc: IStartMenuSessionSectionDesc) {
     return this.sections.some((s) => s.desc.id === desc.id);
   }
 
@@ -126,40 +126,40 @@ export class StartMenu {
    * Loops through all sections and updates them (or the entry points) if necessary
    */
   private updateSections() {
-    const that = this;
+    // const that = this;
 
-    const options = {
-      session: this.app.initNewSession.bind(this.app),
-      graphManager: this.app.graphManager
-    };
+    // const options = {
+    //   session: this.app.initNewSession.bind(this.app),
+    //   graphManager: this.app.graphManager
+    // };
 
-    this.$sections.each(function (desc: IStartMenuSectionDesc) {
-      // reload the entry points every time the
-      const elem = <HTMLElement>this.querySelector('div.body');
+    // this.$sections.each(function (desc: IStartMenuSessionSectionDesc) {
+    //   // reload the entry points every time the
+    //   const elem = <HTMLElement>this.querySelector('div.body');
 
-      // do not load entry point again, if already loaded
-      // i.e. when the StartMenu is opened again and sections are already initialized
-      if (that.hasSection(desc)) {
-        return;
-      }
+    //   // do not load entry point again, if already loaded
+    //   // i.e. when the StartMenu is opened again and sections are already initialized
+    //   if (that.hasSection(desc)) {
+    //     return;
+    //   }
 
-      desc.load().then((plugin) => {
-        elem.innerHTML = '';
-        const section = plugin.factory(elem, desc, options);
-        // prevent adding the entryPoint if already in list or undefined
-        if (section === undefined || that.hasSection(desc)) {
-          return;
-        }
-        that.sections.push(section);
-      });
-    });
+    //   desc.load().then((plugin) => {
+    //     elem.innerHTML = '';
+    //     const section = plugin.factory(elem, desc, options);
+    //     // prevent adding the entryPoint if already in list or undefined
+    //     if (section === undefined || that.hasSection(desc)) {
+    //       return;
+    //     }
+    //     that.sections.push(section);
+    //   });
+    // });
 
-    // update sections when opening the StartMenu
-    this.sections.forEach((section) => {
-      if (typeof section.update === 'function') {
-        section.update();
-      }
-    });
+    // // update sections when opening the StartMenu
+    // this.sections.forEach((section) => {
+    //   if (typeof section.update === 'function') {
+    //     section.update();
+    //   }
+    // });
   }
 
 }

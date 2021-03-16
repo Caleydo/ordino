@@ -6,12 +6,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-import {IStartMenuSection, IStartMenuSectionDesc, IStartMenuSectionOptions} from '../../base/extensions';
+import {IStartMenuSessionSection, IStartMenuSessionSectionDesc, IStartMenuSessionSectionOptions} from '../../base/extensions';
 import {INamedSet} from 'tdp_core';
 import {PersistentSessionList} from 'tdp_core';
 
-export class PersistentSessionSection implements IStartMenuSection {
-  constructor(parent: HTMLElement, public readonly desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions) {
+export class PersistentSessionSection implements IStartMenuSessionSection {
+  constructor(parent: HTMLElement, public readonly desc: IStartMenuSessionSectionDesc, options: IStartMenuSessionSectionOptions) {
     const _ = new PersistentSessionList(parent, options.graphManager);
   }
 

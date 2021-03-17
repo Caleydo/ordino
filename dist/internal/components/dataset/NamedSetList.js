@@ -15,9 +15,9 @@ export function NamedSetList({ headerIcon, headerText, onOpen, value, status, re
             React.createElement("p", null, "No sets available"),
         status === 'success' &&
             value.length > 0 &&
-            React.createElement(ButtonGroup, { vertical: true }, value.map((entry, i) => {
+            React.createElement(ButtonGroup, { vertical: true }, value.map((namedSet, i) => {
                 return (React.createElement(ButtonGroup, { key: i, className: "dropdown-parent justify-content-between" },
-                    React.createElement(Button, { className: "text-left pl-0", style: { color: '#337AB7' }, variant: "link", onClick: (event) => onOpen(event, entry) }, entry.name),
+                    React.createElement(Button, { className: "text-left pl-0", style: { color: '#337AB7' }, variant: "link", onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     readonly ||
                         React.createElement(ListItemDropdown, null,
                             React.createElement(Dropdown.Item, null, "Edit"),

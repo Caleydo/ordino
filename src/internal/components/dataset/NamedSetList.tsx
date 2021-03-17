@@ -26,10 +26,10 @@ export function NamedSetList({headerIcon, headerText, onOpen, value, status, rea
       {status === 'success' &&
         value.length > 0 &&
         <ButtonGroup vertical>
-          {value.map((entry, i) => {
+          {value.map((namedSet, i) => {
             return (
               <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
-                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => onOpen(event, entry)} >{entry.name}</Button>
+                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</Button>
                 { readonly ||
                   <ListItemDropdown>
                     <Dropdown.Item>Edit</Dropdown.Item>

@@ -135,7 +135,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      *
      * @param startViewId First view of the analysis session
      * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
-     * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
+     * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
      */
     private pushStartViewToSession;
     private pushView;

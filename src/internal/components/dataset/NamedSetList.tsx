@@ -17,10 +17,10 @@ interface INamedSetListProps {
 
 export function NamedSetList({headerIcon, headerText, value, startViewId, status}: INamedSetListProps) {
   const {manager} = React.useContext(GraphContext);
-  const [namedSets, setNamedSets] = React.useState<INamedSet[]>(null)
+  const [namedSets, setNamedSets] = React.useState<INamedSet[]>(null);
   React.useEffect(() => {
-    setNamedSets(value)
-  })
+    setNamedSets(value);
+  });
 
   // TODO: refactor init session handling
   const startAnalyis = (event: React.MouseEvent<HTMLElement, MouseEvent>, namedSet: INamedSet) => {
@@ -38,7 +38,7 @@ export function NamedSetList({headerIcon, headerText, value, startViewId, status
   };
 
   const editNamedSet = (event: React.MouseEvent<DropdownItemProps>, namedSet: IStoredNamedSet) => {
-    event.preventDefault()
+    event.preventDefault();
     StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {
       const params = Object.assign({
         name,
@@ -49,21 +49,21 @@ export function NamedSetList({headerIcon, headerText, value, startViewId, status
 
       // TODO: is the notification necessary?
       NotificationHandler.successfullySaved(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.namedSet'), name);
-      setNamedSets((namedSets) => namedSets.splice(namedSets.indexOf(namedSet), 1, editedSet))
+      setNamedSets((namedSets) => namedSets.splice(namedSets.indexOf(namedSet), 1, editedSet));
     });
-  }
+  };
 
   const deleteNamedSet = async (event: React.MouseEvent<DropdownItemProps>, namedSet: IStoredNamedSet) => {
-    event.preventDefault()
+    event.preventDefault();
     const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dialogText', {name: namedSet.name}),
       {title: I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.deleteSet')}
     );
     if (deleteIt) {
       await RestStorageUtils.deleteNamedSet(namedSet.id);
       NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dashboard'), namedSet.name);
-      setNamedSets((namedSets) => namedSets.splice(namedSets.indexOf(namedSet), 1))
+      setNamedSets((namedSets) => namedSets.splice(namedSets.indexOf(namedSet), 1));
     }
-  }
+  };
 
   return (
     <Col md={4} className="dataset-entry d-flex flex-column" >
@@ -79,7 +79,7 @@ export function NamedSetList({headerIcon, headerText, value, startViewId, status
         namedSets.length > 0 &&
         <ButtonGroup vertical>
           {namedSets.map((namedSet, i) => {
-            const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet)
+            const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
               <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
                 <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => startAnalyis(event, namedSet)} >{namedSet.name}</Button>

@@ -1,0 +1,24 @@
+.ordino-footer {
+  background-color: map-get($theme-colors, 'ordino-gray-2');
+
+  .ordino-footer-navigation {
+    gap: 1rem;
+
+    .list-group-item {
+      border: none;
+      background-color: transparent;
+    }
+
+    a {
+      color: map-get($theme-colors, 'ordino-white');
+
+      &:hover {
+        color: map-get($theme-colors, 'ordino-white-hover');
+      }
+    }
+  }
+
+  .ordino-footer-logo a {
+    text-decoration: none;
+  }
+}

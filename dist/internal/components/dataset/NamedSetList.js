@@ -1,24 +1,7 @@
 import React from 'react';
 import { Button, ButtonGroup, Col, Dropdown } from 'react-bootstrap';
-import { SESSION_KEY_NEW_ENTRY_POINT } from '../..';
 import { ListItemDropdown } from '../common';
-import { GraphContext } from '../../OrdinoAppComponent';
-import { UserSession } from 'phovea_core';
-export function NamedSetList({ headerIcon, headerText, startViewId, namedSets, status, readonly }) {
-    const { manager } = React.useContext(GraphContext);
-    // TODO: refactor init session handling
-    const startAnalyis = (event, namedSet) => {
-        event.preventDefault();
-        const defaultSessionValues = {
-            ['species']: 'human' // TODO: refactor to get the value as props
-        };
-        UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
-            view: startViewId,
-            options: { namedSet },
-            defaultSessionValues
-        });
-        manager.newGraph();
-    };
+export function NamedSetList({ headerIcon, headerText, onOpen, value, status, readonly }) {
     return (React.createElement(Col, { md: 4, className: "dataset-entry d-flex flex-column" },
         React.createElement("header", null,
             React.createElement("i", { className: `mr-2 ${headerIcon}` }),
@@ -28,13 +11,13 @@ export function NamedSetList({ headerIcon, headerText, startViewId, namedSets, s
                 React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
                 " Loading sets..."),
         status === 'success' &&
-            namedSets.length === 0 &&
+            value.length === 0 &&
             React.createElement("p", null, "No sets available"),
         status === 'success' &&
-            namedSets.length > 0 &&
-            React.createElement(ButtonGroup, { vertical: true }, namedSets.map((namedSet, i) => {
+            value.length > 0 &&
+            React.createElement(ButtonGroup, { vertical: true }, value.map((namedSet, i) => {
                 return (React.createElement(ButtonGroup, { key: i, className: "dropdown-parent justify-content-between" },
-                    React.createElement(Button, { className: "text-left pl-0", style: { color: '#337AB7' }, variant: "link", onClick: (event) => startAnalyis(event, namedSet) }, namedSet.name),
+                    React.createElement(Button, { className: "text-left pl-0", style: { color: '#337AB7' }, variant: "link", onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     readonly ||
                         React.createElement(ListItemDropdown, null,
                             React.createElement(Dropdown.Item, null, "Edit"),

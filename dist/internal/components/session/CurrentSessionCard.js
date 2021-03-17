@@ -2,7 +2,7 @@ import { I18nextManager } from 'phovea_core';
 import React from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
-import { GraphContext } from '../../OrdinoAppComponent';
+import { GraphContext } from '../../OrdinoApp';
 import { ListItemDropdown } from '../common';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';

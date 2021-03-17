@@ -9,15 +9,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {ProvenanceGraph} from 'phovea_core';
-import {UserSession} from 'phovea_core';
 import {CLUEGraphManager} from 'phovea_clue';
-import {SESSION_KEY_NEW_ENTRY_POINT} from '../internal/constants';
-import {OrdinoAppComponent} from '../internal/OrdinoAppComponent';
-import {TDPApplicationUtils} from 'tdp_core';
+import {OrdinoApp} from '../internal/OrdinoApp';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
 import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenuReact';
 
-export class Ordino extends ATDPApplication<OrdinoAppComponent> {
+export class Ordino extends ATDPApplication<OrdinoApp> {
 
   constructor(options: Partial<ITDPOptions> = {}) {
     super(Object.assign({
@@ -31,11 +28,11 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
     manager: CLUEGraphManager,
     main: HTMLElement
   ) {
-    return new Promise<OrdinoAppComponent>(async (resolve) => {
+    return new Promise<OrdinoApp>(async (resolve) => {
       main.classList.add('targid');
 
       ReactDOM.render(
-        <OrdinoAppComponent
+        <OrdinoApp
           header={this.header}
           graph={graph}
           graphManager={manager}
@@ -48,33 +45,13 @@ export class Ordino extends ATDPApplication<OrdinoAppComponent> {
     });
   }
 
-  protected initSessionImpl(app: OrdinoAppComponent) {
+  protected initSessionImpl(app: OrdinoApp) {
     app.initApp().then(() => {
-      // if (!app.graph.isEmpty) {
-      //   //just if no other option applies jump to the stored state
-      //   this.jumpToStoredOrLastState();
-      // } else {
-      //   app.initEmptySession();
-      // }
-
-      const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);
-
-      if (app.props.graph.isEmpty && !hasInitScript) {
-        app.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
-
-      } else if (hasInitScript) {
-        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
-
-        const {view, options, defaultSessionValues} = UserSession.getInstance().retrieve(SESSION_KEY_NEW_ENTRY_POINT);
-
-        if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-          app.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
-        }
-        app.push(view, null, null, options);
-        UserSession.getInstance().remove(SESSION_KEY_NEW_ENTRY_POINT);
+      if (app.props.graph.isEmpty) {
+        app.initNewSessionAfterPageReload();
       } else {
-        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         //just if no other option applies jump to the stored state
+        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         this.jumpToStoredOrLastState();
       }
     });

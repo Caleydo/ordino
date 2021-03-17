@@ -2,10 +2,10 @@ import { INamedSet } from 'tdp_core';
 interface INamedSetListProps {
     headerIcon: string;
     headerText: string;
-    namedSets: INamedSet[] | null;
-    startViewId: string;
+    value: INamedSet[] | null;
+    onOpen: (event: any, namedSet: INamedSet) => void;
     status: 'idle' | 'pending' | 'success' | 'error';
     readonly?: boolean;
 }
-export declare function NamedSetList({ headerIcon, headerText, startViewId, namedSets, status, readonly }: INamedSetListProps): JSX.Element;
+export declare function NamedSetList({ headerIcon, headerText, onOpen, value, status, readonly }: INamedSetListProps): JSX.Element;
 export {};

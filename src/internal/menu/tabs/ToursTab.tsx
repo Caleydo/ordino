@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Row, Col, Container, Button} from 'react-bootstrap';
 import tour1Img from 'ordino/dist/assets/tour_1.png';
 import {TourCard} from '../../components';
+import {OrdinoFooter} from '../../../components';
 
 
 export function ToursTab() {
@@ -17,6 +18,7 @@ export function ToursTab() {
       <Row md={3}>
         <TourCard title="Adding data Columns" text="Learn how to add data columns to rankings in Ordino." image={tour1Img} onClickHandler={(evt) => console.log('')}></TourCard>
       </Row>
+      <OrdinoFooter openInNewWindow />
     </Container>
   );
 }

@@ -3,24 +3,24 @@ import {Link} from 'react-router-dom';
 import {OrdinoLogo} from './OrdinoLogo';
 
 interface IFooterLinkProps {
-  href: string;
-  className: string;
-  openInNewWindow: boolean;
+  to: string;
+  className?: string;
+  openInNewWindow?: boolean;
   children?: React.ReactNode;
 }
 
-const footerLink = React.forwardRef((props: IFooterLinkProps, ref) => {
-  if(props.openInNewWindow) {
-    return(
-      <a href={props.href} className={props.className} target="_blank" rel="noopener noreferrer">{props.children}</a>
+const FooterLink = (props: IFooterLinkProps) => {
+  if (props.openInNewWindow) {
+    return (
+      <Link to={props.to} className={props.className} target="_blank" rel="noopener noreferrer">{props.children}</Link>
     );
   }
 
-  return(
-    <a href={props.href} className={props.className}>{props.children}</a>
+  return (
+    <Link to={props.to} className={props.className}>{props.children}</Link>
   );
-});
 
+}
 export function OrdinoFooter(props) {
   const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
 
@@ -28,36 +28,36 @@ export function OrdinoFooter(props) {
     <div className="ordino-footer pt-4 pb-6 px-5">
       <nav className="ordino-footer-navigation row">
         <div className="list-group">
-          <Link to="/news" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/news" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-newspaper"></i>What's new?
-          </Link>
-          <Link to="/features" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          </FooterLink>
+          <FooterLink to="/features" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-check"></i>Features
-          </Link>
-          <Link to="/datasets" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          </FooterLink>
+          <FooterLink to="/datasets" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-database"></i>Loaded Datasets
-          </Link>
-          <Link to="/publication" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          </FooterLink>
+          <FooterLink to="/publication" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-book-open"></i>Publication
-          </Link>
+          </FooterLink>
         </div>
         <div className="list-group">
-          <Link to="/help" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-question"></i>Help and Contact
-          </Link>
-          <Link to="/help" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          </FooterLink>
+          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-file-code"></i>Source Code &amp; Licenses
-          </Link>
-          <Link to="/help" component={footerLink} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          </FooterLink>
+          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-smile"></i>Terms of Use
-          </Link>
+          </FooterLink>
         </div>
       </nav>
       <div className="row">
         <div className="col text-right ordino-footer-logo">
-          <Link to="/" component={footerLink} openInNewWindow={openInNewWindow}>
-            <OrdinoLogo></OrdinoLogo>
-          </Link>
+          <FooterLink to="/" openInNewWindow={openInNewWindow}>
+            <OrdinoLogo />
+          </FooterLink>
         </div>
       </div>
     </div>

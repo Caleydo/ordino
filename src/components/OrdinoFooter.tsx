@@ -20,7 +20,8 @@ const FooterLink = (props: IFooterLinkProps) => {
     <Link to={props.to} className={props.className}>{props.children}</Link>
   );
 
-}
+};
+
 export function OrdinoFooter(props) {
   const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
 

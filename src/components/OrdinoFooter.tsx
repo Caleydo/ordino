@@ -9,6 +9,7 @@ interface IFooterLinkProps {
   children?: React.ReactNode;
 }
 
+// tslint:disable-next-line: variable-name
 const FooterLink = (props: IFooterLinkProps) => {
   if (props.openInNewWindow) {
     return (

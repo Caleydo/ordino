@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { OrdinoLogo } from './OrdinoLogo';
+// tslint:disable-next-line: variable-name
 const FooterLink = (props) => {
     if (props.openInNewWindow) {
         return (React.createElement(Link, { to: props.to, className: props.className, target: "_blank", rel: "noopener noreferrer" }, props.children));

@@ -36,7 +36,7 @@ export function DatasetsTab() {
         <Row>
           <Col>
             <Element>
-              <p className="ordino-info-text">Start a new analysis session by loading a dataset</p>
+              <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
             </Element>
             {status === 'success' ?
               cards.map((card) => {

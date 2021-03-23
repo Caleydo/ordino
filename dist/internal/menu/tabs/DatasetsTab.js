@@ -24,7 +24,7 @@ export function DatasetsTab() {
             React.createElement(Row, null,
                 React.createElement(Col, null,
                     React.createElement(Element, null,
-                        React.createElement("p", { className: "ordino-info-text" }, "Start a new analysis session by loading a dataset")),
+                        React.createElement("p", { className: "lead text-ordino-gray-4" }, "Start a new analysis session by loading a dataset")),
                     status === 'success' ?
                         cards.map((card) => {
                             return (React.createElement(Element, { key: card.desc.id, className: "pt-6", name: `${card.desc.id}_${suffix}` },

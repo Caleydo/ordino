@@ -6,7 +6,7 @@ import { OrdinoFooter } from '../../../components';
 export function ToursTab() {
     return (React.createElement(React.Fragment, null,
         React.createElement(Container, { className: "mb-6 tours-tab" },
-            React.createElement("p", { className: "ordino-info-text" }, " Learn more about Ordino by taking an interactive guided tour"),
+            React.createElement("p", { className: "lead text-ordino-gray-4" }, "Learn more about Ordino by taking an interactive guided tour"),
             React.createElement("h4", { className: "text-left mt-4 mb-3  d-flex align-items-center " },
                 React.createElement("i", { className: "mr-2 ordino-icon-1 fas fa-chevron-circle-right" }),
                 " Beginner"),

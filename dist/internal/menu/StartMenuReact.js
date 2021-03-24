@@ -4,6 +4,7 @@ import { GlobalEventHandler } from 'phovea_core';
 import { Ordino } from '../..';
 import { DatasetsTab, SessionsTab, ToursTab } from './tabs';
 import { Button, Col, Container, Row } from 'react-bootstrap';
+import { BrowserRouter } from 'react-router-dom';
 export var EStartMenuMode;
 (function (EStartMenuMode) {
     /**
@@ -27,9 +28,9 @@ export var EStartMenuOpen;
     EStartMenuOpen["CLOSED"] = "closed";
 })(EStartMenuOpen || (EStartMenuOpen = {}));
 const tabs = [
-    { id: 'datasets', title: 'Datasets' },
-    { id: 'sessions', title: 'Analysis Sessions' },
-    { id: 'tours', title: 'Tours' },
+    { id: 'datasets', title: 'Datasets', factory: DatasetsTab },
+    { id: 'sessions', title: 'Analysis Sessions', factory: SessionsTab },
+    { id: 'tours', title: 'Tours', factory: ToursTab },
 ];
 export function StartMenuComponent({ header, mode, open }) {
     // no active tab until `open` is set OR a link in the header navigation is clicked
@@ -73,15 +74,14 @@ function StartMenuTabs(props) {
     if (props.activeTab === null) {
         return null;
     }
-    return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab, index) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
+    return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
         props.mode === EStartMenuMode.OVERLAY &&
             React.createElement(Container, { fluid: true },
                 React.createElement(Row, null,
                     React.createElement(Col, { className: "d-flex justify-content-end" },
                         React.createElement(Button, { className: "start-menu-close", variant: "link", onClick: () => { props.setActiveTab(null); } },
                             React.createElement("i", { className: "fas fa-times" }))))),
-        index === 0 ? React.createElement(DatasetsTab, null) : null,
-        index === 1 ? React.createElement(SessionsTab, null) : null,
-        index === 2 ? React.createElement(ToursTab, null) : null)))));
+        React.createElement(BrowserRouter, { basename: "/#" },
+            React.createElement(tab.factory, null)))))));
 }
 //# sourceMappingURL=StartMenuReact.js.map

@@ -5,6 +5,7 @@ import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {UploadDatasetCard} from '../../components';
 import {EP_ORDINO_STARTMENU_DATASET_SECTION, IStartMenuDatasetSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
+import {OrdinoFooter} from '../../../components';
 
 export interface IStartMenuDatasetSectionTab {
   id: string;
@@ -35,7 +36,7 @@ export function DatasetsTab() {
         <Row>
           <Col>
             <Element>
-              <p className="ordino-info-text">Start a new analysis session by loading a dataset</p>
+              <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
             </Element>
             {status === 'success' ?
               cards.map((card) => {
@@ -51,6 +52,7 @@ export function DatasetsTab() {
           </Col>
         </Row>
       </Container>
+      <OrdinoFooter openInNewWindow />
     </>
   );
 }

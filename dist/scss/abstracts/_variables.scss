@@ -1,5 +1,9 @@
+// Override and set Bootstrap theme colors
+// @see https://getbootstrap.com/docs/4.5/getting-started/theming/#sass-options
+// @usage `color: map-get($theme-colors, "light");`
+$theme-colors: () !default; // define empty $theme-colors map first to merge other colors later
 
-$theme-colors: (
+$ordino-theme-colors: (
   "ordino-white": #FFFFFF,
   "ordino-white-hover": #FFFFFFBF, // add some alpha on hover
   "ordino-gray-1": #F1F2F4,
@@ -8,7 +12,9 @@ $theme-colors: (
   "ordino-gray-4": #72818d,
   "ordino-gray-5":  #D4D7DD,
   "ordino-gray-6":  #aab3bb
-);
+) !default;
+
+$theme-colors: map-merge($theme-colors, $ordino-theme-colors);
 
 // Override spacing (Bootstrap default: 1 rem)
 // @see https://getbootstrap.com/docs/4.5/getting-started/theming/#sass-options

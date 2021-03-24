@@ -5,6 +5,7 @@ import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
+import {BrowserRouter} from 'react-router-dom';
 
 
 export enum EStartMenuMode {
@@ -34,6 +35,8 @@ export enum EStartMenuOpen {
 interface IStartMenuTab {
   id: string;
   title: string;
+  // TODO: create an extension point to add additional tabs
+  factory: () => JSX.Element;
 }
 
 interface IStartMenuTabProps {
@@ -61,9 +64,9 @@ interface IStartMenuTabProps {
 }
 
 const tabs: IStartMenuTab[] = [
-  {id: 'datasets', title: 'Datasets'},
-  {id: 'sessions', title: 'Analysis Sessions'},
-  {id: 'tours', title: 'Tours'},
+  {id: 'datasets', title: 'Datasets', factory: DatasetsTab},
+  {id: 'sessions', title: 'Analysis Sessions', factory: SessionsTab},
+  {id: 'tours', title: 'Tours', factory: ToursTab},
 ];
 
 
@@ -135,13 +138,13 @@ function MainMenuLinks(props: IStartMenuTabProps) {
 
 
 function StartMenuTabs(props: IStartMenuTabProps) {
-  if(props.activeTab === null) {
+  if (props.activeTab === null) {
     return null;
   }
 
   return (
     <div className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
-      {props.tabs.map((tab, index) => (
+      {props.tabs.map((tab) => (
         <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
           key={tab.id}
           id={tab.id}
@@ -149,18 +152,18 @@ function StartMenuTabs(props: IStartMenuTabProps) {
           aria-labelledby={`${tab.id}-tab`}
         >
           {props.mode === EStartMenuMode.OVERLAY &&
-          <Container fluid>
-            <Row>
-              <Col className="d-flex justify-content-end">
-                <Button className="start-menu-close" variant="link" onClick={() => { props.setActiveTab(null); }}>
-                  <i className="fas fa-times"></i>
-                </Button>
-              </Col>
-            </Row>
-          </Container>}
-          {index === 0 ? <DatasetsTab /> : null}
-          {index === 1 ? <SessionsTab /> : null}
-          {index === 2 ? <ToursTab /> : null}
+            <Container fluid>
+              <Row>
+                <Col className="d-flex justify-content-end">
+                  <Button className="start-menu-close" variant="link" onClick={() => {props.setActiveTab(null);}}>
+                    <i className="fas fa-times"></i>
+                  </Button>
+                </Col>
+              </Row>
+            </Container>}
+          <BrowserRouter basename="/#">
+            <tab.factory />
+          </BrowserRouter>
         </div>
       ))}
     </div>

@@ -21,7 +21,7 @@ export default function SavedSessionCard({ name, faIcon }) {
     const otherSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator !== me);
     const { status } = useAsync(listSessions);
     return (React.createElement(React.Fragment, null,
-        React.createElement("p", { className: "ordino-info-text mt-4 " }, " Load a previous analysis session"),
+        React.createElement("p", { className: "lead text-ordino-gray-4 mt-4" }, "Load a previous analysis session"),
         React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo') }, (sessionAction) => {
             return React.createElement(Tab.Container, { defaultActiveKey: "mySessions" },
                 React.createElement(Nav, { className: "session-tab", variant: "pills" },

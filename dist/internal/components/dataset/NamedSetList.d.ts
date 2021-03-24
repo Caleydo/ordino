@@ -1,11 +1,11 @@
+import React from 'react';
 import { INamedSet } from 'tdp_core';
 interface INamedSetListProps {
     headerIcon: string;
     headerText: string;
     value: INamedSet[] | null;
-    onOpen: (event: any, namedSet: INamedSet) => void;
+    onOpen: (event: React.MouseEvent<HTMLElement>, namedSet: INamedSet) => void;
     status: 'idle' | 'pending' | 'success' | 'error';
-    readonly?: boolean;
 }
-export declare function NamedSetList({ headerIcon, headerText, onOpen, value, status, readonly }: INamedSetListProps): JSX.Element;
+export declare function NamedSetList({ headerIcon, headerText, value, status, onOpen }: INamedSetListProps): JSX.Element;
 export {};

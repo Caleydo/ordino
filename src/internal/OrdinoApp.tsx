@@ -9,13 +9,12 @@
 import * as React from 'react';
 import {BaseUtils, NodeUtils, ICmdResult} from 'phovea_core';
 import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'phovea_core';
-import {AView} from 'tdp_core';
+import {AView, TDPApplicationUtils} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {CLUEGraphManager} from 'phovea_clue';
 import {CmdUtils} from './cmds';
 import {Range} from 'phovea_core';
-import {SESSION_KEY_NEW_ENTRY_POINT} from './constants';
 import {UserSession} from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenuReact';
@@ -27,13 +26,13 @@ export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null})
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
-interface IOrdinoAppComponentProps {
+interface IOrdinoAppProps {
   graph: ProvenanceGraph;
   graphManager: CLUEGraphManager;
   header: AppHeader;
 }
 
-interface IOrdinoAppComponentState {
+interface IOrdinoAppState {
   mode: EStartMenuMode;
   open: EStartMenuOpen;
   views: ViewWrapper[];
@@ -46,12 +45,17 @@ interface IOrdinoAppComponentState {
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps, IOrdinoAppComponentState> implements IOrdinoApp  {
+export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp  {
+  /**
+   * Key for the session storage that is temporarily used when starting a new analysis session
+   */
+  private static SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
+
   /**
    * IObjectRef to this OrdinoApp instance
    * @type {IObjectRef<OrdinoApp>}
    */
-  readonly ref: IObjectRef<OrdinoAppComponent>;
+  readonly ref: IObjectRef<OrdinoApp>;
 
   /**
    * React DOM node reference
@@ -78,8 +82,10 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     };
   }
 
+  /**
+   * This function can be used to load some initial content async
+   */
   async initApp() {
-    // this function can be used to load some initial content async
     return null;
   }
 
@@ -254,16 +260,77 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     }
   }
 
-  initNewSession(viewId: string, options: any, defaultSessionValues: any = null) {
+  /**
+   * Starts a new analysis session with a given view and additional options.
+   * The default session values are permanently stored in the provenance graph and the session storage.
+   *
+   * All provided parameters are persisted to the session storage.
+   * Then a new analysis session (provenance graph) is created by reloading the page.
+   * After the page load a new session is available and new actions for the initial view
+   * are pushed to the provenance graph (see `initNewSession()`).
+   *
+   * @param startViewId First view of the analysis session
+   * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+   * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
+   */
+  startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any = null) {
+    // use current emtpy session to start analysis and skip reload to create a new provenance graph
+    if(this.props.graph.isEmpty) {
+      this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+      return;
+    }
+
     // store state to session before creating a new graph
-    UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
-      view: viewId,
-      options,
+    UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
+      startViewId,
+      startViewOptions,
       defaultSessionValues
     });
 
-    // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
+    // create new graph and apply new view after window.reload
+    // TODO: The page reload is necessary to update all CLUE user interface.
+    //       If CLUE is refactored at some point and the page reload is gone,
+    //       we can refactor our session handling here and remove the session storage bypass.
     this.props.graphManager.newGraph();
+  }
+
+  /**
+   * This function is the counter part to `startNewSession()`.
+   * It initializes the new session with the empty provenance graph which is created with the page reload.
+   * If initial data is available in the session storage (stored before page reload),
+   * it is used to store the default session values into the session storage
+   * and push the first view.
+   * If no initial data is avaialble the start menu will be opened.
+   */
+  initNewSessionAfterPageReload() {
+    if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
+      const {startViewId, startViewOptions, defaultSessionValues} = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+
+      this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+
+      UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+
+    } else {
+      this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
+    }
+  }
+
+  /**
+   * Push availabe default session values to provenance graph first.
+   * Then push the first view and close the start menu.
+   *
+   * @param startViewId First view of the analysis session
+   * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+   * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
+   */
+  private pushStartViewToSession(startViewId, viewOptions, defaultSessionValues?) {
+    this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
+
+    if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
+      this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+    }
+
+    this.push(startViewId, null, null, viewOptions);
   }
 
   private pushView(viewId: string, idtype: IDType, selection: Range, options?) {
@@ -423,6 +490,7 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
     return(
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
+          <OrdinoContext.Provider value={{app: this}}>
           <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
           <ul className="tdp-button-group history">
             {this.state.views.map((view) => {
@@ -436,7 +504,6 @@ export class OrdinoAppComponent extends React.Component<IOrdinoAppComponentProps
               );
             })}
           </ul>
-          <OrdinoContext.Provider value={{app: this}}>
           <div className="wrapper">
             <div className="targid" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
           </div>

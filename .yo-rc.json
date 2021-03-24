@@ -31,12 +31,6 @@
       "file-loader": "404|robots"
     },
     "extensions": [
-      {
-        "type": "ordinoWelcomeView",
-        "id": "ordinoWelcomeView",
-        "module": "WelcomeView",
-        "extras": {}
-      }
     ],
     "sextensions": [],
     "libraries": [

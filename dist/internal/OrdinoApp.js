@@ -5,17 +5,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
+import * as React from 'react';
 import { BaseUtils, NodeUtils } from 'phovea_core';
 import { ObjectRefUtils } from 'phovea_core';
-import { EventHandler } from 'phovea_core';
-import * as d3 from 'd3';
-import { AView } from 'tdp_core';
+import { AView, TDPApplicationUtils } from 'tdp_core';
 import { EViewMode } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
-import { SESSION_KEY_NEW_ENTRY_POINT } from './constants';
 import { UserSession } from 'phovea_core';
-export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
+import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenuReact';
+// tslint:disable-next-line: variable-name
+export const OrdinoContext = React.createContext({ app: null });
+// tslint:disable-next-line: variable-name
+export const GraphContext = React.createContext({ graph: null, manager: null });
 /**
  * The main class for the Ordino app
  * This class ...
@@ -23,29 +25,48 @@ export const EXTENSION_POINT_WELCOME_PAGE = 'ordinoWelcomeView';
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class OrdinoApp extends EventHandler {
-    constructor(graph, graphManager, parent) {
-        super();
-        this.graph = graph;
-        this.graphManager = graphManager;
-        // static readonly EVENT_OPEN_START_MENU = 'openStartMenu';
-        /**
-         * List of open views (e.g., to show in the history)
-         * @type {ViewWrapper[]}
-         */
-        this.views = [];
+export class OrdinoApp extends React.Component {
+    constructor(props) {
+        super(props);
         this.removeWrapper = (event, view) => this.remove(view);
         this.chooseNextView = (event, viewId, idtype, selection) => this.handleNextView(event.target, viewId, idtype, selection);
         this.updateSelection = (event, old, newValue) => this.updateItemSelection(event.target, old, newValue);
+        this.nodeRef = React.createRef();
         // add OrdinoApp app as (first) object to provenance graph
         // need old name for compatibility
-        this.ref = graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
-        this.$history = d3.select(parent).append('ul').classed('tdp-button-group history', true);
-        const $wrapper = d3.select(parent).append('div').classed('wrapper', true);
-        this.$node = $wrapper.append('div').classed('targid', true).datum(this);
+        this.ref = this.props.graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
+        this.state = {
+            mode: EStartMenuMode.START,
+            open: EStartMenuOpen.CLOSED,
+            views: []
+        };
+    }
+    /**
+     * This function can be used to load some initial content async
+     */
+    async initApp() {
+        return null;
+    }
+    /**
+     * Set the mode and open/close state of the start menu.
+     * Set both options at once to avoid multiple rerender.
+     * @param open Open/close state
+     * @param mode Overlay/start mode
+     */
+    setStartMenuState(open, mode) {
+        this.setState({
+            open,
+            mode
+        });
+    }
+    /**
+     * List of open views (e.g., to show in the history)
+     */
+    get views() {
+        return this.state.views;
     }
     get node() {
-        return this.$node.node();
+        return this.nodeRef.current;
     }
     /**
      * Decide if a new view should be opened or an existing (right) detail view should be closed.
@@ -58,8 +79,8 @@ export class OrdinoApp extends EventHandler {
      * @param options
      */
     handleNextView(viewWrapper, viewId, idtype, selection, options) {
-        const index = this.views.indexOf(viewWrapper);
-        const nextView = this.views[index + 1];
+        const index = this.state.views.indexOf(viewWrapper);
+        const nextView = this.state.views[index + 1];
         // close instead of "re-open" the same view again
         if (nextView !== undefined && nextView.desc.id === viewId) {
             this.remove(nextView);
@@ -121,15 +142,15 @@ export class OrdinoApp extends EventHandler {
                     break;
                 }
                 // find the next view
-                const index = this.views.lastIndexOf(viewWrapper);
+                const index = this.state.views.lastIndexOf(viewWrapper);
                 if (index === -1) {
                     console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
                     return;
                 }
-                const nextView = this.views[index + 1];
+                const nextView = this.state.views[index + 1];
                 // if there are more views open, then close them first, before replacing the next view
                 if (nextView !== this.lastView) {
-                    this.remove(this.views[index + 2]);
+                    this.remove(this.state.views[index + 2]);
                 }
                 // trigger the replacement of the view
                 this.replaceView(nextView.ref, viewId, idtype, selection, options);
@@ -148,16 +169,16 @@ export class OrdinoApp extends EventHandler {
     updateItemSelection(viewWrapper, oldSelection, newSelection, options) {
         // just update the selection for the last open view
         if (this.lastView === viewWrapper) {
-            this.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range) });
+            this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range) });
             // check last view and if it will stay open for the new given selection
         }
         else {
-            const i = this.views.indexOf(viewWrapper);
-            const right = this.views[i + 1];
+            const i = this.state.views.indexOf(viewWrapper);
+            const right = this.state.views[i + 1];
             // update selection with the last open (= right) view
             if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
                 right.setParameterSelection(newSelection);
-                this.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range) });
+                this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range) });
                 // the selection does not match with the last open (= right) view --> close view
             }
             else {
@@ -169,53 +190,103 @@ export class OrdinoApp extends EventHandler {
      * The last view of the list of open views
      */
     get lastView() {
-        return this.views[this.views.length - 1];
+        return this.state.views[this.state.views.length - 1];
     }
     push(viewId, idtype, selection, options) {
         // create the first view without changing the focus for the (non existing) previous view
-        if (this.views.length === 0) {
+        if (this.state.views.length === 0) {
             return this.pushView(viewId, idtype, selection, options);
         }
         else {
-            return this.focus(this.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
+            return this.focus(this.state.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
         }
     }
-    initNewSession(view, options, defaultSessionValues = null) {
+    /**
+     * Starts a new analysis session with a given view and additional options.
+     * The default session values are permanently stored in the provenance graph and the session storage.
+     *
+     * All provided parameters are persisted to the session storage.
+     * Then a new analysis session (provenance graph) is created by reloading the page.
+     * After the page load a new session is available and new actions for the initial view
+     * are pushed to the provenance graph (see `initNewSession()`).
+     *
+     * @param startViewId First view of the analysis session
+     * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+     * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
+     */
+    startNewSession(startViewId, startViewOptions, defaultSessionValues = null) {
+        // use current emtpy session to start analysis and skip reload to create a new provenance graph
+        if (this.props.graph.isEmpty) {
+            this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+            return;
+        }
         // store state to session before creating a new graph
-        UserSession.getInstance().store(SESSION_KEY_NEW_ENTRY_POINT, {
-            view,
-            options,
+        UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
+            startViewId,
+            startViewOptions,
             defaultSessionValues
         });
-        // create new graph and apply new view after window.reload (@see targid.checkForNewEntryPoint())
-        this.graphManager.newGraph();
+        // create new graph and apply new view after window.reload
+        // TODO: The page reload is necessary to update all CLUE user interface.
+        //       If CLUE is refactored at some point and the page reload is gone,
+        //       we can refactor our session handling here and remove the session storage bypass.
+        this.props.graphManager.newGraph();
+    }
+    /**
+     * This function is the counter part to `startNewSession()`.
+     * It initializes the new session with the empty provenance graph which is created with the page reload.
+     * If initial data is available in the session storage (stored before page reload),
+     * it is used to store the default session values into the session storage
+     * and push the first view.
+     * If no initial data is avaialble the start menu will be opened.
+     */
+    initNewSessionAfterPageReload() {
+        if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
+            const { startViewId, startViewOptions, defaultSessionValues } = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+            this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+            UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+        }
+        else {
+            this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
+        }
+    }
+    /**
+     * Push availabe default session values to provenance graph first.
+     * Then push the first view and close the start menu.
+     *
+     * @param startViewId First view of the analysis session
+     * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+     * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
+     */
+    pushStartViewToSession(startViewId, viewOptions, defaultSessionValues) {
+        this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
+        if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
+            this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+        }
+        this.push(startViewId, null, null, viewOptions);
     }
     pushView(viewId, idtype, selection, options) {
-        return this.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));
+        return this.props.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));
     }
     /**
      * Removes a view, and if there are multiple open (following) views, close them in reverse order.
      * @param viewWrapper
      */
     remove(indexOrView) {
-        const viewWrapper = typeof indexOrView === 'number' ? this.views[indexOrView] : indexOrView;
-        const index = this.views.indexOf(viewWrapper);
-        this.views
-            .slice(index, this.views.length) // retrieve all following views
+        const viewWrapper = typeof indexOrView === 'number' ? this.state.views[indexOrView] : indexOrView;
+        const index = this.state.views.indexOf(viewWrapper);
+        this.state.views
+            .slice(index, this.state.views.length) // retrieve all following views
             .reverse() // remove them in reverse order
             .forEach((view) => {
             //this.remove(d);
-            const viewRef = this.graph.findObject(view);
+            const viewRef = this.props.graph.findObject(view);
             if (viewRef === null) {
                 console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
                 return;
             }
-            return this.graph.push(CmdUtils.removeView(this.ref, viewRef));
+            return this.props.graph.push(CmdUtils.removeView(this.ref, viewRef));
         });
-        // no views available, then open start menu
-        if (index === 0) {
-            this.fire('openStartMenu');
-        }
     }
     /**
      * Add a new view wrapper to the list of open views.
@@ -226,10 +297,11 @@ export class OrdinoApp extends EventHandler {
         view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
         view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-        this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
-        this.views.push(view);
-        this.update();
-        return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.views.length - 1));
+        // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
+        this.setState({
+            views: [...this.state.views, view]
+        });
+        return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
     }
     /**
      * Remove the given and focus on the view with the given index.
@@ -239,12 +311,13 @@ export class OrdinoApp extends EventHandler {
      * @param focus Index of the view in the view list (default: -1)
      */
     removeImpl(view, focus = -1) {
-        const i = this.views.indexOf(view);
+        const i = this.state.views.indexOf(view);
         view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
         view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-        this.views.splice(i, 1);
-        this.update();
+        this.setState({
+            views: this.state.views.filter((v) => v !== view)
+        });
         view.destroy();
         //remove with focus change if not already hidden
         if (!isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
@@ -256,11 +329,7 @@ export class OrdinoApp extends EventHandler {
         return Promise.resolve(NaN);
     }
     replaceView(existingView, viewId, idtype, selection, options) {
-        return this.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options))
-            .then((r) => {
-            this.update();
-            return r;
-        });
+        return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
     }
     /**
      * Jumps to a given viewWrapper in the provenance graph
@@ -268,8 +337,8 @@ export class OrdinoApp extends EventHandler {
      * @returns {any} Promise
      */
     focus(view) {
-        const creators = this.graph.act.path.filter(isCreateView).map((d) => d.creator);
-        const createdBy = NodeUtils.createdBy(this.graph.findOrAddJustObject(view.ref));
+        const creators = this.props.graph.act.path.filter(isCreateView).map((d) => d.creator);
+        const createdBy = NodeUtils.createdBy(this.props.graph.findOrAddJustObject(view.ref));
         const i = creators.indexOf(createdBy);
         if (i === (creators.length - 1)) {
             //we are in focus - or should be
@@ -277,27 +346,27 @@ export class OrdinoApp extends EventHandler {
         }
         else {
             //jump to the last state this view was in focus
-            return this.graph.jumpTo(NodeUtils.previous(creators[i + 1]));
+            return this.props.graph.jumpTo(NodeUtils.previous(creators[i + 1]));
         }
     }
     /**
      * Jumps back to the root of the provenance graph and consequentially removes all open views (undo)
      */
     /*focusOnStart() {
-      const creators = this.graph.act.path.filter((d) => d.creator === null); // null => start StateNode
+      const creators = this.props.graph.act.path.filter((d) => d.creator === null); // null => start StateNode
       if(creators.length > 0) {
-        this.graph.jumpTo(creators[0]);
+        this.props.graph.jumpTo(creators[0]);
       }
     }*/
     removeLastImpl() {
-        return this.removeImpl(this.views[this.views.length - 1]);
+        return this.removeImpl(this.state.views[this.state.views.length - 1]);
     }
     showInFocus(d) {
-        this.focusImpl(this.views.indexOf(d));
+        this.focusImpl(this.state.views.indexOf(d));
     }
     focusImpl(index) {
         let old = -1;
-        this.views.forEach((v, i) => {
+        this.state.views.forEach((v, i) => {
             if (v.mode === EViewMode.FOCUS) {
                 old = i;
             }
@@ -313,38 +382,45 @@ export class OrdinoApp extends EventHandler {
         if (old === index) {
             return Promise.resolve(old);
         }
-        this.update();
+        // TODO: this.setState(); -> triggers rerender
         return BaseUtils.resolveIn(1000).then(() => old);
     }
     /**
      * updates the views information, e.g. history
      */
-    update() {
-        const $views = this.$history.selectAll('li.hview').data(this.views);
-        $views.enter()
-            .append('li').classed('hview', true)
-            .append('a').attr('href', '#')
-            .on('click', (d) => {
-            d3.event.preventDefault();
-            this.showInFocus(d);
-        });
-        $views
-            .classed('t-context', (d) => d.mode === EViewMode.CONTEXT)
-            .classed('t-hide', (d) => d.mode === EViewMode.HIDDEN)
-            .classed('t-focus', (d) => d.mode === EViewMode.FOCUS)
-            .select('a').text((d) => d.desc.name);
-        $views.exit().remove();
-        //notify views which next view is chosen
-        this.views.forEach((view, i) => {
-            if (i < this.views.length - 1) {
-                view.setActiveNextView(this.views[i + 1].desc.id);
-            }
-            else {
-                view.setActiveNextView(null);
-            }
-        });
+    render() {
+        // //notify views which next view is chosen
+        // this.views.forEach((view, i) => {
+        //   if (i < this.views.length - 1) {
+        //     view.setActiveNextView(this.views[i + 1].desc.id);
+        //   } else {
+        //     view.setActiveNextView(null);
+        //   }
+        // });
+        const historyClassNames = {
+            [EViewMode.CONTEXT]: 't-context',
+            [EViewMode.HIDDEN]: 't-hide',
+            [EViewMode.FOCUS]: 't-focus'
+        };
+        return (React.createElement(React.Fragment, null,
+            React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
+                React.createElement(OrdinoContext.Provider, { value: { app: this } },
+                    React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
+                    React.createElement("ul", { className: "tdp-button-group history" }, this.state.views.map((view) => {
+                        return (React.createElement("li", { key: view.desc.id, className: `hview ${historyClassNames[view.mode]}` },
+                            React.createElement("a", { href: "#", onClick: (event) => {
+                                    event.preventDefault();
+                                    this.showInFocus(view);
+                                } }, view.desc.name)));
+                    })),
+                    React.createElement("div", { className: "wrapper" },
+                        React.createElement("div", { className: "targid", ref: this.nodeRef }))))));
     }
 }
+/**
+ * Key for the session storage that is temporarily used when starting a new analysis session
+ */
+OrdinoApp.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
 /**
  * Helper function to filter views that were created: should be moved to NodeUtils
  * @param stateNode

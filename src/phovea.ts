@@ -80,11 +80,6 @@ export default function (registry: IRegistry) {
     priority: 100
   });
 
-  registry.push('ordinoWelcomeView', 'ordinoWelcomeView', () => import('./base/WelcomeView'), {
-    factory: 'new WelcomeView',
-    priority: 10
-  });
-
   registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
     return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
   }, <ILocaleEPDesc>{

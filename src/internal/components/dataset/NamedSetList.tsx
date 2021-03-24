@@ -9,7 +9,7 @@ interface INamedSetListProps {
   headerIcon: string;
   headerText: string;
   value: INamedSet[] | null;
-  onOpen: (event: React.MouseEvent<DropdownItemProps>, namedSet: INamedSet) => void;
+  onOpen: (event: React.MouseEvent<HTMLElement>, namedSet: INamedSet) => void;
   status: 'idle' | 'pending' | 'success' | 'error';
 }
 

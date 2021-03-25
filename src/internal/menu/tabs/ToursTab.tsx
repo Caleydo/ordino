@@ -20,7 +20,6 @@ export function ToursTab() {
           <TourCard title="Adding data Columns" text="Learn how to add data columns to rankings in Ordino." image={tour1Img} onClickHandler={(evt) => console.log('')}></TourCard>
         </Row>
       </Container>
-      <OrdinoFooter openInNewWindow />
     </>
   );
 }

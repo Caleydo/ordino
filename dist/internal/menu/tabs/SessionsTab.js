@@ -4,7 +4,6 @@ import { Link, Element } from 'react-scroll';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { useAsync } from '../../../hooks';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '../../..';
-import { OrdinoFooter } from '../../../components';
 function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
@@ -23,8 +22,7 @@ export function SessionsTab() {
                     React.createElement(Col, null, sections === null || sections === void 0 ? void 0 : sections.map((section, i) => {
                         return (React.createElement(Element, { className: `${i === 0 || 'pt-6'}`, key: section.desc.id, name: `${section.desc.id}-${suffix}` },
                             React.createElement(section.factory, Object.assign({}, section.desc))));
-                    })))),
-            React.createElement(OrdinoFooter, { openInNewWindow: true }))
+                    })))))
         : null));
 }
 //# sourceMappingURL=SessionsTab.js.map

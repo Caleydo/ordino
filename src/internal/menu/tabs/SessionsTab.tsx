@@ -38,8 +38,7 @@ export function SessionsTab() {
                   })}
               </Col>
             </Row>
-          </Container >
-          <OrdinoFooter openInNewWindow />
+          </Container>
         </>
         : null}
     </>

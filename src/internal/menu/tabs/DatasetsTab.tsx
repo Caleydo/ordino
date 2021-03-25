@@ -51,7 +51,6 @@ export function DatasetsTab() {
               </Col>
             </Row>
           </Container>
-          <OrdinoFooter openInNewWindow />
         </> : null}
     </>
   );

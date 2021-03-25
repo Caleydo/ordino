@@ -5,7 +5,6 @@ import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { UploadDatasetCard } from '../../components';
 import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../..';
 import { useAsync } from '../../../hooks';
-import { OrdinoFooter } from '../../../components';
 export function DatasetsTab() {
     const suffix = UniqueIdManager.getInstance().uniqueId();
     const loadCards = useMemo(() => () => {
@@ -29,7 +28,6 @@ export function DatasetsTab() {
                                 React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
                         }),
                         React.createElement(Element, { className: "py-6", name: `upload_${suffix}` },
-                            React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" }))))),
-            React.createElement(OrdinoFooter, { openInNewWindow: true })) : null));
+                            React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" })))))) : null));
 }
 //# sourceMappingURL=DatasetsTab.js.map

@@ -20,9 +20,10 @@ $theme-colors: map-merge($theme-colors, $ordino-theme-colors);
 // @see https://getbootstrap.com/docs/4.5/getting-started/theming/#sass-options
 $spacer: 1.25rem;
 
-$spacers: () !default;
 // Override some default spacers
 // @see https://getbootstrap.com/docs/4.0/utilities/spacing/
+$spacers: () !default;
+
 $ordino-spacers: (
   5: ($spacer * 2),
   6: ($spacer * 3),

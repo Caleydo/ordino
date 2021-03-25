@@ -93,6 +93,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
   React.useEffect(() => {
     // switch header to dark theme when a tab is active
     header.toggleDarkTheme((activeTab) ? true : false);
+    header.togglePositionFixed((activeTab) ? true : false);
   }, [header, activeTab]);
 
   return (

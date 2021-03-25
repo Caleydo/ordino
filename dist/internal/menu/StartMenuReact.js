@@ -51,6 +51,7 @@ export function StartMenuComponent({ header, mode, open }) {
     React.useEffect(() => {
         // switch header to dark theme when a tab is active
         header.toggleDarkTheme((activeTab) ? true : false);
+        header.togglePositionFixed((activeTab) ? true : false);
     }, [header, activeTab]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),

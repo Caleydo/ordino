@@ -36,15 +36,15 @@ export function DatasetsTab() {
           <Container className="mb-4">
             <Row>
               <Col>
-                  <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
-                {cards.map((card) => {
+                <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
+                {cards.map((card, index) => {
                   return (
-                    <Element key={card.desc.id} className="pt-6" name={`${card.desc.id}_${suffix}`}>
+                    <Element key={card.desc.id} className={index > 0 ? "pt-6" : ""} name={`${card.desc.id}_${suffix}`}>
                       <card.factory key={card.desc.id} {...card.desc} />
                     </Element>
                   );
                 })}
-                <Element className="py-6" name={`upload_${suffix}`}>
+                <Element className="pt-6" name={`upload_${suffix}`}>
                   <UploadDatasetCard id="upload" headerText="Upload" headerIcon="fas fa-file-upload"></UploadDatasetCard>
                 </Element>
               </Col>

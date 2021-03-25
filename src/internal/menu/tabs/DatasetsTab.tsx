@@ -23,36 +23,36 @@ export function DatasetsTab() {
 
   return (
     <>
-      <Nav className="scrollspy-nav flex-column ml-4">
-        {status === 'success' ?
-          cards.map((card) => {
-            return (
-              <Link key={card.desc.id} className="nav-link" role="button" to={`${card.desc.id}_${suffix}`} spy={true} smooth={true} offset={-250} duration={500}>{card.desc.name}</Link>
-            );
-          }) : null}
-        <Link className="nav-link" role="button" to={`upload_${suffix}`} spy={true} smooth={true} offset={-250} duration={500}>Upload</Link>
-      </Nav>
-      <Container className="mb-4 datasets-tab">
-        <Row>
-          <Col>
-            <Element>
-              <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
-            </Element>
-            {status === 'success' ?
+      {status === 'success' ?
+        <>
+          <Nav className="scrollspy-nav flex-column ml-4">
+            {
               cards.map((card) => {
                 return (
-                  <Element key={card.desc.id} className="pt-6" name={`${card.desc.id}_${suffix}`}>
-                    <card.factory key={card.desc.id} {...card.desc} />
-                  </Element>
+                  <Link key={card.desc.id} className="nav-link" role="button" to={`${card.desc.id}_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>{card.desc.name}</Link>
                 );
-              }) : null}
-            <Element className="py-6" name={`upload_${suffix}`}>
-              <UploadDatasetCard id="upload" headerText="Upload" headerIcon="fas fa-file-upload"></UploadDatasetCard>
-            </Element>
-          </Col>
-        </Row>
-      </Container>
-      <OrdinoFooter openInNewWindow />
+              })}
+            <Link className="nav-link" role="button" to={`upload_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>Upload</Link>
+          </Nav>
+          <Container className="mb-4">
+            <Row>
+              <Col>
+                  <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
+                {cards.map((card) => {
+                  return (
+                    <Element key={card.desc.id} className="pt-6" name={`${card.desc.id}_${suffix}`}>
+                      <card.factory key={card.desc.id} {...card.desc} />
+                    </Element>
+                  );
+                })}
+                <Element className="py-6" name={`upload_${suffix}`}>
+                  <UploadDatasetCard id="upload" headerText="Upload" headerIcon="fas fa-file-upload"></UploadDatasetCard>
+                </Element>
+              </Col>
+            </Row>
+          </Container>
+          <OrdinoFooter openInNewWindow />
+        </> : null}
     </>
   );
 }

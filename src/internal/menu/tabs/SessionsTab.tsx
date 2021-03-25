@@ -20,25 +20,28 @@ export function SessionsTab() {
 
   return (
     <>
-      <Nav className="scrollspy-nav flex-column ml-4">
-        {
-          sections?.map((section) => <Link className="nav-link" key={section.desc.id} role="button" to={`${section.desc.id}-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>{section.desc.name}</Link>)
-        }
-      </Nav>
-      <Container className="mb-4 analysis-tab">
-        <Row>
-          <Col>
-            {status === 'success' ?
-              sections?.map((section, i) => {
-                return (<Element className={`${i === 0 || 'pt-6'}`} key={section.desc.id} name={`${section.desc.id}-${suffix}`}>
-                  <section.factory {...section.desc} />
-                </Element>);
-              })
-              : null}
-          </Col>
-        </Row>
-      </Container >
-      <OrdinoFooter openInNewWindow />
+      {status === 'success' ?
+        <>
+          <Nav className="scrollspy-nav flex-column ml-4">
+            {
+              sections?.map((section) => <Link className="nav-link" key={section.desc.id} role="button" to={`${section.desc.id}-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>{section.desc.name}</Link>)
+            }
+          </Nav>
+          <Container className="mb-4 analysis-tab">
+            <Row>
+              <Col>
+                {
+                  sections?.map((section, i) => {
+                    return (<Element className={`${i === 0 || 'pt-6'}`} key={section.desc.id} name={`${section.desc.id}-${suffix}`}>
+                      <section.factory {...section.desc} />
+                    </Element>);
+                  })}
+              </Col>
+            </Row>
+          </Container >
+          <OrdinoFooter openInNewWindow />
+        </>
+        : null}
     </>
   );
 }

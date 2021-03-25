@@ -13,25 +13,23 @@ export function DatasetsTab() {
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
     const { status, value: cards } = useAsync(loadCards);
-    return (React.createElement(React.Fragment, null,
-        React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" },
-            status === 'success' ?
+    return (React.createElement(React.Fragment, null, status === 'success' ?
+        React.createElement(React.Fragment, null,
+            React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" },
                 cards.map((card) => {
-                    return (React.createElement(Link, { key: card.desc.id, className: "nav-link", role: "button", to: `${card.desc.id}_${suffix}`, spy: true, smooth: true, offset: -250, duration: 500 }, card.desc.name));
-                }) : null,
-            React.createElement(Link, { className: "nav-link", role: "button", to: `upload_${suffix}`, spy: true, smooth: true, offset: -250, duration: 500 }, "Upload")),
-        React.createElement(Container, { className: "mb-4 datasets-tab" },
-            React.createElement(Row, null,
-                React.createElement(Col, null,
-                    React.createElement(Element, null,
-                        React.createElement("p", { className: "lead text-ordino-gray-4" }, "Start a new analysis session by loading a dataset")),
-                    status === 'success' ?
+                    return (React.createElement(Link, { key: card.desc.id, className: "nav-link", role: "button", to: `${card.desc.id}_${suffix}`, spy: true, smooth: true, offset: -200, duration: 500 }, card.desc.name));
+                }),
+                React.createElement(Link, { className: "nav-link", role: "button", to: `upload_${suffix}`, spy: true, smooth: true, offset: -200, duration: 500 }, "Upload")),
+            React.createElement(Container, { className: "mb-4" },
+                React.createElement(Row, null,
+                    React.createElement(Col, null,
+                        React.createElement("p", { className: "lead text-ordino-gray-4" }, "Start a new analysis session by loading a dataset"),
                         cards.map((card) => {
                             return (React.createElement(Element, { key: card.desc.id, className: "pt-6", name: `${card.desc.id}_${suffix}` },
                                 React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
-                        }) : null,
-                    React.createElement(Element, { className: "py-6", name: `upload_${suffix}` },
-                        React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" }))))),
-        React.createElement(OrdinoFooter, { openInNewWindow: true })));
+                        }),
+                        React.createElement(Element, { className: "py-6", name: `upload_${suffix}` },
+                            React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" }))))),
+            React.createElement(OrdinoFooter, { openInNewWindow: true })) : null));
 }
 //# sourceMappingURL=DatasetsTab.js.map

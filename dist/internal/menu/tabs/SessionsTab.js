@@ -16,7 +16,9 @@ export function SessionsTab() {
     const { status, value: sections } = useAsync(loadSections);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(React.Fragment, null,
-            React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" }, sections === null || sections === void 0 ? void 0 : sections.map((section) => React.createElement(Link, { className: "nav-link", key: section.desc.id, role: "button", to: `${section.desc.id}-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, section.desc.name))),
+            React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" }, sections === null || sections === void 0 ? void 0 : sections.map((section) => {
+                return (React.createElement(Link, { className: "nav-link", key: section.desc.id, role: "button", to: `${section.desc.id}-${suffix}`, spy: true, smooth: true, offset: -300, duration: 500 }, section.desc.name));
+            })),
             React.createElement(Container, { className: "mb-4 analysis-tab" },
                 React.createElement(Row, null,
                     React.createElement(Col, null, sections === null || sections === void 0 ? void 0 : sections.map((section, i) => {

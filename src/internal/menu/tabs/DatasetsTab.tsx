@@ -26,12 +26,11 @@ export function DatasetsTab() {
       {status === 'success' ?
         <>
           <Nav className="scrollspy-nav flex-column ml-4">
-            {
-              cards.map((card) => {
-                return (
-                  <Link key={card.desc.id} className="nav-link" role="button" to={`${card.desc.id}_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>{card.desc.name}</Link>
-                );
-              })}
+            {cards.map((card) => {
+              return (
+                <Link key={card.desc.id} className="nav-link" role="button" to={`${card.desc.id}_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>{card.desc.name}</Link>
+              );
+            })}
             <Link className="nav-link" role="button" to={`upload_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>Upload</Link>
           </Nav>
           <Container className="mb-4">

@@ -12,6 +12,8 @@
   height: fit-content;
   min-height: 100vh;
 
+  padding-top: 40px; // height of the navbar (= phovea_ui header) and `fixed-top` is applied
+
   &.ordino-start-menu-open {
     display: grid;
     grid-template-rows: 1fr auto; // use available space for tab content (1fr) and push footer always to the bottom (auto)

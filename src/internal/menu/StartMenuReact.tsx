@@ -6,6 +6,7 @@ import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
 import {BrowserRouter} from 'react-router-dom';
+import {OrdinoFooter} from '../../components';
 
 
 export enum EStartMenuMode {
@@ -161,11 +162,12 @@ function StartMenuTabs(props: IStartMenuTabProps) {
                 </Col>
               </Row>
             </Container>}
-          <BrowserRouter basename="/#">
             <tab.factory />
-          </BrowserRouter>
         </div>
       ))}
+      <BrowserRouter basename="/#">
+        <OrdinoFooter openInNewWindow />
+      </BrowserRouter>
     </div>
   );
 }

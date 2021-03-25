@@ -55,6 +55,7 @@
     "@types/jquery": "~3.5.5",
     "@types/jquery.scrollto": "~1.4.28",
     "@types/jest": "~26.0.20",
+    "@types/react-scroll":"^1.8.2",
     "@types/react-select": "^4.0.13",
     "@types/react-router-dom":"^5.1.7",
     "identity-obj-proxy": "~3.0.0",

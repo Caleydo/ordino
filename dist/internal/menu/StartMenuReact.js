@@ -51,6 +51,7 @@ export function StartMenuComponent({ header, mode, open }) {
     React.useEffect(() => {
         // switch header to dark theme when a tab is active
         header.toggleDarkTheme((activeTab) ? true : false);
+        header.togglePositionFixed((activeTab) ? true : false);
     }, [header, activeTab]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),
@@ -76,7 +77,7 @@ function StartMenuTabs(props) {
         return null;
     }
     return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` },
-        props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
+        props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5 pb-7` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
             props.mode === EStartMenuMode.OVERLAY &&
                 React.createElement(Container, { fluid: true },
                     React.createElement(Row, null,

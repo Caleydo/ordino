@@ -23,11 +23,11 @@ export function DatasetsTab() {
                 React.createElement(Row, null,
                     React.createElement(Col, null,
                         React.createElement("p", { className: "lead text-ordino-gray-4" }, "Start a new analysis session by loading a dataset"),
-                        cards.map((card) => {
-                            return (React.createElement(Element, { key: card.desc.id, className: "pt-6", name: `${card.desc.id}_${suffix}` },
+                        cards.map((card, index) => {
+                            return (React.createElement(Element, { key: card.desc.id, className: index > 0 ? 'pt-6' : '', name: `${card.desc.id}_${suffix}` },
                                 React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
                         }),
-                        React.createElement(Element, { className: "py-6", name: `upload_${suffix}` },
+                        React.createElement(Element, { className: "pt-6", name: `upload_${suffix}` },
                             React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" })))))) : null));
 }
 //# sourceMappingURL=DatasetsTab.js.map

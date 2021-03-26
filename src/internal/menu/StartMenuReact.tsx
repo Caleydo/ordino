@@ -93,6 +93,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
   React.useEffect(() => {
     // switch header to dark theme when a tab is active
     header.toggleDarkTheme((activeTab) ? true : false);
+    header.togglePositionFixed((activeTab) ? true : false);
   }, [header, activeTab]);
 
   return (
@@ -146,7 +147,7 @@ function StartMenuTabs(props: IStartMenuTabProps) {
   return (
     <div className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
       {props.tabs.map((tab) => (
-        <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
+        <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5 pb-7` : ''}`}
           key={tab.id}
           id={tab.id}
           role="tabpanel"

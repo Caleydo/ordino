@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Row, Col, Container, Button} from 'react-bootstrap';
 import tour1Img from 'ordino/dist/assets/tour_1.png';
 import {TourCard} from '../../components';
-import {OrdinoFooter} from '../../../components';
 
 
 export function ToursTab() {

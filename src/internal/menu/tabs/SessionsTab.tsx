@@ -4,7 +4,6 @@ import {Link, Element} from 'react-scroll';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {useAsync} from '../../../hooks';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
-import {OrdinoFooter} from '../../../components';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);

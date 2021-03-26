@@ -95,7 +95,7 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
         const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', { name: desc.name }));
         if (deleteIt) {
             await Promise.resolve(manager.delete(desc)).then((r) => {
-                if (callback) {
+                if (callback && desc.id !== graph.desc.id) {
                     NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.session'), desc.name);
                     callback((sessions) => sessions === null || sessions === void 0 ? void 0 : sessions.filter((t) => t.id !== desc.id));
                 }

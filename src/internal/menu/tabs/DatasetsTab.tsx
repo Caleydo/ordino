@@ -39,7 +39,7 @@ export function DatasetsTab() {
                 <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
                 {cards.map((card, index) => {
                   return (
-                    <Element key={card.desc.id} className={index > 0 ? "pt-6" : ""} name={`${card.desc.id}_${suffix}`}>
+                    <Element key={card.desc.id} className={index > 0 ? 'pt-6' : ''} name={`${card.desc.id}_${suffix}`}>
                       <card.factory key={card.desc.id} {...card.desc} />
                     </Element>
                   );

@@ -24,7 +24,7 @@ export function DatasetsTab() {
                     React.createElement(Col, null,
                         React.createElement("p", { className: "lead text-ordino-gray-4" }, "Start a new analysis session by loading a dataset"),
                         cards.map((card, index) => {
-                            return (React.createElement(Element, { key: card.desc.id, className: index > 0 ? "pt-6" : "", name: `${card.desc.id}_${suffix}` },
+                            return (React.createElement(Element, { key: card.desc.id, className: index > 0 ? 'pt-6' : '', name: `${card.desc.id}_${suffix}` },
                                 React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
                         }),
                         React.createElement(Element, { className: "pt-6", name: `upload_${suffix}` },

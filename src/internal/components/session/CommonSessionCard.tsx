@@ -74,7 +74,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
                 Promise.resolve(manager.editGraphMetaData(desc, extras))
                     .then((desc) => {
 
-                        callback((sessions) => {
+                        callback((sessions: IProvenanceGraphDataDescription[]) => {
                             const copy = [...sessions];
                             const i = copy.findIndex((s) => s.id === desc.id);
                             copy[i] = desc;
@@ -135,9 +135,9 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
         const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', {name: desc.name}));
         if (deleteIt) {
             await Promise.resolve(manager.delete(desc)).then((r) => {
-                if (callback) {
+                if (callback && desc.id !== graph.desc.id) {
                     NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.session'), desc.name);
-                    callback((sessions) => sessions?.filter((t) => t.id !== desc.id));
+                    callback((sessions: IProvenanceGraphDataDescription[]) => sessions?.filter((t) => t.id !== desc.id));
                 } else {
                     manager.startFromScratch();
                 }

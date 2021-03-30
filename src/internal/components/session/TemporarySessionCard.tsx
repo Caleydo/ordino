@@ -42,7 +42,6 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
                                     <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => sessionAction(EAction.SAVE, event, session)}>Save</Button>
                                     <ListItemDropdown>
                                         <Dropdown.Item onClick={(event) => sessionAction(EAction.CLONE, event, session)}>Clone</Dropdown.Item>
-                                        <Dropdown.Item onClick={(event) => sessionAction(EAction.EXPORT, event, session)}>Export</Dropdown.Item>
                                         <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
                                     </ListItemDropdown>
                                 </SessionListItem>;

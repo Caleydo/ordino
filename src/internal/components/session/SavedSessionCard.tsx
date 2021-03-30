@@ -57,7 +57,6 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                         return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
                           <Button variant="outline-secondary" onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)} className="mr-2 pt-1 pb-1">Edit</Button>
                           <ListItemDropdown >
-                            <Dropdown.Item onClick={(event) => sessionAction(EAction.EXPORT, event, session)}>Export</Dropdown.Item>
                             <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
                           </ListItemDropdown>
                         </SessionListItem>;

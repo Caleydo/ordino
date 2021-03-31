@@ -23,7 +23,7 @@ export function SessionsTab() {
         <>
           <Nav className="scrollspy-nav flex-column ml-4">
             {sections?.map((section) => {
-              return(<Link className="nav-link" key={section.desc.id} role="button" to={`${section.desc.id}-${suffix}`} spy={true} smooth={true} offset={-300} duration={500}>{section.desc.name}</Link>);
+              return(<Link className="nav-link" key={section.desc.id} role="button" to={`${section.desc.id}-${suffix}`} spy={true} smooth={true} duration={500} containerId="ordino-start-menu">{section.desc.name}</Link>);
             })}
           </Nav>
           <Container className="mb-4 analysis-tab">

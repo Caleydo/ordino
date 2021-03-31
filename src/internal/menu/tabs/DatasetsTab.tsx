@@ -27,10 +27,10 @@ export function DatasetsTab() {
           <Nav className="scrollspy-nav flex-column ml-4">
             {cards.map((card) => {
               return (
-                <Link key={card.desc.id} className="nav-link" role="button" to={`${card.desc.id}_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>{card.desc.name}</Link>
+                <Link key={card.desc.id} className="nav-link" role="button" to={`${card.desc.id}_${suffix}`} spy={true} smooth={true} duration={500} containerId="ordino-start-menu">{card.desc.name}</Link>
               );
             })}
-            <Link className="nav-link" role="button" to={`upload_${suffix}`} spy={true} smooth={true} offset={-200} duration={500}>Upload</Link>
+            <Link className="nav-link" role="button" to={`upload_${suffix}`} spy={true} smooth={true} duration={500} containerId="ordino-start-menu">Upload</Link>
           </Nav>
           <Container className="mb-4">
             <Row>

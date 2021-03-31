@@ -144,7 +144,7 @@ function StartMenuTabs(props: IStartMenuTabProps) {
   }
 
   return (
-    <div className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
+    <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
       {props.tabs.map((tab) => (
         <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5 pb-7` : ''}`}
           key={tab.id}

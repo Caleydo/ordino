@@ -16,9 +16,9 @@ export function DatasetsTab() {
         React.createElement(React.Fragment, null,
             React.createElement(Nav, { className: "scrollspy-nav flex-column ml-4" },
                 cards.map((card) => {
-                    return (React.createElement(Link, { key: card.desc.id, className: "nav-link", role: "button", to: `${card.desc.id}_${suffix}`, spy: true, smooth: true, offset: -200, duration: 500 }, card.desc.name));
+                    return (React.createElement(Link, { key: card.desc.id, className: "nav-link", role: "button", to: `${card.desc.id}_${suffix}`, spy: true, smooth: true, duration: 500, containerId: "ordino-start-menu" }, card.desc.name));
                 }),
-                React.createElement(Link, { className: "nav-link", role: "button", to: `upload_${suffix}`, spy: true, smooth: true, offset: -200, duration: 500 }, "Upload")),
+                React.createElement(Link, { className: "nav-link", role: "button", to: `upload_${suffix}`, spy: true, smooth: true, duration: 500, containerId: "ordino-start-menu" }, "Upload")),
             React.createElement(Container, { className: "mb-4" },
                 React.createElement(Row, null,
                     React.createElement(Col, null,

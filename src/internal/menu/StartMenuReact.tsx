@@ -119,13 +119,17 @@ function MainMenuLinks(props: IStartMenuTabProps) {
             aria-selected={(props.activeTab === tab)}
             onClick={(evt) => {
               evt.preventDefault();
-              window.scrollTo(0, 0);
+
+              // always scroll to the top of the start menu
+              document.querySelector(`#ordino-start-menu`)?.scrollTo(0, 0);
+
               if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
                 // close tab only in overlay mode
                 props.setActiveTab(null);
               } else {
                 props.setActiveTab(tab);
               }
+
               return false;
             }}
           >
@@ -143,8 +147,16 @@ function StartMenuTabs(props: IStartMenuTabProps) {
     return null;
   }
 
+  React.useEffect(() => {
+    // refresh scrollspy when the active tab and the corresponding data-target attribute has changed
+    // @see https://getbootstrap.com/docs/4.6/components/scrollspy/#scrollspyrefresh
+    $('[data-spy="scroll"]').each(function () {
+      $(this).scrollspy('refresh');
+    });
+  }, [props.activeTab]);
+
   return (
-    <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
+    <div id="ordino-start-menu" data-spy="scroll" data-target={`#${props.activeTab.id}-tab-scrollspy-nav`} data-offset="0" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}`}>
       {props.tabs.map((tab) => (
         <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5 pb-7` : ''}`}
           key={tab.id}

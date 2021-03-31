@@ -28,7 +28,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
 
   return (
     <>
-      <p className="lead text-ordino-gray-4 mt-4">Load a previous analysis session</p>
+      <p className="lead text-ordino-gray-4 mb-4">Load a previous analysis session</p>
       <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo')}>
         {(sessionAction) => {
           return <Tab.Container defaultActiveKey="mySessions">

@@ -7,12 +7,7 @@
   right: 0;
   background-color: map-get($theme-colors, "ordino-gray-1");
   z-index: 99; // above all other content
-
-  // stretch background to span the whole page
-  height: fit-content;
-  min-height: 100vh;
-
-  padding-top: 40px; // height of the navbar (= phovea_ui header) and `fixed-top` is applied
+  overflow: auto;
 
   &.ordino-start-menu-open {
     display: grid;

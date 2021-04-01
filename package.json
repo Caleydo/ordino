@@ -52,6 +52,7 @@
     "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *"
   },
   "devDependencies": {
+    "@types/bootstrap": "~4.6.0",
     "@types/jquery": "~3.5.5",
     "@types/jquery.scrollto": "~1.4.28",
     "@types/jest": "~26.0.20",

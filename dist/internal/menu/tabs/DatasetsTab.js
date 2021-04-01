@@ -26,9 +26,14 @@ export function DatasetsTab() {
         React.createElement(React.Fragment, null,
             React.createElement(ListGroup, { variant: "flush", id: "datasets-tab-scrollspy-nav", className: "scrollspy-nav flex-column ml-4" },
                 cards.map((card) => {
-                    return (React.createElement(ListGroup.Item, { key: card.desc.id, action: true, href: `#${card.desc.id}_${suffix}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent" }, card.desc.name));
+                    return (
+                    // Important: We cannot use the react-bootstrap `ListGroup.Item` here, because it sets the `active` class automatically at `onClick`.
+                    // This behavior cannot be supressed and interfers with the Bootstrap scrollspy + `scrollIntoView` which causes a flickering of the navigation items.
+                    // The only solution is to use a plain `a` element and add the necessary Bootstrap classes here.
+                    // <ListGroup.Item key={card.desc.id} action href={`#${card.desc.id}_${suffix}`} onClick={scrollIntoView} className="pl-0 mt-0 border-0 bg-transparent">{card.desc.name}</ListGroup.Item>
+                    React.createElement("a", { key: card.desc.id, href: `#${card.desc.id}_${suffix}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action" }, card.desc.name));
                 }),
-                React.createElement(ListGroup.Item, { action: true, href: `#upload_${suffix}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent" }, "Upload")),
+                React.createElement("a", { href: `#upload_${suffix}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action" }, "Upload")),
             React.createElement(Container, { className: "mb-4" },
                 React.createElement(Row, null,
                     React.createElement(Col, null,

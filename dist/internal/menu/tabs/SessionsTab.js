@@ -27,7 +27,11 @@ export function SessionsTab() {
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(React.Fragment, null,
             React.createElement(ListGroup, { variant: "flush", id: "session-tab-scrollspy-nav", className: "scrollspy-nav flex-column ml-4" }, sections === null || sections === void 0 ? void 0 : sections.map((section) => {
-                return (React.createElement(ListGroup.Item, { key: section.desc.id, action: true, href: `#${section.desc.id}_${suffix}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent" }, section.desc.name));
+                // Important: We cannot use the react-bootstrap `ListGroup.Item` here, because it sets the `active` class automatically at `onClick`.
+                // This behavior cannot be supressed and interfers with the Bootstrap scrollspy + `scrollIntoView` which causes a flickering of the navigation items.
+                // The only solution is to use a plain `a` element and add the necessary Bootstrap classes here.
+                // return(<ListGroup.Item key={section.desc.id} action href={`#${section.desc.id}_${suffix}`} onClick={scrollIntoView} className="pl-0 mt-0 border-0 bg-transparent">{section.desc.name}</ListGroup.Item>);
+                return (React.createElement("a", { key: section.desc.id, href: `#${section.desc.id}_${suffix}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action" }, section.desc.name));
             })),
             React.createElement(Container, { className: "mb-4" },
                 React.createElement(Row, null,

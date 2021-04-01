@@ -47,15 +47,15 @@ export function DatasetsTab() {
           <Container className="mb-4">
             <Row>
               <Col>
-                <p className="lead text-ordino-gray-4">Start a new analysis session by loading a dataset</p>
-                {cards.map((card, index) => {
+                <p className="lead text-ordino-gray-4 mb-0">Start a new analysis session by loading a dataset</p>
+                {cards.map((card) => {
                   return (
-                    <div key={card.desc.id} className={index > 0 ? 'pt-6' : ''} id={`${card.desc.id}_${suffix}`}>
+                    <div key={card.desc.id} className="pt-3 pb-5" id={`${card.desc.id}_${suffix}`}>
                       <card.factory key={card.desc.id} {...card.desc} />
                     </div>
                   );
                 })}
-                <div className="pt-6" id={`upload_${suffix}`}>
+                <div className="pt-3" id={`upload_${suffix}`}>
                   <UploadDatasetCard id="upload" headerText="Upload" headerIcon="fas fa-file-upload"></UploadDatasetCard>
                 </div>
               </Col>

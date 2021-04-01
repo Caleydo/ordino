@@ -41,8 +41,8 @@ export function SessionsTab() {
           <Container className="mb-4">
             <Row>
               <Col>
-                {sections?.map((section, i) => {
-                  return (<div id={`${section.desc.id}_${suffix}`} className={`${i === 0 || 'pt-6'}`} key={section.desc.id}>
+                {sections?.map((section, index) => {
+                  return (<div id={`${section.desc.id}_${suffix}`} className={`${(index > 0) ? 'pt-3' : ''} ${(index < sections.length - 1) ? 'pb-5' : ''}`} key={section.desc.id}>
                     <section.factory {...section.desc} />
                   </div>);
                 })}

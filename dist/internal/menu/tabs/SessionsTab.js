@@ -31,8 +31,8 @@ export function SessionsTab() {
             })),
             React.createElement(Container, { className: "mb-4" },
                 React.createElement(Row, null,
-                    React.createElement(Col, null, sections === null || sections === void 0 ? void 0 : sections.map((section, i) => {
-                        return (React.createElement("div", { id: `${section.desc.id}_${suffix}`, className: `${i === 0 || 'pt-6'}`, key: section.desc.id },
+                    React.createElement(Col, null, sections === null || sections === void 0 ? void 0 : sections.map((section, index) => {
+                        return (React.createElement("div", { id: `${section.desc.id}_${suffix}`, className: `${(index > 0) ? 'pt-3' : ''} ${(index < sections.length - 1) ? 'pb-5' : ''}`, key: section.desc.id },
                             React.createElement(section.factory, Object.assign({}, section.desc))));
                     })))))
         : null));

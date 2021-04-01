@@ -32,12 +32,12 @@ export function DatasetsTab() {
             React.createElement(Container, { className: "mb-4" },
                 React.createElement(Row, null,
                     React.createElement(Col, null,
-                        React.createElement("p", { className: "lead text-ordino-gray-4" }, "Start a new analysis session by loading a dataset"),
-                        cards.map((card, index) => {
-                            return (React.createElement("div", { key: card.desc.id, className: index > 0 ? 'pt-6' : '', id: `${card.desc.id}_${suffix}` },
+                        React.createElement("p", { className: "lead text-ordino-gray-4 mb-0" }, "Start a new analysis session by loading a dataset"),
+                        cards.map((card) => {
+                            return (React.createElement("div", { key: card.desc.id, className: "pt-3 pb-5", id: `${card.desc.id}_${suffix}` },
                                 React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
                         }),
-                        React.createElement("div", { className: "pt-6", id: `upload_${suffix}` },
+                        React.createElement("div", { className: "pt-3", id: `upload_${suffix}` },
                             React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" })))))) : null));
 }
 //# sourceMappingURL=DatasetsTab.js.map

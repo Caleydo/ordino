@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Row, Container } from 'react-bootstrap';
+import { TourCard, OrdinoScrollspy } from '../../components';
+import { BrowserRouter } from 'react-router-dom';
+import { OrdinoFooter } from '../../../components';
 import tour1Img from 'ordino/dist/assets/tour_1.png';
-import { TourCard } from '../../components';
 export function ToursTab() {
-    return (React.createElement(React.Fragment, null,
-        React.createElement(Container, { className: "mb-6 tours-tab" },
+    return (React.createElement(OrdinoScrollspy, null,
+        React.createElement(Container, { className: "pb-10 pt-5 tours-tab" },
             React.createElement("p", { className: "lead text-ordino-gray-4" }, "Learn more about Ordino by taking an interactive guided tour"),
             React.createElement("h4", { className: "text-left mt-4 mb-3  d-flex align-items-center " },
                 React.createElement("i", { className: "mr-2 ordino-icon-1 fas fa-chevron-circle-right" }),
@@ -16,6 +18,8 @@ export function ToursTab() {
                 React.createElement("i", { className: "mr-2 ordino-icon-1 fas fa-chevron-circle-right" }),
                 " Advanced"),
             React.createElement(Row, { md: 3 },
-                React.createElement(TourCard, { title: "Adding data Columns", text: "Learn how to add data columns to rankings in Ordino.", image: tour1Img, onClickHandler: (evt) => console.log('') })))));
+                React.createElement(TourCard, { title: "Adding data Columns", text: "Learn how to add data columns to rankings in Ordino.", image: tour1Img, onClickHandler: (evt) => console.log('') }))),
+        React.createElement(BrowserRouter, { basename: "/#" },
+            React.createElement(OrdinoFooter, { openInNewWindow: true }))));
 }
 //# sourceMappingURL=ToursTab.js.map

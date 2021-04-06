@@ -36,7 +36,7 @@
     }
   }
 
-  .scrollspy-nav {
+  .ordino-scrollspy-nav {
     position: fixed;
 
     .list-group-item {
@@ -52,6 +52,10 @@
         visibility: hidden;
       }
 
+      &:hover {
+        color: inherit;
+      }
+
       &.active {
         color: inherit;
 
@@ -60,6 +64,17 @@
         }
       }
     }
+  }
+
+  .ordino-scrollspy-container {
+    position: absolute;
+    overflow: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
   }
 
   .mouse-icon {
@@ -136,7 +151,7 @@
         &,
         &:hover,
         &:focus,
-        a:active {
+        a.active {
           font-weight: 500;
           color: inherit;
           background: none;
@@ -185,6 +200,10 @@
 .start-menu-close {
   color: map-get($theme-colors, "ordino-gray-4");
   font-size: 1.2em;
+
+  position: relative;
+  z-index: 1; // position icon above the tab container to make it clickable
+
   &:hover {
     color: darken($color: map-get($theme-colors, "ordino-gray-4"), $amount: 20);
   }

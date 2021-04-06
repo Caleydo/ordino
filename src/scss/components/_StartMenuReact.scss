@@ -7,12 +7,7 @@
   right: 0;
   background-color: map-get($theme-colors, "ordino-gray-1");
   z-index: 99; // above all other content
-
-  // stretch background to span the whole page
-  height: fit-content;
-  min-height: 100vh;
-
-  padding-top: 40px; // height of the navbar (= phovea_ui header) and `fixed-top` is applied
+  overflow: auto;
 
   &.ordino-start-menu-open {
     display: grid;
@@ -43,25 +38,25 @@
 
   .scrollspy-nav {
     position: fixed;
-    top: 6em;
 
-    .nav-link {
+    .list-group-item {
       color: map-get($theme-colors, "ordino-gray-4");
-      font-size: 1.12em;
-      padding-left: 2.5rem;
+      font-size: 1.12rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+
+      &::before {
+        @extend .fas;
+        content: fa-content($fa-var-angle-right);
+        visibility: hidden;
+      }
 
       &.active {
         color: inherit;
-        font-weight: 500;
-        position: relative;
 
-        &:before {
-          @extend .fas;
-          content: fa-content($fa-var-angle-right);
-          position: absolute;
-          top: 0.5rem;
-          left: 1rem;
-          font-size: 1.3em;
+        &::before {
+          visibility: visible;
         }
       }
     }
@@ -71,7 +66,7 @@
     &::before {
       content: "";
       display: block;
-      height: 0.85em;
+      height: 0.85rem;
       background: no-repeat center/20px
         url("~tdp_gene/dist/assets/previews/mouse-icon.png");
     }
@@ -80,17 +75,19 @@
   .nav-link {
     position: relative;
     color: map-get($theme-colors, "ordino-gray-4");
-    font-size: 1.12em;
+    font-size: 1.12rem;
+
     .active {
       color: inherit;
       font-weight: 500;
+
       &:before {
         @extend .fas;
         content: fa-content($fa-var-angle-right);
         position: absolute;
         top: 0.5rem;
         left: 1rem;
-        font-size: 1.3em;
+        font-size: 1.3rem;
       }
     }
   }

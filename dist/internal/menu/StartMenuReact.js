@@ -51,7 +51,6 @@ export function StartMenuComponent({ header, mode, open }) {
     React.useEffect(() => {
         // switch header to dark theme when a tab is active
         header.toggleDarkTheme((activeTab) ? true : false);
-        header.togglePositionFixed((activeTab) ? true : false);
     }, [header, activeTab]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),
@@ -60,8 +59,10 @@ export function StartMenuComponent({ header, mode, open }) {
 function MainMenuLinks(props) {
     return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.activeTab === tab ? 'active' : ''}`, key: tab.id },
         React.createElement("a", { className: "nav-link", href: `#${tab.id}`, id: `${tab.id}-tab`, role: "tab", "aria-controls": tab.id, "aria-selected": (props.activeTab === tab), onClick: (evt) => {
+                var _a;
                 evt.preventDefault();
-                window.scrollTo(0, 0);
+                // always scroll to the top of the start menu
+                (_a = document.querySelector(`#ordino-start-menu`)) === null || _a === void 0 ? void 0 : _a.scrollTo(0, 0);
                 if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
                     // close tab only in overlay mode
                     props.setActiveTab(null);
@@ -76,7 +77,14 @@ function StartMenuTabs(props) {
     if (props.activeTab === null) {
         return null;
     }
-    return (React.createElement("div", { className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` },
+    React.useEffect(() => {
+        // refresh scrollspy when the active tab and the corresponding data-target attribute has changed
+        // @see https://getbootstrap.com/docs/4.6/components/scrollspy/#scrollspyrefresh
+        $('[data-spy="scroll"]').each(function () {
+            $(this).scrollspy('refresh');
+        });
+    }, [props.activeTab]);
+    return (React.createElement("div", { id: "ordino-start-menu", "data-spy": "scroll", "data-target": `#${props.activeTab.id}-tab-scrollspy-nav`, "data-offset": "0", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` },
         props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5 pb-7` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
             props.mode === EStartMenuMode.OVERLAY &&
                 React.createElement(Container, { fluid: true },

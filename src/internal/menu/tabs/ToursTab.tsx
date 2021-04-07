@@ -3,7 +3,6 @@ import {Row, Container} from 'react-bootstrap';
 import {TourCard, OrdinoScrollspy} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
-import tour1Img from 'ordino/dist/assets/tour_1.png';
 import {TourUtils, ITDPTourExtensionDesc, ITDPTourExtension} from 'tdp_core';
 import {PluginRegistry, IPlugin} from 'phovea_core';
 import {useAsync} from '../../../hooks';
@@ -47,14 +46,31 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
     return null;
   }
 
+  const loadTourImages = useMemo(() => () => {
+    return Promise.all(props.tours.map(async (tour) => {
+      if(!tour.desc.preview) { // preview function is optional
+        return Promise.resolve(null);
+      }
+
+      const module = await tour.desc.preview(); // uses `import('/my/asset.jpg')` to load image as module
+      return module['default']; // use default export of module
+    }));
+  }, [props.tours]);
+
+  const {status, value: images} = useAsync(loadTourImages);
+
   return (
     <>
-      <h4 className="text-left mt-4 mb-3  d-flex align-items-center"><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
-      <Row className="mb-4" md={3}>
-        {props.tours.map((tour) => {
-          return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={tour1Img} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>
-        })}
-      </Row>
+      {status === 'success' ?
+        <>
+          <h4 className="text-left mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
+          <Row className="mb-4" md={3}>
+            {props.tours.map((tour, index) => {
+              return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index]} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>
+            })}
+          </Row>
+        </>
+      : null}
     </>
   );
 }

@@ -14,7 +14,9 @@ export function TourCard({image, title, text, onClickHandler}: ITourCardProps) {
     return (
         <Col>
             <Card className="ordino-tour-card shadow-sm">
-                <Card.Img style={{height: '200px'}} variant="top" className="p-2" src={image} />
+                {image ?
+                  <Card.Img style={{height: '200px'}} variant="top" className="p-2" src={image} />
+                : null}
                 <Card.Body className="p-2">
                     <Card.Title>{title}</Card.Title>
                     <Card.Text>

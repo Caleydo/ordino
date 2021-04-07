@@ -8,7 +8,7 @@ export function TourCard({ image, title, text, onClickHandler }) {
             React.createElement(Card.Body, { className: "p-2" },
                 React.createElement(Card.Title, null, title),
                 React.createElement(Card.Text, null, text),
-                React.createElement(Button, { className: "btn btn-light" },
+                React.createElement(Button, { className: "btn btn-light", onClick: onClickHandler },
                     React.createElement("i", { className: "mr-1 fas fa-angle-right" }),
                     " Start Tour")))));
 }

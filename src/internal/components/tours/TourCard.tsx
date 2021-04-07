@@ -20,7 +20,7 @@ export function TourCard({image, title, text, onClickHandler}: ITourCardProps) {
                     <Card.Text>
                         {text}
                     </Card.Text>
-                    <Button className="btn btn-light"><i className="mr-1 fas fa-angle-right"></i> Start Tour</Button>
+                    <Button className="btn btn-light" onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> Start Tour</Button>
                 </Card.Body>
             </Card>
         </Col>

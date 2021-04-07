@@ -19,10 +19,10 @@ export function ToursTab() {
             React.createElement(Container, { className: "pb-10 pt-5 tours-tab" },
                 React.createElement("p", { className: "lead text-ordino-gray-4" }, "Learn more about Ordino by taking an interactive guided tour"),
                 beginnerTours ?
-                    React.createElement(ToursSection, { level: 'beginner', tours: beginnerTours })
+                    React.createElement(ToursSection, { level: "beginner", tours: beginnerTours })
                     : null,
                 advancedTours ?
-                    React.createElement(ToursSection, { level: 'advanced', tours: advancedTours })
+                    React.createElement(ToursSection, { level: "advanced", tours: advancedTours })
                     : null),
             React.createElement(BrowserRouter, { basename: "/#" },
                 React.createElement(OrdinoFooter, { openInNewWindow: true }))) : null));
@@ -37,7 +37,7 @@ function ToursSection(props) {
                 return Promise.resolve(null);
             }
             const module = await tour.desc.preview(); // uses `import('/my/asset.jpg')` to load image as module
-            return module['default']; // use default export of module
+            return module.default; // use default export of module
         }));
     }, [props.tours]);
     const { status, value: images } = useAsync(loadTourImages);

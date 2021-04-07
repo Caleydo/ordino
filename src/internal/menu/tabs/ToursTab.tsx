@@ -26,10 +26,10 @@ export function ToursTab() {
         <Container className="pb-10 pt-5 tours-tab">
           <p className="lead text-ordino-gray-4">Learn more about Ordino by taking an interactive guided tour</p>
           {beginnerTours ?
-            <ToursSection level='beginner' tours={beginnerTours}></ToursSection>
+            <ToursSection level="beginner" tours={beginnerTours}></ToursSection>
           : null}
           {advancedTours ?
-            <ToursSection level='advanced' tours={advancedTours}></ToursSection>
+            <ToursSection level="advanced" tours={advancedTours}></ToursSection>
           : null}
         </Container>
         <BrowserRouter basename="/#">
@@ -53,7 +53,7 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
       }
 
       const module = await tour.desc.preview(); // uses `import('/my/asset.jpg')` to load image as module
-      return module['default']; // use default export of module
+      return module.default; // use default export of module
     }));
   }, [props.tours]);
 
@@ -66,7 +66,7 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
           <h4 className="text-left mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
           <Row className="mb-4" md={3}>
             {props.tours.map((tour, index) => {
-              return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index]} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>
+              return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index]} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>;
             })}
           </Row>
         </>

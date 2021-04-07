@@ -1,0 +1,47 @@
+
+@media only screen and (max-width: 1500px) {
+  .scrollspy-nav {
+    display: none;
+  }
+}
+
+.ordino-scrollspy-nav {
+  position: fixed;
+
+  .list-group-item {
+    color: map-get($theme-colors, "ordino-gray-4");
+    font-size: 1.12rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+
+    &::before {
+      @extend .fas;
+      content: fa-content($fa-var-angle-right);
+      visibility: hidden;
+    }
+
+    &:hover {
+      color: inherit;
+    }
+
+    &.active {
+      color: inherit;
+
+      &::before {
+        visibility: visible;
+      }
+    }
+  }
+}
+
+.ordino-scrollspy-container {
+  position: absolute;
+  overflow: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}

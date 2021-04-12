@@ -345,7 +345,7 @@ export class ViewWrapper extends EventHandler {
       const $buttons = $categories.selectAll('button').data((d) => d.views);
 
       $buttons.enter().append('button')
-        .classed('btn btn-secondary', true);
+        .classed('btn btn-light', true);
 
       $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)

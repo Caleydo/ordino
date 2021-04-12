@@ -153,7 +153,7 @@ export class ViewWrapper extends EventHandler {
       });
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline')
+      .attr('class', 'parameters')
       .datum(this);
 
     const $inner = this.$node.append('div')

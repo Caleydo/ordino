@@ -7,9 +7,9 @@
  ********************************************************************/
 
 import * as React from 'react';
-import {BaseUtils, NodeUtils, ICmdResult} from 'phovea_core';
+import {BaseUtils, NodeUtils, ICmdResult, AppContext} from 'phovea_core';
 import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'phovea_core';
-import {AView, TDPApplicationUtils} from 'tdp_core';
+import {AView, TDPApplicationUtils, TourUtils} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {CLUEGraphManager} from 'phovea_clue';
@@ -50,6 +50,11 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * Key for the session storage that is temporarily used when starting a new analysis session
    */
   private static SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
+
+  /**
+   * Key of the URL hash property that starts a new tour with the given ID (if the tour is registered in a phovea.ts)
+   */
+  private static HASH_PROPERTY_START_NEW_TOUR = 'tour';
 
   /**
    * IObjectRef to this OrdinoApp instance
@@ -301,6 +306,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * it is used to store the default session values into the session storage
    * and push the first view.
    * If no initial data is avaialble the start menu will be opened.
+   * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
    */
   initNewSessionAfterPageReload() {
     if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
@@ -312,6 +318,15 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
 
     } else {
       this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
+
+      // start a tour if a tour ID is passed as URL hash
+      if(AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
+        const tourId = AppContext.getInstance().hash.getProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
+        // remove hash to avoid starting the tour again after another page load (e.g., starting a new session)
+        AppContext.getInstance().hash.removeProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
+        // start selected tour
+        TourUtils.startTour(tourId);
+      }
     }
   }
 

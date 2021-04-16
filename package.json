@@ -75,6 +75,7 @@
     "jquery.scrollto": "~2.1.2",
     "tdp_core": "github:datavisyn/tdp_core#bootstrap-v4",
     "react-select": "^4.1.0",
+    "react-dropzone": "^11.3.1",
     "react-router-dom": "^5.2.0",
     "react-virtualized": "^9.22.3",
     "react-select-async-paginate": "^0.5.3",

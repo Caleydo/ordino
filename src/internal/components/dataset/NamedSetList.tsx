@@ -14,7 +14,7 @@ interface INamedSetListProps {
 }
 
 export function NamedSetList({headerIcon, headerText, value, status, onOpen}: INamedSetListProps) {
-  const [namedSets, setNamedSets] = React.useState<INamedSet[]>(null);
+  const [namedSets, setNamedSets] = React.useState<INamedSet[]>([]);
   React.useEffect(() => {
     setNamedSets(value);
   });

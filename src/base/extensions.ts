@@ -9,7 +9,6 @@
 import {IPluginDesc} from 'phovea_core';
 import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
-import {IStartMenuDatasetSectionTab} from '../internal/menu/tabs/DatasetsTab';
 
 export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 
@@ -46,13 +45,43 @@ export interface IStartMenuSessionSection {
  */
 export const EP_ORDINO_STARTMENU_DATASET_SECTION = 'epOrdinoStartMenuDatasetSection';
 
+/**
+ * Interface describing a section for the datasets tab of the start menu
+ */
 export interface IStartMenuDatasetSectionDesc extends IPluginDesc {
+  /**
+   * Name of the plugin, should be unique within a type
+   */
   id: string;
-  name: string;
-  headerIcon: string;
-  viewId: string;
-  tabs: IStartMenuDatasetSectionTab[];
 
+  /**
+   * Human readable name of this plugin
+   */
+  name: string;
+
+  /**
+   * Font Awesome icon
+   * Could be used in the section header
+   * @see https://fontawesome.com/
+   * @example `fas fa-database`
+   */
+  icon: string;
+
+  /**
+   * IDType of the section
+   * Can be used to fetch matching data from the backend
+   */
+  idType: string;
+
+  /**
+   * View ID used as first view when selecting a dataset
+   */
+  startViewId: string;
+
+  /**
+   * Function for loading this plugin
+   * @returns a promise for the loaded plugin
+   */
   load(): Promise<IStartMenuDatasetSectionPlugin>;
 }
 

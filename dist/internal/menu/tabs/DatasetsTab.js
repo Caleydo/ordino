@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Container, Col, Row } from 'react-bootstrap';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
-import { UploadDatasetCard, OrdinoScrollspy } from '../../components';
+import { OrdinoScrollspy } from '../../components';
 import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../..';
 import { useAsync } from '../../../hooks';
 import { BrowserRouter } from 'react-router-dom';
@@ -24,9 +24,7 @@ export function DatasetsTab() {
                             // `id` attribute must match the one in the scrollspy
                             React.createElement("div", { key: card.desc.id, className: "pt-3 pb-5", id: `${card.desc.id}_${suffix}` },
                                 React.createElement(card.factory, Object.assign({ key: card.desc.id }, card.desc))));
-                        }),
-                        React.createElement("div", { className: "pt-3", id: `upload_${suffix}` },
-                            React.createElement(UploadDatasetCard, { id: "upload", headerText: "Upload", headerIcon: "fas fa-file-upload" }))))),
+                        })))),
             React.createElement(BrowserRouter, { basename: "/#" },
                 React.createElement(OrdinoFooter, { openInNewWindow: true }))) : null));
 }

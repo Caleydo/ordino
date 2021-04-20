@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ENamedSetType, FormDialog, INamedSet, IStoredNamedSet, NotificationHandler, RestStorageUtils, StoreUtils} from 'tdp_core';
-import {ListItemDropdown} from '../common';
+import {ListItemDropdown} from '../../../components';
 
 interface INamedSetListProps {
   headerIcon: string;

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
 import { GraphContext } from '../../OrdinoApp';
-import { ListItemDropdown } from '../common';
+import { ListItemDropdown } from '../../../components';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
 export default function CurrentSessionCard({ name, faIcon }) {

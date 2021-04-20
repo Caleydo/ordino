@@ -30,15 +30,6 @@
     font-size: 1rem;
   }
 
-  .mouse-icon {
-    &::before {
-      content: "";
-      display: block;
-      height: 0.85rem;
-      background: no-repeat center/20px
-        url("~tdp_gene/dist/assets/previews/mouse-icon.png");
-    }
-  }
 
   .nav-link {
     position: relative;

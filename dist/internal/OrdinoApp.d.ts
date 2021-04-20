@@ -12,7 +12,7 @@ import { ViewWrapper } from './ViewWrapper';
 import { CLUEGraphManager } from 'phovea_clue';
 import { Range } from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
-import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenu';
 import { AppHeader } from 'phovea_ui';
 export declare const OrdinoContext: React.Context<{
     app: IOrdinoApp;

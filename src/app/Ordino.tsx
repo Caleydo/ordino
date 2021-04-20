@@ -12,7 +12,7 @@ import {ProvenanceGraph} from 'phovea_core';
 import {CLUEGraphManager} from 'phovea_clue';
 import {OrdinoApp} from '../internal/OrdinoApp';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
-import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenuReact';
+import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenu';
 
 export class Ordino extends ATDPApplication<OrdinoApp> {
 

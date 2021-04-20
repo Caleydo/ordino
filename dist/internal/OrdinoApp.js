@@ -13,7 +13,7 @@ import { EViewMode } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
 import { UserSession } from 'phovea_core';
-import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenu';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name

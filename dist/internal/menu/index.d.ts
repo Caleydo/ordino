@@ -1,1 +1,1 @@
-export * from './StartMenuReact';
+export * from './StartMenu';

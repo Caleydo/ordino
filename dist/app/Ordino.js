@@ -9,7 +9,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication } from 'tdp_core';
-import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenu';
 export class Ordino extends ATDPApplication {
     constructor(options = {}) {
         super(Object.assign({

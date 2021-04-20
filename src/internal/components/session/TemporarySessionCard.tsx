@@ -5,7 +5,7 @@ import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../OrdinoApp';
-import {ListItemDropdown} from '../common';
+import {ListItemDropdown} from '../../../components';
 import {EAction, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
 import {byDateDesc} from './utils';

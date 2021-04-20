@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {Container, Col, Row} from 'react-bootstrap';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
-import {UploadDatasetCard, OrdinoScrollspy} from '../../components';
+import {OrdinoScrollspy} from '../../components';
 import {EP_ORDINO_STARTMENU_DATASET_SECTION, IStartMenuDatasetSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
 import {BrowserRouter} from 'react-router-dom';
@@ -33,9 +33,6 @@ export function DatasetsTab() {
                       </div>
                     );
                   })}
-                  <div className="pt-3" id={`upload_${suffix}`}>
-                    <UploadDatasetCard id="upload" headerText="Upload" headerIcon="fas fa-file-upload"></UploadDatasetCard>
-                  </div>
                 </Col>
               </Row>
             </Container>

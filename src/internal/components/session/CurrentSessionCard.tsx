@@ -4,7 +4,7 @@ import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
 import {GraphContext} from '../../OrdinoApp';
-import {ListItemDropdown} from '../common';
+import {ListItemDropdown} from '../../../components';
 import {EAction, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
 

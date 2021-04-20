@@ -2,7 +2,7 @@ import { I18nextManager, UserSession } from 'phovea_core';
 import React from 'react';
 import { Button, ButtonGroup, Col, Dropdown } from 'react-bootstrap';
 import { ENamedSetType, FormDialog, NotificationHandler, RestStorageUtils, StoreUtils } from 'tdp_core';
-import { ListItemDropdown } from '../common';
+import { ListItemDropdown } from '../../../components';
 export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) {
     const [namedSets, setNamedSets] = React.useState([]);
     React.useEffect(() => {

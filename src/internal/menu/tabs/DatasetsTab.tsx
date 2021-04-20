@@ -7,12 +7,6 @@ import {useAsync} from '../../../hooks';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
 
-export interface IStartMenuDatasetSectionTab {
-  id: string;
-  tabText: string;
-  tabIcon: string;
-}
-
 export function DatasetsTab() {
   const suffix = UniqueIdManager.getInstance().uniqueId();
 

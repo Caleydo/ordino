@@ -6,7 +6,7 @@
  */
 export declare const useAsync: <T, E = string>(asyncFunction: () => Promise<T>, immediate?: boolean) => {
     execute: () => Promise<void>;
-    status: "idle" | "pending" | "success" | "error";
+    status: "success" | "idle" | "pending" | "error";
     value: T;
     error: E;
 };

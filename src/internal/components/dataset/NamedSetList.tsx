@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ENamedSetType, FormDialog, INamedSet, IStoredNamedSet, NotificationHandler, RestStorageUtils, StoreUtils} from 'tdp_core';
-import {ListItemDropdown} from '../common';
+import {ListItemDropdown} from '../../../components';
 
 interface INamedSetListProps {
   headerIcon: string;
@@ -14,7 +14,7 @@ interface INamedSetListProps {
 }
 
 export function NamedSetList({headerIcon, headerText, value, status, onOpen}: INamedSetListProps) {
-  const [namedSets, setNamedSets] = React.useState<INamedSet[]>(null);
+  const [namedSets, setNamedSets] = React.useState<INamedSet[]>([]);
   React.useEffect(() => {
     setNamedSets(value);
   });

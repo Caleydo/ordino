@@ -1,1 +1,2 @@
-export * from './StartMenuReact';
+export * from './StartMenu';
+export * from './tabs';

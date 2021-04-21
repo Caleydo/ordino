@@ -6,14 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import * as React from 'react';
-import { BaseUtils, NodeUtils } from 'phovea_core';
+import { BaseUtils, NodeUtils, AppContext } from 'phovea_core';
 import { ObjectRefUtils } from 'phovea_core';
-import { AView, TDPApplicationUtils } from 'tdp_core';
+import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
 import { EViewMode } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
 import { UserSession } from 'phovea_core';
-import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenu';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name
@@ -239,6 +239,7 @@ export class OrdinoApp extends React.Component {
      * it is used to store the default session values into the session storage
      * and push the first view.
      * If no initial data is avaialble the start menu will be opened.
+     * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
      */
     initNewSessionAfterPageReload() {
         if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
@@ -248,6 +249,14 @@ export class OrdinoApp extends React.Component {
         }
         else {
             this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
+            // start a tour if a tour ID is passed as URL hash
+            if (AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
+                const tourId = AppContext.getInstance().hash.getProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
+                // remove hash to avoid starting the tour again after another page load (e.g., starting a new session)
+                AppContext.getInstance().hash.removeProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
+                // start selected tour
+                TourUtils.startTour(tourId);
+            }
         }
     }
     /**
@@ -421,6 +430,10 @@ export class OrdinoApp extends React.Component {
  * Key for the session storage that is temporarily used when starting a new analysis session
  */
 OrdinoApp.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
+/**
+ * Key of the URL hash property that starts a new tour with the given ID (if the tour is registered in a phovea.ts)
+ */
+OrdinoApp.HASH_PROPERTY_START_NEW_TOUR = 'tour';
 /**
  * Helper function to filter views that were created: should be moved to NodeUtils
  * @param stateNode

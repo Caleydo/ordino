@@ -6,21 +6,24 @@ interface ITourCardProps {
     image: string;
     title: string;
     text: string;
-    onClickHandler: (evt: React.MouseEvent<HTMLAnchorElement>) => void;
+    href?: string;
+    onClickHandler?: (evt: React.MouseEvent<HTMLAnchorElement>) => void;
     children?: React.ReactNode;
 }
 
-export function TourCard({image, title, text, onClickHandler}: ITourCardProps) {
+export function TourCard({image, title, text, onClickHandler, href}: ITourCardProps) {
     return (
         <Col>
             <Card className="ordino-tour-card shadow-sm">
-                <Card.Img style={{height: '200px'}} variant="top" className="p-2" src={image} />
+                {image ?
+                  <Card.Img style={{height: '200px'}} variant="top" className="p-2" src={image} />
+                : null}
                 <Card.Body className="p-2">
                     <Card.Title>{title}</Card.Title>
                     <Card.Text>
                         {text}
                     </Card.Text>
-                    <Button className="btn btn-light"><i className="mr-1 fas fa-angle-right"></i> Start Tour</Button>
+                    <Button className="btn btn-light" href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> Start Tour</Button>
                 </Card.Body>
             </Card>
         </Col>

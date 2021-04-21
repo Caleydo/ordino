@@ -12,7 +12,7 @@ import { ViewWrapper } from './ViewWrapper';
 import { CLUEGraphManager } from 'phovea_clue';
 import { Range } from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
-import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenuReact';
+import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenu';
 import { AppHeader } from 'phovea_ui';
 export declare const OrdinoContext: React.Context<{
     app: IOrdinoApp;
@@ -43,6 +43,10 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * Key for the session storage that is temporarily used when starting a new analysis session
      */
     private static SESSION_KEY_START_NEW_SESSION;
+    /**
+     * Key of the URL hash property that starts a new tour with the given ID (if the tour is registered in a phovea.ts)
+     */
+    private static HASH_PROPERTY_START_NEW_TOUR;
     /**
      * IObjectRef to this OrdinoApp instance
      * @type {IObjectRef<OrdinoApp>}
@@ -127,6 +131,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * it is used to store the default session values into the session storage
      * and push the first view.
      * If no initial data is avaialble the start menu will be opened.
+     * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
      */
     initNewSessionAfterPageReload(): void;
     /**

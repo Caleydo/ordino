@@ -7,12 +7,7 @@
   right: 0;
   background-color: map-get($theme-colors, "ordino-gray-1");
   z-index: 99; // above all other content
-
-  // stretch background to span the whole page
-  height: fit-content;
-  min-height: 100vh;
-
-  padding-top: 40px; // height of the navbar (= phovea_ui header) and `fixed-top` is applied
+  overflow: auto;
 
   &.ordino-start-menu-open {
     display: grid;
@@ -35,62 +30,23 @@
     font-size: 1rem;
   }
 
-  @media only screen and (max-width: 1500px) {
-    .scrollspy-nav {
-      display: none;
-    }
-  }
-
-  .scrollspy-nav {
-    position: fixed;
-    top: 6em;
-
-    .nav-link {
-      color: map-get($theme-colors, "ordino-gray-4");
-      font-size: 1.12em;
-      padding-left: 2.5rem;
-
-      &.active {
-        color: inherit;
-        font-weight: 500;
-        position: relative;
-
-        &:before {
-          @extend .fas;
-          content: fa-content($fa-var-angle-right);
-          position: absolute;
-          top: 0.5rem;
-          left: 1rem;
-          font-size: 1.3em;
-        }
-      }
-    }
-  }
-
-  .mouse-icon {
-    &::before {
-      content: "";
-      display: block;
-      height: 0.85em;
-      background: no-repeat center/20px
-        url("~tdp_gene/dist/assets/previews/mouse-icon.png");
-    }
-  }
 
   .nav-link {
     position: relative;
     color: map-get($theme-colors, "ordino-gray-4");
-    font-size: 1.12em;
+    font-size: 1.12rem;
+
     .active {
       color: inherit;
       font-weight: 500;
+
       &:before {
         @extend .fas;
         content: fa-content($fa-var-angle-right);
         position: absolute;
         top: 0.5rem;
         left: 1rem;
-        font-size: 1.3em;
+        font-size: 1.3rem;
       }
     }
   }
@@ -139,7 +95,7 @@
         &,
         &:hover,
         &:focus,
-        a:active {
+        a.active {
           font-weight: 500;
           color: inherit;
           background: none;
@@ -188,6 +144,10 @@
 .start-menu-close {
   color: map-get($theme-colors, "ordino-gray-4");
   font-size: 1.2em;
+
+  position: relative;
+  z-index: 1; // position icon above the tab container to make it clickable
+
   &:hover {
     color: darken($color: map-get($theme-colors, "ordino-gray-4"), $amount: 20);
   }

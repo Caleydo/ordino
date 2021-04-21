@@ -81,4 +81,4 @@ function StartMenuTabs(props) {
                             React.createElement("i", { className: "fas fa-times" }))))),
         React.createElement(tab.factory, null))))));
 }
-//# sourceMappingURL=StartMenuReact.js.map
+//# sourceMappingURL=StartMenu.js.map

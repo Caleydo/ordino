@@ -17,7 +17,7 @@ import {CmdUtils} from './cmds';
 import {Range} from 'phovea_core';
 import {UserSession} from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
-import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenuReact';
+import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
 
 // tslint:disable-next-line: variable-name

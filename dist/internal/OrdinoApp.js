@@ -18,6 +18,8 @@ import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/Start
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext({ graph: null, manager: null });
+// tslint:disable-next-line: variable-name
+export const HighlightSessionCardContext = React.createContext({ highlight: false });
 /**
  * The main class for the Ordino app
  * This class ...

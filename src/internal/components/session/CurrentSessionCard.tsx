@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
-import {GraphContext} from '../../OrdinoApp';
+import {GraphContext, HighlightSessionCardContext} from '../../OrdinoApp';
 import {ListItemDropdown} from '../../../components';
 import {EAction, CommonSessionCard} from './CommonSessionCard';
 import {SessionListItem} from './SessionListItem';
@@ -11,9 +11,10 @@ import {SessionListItem} from './SessionListItem';
 
 export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSectionDesc) {
     const {graph} = React.useContext(GraphContext);
+    const {highlight} = React.useContext(HighlightSessionCardContext);
     const desc = graph.desc;
     return (
-        <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo')}>
+        <CommonSessionCard cardName={name} highlight={highlight} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo')}>
             {(sessionAction) => {
                 return <SessionListItem desc={desc} selectSession={(event) => sessionAction(EAction.SELECT, event, desc)}>
                     <Button variant="outline-secondary" disabled={ProvenanceGraphMenuUtils.isPersistent(desc)} className="mr-2 pt-1 pb-1" onClick={(event) => sessionAction(EAction.SAVE, event, desc)}>Save</Button>

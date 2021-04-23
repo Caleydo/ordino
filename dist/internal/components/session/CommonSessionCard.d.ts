@@ -6,6 +6,7 @@ interface ICommonSessionCardProps {
     faIcon: string;
     cardInfo?: string;
     children?: (sessionAction: SessionActionChooser) => React.ReactNode;
+    highlight?: boolean;
 }
 /**
  * Types of actions exposed by the CommonSessionCard component
@@ -23,5 +24,5 @@ export declare type SessionAction = (event: React.MouseEvent<DropdownItemProps |
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children }: ICommonSessionCardProps): JSX.Element;
+export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight }: ICommonSessionCardProps): JSX.Element;
 export {};

@@ -21,6 +21,9 @@ export declare const GraphContext: React.Context<{
     graph: ProvenanceGraph;
     manager: CLUEGraphManager;
 }>;
+export declare const HighlightSessionCardContext: React.Context<{
+    highlight: boolean;
+}>;
 interface IOrdinoAppProps {
     graph: ProvenanceGraph;
     graphManager: CLUEGraphManager;

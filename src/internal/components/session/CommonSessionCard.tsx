@@ -11,6 +11,7 @@ interface ICommonSessionCardProps {
     faIcon: string;
     cardInfo?: string;
     children?: (sessionAction: SessionActionChooser) => React.ReactNode;
+    highlight?: boolean;
 }
 
 
@@ -33,7 +34,7 @@ export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLEle
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommonSessionCardProps) {
+export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlight}: ICommonSessionCardProps) {
 
     const parent = useRef(null);
     const {manager, graph} = React.useContext(GraphContext);
@@ -166,7 +167,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
 
     return <>
         <h4 className="text-left d-flex align-items-center mb-3"><i className={`mr-2 ordino-icon-2 fas ${faIcon}`} ></i>{cardName}</h4>
-        <Card ref={parent} className="shadow-sm">
+        <Card ref={parent} className={`session-card ${highlight && 'highlight-card'}`}>
             <Card.Body className="p-3">
                 {cardInfo || <Card.Text>
                     {cardInfo}

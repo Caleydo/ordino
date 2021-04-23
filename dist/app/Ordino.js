@@ -14,7 +14,19 @@ export class Ordino extends ATDPApplication {
     constructor(options = {}) {
         super(Object.assign({
             prefix: 'ordino',
-            name: 'Ordino'
+            name: 'Ordino',
+            /**
+             * Show content in the `Ordino at a Glance` page instead.
+             */
+            showAboutLink: false,
+            /**
+             * Show content in the `Ordino at a Glance` page instead.
+             */
+            showReportBugLink: false,
+            /**
+             * Functionality is included in the sessions tab.
+             */
+            showProvenanceMenu: false
         }, options));
     }
     createApp(graph, manager, main) {

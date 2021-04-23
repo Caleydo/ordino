@@ -16,7 +16,7 @@ import {CLUEGraphManager} from 'phovea_clue';
 import {CmdUtils} from './cmds';
 import {Range} from 'phovea_core';
 import {UserSession} from 'phovea_core';
-import { IOrdinoApp } from './IOrdinoApp';
+import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
 
@@ -25,6 +25,9 @@ export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null})
 
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
+
+// tslint:disable-next-line: variable-name
+export const HighlightSessionCardContext = React.createContext<{highlight: boolean}>({highlight: false})
 
 interface IOrdinoAppProps {
   graph: ProvenanceGraph;

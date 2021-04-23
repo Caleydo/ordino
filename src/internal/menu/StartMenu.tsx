@@ -5,8 +5,7 @@ import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
-import {BrowserRouter} from 'react-router-dom';
-import {OrdinoFooter} from '../../components';
+import {HighlightSessionCardContext} from '../OrdinoApp';
 
 
 export enum EStartMenuMode {
@@ -74,6 +73,7 @@ const tabs: IStartMenuTab[] = [
 export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: EStartMenuOpen}) {
   // no active tab until `open` is set OR a link in the header navigation is clicked
   const [activeTab, setActiveTab] = React.useState(null);
+  const [highlight, setHighlight] = React.useState(false);
 
   React.useEffect(() => {
     // legacy event from ATDPApplication
@@ -95,13 +95,32 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
     header.toggleDarkTheme((activeTab) ? true : false);
   }, [header, activeTab]);
 
+
+  React.useEffect(() => {
+    let link = header.rightMenu.querySelector('*[data-header="currentAnalysisSession"]');
+    if (!link) {
+      link = header.addRightMenu('Current session', (event) => {
+        event.preventDefault();
+        setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+      });
+
+      link.firstElementChild.innerHTML = '<i class="fas fa-history mr-2"></i>Current Analysis Session';
+      link.setAttribute('data-header', 'currentAnalysisSession');
+      link.classList.add('hidden');
+    }
+
+    link.toggleAttribute('hidden', (activeTab) ? true : false);
+  }, [header, activeTab]);
+
   return (
     <>
       {ReactDOM.createPortal(
         <MainMenuLinks tabs={tabs} activeTab={activeTab} setActiveTab={(a) => setActiveTab(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <StartMenuTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabs>
+      <HighlightSessionCardContext.Provider value={{highlight}}>
+        <StartMenuTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabs>
+      </HighlightSessionCardContext.Provider>
     </>
   );
 }

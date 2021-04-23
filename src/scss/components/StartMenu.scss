@@ -9,6 +9,22 @@
   z-index: 99; // above all other content
   overflow: auto;
 
+  .session-card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.08);
+  }
+
+  .highlight-card {
+    animation: highlight-card 4s linear;
+  }
+
+  @keyframes highlight-card {
+    10%,
+    70% {
+      box-shadow: 0 0 10px rgba(81, 203, 238, 1);
+      border: 1px solid rgba(81, 203, 238, 1);
+    }
+  }
+
   &.ordino-start-menu-open {
     display: grid;
     grid-template-rows: 1fr auto; // use available space for tab content (1fr) and push footer always to the bottom (auto)
@@ -29,7 +45,6 @@
     border-radius: 50%;
     font-size: 1rem;
   }
-
 
   .nav-link {
     position: relative;

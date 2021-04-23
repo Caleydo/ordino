@@ -102,6 +102,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
       link = header.addRightMenu('Current session', (event) => {
         event.preventDefault();
         setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+        setHighlight(true); // TODO: set highlight back to false
       });
 
       link.firstElementChild.innerHTML = '<i class="fas fa-history mr-2"></i>Current Analysis Session';

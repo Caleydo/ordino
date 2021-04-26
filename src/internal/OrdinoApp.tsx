@@ -19,6 +19,7 @@ import {UserSession} from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
+import {OrdinoBreadcrumbs} from './components/navigation';
 
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null});
@@ -487,38 +488,22 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * updates the views information, e.g. history
    */
   render() {
-    // //notify views which next view is chosen
-    // this.views.forEach((view, i) => {
-    //   if (i < this.views.length - 1) {
-    //     view.setActiveNextView(this.views[i + 1].desc.id);
-    //   } else {
-    //     view.setActiveNextView(null);
-    //   }
-    // });
-
-    const historyClassNames = {
-      [EViewMode.CONTEXT]: 't-context',
-      [EViewMode.HIDDEN]: 't-hide',
-      [EViewMode.FOCUS]: 't-focus'
-    };
+    // notify views about next view to update detail view chooser
+    // TODO remove/refactor this loop when switching ViewWrapper and the detail view chooser to React
+    this.state.views.forEach((view, i) => {
+      if (i < this.views.length - 1) {
+        view.setActiveNextView(this.views[i + 1].desc.id);
+      } else {
+        view.setActiveNextView(null);
+      }
+    });
 
     return(
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
           <OrdinoContext.Provider value={{app: this}}>
           <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
-          <ul className="tdp-button-group history">
-            {this.state.views.map((view) => {
-              return (
-                <li key={view.desc.id} className={`hview ${historyClassNames[view.mode]}`}>
-                  <a href="#" onClick={(event) => {
-                    event.preventDefault();
-                    this.showInFocus(view);
-                  }}>{view.desc.name}</a>
-                </li>
-              );
-            })}
-          </ul>
+          <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
           <div className="wrapper">
             <div className="targid" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
           </div>

@@ -14,6 +14,7 @@ import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
 import { UserSession } from 'phovea_core';
 import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenu';
+import { OrdinoBreadcrumbs } from './components/navigation';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name
@@ -398,30 +399,21 @@ export class OrdinoApp extends React.Component {
      * updates the views information, e.g. history
      */
     render() {
-        // //notify views which next view is chosen
-        // this.views.forEach((view, i) => {
-        //   if (i < this.views.length - 1) {
-        //     view.setActiveNextView(this.views[i + 1].desc.id);
-        //   } else {
-        //     view.setActiveNextView(null);
-        //   }
-        // });
-        const historyClassNames = {
-            [EViewMode.CONTEXT]: 't-context',
-            [EViewMode.HIDDEN]: 't-hide',
-            [EViewMode.FOCUS]: 't-focus'
-        };
+        // notify views about next view to update detail view chooser
+        // TODO remove/refactor this loop when switching ViewWrapper and the detail view chooser to React
+        this.state.views.forEach((view, i) => {
+            if (i < this.views.length - 1) {
+                view.setActiveNextView(this.views[i + 1].desc.id);
+            }
+            else {
+                view.setActiveNextView(null);
+            }
+        });
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
                 React.createElement(OrdinoContext.Provider, { value: { app: this } },
                     React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
-                    React.createElement("ul", { className: "tdp-button-group history" }, this.state.views.map((view) => {
-                        return (React.createElement("li", { key: view.desc.id, className: `hview ${historyClassNames[view.mode]}` },
-                            React.createElement("a", { href: "#", onClick: (event) => {
-                                    event.preventDefault();
-                                    this.showInFocus(view);
-                                } }, view.desc.name)));
-                    })),
+                    React.createElement(OrdinoBreadcrumbs, { views: this.state.views, onClick: (view) => this.showInFocus(view) }),
                     React.createElement("div", { className: "wrapper" },
                         React.createElement("div", { className: "targid", ref: this.nodeRef }))))));
     }

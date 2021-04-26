@@ -19,6 +19,7 @@ export declare class ViewWrapper extends EventHandler {
     static EVENT_CHOOSE_NEXT_VIEW: string;
     static EVENT_FOCUS: string;
     static EVENT_REMOVE: string;
+    static EVENT_MODE_CHANGED: string;
     private $viewWrapper;
     private $node;
     private $chooser;

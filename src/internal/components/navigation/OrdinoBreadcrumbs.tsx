@@ -33,13 +33,13 @@ export function OrdinoBreadcrumbs(props: IOrdinoBreadcrumbsProps) {
 }
 
 
-interface OrdinoBreadcrumbItemProps {
+interface IOrdinoBreadcrumbItemProps {
   view: ViewWrapper;
 
   onClick(view: ViewWrapper): void;
 }
 
-function OrdinoBreadcrumbItem(props: OrdinoBreadcrumbItemProps) {
+function OrdinoBreadcrumbItem(props: IOrdinoBreadcrumbItemProps) {
   const historyClassNames = {
     [EViewMode.CONTEXT]: 't-context',
     [EViewMode.HIDDEN]: 't-hide',
@@ -66,7 +66,7 @@ function OrdinoBreadcrumbItem(props: OrdinoBreadcrumbItemProps) {
     return () => { // cleanup
       props.view.off(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
       props.view.off(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
-    }
+    };
   }, [props.view]);
 
   return (

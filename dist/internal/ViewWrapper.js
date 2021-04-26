@@ -208,7 +208,7 @@ export class ViewWrapper extends EventHandler {
         }
         const b = this._mode;
         this.modeChanged(mode);
-        this.fire('modeChanged', this._mode = mode, b);
+        this.fire(ViewWrapper.EVENT_MODE_CHANGED, this._mode = mode, b);
     }
     modeChanged(mode) {
         // update css classes
@@ -311,4 +311,5 @@ export class ViewWrapper extends EventHandler {
 ViewWrapper.EVENT_CHOOSE_NEXT_VIEW = 'open';
 ViewWrapper.EVENT_FOCUS = 'focus';
 ViewWrapper.EVENT_REMOVE = 'remove';
+ViewWrapper.EVENT_MODE_CHANGED = 'modeChanged';
 //# sourceMappingURL=ViewWrapper.js.map

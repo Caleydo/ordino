@@ -39,6 +39,7 @@ export class ViewWrapper extends EventHandler {
   static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
   static EVENT_REMOVE = 'remove';
+  static EVENT_MODE_CHANGED = 'modeChanged';
 
   private $viewWrapper: d3.Selection<ViewWrapper>;
   private $node: d3.Selection<ViewWrapper>;
@@ -276,7 +277,7 @@ export class ViewWrapper extends EventHandler {
     }
     const b = this._mode;
     this.modeChanged(mode);
-    this.fire('modeChanged', this._mode = mode, b);
+    this.fire(ViewWrapper.EVENT_MODE_CHANGED, this._mode = mode, b);
   }
 
   protected modeChanged(mode: EViewMode) {

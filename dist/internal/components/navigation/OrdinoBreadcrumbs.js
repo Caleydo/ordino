@@ -19,20 +19,26 @@ function OrdinoBreadcrumbItem(props) {
     };
     // TODO Refactor/remove the `useState` and `useEffect` when switching the ViewWrapper to React
     const [viewMode, setViewMode] = React.useState(EViewMode.HIDDEN);
+    const [viewName, setViewName] = React.useState(props.view.desc.name);
     // listen to mode changes of the view and update the state accordingly
     React.useEffect(() => {
-        const listener = (_event, currentMode, _previousMode) => {
+        const modeChangedListener = (_event, currentMode, _previousMode) => {
             setViewMode(currentMode);
         };
-        props.view.on(ViewWrapper.EVENT_MODE_CHANGED, listener);
+        const replaceViewListener = (_event, view) => {
+            setViewName(view.desc.name);
+        };
+        props.view.on(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+        props.view.on(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
         return () => {
-            props.view.off(ViewWrapper.EVENT_MODE_CHANGED, listener);
+            props.view.off(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+            props.view.off(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
         };
     }, [props.view]);
     return (React.createElement("li", { className: `hview ${historyClassNames[viewMode]}` },
         React.createElement("a", { href: "#", onClick: (event) => {
                 event.preventDefault();
                 props.onClick(props.view);
-            } }, props.view.desc.name)));
+            } }, viewName)));
 }
 //# sourceMappingURL=OrdinoBreadcrumbs.js.map

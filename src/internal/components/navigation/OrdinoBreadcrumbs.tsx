@@ -48,17 +48,24 @@ function OrdinoBreadcrumbItem(props: OrdinoBreadcrumbItemProps) {
 
   // TODO Refactor/remove the `useState` and `useEffect` when switching the ViewWrapper to React
   const [viewMode, setViewMode] = React.useState(EViewMode.HIDDEN);
+  const [viewName, setViewName] = React.useState(props.view.desc.name);
 
   // listen to mode changes of the view and update the state accordingly
   React.useEffect(() => {
-    const listener = (_event, currentMode: EViewMode, _previousMode: EViewMode) => {
+    const modeChangedListener = (_event, currentMode: EViewMode, _previousMode: EViewMode) => {
       setViewMode(currentMode);
     };
 
-    props.view.on(ViewWrapper.EVENT_MODE_CHANGED, listener);
+    const replaceViewListener = (_event, view: ViewWrapper) => {
+      setViewName(view.desc.name);
+    };
+
+    props.view.on(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+    props.view.on(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
 
     return () => { // cleanup
-      props.view.off(ViewWrapper.EVENT_MODE_CHANGED, listener)
+      props.view.off(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+      props.view.off(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
     }
   }, [props.view]);
 
@@ -67,7 +74,7 @@ function OrdinoBreadcrumbItem(props: OrdinoBreadcrumbItemProps) {
       <a href="#" onClick={(event) => {
         event.preventDefault();
         props.onClick(props.view);
-      }}>{props.view.desc.name}</a>
+      }}>{viewName}</a>
     </li>
   );
 }

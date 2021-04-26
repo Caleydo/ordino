@@ -29,8 +29,9 @@ export const GraphContext = React.createContext({ graph: null, manager: null });
 export class OrdinoApp extends React.Component {
     constructor(props) {
         super(props);
-        this.removeWrapper = (event, view) => this.remove(view);
+        this.removeWrapper = (_event, view) => this.remove(view);
         this.chooseNextView = (event, viewId, idtype, selection) => this.handleNextView(event.target, viewId, idtype, selection);
+        this.replaceViewInViewWrapper = (_event, _view) => this.updateDetailViewChoosers();
         this.updateSelection = (event, old, newValue) => this.updateItemSelection(event.target, old, newValue);
         this.nodeRef = React.createRef();
         // add OrdinoApp app as (first) object to provenance graph
@@ -306,6 +307,7 @@ export class OrdinoApp extends React.Component {
     pushImpl(view) {
         view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
         view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
+        view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
         // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
         this.setState({
@@ -324,6 +326,7 @@ export class OrdinoApp extends React.Component {
         const i = this.state.views.indexOf(view);
         view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
         view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
+        view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
         this.setState({
             views: this.state.views.filter((v) => v !== view)
@@ -396,11 +399,12 @@ export class OrdinoApp extends React.Component {
         return BaseUtils.resolveIn(1000).then(() => old);
     }
     /**
-     * updates the views information, e.g. history
+     * Update the detail view chooser of each view wrapper,
+     * because each view wrapper does not know the surrounding view wrappers.
+     *
+     * TODO remove/refactor this function when switching the ViewWrapper and its detail view chooser to React
      */
-    render() {
-        // notify views about next view to update detail view chooser
-        // TODO remove/refactor this loop when switching ViewWrapper and the detail view chooser to React
+    updateDetailViewChoosers() {
         this.state.views.forEach((view, i) => {
             if (i < this.views.length - 1) {
                 view.setActiveNextView(this.views[i + 1].desc.id);
@@ -409,6 +413,12 @@ export class OrdinoApp extends React.Component {
                 view.setActiveNextView(null);
             }
         });
+    }
+    /**
+     * updates the views information, e.g. history
+     */
+    render() {
+        this.updateDetailViewChoosers();
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
                 React.createElement(OrdinoContext.Provider, { value: { app: this } },

@@ -97,17 +97,21 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
 
 
   React.useEffect(() => {
-    let link = header.rightMenu.querySelector('*[data-header="currentAnalysisSession"]');
+    let link = header.rightMenu.parentElement.querySelector('.current-session') as HTMLUListElement;
     if (!link) {
-      link = header.addRightMenu('Current session', (event) => {
+      link = header.rightMenu.ownerDocument.createElement('ul');
+      link.classList.add('navbar-nav', 'navbar-right', 'current-session');
+      ReactDOM.render(
+        <li className="nav-item" >
+          <a className="nav-link" role="button"><i className="fas fa-history mr-2"></i>Current Analysis Session</a>
+        </li>, link);
+
+      link.onclick = (event) => {
         event.preventDefault();
         setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
         setHighlight(true); // TODO: set highlight back to false
-      });
-
-      link.firstElementChild.innerHTML = '<i class="fas fa-history mr-2"></i>Current Analysis Session';
-      link.setAttribute('data-header', 'currentAnalysisSession');
-      link.classList.add('hidden');
+      };
+      header.insertCustomRightMenu(link);
     }
 
     link.toggleAttribute('hidden', (activeTab) ? true : false);

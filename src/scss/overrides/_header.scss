@@ -1,3 +1,10 @@
+[data-header="mainMenu"] {
+  order: -2;
+}
+.current-session {
+  order: -1;
+}
+
 [data-header="rightMenu"] {
-  order: 3;
+  order: 10;
 }

@@ -77,7 +77,7 @@ export function OrdinoScrollspy(props) {
         }, 250); // debounce avoid performance issues by calling `getBoundingClientRect()`
         window.addEventListener('resize', resizeListener);
         const scrollListener = (event) => {
-            var element = event.target;
+            const element = event.target;
             // console.log(element.scrollHeight, element.scrollTop, containerHeight, element.scrollHeight - element.scrollTop === containerHeight, scrolledToBottom);
             // check if container is scrolled to the bottom
             if (element.scrollHeight - element.scrollTop === containerHeight) {

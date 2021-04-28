@@ -6,7 +6,7 @@ import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../..';
 import { useAsync } from '../../../hooks';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoFooter } from '../../../components';
-export function DatasetsTab(props) {
+export function DatasetsTab(_props) {
     const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     const loadCards = useMemo(() => () => {
         const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_DATASET_SECTION).map((d) => d);

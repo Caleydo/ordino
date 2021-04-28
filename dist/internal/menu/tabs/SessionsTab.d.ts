@@ -1,2 +1,2 @@
 import { IStartMenuTabProps } from '../StartMenu';
-export declare function SessionsTab(props: IStartMenuTabProps): JSX.Element;
+export declare function SessionsTab(_props: IStartMenuTabProps): JSX.Element;

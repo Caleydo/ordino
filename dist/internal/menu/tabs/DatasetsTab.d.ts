@@ -1,2 +1,2 @@
 import { IStartMenuTabProps } from '../StartMenu';
-export declare function DatasetsTab(props: IStartMenuTabProps): JSX.Element;
+export declare function DatasetsTab(_props: IStartMenuTabProps): JSX.Element;

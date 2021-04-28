@@ -6,6 +6,7 @@ import {OrdinoFooter} from '../../../components';
 import {TourUtils, ITDPTourExtensionDesc, ITDPTourExtension} from 'tdp_core';
 import {PluginRegistry, IPlugin} from 'phovea_core';
 import {useAsync} from '../../../hooks';
+import {IStartMenuTabProps} from '../StartMenu';
 
 
 export function ToursTab(_props: IStartMenuTabProps) {

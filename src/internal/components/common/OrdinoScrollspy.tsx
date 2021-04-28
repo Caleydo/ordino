@@ -180,12 +180,13 @@ interface IOrdinoScrollspyItemProps {
 }
 
 /**
- *
+ * Threshold points when the intersection observer should trigger
  */
 const threshold = [0, 1];
 
 /**
- *
+ * Wrap the children using the `InView` of `react-intersection-observer`.
+ * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
 export function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)) {

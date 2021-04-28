@@ -33,14 +33,22 @@ export enum EStartMenuOpen {
   CLOSED = 'closed'
 }
 
+
+export interface IStartMenuTabProps {
+  /**
+   * Flag if the tab is currently active and visible
+   */
+  isActive: boolean;
+}
+
 interface IStartMenuTab {
   id: string;
   title: string;
   // TODO: create an extension point to add additional tabs
-  factory: () => JSX.Element;
+  factory: (props: IStartMenuTabProps) => JSX.Element;
 }
 
-interface IStartMenuTabProps {
+interface IStartMenuTabWrapperProps {
   /**
    * List of tabs
    */
@@ -101,12 +109,12 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
         <MainMenuLinks tabs={tabs} activeTab={activeTab} setActiveTab={(a) => setActiveTab(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <StartMenuTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabs>
+      <StartMenuTabWrapper tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabWrapper>
     </>
   );
 }
 
-function MainMenuLinks(props: IStartMenuTabProps) {
+function MainMenuLinks(props: IStartMenuTabWrapperProps) {
   return (
     <>
       {props.tabs.map((tab) => (
@@ -138,7 +146,7 @@ function MainMenuLinks(props: IStartMenuTabProps) {
 }
 
 
-function StartMenuTabs(props: IStartMenuTabProps) {
+function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
   if (props.activeTab === null) {
     return null;
   }
@@ -163,7 +171,7 @@ function StartMenuTabs(props: IStartMenuTabProps) {
               </Row>
             </Container>
           }
-          <tab.factory />
+          <tab.factory isActive={props.activeTab === tab} />
         </div>
       ))}
     </div>

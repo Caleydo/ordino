@@ -1,18 +1,18 @@
 import React, {useMemo} from 'react';
 import {Container, Col, Row} from 'react-bootstrap';
-import {InView} from 'react-intersection-observer';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {useAsync} from '../../../hooks';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
-import {OrdinoScrollspy} from '../../components';
+import {OrdinoScrollspy, OrdinoScrollspyItem} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
+import {IStartMenuTabProps} from '../StartMenu';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
 }
 
-export function SessionsTab() {
+export function SessionsTab(_props: IStartMenuTabProps) {
   const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
 
   const loadSections = useMemo(() => () => {
@@ -34,9 +34,9 @@ export function SessionsTab() {
                     {items?.map((item, index) => {
                       return (
                         // `id` attribute must match the one in the scrollspy
-                        <InView as="div" className={`${(index > 0) ? 'pt-3' : ''} ${(index < items.length - 1) ? 'pb-5' : ''}`} id={`${item.desc.id}_${suffix}`} key={item.desc.id} onChange={(inView: boolean, entry: IntersectionObserverEntry) => handleOnChange(`${item.desc.id}_${suffix}`, inView, entry)}>
+                        <OrdinoScrollspyItem className="pt-3 pb-5" id={`${item.desc.id}_${suffix}`} key={item.desc.id} index={index} handleOnChange={handleOnChange}>
                           <item.factory {...item.desc} />
-                        </InView>
+                        </OrdinoScrollspyItem>
                       );
                     })}
                   </Col>

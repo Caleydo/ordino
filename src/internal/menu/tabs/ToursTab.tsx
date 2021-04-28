@@ -8,7 +8,7 @@ import {PluginRegistry, IPlugin} from 'phovea_core';
 import {useAsync} from '../../../hooks';
 
 
-export function ToursTab() {
+export function ToursTab(_props: IStartMenuTabProps) {
   const loadTours = useMemo(() => () => {
     const tourEntries = PluginRegistry.getInstance().listPlugins(TourUtils.EXTENSION_POINT_TDP_TOUR).map((d) => d as ITDPTourExtensionDesc);
     return Promise.all(tourEntries.map((tour) => tour.load()));

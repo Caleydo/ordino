@@ -1,6 +1,6 @@
 import React from 'react';
 import {ListGroup} from 'react-bootstrap';
-import {debounce} from 'lodash';
+import {InView, IntersectionObserverProps, PlainChildrenProps} from 'react-intersection-observer';
 
 interface IOrdinoScrollspyProps {
   /**
@@ -18,9 +18,9 @@ interface IOrdinoScrollspyProps {
   }[];
 
   /**
-   * Container content
+   * Container content and handle on change function to pass to the scrollspy item
    */
-  children: ((handleOnChange: (id: string, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
+  children: ((handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -39,17 +39,16 @@ interface IOrdinoScrollspyProps {
  *
  * @example Usage with items to observe
  * ```jsx
- * import {InView} from 'react-intersection-observer';
- * import {OrdinoScrollspy} from 'ordino';
+ * import {OrdinoScrollspy, OrdinoScrollspyItem} from 'ordino';
  *
  *  <OrdinoScrollspy items={items.map((item) => ({id: item.desc.id, name: item.desc.name}))}>
  *    {(handleOnChange) =>
- *      {items.map((item) => {
+ *      {items.map((item, index) => {
  *        return (
- *          <InView as="div" className="pt-3 pb-5" id={item.desc.id} key={item.desc.id} onChange={(inView: boolean, entry: IntersectionObserverEntry) => handleOnChange(item.desc.id, inView, entry)}>
+ *          <OrdinoScrollspyItem className="pt-3 pb-5" id={item.desc.id} key={item.desc.id} index={index} onChange={handleOnChange}>
  *            <h5>${item.desc.name}</h5>
  *            ... other content ...
- *          </InView>
+ *          </OrdinoScrollspyItem>
  *        );
  *      })}
  *      </div>
@@ -81,84 +80,118 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
     );
   }
 
-  const [activeItemIndex, setActiveItemIndex] = React.useState(0); // highlight first item by default
+  // state with all active items
+  const [activeItems, setActiveItems] = React.useState<{[key: string]: {ratio: number, index: number} | null}>({});
 
-  const handleOnChange = (id: string, inView: boolean, entry: IntersectionObserverEntry) => {
-    const currentItemIndex = props.items.findIndex((item) => item.id === id);
+  // create ref to avoid rapid state updates and instead updating the state using state using debounce
+  const activeItemsRef = React.useRef<{[key: string]: {ratio: number, index: number} | null}>({});
 
-    if(currentItemIndex === activeItemIndex && inView === false) {
-      setActiveItemIndex(currentItemIndex + 1); // highlight next item once the active one is invisble
-
-    } else if(currentItemIndex < activeItemIndex && inView === true) {
-      setActiveItemIndex(currentItemIndex); // highlight previous item once it is visible
+  const handleOnChange = (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => {
+    // do nothing if item is not set and invisible
+    if(!activeItems[id] && inView === false) {
+      return;
     }
+
+    activeItemsRef.current = {
+      ...activeItemsRef.current,
+      // add new item per id if in view
+      [id]: (inView) ? {
+        ratio: entry.intersectionRatio,
+        index
+      } : null
+    };
   };
 
-  const containerRef = React.useRef(null);
-
-  // check scroll position of container to highlight last item once the scroll bar reaches the bottom
   React.useEffect(() => {
-    let scrolledToBottom = false;
+    // synchronize `activeItemsRef` with `activeItems` (similar to debounce)
+    const intervalId = setInterval(() => {
+      setActiveItems(activeItemsRef.current);
+    }, 100);
 
-    // TODO the container height must be initialized after showing the scroll spy. otherwise the height is 0.
-    let containerHeight = containerRef.current.getBoundingClientRect().height;
-    // console.log('set containerHeight', containerHeight);
-
-    // update the container height when resizing the window
-    const resizeListener = debounce(() => {
-      containerHeight = containerRef.current.getBoundingClientRect().height;
-    }, 250); // debounce avoid performance issues by calling `getBoundingClientRect()`
-
-    window.addEventListener('resize', resizeListener);
-
-    const scrollListener = (event) => {
-      const element = event.target;
-      // console.log(element.scrollHeight, element.scrollTop, containerHeight, element.scrollHeight - element.scrollTop === containerHeight, scrolledToBottom);
-
-      // check if container is scrolled to the bottom
-      if (element.scrollHeight - element.scrollTop === containerHeight) {
-        scrolledToBottom = true;
-        setActiveItemIndex(props.items.length - 1); // highlight last item of the list
-
-      // check if container was already scrolled to bottom and now scrolled up again
-      } else if(scrolledToBottom) {
-        scrolledToBottom = false;
-        setActiveItemIndex(props.items.length - 2); // highlight item previous to the last one
-        // FIXME there are still edge cases depending on the container and window height
-      }
-    };
-
-    containerRef.current.addEventListener('scroll', scrollListener);
-
-    return () => { // cleanup = remove event listener
-      window.removeEventListener('resize', resizeListener);
-      containerRef.current.removeEventListener('scroll', scrollListener);
+    return () => { // cleanup
+      clearInterval(intervalId);
     };
   }, []);
+
+  const activeId = Object.entries(activeItems)
+    .filter(([_id, item]) => item?.ratio)
+    // get items with maximum ratio and on tie use the one with the lowest index
+    .sort((a, b) => (b[1].ratio - a[1].ratio) || (a[1].index - b[1].index))?.
+    [0]?. // pick the first item of the sorted array
+    [0]; // get the item's `id` (from Object.entries())
 
   /**
    * Get the href attribute and find the corresponding element with the id.
    * If found scroll the element into the viewport.
    * @param event Click event
    */
-  const scrollIntoView = (event) => {
-    event.preventDefault(); // prevent jumping to element with id and scroll smoothly instead
+  const scrollIntoView = React.useCallback((event) => {
+    // prevent jumping to element with id and scroll smoothly instead
+    event.preventDefault();
+    event.stopPropagation();
+    event.nativeEvent.preventDefault();
+    event.nativeEvent.stopPropagation();
+
     document.querySelector(event.currentTarget.getAttribute('href'))?.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
     return false;
-  };
+  }, []);
 
   return (
     <>
-      <div ref={containerRef} className="ordino-scrollspy-container">
+      <div className="ordino-scrollspy-container">
         {props.children(handleOnChange)}
       </div>
       <ListGroup variant="flush" className="ordino-scrollspy-nav flex-column ml-4">
-        {props.items.map((item, index) => {
+        {props.items.map((item) => {
           return (
-            <ListGroup.Item key={item.id} action href={`#${item.id}`} onClick={scrollIntoView} className={`pl-0 mt-0 border-0 bg-transparent ${index === activeItemIndex ? 'active' : ''}`}>{item.name}</ListGroup.Item>
+            // Important: We cannot use the react-bootstrap `ListGroup.Item` here, because it sets the `active` class automatically at `onClick`.
+            // This behavior cannot be supressed and interfers with the scrollspy + `scrollIntoView` which causes a flickering of the navigation items.
+            // The only solution is to use a plain `a` element and add the necessary Bootstrap classes here.
+            // <ListGroup.Item key={item.id} action href={`#${item.id}`} onClick={scrollIntoView} className="pl-0 mt-0 border-0 bg-transparent">{item.name}</ListGroup.Item>
+            <a key={item.id} href={`#${item.id}`} onClick={scrollIntoView} className={`pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}`}>{item.name}</a>
           );
         })}
       </ListGroup>
     </>
+  );
+}
+
+
+interface IOrdinoScrollspyItemProps {
+  /**
+   * Unique id of the item
+   */
+  id: string;
+
+  /**
+   * Item index in the list of items that is passed to the OrdinoScrollSpy
+   */
+  index: number;
+
+  /**
+   * CSS class
+   */
+  className: string;
+
+  /**
+   * On change function that is passed to `InView` and triggered by the intersection observer when the visibility of an element changes
+   */
+  handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void;
+}
+
+/**
+ *
+ */
+const threshold = [0, 1];
+
+/**
+ *
+ * @param props
+ */
+export function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)) {
+  return (
+    <InView className={props.className} id={props.id} threshold={threshold} onChange={(inView: boolean, entry: IntersectionObserverEntry) => props.handleOnChange(props.id, props.index, inView, entry)}>
+      {props.children}
+    </InView>
   );
 }

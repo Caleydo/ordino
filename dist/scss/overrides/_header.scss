@@ -1,10 +1,15 @@
+// change the order of the navbar menus in the app header
+
 [data-header="mainMenu"] {
-  order: -2;
-}
-.current-session {
-  order: -1;
+  order: -10; // first of *left* navbar menus
 }
 
+.current-session {
+  order: -1; // first of *right* navbar menus
+}
+
+// all other right are `order: 0` by default
+
 [data-header="rightMenu"] {
-  order: 10;
+  order: 10; // most right navbar menu
 }

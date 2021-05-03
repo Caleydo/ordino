@@ -21,8 +21,8 @@
   @keyframes highlight-card {
     10%,
     70% {
-      box-shadow: 0 0 10px rgba(81, 203, 238, 1);
-      border: 1px solid rgba(81, 203, 238, 1);
+      box-shadow: 0 0 0.75rem $select-color;
+      border: 1px solid $select-color;
     }
   }
 

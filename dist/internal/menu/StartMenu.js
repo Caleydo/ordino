@@ -4,6 +4,8 @@ import { GlobalEventHandler } from 'phovea_core';
 import { Ordino } from '../..';
 import { DatasetsTab, SessionsTab, ToursTab } from './tabs';
 import { Button, Col, Container, Row } from 'react-bootstrap';
+import { HighlightSessionCardContext } from '../OrdinoApp';
+import { Nav } from 'react-bootstrap';
 export var EStartMenuMode;
 (function (EStartMenuMode) {
     /**
@@ -34,6 +36,7 @@ const tabs = [
 export function StartMenuComponent({ header, mode, open }) {
     // no active tab until `open` is set OR a link in the header navigation is clicked
     const [activeTab, setActiveTab] = React.useState(null);
+    const [highlight, setHighlight] = React.useState(false);
     React.useEffect(() => {
         // legacy event from ATDPApplication
         const listener = () => setActiveTab(tabs[0]);
@@ -50,9 +53,30 @@ export function StartMenuComponent({ header, mode, open }) {
         // switch header to dark theme when a tab is active
         header.toggleDarkTheme((activeTab) ? true : false);
     }, [header, activeTab]);
+    React.useEffect(() => {
+        // add short cut button to current session card to navbar in header
+        let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');
+        // add menu only once
+        if (!currentSessionNav) {
+            // TODO once the phovea header is using React we can switch to `Nav` from react bootstrap
+            currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
+            currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
+            ReactDOM.render(React.createElement(Nav.Link, null,
+                React.createElement("i", { className: "fas fa-history mr-2" }),
+                "Current Analysis Session"), currentSessionNav);
+            currentSessionNav.onclick = (event) => {
+                event.preventDefault();
+                setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+                setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
+            };
+            header.insertCustomRightMenu(currentSessionNav);
+        }
+        currentSessionNav.toggleAttribute('hidden', (activeTab) ? true : false);
+    }, [header, activeTab]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),
-        React.createElement(StartMenuTabs, { tabs: tabs, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode })));
+        React.createElement(HighlightSessionCardContext.Provider, { value: { highlight, setHighlight } },
+            React.createElement(StartMenuTabs, { tabs: tabs, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode }))));
 }
 function MainMenuLinks(props) {
     return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.activeTab === tab ? 'active' : ''}`, key: tab.id },

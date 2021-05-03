@@ -48,7 +48,7 @@ export default function (registry) {
         matches: '(targidSetSelection)'
     });
     registry.push(EP_ORDINO_STARTMENU_SESSION_SECTION, 'targid_current_session', () => import('./internal/components/session/CurrentSessionCard'), {
-        name: 'Current Sessions',
+        name: 'Current Session',
         faIcon: 'fa-history',
         priority: 10
     });

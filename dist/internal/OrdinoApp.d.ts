@@ -62,6 +62,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     private readonly nodeRef;
     private readonly removeWrapper;
     private readonly chooseNextView;
+    private readonly replaceViewInViewWrapper;
     private readonly updateSelection;
     constructor(props: any);
     /**
@@ -180,6 +181,13 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     removeLastImpl(): Promise<number>;
     showInFocus(d: ViewWrapper): void;
     focusImpl(index: number): Promise<number>;
+    /**
+     * Update the detail view chooser of each view wrapper,
+     * because each view wrapper does not know the surrounding view wrappers.
+     *
+     * TODO remove/refactor this function when switching the ViewWrapper and its detail view chooser to React
+     */
+    private updateDetailViewChoosers;
     /**
      * updates the views information, e.g. history
      */

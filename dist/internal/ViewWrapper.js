@@ -107,7 +107,7 @@ export class ViewWrapper extends EventHandler {
             this.remove();
         });
         const $params = this.$node.append('div')
-            .attr('class', 'parameters form-inline')
+            .attr('class', 'parameters')
             .datum(this);
         const $inner = this.$node.append('div')
             .classed('inner', true);
@@ -136,7 +136,11 @@ export class ViewWrapper extends EventHandler {
         this.options = options;
         this.firstTime = firstTime;
         this.init(this.graph, selection, plugin, options);
-        return this.built = this.createView(selection, itemSelection, plugin, options);
+        this.built = this.createView(selection, itemSelection, plugin, options);
+        this.built.then(() => {
+            this.fire(ViewWrapper.EVENT_REPLACE_VIEW, this);
+        });
+        return this.built;
     }
     /**
      * De-attache the event listener to (inner) view, destroys instance and removes the DOM elements
@@ -208,7 +212,7 @@ export class ViewWrapper extends EventHandler {
         }
         const b = this._mode;
         this.modeChanged(mode);
-        this.fire('modeChanged', this._mode = mode, b);
+        this.fire(ViewWrapper.EVENT_MODE_CHANGED, this._mode = mode, b);
     }
     modeChanged(mode) {
         // update css classes
@@ -263,7 +267,7 @@ export class ViewWrapper extends EventHandler {
             // sort data that buttons inside groups are sorted
             const $buttons = $categories.selectAll('button').data((d) => d.views);
             $buttons.enter().append('button')
-                .classed('btn btn-default', true);
+                .classed('btn btn-white', true);
             $buttons.attr('data-viewid', (d) => d.v.id);
             $buttons.text((d) => d.v.name)
                 .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
@@ -311,4 +315,6 @@ export class ViewWrapper extends EventHandler {
 ViewWrapper.EVENT_CHOOSE_NEXT_VIEW = 'open';
 ViewWrapper.EVENT_FOCUS = 'focus';
 ViewWrapper.EVENT_REMOVE = 'remove';
+ViewWrapper.EVENT_MODE_CHANGED = 'modeChanged';
+ViewWrapper.EVENT_REPLACE_VIEW = 'replaceView';
 //# sourceMappingURL=ViewWrapper.js.map

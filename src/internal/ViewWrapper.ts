@@ -39,6 +39,8 @@ export class ViewWrapper extends EventHandler {
   static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
   static EVENT_REMOVE = 'remove';
+  static EVENT_MODE_CHANGED = 'modeChanged';
+  static EVENT_REPLACE_VIEW = 'replaceView';
 
   private $viewWrapper: d3.Selection<ViewWrapper>;
   private $node: d3.Selection<ViewWrapper>;
@@ -153,7 +155,7 @@ export class ViewWrapper extends EventHandler {
       });
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters form-inline')
+      .attr('class', 'parameters')
       .datum(this);
 
     const $inner = this.$node.append('div')
@@ -188,7 +190,11 @@ export class ViewWrapper extends EventHandler {
     this.firstTime = firstTime;
 
     this.init(this.graph, selection, plugin, options);
-    return this.built = this.createView(selection, itemSelection, plugin, options);
+    this.built = this.createView(selection, itemSelection, plugin, options);
+    this.built.then(() => {
+      this.fire(ViewWrapper.EVENT_REPLACE_VIEW, this);
+    });
+    return this.built;
   }
 
   /**
@@ -276,7 +282,7 @@ export class ViewWrapper extends EventHandler {
     }
     const b = this._mode;
     this.modeChanged(mode);
-    this.fire('modeChanged', this._mode = mode, b);
+    this.fire(ViewWrapper.EVENT_MODE_CHANGED, this._mode = mode, b);
   }
 
   protected modeChanged(mode: EViewMode) {
@@ -345,7 +351,7 @@ export class ViewWrapper extends EventHandler {
       const $buttons = $categories.selectAll('button').data((d) => d.views);
 
       $buttons.enter().append('button')
-        .classed('btn btn-default', true);
+        .classed('btn btn-white', true);
 
       $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)

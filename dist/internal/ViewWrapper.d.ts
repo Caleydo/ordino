@@ -19,6 +19,8 @@ export declare class ViewWrapper extends EventHandler {
     static EVENT_CHOOSE_NEXT_VIEW: string;
     static EVENT_FOCUS: string;
     static EVENT_REMOVE: string;
+    static EVENT_MODE_CHANGED: string;
+    static EVENT_REPLACE_VIEW: string;
     private $viewWrapper;
     private $node;
     private $chooser;
@@ -84,7 +86,7 @@ export declare class ViewWrapper extends EventHandler {
      * @param plugin
      * @param options
      */
-    replaceView(selection: ISelection, itemSelection: ISelection | null, plugin: IPlugin, firstTime: boolean, options?: any): PromiseLike<void>;
+    replaceView(selection: ISelection, itemSelection: ISelection | null, plugin: IPlugin, firstTime: boolean, options?: any): PromiseLike<any>;
     /**
      * De-attache the event listener to (inner) view, destroys instance and removes the DOM elements
      */
@@ -119,5 +121,5 @@ export declare class ViewWrapper extends EventHandler {
     remove(): void;
     focus(): void;
     static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<ViewWrapper>;
-    static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection | null, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<void>;
+    static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection | null, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<any>;
 }

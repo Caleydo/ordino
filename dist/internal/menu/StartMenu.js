@@ -5,6 +5,7 @@ import { Ordino } from '../..';
 import { DatasetsTab, SessionsTab, ToursTab } from './tabs';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { HighlightSessionCardContext } from '../OrdinoApp';
+import { Nav } from 'react-bootstrap';
 export var EStartMenuMode;
 (function (EStartMenuMode) {
     /**
@@ -53,22 +54,24 @@ export function StartMenuComponent({ header, mode, open }) {
         header.toggleDarkTheme((activeTab) ? true : false);
     }, [header, activeTab]);
     React.useEffect(() => {
-        let link = header.rightMenu.parentElement.querySelector('.current-session');
-        if (!link) {
-            link = header.rightMenu.ownerDocument.createElement('ul');
-            link.classList.add('navbar-nav', 'navbar-right', 'current-session');
-            ReactDOM.render(React.createElement("li", { className: "nav-item" },
-                React.createElement("a", { className: "nav-link", role: "button" },
-                    React.createElement("i", { className: "fas fa-history mr-2" }),
-                    "Current Analysis Session")), link);
-            link.onclick = (event) => {
+        // add short cut button to current session card to navbar in header
+        let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');
+        // add menu only once
+        if (!currentSessionNav) {
+            // TODO once the phovea header is using React we can switch to `Nav` from react bootstrap
+            currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
+            currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
+            ReactDOM.render(React.createElement(Nav.Link, null,
+                React.createElement("i", { className: "fas fa-history mr-2" }),
+                "Current Analysis Session"), currentSessionNav);
+            currentSessionNav.onclick = (event) => {
                 event.preventDefault();
                 setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
                 setHighlight(true); // TODO: set highlight back to false
             };
-            header.insertCustomRightMenu(link);
+            header.insertCustomRightMenu(currentSessionNav);
         }
-        link.toggleAttribute('hidden', (activeTab) ? true : false);
+        currentSessionNav.toggleAttribute('hidden', (activeTab) ? true : false);
     }, [header, activeTab]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),

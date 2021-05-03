@@ -6,6 +6,7 @@ import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
 import {HighlightSessionCardContext} from '../OrdinoApp';
+import {Nav} from 'react-bootstrap';
 
 
 export enum EStartMenuMode {
@@ -97,24 +98,27 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
 
 
   React.useEffect(() => {
-    let link = header.rightMenu.parentElement.querySelector('.current-session') as HTMLUListElement;
-    if (!link) {
-      link = header.rightMenu.ownerDocument.createElement('ul');
-      link.classList.add('navbar-nav', 'navbar-right', 'current-session');
-      ReactDOM.render(
-        <li className="nav-item" >
-          <a className="nav-link" role="button"><i className="fas fa-history mr-2"></i>Current Analysis Session</a>
-        </li>, link);
+    // add short cut button to current session card to navbar in header
+    let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session') as HTMLUListElement;
 
-      link.onclick = (event) => {
+    // add menu only once
+    if (!currentSessionNav) {
+      // TODO once the phovea header is using React we can switch to `Nav` from react bootstrap
+      currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
+      currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
+
+      ReactDOM.render(<Nav.Link><i className="fas fa-history mr-2"></i>Current Analysis Session</Nav.Link>, currentSessionNav);
+
+      currentSessionNav.onclick = (event) => {
         event.preventDefault();
         setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
         setHighlight(true); // TODO: set highlight back to false
       };
-      header.insertCustomRightMenu(link);
+
+      header.insertCustomRightMenu(currentSessionNav);
     }
 
-    link.toggleAttribute('hidden', (activeTab) ? true : false);
+    currentSessionNav.toggleAttribute('hidden', (activeTab) ? true : false);
   }, [header, activeTab]);
 
   return (

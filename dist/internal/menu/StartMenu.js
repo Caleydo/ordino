@@ -67,7 +67,7 @@ export function StartMenuComponent({ header, mode, open }) {
             currentSessionNav.onclick = (event) => {
                 event.preventDefault();
                 setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
-                setHighlight(true); // TODO: set highlight back to false
+                setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
             };
             header.insertCustomRightMenu(currentSessionNav);
         }
@@ -75,7 +75,7 @@ export function StartMenuComponent({ header, mode, open }) {
     }, [header, activeTab]);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),
-        React.createElement(HighlightSessionCardContext.Provider, { value: { highlight } },
+        React.createElement(HighlightSessionCardContext.Provider, { value: { highlight, setHighlight } },
             React.createElement(StartMenuTabs, { tabs: tabs, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode }))));
 }
 function MainMenuLinks(props) {

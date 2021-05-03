@@ -112,7 +112,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
       currentSessionNav.onclick = (event) => {
         event.preventDefault();
         setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
-        setHighlight(true); // TODO: set highlight back to false
+        setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
       };
 
       header.insertCustomRightMenu(currentSessionNav);
@@ -127,7 +127,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
         <MainMenuLinks tabs={tabs} activeTab={activeTab} setActiveTab={(a) => setActiveTab(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <HighlightSessionCardContext.Provider value={{highlight}}>
+      <HighlightSessionCardContext.Provider value={{highlight, setHighlight}}>
         <StartMenuTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabs>
       </HighlightSessionCardContext.Provider>
     </>

@@ -23,6 +23,7 @@ export declare const GraphContext: React.Context<{
 }>;
 export declare const HighlightSessionCardContext: React.Context<{
     highlight: boolean;
+    setHighlight: React.Dispatch<React.SetStateAction<boolean>>;
 }>;
 interface IOrdinoAppProps {
     graph: ProvenanceGraph;

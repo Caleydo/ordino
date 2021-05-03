@@ -27,7 +27,7 @@ export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null})
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
 // tslint:disable-next-line: variable-name
-export const HighlightSessionCardContext = React.createContext<{highlight: boolean}>({highlight: false});
+export const HighlightSessionCardContext = React.createContext<{highlight: boolean, setHighlight: React.Dispatch<React.SetStateAction<boolean>>}>({highlight: false, setHighlight: () => { /* dummy function */ }});
 
 interface IOrdinoAppProps {
   graph: ProvenanceGraph;

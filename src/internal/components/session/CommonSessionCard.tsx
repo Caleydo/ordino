@@ -1,6 +1,6 @@
 import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
 import {FormDialog} from 'phovea_ui';
-import React, {useRef} from 'react';
+import React, {useRef, AnimationEventHandler} from 'react';
 import {Card} from 'react-bootstrap';
 import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
@@ -11,6 +11,23 @@ interface ICommonSessionCardProps {
     faIcon: string;
     cardInfo?: string;
     children?: (sessionAction: SessionActionChooser) => React.ReactNode;
+
+    /**
+     * If set to `true` the card is rendered with a halo animation
+     */
+    highlight?: boolean;
+
+    /**
+     * Callback when the highlight animation starts
+     * @see https://reactjs.org/docs/events.html#animation-events
+     */
+    onHighlightAnimationStart?: AnimationEventHandler<any>;
+
+    /**
+     * Callback when the highlight animation ends
+     * @see https://reactjs.org/docs/events.html#animation-events
+     */
+    onHighlightAnimationEnd?: AnimationEventHandler<any>;
 }
 
 
@@ -33,7 +50,7 @@ export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLEle
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommonSessionCardProps) {
+export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd}: ICommonSessionCardProps) {
 
     const parent = useRef(null);
     const {manager, graph} = React.useContext(GraphContext);
@@ -166,7 +183,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children}: ICommo
 
     return <>
         <h4 className="text-left d-flex align-items-center mb-3"><i className={`mr-2 ordino-icon-2 fas ${faIcon}`} ></i>{cardName}</h4>
-        <Card ref={parent} className="shadow-sm">
+        <Card ref={parent} className={`card-shadow ${highlight ? 'highlight-card' : ''}`} onAnimationStart={onHighlightAnimationStart} onAnimationEnd={onHighlightAnimationEnd}>
             <Card.Body className="p-3">
                 {cardInfo || <Card.Text>
                     {cardInfo}

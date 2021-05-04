@@ -19,6 +19,8 @@ import { OrdinoBreadcrumbs } from './components/navigation';
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name
 export const GraphContext = React.createContext({ graph: null, manager: null });
+// tslint:disable-next-line: variable-name
+export const HighlightSessionCardContext = React.createContext({ highlight: false, setHighlight: () => { } });
 /**
  * The main class for the Ordino app
  * This class ...

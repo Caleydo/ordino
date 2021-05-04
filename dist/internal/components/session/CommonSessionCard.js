@@ -7,7 +7,7 @@ import { GraphContext } from '../../OrdinoApp';
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
+export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd }) {
     const parent = useRef(null);
     const { manager, graph } = React.useContext(GraphContext);
     const selectSession = (event, desc) => {
@@ -126,7 +126,7 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children }) {
         React.createElement("h4", { className: "text-left d-flex align-items-center mb-3" },
             React.createElement("i", { className: `mr-2 ordino-icon-2 fas ${faIcon}` }),
             cardName),
-        React.createElement(Card, { ref: parent, className: "shadow-sm" },
+        React.createElement(Card, { ref: parent, className: `card-shadow ${highlight ? 'highlight-card' : ''}`, onAnimationStart: onHighlightAnimationStart, onAnimationEnd: onHighlightAnimationEnd },
             React.createElement(Card.Body, { className: "p-3" },
                 cardInfo || React.createElement(Card.Text, null, cardInfo),
                 children(sessionAction))));

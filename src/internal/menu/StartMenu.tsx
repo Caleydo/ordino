@@ -5,8 +5,8 @@ import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
-import {BrowserRouter} from 'react-router-dom';
-import {OrdinoFooter} from '../../components';
+import {HighlightSessionCardContext} from '../OrdinoApp';
+import {Nav} from 'react-bootstrap';
 
 
 export enum EStartMenuMode {
@@ -82,6 +82,7 @@ const tabs: IStartMenuTab[] = [
 export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: EStartMenuOpen}) {
   // no active tab until `open` is set OR a link in the header navigation is clicked
   const [activeTab, setActiveTab] = React.useState(null);
+  const [highlight, setHighlight] = React.useState(false);
 
   React.useEffect(() => {
     // legacy event from ATDPApplication
@@ -103,13 +104,40 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
     header.toggleDarkTheme((activeTab) ? true : false);
   }, [header, activeTab]);
 
+
+  React.useEffect(() => {
+    // add short cut button to current session card to navbar in header
+    let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session') as HTMLUListElement;
+
+    // add menu only once
+    if (!currentSessionNav) {
+      // TODO once the phovea header is using React we can switch to `Nav` from react bootstrap
+      currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
+      currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
+
+      ReactDOM.render(<Nav.Link><i className="fas fa-history mr-2"></i>Current Analysis Session</Nav.Link>, currentSessionNav);
+
+      currentSessionNav.onclick = (event) => {
+        event.preventDefault();
+        setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+        setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
+      };
+
+      header.insertCustomRightMenu(currentSessionNav);
+    }
+
+    currentSessionNav.toggleAttribute('hidden', (activeTab) ? true : false);
+  }, [header, activeTab]);
+
   return (
     <>
       {ReactDOM.createPortal(
         <MainMenuLinks tabs={tabs} activeTab={activeTab} setActiveTab={(a) => setActiveTab(a)} mode={mode}></MainMenuLinks>,
         header.mainMenu
       )}
-      <StartMenuTabWrapper tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabWrapper>
+      <HighlightSessionCardContext.Provider value={{highlight, setHighlight}}>
+        <StartMenuTabWrapper tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode}></StartMenuTabWrapper>
+      </HighlightSessionCardContext.Provider>
     </>
   );
 }

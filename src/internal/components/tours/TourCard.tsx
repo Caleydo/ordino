@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 import {Row, Col, Button} from 'react-bootstrap';
 
 interface ITourCardProps {
-    image: string;
+    image: string | null;
     title: string;
     text: string;
     href?: string;

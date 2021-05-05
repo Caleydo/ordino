@@ -1,1 +1,2 @@
-export declare function ToursTab(): JSX.Element;
+import { IStartMenuTabProps } from '../StartMenu';
+export declare function ToursTab(_props: IStartMenuTabProps): JSX.Element;

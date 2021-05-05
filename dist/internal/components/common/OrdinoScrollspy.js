@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListGroup } from 'react-bootstrap';
-import { UniqueIdManager } from 'phovea_core';
+import { InView } from 'react-intersection-observer';
 /**
  * The Ordino Scrollspy is a container and adds navigation items.
  * The navigation items are highlighted once they reach the top of the container.
@@ -12,48 +12,115 @@ import { UniqueIdManager } from 'phovea_core';
  * If no items are given, only the scrollspy container is rendered
  * to maintain positions of the content (i.e., `props.children`).
  *
- * Ordino Scrollspy uses the functionality of the Bootstrap Scrollspy.
- * @see https://getbootstrap.com/docs/4.6/components/scrollspy/
+ * This implementation requires the `InView` component of `react-intersection-observer`.
+ * @see https://github.com/thebuilder/react-intersection-observer
+ *
+ * @example Usage with items to observe
+ * ```jsx
+ * import {OrdinoScrollspy, OrdinoScrollspyItem} from 'ordino';
+ *
+ *  <OrdinoScrollspy items={items.map((item) => ({id: item.desc.id, name: item.desc.name}))}>
+ *    {(handleOnChange) =>
+ *      {items.map((item, index) => {
+ *        return (
+ *          <OrdinoScrollspyItem className="pt-3 pb-5" id={item.desc.id} key={item.desc.id} index={index} onChange={handleOnChange}>
+ *            <h5>${item.desc.name}</h5>
+ *            ... other content ...
+ *          </OrdinoScrollspyItem>
+ *        );
+ *      })}
+ *      </div>
+ *    }
+ *  </OrdinoScrollspy>
+ * ```
+ *
+ * @example Usage without items to observe
+ * ```jsx
+ * import {OrdinoScrollspy} from 'ordino';
+ *
+ *  <OrdinoScrollspy>
+ *    <div className="pt-3 pb-5">
+ *      <h5>${item.desc.name}</h5>
+ *      ... other content ...
+ *    </div>
+ *  </OrdinoScrollspy>
+ * ```
  *
  * @param props IOrdinoScrollspy properties
  */
 export function OrdinoScrollspy(props) {
+    var _a, _b;
     // render only the scrollspy container to maintain positions
-    if (!props.items || props.items.length === 0) {
+    if (typeof (props.children) !== 'function' || !props.items || props.items.length === 0) {
         return (React.createElement("div", { className: "ordino-scrollspy-container" }, props.children));
     }
-    const suffix = UniqueIdManager.getInstance().uniqueId();
+    // state with all active items
+    const [activeItems, setActiveItems] = React.useState({});
+    // create ref to avoid rapid state updates and instead updating the state using state using debounce
+    const activeItemsRef = React.useRef({});
+    const handleOnChange = (id, index, inView, entry) => {
+        // do nothing if item is not set and invisible
+        if (!activeItems[id] && inView === false) {
+            return;
+        }
+        activeItemsRef.current = {
+            ...activeItemsRef.current,
+            // add new item per id if in view
+            [id]: (inView) ? {
+                ratio: entry.intersectionRatio,
+                index
+            } : null
+        };
+    };
     React.useEffect(() => {
-        // refresh scrollspy every time the props.children change or the visibility of this scrollspy has changed
-        // (e.g., switching the active tab of the start menu)
-        // @see https://getbootstrap.com/docs/4.6/components/scrollspy/#scrollspyrefresh
-        $('[data-spy="scroll"]').each(function () {
-            // always scroll container to the top before refreshing the scrollspy internals
-            // otherwise the scrollspy does not work correctly and wrong navigation items are highlighted.
-            this.scrollTo(0, 0);
-            $(this).scrollspy('refresh');
-        });
-    });
+        // synchronize `activeItemsRef` with `activeItems` (similar to debounce)
+        const intervalId = setInterval(() => {
+            setActiveItems(activeItemsRef.current);
+        }, 100);
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, []);
+    const activeId = (_b = (_a = Object.entries(activeItems)
+        .filter(([_id, item]) => item === null || item === void 0 ? void 0 : item.ratio)
+        // get items with maximum ratio and on tie use the one with the lowest index
+        .sort((a, b) => (b[1].ratio - a[1].ratio) || (a[1].index - b[1].index))) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[0]; // get the item's `id` (from Object.entries())
     /**
      * Get the href attribute and find the corresponding element with the id.
      * If found scroll the element into the viewport.
-     * @param evt Click event
+     * @param event Click event
      */
-    const scrollIntoView = (evt) => {
+    const scrollIntoView = React.useCallback((event) => {
         var _a;
-        evt.preventDefault(); // prevent jumping to element with id and scroll smoothly instead
-        (_a = document.querySelector(evt.currentTarget.getAttribute('href'))) === null || _a === void 0 ? void 0 : _a.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+        // prevent jumping to element with id and scroll smoothly instead
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.preventDefault();
+        event.nativeEvent.stopPropagation();
+        (_a = document.querySelector(event.currentTarget.getAttribute('href'))) === null || _a === void 0 ? void 0 : _a.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
         return false;
-    };
+    }, []);
     return (React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "ordino-scrollspy-container", "data-spy": "scroll", "data-target": `#ordino-tab-scrollspy-nav-${suffix}`, "data-offset": "0" }, props.children),
-        React.createElement(ListGroup, { variant: "flush", id: `ordino-tab-scrollspy-nav-${suffix}`, className: "ordino-scrollspy-nav flex-column ml-4" }, props.items.map((item) => {
+        React.createElement("div", { className: "ordino-scrollspy-container" }, props.children(handleOnChange)),
+        React.createElement(ListGroup, { variant: "flush", className: "ordino-scrollspy-nav flex-column ml-4" }, props.items.map((item) => {
             return (
             // Important: We cannot use the react-bootstrap `ListGroup.Item` here, because it sets the `active` class automatically at `onClick`.
-            // This behavior cannot be supressed and interfers with the Bootstrap scrollspy + `scrollIntoView` which causes a flickering of the navigation items.
+            // This behavior cannot be supressed and interfers with the scrollspy + `scrollIntoView` which causes a flickering of the navigation items.
             // The only solution is to use a plain `a` element and add the necessary Bootstrap classes here.
             // <ListGroup.Item key={item.id} action href={`#${item.id}`} onClick={scrollIntoView} className="pl-0 mt-0 border-0 bg-transparent">{item.name}</ListGroup.Item>
-            React.createElement("a", { key: item.id, href: `#${item.id}`, onClick: scrollIntoView, className: "pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action" }, item.name));
+            React.createElement("a", { key: item.id, href: `#${item.id}`, onClick: scrollIntoView, className: `pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}` }, item.name));
         }))));
+}
+/**
+ * Threshold points when the intersection observer should trigger
+ */
+const threshold = [0, 1];
+/**
+ * Wrap the children using the `InView` of `react-intersection-observer`.
+ * Extends the `InView` props with custom scrollspy props.
+ * @param props
+ */
+export function OrdinoScrollspyItem(props) {
+    return (React.createElement(InView, { className: props.className, id: props.id, threshold: threshold, onChange: (inView, entry) => props.handleOnChange(props.id, props.index, inView, entry) }, props.children));
 }
 //# sourceMappingURL=OrdinoScrollspy.js.map

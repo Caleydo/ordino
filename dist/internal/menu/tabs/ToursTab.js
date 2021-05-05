@@ -6,7 +6,7 @@ import { OrdinoFooter } from '../../../components';
 import { TourUtils } from 'tdp_core';
 import { PluginRegistry } from 'phovea_core';
 import { useAsync } from '../../../hooks';
-export function ToursTab() {
+export function ToursTab(_props) {
     const loadTours = useMemo(() => () => {
         const tourEntries = PluginRegistry.getInstance().listPlugins(TourUtils.EXTENSION_POINT_TDP_TOUR).map((d) => d);
         return Promise.all(tourEntries.map((tour) => tour.load()));

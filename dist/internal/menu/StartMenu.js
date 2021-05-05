@@ -76,7 +76,7 @@ export function StartMenuComponent({ header, mode, open }) {
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(MainMenuLinks, { tabs: tabs, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),
         React.createElement(HighlightSessionCardContext.Provider, { value: { highlight, setHighlight } },
-            React.createElement(StartMenuTabs, { tabs: tabs, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode }))));
+            React.createElement(StartMenuTabWrapper, { tabs: tabs, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode }))));
 }
 function MainMenuLinks(props) {
     return (React.createElement(React.Fragment, null, props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.activeTab === tab ? 'active' : ''}`, key: tab.id },
@@ -92,7 +92,7 @@ function MainMenuLinks(props) {
                 return false;
             } }, tab.title))))));
 }
-function StartMenuTabs(props) {
+function StartMenuTabWrapper(props) {
     if (props.activeTab === null) {
         return null;
     }
@@ -103,6 +103,6 @@ function StartMenuTabs(props) {
                     React.createElement(Col, { className: "d-flex justify-content-end" },
                         React.createElement(Button, { className: "start-menu-close", variant: "link", onClick: () => { props.setActiveTab(null); } },
                             React.createElement("i", { className: "fas fa-times" }))))),
-        React.createElement(tab.factory, null))))));
+        React.createElement(tab.factory, { isActive: props.activeTab === tab }))))));
 }
 //# sourceMappingURL=StartMenu.js.map

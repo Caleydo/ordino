@@ -19,6 +19,12 @@ export declare enum EStartMenuOpen {
      */
     CLOSED = "closed"
 }
+export interface IStartMenuTabProps {
+    /**
+     * Flag if the tab is currently active and visible
+     */
+    isActive: boolean;
+}
 export declare function StartMenuComponent({ header, mode, open }: {
     header: AppHeader;
     mode: EStartMenuMode;

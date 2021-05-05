@@ -1,4 +1,5 @@
 import React from 'react';
+import { IntersectionObserverProps, PlainChildrenProps } from 'react-intersection-observer';
 interface IOrdinoScrollspyProps {
     /**
      * List of items for the scrollspy
@@ -14,9 +15,9 @@ interface IOrdinoScrollspyProps {
         name: string;
     }[];
     /**
-     * Container content
+     * Container content and handle on change function to pass to the scrollspy item
      */
-    children: React.ReactNode;
+    children: ((handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
 }
 /**
  * The Ordino Scrollspy is a container and adds navigation items.
@@ -29,10 +30,65 @@ interface IOrdinoScrollspyProps {
  * If no items are given, only the scrollspy container is rendered
  * to maintain positions of the content (i.e., `props.children`).
  *
- * Ordino Scrollspy uses the functionality of the Bootstrap Scrollspy.
- * @see https://getbootstrap.com/docs/4.6/components/scrollspy/
+ * This implementation requires the `InView` component of `react-intersection-observer`.
+ * @see https://github.com/thebuilder/react-intersection-observer
+ *
+ * @example Usage with items to observe
+ * ```jsx
+ * import {OrdinoScrollspy, OrdinoScrollspyItem} from 'ordino';
+ *
+ *  <OrdinoScrollspy items={items.map((item) => ({id: item.desc.id, name: item.desc.name}))}>
+ *    {(handleOnChange) =>
+ *      {items.map((item, index) => {
+ *        return (
+ *          <OrdinoScrollspyItem className="pt-3 pb-5" id={item.desc.id} key={item.desc.id} index={index} onChange={handleOnChange}>
+ *            <h5>${item.desc.name}</h5>
+ *            ... other content ...
+ *          </OrdinoScrollspyItem>
+ *        );
+ *      })}
+ *      </div>
+ *    }
+ *  </OrdinoScrollspy>
+ * ```
+ *
+ * @example Usage without items to observe
+ * ```jsx
+ * import {OrdinoScrollspy} from 'ordino';
+ *
+ *  <OrdinoScrollspy>
+ *    <div className="pt-3 pb-5">
+ *      <h5>${item.desc.name}</h5>
+ *      ... other content ...
+ *    </div>
+ *  </OrdinoScrollspy>
+ * ```
  *
  * @param props IOrdinoScrollspy properties
  */
 export declare function OrdinoScrollspy(props: IOrdinoScrollspyProps): JSX.Element;
+interface IOrdinoScrollspyItemProps {
+    /**
+     * Unique id of the item
+     */
+    id: string;
+    /**
+     * Item index in the list of items that is passed to the OrdinoScrollSpy
+     */
+    index: number;
+    /**
+     * CSS class
+     */
+    className: string;
+    /**
+     * On change function that is passed to `InView` and triggered by the intersection observer when the visibility of an element changes
+     */
+    handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void;
+}
+/**
+ * Wrap the children using the `InView` of `react-intersection-observer`.
+ * Extends the `InView` props with custom scrollspy props.
+ * @param props
+ */
+export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
 export {};

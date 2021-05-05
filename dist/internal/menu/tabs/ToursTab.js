@@ -37,7 +37,7 @@ function ToursSection(props) {
                 return Promise.resolve(null);
             }
             const module = await tour.desc.preview(); // uses `import('/my/asset.jpg')` to load image as module
-            return module.default; // use default export of module
+            return module.default; // use default export of module -> contains the URL as string from Webpack loader
         }));
     }, [props.tours]);
     const { status, value: images } = useAsync(loadTourImages);
@@ -48,7 +48,7 @@ function ToursSection(props) {
                 " ",
                 props.level),
             React.createElement(Row, { className: "mb-4", md: 3 }, props.tours.map((tour, index) => {
-                return React.createElement(TourCard, { key: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images[index], onClickHandler: (evt) => TourUtils.startTour(tour.desc.id) });
+                return React.createElement(TourCard, { key: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images[index] || null, onClickHandler: (evt) => TourUtils.startTour(tour.desc.id) });
             })))
         : null));
 }

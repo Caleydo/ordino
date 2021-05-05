@@ -1,6 +1,6 @@
 import * as React from 'react';
 interface ITourCardProps {
-    image: string;
+    image: string | null;
     title: string;
     text: string;
     href?: string;

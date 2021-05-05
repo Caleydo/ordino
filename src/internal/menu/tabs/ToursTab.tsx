@@ -53,8 +53,8 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
         return Promise.resolve(null);
       }
 
-      const module = await tour.desc.preview(); // uses `import('/my/asset.jpg')` to load image as module
-      return module.default; // use default export of module
+      const module: any = await tour.desc.preview(); // uses `import('/my/asset.jpg')` to load image as module
+      return module.default; // use default export of module -> contains the URL as string from Webpack loader
     }));
   }, [props.tours]);
 
@@ -67,7 +67,7 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
           <h4 className="text-left mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
           <Row className="mb-4" md={3}>
             {props.tours.map((tour, index) => {
-              return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index]} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>;
+              return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index] || null} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>;
             })}
           </Row>
         </>

@@ -12,4 +12,8 @@
 
 [data-header="rightMenu"] {
   order: 10; // most right navbar menu
+
+  [data-header="helpLink"] {
+    display: none; // hide the default tours button
+  }
 }

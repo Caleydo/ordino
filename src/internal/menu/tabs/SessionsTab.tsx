@@ -12,7 +12,7 @@ function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
 }
 
-export function SessionsTab(_props: IStartMenuTabProps) {
+export default function SessionsTab(_props: IStartMenuTabProps) {
   const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
 
   const loadSections = useMemo(() => () => {

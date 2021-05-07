@@ -12,7 +12,7 @@ export var EStartMenuSection;
      */
     EStartMenuSection["MAIN"] = "main";
     /**
-     * Right menu in section in the header
+     * Right menu section in the header
      */
     EStartMenuSection["RIGHT"] = "right";
 })(EStartMenuSection || (EStartMenuSection = {}));

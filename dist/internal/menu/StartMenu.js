@@ -3,9 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { GlobalEventHandler } from 'phovea_core';
 import { Ordino } from '../..';
 import { DatasetsTab, SessionsTab, ToursTab } from './tabs';
-import { Button, Col, Container, Row } from 'react-bootstrap';
 import { HighlightSessionCardContext } from '../OrdinoApp';
-import { Nav } from 'react-bootstrap';
 export var EStartMenuMode;
 (function (EStartMenuMode) {
     /**
@@ -61,7 +59,7 @@ export function StartMenuComponent({ header, mode, open }) {
             // TODO once the phovea header is using React we can switch to `Nav` from react bootstrap
             currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
             currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
-            ReactDOM.render(React.createElement(Nav.Link, null,
+            ReactDOM.render(React.createElement("a", { href: "#", className: "nav-link", role: "button" },
                 React.createElement("i", { className: "fas fa-history mr-2" }),
                 "Current Analysis Session"), currentSessionNav);
             currentSessionNav.onclick = (event) => {
@@ -98,10 +96,10 @@ function StartMenuTabWrapper(props) {
     }
     return (React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
         props.mode === EStartMenuMode.OVERLAY &&
-            React.createElement(Container, { fluid: true },
-                React.createElement(Row, null,
-                    React.createElement(Col, { className: "d-flex justify-content-end" },
-                        React.createElement(Button, { className: "start-menu-close", variant: "link", onClick: () => { props.setActiveTab(null); } },
+            React.createElement("div", { className: "container-fluid" },
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col d-flex justify-content-end" },
+                        React.createElement("button", { className: "btn btn-link start-menu-close", onClick: () => { props.setActiveTab(null); } },
                             React.createElement("i", { className: "fas fa-times" }))))),
         React.createElement(tab.factory, { isActive: props.activeTab === tab }))))));
 }

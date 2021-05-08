@@ -1,6 +1,5 @@
 import {I18nextManager} from 'phovea_core';
 import React from 'react';
-import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
 import {GraphContext, HighlightSessionCardContext} from '../../OrdinoApp';
@@ -22,11 +21,11 @@ export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSect
         <CommonSessionCard cardName={name} highlight={highlight} onHighlightAnimationEnd={onHighlightAnimationEnd} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo')}>
             {(sessionAction) => {
                 return <SessionListItem desc={desc} selectSession={(event) => sessionAction(EAction.SELECT, event, desc)}>
-                    <Button variant="outline-secondary" disabled={ProvenanceGraphMenuUtils.isPersistent(desc)} className="mr-2 pt-1 pb-1" onClick={(event) => sessionAction(EAction.SAVE, event, desc)}>Save</Button>
+                    <button type="button" className="mr-2 pt-1 pb-1 btn btn-outline-secondary" disabled={ProvenanceGraphMenuUtils.isPersistent(desc)} onClick={(event) => sessionAction(EAction.SAVE, event, desc)}>Save</button>
                     <ListItemDropdown>
-                        <Dropdown.Item onClick={(event) => sessionAction(EAction.CLONE, event, desc)}>Clone</Dropdown.Item>
-                        <Dropdown.Item onClick={(event) => sessionAction(EAction.EXPORT, event, desc)}>Export</Dropdown.Item>
-                        <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, desc)}>Delete</Dropdown.Item>
+                        <button className="dropdown-item" onClick={(event) => sessionAction(EAction.CLONE, event, desc)}>Clone</button>
+                        <button className="dropdown-item" onClick={(event) => sessionAction(EAction.EXPORT, event, desc)}>Export</button>
+                        <button className="dropdown-delete dropdown-item" onClick={(event) => sessionAction(EAction.DELETE, event, desc)}>Delete</button>
                     </ListItemDropdown>
                 </SessionListItem>;
             }}

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {Navbar, Button, Nav} from 'react-bootstrap';
 import {NavLink} from 'react-router-dom';
 import {OrdinoLogo} from './OrdinoLogo';
 
@@ -20,25 +19,21 @@ export function HeaderNavigation(props: IHeaderNavigationProps) {
   const bg = props.bg ?? 'ordino-gray-2';
 
   return (
-    <Navbar collapseOnSelect fixed={props.fixed} expand="lg" bg={bg} variant="dark" className="ordino-header-navigation">
-      <Navbar.Brand href="#/">
+    <nav className={`ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${props.fixed === 'top' ? 'fixed-top' : ''} ${props.fixed === 'bottom' ? 'fixed-bottom' : ''}`}>
+      <a href="#/" className="navbar-brand">
         <OrdinoLogo></OrdinoLogo>
-      </Navbar.Brand>
-      <Button href="/app/" variant="light" className="order-lg-2 mx-3 mx-lg-0 ml-auto ml-lg-3">Start Analysis</Button>
-      <Navbar.Toggle aria-controls="ordino-header-navbar-nav" className="" />
-      <Navbar.Collapse id="ordino-header-navbar-nav" className="order-lg-1">
-        <Nav as="ul">
-          <Nav.Item as="li" className="px-3">
-            <NavLink to="/news" className="nav-link" activeClassName="active">What's new?</NavLink>
-          </Nav.Item>
-          <Nav.Item as="li" className="px-3">
-            <NavLink to="/features" className="nav-link" activeClassName="active">Features</NavLink>
-          </Nav.Item>
-          <Nav.Item as="li" className="px-3">
-            <NavLink to="/datasets" className="nav-link" activeClassName="active">Datasets</NavLink>
-          </Nav.Item>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+      </a>
+      <a href="/app/" className="order-lg-2 mx-3 mx-lg-0 ml-auto ml-lg-3 btn btn-light">Start Analysis</a>
+      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#ordino-header-navbar-nav" aria-controls="ordino-header-navbar-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span className="navbar-toggler-icon"></span>
+      </button>
+      <div className="order-lg-1 navbar-collapse collapse" id="ordino-header-navbar-nav">
+        <ul className="navbar-nav">
+          <li className="px-3 nav-item"><NavLink to="/news" className="nav-link" activeClassName="active">What's new?</NavLink></li>
+          <li className="px-3 nav-item"><NavLink to="/features" className="nav-link" activeClassName="active">Features</NavLink></li>
+          <li className="px-3 nav-item"><NavLink to="/datasets" className="nav-link" activeClassName="active">Datasets</NavLink></li>
+        </ul>
+      </div>
+    </nav>
   );
 }

@@ -3,10 +3,8 @@ import * as ReactDOM from 'react-dom';
 import {GlobalEventHandler} from 'phovea_core';
 import {Ordino} from '../..';
 import {DatasetsTab, SessionsTab, ToursTab} from './tabs';
-import {Button, Col, Container, Row} from 'react-bootstrap';
 import {AppHeader} from 'phovea_ui';
 import {HighlightSessionCardContext} from '../OrdinoApp';
-import {Nav} from 'react-bootstrap';
 
 
 export enum EStartMenuMode {
@@ -115,7 +113,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
       currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
       currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
 
-      ReactDOM.render(<Nav.Link><i className="fas fa-history mr-2"></i>Current Analysis Session</Nav.Link>, currentSessionNav);
+      ReactDOM.render(<a href="#" className="nav-link" role="button"><i className="fas fa-history mr-2"></i>Current Analysis Session</a>, currentSessionNav);
 
       currentSessionNav.onclick = (event) => {
         event.preventDefault();
@@ -189,15 +187,15 @@ function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
           aria-labelledby={`${tab.id}-tab`}
         >
           {props.mode === EStartMenuMode.OVERLAY &&
-            <Container fluid>
-              <Row>
-                <Col className="d-flex justify-content-end">
-                  <Button className="start-menu-close" variant="link" onClick={() => {props.setActiveTab(null);}}>
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col d-flex justify-content-end">
+                  <button className="btn btn-link start-menu-close" onClick={() => {props.setActiveTab(null);}}>
                     <i className="fas fa-times"></i>
-                  </Button>
-                </Col>
-              </Row>
-            </Container>
+                  </button>
+                </div>
+              </div>
+            </div>
           }
           <tab.factory isActive={props.activeTab === tab} />
         </div>

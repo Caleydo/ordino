@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Container, Col, Row } from 'react-bootstrap';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { useAsync } from '../../../hooks';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '../../..';
@@ -18,9 +17,9 @@ export function SessionsTab(_props) {
     const { status, value: items } = useAsync(loadSections);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(OrdinoScrollspy, { items: items.map((item) => ({ id: `${item.desc.id}_${suffix}`, name: item.desc.name })) }, (handleOnChange) => React.createElement(React.Fragment, null,
-            React.createElement(Container, { className: "pb-10 pt-5" },
-                React.createElement(Row, null,
-                    React.createElement(Col, null, items === null || items === void 0 ? void 0 : items.map((item, index) => {
+            React.createElement("div", { className: "container pb-10 pt-5" },
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col" }, items === null || items === void 0 ? void 0 : items.map((item, index) => {
                         return (
                         // `id` attribute must match the one in the scrollspy
                         React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `${item.desc.id}_${suffix}`, key: item.desc.id, index: index, handleOnChange: handleOnChange },

@@ -1,8 +1,6 @@
 import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
 import {FormDialog} from 'phovea_ui';
 import React, {useRef, AnimationEventHandler} from 'react';
-import {Card} from 'react-bootstrap';
-import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
 import {GraphContext} from '../../OrdinoApp';
 
@@ -43,8 +41,8 @@ export const enum EAction {
     DELETE = 'delete',
 }
 
-export type SessionActionChooser = (type: EAction, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
-export type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export type SessionActionChooser = (type: EAction, event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export type SessionAction = (event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 
 
 /**
@@ -55,7 +53,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     const parent = useRef(null);
     const {manager, graph} = React.useContext(GraphContext);
 
-    const selectSession = (event: React.MouseEvent<DropdownItemProps | HTMLElement, MouseEvent>, desc: IProvenanceGraphDataDescription) => {
+    const selectSession = (event: React.MouseEvent, desc: IProvenanceGraphDataDescription) => {
         event.preventDefault();
         event.stopPropagation();
         if (UserSession.getInstance().canWrite(desc)) {
@@ -66,7 +64,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
         return false;
     };
 
-    const saveSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
+    const saveSession = (event: React.MouseEvent, desc: IProvenanceGraphDataDescription) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -79,7 +77,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     };
 
 
-    const editSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription, callback?: any) => {
+    const editSession = (event: React.MouseEvent, desc: IProvenanceGraphDataDescription, callback?: any) => {
         event.preventDefault();
         event.stopPropagation();
         // TODO: why is the check for the graph necessary here?
@@ -106,7 +104,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     };
 
 
-    const cloneSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
+    const cloneSession = (event: React.MouseEvent, desc: IProvenanceGraphDataDescription) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -115,7 +113,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     };
 
     // TODO refactor this to export the correct graph. Now it exports the current one.
-    const exportSession = (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription) => {
+    const exportSession = (event: React.MouseEvent, desc: IProvenanceGraphDataDescription) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -146,7 +144,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     };
 
 
-    const deleteSession = async (event: React.MouseEvent<DropdownItemProps>, desc: IProvenanceGraphDataDescription, callback?: any) => {
+    const deleteSession = async (event: React.MouseEvent, desc: IProvenanceGraphDataDescription, callback?: any) => {
         event.preventDefault();
         event.stopPropagation();
         const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', {name: desc.name}));
@@ -164,7 +162,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     };
 
 
-    const sessionAction = (type: EAction, event: React.MouseEvent<HTMLElement | DropdownItemProps, MouseEvent>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => {
+    const sessionAction = (type: EAction, event: React.MouseEvent, desc: IProvenanceGraphDataDescription, updateSessions?: any) => {
         switch (type) {
             case EAction.SELECT:
                 return selectSession(event, desc);
@@ -183,13 +181,13 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
 
     return <>
         <h4 className="text-left d-flex align-items-center mb-3"><i className={`mr-2 ordino-icon-2 fas ${faIcon}`} ></i>{cardName}</h4>
-        <Card ref={parent} className={`card-shadow ${highlight ? 'highlight-card' : ''}`} onAnimationStart={onHighlightAnimationStart} onAnimationEnd={onHighlightAnimationEnd}>
-            <Card.Body className="p-3">
-                {cardInfo || <Card.Text>
+        <div ref={parent} className={`card card-shadow ${highlight ? 'highlight-card' : ''}`} onAnimationStart={onHighlightAnimationStart} onAnimationEnd={onHighlightAnimationEnd}>
+            <div className="card-body p-3">
+                {cardInfo && <p className="card-text mb-4">
                     {cardInfo}
-                </Card.Text>}
+                </p>}
                 {children(sessionAction)}
-            </Card.Body>
-        </Card>
+            </div>
+        </div>
     </>;
 }

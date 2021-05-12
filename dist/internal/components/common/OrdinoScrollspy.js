@@ -1,5 +1,4 @@
 import React from 'react';
-import { ListGroup } from 'react-bootstrap';
 import { InView } from 'react-intersection-observer';
 /**
  * The Ordino Scrollspy is a container and adds navigation items.
@@ -102,13 +101,8 @@ export function OrdinoScrollspy(props) {
     }, []);
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "ordino-scrollspy-container" }, props.children(handleOnChange)),
-        React.createElement(ListGroup, { variant: "flush", className: "ordino-scrollspy-nav flex-column ml-4" }, props.items.map((item) => {
-            return (
-            // Important: We cannot use the react-bootstrap `ListGroup.Item` here, because it sets the `active` class automatically at `onClick`.
-            // This behavior cannot be supressed and interfers with the scrollspy + `scrollIntoView` which causes a flickering of the navigation items.
-            // The only solution is to use a plain `a` element and add the necessary Bootstrap classes here.
-            // <ListGroup.Item key={item.id} action href={`#${item.id}`} onClick={scrollIntoView} className="pl-0 mt-0 border-0 bg-transparent">{item.name}</ListGroup.Item>
-            React.createElement("a", { key: item.id, href: `#${item.id}`, onClick: scrollIntoView, className: `pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}` }, item.name));
+        React.createElement("ul", { className: "list-group list-group-flush ordino-scrollspy-nav flex-column ml-4" }, props.items.map((item) => {
+            return (React.createElement("a", { key: item.id, href: `#${item.id}`, onClick: scrollIntoView, className: `pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}` }, item.name));
         }))));
 }
 /**

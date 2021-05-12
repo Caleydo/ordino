@@ -1,18 +1,19 @@
 import React from 'react';
-import {ButtonGroup, Dropdown} from 'react-bootstrap';
 
 interface IListItemDropdownProps {
-  children?: Dropdown['Item'] | Dropdown['Item'][] | React.ReactNode;
+  children?: React.ReactNode[];
 }
 
 // tslint:disable-next-line: variable-name
 export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps, ref) => {
   return (
-    <Dropdown ref={ref} vertical className="list-item-dropdown" as={ButtonGroup}>
-      <Dropdown.Toggle variant="link"><i className="fas fa-ellipsis-v "></i></Dropdown.Toggle>
-      <Dropdown.Menu>
+    <div className="dropdown btn-group-vertical list-item-dropdown">
+      <button className="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i className="fas fa-ellipsis-v"></i>
+      </button>
+      <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {props.children}
-      </Dropdown.Menu>
-    </Dropdown>
+      </div>
+    </div>
   );
 });

@@ -1,6 +1,5 @@
 import { IProvenanceGraphDataDescription } from 'phovea_core';
 import React, { AnimationEventHandler } from 'react';
-import { DropdownItemProps } from 'react-bootstrap/esm/DropdownItem';
 interface ICommonSessionCardProps {
     cardName: string;
     faIcon: string;
@@ -32,8 +31,8 @@ export declare const enum EAction {
     EXPORT = "epxport",
     DELETE = "delete"
 }
-export declare type SessionActionChooser = (type: EAction, event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
-export declare type SessionAction = (event: React.MouseEvent<DropdownItemProps | HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export declare type SessionActionChooser = (type: EAction, event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export declare type SessionAction = (event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 /**
  * Wrapper component that exposes actions to be used in children components.
  */

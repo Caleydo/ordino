@@ -1,5 +1,4 @@
 import React, {useMemo} from 'react';
-import {Container, Col, Row} from 'react-bootstrap';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {OrdinoScrollspy, OrdinoScrollspyItem} from '../../components';
 import {EP_ORDINO_STARTMENU_DATASET_SECTION, IStartMenuDatasetSectionDesc} from '../../..';
@@ -24,9 +23,9 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
         <OrdinoScrollspy items={items.map((card) => ({id: `${card.desc.id}_${suffix}`, name: card.desc.name}))}>
           {(handleOnChange) =>
             <>
-              <Container className="pb-10 pt-5">
-                <Row>
-                  <Col>
+              <div className="container pb-10 pt-5">
+                <div className="row">
+                  <div className="col">
                     <p className="lead text-ordino-gray-4 mb-0">Start a new analysis session by loading a dataset</p>
                     {items.map((item, index) => {
                       return (
@@ -36,9 +35,9 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
                         </OrdinoScrollspyItem>
                       );
                     })}
-                  </Col>
-                </Row>
-              </Container>
+                  </div>
+                </div>
+              </div>
               <BrowserRouter basename="/#">
                 <OrdinoFooter openInNewWindow />
               </BrowserRouter>

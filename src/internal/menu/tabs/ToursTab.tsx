@@ -1,5 +1,4 @@
 import React, {useMemo} from 'react';
-import {Row, Container} from 'react-bootstrap';
 import {TourCard, OrdinoScrollspy} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
@@ -22,21 +21,21 @@ export default function ToursTab(_props: IStartMenuTabProps) {
 
   return (
     <>
-      {status === 'success' ?
-        <OrdinoScrollspy>
-          <Container className="pb-10 pt-5 tours-tab">
-            <p className="lead text-ordino-gray-4">Learn more about Ordino by taking an interactive guided tour</p>
-            {beginnerTours ?
-              <ToursSection level="beginner" tours={beginnerTours}></ToursSection>
-              : null}
-            {advancedTours ?
-              <ToursSection level="advanced" tours={advancedTours}></ToursSection>
-              : null}
-          </Container>
-          <BrowserRouter basename="/#">
-            <OrdinoFooter openInNewWindow />
-          </BrowserRouter>
-        </OrdinoScrollspy> : null}
+    {status === 'success' ?
+      <OrdinoScrollspy>
+        <div className="container pb-10 pt-5 tours-tab">
+          <p className="lead text-ordino-gray-4">Learn more about Ordino by taking an interactive guided tour</p>
+          {beginnerTours ?
+            <ToursSection level="beginner" tours={beginnerTours}></ToursSection>
+          : null}
+          {advancedTours ?
+            <ToursSection level="advanced" tours={advancedTours}></ToursSection>
+          : null}
+        </div>
+        <BrowserRouter basename="/#">
+          <OrdinoFooter openInNewWindow />
+        </BrowserRouter>
+      </OrdinoScrollspy> : null}
     </>
   );
 }
@@ -65,11 +64,11 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
       {status === 'success' ?
         <>
           <h4 className="text-left mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
-          <Row className="mb-4" md={3}>
+          <div className="mb-4 row row-cols-md-3">
             {props.tours.map((tour, index) => {
               return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index] || null} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>;
             })}
-          </Row>
+          </div>
         </>
         : null}
     </>

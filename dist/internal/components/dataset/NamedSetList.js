@@ -1,6 +1,5 @@
 import { I18nextManager, UserSession } from 'phovea_core';
 import React from 'react';
-import { Button, ButtonGroup, Col, Dropdown } from 'react-bootstrap';
 import { ENamedSetType, FormDialog, NotificationHandler, RestStorageUtils, StoreUtils } from 'tdp_core';
 import { ListItemDropdown } from '../../../components';
 export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) {
@@ -29,7 +28,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             setNamedSets((namedSets) => namedSets.splice(namedSets.indexOf(namedSet), 1));
         }
     };
-    return (React.createElement(Col, { md: 4, className: "dataset-entry d-flex flex-column" },
+    return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4" },
         React.createElement("header", null,
             React.createElement("i", { className: `mr-2 ${headerIcon}` }),
             headerText),
@@ -42,14 +41,14 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             React.createElement("p", null, "No sets available"),
         status === 'success' &&
             value.length > 0 &&
-            React.createElement(ButtonGroup, { vertical: true }, namedSets.map((namedSet, i) => {
+            React.createElement("div", { role: "group", className: "btn-group-vertical" }, namedSets.map((namedSet, i) => {
                 const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
-                return (React.createElement(ButtonGroup, { key: i, className: "dropdown-parent justify-content-between" },
-                    React.createElement(Button, { className: "text-left pl-0", style: { color: '#337AB7' }, variant: "link", onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
+                return (React.createElement("div", { key: i, className: "dropdown-parent justify-content-between btn-group" },
+                    React.createElement("button", { className: "text-left pl-0 btn btn-link", style: { color: '#337AB7' }, onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     canWrite ?
                         React.createElement(ListItemDropdown, null,
-                            React.createElement(Dropdown.Item, { onClick: (event) => editNamedSet(event, namedSet) }, "Edit"),
-                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => deleteNamedSet(event, namedSet) }, "Delete")) : null));
+                            React.createElement("button", { className: "dropdown-item", onClick: (event) => editNamedSet(event, namedSet) }, "Edit"),
+                            React.createElement("button", { className: "dropdown-item dropdown-delete", onClick: (event) => deleteNamedSet(event, namedSet) }, "Delete")) : null));
             })),
         status === 'error' && React.createElement("p", null, "Error when loading sets")));
 }

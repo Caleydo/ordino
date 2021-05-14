@@ -1,6 +1,5 @@
-import {I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
+import {I18nextManager, IProvenanceGraphDataDescription, UserSession, UniqueIdManager} from 'phovea_core';
 import React from 'react';
-import {Tab, Nav, Row, Col, Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
@@ -26,24 +25,30 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
 
   const {status} = useAsync(listSessions);
 
+  const id = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
+
   return (
     <>
       <p className="lead text-ordino-gray-4 mb-4">Load a previous analysis session</p>
       <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo')}>
         {(sessionAction) => {
-          return <Tab.Container defaultActiveKey="mySessions">
-            <Nav className="session-tab" variant="pills">
-              <Nav.Item >
-                <Nav.Link eventKey="mySessions"><i className="mr-2 fas fa-user"></i>My sessions</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey={`publicSessions}`}> <i className="mr-2 fas fa-users"></i>Public sessions</Nav.Link>
-              </Nav.Item>
-            </Nav>
-            <Row className="pt-4">
-              <Col >
-                <Tab.Content>
-                  <Tab.Pane eventKey="mySessions">
+          return <>
+            <ul className="nav nav-pills session-tab card-header-pills"  role="tablist">
+              <li className="nav-item" role="presentation">
+                <a className="nav-link active" id={`saved-session-tab-${id}`} data-toggle="tab" href={`#saved-session-mine-panel-${id}`} role="tab" aria-controls={`saved-session-mine-panel-${id}`} aria-selected="true">
+                <i className="mr-2 fas fa-user"></i>My sessions
+                </a>
+              </li>
+              <li className="nav-item" role="presentation">
+                <a className="nav-link" id={`saved-session-other-tab-${id}`} data-toggle="tab" href={`#saved-session-other-panel-${id}`} role="tab" aria-controls={`saved-session-other-panel-${id}`} aria-selected="false">
+                <i className="mr-2 fas fa-users"></i>Public sessions
+                </a>
+              </li>
+            </ul>
+            <div className="row pt-4">
+              <div className="col">
+                <div className="tab-content">
+                  <div className="tab-pane fade show active" role="tabpanel" id={`saved-session-mine-panel-${id}`} aria-labelledby={`saved-session-mine-tab-${id}`}>
                     {status === 'pending' &&
                       <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
                     }
@@ -55,16 +60,21 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                       status === 'success' && savedSessions.length > 0 &&
                       savedSessions?.map((session) => {
                         return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
-                          <Button variant="outline-secondary" onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)} className="mr-2 pt-1 pb-1">Edit</Button>
-                          <ListItemDropdown >
-                            <Dropdown.Item title="Clone to Temporary Session" onClick={(event) => sessionAction(EAction.CLONE, event, session)}>Clone</Dropdown.Item>
-                            <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
+                          <button onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)} className="mr-2 pt-1 pb-1 btn btn-outline-secondary">Edit</button>
+                          <ListItemDropdown>
+                            <button className="dropdown-item" title="Clone to Temporary Session" onClick={(event) => sessionAction(EAction.CLONE, event, session)}>
+                              Clone
+                            </button>
+                            <button className="dropdown-item dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>
+                              Delete
+                            </button>
                           </ListItemDropdown>
                         </SessionListItem>;
                       })}
                     {status === 'error' && <p>Error when loading sets</p>}
-                  </Tab.Pane>
-                  <Tab.Pane eventKey={`publicSessions}`}>
+                  </div>
+
+                  <div className="tab-pane fade" role="tabpanel" id={`saved-session-other-panel-${id}`} aria-labelledby={`saved-session-other-tab-${id}`}>
                     {status === 'pending' &&
                       <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
                     }
@@ -76,15 +86,15 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                       status === 'success' && otherSessions.length > 0 &&
                       otherSessions?.map((session) => {
                         return <SessionListItem key={session.id} desc={session}>
-                          <Button variant="outline-secondary" title="Clone to Temporary Session" onClick={(event) => sessionAction(EAction.CLONE, event, session)} className="mr-2 pt-1 pb-1">Clone</Button>
+                          <button title="Clone to Temporary Session" onClick={(event) => sessionAction(EAction.CLONE, event, session)} className="mr-2 pt-1 pb-1 btn btn-outline-secondary">Clone</button>
                         </SessionListItem>;
                       })}
                     {status === 'error' && <p>Error when loading sets</p>}
-                  </Tab.Pane>
-                </Tab.Content>
-              </Col>
-            </Row>
-          </Tab.Container>;
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>;
         }}
       </CommonSessionCard>
     </>

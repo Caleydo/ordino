@@ -1,7 +1,5 @@
 import {I18nextManager, UserSession} from 'phovea_core';
 import React from 'react';
-import {Button, ButtonGroup, Col, Dropdown} from 'react-bootstrap';
-import {DropdownItemProps} from 'react-bootstrap/esm/DropdownItem';
 import {ENamedSetType, FormDialog, INamedSet, IStoredNamedSet, NotificationHandler, RestStorageUtils, StoreUtils} from 'tdp_core';
 import {ListItemDropdown} from '../../../components';
 
@@ -19,7 +17,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
     setNamedSets(value);
   });
 
-  const editNamedSet = (event: React.MouseEvent<DropdownItemProps>, namedSet: IStoredNamedSet) => {
+  const editNamedSet = (event: React.MouseEvent, namedSet: IStoredNamedSet) => {
     event.preventDefault();
     StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {
       const params = Object.assign({
@@ -34,7 +32,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
     });
   };
 
-  const deleteNamedSet = async (event: React.MouseEvent<DropdownItemProps>, namedSet: IStoredNamedSet) => {
+  const deleteNamedSet = async (event: React.MouseEvent, namedSet: IStoredNamedSet) => {
     event.preventDefault();
     const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dialogText', {name: namedSet.name}),
       {title: I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.deleteSet')}
@@ -47,7 +45,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
   };
 
   return (
-    <Col md={4} className="dataset-entry d-flex flex-column" >
+    <div className="dataset-entry d-flex flex-column col-md-4">
       <header><i className={`mr-2 ${headerIcon}`}></i>{headerText}</header>
       {status === 'pending' &&
         <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
@@ -58,24 +56,24 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
       }
       {status === 'success' &&
         value.length > 0 &&
-        <ButtonGroup vertical>
+        <div role="group" className="btn-group-vertical">
           {namedSets.map((namedSet, i) => {
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
-              <ButtonGroup key={i} className="dropdown-parent justify-content-between" >
-                <Button className="text-left pl-0" style={{color: '#337AB7'}} variant="link" onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</Button>
+              <div key={i} className="dropdown-parent justify-content-between btn-group">
+                <button className="text-left pl-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
                 {canWrite ?
                   <ListItemDropdown>
-                    <Dropdown.Item onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>Edit</Dropdown.Item>
-                    <Dropdown.Item className="dropdown-delete" onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}>Delete</Dropdown.Item>
+                    <button className="dropdown-item" onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>Edit</button>
+                    <button className="dropdown-item dropdown-delete" onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}>Delete</button>
                   </ListItemDropdown> : null
                 }
-              </ButtonGroup>);
+              </div>);
           })}
-        </ButtonGroup>
+        </div>
       }
       {/* {status === 'error' && <p>{(typeof error === 'string') ? error : (error as Error)?.message}</p>} */}
       {status === 'error' && <p>Error when loading sets</p>}
-    </Col>
+    </div>
   );
 }

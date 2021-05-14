@@ -1,5 +1,4 @@
 import React, {useMemo} from 'react';
-import {Container, Col, Row} from 'react-bootstrap';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {useAsync} from '../../../hooks';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
@@ -28,9 +27,9 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
         <OrdinoScrollspy items={items.map((item) => ({id: `${item.desc.id}_${suffix}`, name: item.desc.name}))}>
           {(handleOnChange) =>
             <>
-              <Container className="pb-10 pt-5">
-                <Row>
-                  <Col>
+              <div className="container pb-10 pt-5">
+                <div className="row">
+                  <div className="col">
                     {items?.map((item, index) => {
                       return (
                         // `id` attribute must match the one in the scrollspy
@@ -39,9 +38,9 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
                         </OrdinoScrollspyItem>
                       );
                     })}
-                  </Col>
-                </Row>
-              </Container>
+                  </div>
+                </div>
+              </div>
               <BrowserRouter basename="/#">
                 <OrdinoFooter openInNewWindow />
               </BrowserRouter>

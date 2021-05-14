@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Row, Container } from 'react-bootstrap';
 import { TourCard, OrdinoScrollspy } from '../../components';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoFooter } from '../../../components';
@@ -16,7 +15,7 @@ export default function ToursTab(_props) {
     const advancedTours = tours === null || tours === void 0 ? void 0 : tours.filter((tour) => tour.desc.level === 'advanced');
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(OrdinoScrollspy, null,
-            React.createElement(Container, { className: "pb-10 pt-5 tours-tab" },
+            React.createElement("div", { className: "container pb-10 pt-5 tours-tab" },
                 React.createElement("p", { className: "lead text-ordino-gray-4" }, "Learn more about Ordino by taking an interactive guided tour"),
                 beginnerTours ?
                     React.createElement(ToursSection, { level: "beginner", tours: beginnerTours })
@@ -47,7 +46,7 @@ function ToursSection(props) {
                 React.createElement("i", { className: "mr-2 ordino-icon-1 fas fa-chevron-circle-right" }),
                 " ",
                 props.level),
-            React.createElement(Row, { className: "mb-4", md: 3 }, props.tours.map((tour, index) => {
+            React.createElement("div", { className: "mb-4 row row-cols-md-3" }, props.tours.map((tour, index) => {
                 return React.createElement(TourCard, { key: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images[index] || null, onClickHandler: (evt) => TourUtils.startTour(tour.desc.id) });
             })))
         : null));

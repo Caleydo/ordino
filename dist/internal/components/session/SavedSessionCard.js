@@ -1,6 +1,5 @@
-import { I18nextManager, UserSession } from 'phovea_core';
+import { I18nextManager, UserSession, UniqueIdManager } from 'phovea_core';
 import React from 'react';
-import { Tab, Nav, Row, Col, Button, Dropdown } from 'react-bootstrap';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
 import { useAsync } from '../../../hooks';
 import { GraphContext } from '../../OrdinoApp';
@@ -20,24 +19,24 @@ export default function SavedSessionCard({ name, faIcon }) {
     const savedSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator === me);
     const otherSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator !== me);
     const { status } = useAsync(listSessions);
+    const id = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     return (React.createElement(React.Fragment, null,
         React.createElement("p", { className: "lead text-ordino-gray-4 mb-4" }, "Load a previous analysis session"),
         React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo') }, (sessionAction) => {
-            return React.createElement(Tab.Container, { defaultActiveKey: "mySessions" },
-                React.createElement(Nav, { className: "session-tab", variant: "pills" },
-                    React.createElement(Nav.Item, null,
-                        React.createElement(Nav.Link, { eventKey: "mySessions" },
+            return React.createElement(React.Fragment, null,
+                React.createElement("ul", { className: "nav nav-pills session-tab card-header-pills", role: "tablist" },
+                    React.createElement("li", { className: "nav-item", role: "presentation" },
+                        React.createElement("a", { className: "nav-link active", id: `saved-session-tab-${id}`, "data-toggle": "tab", href: `#saved-session-mine-panel-${id}`, role: "tab", "aria-controls": `saved-session-mine-panel-${id}`, "aria-selected": "true" },
                             React.createElement("i", { className: "mr-2 fas fa-user" }),
                             "My sessions")),
-                    React.createElement(Nav.Item, null,
-                        React.createElement(Nav.Link, { eventKey: `publicSessions}` },
-                            " ",
+                    React.createElement("li", { className: "nav-item", role: "presentation" },
+                        React.createElement("a", { className: "nav-link", id: `saved-session-other-tab-${id}`, "data-toggle": "tab", href: `#saved-session-other-panel-${id}`, role: "tab", "aria-controls": `saved-session-other-panel-${id}`, "aria-selected": "false" },
                             React.createElement("i", { className: "mr-2 fas fa-users" }),
                             "Public sessions"))),
-                React.createElement(Row, { className: "pt-4" },
-                    React.createElement(Col, null,
-                        React.createElement(Tab.Content, null,
-                            React.createElement(Tab.Pane, { eventKey: "mySessions" },
+                React.createElement("div", { className: "row pt-4" },
+                    React.createElement("div", { className: "col" },
+                        React.createElement("div", { className: "tab-content" },
+                            React.createElement("div", { className: "tab-pane fade show active", role: "tabpanel", id: `saved-session-mine-panel-${id}`, "aria-labelledby": `saved-session-mine-tab-${id}` },
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
@@ -47,13 +46,13 @@ export default function SavedSessionCard({ name, faIcon }) {
                                     React.createElement("p", null, "No sets available"),
                                 status === 'success' && savedSessions.length > 0 && (savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
                                     return React.createElement(SessionListItem, { key: session.id, desc: session, selectSession: (event) => sessionAction("select" /* SELECT */, event, session) },
-                                        React.createElement(Button, { variant: "outline-secondary", onClick: (event) => sessionAction("edit" /* EDIT */, event, session, setSessions), className: "mr-2 pt-1 pb-1" }, "Edit"),
+                                        React.createElement("button", { onClick: (event) => sessionAction("edit" /* EDIT */, event, session, setSessions), className: "mr-2 pt-1 pb-1 btn btn-outline-secondary" }, "Edit"),
                                         React.createElement(ListItemDropdown, null,
-                                            React.createElement(Dropdown.Item, { title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, "Clone"),
-                                            React.createElement(Dropdown.Item, { className: "dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, "Delete")));
+                                            React.createElement("button", { className: "dropdown-item", title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, "Clone"),
+                                            React.createElement("button", { className: "dropdown-item dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, "Delete")));
                                 })),
                                 status === 'error' && React.createElement("p", null, "Error when loading sets")),
-                            React.createElement(Tab.Pane, { eventKey: `publicSessions}` },
+                            React.createElement("div", { className: "tab-pane fade", role: "tabpanel", id: `saved-session-other-panel-${id}`, "aria-labelledby": `saved-session-other-tab-${id}` },
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
@@ -63,7 +62,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                     React.createElement("p", null, "No sets available"),
                                 status === 'success' && otherSessions.length > 0 && (otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
                                     return React.createElement(SessionListItem, { key: session.id, desc: session },
-                                        React.createElement(Button, { variant: "outline-secondary", title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session), className: "mr-2 pt-1 pb-1" }, "Clone"));
+                                        React.createElement("button", { title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session), className: "mr-2 pt-1 pb-1 btn btn-outline-secondary" }, "Clone"));
                                 })),
                                 status === 'error' && React.createElement("p", null, "Error when loading sets"))))));
         })));

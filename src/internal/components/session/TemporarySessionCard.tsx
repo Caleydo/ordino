@@ -1,6 +1,5 @@
 import {IProvenanceGraphDataDescription, I18nextManager} from 'phovea_core';
 import React from 'react';
-import {Button, Dropdown} from 'react-bootstrap';
 import {ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
 import {useAsync} from '../../../hooks';
@@ -39,11 +38,11 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
                             status === 'success' && sessions.length > 0 &&
                             sessions?.map((session) => {
                                 return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
-                                    <Button variant="outline-secondary" className="mr-2 pt-1 pb-1" onClick={(event) => sessionAction(EAction.SAVE, event, session)}>Save</Button>
-                                    <ListItemDropdown>
-                                        <Dropdown.Item onClick={(event) => sessionAction(EAction.CLONE, event, session)}>Clone</Dropdown.Item>
-                                        <Dropdown.Item className="dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</Dropdown.Item>
-                                    </ListItemDropdown>
+                                  <button type="button" className="mr-2 pt-1 pb-1 btn btn-outline-secondary" onClick={(event) => sessionAction(EAction.SAVE, event, session)}>Save</button>
+                                  <ListItemDropdown>
+                                      <button className="dropdown-item" onClick={(event) => sessionAction(EAction.CLONE, event, session)}>Clone</button>
+                                      <button className="dropdown-delete dropdown-item" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</button>
+                                  </ListItemDropdown>
                                 </SessionListItem>;
                             })
                         }

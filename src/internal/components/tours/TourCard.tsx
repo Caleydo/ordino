@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Card from 'react-bootstrap/Card';
-import {Row, Col, Button} from 'react-bootstrap';
 
 interface ITourCardProps {
     image: string | null;
@@ -13,19 +11,19 @@ interface ITourCardProps {
 
 export function TourCard({image, title, text, onClickHandler, href}: ITourCardProps) {
     return (
-        <Col>
-            <Card className="ordino-tour-card shadow-sm">
+        <div className="col">
+            <div className="card ordino-tour-card shadow-sm">
                 {image ?
-                  <Card.Img style={{height: '200px'}} variant="top" className="p-2" src={image} />
+                  <img className="card-img-top p-2" style={{height: '200px'}} src={image} />
                 : null}
-                <Card.Body className="p-2">
-                    <Card.Title>{title}</Card.Title>
-                    <Card.Text>
+                <div className="card-body p-2">
+                    <h5 className="card-title">{title}</h5>
+                    <p className="card-text">
                         {text}
-                    </Card.Text>
-                    <Button className="btn btn-light" href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> Start Tour</Button>
-                </Card.Body>
-            </Card>
-        </Col>
+                    </p>
+                    <a className="btn btn-light" href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> Start Tour</a>
+                </div>
+            </div>
+        </div>
     );
 }

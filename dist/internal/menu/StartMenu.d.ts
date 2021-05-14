@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { AppHeader } from 'phovea_ui';
 export declare enum EStartMenuSection {
     /**

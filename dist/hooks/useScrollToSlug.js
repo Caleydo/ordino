@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
  * @see https://github.com/rafgraph/react-router-hash-link/issues/13
  */
 export function useScrollToSlug() {
-    let { slug } = useParams();
+    const { slug } = useParams();
     React.useEffect(() => {
         setTimeout(() => {
             if (slug) {

@@ -69,23 +69,31 @@ export function StartMenuComponent({ header, mode, open }) {
     React.useEffect(() => {
         // add short cut button to current session card to navbar in header
         let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');
-        // add menu only once
-        if (!currentSessionNav) {
-            // TODO once the phovea header is using React we can switch to `Nav` from react bootstrap
-            currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
-            currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
-            ReactDOM.render(React.createElement("a", { href: "#", className: "nav-link", role: "button" },
-                React.createElement("i", { className: "fas fa-history mr-2" }),
-                "Current Analysis Session"), currentSessionNav);
-            currentSessionNav.onclick = (event) => {
-                event.preventDefault();
-                setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
-                setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
-            };
-            header.insertCustomRightMenu(currentSessionNav);
+        // skip if tabs are not available (yet) or nav item is already initialized
+        if (!tabs || currentSessionNav) {
+            return;
         }
-        currentSessionNav.toggleAttribute('hidden', (activeTab) ? true : false);
-    }, [activeTab, tabs]); // TODO: when the current session button is clicked the tabs are null.
+        currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
+        currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
+        ReactDOM.render(React.createElement("a", { href: "#", className: "nav-link", role: "button" },
+            React.createElement("i", { className: "fas fa-history mr-2" }),
+            "Current Analysis Session"), currentSessionNav);
+        const clickListener = (event) => {
+            event.preventDefault();
+            setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+            setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
+        };
+        currentSessionNav.addEventListener('click', clickListener);
+        header.insertCustomRightMenu(currentSessionNav);
+        return () => {
+            currentSessionNav.removeEventListener('click', clickListener);
+        };
+    }, [tabs]);
+    React.useEffect(() => {
+        var _a;
+        // hide current session button when start menu is open
+        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', (activeTab) ? true : false);
+    }, [activeTab]);
     const mainMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
     const rightMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
     return (React.createElement(React.Fragment, null,

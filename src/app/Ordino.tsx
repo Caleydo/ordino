@@ -29,6 +29,10 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
        */
       showReportBugLink: false,
       /**
+       * Disable help modal dialog with tours and show tours in a separate tours tab instead
+       */
+      showHelpLink: false,
+      /**
        * Functionality is included in the sessions tab.
        */
       showProvenanceMenu: false

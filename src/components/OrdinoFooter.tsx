@@ -44,19 +44,19 @@ export function OrdinoFooter(props) {
           </FooterLink>
         </div>
         <div className="list-group">
-          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/help/ordino-at-a-glance" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-mountain"></i>Ordino at a Glance
           </FooterLink>
-          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/help/contact-us" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
           <i className="mr-2 fas fa-fw fa-at"></i>Contact us
           </FooterLink>
-          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/help/disclaimer" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-exclamation-triangle"></i>Disclaimer
           </FooterLink>
-          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/help/terms-of-use" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-smile"></i>Terms of Use
           </FooterLink>
-          <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/help/source-code-licenses" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-code"></i>Source Code {'&'} Licenses
           </FooterLink>
         </div>

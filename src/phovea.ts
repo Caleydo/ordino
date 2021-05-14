@@ -7,7 +7,7 @@ import {IRegistry, PluginRegistry} from 'phovea_core';
 import {ParseRangeUtils} from 'phovea_core';
 import {ActionNode} from 'phovea_core';
 import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core';
-import {EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_STARTMENU_TAB} from '.';
+import {EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_START_MENU_TAB} from '.';
 import {EStartMenuSection} from './internal';
 
 export default function (registry: IRegistry) {
@@ -81,19 +81,19 @@ export default function (registry: IRegistry) {
     priority: 100
   });
 
-  registry.push(EP_ORDINO_STARTMENU_TAB, 'ordino_dataset_tab', () => import('./internal/menu/tabs/DatasetsTab'), {
+  registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_dataset_tab', () => import('./internal/menu/tabs/DatasetsTab'), {
     text: 'Datasets',
     menu: EStartMenuSection.MAIN,
     priority: 10
   });
 
-  registry.push(EP_ORDINO_STARTMENU_TAB, 'ordino_sessions_tab', () => import('./internal/menu/tabs/SessionsTab'), {
+  registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_sessions_tab', () => import('./internal/menu/tabs/SessionsTab'), {
     text: 'Analysis Sessions',
     menu: EStartMenuSection.MAIN,
     priority: 20
   });
 
-  registry.push(EP_ORDINO_STARTMENU_TAB, 'ordino_tours_tab', () => import('./internal/menu/tabs/ToursTab'), {
+  registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_tours_tab', () => import('./internal/menu/tabs/ToursTab'), {
     text: 'Tours',
     menu: EStartMenuSection.MAIN,
     priority: 30

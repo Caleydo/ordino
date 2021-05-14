@@ -11,7 +11,7 @@ import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
 import {EStartMenuSection, IStartMenuTabProps} from '../internal';
 
-export const EP_ORDINO_STARTMENU_TAB = 'epOrdinoStartMenuTab';
+export const EP_ORDINO_START_MENU_TAB = 'epOrdinoStartMenuTab';
 
 /**
  * Register a new tab in the ordino start menu

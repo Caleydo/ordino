@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { GlobalEventHandler, PluginRegistry } from 'phovea_core';
-import { EP_ORDINO_STARTMENU_TAB, Ordino, useAsync } from '../..';
+import { EP_ORDINO_START_MENU_TAB, Ordino, useAsync } from '../..';
 import { HighlightSessionCardContext } from '../OrdinoApp';
 export var EStartMenuSection;
 (function (EStartMenuSection) {
@@ -44,7 +44,7 @@ export function StartMenuComponent({ header, mode, open }) {
     const [activeTab, setActiveTab] = React.useState(null);
     const [highlight, setHighlight] = React.useState(false);
     const loadTabs = React.useMemo(() => () => {
-        const tabEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_TAB).map((d) => d).sort(byPriority);
+        const tabEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_START_MENU_TAB).map((d) => d).sort(byPriority);
         return Promise.all(tabEntries.map((section) => section.load()));
     }, []);
     // load all registered tabs

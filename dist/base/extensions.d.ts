@@ -10,7 +10,7 @@ import { IPluginDesc } from 'phovea_core';
 import { INamedSet } from 'tdp_core';
 import { CLUEGraphManager } from 'phovea_clue';
 import { EStartMenuSection, IStartMenuTabProps } from '../internal';
-export declare const EP_ORDINO_STARTMENU_TAB = "epOrdinoStartMenuTab";
+export declare const EP_ORDINO_START_MENU_TAB = "epOrdinoStartMenuTab";
 /**
  * Register a new tab in the ordino start menu
  */

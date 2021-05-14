@@ -8,7 +8,7 @@ import {useAsync} from '../../../hooks';
 import {IStartMenuTabProps} from '../StartMenu';
 
 
-export function ToursTab(_props: IStartMenuTabProps) {
+export default function ToursTab(_props: IStartMenuTabProps) {
   const loadTours = useMemo(() => () => {
     const tourEntries = PluginRegistry.getInstance().listPlugins(TourUtils.EXTENSION_POINT_TDP_TOUR).map((d) => d as ITDPTourExtensionDesc);
     return Promise.all(tourEntries.map((tour) => tour.load()));
@@ -42,13 +42,13 @@ export function ToursTab(_props: IStartMenuTabProps) {
 
 
 function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & ITDPTourExtension)[]}) {
-  if(props.tours.length === 0) {
+  if (props.tours.length === 0) {
     return null;
   }
 
   const loadTourImages = useMemo(() => () => {
     return Promise.all(props.tours.map(async (tour) => {
-      if(!tour.desc.preview) { // preview function is optional
+      if (!tour.desc.preview) { // preview function is optional
         return Promise.resolve(null);
       }
 
@@ -70,7 +70,7 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
             })}
           </div>
         </>
-      : null}
+        : null}
     </>
   );
 }

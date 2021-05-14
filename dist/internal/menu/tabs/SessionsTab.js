@@ -8,7 +8,7 @@ import { OrdinoFooter } from '../../../components';
 function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
-export function SessionsTab(_props) {
+export default function SessionsTab(_props) {
     const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     const loadSections = useMemo(() => () => {
         const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_SESSION_SECTION).map((d) => d).sort(byPriority);

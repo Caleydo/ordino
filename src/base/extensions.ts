@@ -9,6 +9,54 @@
 import {IPluginDesc} from 'phovea_core';
 import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
+import {EStartMenuSection, IStartMenuTabProps} from '../internal';
+
+export const EP_ORDINO_START_MENU_TAB = 'epOrdinoStartMenuTab';
+
+/**
+ * Register a new tab in the ordino start menu
+ */
+export interface IStartMenuTabDesc extends IPluginDesc {
+  /**
+   * Name of the plugin, should be unique within a type
+   */
+  id: string;
+
+  /**
+   * Used as text for the NavTab button
+   */
+  text?: string;
+  /**
+   * Font Awesome icon
+   * Will be used a as button icon
+   * @see https://fontawesome.com/
+   * @example `fas fa-database`
+   */
+  icon?: string;
+
+  /**
+   * Whether to render the tab on the `mainMenu` or the `rightMenu` section in the header
+   */
+  readonly menu: EStartMenuSection;
+
+  /**
+   * Function for loading this plugin
+   * @returns a promise for the loaded plugin
+   */
+  load(): Promise<IStartMenuTabPlugin>;
+}
+
+export interface IStartMenuTabPlugin {
+  desc: IStartMenuTabDesc;
+
+  factory(props: IStartMenuTabProps): JSX.Element;
+}
+
+export interface IStartMenuTab {
+  readonly desc: IStartMenuTabDesc;
+  update?(): void;
+}
+
 
 export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 

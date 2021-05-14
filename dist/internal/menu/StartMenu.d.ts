@@ -1,5 +1,15 @@
 /// <reference types="react" />
 import { AppHeader } from 'phovea_ui';
+export declare enum EStartMenuSection {
+    /**
+     * Main menu section in the header
+     */
+    MAIN = "main",
+    /**
+     * Right menu section in the header
+     */
+    RIGHT = "right"
+}
 export declare enum EStartMenuMode {
     /**
      * no analysis in the background, the start menu cannot be closed

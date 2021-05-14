@@ -7,7 +7,7 @@ import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
 import {IStartMenuTabProps} from '../StartMenu';
 
-export function DatasetsTab(_props: IStartMenuTabProps) {
+export default function DatasetsTab(_props: IStartMenuTabProps) {
   const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
 
   const loadCards = useMemo(() => () => {

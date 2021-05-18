@@ -154,6 +154,11 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
 
 interface IOrdinoScrollspyItemProps {
   /**
+   * Key for list items
+   */
+  key?: React.Key;
+
+  /**
    * Unique id of the item
    */
   id: string;

@@ -68,6 +68,10 @@ interface IOrdinoScrollspyProps {
 export declare function OrdinoScrollspy(props: IOrdinoScrollspyProps): JSX.Element;
 interface IOrdinoScrollspyItemProps {
     /**
+     * Key for list items
+     */
+    key?: React.Key;
+    /**
      * Unique id of the item
      */
     id: string;

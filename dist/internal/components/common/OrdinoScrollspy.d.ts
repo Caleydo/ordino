@@ -1,5 +1,4 @@
 import React from 'react';
-import { IntersectionObserverProps, PlainChildrenProps } from 'react-intersection-observer';
 interface IOrdinoScrollspyProps {
     /**
      * List of items for the scrollspy
@@ -94,5 +93,5 @@ interface IOrdinoScrollspyItemProps {
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & Omit<(IntersectionObserverProps | PlainChildrenProps), 'children'>): JSX.Element;
+export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps): JSX.Element;
 export {};

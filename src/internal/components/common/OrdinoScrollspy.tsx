@@ -189,7 +189,7 @@ const threshold = [0, 1];
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & Omit<(IntersectionObserverProps | PlainChildrenProps), 'children'>) {
+export function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps) {
   return (
     <InView className={props.className} id={props.id} threshold={threshold} onChange={(inView: boolean, entry: IntersectionObserverEntry) => props.handleOnChange(props.id, props.index, inView, entry)}>
       {props.children}

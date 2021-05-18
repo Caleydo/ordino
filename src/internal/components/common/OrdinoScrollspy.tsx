@@ -154,11 +154,6 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
 
 interface IOrdinoScrollspyItemProps {
   /**
-   * Key for list items
-   */
-  key?: React.Key;
-
-  /**
    * Unique id of the item
    */
   id: string;
@@ -169,19 +164,9 @@ interface IOrdinoScrollspyItemProps {
   index: number;
 
   /**
-   * CSS class
-   */
-  className: string;
-
-  /**
    * On change function that is passed to `InView` and triggered by the intersection observer when the visibility of an element changes
    */
   handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void;
-
-  /**
-   * Item content that is checked by the intersection observer
-   */
-  children?: React.ReactNode;
 }
 
 /**
@@ -194,10 +179,12 @@ const threshold = [0, 1];
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps) {
+export function OrdinoScrollspyItem({id, index, handleOnChange, ...innerProps}: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)) {
   return (
-    <InView className={props.className} id={props.id} threshold={threshold} onChange={(inView: boolean, entry: IntersectionObserverEntry) => props.handleOnChange(props.id, props.index, inView, entry)}>
-      {props.children}
-    </InView>
+    // @ts-expect-error TS2322 Error in `PlainChildrenProps` typings from react-intersection-observer
+    <InView threshold={threshold} {...innerProps} onChange={(inView: boolean, entry: IntersectionObserverEntry) => {
+      innerProps.onChange(inView, entry);
+      handleOnChange(id, index, inView, entry);
+    }} />
   );
 }

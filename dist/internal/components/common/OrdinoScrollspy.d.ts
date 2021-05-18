@@ -1,4 +1,5 @@
 import React from 'react';
+import { IntersectionObserverProps, PlainChildrenProps } from 'react-intersection-observer';
 interface IOrdinoScrollspyProps {
     /**
      * List of items for the scrollspy
@@ -68,10 +69,6 @@ interface IOrdinoScrollspyProps {
 export declare function OrdinoScrollspy(props: IOrdinoScrollspyProps): JSX.Element;
 interface IOrdinoScrollspyItemProps {
     /**
-     * Key for list items
-     */
-    key?: React.Key;
-    /**
      * Unique id of the item
      */
     id: string;
@@ -80,22 +77,14 @@ interface IOrdinoScrollspyItemProps {
      */
     index: number;
     /**
-     * CSS class
-     */
-    className: string;
-    /**
      * On change function that is passed to `InView` and triggered by the intersection observer when the visibility of an element changes
      */
     handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void;
-    /**
-     * Item content that is checked by the intersection observer
-     */
-    children?: React.ReactNode;
 }
 /**
  * Wrap the children using the `InView` of `react-intersection-observer`.
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps): JSX.Element;
+export declare function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
 export {};

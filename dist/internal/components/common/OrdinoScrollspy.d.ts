@@ -84,11 +84,15 @@ interface IOrdinoScrollspyItemProps {
      * On change function that is passed to `InView` and triggered by the intersection observer when the visibility of an element changes
      */
     handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void;
+    /**
+     * Item content that is checked by the intersection observer
+     */
+    children: React.ReactNode;
 }
 /**
  * Wrap the children using the `InView` of `react-intersection-observer`.
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
+export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (Omit<IntersectionObserverProps, 'children'> | PlainChildrenProps)): JSX.Element;
 export {};

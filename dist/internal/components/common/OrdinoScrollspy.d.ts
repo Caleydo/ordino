@@ -94,5 +94,5 @@ interface IOrdinoScrollspyItemProps {
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (Omit<IntersectionObserverProps, 'children'> | PlainChildrenProps)): JSX.Element;
+export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & Omit<(IntersectionObserverProps | PlainChildrenProps), 'children'>): JSX.Element;
 export {};

@@ -16,7 +16,7 @@ interface IOrdinoScrollspyProps {
     /**
      * Container content and handle on change function to pass to the scrollspy item
      */
-    children: ((handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
+    children?: ((handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
 }
 /**
  * The Ordino Scrollspy is a container and adds navigation items.
@@ -86,7 +86,7 @@ interface IOrdinoScrollspyItemProps {
     /**
      * Item content that is checked by the intersection observer
      */
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 /**
  * Wrap the children using the `InView` of `react-intersection-observer`.

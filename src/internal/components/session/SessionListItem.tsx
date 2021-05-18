@@ -20,7 +20,7 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
     <>
       <div className="row dropdown-parent session-item mx-0 mb-1 align-items-start">
         <div className="d-flex px-0 flex-column align-items-start col-md-11">
-          <button disabled={selectSession == null} className="pl-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => selectSession(event, desc)}>
+          <button disabled={selectSession == null} className="pl-0 btn btn-link text-ordino-button-primary" onClick={(event) => selectSession(event, desc)}>
             <i className={`mr-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}`}></i>
             {desc.name}
           </button>

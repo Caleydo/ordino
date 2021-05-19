@@ -19,7 +19,7 @@ interface IOrdinoScrollspyProps {
   /**
    * Container content and handle on change function to pass to the scrollspy item
    */
-  children?: ((handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
+  children: ((handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void) => React.ReactNode) | React.ReactNode;
 }
 
 /**

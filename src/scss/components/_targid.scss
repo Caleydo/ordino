@@ -313,7 +313,7 @@ div.targid {
     }
 
     &.t-context > .view {
-      //border-top: 8px solid lighten($core_border, 10%);
+      //border-top: 8px solid tint-color($core_border, 10%);
 
       > div {
         opacity: 0.6;
@@ -321,7 +321,7 @@ div.targid {
     }
 
     &.t-focus > .view {
-      //border-top: 8px solid lighten($core_border, 5%);
+      //border-top: 8px solid tint-color($core_border, 5%);
 
       > div {
         opacity: 1;
@@ -369,7 +369,7 @@ div.targid {
         &:active,
         &:focus,
         &:hover {
-          background: lighten($core_colour, 3%);
+          background: tint-color($core_colour, 3%);
           border-color: $hover-data-color;
         }
 

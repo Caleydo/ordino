@@ -165,6 +165,6 @@
   z-index: 1; // position icon above the tab container to make it clickable
 
   &:hover {
-    color: darken($color: map-get($theme-colors, "ordino-gray-4"), $amount: 20);
+    color: shade-color(map-get($theme-colors, "ordino-gray-4"), 20);
   }
 }

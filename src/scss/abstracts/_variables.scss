@@ -11,7 +11,8 @@ $ordino-theme-colors: (
   "ordino-gray-3": #6c757d,
   "ordino-gray-4": #72818d,
   "ordino-gray-5":  #D4D7DD,
-  "ordino-gray-6":  #aab3bb
+  "ordino-gray-6":  #aab3bb,
+  "ordino-button-primary": #337AB7
 ) !default;
 
 $theme-colors: map-merge($theme-colors, $ordino-theme-colors);

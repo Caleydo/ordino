@@ -1,4 +1,4 @@
-import { EPermission, Permission, UserSession } from 'phovea_core';
+import { EPermission, Permission } from 'phovea_core';
 import { ENamedSetType } from 'tdp_core';
 export class DatasetUtils {
     /**
@@ -6,7 +6,6 @@ export class DatasetUtils {
      * @param namedSet NamedSet
      */
     static toNamedSetTitle(namedSet) {
-        const me = UserSession.getInstance().currentUserNameOrAnonymous();
         let title = `Name: ${namedSet.name}\nDescription: ${namedSet.description}`;
         if (namedSet.type === ENamedSetType.NAMEDSET) {
             const permission = Permission.decode(namedSet.permissions);

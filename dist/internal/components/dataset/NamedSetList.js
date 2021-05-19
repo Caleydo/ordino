@@ -35,10 +35,11 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
         status === 'pending' &&
             React.createElement("p", null,
                 React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
-                " Loading sets..."),
+                I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets'),
+                " "),
         status === 'success' &&
             value.length === 0 &&
-            React.createElement("p", null, "No sets available"),
+            React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')),
         status === 'success' &&
             value.length > 0 &&
             React.createElement("div", { role: "group", className: "btn-group-vertical" }, namedSets.map((namedSet, i) => {
@@ -47,9 +48,11 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
                     React.createElement("button", { className: "text-left pl-0 btn btn-link", style: { color: '#337AB7' }, onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     canWrite ?
                         React.createElement(ListItemDropdown, null,
-                            React.createElement("button", { className: "dropdown-item", onClick: (event) => editNamedSet(event, namedSet) }, "Edit"),
-                            React.createElement("button", { className: "dropdown-item dropdown-delete", onClick: (event) => deleteNamedSet(event, namedSet) }, "Delete")) : null));
+                            React.createElement("button", { className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails'), onClick: (event) => editNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')),
+                            React.createElement("button", { className: "dropdown-item dropdown-delete", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete'), onClick: (event) => deleteNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete'))) : null));
             })),
-        status === 'error' && React.createElement("p", null, "Error when loading sets")));
+        status === 'error' && React.createElement("p", null,
+            " ",
+            I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError'))));
 }
 //# sourceMappingURL=NamedSetList.js.map

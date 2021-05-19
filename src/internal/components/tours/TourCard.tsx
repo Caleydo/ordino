@@ -1,3 +1,4 @@
+import {I18nextManager} from 'phovea_core';
 import * as React from 'react';
 
 interface ITourCardProps {
@@ -21,7 +22,7 @@ export function TourCard({image, title, text, onClickHandler, href}: ITourCardPr
                     <p className="card-text">
                         {text}
                     </p>
-                    <a className="btn btn-light" href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> Start Tour</a>
+                    <a type="button" className="btn btn-light" href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')}</a>
                 </div>
             </div>
         </div>

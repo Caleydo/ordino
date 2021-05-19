@@ -22,7 +22,7 @@ interface IOrdinoBreadcrumbsProps {
  */
 export function OrdinoBreadcrumbs(props: IOrdinoBreadcrumbsProps) {
   return (
-    <ul className="tdp-button-group history">
+    <ul className="tdp-button-group history" aria-label="breadcrumb">
       {props.views.map((view) => {
         return (
           <OrdinoBreadcrumbItem key={view.desc.id} view={view} onClick={props.onClick}></OrdinoBreadcrumbItem>

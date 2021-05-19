@@ -20,7 +20,7 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
     <>
       <div className="row dropdown-parent session-item mx-0 mb-1 align-items-start">
         <div className="d-flex px-0 flex-column align-items-start col-md-11">
-          <button disabled={selectSession == null} className="pl-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => selectSession(event, desc)}>
+          <button type="button" disabled={selectSession == null} className="pl-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => selectSession(event, desc)}>
             <i className={`mr-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}`}></i>
             {desc.name}
           </button>
@@ -33,11 +33,11 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
               <div className="col">
                 {ProvenanceGraphMenuUtils.isPublic(desc) ?
                   <p className="text-muted flex-grow-1" title={I18nextManager.getInstance().i18n.t('tdp:core.SessionList.status')}>
-                    <i className="mr-2 fas fa-users"></i>Public access
-               </p> :
+                    <i className="mr-2 fas fa-users"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.publicAccess')}
+                  </p> :
                   <p className="text-muted flex-grow-1" title={I18nextManager.getInstance().i18n.t('tdp:core.SessionList.status', {context: 'private'})}>
-                    <i className="mr-2 fas fa-user"></i>Private access
-              </p>}
+                    <i className="mr-2 fas fa-user"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.privateAccess')}
+                  </p>}
               </div>
             }
           </div>

@@ -7,7 +7,7 @@ import { EViewMode } from 'tdp_core';
  * @param props properties
  */
 export function OrdinoBreadcrumbs(props) {
-    return (React.createElement("ul", { className: "tdp-button-group history" }, props.views.map((view) => {
+    return (React.createElement("ul", { className: "tdp-button-group history", "aria-label": "breadcrumb" }, props.views.map((view) => {
         return (React.createElement(OrdinoBreadcrumbItem, { key: view.desc.id, view: view, onClick: props.onClick }));
     })));
 }

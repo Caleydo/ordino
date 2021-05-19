@@ -16,7 +16,6 @@ export function useScrollToSlug() {
         const element = document.getElementById(slug);
         if (element) {
           element.scrollIntoView({ block: 'start', behavior: 'auto' });
-          window.scrollBy(0, -55);
         }
       }
     }, 100);

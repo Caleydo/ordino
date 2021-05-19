@@ -182,8 +182,10 @@ const threshold = [0, 1];
 export function OrdinoScrollspyItem({id, index, handleOnChange, ...innerProps}: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)) {
   return (
     // @ts-expect-error TS2322 Error in `PlainChildrenProps` typings from react-intersection-observer
-    <InView threshold={threshold} {...innerProps} onChange={(inView: boolean, entry: IntersectionObserverEntry) => {
-      innerProps.onChange(inView, entry);
+    <InView threshold={threshold} id={id} {...innerProps} onChange={(inView: boolean, entry: IntersectionObserverEntry) => {
+      if(innerProps.onChange) {
+        innerProps.onChange(inView, entry);
+      }
       handleOnChange(id, index, inView, entry);
     }} />
   );

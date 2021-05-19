@@ -114,7 +114,12 @@ const threshold = [0, 1];
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export function OrdinoScrollspyItem(props) {
-    return (React.createElement(InView, { className: props.className, id: props.id, threshold: threshold, onChange: (inView, entry) => props.handleOnChange(props.id, props.index, inView, entry) }, props.children));
+export function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }) {
+    return (
+    // @ts-expect-error TS2322 Error in `PlainChildrenProps` typings from react-intersection-observer
+    React.createElement(InView, Object.assign({ threshold: threshold }, innerProps, { onChange: (inView, entry) => {
+            innerProps.onChange(inView, entry);
+            handleOnChange(id, index, inView, entry);
+        } })));
 }
 //# sourceMappingURL=OrdinoScrollspy.js.map

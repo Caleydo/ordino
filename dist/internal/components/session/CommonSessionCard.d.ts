@@ -28,7 +28,7 @@ export declare const enum EAction {
     SAVE = "save",
     EDIT = "edit",
     CLONE = "clone",
-    EXPORT = "epxport",
+    EXPORT = "export",
     DELETE = "delete"
 }
 export declare type SessionActionChooser = (type: EAction, event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;

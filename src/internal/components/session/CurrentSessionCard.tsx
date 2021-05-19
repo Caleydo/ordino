@@ -22,7 +22,7 @@ export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSect
             {(sessionAction) => {
                 const disabled = ProvenanceGraphMenuUtils.isPersistent(desc);
                 return <SessionListItem desc={desc} selectSession={(event) => sessionAction(EAction.SELECT, event, desc)}>
-                    <button type="button" className="mr-2 pt-1 pb-1 btn btn-outline-secondary" title={disabled ? I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.alreadySaved') : I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} disabled={disabled} onClick={(event) => sessionAction(EAction.SAVE, event, desc)}>
+                    <button type="button" className="mr-2 pt-1 pb-1 btn btn-outline-secondary" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} disabled={disabled} onClick={(event) => sessionAction(EAction.SAVE, event, desc)}>
                         {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')}
                     </button>
                     <ListItemDropdown>

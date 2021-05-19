@@ -30,6 +30,7 @@
       "mySessions": "My Sessions",
       "publicSessions": "Public Sessions",
       "clone": "Clone",
+      "cloneSession": "Clone Session",
       "cloneToTemporary": "Clone to Temporary Session",
       "continueSession": "Continue Session",
       "privateAccess": "Private Access",

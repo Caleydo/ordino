@@ -9,7 +9,7 @@ export function TourCard({ image, title, text, onClickHandler, href }) {
             React.createElement("div", { className: "card-body p-2" },
                 React.createElement("h5", { className: "card-title" }, title),
                 React.createElement("p", { className: "card-text" }, text),
-                React.createElement("a", { type: "button", className: "btn btn-light", href: href, onClick: onClickHandler },
+                React.createElement("a", { className: "btn btn-light", href: href, onClick: onClickHandler },
                     React.createElement("i", { className: "mr-1 fas fa-angle-right" }),
                     " ",
                     I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour'))))));

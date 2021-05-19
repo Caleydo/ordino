@@ -77,10 +77,6 @@ interface IOrdinoScrollspyItemProps {
      */
     index: number;
     /**
-     * CSS class
-     */
-    className: string;
-    /**
      * On change function that is passed to `InView` and triggered by the intersection observer when the visibility of an element changes
      */
     handleOnChange: (id: string, index: number, inView: boolean, entry: IntersectionObserverEntry) => void;
@@ -90,5 +86,5 @@ interface IOrdinoScrollspyItemProps {
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export declare function OrdinoScrollspyItem(props: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
+export declare function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
 export {};

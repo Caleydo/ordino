@@ -35,12 +35,12 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
           return <>
             <ul className="nav nav-pills session-tab card-header-pills"  role="tablist">
               <li className="nav-item" role="presentation">
-                <a className="nav-link active" id={`saved-session-tab-${id}`} data-toggle="tab" href={`#saved-session-mine-panel-${id}`} role="tab" aria-controls={`saved-session-mine-panel-${id}`} aria-selected="true">
+                <a className="nav-link active" id={`saved-session-tab-${id}`} data-bs-toggle="tab" href={`#saved-session-mine-panel-${id}`} role="tab" aria-controls={`saved-session-mine-panel-${id}`} aria-selected="true">
                 <i className="me-2 fas fa-user"></i>My sessions
                 </a>
               </li>
               <li className="nav-item" role="presentation">
-                <a className="nav-link" id={`saved-session-other-tab-${id}`} data-toggle="tab" href={`#saved-session-other-panel-${id}`} role="tab" aria-controls={`saved-session-other-panel-${id}`} aria-selected="false">
+                <a className="nav-link" id={`saved-session-other-tab-${id}`} data-bs-toggle="tab" href={`#saved-session-other-panel-${id}`} role="tab" aria-controls={`saved-session-other-panel-${id}`} aria-selected="false">
                 <i className="me-2 fas fa-users"></i>Public sessions
                 </a>
               </li>

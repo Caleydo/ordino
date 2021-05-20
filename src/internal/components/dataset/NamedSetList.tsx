@@ -46,7 +46,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
 
   return (
     <div className="dataset-entry d-flex flex-column col-md-4">
-      <header><i className={`mr-2 ${headerIcon}`}></i>{headerText}</header>
+      <header><i className={`me-2 ${headerIcon}`}></i>{headerText}</header>
       {status === 'pending' &&
         <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
       }
@@ -61,7 +61,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
               <div key={i} className="dropdown-parent justify-content-between btn-group">
-                <button className="text-left pl-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
+                <button className="text-start ps-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
                 {canWrite ?
                   <ListItemDropdown>
                     <button className="dropdown-item" onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>Edit</button>

@@ -76,7 +76,7 @@ export function StartMenuComponent({ header, mode, open }) {
         currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
         currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
         ReactDOM.render(React.createElement("a", { href: "#", className: "nav-link", role: "button" },
-            React.createElement("i", { className: "fas fa-history mr-2" }),
+            React.createElement("i", { className: "fas fa-history me-2" }),
             "Current Analysis Session"), currentSessionNav);
         const clickListener = (event) => {
             event.preventDefault();

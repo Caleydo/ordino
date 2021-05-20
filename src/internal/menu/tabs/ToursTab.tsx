@@ -63,7 +63,7 @@ function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPlugin & 
     <>
       {status === 'success' ?
         <>
-          <h4 className="text-left mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="mr-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
+          <h4 className="text-start mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="me-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
           <div className="mb-4 row row-cols-md-3">
             {props.tours.map((tour, index) => {
               return <TourCard key={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index] || null} onClickHandler={(evt) => TourUtils.startTour(tour.desc.id)}></TourCard>;

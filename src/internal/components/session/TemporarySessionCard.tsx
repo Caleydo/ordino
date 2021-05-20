@@ -38,7 +38,7 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
                             status === 'success' && sessions.length > 0 &&
                             sessions?.map((session) => {
                                 return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
-                                  <button type="button" className="mr-2 pt-1 pb-1 btn btn-outline-secondary" onClick={(event) => sessionAction(EAction.SAVE, event, session)}>Save</button>
+                                  <button type="button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" onClick={(event) => sessionAction(EAction.SAVE, event, session)}>Save</button>
                                   <ListItemDropdown>
                                       <button className="dropdown-item" onClick={(event) => sessionAction(EAction.CLONE, event, session)}>Clone</button>
                                       <button className="dropdown-delete dropdown-item" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>Delete</button>

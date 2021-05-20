@@ -31,32 +31,32 @@ export function OrdinoFooter(props) {
       <nav className="ordino-footer-navigation row">
         <div className="list-group">
           <FooterLink to="/news" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-newspaper"></i>What's new?
+            <i className="me-2 fas fa-fw fa-newspaper"></i>What's new?
           </FooterLink>
           <FooterLink to="/features" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-check"></i>Features
+            <i className="me-2 fas fa-fw fa-check"></i>Features
           </FooterLink>
           <FooterLink to="/datasets" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-database"></i>Loaded Datasets
+            <i className="me-2 fas fa-fw fa-database"></i>Loaded Datasets
           </FooterLink>
           <FooterLink to="/publication" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-book-open"></i>Publication
+            <i className="me-2 fas fa-fw fa-book-open"></i>Publication
           </FooterLink>
         </div>
         <div className="list-group">
           <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-question"></i>Help and Contact
+            <i className="me-2 fas fa-fw fa-question"></i>Help and Contact
           </FooterLink>
           <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-file-code"></i>Source Code &amp; Licenses
+            <i className="me-2 fas fa-fw fa-file-code"></i>Source Code &amp; Licenses
           </FooterLink>
           <FooterLink to="/help" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-smile"></i>Terms of Use
+            <i className="me-2 fas fa-fw fa-smile"></i>Terms of Use
           </FooterLink>
         </div>
       </nav>
       <div className="row">
-        <div className="col text-right ordino-footer-logo">
+        <div className="col position-relative text-end ordino-footer-logo">
           <FooterLink to="/" openInNewWindow={openInNewWindow}>
             <OrdinoLogo />
           </FooterLink>

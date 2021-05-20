@@ -14,7 +14,7 @@ export default function CurrentSessionCard({ name, faIcon }) {
     };
     return (React.createElement(CommonSessionCard, { cardName: name, highlight: highlight, onHighlightAnimationEnd: onHighlightAnimationEnd, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo') }, (sessionAction) => {
         return React.createElement(SessionListItem, { desc: desc, selectSession: (event) => sessionAction("select" /* SELECT */, event, desc) },
-            React.createElement("button", { type: "button", className: "mr-2 pt-1 pb-1 btn btn-outline-secondary", disabled: ProvenanceGraphMenuUtils.isPersistent(desc), onClick: (event) => sessionAction("save" /* SAVE */, event, desc) }, "Save"),
+            React.createElement("button", { type: "button", className: "me-2 pt-1 pb-1 btn btn-outline-secondary", disabled: ProvenanceGraphMenuUtils.isPersistent(desc), onClick: (event) => sessionAction("save" /* SAVE */, event, desc) }, "Save"),
             React.createElement(ListItemDropdown, null,
                 React.createElement("button", { className: "dropdown-item", onClick: (event) => sessionAction("clone" /* CLONE */, event, desc) }, "Clone"),
                 React.createElement("button", { className: "dropdown-item", onClick: (event) => sessionAction("epxport" /* EXPORT */, event, desc) }, "Export"),

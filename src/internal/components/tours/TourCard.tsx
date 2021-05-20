@@ -21,7 +21,7 @@ export function TourCard({image, title, text, onClickHandler, href}: ITourCardPr
                     <p className="card-text">
                         {text}
                     </p>
-                    <a className="btn btn-light" href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> Start Tour</a>
+                    <a className="btn btn-light" href={href} onClick={onClickHandler}><i className="me-1 fas fa-angle-right"></i> Start Tour</a>
                 </div>
             </div>
         </div>

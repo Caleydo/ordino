@@ -9,7 +9,7 @@ export function TourCard({ image, title, text, onClickHandler, href }) {
                 React.createElement("h5", { className: "card-title" }, title),
                 React.createElement("p", { className: "card-text" }, text),
                 React.createElement("a", { className: "btn btn-light", href: href, onClick: onClickHandler },
-                    React.createElement("i", { className: "mr-1 fas fa-angle-right" }),
+                    React.createElement("i", { className: "me-1 fas fa-angle-right" }),
                     " Start Tour")))));
 }
 //# sourceMappingURL=TourCard.js.map

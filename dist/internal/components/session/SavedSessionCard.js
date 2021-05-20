@@ -27,14 +27,14 @@ export default function SavedSessionCard({ name, faIcon }) {
                 React.createElement("ul", { className: "nav nav-pills session-tab card-header-pills", role: "tablist" },
                     React.createElement("li", { className: "nav-item", role: "presentation" },
                         React.createElement("a", { className: "nav-link active", id: `saved-session-tab-${id}`, "data-toggle": "tab", href: `#saved-session-mine-panel-${id}`, role: "tab", "aria-controls": `saved-session-mine-panel-${id}`, "aria-selected": "true" },
-                            React.createElement("i", { className: "mr-2 fas fa-user" }),
+                            React.createElement("i", { className: "me-2 fas fa-user" }),
                             "My sessions")),
                     React.createElement("li", { className: "nav-item", role: "presentation" },
                         React.createElement("a", { className: "nav-link", id: `saved-session-other-tab-${id}`, "data-toggle": "tab", href: `#saved-session-other-panel-${id}`, role: "tab", "aria-controls": `saved-session-other-panel-${id}`, "aria-selected": "false" },
-                            React.createElement("i", { className: "mr-2 fas fa-users" }),
+                            React.createElement("i", { className: "me-2 fas fa-users" }),
                             "Public sessions"))),
                 React.createElement("div", { className: "row pt-4" },
-                    React.createElement("div", { className: "col" },
+                    React.createElement("div", { className: "col position-relative" },
                         React.createElement("div", { className: "tab-content" },
                             React.createElement("div", { className: "tab-pane fade show active", role: "tabpanel", id: `saved-session-mine-panel-${id}`, "aria-labelledby": `saved-session-mine-tab-${id}` },
                                 status === 'pending' &&
@@ -46,7 +46,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                     React.createElement("p", null, "No sets available"),
                                 status === 'success' && savedSessions.length > 0 && (savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
                                     return React.createElement(SessionListItem, { key: session.id, desc: session, selectSession: (event) => sessionAction("select" /* SELECT */, event, session) },
-                                        React.createElement("button", { onClick: (event) => sessionAction("edit" /* EDIT */, event, session, setSessions), className: "mr-2 pt-1 pb-1 btn btn-outline-secondary" }, "Edit"),
+                                        React.createElement("button", { onClick: (event) => sessionAction("edit" /* EDIT */, event, session, setSessions), className: "me-2 pt-1 pb-1 btn btn-outline-secondary" }, "Edit"),
                                         React.createElement(ListItemDropdown, null,
                                             React.createElement("button", { className: "dropdown-item", title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, "Clone"),
                                             React.createElement("button", { className: "dropdown-item dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, "Delete")));
@@ -62,7 +62,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                     React.createElement("p", null, "No sets available"),
                                 status === 'success' && otherSessions.length > 0 && (otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
                                     return React.createElement(SessionListItem, { key: session.id, desc: session },
-                                        React.createElement("button", { title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session), className: "mr-2 pt-1 pb-1 btn btn-outline-secondary" }, "Clone"));
+                                        React.createElement("button", { title: "Clone to Temporary Session", onClick: (event) => sessionAction("clone" /* CLONE */, event, session), className: "me-2 pt-1 pb-1 btn btn-outline-secondary" }, "Clone"));
                                 })),
                                 status === 'error' && React.createElement("p", null, "Error when loading sets"))))));
         })));

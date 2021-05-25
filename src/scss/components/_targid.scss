@@ -275,8 +275,12 @@ div.targid {
 
       > .inner,
       > .parameters,
-      button.close {
+      button.btn-close {
         margin: 10px;
+      }
+
+      .btn-close {
+        float: right;
       }
 
       > .parameters {

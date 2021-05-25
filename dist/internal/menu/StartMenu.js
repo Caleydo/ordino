@@ -127,7 +127,7 @@ function StartMenuTabWrapper(props) {
             props.mode === EStartMenuMode.OVERLAY &&
                 React.createElement("div", { className: "container-fluid" },
                     React.createElement("div", { className: "row" },
-                        React.createElement("div", { className: "col d-flex justify-content-end" },
+                        React.createElement("div", { className: "col position-relative d-flex justify-content-end" },
                             React.createElement("button", { className: "btn btn-link start-menu-close", onClick: () => { props.setActiveTab(null); } },
                                 React.createElement("i", { className: "fas fa-times" }))))),
             React.createElement(tab.factory, { isActive: props.activeTab === tab })))))));

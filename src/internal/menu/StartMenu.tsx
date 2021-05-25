@@ -229,7 +229,7 @@ function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
               {props.mode === EStartMenuMode.OVERLAY &&
                 <div className="container-fluid">
                   <div className="row">
-                    <div className="col d-flex justify-content-end">
+                    <div className="col position-relative d-flex justify-content-end">
                       <button className="btn btn-link start-menu-close" onClick={() => {props.setActiveTab(null);}}>
                         <i className="fas fa-times"></i>
                       </button>

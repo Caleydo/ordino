@@ -11,7 +11,7 @@ interface ITourCardProps {
 
 export function TourCard({image, title, text, onClickHandler, href}: ITourCardProps) {
     return (
-        <div className="col">
+        <div className="col position-relative">
             <div className="card ordino-tour-card shadow-sm">
                 {image ?
                   <img className="card-img-top p-2" style={{height: '200px'}} src={image} />

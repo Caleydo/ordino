@@ -36,6 +36,8 @@ $ordino-spacers: (
 
 $spacers: map-merge($spacers, $ordino-spacers);
 
+// Override the default grid-breakpoints
+// @see https://getbootstrap.com/docs/4.0/layout/grid/#grid-tiers
 $container-max-widths: (
   sm: 540px,
   md: 720px,

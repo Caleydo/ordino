@@ -101,7 +101,7 @@ export function OrdinoScrollspy(props) {
     }, []);
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "ordino-scrollspy-container" }, props.children(handleOnChange)),
-        React.createElement("ul", { className: "list-group list-group-flush ordino-scrollspy-nav flex-column ms-4" }, props.items.map((item) => {
+        React.createElement("ul", { className: "list-group d-none d-xxxl-block list-group-flush ordino-scrollspy-nav flex-column ml-4" }, props.items.map((item) => {
             return (React.createElement("a", { key: item.id, href: `#${item.id}`, onClick: scrollIntoView, className: `ps-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}` }, item.name));
         }))));
 }
@@ -114,7 +114,14 @@ const threshold = [0, 1];
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export function OrdinoScrollspyItem(props) {
-    return (React.createElement(InView, { className: props.className, id: props.id, threshold: threshold, onChange: (inView, entry) => props.handleOnChange(props.id, props.index, inView, entry) }, props.children));
+export function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }) {
+    return (
+    // @ts-expect-error TS2322 Error in `PlainChildrenProps` typings from react-intersection-observer
+    React.createElement(InView, Object.assign({ threshold: threshold, id: id }, innerProps, { onChange: (inView, entry) => {
+            if (innerProps.onChange) {
+                innerProps.onChange(inView, entry);
+            }
+            handleOnChange(id, index, inView, entry);
+        } })));
 }
 //# sourceMappingURL=OrdinoScrollspy.js.map

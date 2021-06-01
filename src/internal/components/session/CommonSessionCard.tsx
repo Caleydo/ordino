@@ -37,7 +37,7 @@ export const enum EAction {
     SAVE = 'save',
     EDIT = 'edit',
     CLONE = 'clone',
-    EXPORT = 'epxport',
+    EXPORT = 'export',
     DELETE = 'delete',
 }
 

@@ -22,18 +22,18 @@ export default function TemporarySessionCard({ name, faIcon }) {
                 status === 'pending' &&
                     React.createElement("p", null,
                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
-                        " Loading sets..."),
+                        I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')),
                 status === 'success' &&
                     sessions.length === 0 &&
-                    React.createElement("p", null, "No sets available"),
+                    React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')),
                 status === 'success' && sessions.length > 0 && (sessions === null || sessions === void 0 ? void 0 : sessions.map((session) => {
                     return React.createElement(SessionListItem, { key: session.id, desc: session, selectSession: (event) => sessionAction("select" /* SELECT */, event, session) },
-                        React.createElement("button", { type: "button", className: "me-2 pt-1 pb-1 btn btn-outline-secondary", onClick: (event) => sessionAction("save" /* SAVE */, event, session) }, "Save"),
+                        React.createElement("button", { type: "button", className: "mr-2 pt-1 pb-1 btn btn-outline-secondary", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession'), onClick: (event) => sessionAction("save" /* SAVE */, event, session) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')),
                         React.createElement(ListItemDropdown, null,
-                            React.createElement("button", { className: "dropdown-item", onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, "Clone"),
-                            React.createElement("button", { className: "dropdown-delete dropdown-item", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, "Delete")));
+                            React.createElement("button", { type: "button", className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary'), onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')),
+                            React.createElement("button", { type: "button", className: "dropdown-delete dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession'), onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete'))));
                 })),
-                status === 'error' && React.createElement("p", null, "Error when loading sets"));
+                status === 'error' && React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')));
         })));
 }
 //# sourceMappingURL=TemporarySessionCard.js.map

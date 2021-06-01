@@ -2,6 +2,7 @@ import {I18nextManager, UserSession} from 'phovea_core';
 import React from 'react';
 import {ENamedSetType, FormDialog, INamedSet, IStoredNamedSet, NotificationHandler, RestStorageUtils, StoreUtils} from 'tdp_core';
 import {ListItemDropdown} from '../../../components';
+import {DatasetUtils} from './DatasetUtils';
 
 interface INamedSetListProps {
   headerIcon: string;
@@ -48,11 +49,11 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
     <div className="dataset-entry d-flex flex-column col-md-4">
       <header><i className={`me-2 ${headerIcon}`}></i>{headerText}</header>
       {status === 'pending' &&
-        <p><i className="fas fa-circle-notch fa-spin"></i> Loading sets...</p>
+        <p><i className="fas fa-circle-notch fa-spin"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')} </p>
       }
       {status === 'success' &&
         value.length === 0 &&
-        <p>No sets available</p>
+        <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>
       }
       {status === 'success' &&
         value.length > 0 &&
@@ -61,11 +62,15 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
               <div key={i} className="dropdown-parent justify-content-between btn-group">
-                <button className="text-start ps-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
+                <button className="text-left pl-0 btn btn-link text-ordino-button-primary" title={DatasetUtils.toNamedSetTitle(namedSet)} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
                 {canWrite ?
                   <ListItemDropdown>
-                    <button className="dropdown-item" onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>Edit</button>
-                    <button className="dropdown-item dropdown-delete" onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}>Delete</button>
+                    <button className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails')} onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>
+                      {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')}
+                    </button>
+                    <button className="dropdown-item dropdown-delete" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')} onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}>
+                      {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}
+                    </button>
                   </ListItemDropdown> : null
                 }
               </div>);
@@ -73,7 +78,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
         </div>
       }
       {/* {status === 'error' && <p>{(typeof error === 'string') ? error : (error as Error)?.message}</p>} */}
-      {status === 'error' && <p>Error when loading sets</p>}
+      {status === 'error' && <p> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')}</p>}
     </div>
   );
 }

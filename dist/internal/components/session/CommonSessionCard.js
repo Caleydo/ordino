@@ -115,7 +115,7 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
                 return editSession(event, desc, updateSessions);
             case "clone" /* CLONE */:
                 return cloneSession(event, desc);
-            case "epxport" /* EXPORT */:
+            case "export" /* EXPORT */:
                 return exportSession(event, desc);
             case "delete" /* DELETE */:
                 return deleteSession(event, desc, updateSessions);

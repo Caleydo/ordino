@@ -1,4 +1,4 @@
-import {I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
+import {I18nextManager, IProvenanceGraphDataDescription} from 'phovea_core';
 import React from 'react';
 import {ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
 import {SessionAction} from './CommonSessionCard';
@@ -15,13 +15,12 @@ interface ISessionListItemProps {
 
 export function SessionListItem({desc, selectSession, children}: ISessionListItemProps) {
   const dateFromNow = desc?.ts ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
-
   return (
     <>
       <div className="row dropdown-parent session-item mx-0 mb-1 align-items-start">
         <div className="d-flex px-0 flex-column align-items-start col-md-11">
-          <button disabled={selectSession == null} className="ps-0 btn btn-link" style={{color: '#337AB7'}} onClick={(event) => selectSession(event, desc)}>
-            <i className={`me-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}`}></i>
+          <button type="button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession')} disabled={selectSession == null} className="pl-0 btn btn-link text-ordino-button-primary" onClick={(event) => selectSession(event, desc)}>
+            <i className={`mr-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}`}></i>
             {desc.name}
           </button>
           {desc.description ? <p className="ms-4">{desc.description} </p> : null}
@@ -33,11 +32,11 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
               <div className="col position-relative">
                 {ProvenanceGraphMenuUtils.isPublic(desc) ?
                   <p className="text-muted flex-grow-1" title={I18nextManager.getInstance().i18n.t('tdp:core.SessionList.status')}>
-                    <i className="me-2 fas fa-users"></i>Public access
-               </p> :
+                    <i className="mr-2 fas fa-users"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.publicAccess')}
+                  </p> :
                   <p className="text-muted flex-grow-1" title={I18nextManager.getInstance().i18n.t('tdp:core.SessionList.status', {context: 'private'})}>
-                    <i className="me-2 fas fa-user"></i>Private access
-              </p>}
+                    <i className="mr-2 fas fa-user"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.privateAccess')}
+                  </p>}
               </div>
             }
           </div>

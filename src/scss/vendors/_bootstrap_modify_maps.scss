@@ -18,6 +18,10 @@ $theme-colors: map-merge($theme-colors, $ordino-theme-colors);
 // @see https://getbootstrap.com/docs/4.5/getting-started/theming/#sass-options
 $spacer: 1.25rem;
 
+// Override some default spacers
+// @see https://getbootstrap.com/docs/4.0/utilities/spacing/
+$spacers: () !default;
+
 
 $ordino-spacers: (
   5: ($spacer * 2),
@@ -29,3 +33,23 @@ $ordino-spacers: (
 ) !default;
 
 $spacers: map-merge($spacers, $ordino-spacers);
+
+// Override the default grid-breakpoints
+// @see https://getbootstrap.com/docs/4.0/layout/grid/#grid-tiers
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px // new width in Bootstrap 5
+) !default; // TODO remove the whole $container-max-widths map after the upgrade to BS5, since it has no custom modifications
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px, // up to hear Bootstrap 4 + 5 default breakpoints
+  xxl: 1400px, // new breakpoint in Bootstrap 5
+  xxxl: 1900px // additional breakpoint to hide scrollspy nav
+) !default;

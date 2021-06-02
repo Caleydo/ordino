@@ -22,7 +22,7 @@ export function TourCard({image, title, text, onClickHandler, href}: ITourCardPr
                     <p className="card-text">
                         {text}
                     </p>
-                    <a className="btn btn-light" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')} href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')}</a>
+                    <a className="btn btn-light" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')} href={href} onClick={onClickHandler}><i className="me-1 fas fa-angle-right"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')}</a>
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@ export function SessionListItem({ desc, selectSession, children }) {
         React.createElement("div", { className: "row dropdown-parent session-item mx-0 mb-1 align-items-start" },
             React.createElement("div", { className: "d-flex px-0 flex-column align-items-start col-md-11" },
                 React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession'), disabled: selectSession == null, className: "pl-0 btn btn-link text-ordino-button-primary", onClick: (event) => selectSession(event, desc) },
-                    React.createElement("i", { className: `mr-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}` }),
+                    React.createElement("i", { className: `me-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}` }),
                     desc.name),
                 desc.description ? React.createElement("p", { className: "ms-4" },
                     desc.description,
@@ -19,10 +19,10 @@ export function SessionListItem({ desc, selectSession, children }) {
                     desc.local ? null :
                         React.createElement("div", { className: "col position-relative" }, ProvenanceGraphMenuUtils.isPublic(desc) ?
                             React.createElement("p", { className: "text-muted flex-grow-1", title: I18nextManager.getInstance().i18n.t('tdp:core.SessionList.status') },
-                                React.createElement("i", { className: "mr-2 fas fa-users" }),
+                                React.createElement("i", { className: "me-2 fas fa-users" }),
                                 I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.publicAccess')) :
                             React.createElement("p", { className: "text-muted flex-grow-1", title: I18nextManager.getInstance().i18n.t('tdp:core.SessionList.status', { context: 'private' }) },
-                                React.createElement("i", { className: "mr-2 fas fa-user" }),
+                                React.createElement("i", { className: "me-2 fas fa-user" }),
                                 I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.privateAccess'))))),
             React.createElement("div", { className: "d-flex px-0 mt-1 justify-content-end col-md-1" }, children))));
 }

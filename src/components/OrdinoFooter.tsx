@@ -40,24 +40,24 @@ export function OrdinoFooter(props) {
             <i className="me-2 fas fa-fw fa-database"></i>Loaded Datasets
           </FooterLink>
           <FooterLink to="/publication" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-book-open"></i>Publications
+            <i className="me-2 fas fa-fw fa-book-open"></i>Publications
           </FooterLink>
         </div>
         <div className="list-group">
           <FooterLink to="/help/ordino-at-a-glance" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-mountain"></i>Ordino at a Glance
+            <i className="me-2 fas fa-fw fa-mountain"></i>Ordino at a Glance
           </FooterLink>
           <FooterLink to="/help/contact-us" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-          <i className="mr-2 fas fa-fw fa-at"></i>Contact us
+          <i className="me-2 fas fa-fw fa-at"></i>Contact us
           </FooterLink>
           <FooterLink to="/help/disclaimer" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-exclamation-triangle"></i>Disclaimer
+            <i className="me-2 fas fa-fw fa-exclamation-triangle"></i>Disclaimer
           </FooterLink>
           <FooterLink to="/help/terms-of-use" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-smile"></i>Terms of Use
+            <i className="me-2 fas fa-fw fa-smile"></i>Terms of Use
           </FooterLink>
           <FooterLink to="/help/source-code-licenses" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="mr-2 fas fa-fw fa-code"></i>Source Code {'&'} Licenses
+            <i className="me-2 fas fa-fw fa-code"></i>Source Code {'&'} Licenses
           </FooterLink>
         </div>
       </nav>

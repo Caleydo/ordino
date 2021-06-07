@@ -40,6 +40,8 @@ function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
 export function StartMenuComponent({ header, mode, open }) {
+    // always use dark theme for header independent of if the menu is open or closed
+    header.toggleDarkTheme(true);
     // no active tab until `open` is set OR a link in the header navigation is clicked
     const [activeTab, setActiveTab] = React.useState(null);
     const [highlight, setHighlight] = React.useState(false);
@@ -62,10 +64,6 @@ export function StartMenuComponent({ header, mode, open }) {
         // tabs are sorted, the one with the lowest priority will be the default open tab
         setActiveTab((open === EStartMenuOpen.OPEN) ? tabs === null || tabs === void 0 ? void 0 : tabs[0] : null);
     }, [status, open]);
-    React.useEffect(() => {
-        // switch header to dark theme when a tab is active
-        header.toggleDarkTheme((activeTab) ? true : false);
-    }, [header, activeTab]);
     React.useEffect(() => {
         // add short cut button to current session card to navbar in header
         let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');

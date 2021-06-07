@@ -13,3 +13,27 @@
 [data-header="rightMenu"] {
   order: 10; // most right navbar menu
 }
+
+
+// override Provenance Graph Navigation to fit dark app header
+label.clue-E,
+label.clue-A,
+label.clue-P {
+  color: white;
+
+  &.active {
+    background-color: #5c6873;
+
+    &:hover,
+    &.focus {
+      background-color: #73818f;
+      color: white;
+    }
+  }
+
+  &:hover,
+  &.focus {
+    background-color: #73818f;
+    color: white;
+  }
+}

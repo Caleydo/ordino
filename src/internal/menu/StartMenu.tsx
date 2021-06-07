@@ -87,6 +87,9 @@ function byPriority(a: any, b: any) {
 
 
 export function StartMenuComponent({header, mode, open}: {header: AppHeader, mode: EStartMenuMode, open: EStartMenuOpen}) {
+  // always use dark theme for header independent of if the menu is open or closed
+  header.toggleDarkTheme(true);
+
   // no active tab until `open` is set OR a link in the header navigation is clicked
   const [activeTab, setActiveTab] = React.useState(null);
   const [highlight, setHighlight] = React.useState(false);
@@ -115,11 +118,6 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
     // tabs are sorted, the one with the lowest priority will be the default open tab
     setActiveTab((open === EStartMenuOpen.OPEN) ? tabs?.[0] : null);
   }, [status, open]);
-
-  React.useEffect(() => {
-    // switch header to dark theme when a tab is active
-    header.toggleDarkTheme((activeTab) ? true : false);
-  }, [header, activeTab]);
 
 
   React.useEffect(() => {

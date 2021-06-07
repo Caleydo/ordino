@@ -189,6 +189,9 @@ function StartMenuLinks(props: IStartMenuTabWrapperProps) {
             onClick={(evt) => {
               evt.preventDefault();
               if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
+                // remove :focus from link to remove highlight color
+                evt.currentTarget.blur();
+
                 // close tab only in overlay mode
                 props.setActiveTab(null);
               } else {

@@ -89,8 +89,13 @@ export function StartMenuComponent({ header, mode, open }) {
     }, [tabs]);
     React.useEffect(() => {
         var _a;
+        const isMenuOpen = (activeTab) ? true : false;
         // hide current session button when start menu is open
-        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', (activeTab) ? true : false);
+        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', isMenuOpen);
+        // add class to body to toggle CLUE button mode selector and side panels via CSS (see _header.scss)
+        // use CSS solution here, because there is no object reference to the button mode selector and side panels available
+        // TODO: refactor this solution once the CLUE mode selector and side panels are React based
+        document.body.classList.toggle('ordino-start-menu-open', isMenuOpen);
     }, [activeTab]);
     const mainMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
     const rightMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);

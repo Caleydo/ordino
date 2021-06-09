@@ -41,7 +41,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
               </li>
               <li className="nav-item" role="presentation">
                 <a className="nav-link" id={`saved-session-other-tab-${id}`} data-toggle="tab" href={`#saved-session-other-panel-${id}`} role="tab" aria-controls={`saved-session-other-panel-${id}`} aria-selected="false">
-                  <i className="mr-2 fas fa-users"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.publicSessions')}
+                  <i className="mr-2 fas fa-users"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.otherSessions')}
                 </a>
               </li>
             </ul>

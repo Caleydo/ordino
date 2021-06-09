@@ -28,7 +28,7 @@
             "alreadySaved": "Session is Already Saved",
             "saveSession": "Save Session",
             "mySessions": "My Sessions",
-            "publicSessions": "Public Sessions",
+            "otherSessions": "Other Sessions",
             "clone": "Clone",
             "cloneSession": "Clone Session",
             "cloneToTemporary": "Clone to Temporary Session",

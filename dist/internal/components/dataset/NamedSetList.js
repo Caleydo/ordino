@@ -36,6 +36,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
         status === 'pending' &&
             React.createElement("p", null,
                 React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                " ",
                 I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets'),
                 " "),
         status === 'success' &&

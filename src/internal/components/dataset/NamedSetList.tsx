@@ -49,7 +49,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
     <div className="dataset-entry d-flex flex-column col-md-4">
       <header><i className={`mr-2 ${headerIcon}`}></i>{headerText}</header>
       {status === 'pending' &&
-        <p><i className="fas fa-circle-notch fa-spin"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')} </p>
+        <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')} </p>
       }
       {status === 'success' &&
         value.length === 0 &&

@@ -40,6 +40,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                                        " ",
                                         I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')),
                                 status === 'success' &&
                                     savedSessions.length === 0 &&
@@ -56,6 +57,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                                        " ",
                                         I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')),
                                 status === 'success' &&
                                     otherSessions.length === 0 &&

@@ -24,11 +24,11 @@ export class Ordino extends ATDPApplication {
              */
             showReportBugLink: false,
             /**
-             * Disable help and show help in `Ordino at a Glance` page instead
+             * Hide help and show help in `Ordino at a Glance` page instead
              */
             showHelpLink: false,
             /**
-             * Disable tours link and show tours in a separate tours tab instead
+             * Hide tours link and show tours in a separate tours tab instead
              */
             showTourLink: false,
             /**

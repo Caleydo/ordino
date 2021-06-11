@@ -40,6 +40,8 @@ function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
 export function StartMenuComponent({ header, mode, open }) {
+    // always use dark theme for header independent of if the menu is open or closed
+    header.toggleDarkTheme(true);
     // no active tab until `open` is set OR a link in the header navigation is clicked
     const [activeTab, setActiveTab] = React.useState(null);
     const [highlight, setHighlight] = React.useState(false);
@@ -62,10 +64,6 @@ export function StartMenuComponent({ header, mode, open }) {
         // tabs are sorted, the one with the lowest priority will be the default open tab
         setActiveTab((open === EStartMenuOpen.OPEN) ? tabs === null || tabs === void 0 ? void 0 : tabs[0] : null);
     }, [status, open]);
-    React.useEffect(() => {
-        // switch header to dark theme when a tab is active
-        header.toggleDarkTheme((activeTab) ? true : false);
-    }, [header, activeTab]);
     React.useEffect(() => {
         // add short cut button to current session card to navbar in header
         let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');
@@ -91,8 +89,13 @@ export function StartMenuComponent({ header, mode, open }) {
     }, [tabs]);
     React.useEffect(() => {
         var _a;
+        const isMenuOpen = (activeTab) ? true : false;
         // hide current session button when start menu is open
-        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', (activeTab) ? true : false);
+        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', isMenuOpen);
+        // add class to body to toggle CLUE button mode selector and side panels via CSS (see _header.scss)
+        // use CSS solution here, because there is no object reference to the button mode selector and side panels available
+        // TODO: refactor this solution once the CLUE mode selector and side panels are React based
+        document.body.classList.toggle('ordino-start-menu-open', isMenuOpen);
     }, [activeTab]);
     const mainMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
     const rightMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
@@ -107,6 +110,8 @@ function StartMenuLinks(props) {
         React.createElement("a", { className: "nav-link", href: `#${tab.desc.id}`, id: `${tab.desc.id}-tab`, role: "tab", "aria-controls": tab.desc.id, "aria-selected": (props.activeTab === tab), onClick: (evt) => {
                 evt.preventDefault();
                 if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
+                    // remove :focus from link to remove highlight color
+                    evt.currentTarget.blur();
                     // close tab only in overlay mode
                     props.setActiveTab(null);
                 }

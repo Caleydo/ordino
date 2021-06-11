@@ -78,7 +78,7 @@ export function StartMenuComponent({ header, mode, open }) {
             "Current Analysis Session"), currentSessionNav);
         const clickListener = (event) => {
             event.preventDefault();
-            setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+            setActiveTab(tabs.find((tab) => tab.desc.id === 'ordino_sessions_tab')); // TODO: find better way to identify the tabs
             setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
         };
         currentSessionNav.addEventListener('click', clickListener);

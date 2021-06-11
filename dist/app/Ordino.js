@@ -16,19 +16,23 @@ export class Ordino extends ATDPApplication {
             prefix: 'ordino',
             name: 'Ordino',
             /**
-             * Show content in the `Ordino at a Glance` page instead.
+             * Show content in the `Ordino at a Glance` page instead
              */
             showAboutLink: false,
             /**
-             * Show content in the `Ordino at a Glance` page instead.
+             * Show content in the `Ordino at a Glance` page instead
              */
             showReportBugLink: false,
             /**
-             * Disable help modal dialog with tours and show tours in a separate tours tab instead
+             * Hide help and show help in `Ordino at a Glance` page instead
              */
             showHelpLink: false,
             /**
-             * Functionality is included in the sessions tab.
+             * Hide tours link and show tours in a separate tours tab instead
+             */
+            showTourLink: false,
+            /**
+             * Functionality is included in the sessions tab
              */
             showProvenanceMenu: false
         }, options));

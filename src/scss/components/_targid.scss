@@ -331,7 +331,7 @@ div.filmstrip {
     }*/
 
     > .chooser {
-      max-height: calc(100vh - 36px - 38px); // viewport height - header - history
+      max-height: calc(100vh - 40px - 46px - 1px); // viewport height - header - history/breadcrumbs - viewwrapper border top
       flex: 0 0 15em;
       background-color: $core_colour;
       text-align: center;

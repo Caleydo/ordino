@@ -74,8 +74,10 @@ export declare class CmdUtils {
      * @returns {IAction}
      */
     static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?: any, itemSelection?: ISelection): IAction;
-    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: any): any;
-    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): any;
+    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: any): Promise<{
+        inverse: IAction;
+    }>;
+    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): IAction;
     static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): IAction;
     /**
      * Factory function that compresses a series of action to fewer one.

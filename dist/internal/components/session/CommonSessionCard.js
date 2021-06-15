@@ -122,8 +122,8 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
         }
     };
     return React.createElement(React.Fragment, null,
-        React.createElement("h4", { className: "text-left d-flex align-items-center mb-3" },
-            React.createElement("i", { className: `mr-2 ordino-icon-2 fas ${faIcon}` }),
+        React.createElement("h4", { className: "text-start d-flex align-items-center mb-3" },
+            React.createElement("i", { className: `me-2 ordino-icon-2 fas ${faIcon}` }),
             cardName),
         React.createElement("div", { ref: parent, className: `card card-shadow ${highlight ? 'highlight-card' : ''}`, onAnimationStart: onHighlightAnimationStart, onAnimationEnd: onHighlightAnimationEnd },
             React.createElement("div", { className: "card-body p-3" },

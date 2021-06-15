@@ -134,7 +134,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
     currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
     currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
 
-    ReactDOM.render(<a href="#" className="nav-link" role="button"><i className="fas fa-history mr-2"></i>Current Analysis Session</a>, currentSessionNav);
+    ReactDOM.render(<a href="#" className="nav-link" role="button"><i className="fas fa-history me-2"></i>Current Analysis Session</a>, currentSessionNav);
 
     const clickListener = (event) => {
       event.preventDefault();
@@ -229,7 +229,7 @@ function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
               {props.mode === EStartMenuMode.OVERLAY &&
                 <div className="container-fluid">
                   <div className="row">
-                    <div className="col d-flex justify-content-end">
+                    <div className="col position-relative d-flex justify-content-end">
                       <button className="btn btn-link start-menu-close" onClick={() => {props.setActiveTab(null);}}>
                         <i className="fas fa-times"></i>
                       </button>

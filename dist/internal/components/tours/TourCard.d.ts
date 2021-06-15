@@ -1,5 +1,6 @@
 import * as React from 'react';
 interface ITourCardProps {
+    id: string;
     image: string | null;
     title: string;
     text: string;
@@ -7,5 +8,5 @@ interface ITourCardProps {
     onClickHandler?: (evt: React.MouseEvent<HTMLAnchorElement>) => void;
     children?: React.ReactNode;
 }
-export declare function TourCard({ image, title, text, onClickHandler, href }: ITourCardProps): JSX.Element;
+export declare function TourCard({ id, image, title, text, onClickHandler, href }: ITourCardProps): JSX.Element;
 export {};

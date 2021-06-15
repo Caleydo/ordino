@@ -26,7 +26,7 @@ export default function ToursTab(_props) {
             React.createElement(BrowserRouter, { basename: "/#" },
                 React.createElement(OrdinoFooter, { openInNewWindow: true }))) : null));
 }
-function ToursSection(props) {
+export function ToursSection(props) {
     if (props.tours.length === 0) {
         return null;
     }
@@ -47,7 +47,10 @@ function ToursSection(props) {
                 " ",
                 props.level),
             React.createElement("div", { className: "mb-4 row row-cols-md-3" }, props.tours.map((tour, index) => {
-                return React.createElement(TourCard, { key: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images[index] || null, onClickHandler: (evt) => TourUtils.startTour(tour.desc.id) });
+                // either hrefBase or onClickHandler
+                const href = (props.hrefBase) ? props.hrefBase.replace('{id}', tour.desc.id) : null;
+                const onClickHandler = (!props.hrefBase) ? (evt) => TourUtils.startTour(tour.desc.id) : null;
+                return React.createElement(TourCard, { key: tour.desc.id, id: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images[index] || null, onClickHandler: onClickHandler, href: href });
             })))
         : null));
 }

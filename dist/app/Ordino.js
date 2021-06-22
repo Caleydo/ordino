@@ -40,6 +40,12 @@ export class Ordino extends ATDPApplication {
     createApp(graph, manager, main) {
         return new Promise(async (resolve) => {
             main.classList.add('targid');
+            // open home page
+            const appLink = document.querySelector('*[data-header="appLink"]');
+            appLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.open('/#/');
+            });
             ReactDOM.render(React.createElement(OrdinoApp, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
                     resolve(instance); // Promise is resolved when the component is intialized
                 } }), main);

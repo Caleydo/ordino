@@ -51,6 +51,13 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
     return new Promise<OrdinoApp>(async (resolve) => {
       main.classList.add('targid');
 
+      // open home page
+      const appLink = document.querySelector('*[data-header="appLink"]') as HTMLAnchorElement;
+      appLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.open('/#/');
+      });
+
       ReactDOM.render(
         <OrdinoApp
           header={this.header}

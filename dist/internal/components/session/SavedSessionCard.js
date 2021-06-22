@@ -32,7 +32,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                     React.createElement("li", { className: "nav-item", role: "presentation" },
                         React.createElement("a", { className: "nav-link", id: `saved-session-other-tab-${id}`, "data-toggle": "tab", href: `#saved-session-other-panel-${id}`, role: "tab", "aria-controls": `saved-session-other-panel-${id}`, "aria-selected": "false" },
                             React.createElement("i", { className: "me-2 fas fa-users" }),
-                            I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.publicSessions')))),
+                            I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.otherSessions')))),
                 React.createElement("div", { className: "row pt-4" },
                     React.createElement("div", { className: "col position-relative" },
                         React.createElement("div", { className: "tab-content" },
@@ -40,6 +40,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                                        " ",
                                         I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')),
                                 status === 'success' &&
                                     savedSessions.length === 0 &&
@@ -56,6 +57,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
+                                        " ",
                                         I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')),
                                 status === 'success' &&
                                     otherSessions.length === 0 &&

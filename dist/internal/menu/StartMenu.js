@@ -40,6 +40,8 @@ function byPriority(a, b) {
     return (a.priority || 10) - (b.priority || 10);
 }
 export function StartMenuComponent({ header, mode, open }) {
+    // always use dark theme for header independent of if the menu is open or closed
+    header.toggleDarkTheme(true);
     // no active tab until `open` is set OR a link in the header navigation is clicked
     const [activeTab, setActiveTab] = React.useState(null);
     const [highlight, setHighlight] = React.useState(false);
@@ -63,10 +65,6 @@ export function StartMenuComponent({ header, mode, open }) {
         setActiveTab((open === EStartMenuOpen.OPEN) ? tabs === null || tabs === void 0 ? void 0 : tabs[0] : null);
     }, [status, open]);
     React.useEffect(() => {
-        // switch header to dark theme when a tab is active
-        header.toggleDarkTheme((activeTab) ? true : false);
-    }, [header, activeTab]);
-    React.useEffect(() => {
         // add short cut button to current session card to navbar in header
         let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');
         // skip if tabs are not available (yet) or nav item is already initialized
@@ -80,7 +78,7 @@ export function StartMenuComponent({ header, mode, open }) {
             "Current Analysis Session"), currentSessionNav);
         const clickListener = (event) => {
             event.preventDefault();
-            setActiveTab(tabs[1]); // TODO: find better way to identify the tabs
+            setActiveTab(tabs.find((tab) => tab.desc.id === 'ordino_sessions_tab')); // TODO: find better way to identify the tabs
             setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
         };
         currentSessionNav.addEventListener('click', clickListener);
@@ -91,8 +89,13 @@ export function StartMenuComponent({ header, mode, open }) {
     }, [tabs]);
     React.useEffect(() => {
         var _a;
+        const isMenuOpen = (activeTab) ? true : false;
         // hide current session button when start menu is open
-        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', (activeTab) ? true : false);
+        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', isMenuOpen);
+        // add class to body to toggle CLUE button mode selector and side panels via CSS (see _header.scss)
+        // use CSS solution here, because there is no object reference to the button mode selector and side panels available
+        // TODO: refactor this solution once the CLUE mode selector and side panels are React based
+        document.body.classList.toggle('ordino-start-menu-open', isMenuOpen);
     }, [activeTab]);
     const mainMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
     const rightMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
@@ -107,6 +110,8 @@ function StartMenuLinks(props) {
         React.createElement("a", { className: "nav-link", href: `#${tab.desc.id}`, id: `${tab.desc.id}-tab`, role: "tab", "aria-controls": tab.desc.id, "aria-selected": (props.activeTab === tab), onClick: (evt) => {
                 evt.preventDefault();
                 if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
+                    // remove :focus from link to remove highlight color
+                    evt.currentTarget.blur();
                     // close tab only in overlay mode
                     props.setActiveTab(null);
                 }
@@ -123,7 +128,7 @@ function StartMenuTabWrapper(props) {
         return null;
     }
     return (React.createElement(React.Fragment, null, props.status === 'success' &&
-        React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.desc.id, id: tab.desc.id, role: "tabpanel", "aria-labelledby": `${tab.desc.id}-tab` },
+        React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.desc.id, id: tab.desc.id, role: "tabpanel", "aria-labelledby": `${tab.desc.id}-tab` },
             props.mode === EStartMenuMode.OVERLAY &&
                 React.createElement("div", { className: "container-fluid" },
                     React.createElement("div", { className: "row" },

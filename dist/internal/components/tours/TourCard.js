@@ -1,8 +1,8 @@
 import { I18nextManager } from 'phovea_core';
 import * as React from 'react';
-export function TourCard({ image, title, text, onClickHandler, href }) {
+export function TourCard({ id, image, title, text, onClickHandler, href }) {
     return (React.createElement("div", { className: "col position-relative" },
-        React.createElement("div", { className: "card ordino-tour-card shadow-sm" },
+        React.createElement("div", { className: "card ordino-tour-card shadow-sm", "data-id": id },
             image ?
                 React.createElement("img", { className: "card-img-top p-2", style: { height: '200px' }, src: image, alt: "Tour Image" })
                 : null,

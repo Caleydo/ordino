@@ -213,7 +213,7 @@ nav.mainNavi {
 $mode-animation-time: 500ms;
 
 
-div.targid {
+div.filmstrip {
   flex: 1;
 
   display: flex;
@@ -221,8 +221,6 @@ div.targid {
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;
-
-  border-left: 1px solid #ddd;
 
   > .viewWrapper {
     position: relative;
@@ -337,7 +335,7 @@ div.targid {
     }*/
 
     > .chooser {
-      max-height: calc(100vh - 36px - 38px); // viewport height - header - history
+      max-height: calc(100vh - 40px - 46px - 1px); // viewport height - header - history/breadcrumbs - viewwrapper border top
       flex: 0 0 15em;
       background-color: $core_colour;
       text-align: center;

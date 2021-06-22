@@ -37,7 +37,7 @@ export function OrdinoFooter(props) {
             <i className="me-2 fas fa-fw fa-check"></i>Features
           </FooterLink>
           <FooterLink to="/datasets" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="me-2 fas fa-fw fa-database"></i>Loaded Datasets
+            <i className="me-2 fas fa-fw fa-database"></i>Loaded datasets
           </FooterLink>
           <FooterLink to="/publication" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="me-2 fas fa-fw fa-book-open"></i>Publications
@@ -45,7 +45,7 @@ export function OrdinoFooter(props) {
         </div>
         <div className="list-group">
           <FooterLink to="/help/ordino-at-a-glance" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="me-2 fas fa-fw fa-mountain"></i>Ordino at a Glance
+            <i className="me-2 fas fa-fw fa-mountain"></i>Ordino at a glance
           </FooterLink>
           <FooterLink to="/help/contact-us" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
           <i className="me-2 fas fa-fw fa-at"></i>Contact us
@@ -54,10 +54,10 @@ export function OrdinoFooter(props) {
             <i className="me-2 fas fa-fw fa-exclamation-triangle"></i>Disclaimer
           </FooterLink>
           <FooterLink to="/help/terms-of-use" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="me-2 fas fa-fw fa-smile"></i>Terms of Use
+            <i className="me-2 fas fa-fw fa-smile"></i>Terms of use
           </FooterLink>
           <FooterLink to="/help/source-code-licenses" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-            <i className="me-2 fas fa-fw fa-code"></i>Source Code {'&'} Licenses
+            <i className="me-2 fas fa-fw fa-code"></i>Source code {'&'} licenses
           </FooterLink>
         </div>
       </nav>

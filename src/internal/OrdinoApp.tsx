@@ -515,11 +515,11 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
           <OrdinoContext.Provider value={{app: this}}>
-          <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
-          <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
-          <div className="wrapper">
-            <div className="targid" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
-          </div>
+            <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
+            <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
+            <div className="wrapper">
+              <div className="filmstrip" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
+            </div>
           </OrdinoContext.Provider>
         </GraphContext.Provider>
       </>

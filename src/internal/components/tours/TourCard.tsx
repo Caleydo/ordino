@@ -2,6 +2,7 @@ import {I18nextManager} from 'phovea_core';
 import * as React from 'react';
 
 interface ITourCardProps {
+    id: string;
     image: string | null;
     title: string;
     text: string;
@@ -10,10 +11,10 @@ interface ITourCardProps {
     children?: React.ReactNode;
 }
 
-export function TourCard({image, title, text, onClickHandler, href}: ITourCardProps) {
+export function TourCard({id, image, title, text, onClickHandler, href}: ITourCardProps) {
     return (
         <div className="col position-relative">
-            <div className="card ordino-tour-card shadow-sm">
+            <div className="card ordino-tour-card shadow-sm" data-id={id}>
                 {image ?
                     <img className="card-img-top p-2" style={{height: '200px'}} src={image} alt="Tour Image" />
                     : null}

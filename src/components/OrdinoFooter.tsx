@@ -29,7 +29,7 @@ export function OrdinoFooter(props) {
   return (
     <div className="ordino-footer pt-4 pb-6 px-5">
       <nav className="ordino-footer-navigation row">
-        <div className="list-group">
+        <div className="list-group col-sm-auto">
           <FooterLink to="/news" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="me-2 fas fa-fw fa-newspaper"></i>What's new?
           </FooterLink>
@@ -43,7 +43,7 @@ export function OrdinoFooter(props) {
             <i className="me-2 fas fa-fw fa-book-open"></i>Publications
           </FooterLink>
         </div>
-        <div className="list-group">
+        <div className="list-group col-sm-auto">
           <FooterLink to="/help/ordino-at-a-glance" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="me-2 fas fa-fw fa-mountain"></i>Ordino at a glance
           </FooterLink>

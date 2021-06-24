@@ -12,7 +12,7 @@ export function OrdinoFooter(props) {
     const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
     return (React.createElement("div", { className: "ordino-footer pt-4 pb-6 px-5" },
         React.createElement("nav", { className: "ordino-footer-navigation row" },
-            React.createElement("div", { className: "list-group" },
+            React.createElement("div", { className: "list-group col-sm-auto" },
                 React.createElement(FooterLink, { to: "/news", openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
                     React.createElement("i", { className: "me-2 fas fa-fw fa-newspaper" }),
                     "What's new?"),
@@ -25,7 +25,7 @@ export function OrdinoFooter(props) {
                 React.createElement(FooterLink, { to: "/publication", openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
                     React.createElement("i", { className: "me-2 fas fa-fw fa-book-open" }),
                     "Publications")),
-            React.createElement("div", { className: "list-group" },
+            React.createElement("div", { className: "list-group col-sm-auto" },
                 React.createElement(FooterLink, { to: "/help/ordino-at-a-glance", openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
                     React.createElement("i", { className: "me-2 fas fa-fw fa-mountain" }),
                     "Ordino at a glance"),

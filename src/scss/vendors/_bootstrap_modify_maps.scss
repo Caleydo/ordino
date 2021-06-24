@@ -14,21 +14,6 @@ $ordino-theme-colors: (
 
 $theme-colors: map-merge($theme-colors, $ordino-theme-colors);
 
-// Override spacing (Bootstrap default: 1 rem)
-// @see https://getbootstrap.com/docs/4.5/getting-started/theming/#sass-options
-$spacer: 1.25rem;
-
-$ordino-spacers: (
-  5: ($spacer * 2),
-  6: ($spacer * 3),
-  7: ($spacer * 4),
-  8: ($spacer * 5),
-  9: ($spacer * 6),
-  10: ($spacer * 7)
-) !default;
-
-$spacers: map-merge($spacers, $ordino-spacers);
-
 // Override the default grid-breakpoints
 // @see https://getbootstrap.com/docs/4.0/layout/grid/#grid-tiers
 $container-max-widths: (

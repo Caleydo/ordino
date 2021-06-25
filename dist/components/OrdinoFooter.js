@@ -22,7 +22,7 @@ export function OrdinoFooter(props) {
                 React.createElement(FooterLink, { to: "/datasets", openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
                     React.createElement("i", { className: "mr-2 fas fa-fw fa-database" }),
                     "Loaded datasets"),
-                React.createElement(FooterLink, { to: "/publication", openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
+                React.createElement(FooterLink, { to: "/publications", openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
                     React.createElement("i", { className: "mr-2 fas fa-fw fa-book-open" }),
                     "Publications")),
             React.createElement("div", { className: "list-group" },

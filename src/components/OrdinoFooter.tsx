@@ -39,7 +39,7 @@ export function OrdinoFooter(props) {
           <FooterLink to="/datasets" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-database"></i>Loaded datasets
           </FooterLink>
-          <FooterLink to="/publication" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
+          <FooterLink to="/publications" openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
             <i className="mr-2 fas fa-fw fa-book-open"></i>Publications
           </FooterLink>
         </div>

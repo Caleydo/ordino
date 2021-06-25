@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {ProvenanceGraph} from 'phovea_core';
+import {ProvenanceGraph, I18nextManager} from 'phovea_core';
 import {CLUEGraphManager} from 'phovea_clue';
 import {OrdinoApp} from '../internal/OrdinoApp';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
@@ -50,6 +50,14 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
   ) {
     return new Promise<OrdinoApp>(async (resolve) => {
       main.classList.add('targid');
+
+      // reconfigure app link to open the homepage in a new tab
+      const appLink = document.querySelector('*[data-header="appLink"]') as HTMLAnchorElement;
+      appLink.title = I18nextManager.getInstance().i18n.t('tdp:ordino.appLink.title');
+      appLink.href = '/'; // domain root
+      appLink.target = '_blank';
+      appLink.rel = 'noopener noreferrer';
+      appLink.onclick = null; // remove default click listener from `ATDPApplication.createHeader()`
 
       ReactDOM.render(
         <OrdinoApp

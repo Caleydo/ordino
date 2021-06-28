@@ -38,7 +38,9 @@
             "continueSession": "Continue Session",
             "privateAccess": "Private Access",
             "publicAccess": "Public Access",
-            "startTour": "Start Tour"
+            "startTour": "Start Tour",
+            "tourLevelBeginner": "General introduction",
+            "tourLevelAdvanced": "Advanced tours"
         }
     }
 }

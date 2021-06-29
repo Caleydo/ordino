@@ -137,10 +137,10 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
 
   return (
     <>
-      <div className="ordino-scrollspy-container px-0 px-xxl-15">
+      <div className="ordino-scrollspy-container">
         {props.children(handleOnChange)}
       </div>
-      <ul className="list-group d-none d-xxl-block list-group-flush ordino-scrollspy-nav flex-column ml-4">
+      <ul className="list-group d-none d-xxxl-block list-group-flush ordino-scrollspy-nav flex-column ml-4">
         {props.items.map((item) => {
           return (
             <a key={item.id} href={`#${item.id}`} onClick={scrollIntoView} className={`pl-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}`}>{item.name}</a>

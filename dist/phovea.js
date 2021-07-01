@@ -79,7 +79,7 @@ export default function (registry) {
         priority: 20
     });
     registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_tours_tab', () => import('./internal/menu/tabs/ToursTab'), {
-        text: 'Tours',
+        text: 'Onboarding Tours',
         menu: EStartMenuSection.MAIN,
         priority: 30
     });

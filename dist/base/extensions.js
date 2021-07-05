@@ -11,4 +11,5 @@ export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSect
  * Register a new section in the start menu datasets tab
  */
 export const EP_ORDINO_STARTMENU_DATASET_SECTION = 'epOrdinoStartMenuDatasetSection';
+export const EP_ORDINO_FOOTER_MENU = 'epOrdinoFooterMenu';
 //# sourceMappingURL=extensions.js.map

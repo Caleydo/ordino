@@ -127,10 +127,12 @@ export declare const EP_ORDINO_FOOTER_MENU = "epOrdinoFooterMenu";
 export interface IOrdinoFooterMenuDesc extends IPluginDesc {
     /**
      * Nested list of links for the menu
+     * - First level = list group
+     * - Second level = list items (= links)
      */
-    readonly lists: IOrdinoFooterLists[][];
+    readonly lists: IOrdinoFooterMenuLink[][];
 }
-export interface IOrdinoFooterLists {
+export interface IOrdinoFooterMenuLink {
     page: string;
     faIcon: string;
     text: string;

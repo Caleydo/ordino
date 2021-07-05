@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {OrdinoLogo} from './OrdinoLogo';
 import {PluginRegistry} from 'phovea_core';
-import {EP_ORDINO_FOOTER_MENU, IOrdinoFooterMenuDesc, IOrdinoFooterLists} from '../base';
+import {EP_ORDINO_FOOTER_MENU, IOrdinoFooterMenuDesc, IOrdinoFooterMenuLink} from '../base';
 
 interface IFooterLinkProps {
   to: string;
@@ -28,7 +28,7 @@ const FooterLink = (props: IFooterLinkProps) => {
 export function OrdinoFooter(props) {
   const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
 
-  const lists: IOrdinoFooterLists[][] = PluginRegistry.getInstance().listPlugins(EP_ORDINO_FOOTER_MENU)
+  const lists: IOrdinoFooterMenuLink[][] = PluginRegistry.getInstance().listPlugins(EP_ORDINO_FOOTER_MENU)
     .map((d) => d as IOrdinoFooterMenuDesc) // no need to load the plugin; everything is contained in the plugin desc
     .map((d) => d.lists)[0]; // take only the first footer menu
 

@@ -119,4 +119,22 @@ export interface IStartMenuDatasetSection {
     push(namedSet: INamedSet): boolean;
     update(): void;
 }
+export declare const EP_ORDINO_FOOTER_MENU = "epOrdinoFooterMenu";
+/**
+ * Register links to the footer menu
+ * Only a single footer menu is considered
+ */
+export interface IOrdinoFooterMenuDesc extends IPluginDesc {
+    /**
+     * Nested list of links for the menu
+     * - First level = list group
+     * - Second level = list items (= links)
+     */
+    readonly lists: IOrdinoFooterMenuLink[][];
+}
+export interface IOrdinoFooterMenuLink {
+    page: string;
+    faIcon: string;
+    text: string;
+}
 export {};

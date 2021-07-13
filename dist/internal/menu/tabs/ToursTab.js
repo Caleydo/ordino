@@ -42,7 +42,7 @@ export function ToursSection(props) {
     const { status, value: images } = useAsync(loadTourImages);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(React.Fragment, null,
-            React.createElement("h4", { className: "text-left mt-4 mb-3  d-flex align-items-center text-capitalize" },
+            React.createElement("h4", { className: "text-start mt-4 mb-3  d-flex align-items-center text-capitalize" },
                 React.createElement("i", { className: "me-2 ordino-icon-1 fas fa-chevron-circle-right" }),
                 " ",
                 (props.level === 'beginner') ? I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tourLevelBeginner') : I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tourLevelAdvanced')),

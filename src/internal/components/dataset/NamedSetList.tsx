@@ -62,7 +62,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
               <div key={i} className="dropdown-parent justify-content-between btn-group">
-                <button className="text-start pl-0 btn btn-link text-ordino-button-primary" title={DatasetUtils.toNamedSetTitle(namedSet)} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
+                <button className="text-start ps-0 btn btn-link text-ordino-button-primary" title={DatasetUtils.toNamedSetTitle(namedSet)} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
                 {canWrite ?
                   <ListItemDropdown>
                     <button className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails')} onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>

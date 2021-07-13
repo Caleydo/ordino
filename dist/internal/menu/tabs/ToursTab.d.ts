@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { ITDPTourExtension } from 'tdp_core';
 import { IPlugin } from 'phovea_core';
 import { IStartMenuTabProps } from '../StartMenu';

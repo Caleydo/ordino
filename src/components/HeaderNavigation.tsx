@@ -25,7 +25,7 @@ export function HeaderNavigation(props: IHeaderNavigationProps) {
           <OrdinoLogo></OrdinoLogo>
         </a>
         <a href="/app/" className="order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light">Start Analysis</a>
-        <button className="navbar-toggler" type="button" data-bs-toggle="button" data-target="#ordino-header-navbar-nav" aria-controls="ordino-header-navbar-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <button className="navbar-toggler" type="button" data-bs-toggle="button" data-bs-target="#ordino-header-navbar-nav" aria-controls="ordino-header-navbar-nav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="order-1 navbar-collapse collapse" id="ordino-header-navbar-nav">

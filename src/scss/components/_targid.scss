@@ -240,6 +240,11 @@ div.filmstrip {
       width: 100%;
     }
 
+    // hide close button for the first view
+    &:nth-child(1) > .view > button.close {
+      display: none;
+    }
+
     &.t-focus {
       width: 70%;
     }

@@ -3,7 +3,7 @@ import {TourCard, OrdinoScrollspy} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
 import {TourUtils, ITDPTourExtensionDesc, ITDPTourExtension} from 'tdp_core';
-import {PluginRegistry, IPlugin} from 'phovea_core';
+import {PluginRegistry, IPlugin, I18nextManager} from 'phovea_core';
 import {useAsync} from '../../../hooks';
 import {IStartMenuTabProps} from '../StartMenu';
 
@@ -63,7 +63,7 @@ export function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPl
     <>
       {status === 'success' ?
         <>
-          <h4 className="text-start mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="me-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {props.level}</h4>
+          <h4 className="text-left mt-4 mb-3  d-flex align-items-center text-capitalize"><i className="me-2 ordino-icon-1 fas fa-chevron-circle-right"></i> {(props.level === 'beginner') ? I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tourLevelBeginner') : I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tourLevelAdvanced')}</h4>
           <div className="mb-4 row row-cols-md-3">
             {props.tours.map((tour, index) => {
               // either hrefBase or onClickHandler

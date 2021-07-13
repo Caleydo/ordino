@@ -9,6 +9,9 @@
         }
     },
     "ordino": {
+        "appLink": {
+            "title": "Open Ordino start page in a new tab"
+        },
         "startMenu": {
             "currentCardInfo": "Save the current session to open it later again or share it with other users.",
             "tempCardInfo": "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states of this session with others. Only the 10 most recent sessions will be stored.",
@@ -35,7 +38,9 @@
             "continueSession": "Continue Session",
             "privateAccess": "Private Access",
             "publicAccess": "Public Access",
-            "startTour": "Start Tour"
+            "startTour": "Start Tour",
+            "tourLevelBeginner": "General introduction",
+            "tourLevelAdvanced": "Advanced tours"
         }
     }
 }

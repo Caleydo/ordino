@@ -7,6 +7,7 @@
  ********************************************************************/
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { I18nextManager } from 'phovea_core';
 import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication } from 'tdp_core';
 import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenu';
@@ -40,6 +41,13 @@ export class Ordino extends ATDPApplication {
     createApp(graph, manager, main) {
         return new Promise(async (resolve) => {
             main.classList.add('targid');
+            // reconfigure app link to open the homepage in a new tab
+            const appLink = document.querySelector('*[data-header="appLink"]');
+            appLink.title = I18nextManager.getInstance().i18n.t('tdp:ordino.appLink.title');
+            appLink.href = '/'; // domain root
+            appLink.target = '_blank';
+            appLink.rel = 'noopener noreferrer';
+            appLink.onclick = null; // remove default click listener from `ATDPApplication.createHeader()`
             ReactDOM.render(React.createElement(OrdinoApp, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
                     resolve(instance); // Promise is resolved when the component is intialized
                 } }), main);

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { OrdinoLogo } from './OrdinoLogo';
 export function HeaderNavigation(props) {
     var _a;
-    const bg = (_a = props.bg) !== null && _a !== void 0 ? _a : 'ordino-gray-2';
+    const bg = (_a = props.bg) !== null && _a !== void 0 ? _a : 'dark';
     return (React.createElement("nav", { className: `ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${props.fixed === 'top' ? 'fixed-top' : ''} ${props.fixed === 'bottom' ? 'fixed-bottom' : ''}` },
         React.createElement("div", { className: "container-fluid" },
             React.createElement("a", { href: "#/", className: "navbar-brand" },

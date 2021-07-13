@@ -10,13 +10,13 @@ interface IHeaderNavigationProps {
 
   /**
    * Background color
-   * @default ordino-gray-2 (see variables.scss)
+   * @default dark (see variables.scss)
    */
   bg?: string;
 }
 
 export function HeaderNavigation(props: IHeaderNavigationProps) {
-  const bg = props.bg ?? 'ordino-gray-2';
+  const bg = props.bg ?? 'dark';
 
   return (
     <nav className={`ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${props.fixed === 'top' ? 'fixed-top' : ''} ${props.fixed === 'bottom' ? 'fixed-bottom' : ''}`}>

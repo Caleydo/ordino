@@ -37,7 +37,7 @@ export function OrdinoFooter(props) {
       <nav className="ordino-footer-navigation row">
         {lists && lists.map((list, index) => {
           return (
-          <div className="list-group" key={index}>
+          <div className="list-group col-sm-auto" key={index}>
             {
               list && list.map((link) => {
                 return (

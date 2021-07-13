@@ -17,7 +17,7 @@ export function OrdinoFooter(props) {
         .map((d) => d.lists)[0]; // take only the first footer menu
     return (React.createElement("div", { className: "ordino-footer pt-4 pb-6 px-5" },
         React.createElement("nav", { className: "ordino-footer-navigation row" }, lists && lists.map((list, index) => {
-            return (React.createElement("div", { className: "list-group", key: index }, list && list.map((link) => {
+            return (React.createElement("div", { className: "list-group col-sm-auto", key: index }, list && list.map((link) => {
                 return (React.createElement(FooterLink, { key: link.page, to: link.page, openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
                     React.createElement("i", { className: `me-2 ${link.faIcon}` }),
                     " ",

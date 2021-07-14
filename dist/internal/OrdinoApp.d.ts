@@ -34,6 +34,8 @@ interface IOrdinoAppState {
     mode: EStartMenuMode;
     open: EStartMenuOpen;
     views: ViewWrapper[];
+    externalDetailViewOpen: boolean;
+    currentView: ViewWrapper;
 }
 /**
  * The main class for the Ordino app
@@ -60,15 +62,18 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * React DOM node reference
      */
     private readonly nodeRef;
+    protected externalWindowRef: Window | null;
     private readonly removeWrapper;
     private readonly chooseNextView;
     private readonly replaceViewInViewWrapper;
     private readonly updateSelection;
+    private readonly setExternalViewStateTrue;
     constructor(props: any);
     /**
      * This function can be used to load some initial content async
      */
     initApp(): Promise<any>;
+    setExternalViewState(): void;
     /**
      * Set the mode and open/close state of the start menu.
      * Set both options at once to avoid multiple rerender.

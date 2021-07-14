@@ -20,6 +20,7 @@ import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
 import {OrdinoBreadcrumbs} from './components/navigation';
+import {ExternalViewPortal} from './ExternalViewPortal';
 
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null});
@@ -28,7 +29,7 @@ export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null})
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
 // tslint:disable-next-line: variable-name
-export const HighlightSessionCardContext = React.createContext<{highlight: boolean, setHighlight: React.Dispatch<React.SetStateAction<boolean>>}>({highlight: false, setHighlight: () => { /* dummy function */ }});
+export const HighlightSessionCardContext = React.createContext<{highlight: boolean, setHighlight: React.Dispatch<React.SetStateAction<boolean>>}>({highlight: false, setHighlight: () => { /* dummy function */}});
 
 interface IOrdinoAppProps {
   graph: ProvenanceGraph;
@@ -40,6 +41,8 @@ interface IOrdinoAppState {
   mode: EStartMenuMode;
   open: EStartMenuOpen;
   views: ViewWrapper[];
+  externalDetailViewOpen: boolean;
+  currentView: ViewWrapper;
 }
 
 /**
@@ -49,7 +52,7 @@ interface IOrdinoAppState {
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp  {
+export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp {
   /**
    * Key for the session storage that is temporarily used when starting a new analysis session
    */
@@ -71,11 +74,13 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   private readonly nodeRef: React.RefObject<HTMLDivElement>;
 
+  protected externalWindowRef: Window | null = null;
+
   private readonly removeWrapper = (_event: any, view: ViewWrapper) => this.remove(view);
   private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);
   private readonly replaceViewInViewWrapper = (_event: any, _view: ViewWrapper) => this.updateDetailViewChoosers();
   private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(event.target as ViewWrapper, old, newValue);
-
+  private readonly setExternalViewStateTrue = () => this.setExternalViewState();
   constructor(props) {
     super(props);
 
@@ -88,7 +93,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     this.state = {
       mode: EStartMenuMode.START,
       open: EStartMenuOpen.CLOSED,
-      views: []
+      views: [],
+      externalDetailViewOpen: false,
+      currentView: null
     };
   }
 
@@ -97,6 +104,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   async initApp() {
     return null;
+  }
+  setExternalViewState() {
+    this.setState((previousState) => ({...previousState, externalDetailViewOpen: true}))
   }
 
   /**
@@ -285,7 +295,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any = null) {
     // use current emtpy session to start analysis and skip reload to create a new provenance graph
-    if(this.props.graph.isEmpty) {
+    if (this.props.graph.isEmpty) {
       this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
       return;
     }
@@ -325,7 +335,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
 
       // start a tour if a tour ID is passed as URL hash
-      if(AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
+      if (AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
         const tourId = AppContext.getInstance().hash.getProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
         // remove hash to avoid starting the tour again after another page load (e.g., starting a new session)
         AppContext.getInstance().hash.removeProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
@@ -389,6 +399,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    view.on(ViewWrapper.EVENT_OPEN_EXTERNALLY, () => this.setExternalViewState());
     // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
 
     this.setState({
@@ -506,12 +517,16 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     });
   }
 
+
   /**
    * updates the views information, e.g. history
    */
   render() {
+
     this.updateDetailViewChoosers();
-    return(
+    const previousView = this.state.views?.[this.state.views.length - 2];
+    const currentView = this.state.views?.[this.state.views.length - 1];
+    return (
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
           <OrdinoContext.Provider value={{app: this}}>
@@ -522,6 +537,23 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
             </div>
           </OrdinoContext.Provider>
         </GraphContext.Provider>
+
+        <ExternalViewPortal
+          active={this.state.externalDetailViewOpen}
+          title="External Detail Views"
+          viewWrapper={currentView}
+          onWindowClosed={() => {
+            // this.setState((prevState) => ({...prevState, externalDetailViewOpen: false}));
+            this.showInFocus(currentView);
+          }
+          }
+          onWindowOpened={(window) => {
+              this.setState((previousState) => ({...previousState, currentView}));
+            this.externalWindowRef = window;
+            this.showInFocus(previousView);
+          }}
+        >
+        </ExternalViewPortal>
       </>
     );
   }

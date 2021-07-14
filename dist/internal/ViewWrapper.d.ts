@@ -13,6 +13,7 @@ import { EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;
     selection: ISelection;
+    itemSelection: ISelection | null;
     private plugin;
     private firstTime;
     options?: any;
@@ -21,6 +22,7 @@ export declare class ViewWrapper extends EventHandler {
     static EVENT_REMOVE: string;
     static EVENT_MODE_CHANGED: string;
     static EVENT_REPLACE_VIEW: string;
+    static EVENT_OPEN_EXTERNALLY: string;
     private $viewWrapper;
     private $node;
     private $chooser;
@@ -54,6 +56,7 @@ export declare class ViewWrapper extends EventHandler {
      */
     context: IViewContext;
     built: PromiseLike<any>;
+    readonly render: (parent: Element) => void;
     /**
      * Initialize this view, create the root node and the (inner) view
      * @param graph
@@ -64,6 +67,8 @@ export declare class ViewWrapper extends EventHandler {
      * @param options
      */
     constructor(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IPlugin, firstTime: boolean, options?: any);
+    reInitialize(): void;
+    renderInNewNode(parents: Element): void;
     /**
      * Create provenance reference object (`this.ref`) and the context (`this.context`)
      * @param graph
@@ -123,3 +128,4 @@ export declare class ViewWrapper extends EventHandler {
     static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<ViewWrapper>;
     static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection | null, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<any>;
 }
+export declare let awaitWindowLoad: (win: any, cb: any) => void;

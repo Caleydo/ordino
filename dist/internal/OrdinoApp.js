@@ -15,6 +15,7 @@ import { CmdUtils } from './cmds';
 import { UserSession } from 'phovea_core';
 import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenu';
 import { OrdinoBreadcrumbs } from './components/navigation';
+import { ExternalViewPortal } from './ExternalViewPortal';
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext({ app: null });
 // tslint:disable-next-line: variable-name
@@ -31,10 +32,12 @@ export const HighlightSessionCardContext = React.createContext({ highlight: fals
 export class OrdinoApp extends React.Component {
     constructor(props) {
         super(props);
+        this.externalWindowRef = null;
         this.removeWrapper = (_event, view) => this.remove(view);
         this.chooseNextView = (event, viewId, idtype, selection) => this.handleNextView(event.target, viewId, idtype, selection);
         this.replaceViewInViewWrapper = (_event, _view) => this.updateDetailViewChoosers();
         this.updateSelection = (event, old, newValue) => this.updateItemSelection(event.target, old, newValue);
+        this.setExternalViewStateTrue = () => this.setExternalViewState();
         this.nodeRef = React.createRef();
         // add OrdinoApp app as (first) object to provenance graph
         // need old name for compatibility
@@ -42,7 +45,9 @@ export class OrdinoApp extends React.Component {
         this.state = {
             mode: EStartMenuMode.START,
             open: EStartMenuOpen.CLOSED,
-            views: []
+            views: [],
+            externalDetailViewOpen: false,
+            currentView: null
         };
     }
     /**
@@ -50,6 +55,9 @@ export class OrdinoApp extends React.Component {
      */
     async initApp() {
         return null;
+    }
+    setExternalViewState() {
+        this.setState((previousState) => ({ ...previousState, externalDetailViewOpen: true }));
     }
     /**
      * Set the mode and open/close state of the start menu.
@@ -311,6 +319,7 @@ export class OrdinoApp extends React.Component {
         view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+        view.on(ViewWrapper.EVENT_OPEN_EXTERNALLY, () => this.setExternalViewState());
         // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
         this.setState({
             views: [...this.state.views, view]
@@ -420,14 +429,25 @@ export class OrdinoApp extends React.Component {
      * updates the views information, e.g. history
      */
     render() {
+        var _a, _b;
         this.updateDetailViewChoosers();
+        const previousView = (_a = this.state.views) === null || _a === void 0 ? void 0 : _a[this.state.views.length - 2];
+        const currentView = (_b = this.state.views) === null || _b === void 0 ? void 0 : _b[this.state.views.length - 1];
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
                 React.createElement(OrdinoContext.Provider, { value: { app: this } },
                     React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
                     React.createElement(OrdinoBreadcrumbs, { views: this.state.views, onClick: (view) => this.showInFocus(view) }),
                     React.createElement("div", { className: "wrapper" },
-                        React.createElement("div", { className: "filmstrip", ref: this.nodeRef }))))));
+                        React.createElement("div", { className: "filmstrip", ref: this.nodeRef })))),
+            React.createElement(ExternalViewPortal, { active: this.state.externalDetailViewOpen, title: "External Detail Views", viewWrapper: currentView, onWindowClosed: () => {
+                    // this.setState((prevState) => ({...prevState, externalDetailViewOpen: false}));
+                    this.showInFocus(currentView);
+                }, onWindowOpened: (window) => {
+                    this.setState((previousState) => ({ ...previousState, currentView }));
+                    this.externalWindowRef = window;
+                    this.showInFocus(previousView);
+                } })));
     }
 }
 /**

@@ -41,6 +41,7 @@ export class ViewWrapper extends EventHandler {
   static EVENT_REMOVE = 'remove';
   static EVENT_MODE_CHANGED = 'modeChanged';
   static EVENT_REPLACE_VIEW = 'replaceView';
+  static EVENT_OPEN_EXTERNALLY = 'openExternally';
 
   private $viewWrapper: d3.Selection<ViewWrapper>;
   private $node: d3.Selection<ViewWrapper>;
@@ -91,6 +92,8 @@ export class ViewWrapper extends EventHandler {
 
   built: PromiseLike<any>;
 
+  public readonly render = (parent: Element) => this.renderInNewNode(parent)
+
   /**
    * Initialize this view, create the root node and the (inner) view
    * @param graph
@@ -100,7 +103,7 @@ export class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, itemSelection: ISelection|null, parent: Element, private plugin: IPlugin, private firstTime: boolean, public options?) {
+  constructor(private readonly graph: ProvenanceGraph, public selection: ISelection, public itemSelection: ISelection | null, parent: Element, private plugin: IPlugin, private firstTime: boolean, public options?) {
     super();
 
     // create provenance reference
@@ -112,6 +115,25 @@ export class ViewWrapper extends EventHandler {
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
 
     this.built = ResolveNow.resolveImmediately(this.createView(selection, itemSelection, plugin, options));
+
+  }
+
+  public reInitialize() {
+    this.init(this.graph, this.selection, this.plugin, this.options);
+
+    // create ViewWrapper root node
+    this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+
+    this.built = ResolveNow.resolveImmediately(this.createView(this.selection, this.itemSelection, this.plugin, this.options));
+  }
+
+  public renderInNewNode(parents: Element) {
+    this.destroyView();
+    this.init(this.graph, this.selection, this.plugin, this.options);
+    // create ViewWrapper root node
+    this.$viewWrapper = d3.select(parents).append('div').classed('viewWrapper', true);
+
+    this.built = ResolveNow.resolveImmediately(this.createView(this.selection, this.itemSelection, this.plugin, this.options));
   }
 
   /**
@@ -135,7 +157,8 @@ export class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  private createView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
+  private createView(selection: ISelection, itemSelection: ISelection | null, plugin: IPlugin, options?) {
+
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)
       .datum(this);
@@ -153,6 +176,16 @@ export class ViewWrapper extends EventHandler {
       .on('click', (d) => {
         this.remove();
       });
+
+    this.$node.append('button')
+      .attr('type', 'button')
+      .attr('aria-label', 'Open in external window')
+      .attr('class', 'external')
+      .html(`<i class="fas fa-external-link-square-alt"></i>`)
+      .on('click', (d) => {
+        this.fire(ViewWrapper.EVENT_OPEN_EXTERNALLY, plugin.desc.id);
+      });
+
 
     const $params = this.$node.append('div')
       .attr('class', 'parameters')
@@ -181,14 +214,16 @@ export class ViewWrapper extends EventHandler {
    * @param plugin
    * @param options
    */
-  replaceView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, firstTime: boolean, options?) {
+  replaceView(selection: ISelection, itemSelection: ISelection | null, plugin: IPlugin, firstTime: boolean, options?) {
     this.destroyView();
-
     this.selection = selection;
     this.plugin = plugin;
     this.options = options;
     this.firstTime = firstTime;
-
+    // console.log(plugin)
+    // if (plugin.desc.openInNewTab) {
+    //   console.log("External")
+    // }
     this.init(this.graph, selection, plugin, options);
     this.built = this.createView(selection, itemSelection, plugin, options);
     this.built.then(() => {
@@ -343,7 +378,7 @@ export class ViewWrapper extends EventHandler {
       const groups = FindViewUtils.groupByCategory(views);
 
       const $categories = this.$chooser.selectAll('div.category').data(groups);
-
+      console.log('views', views)
       $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d.label);
       $categories.exit().remove();
 
@@ -356,10 +391,14 @@ export class ViewWrapper extends EventHandler {
       $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)
         .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
-        .on('click', function (d) {
+        .on('click', async function (d) {
           $buttons.classed('active', false);
+          // if (d.v.openInNewTab) {
+          //   const external = window.open('', d.v.name, 'menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes');
+          //   const {origin} = window.location
+          //   external.location.href = `${origin}/externalView.html`;
+          // }
           d3.select(this).classed('active', true);
-
           that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
         });
 
@@ -399,11 +438,46 @@ export class ViewWrapper extends EventHandler {
     this.fire(ViewWrapper.EVENT_FOCUS, this);
   }
 
-  static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
+  static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
+    console.log('options', options)
     return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
   }
 
-  static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection|null, plugin: IPluginDesc, firstTime: boolean, options?) {
+  static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection | null, plugin: IPluginDesc, firstTime: boolean, options?) {
     return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
   }
+}
+
+export let awaitWindowLoad = function (win, cb) {
+  let wasCalled = false;
+  function unloadListener() {
+    if (wasCalled) {
+      return;
+    }
+    wasCalled = true;
+    win.removeEventListener('unload', unloadListener);
+    win.removeEventListener('pagehide', unloadListener);
+    // Firefox keeps window event listeners for multiple page loads
+    defer(function () {
+      if (win.document.readyState === 'loading') {
+        win.addEventListener('load', function loadListener() {
+          win.removeEventListener('load', loadListener);
+          cb();
+        });
+      } else {
+        cb();
+      }
+    });
+  }
+  win.addEventListener('unload', unloadListener);
+  win.addEventListener('pagehide', unloadListener);
+  // Safari does not support unload
+};
+
+function defer(callback) {
+  const channel = new MessageChannel();
+  channel.port1.onmessage = function (e) {
+    callback();
+  };
+  channel.port2.postMessage(null);
 }

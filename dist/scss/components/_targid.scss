@@ -241,7 +241,7 @@ div.filmstrip {
     }
 
     // hide close button for the first view
-    &:nth-child(1) > .view > button.close {
+    &:nth-child(1) > .view > .btn-close {
       display: none;
     }
 

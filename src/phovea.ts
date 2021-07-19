@@ -8,6 +8,7 @@ import {ParseRangeUtils} from 'phovea_core';
 import {ActionNode} from 'phovea_core';
 import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_START_MENU_TAB} from '.';
+import {EP_ORDINO_LOGO, IOrdinoLogDesc} from './base';
 import {EStartMenuSection} from './internal';
 
 export default function (registry: IRegistry) {
@@ -99,6 +100,12 @@ export default function (registry: IRegistry) {
     priority: 30
   });
 
+  registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => ({}), <IOrdinoLogDesc>{
+    loadIcon() {
+      return import('ordino/dist/assets/logos/ordino.svg');
+    },
+    text: 'Ordino',
+  });
 
   registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
     return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);

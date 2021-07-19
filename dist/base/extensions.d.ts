@@ -137,4 +137,19 @@ export interface IOrdinoFooterMenuLink {
     faIcon: string;
     text: string;
 }
+export declare const EP_ORDINO_LOGO = "epOrdinoLogo";
+/**
+ * Overwrite the default app icon and name
+ * Only The last registered icon is considered
+ */
+export interface IOrdinoLogDesc extends IPluginDesc {
+    /**
+     * Use `import('/my/asset.jpg')` to load image as module
+     */
+    readonly loadIcon: () => Promise<string>;
+    /**
+     * Name of the app
+     */
+    readonly text: string;
+}
 export {};

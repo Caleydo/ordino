@@ -12,4 +12,5 @@ export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSect
  */
 export const EP_ORDINO_STARTMENU_DATASET_SECTION = 'epOrdinoStartMenuDatasetSection';
 export const EP_ORDINO_FOOTER_MENU = 'epOrdinoFooterMenu';
+export const EP_ORDINO_LOGO = 'epOrdinoLogo';
 //# sourceMappingURL=extensions.js.map

@@ -241,7 +241,7 @@ div.filmstrip {
     }
 
     // hide close button for the first view
-    &:nth-child(1) > .view > button.close {
+    &:nth-child(1) > .view > .view-actions > button.close {
       display: none;
     }
 
@@ -273,8 +273,22 @@ div.filmstrip {
       position: relative;
       overflow: hidden;
 
-      //transition: width 0.3s ease;
-      //border-top: 8px solid #fff;
+      display: grid;
+      grid-template-columns: auto 5%;
+      grid-template-rows: minmax(2.4em, min-content) auto;
+      grid-template-areas:
+        "parameters viewActions"
+        "inner inner";
+
+      > .view-actions {
+        grid-area: viewActions;
+        display: flex;
+        justify-content: flex-end;
+        justify-self: flex-end;
+        > button.close {
+          align-self: flex-start;
+        }
+      }
 
       > .inner,
       > .parameters,
@@ -283,21 +297,30 @@ div.filmstrip {
       }
 
       > .parameters {
+        margin-bottom: 0;
+        grid-area: parameters;
         opacity: 1;
         transition: opacity 0.3s ease;
+
         p {
           margin: 5px 0;
+        }
+
+        // add gap between wrapped inline form elements
+        .form-inline {
+          display: inline-flex;
+          flex-wrap: wrap;
+          gap: 3px;
         }
       }
 
       > .parameters:not(.hidden) ~ .inner {
+        position: relative;
         border-top: 1px solid $core_border;
         padding-top: 10px;
-        position: absolute;
-        top: 45px;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        grid-area: inner;
+        height: 1px; // dummy height needed for the overflow-y
+        min-height: 99%;  
         overflow-y: auto;
         display: flex;
 

@@ -238,8 +238,7 @@ function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
                 <div className="container-fluid">
                   <div className="row">
                     <div className="col position-relative d-flex justify-content-end">
-                      <button className="btn btn-link start-menu-close" onClick={() => {props.setActiveTab(null);}}>
-                        <i className="fas fa-times"></i>
+                      <button className="btn-close" onClick={() => {props.setActiveTab(null);}}>
                       </button>
                     </div>
                   </div>

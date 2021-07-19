@@ -145,7 +145,12 @@ export class ViewWrapper extends EventHandler {
       .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
       .datum(this);
 
-    this.$node.append('button')
+
+
+    const $viewActions = this.$node.append('div')
+      .attr('class', 'view-actions');
+
+    $viewActions.append('button')
       .attr('type', 'button')
       .attr('class', 'close')
       .attr('aria-label', 'Close')

@@ -173,7 +173,7 @@ export const EP_ORDINO_LOGO = 'epOrdinoLogo';
  * Overwrite the default app icon and name
  * Only the last registration is considered
  */
-export interface IOrdinoLogDesc extends IPluginDesc {
+export interface IOrdinoLogoDesc extends IPluginDesc {
   /**
    * Use `import('/my/asset.jpg')` to load image as module
    */

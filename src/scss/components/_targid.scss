@@ -274,7 +274,7 @@ div.filmstrip {
       overflow: hidden;
 
       display: grid;
-      grid-template-columns: auto 5%;
+      grid-template-columns: auto min-content;
       grid-template-rows: min-content auto;
       grid-template-areas:
         "parameters viewActions"

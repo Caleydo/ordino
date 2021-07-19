@@ -140,7 +140,7 @@ export interface IOrdinoFooterMenuLink {
 export declare const EP_ORDINO_LOGO = "epOrdinoLogo";
 /**
  * Overwrite the default app icon and name
- * Only The last registered icon is considered
+ * Only the last registration is considered
  */
 export interface IOrdinoLogDesc extends IPluginDesc {
     /**

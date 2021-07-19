@@ -306,7 +306,7 @@ div.filmstrip {
           margin: 5px 0;
         }
 
-        // add gap between wrapped elements
+        // TODO: temporary solution, this should be fixed in tdp_core
         .form-inline {
           display: inline-flex;
           flex-wrap: wrap;

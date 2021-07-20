@@ -157,11 +157,13 @@
   border-bottom: 1px solid map-get($theme-colors, "ordino-gray-5");
 }
 
-.btn-close {
-  position: relative;
-  z-index: 1; // position icon above the tab container to make it clickable
-  padding-top: 2em;
-  padding-right: 2em;
+.col.position-relative {
+  .btn-close {
+    position: relative;
+    z-index: 1; // position icon above the tab container to make it clickable
+    padding-top: 2em;
+    padding-right: 2em;
+  }
 }
 
 .ordino-start-menu-overlay {

@@ -10,6 +10,8 @@ import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_START_MENU_TAB} from '.';
 import {EStartMenuSection} from './internal';
 
+import {create} from 'lodash';
+
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
   // generator-phovea:begin

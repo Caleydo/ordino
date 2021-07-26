@@ -225,6 +225,7 @@ export class ViewWrapper extends EventHandler {
 
 
   private onParameterChange(name: string, value: any, previousValue: any, isInitializion: boolean) {
+    console.log(name, value, previousValue)
     if (isInitializion) {
       if (this.firstTime) {
         return this.context.graph.pushWithResult(TDPApplicationUtils.setParameter(this.ref, name, value, previousValue), {
@@ -400,6 +401,7 @@ export class ViewWrapper extends EventHandler {
   }
 
   static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection|null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?) {
+
     return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
   }
 

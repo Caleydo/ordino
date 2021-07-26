@@ -20,6 +20,11 @@ import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
 import {OrdinoBreadcrumbs} from './components/navigation';
+import { provenanceActions, prov, DemoState } from "./TrrackFunctions";
+import { ProvVis } from '../trrackvis/src/index'
+import {eventConfig} from './TrrackIcons'
+import "semantic-ui-css/semantic.min.css";
+
 
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null});
@@ -81,6 +86,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
 
     this.nodeRef = React.createRef();
 
+    
+    this.setupObservers()
+    prov.done();
+
     // add OrdinoApp app as (first) object to provenance graph
     // need old name for compatibility
     this.ref = this.props.graph.findOrAddObject(this, 'Targid', ObjectRefUtils.category.visual);
@@ -88,7 +97,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     this.state = {
       mode: EStartMenuMode.START,
       open: EStartMenuOpen.CLOSED,
-      views: []
+      views: [],
     };
   }
 
@@ -97,6 +106,27 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   async initApp() {
     return null;
+  }
+
+  /**
+   * Sets up needed observers for trrack. These observers get called when the related state changes. 
+   */
+  setupObservers()
+  {
+    prov.addObserver((state) => state.viewList, (viewList) => {
+      console.log(viewList)
+    });
+
+    prov.addObserver((state) => state.focusView, (focused) => {
+      console.log(focused);
+      //this causes problems at time because of ordering. Fixable when everything is converted. 
+      this.focusImpl(focused);
+      this.setState({...this.state});
+    });
+
+    prov.addGlobalObserver((graph) => {
+      console.log(graph.current)
+    })
   }
 
   /**
@@ -466,6 +496,20 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   }
 
   showInFocus(d: ViewWrapper) {
+
+    let focusIndex = this.state.views.indexOf(d);
+    if (prov.getState(prov.current).focusView === focusIndex)
+    {
+      return;
+    }
+
+    const { focusViewAction } = provenanceActions;
+
+    focusViewAction.setLabel("Focus " + d.desc.name);
+    prov.apply(focusViewAction(focusIndex));
+
+    //this should, of course, not be here. Due to concurrency problems, the observer sometimes causes problems without this. 
+    // Fixed once everything is moved to observers
     this.focusImpl(this.state.views.indexOf(d));
   }
 
@@ -511,14 +555,36 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   render() {
     this.updateDetailViewChoosers();
-    return(
+    return (
       <>
-        <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
-          <OrdinoContext.Provider value={{app: this}}>
-            <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
-            <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
+        <GraphContext.Provider
+          value={{ manager: this.props.graphManager, graph: this.props.graph }}
+        >
+          <OrdinoContext.Provider value={{ app: this }}>
+            <StartMenuComponent
+              header={this.props.header}
+              mode={this.state.mode}
+              open={this.state.open}
+            ></StartMenuComponent>
+            <OrdinoBreadcrumbs
+              views={this.state.views}
+              onClick={(view) => this.showInFocus(view)}
+            ></OrdinoBreadcrumbs>
             <div className="wrapper">
-              <div className="filmstrip" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
+              <div className="filmstrip" ref={this.nodeRef}>
+                {/* ViewWrapper will be rendered as child elements here */}
+              </div>
+              <ProvVis
+                backboneGutter={40}
+                changeCurrent={(nodeID: string) => prov.goToNode(nodeID)}
+                current={prov.graph.current}
+                ephemeralUndo={false}
+                eventConfig={eventConfig}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                prov={prov as any}
+                root={prov.graph.root}
+                undoRedoButtons
+              />
             </div>
           </OrdinoContext.Provider>
         </GraphContext.Provider>

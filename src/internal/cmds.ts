@@ -24,6 +24,8 @@ import {ViewWrapper} from './ViewWrapper';
 import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core';
 import {Compression} from 'phovea_clue';
 import { IOrdinoApp } from './IOrdinoApp';
+import {provenanceActions, prov} from './TrrackFunctions'
+import {create} from 'lodash';
 
 
 const CMD_CREATE_VIEW = 'targidCreateView';
@@ -67,6 +69,12 @@ export class CmdUtils {
     if (viewWrapperInstance.built) {
       await viewWrapperInstance.built;
     }
+
+    const { createViewAction } = provenanceActions;
+
+    createViewAction.setLabel("Add " + view.name);
+    prov.apply(createViewAction(view.name));
+
     const oldFocus = await app.pushImpl(viewWrapperInstance);
     return {
       created: [viewWrapperInstance.ref],
@@ -89,6 +97,11 @@ export class CmdUtils {
     delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
 
     app.removeImpl(existingView, oldFocus);
+
+    const { removeViewAction } = provenanceActions;
+
+    removeViewAction.setLabel("Remove " + existingView.toString());
+    prov.apply(removeViewAction(app.views.indexOf(existingView)));
     return {
       removed: [inputs[1]],
       inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
@@ -129,6 +142,19 @@ export class CmdUtils {
 
     await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
 
+    const { changeViewAction } = provenanceActions;
+
+    changeViewAction.setLabel(
+      "Replace " + existingView.context.desc.name + " with " + view.name
+    );
+
+    prov.apply(
+      changeViewAction(
+        view.name,
+        app.views.indexOf(existingView)
+      )
+    );
+
     return {
       inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
     };
@@ -145,6 +171,9 @@ export class CmdUtils {
    */
   static createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+
+
+
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, CmdUtils.createViewImpl, [app], {
       viewId,
@@ -163,6 +192,8 @@ export class CmdUtils {
    * @returns {IAction}
    */
   static removeView<T extends IOrdinoApp>(app: IObjectRef<T>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
+
+
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Remove ' + view.toString(), ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, CmdUtils.removeViewImpl, [app, view], {
       viewId: view.value.desc.id,
@@ -182,6 +213,9 @@ export class CmdUtils {
    */
   static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+
+
+
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
       viewId,

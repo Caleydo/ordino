@@ -6,7 +6,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import * as React from 'react';
-import { ICmdResult } from 'phovea_core';
 import { IObjectRef, ProvenanceGraph, IDType } from 'phovea_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CLUEGraphManager } from 'phovea_clue';
@@ -14,6 +13,7 @@ import { Range } from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenu';
 import { AppHeader } from 'phovea_ui';
+import "semantic-ui-css/semantic.min.css";
 export declare const OrdinoContext: React.Context<{
     app: IOrdinoApp;
 }>;
@@ -34,6 +34,7 @@ interface IOrdinoAppState {
     mode: EStartMenuMode;
     open: EStartMenuOpen;
     views: ViewWrapper[];
+    currentIndex: number;
 }
 /**
  * The main class for the Ordino app
@@ -69,6 +70,10 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * This function can be used to load some initial content async
      */
     initApp(): Promise<any>;
+    /**
+     * Sets up needed observers for trrack. These observers get called when the related state changes.
+     */
+    setupObservers(): void;
     /**
      * Set the mode and open/close state of the start menu.
      * Set both options at once to avoid multiple rerender.
@@ -114,7 +119,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * The last view of the list of open views
      */
     get lastView(): ViewWrapper;
-    push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
+    push(viewId: string, idtype: IDType, selection: Range, options?: any): void | PromiseLike<void>;
     /**
      * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.
@@ -159,7 +164,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * The return value is index in the list of views.
      * @param view ViewWrapper
      */
-    pushImpl(view: ViewWrapper): Promise<number>;
+    pushImpl(view: ViewWrapper): ViewWrapper;
     /**
      * Remove the given and focus on the view with the given index.
      * If the focus index is -1 the previous view of the given view will be focused.

@@ -162,8 +162,12 @@ export class ViewWrapper extends EventHandler {
       .classed('inner', true);
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
+
+    console.log(this.instance)
+    console.log(options)
     return ResolveNow.resolveImmediately(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this))).then(() => {
       if (itemSelection) {
+        console.log(selection, itemSelection, this.desc);
         return this.instance.setItemSelection(itemSelection);
       }
     }).then(() => {
@@ -252,6 +256,8 @@ export class ViewWrapper extends EventHandler {
   setItemSelection(sel: ISelection) {
     // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+    
+    console.log(sel, this.desc);
 
     return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
       this.chooseNextViews(sel.idtype, sel.range);

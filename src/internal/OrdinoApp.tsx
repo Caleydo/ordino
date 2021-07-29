@@ -45,6 +45,7 @@ interface IOrdinoAppState {
   mode: EStartMenuMode;
   open: EStartMenuOpen;
   views: ViewWrapper[];
+  currentIndex: number;
 }
 
 /**
@@ -86,7 +87,6 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
 
     this.nodeRef = React.createRef();
 
-    
     this.setupObservers()
     prov.done();
 
@@ -98,9 +98,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       mode: EStartMenuMode.START,
       open: EStartMenuOpen.CLOSED,
       views: [],
+      currentIndex: 0
     };
   }
-
   /**
    * This function can be used to load some initial content async
    */
@@ -113,19 +113,120 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   setupObservers()
   {
+    prov.addObserver(state => state.viewList.map(v => v.selection), (selections, oldSelections) => {
+      if(selections.length != oldSelections.length)
+      {
+        return; 
+      }
+
+      let changeIndex = selections.indexOf(
+        selections.filter((d, i) => d !== oldSelections[i])[0]
+      );
+
+      if(this.state.views.length > changeIndex + 1)
+      {
+        CmdUtils.setSelectionTrrack(
+          [this.state.views[changeIndex].ref, this.state.views[changeIndex + 1].ref],
+          prov.getState(prov.current).viewList[changeIndex]
+        );
+      }
+      else{
+        CmdUtils.setSelectionTrrack(
+          [this.state.views[changeIndex].ref],
+          prov.getState(prov.current).viewList[changeIndex]
+        );
+      }
+    })
+
+    prov.addObserver(
+      (state) => state.viewList.map((v) => v.viewId), (id, oldId) => {
+        if(id.length === oldId.length)
+        {
+          let changeIndex = id.indexOf(id.filter((d, i) => d !== oldId[i])[0])
+
+          if(changeIndex > 0)
+          {
+            CmdUtils.replaceViewTrrack(
+              [this.ref, this.state.views[changeIndex].ref],
+              prov.getState(prov.current).viewList[changeIndex],
+              prov.getState(prov.current).viewList[changeIndex - 1]
+            );
+          }
+          else{
+            CmdUtils.replaceViewTrrack(
+              [this.ref, this.state.views[changeIndex].ref],
+              prov.getState(prov.current).viewList[changeIndex],
+              null
+            );
+          }
+
+        }
+      }
+    );
+
     prov.addObserver((state) => state.viewList, (viewList) => {
-      console.log(viewList)
+      let promises = []
+      if (viewList.length > this.state.views.length) {
+        for (let i = this.state.views.length; i < viewList.length; i += 1) {
+          if(i > 0)
+          {
+            promises.push(
+              CmdUtils.createViewTrrack(
+                this.props.graph,
+                [this.ref],
+                viewList[i],
+                viewList[i - 1], 
+                viewList.length == 1
+              )
+            );
+          }
+          else{
+            promises.push(
+              CmdUtils.createViewTrrack(
+                this.props.graph,
+                [this.ref],
+                viewList[i],
+                null,
+                viewList.length == 1
+              )
+            );
+          }
+
+        }
+
+        Promise.all(promises).then((d: ViewWrapper[]) => {
+          this.setState({
+            views: [...this.state.views, ...d]
+          }, () => this.focusImpl(viewList.length - 1));
+        });
+      } 
+      else if (viewList.length < this.state.views.length) 
+      {
+        for (let i = this.state.views.length - 1; i >= viewList.length; i -= 1) 
+        {
+          promises.push(
+            CmdUtils.removeViewTrrack([this.ref, this.state.views[i].ref])
+          );
+        }
+
+        Promise.all(promises).then((d: ViewWrapper[]) => {
+          this.focusImpl(viewList.length - 1);
+        });
+      } 
     });
 
     prov.addObserver((state) => state.focusView, (focused) => {
-      console.log(focused);
-      //this causes problems at time because of ordering. Fixable when everything is converted. 
-      this.focusImpl(focused);
-      this.setState({...this.state});
+
+      this.setState(
+        {
+          currentIndex: focused,
+        },
+        () => this.focusImpl(focused)
+      )
     });
 
     prov.addGlobalObserver((graph) => {
-      console.log(graph.current)
+      console.log(graph)
     })
   }
 
@@ -264,8 +365,16 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
 
+      const { selectFocusAction } = provenanceActions;
+
+      selectFocusAction.setLabel("Select Focused View");
+      prov.apply(
+        selectFocusAction(
+          newSelection.idtype.id, 
+          newSelection.range.toString()
+        )
+      );
       // check last view and if it will stay open for the new given selection
     } else {
       const i = this.state.views.indexOf(viewWrapper);
@@ -274,8 +383,12 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       // update selection with the last open (= right) view
       if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
         right.setParameterSelection(newSelection);
-        this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+        // this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
 
+        const { selectSecondaryAction } = provenanceActions;
+
+        selectSecondaryAction.setLabel("Select Secondary View");
+        prov.apply(selectSecondaryAction(newSelection.idtype.id, newSelection.range.toString()));
         // the selection does not match with the last open (= right) view --> close view
       } else {
         this.remove(right);
@@ -383,8 +496,19 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     this.push(startViewId, null, null, viewOptions);
   }
 
-  private pushView(viewId: string, idtype: IDType, selection: Range, options?) {
-    return this.props.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));
+  private  pushView(viewId: string, idtype: IDType, selection: Range, options?) {
+
+    const { createViewAction } = provenanceActions;
+
+    createViewAction.setLabel("Add " + viewId);
+    prov.apply(
+      createViewAction(
+        viewId,
+        idtype ? idtype.id : null,
+        "",
+        options
+      )
+    );
   }
 
   /**
@@ -395,18 +519,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     const viewWrapper = typeof indexOrView === 'number' ? this.state.views[indexOrView as number] : indexOrView as ViewWrapper;
     const index = this.state.views.indexOf(viewWrapper);
 
-    this.state.views
-      .slice(index, this.state.views.length) // retrieve all following views
-      .reverse() // remove them in reverse order
-      .forEach((view) => {
-        //this.remove(d);
-        const viewRef = this.props.graph.findObject(view);
-        if (viewRef === null) {
-          console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
-          return;
-        }
-        return this.props.graph.push(CmdUtils.removeView(this.ref, viewRef));
-      });
+    const { removeViewAction } = provenanceActions;
+
+    removeViewAction.setLabel("Remove " + viewWrapper.desc.name);
+    prov.apply(removeViewAction(index));
   }
 
   /**
@@ -421,11 +537,11 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
     // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
 
-    this.setState({
-      views: [...this.state.views, view]
-    });
+    // this.setState({
+    //   views: [...this.state.views, view]
+    // });
 
-    return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
+    return view;
   }
 
   /**
@@ -442,24 +558,37 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
 
+    let filteredViews = 
+      this.state.views.filter((v) => {
+        return (
+          prov.getState(prov.current).viewList.filter((d) => {
+            return d.viewId === v.desc.id;
+          }).length > 0
+        );
+      })
+
     this.setState({
-      views: this.state.views.filter((v) => v !== view)
+      views: [...filteredViews]
     });
 
     view.destroy();
-    //remove with focus change if not already hidden
-    if (!isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
-      if (focus < 0) {
-        focus = i - 1;
-      }
-      return this.focusImpl(focus);
-    }
 
     return Promise.resolve(NaN);
   }
 
-  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): Promise<ICmdResult> {
-    return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
+  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?) {
+    const { replaceViewAction } = provenanceActions;
+
+    replaceViewAction.setLabel("Replace " + viewId);
+    prov.apply(
+      replaceViewAction(
+        this.state.views.indexOf(existingView.value),
+        viewId,
+        idtype ? idtype.id : null,
+        "",
+        options
+      )
+    );
   }
 
   /**
@@ -510,7 +639,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
 
     //this should, of course, not be here. Due to concurrency problems, the observer sometimes causes problems without this. 
     // Fixed once everything is moved to observers
-    this.focusImpl(this.state.views.indexOf(d));
+    // this.focusImpl(this.state.views.indexOf(d));
   }
 
   focusImpl(index: number) {

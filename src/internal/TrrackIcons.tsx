@@ -154,4 +154,17 @@ export const eventConfig: EventConfig<OrdinoEvents> = {
     regularGlyph: <CreateView size={16} />,
     bundleGlyph: <CreateView fill="#2185d0" size={22} />,
   },
+  "Select Focus": {
+    backboneGlyph: <CreateView size={22} />,
+    currentGlyph: <CreateView fill="#2185d0" size={22} />,
+    regularGlyph: <CreateView size={16} />,
+    bundleGlyph: <CreateView fill="#2185d0" size={22} />,
+  },
+  "Replace View": {
+    backboneGlyph: <CreateView size={22} />,
+    currentGlyph: <CreateView fill="#2185d0" size={22} />,
+    regularGlyph: <CreateView size={16} />,
+    bundleGlyph: <CreateView fill="#2185d0" size={22} />,
+  },
 };
+

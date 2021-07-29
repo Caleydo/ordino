@@ -17,7 +17,7 @@ export interface IOrdinoApp {
      * The return value is index in the list of views.
      * @param view ViewWrapper
      */
-    pushImpl(view: ViewWrapper): Promise<number>;
+    pushImpl(view: ViewWrapper): void;
     /**
      * Remove the given and focus on the view with the given index.
      * If the focus index is -1 the previous view of the given view will be focused.

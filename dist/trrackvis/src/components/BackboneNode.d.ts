@@ -1,0 +1,31 @@
+import { Provenance, StateNode } from '@visdesignlab/trrack';
+import { ReactChild } from 'react';
+import { BundleMap } from '../Utils/BundleMap';
+import { EventConfig } from '../Utils/EventConfig';
+interface BackboneNodeProps<T, S extends string, A> {
+    prov: Provenance<T, S, A>;
+    first: boolean;
+    iconOnly: boolean;
+    current: boolean;
+    duration: number;
+    node: StateNode<S, A>;
+    radius: number;
+    strokeWidth: number;
+    textSize: number;
+    setBookmark: any;
+    bookmark: any;
+    nodeMap: any;
+    annotationOpen: number;
+    setAnnotationOpen: any;
+    exemptList: string[];
+    setExemptList: any;
+    bundleMap?: BundleMap;
+    clusterLabels: boolean;
+    editAnnotations: boolean;
+    eventConfig?: EventConfig<S>;
+    popupContent?: (nodeId: StateNode<S, A>) => ReactChild;
+    annotationContent?: (nodeId: StateNode<S, A>) => ReactChild;
+    expandedClusterList?: string[];
+}
+declare function BackboneNode<T, S extends string, A>({ prov, first, iconOnly, current, node, duration, radius, strokeWidth, textSize, nodeMap, annotationOpen, bookmark, setAnnotationOpen, exemptList, setExemptList, bundleMap, eventConfig, popupContent, editAnnotations, annotationContent, expandedClusterList, }: BackboneNodeProps<T, S, A>): JSX.Element;
+export default BackboneNode;

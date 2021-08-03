@@ -31,7 +31,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
     };
     return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4" },
         React.createElement("header", null,
-            React.createElement("i", { className: `mr-2 ${headerIcon}` }),
+            React.createElement("i", { className: `me-2 ${headerIcon}` }),
             headerText),
         status === 'pending' &&
             React.createElement("p", null,
@@ -47,7 +47,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             React.createElement("div", { role: "group", className: "btn-group-vertical" }, namedSets.map((namedSet, i) => {
                 const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
                 return (React.createElement("div", { key: i, className: "dropdown-parent justify-content-between btn-group" },
-                    React.createElement("button", { className: "text-left pl-0 btn btn-link text-ordino-button-primary", title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
+                    React.createElement("button", { className: "text-start ps-0 btn btn-link text-ordino-button-primary", title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     canWrite ?
                         React.createElement(ListItemDropdown, null,
                             React.createElement("button", { className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails'), onClick: (event) => editNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')),

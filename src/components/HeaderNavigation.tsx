@@ -13,7 +13,7 @@ interface IHeaderNavigationProps {
    * Specify the links of the header
    * @default []
    */
-  links?: IHeaderNavigationLink[]
+  links?: IHeaderNavigationLink[];
   /**
    * Defines if the header is sticky and visible when scrolling the page down
    */

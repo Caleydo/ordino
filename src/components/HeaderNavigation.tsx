@@ -2,7 +2,18 @@ import * as React from 'react';
 import {NavLink} from 'react-router-dom';
 import {OrdinoLogo} from './OrdinoLogo';
 
+interface IHeaderNavigationLink {
+  text: string;
+  page: string;
+}
+
 interface IHeaderNavigationProps {
+
+  /**
+   * Specify the links of the header
+   * @default []
+   */
+  links?: IHeaderNavigationLink[]
   /**
    * Defines if the header is sticky and visible when scrolling the page down
    */
@@ -15,11 +26,10 @@ interface IHeaderNavigationProps {
   bg?: string;
 }
 
-export function HeaderNavigation(props: IHeaderNavigationProps) {
-  const bg = props.bg ?? 'ordino-gray-2';
+export function HeaderNavigation({links, fixed, bg = 'ordino-gray-2'}: IHeaderNavigationProps) {
 
   return (
-    <nav className={`ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${props.fixed === 'top' ? 'fixed-top' : ''} ${props.fixed === 'bottom' ? 'fixed-bottom' : ''}`}>
+    <nav className={`ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${fixed === 'top' ? 'fixed-top' : ''} ${fixed === 'bottom' ? 'fixed-bottom' : ''}`}>
       <a href="#/" className="navbar-brand">
         <OrdinoLogo></OrdinoLogo>
       </a>
@@ -28,11 +38,11 @@ export function HeaderNavigation(props: IHeaderNavigationProps) {
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="order-lg-1 navbar-collapse collapse" id="ordino-header-navbar-nav">
-        <ul className="navbar-nav">
-          <li className="px-3 nav-item"><NavLink to="/news" className="nav-link" activeClassName="active">What's new?</NavLink></li>
-          <li className="px-3 nav-item"><NavLink to="/features" className="nav-link" activeClassName="active">Features</NavLink></li>
-          <li className="px-3 nav-item"><NavLink to="/datasets" className="nav-link" activeClassName="active">Datasets</NavLink></li>
-        </ul>
+        {links &&
+          <ul className="navbar-nav">
+            {links.map(({text, page}) => <li className="px-3 nav-item"><NavLink to={page} className="nav-link" activeClassName="active">{text}</NavLink></li>)}
+          </ul>
+        }
       </div>
     </nav>
   );

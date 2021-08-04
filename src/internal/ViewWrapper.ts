@@ -163,11 +163,8 @@ export class ViewWrapper extends EventHandler {
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
 
-    console.log(this.instance)
-    console.log(options)
     return ResolveNow.resolveImmediately(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this))).then(() => {
       if (itemSelection) {
-        console.log(selection, itemSelection, this.desc);
         return this.instance.setItemSelection(itemSelection);
       }
     }).then(() => {
@@ -229,7 +226,6 @@ export class ViewWrapper extends EventHandler {
 
 
   private onParameterChange(name: string, value: any, previousValue: any, isInitializion: boolean) {
-    console.log(name, value, previousValue)
     if (isInitializion) {
       if (this.firstTime) {
         return this.context.graph.pushWithResult(TDPApplicationUtils.setParameter(this.ref, name, value, previousValue), {
@@ -244,6 +240,7 @@ export class ViewWrapper extends EventHandler {
   getParameter(name: string) {
     return this.instance.getParameter(name);
   }
+  
 
   setParameterImpl(name: string, value: any) {
     return this.instance.setParameter(name, value);
@@ -257,8 +254,6 @@ export class ViewWrapper extends EventHandler {
     // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
     
-    console.log(sel, this.desc);
-
     return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
       this.chooseNextViews(sel.idtype, sel.range);
 

@@ -17,7 +17,7 @@ export declare class CmdUtils {
         idtype: string;
         selection: string;
     };
-    static createViewTrrack(graph: ProvenanceGraph, inputs: IObjectRef<any>[], parameter: any, previousSelection: any | null, firstRun?: boolean): Promise<ViewWrapper>;
+    static createViewTrrack(graph: ProvenanceGraph, inputs: IObjectRef<any>[], currentParam: any, previousParam: any | null, firstRun?: boolean): Promise<ViewWrapper>;
     static removeViewTrrack(inputs: IObjectRef<any>[]): void;
     /**
      * Replaces a (inner) view of an existing ViewWrapper with a new (inner) view.

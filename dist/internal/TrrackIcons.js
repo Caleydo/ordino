@@ -13,24 +13,6 @@ function CreateView({ size = 15, fill = "#ccc", }) {
                 React.createElement("polygon", { stroke: "black", fill: fill, points: "59.164,0 2,33.003 59.164,66.007 \t" }),
                 React.createElement("polygon", { stroke: "black", fill: fill, points: "63.166,66.008 120.33,33.004 63.166,0 \t" })))));
 }
-function RemoveView({ size = 15, fill = "#ccc", }) {
-    return (React.createElement("g", null,
-        React.createElement("circle", { fill: "white", r: size - size / 4 }),
-        React.createElement("g", null,
-            React.createElement("text", { dominantBaseline: "middle", fill: fill, fontFamily: "FontAwesome", fontSize: size, textAnchor: "middle" }, "\uF61F"))));
-}
-function EditView({ size = 15, fill = "#ccc", }) {
-    return (React.createElement("g", null,
-        React.createElement("circle", { fill: "white", r: size - size / 4 }),
-        React.createElement("g", null,
-            React.createElement("text", { dominantBaseline: "middle", fill: fill, fontFamily: "FontAwesome", fontSize: size, textAnchor: "middle" }, "\uF61F"))));
-}
-function FocusView({ size = 15, fill = "#ccc", }) {
-    return (React.createElement("g", null,
-        React.createElement("circle", { fill: "white", r: size - size / 4 }),
-        React.createElement("g", null,
-            React.createElement("text", { dominantBaseline: "middle", fill: fill, fontFamily: "FontAwesome", fontSize: size, textAnchor: "middle" }, "\uF61F"))));
-}
 export const eventConfig = {
     "Create View": {
         backboneGlyph: React.createElement(CreateView, { size: 22 }),

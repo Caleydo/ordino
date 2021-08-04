@@ -1,6 +1,7 @@
+/// <reference types="react" />
 import { ProvenanceGraph } from '@visdesignlab/trrack';
 export interface BookmarkToggleConfig<T, S extends string, A> {
-    graph?: ProvenanceGraph<T, S, A>;
+    graph?: ProvenanceGraph<T, A>;
     bookmarkView: boolean;
     setBookmarkView: (b: boolean) => void;
 }

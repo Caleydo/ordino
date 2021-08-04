@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { NodeID, ProvenanceGraph } from '@visdesignlab/trrack';
 import { EventConfig } from '../Utils/EventConfig';
 export interface BookmarkListViewConfig<T, S extends string, A> {

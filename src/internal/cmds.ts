@@ -63,39 +63,36 @@ export class CmdUtils {
   static async createViewTrrack(
     graph: ProvenanceGraph,
     inputs: IObjectRef<any>[],
-    parameter: any,
-    previousSelection: any | null,
+    currentParam: any,
+    previousParam: any | null,
     firstRun: boolean = false
   ) {
-    console.log(parameter);
     const app: IOrdinoApp = inputs[0].value;
-    const viewId: string = parameter.viewId;
+    const viewId: string = currentParam.viewId;
 
-    const mySelection = parameter
+    const mySelection = currentParam
       ? CmdUtils.asSelection({
-          idtype: parameter.idType,
-          selection: parameter.selection,
+          idtype: currentParam.idType,
+          selection: currentParam.selection,
         })
       : null;
 
-    const prevSelection = previousSelection
+    const prevSelection = previousParam
       ? CmdUtils.asSelection({
-          idtype: previousSelection.idType,
-          selection: previousSelection.selection,
+          idtype: previousParam.idType,
+          selection: previousParam.selection,
         })
       : CmdUtils.asSelection({
           idtype: null,
           selection: Range.none().toString(),
         });
 
-    const options: any & { app: IOrdinoApp } = { ...parameter.options, app }; // pass the app in options (e.g., to access the list of open views)
+    const options: any & { app: IOrdinoApp } = { ...currentParam.options, app }; // pass the app in options (e.g., to access the list of open views)
 
     const view = PluginRegistry.getInstance().getPlugin(
       EXTENSION_POINT_TDP_VIEW,
       viewId
     );
-
-    console.log(mySelection, prevSelection)
     
     const viewWrapperInstance = await ViewWrapper.createViewWrapper(
       graph,

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { StateNode } from '@visdesignlab/trrack';
 import { EventConfig } from '../Utils/EventConfig';
 interface BookmarkNodeProps<T, S extends string, A> {

@@ -38,28 +38,26 @@ export class CmdUtils {
             selection: selection.range.toString(),
         };
     }
-    static async createViewTrrack(graph, inputs, parameter, previousSelection, firstRun = false) {
-        console.log(parameter);
+    static async createViewTrrack(graph, inputs, currentParam, previousParam, firstRun = false) {
         const app = inputs[0].value;
-        const viewId = parameter.viewId;
-        const mySelection = parameter
+        const viewId = currentParam.viewId;
+        const mySelection = currentParam
             ? CmdUtils.asSelection({
-                idtype: parameter.idType,
-                selection: parameter.selection,
+                idtype: currentParam.idType,
+                selection: currentParam.selection,
             })
             : null;
-        const prevSelection = previousSelection
+        const prevSelection = previousParam
             ? CmdUtils.asSelection({
-                idtype: previousSelection.idType,
-                selection: previousSelection.selection,
+                idtype: previousParam.idType,
+                selection: previousParam.selection,
             })
             : CmdUtils.asSelection({
                 idtype: null,
                 selection: Range.none().toString(),
             });
-        const options = { ...parameter.options, app }; // pass the app in options (e.g., to access the list of open views)
+        const options = { ...currentParam.options, app }; // pass the app in options (e.g., to access the list of open views)
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
-        console.log(mySelection, prevSelection);
         const viewWrapperInstance = await ViewWrapper.createViewWrapper(graph, prevSelection, mySelection, app.node, view, firstRun, options);
         if (viewWrapperInstance.built) {
             await viewWrapperInstance.built;

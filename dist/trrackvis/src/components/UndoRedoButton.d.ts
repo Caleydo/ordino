@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { ProvenanceGraph } from '@visdesignlab/trrack';
 export interface UndoRedoConfig<T, S extends string, A> {
     undoCallback: () => void;

@@ -46,7 +46,6 @@ export function ProvVisCreator<T, S extends string, A>(
         root={fauxRoot}
         changeCurrent={callback}
         current={prov.graph.current}
-        nodeMap={prov.graph.nodes}
         prov={prov}
         undoRedoButtons={true}
         ephemeralUndo={ephemeralUndo}
@@ -61,7 +60,6 @@ export function ProvVisCreator<T, S extends string, A>(
       root={fauxRoot}
       changeCurrent={callback}
       current={prov.graph.current}
-      nodeMap={prov.graph.nodes}
       prov={prov}
       undoRedoButtons={true}
       ephemeralUndo={ephemeralUndo}

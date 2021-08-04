@@ -73,7 +73,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     /**
      * Sets up needed observers for trrack. These observers get called when the related state changes.
      */
-    setupObservers(): void;
+    setupObservers(): Promise<void>;
     /**
      * Set the mode and open/close state of the start menu.
      * Set both options at once to avoid multiple rerender.

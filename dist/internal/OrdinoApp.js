@@ -61,22 +61,43 @@ export class OrdinoApp extends React.Component {
     /**
      * Sets up needed observers for trrack. These observers get called when the related state changes.
      */
-    setupObservers() {
-        prov.addObserver(state => state.viewList.map(v => v.selection), (selections, oldSelections) => {
-            if (selections.length != oldSelections.length) {
-                return;
+    async setupObservers() {
+        //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically. 
+        prov.addObserver((state) => state.viewList.map((v) => v.selection), (selections, oldSelections) => {
+            let selectionChanges = {};
+            for (let j in selections) {
+                if (oldSelections[j] !== undefined && selections[j] !== oldSelections[j]) {
+                    selectionChanges[j] = selections[j];
+                }
             }
-            let changeIndex = selections.indexOf(selections.filter((d, i) => d !== oldSelections[i])[0]);
-            if (this.state.views.length > changeIndex + 1) {
-                CmdUtils.setSelectionTrrack([this.state.views[changeIndex].ref, this.state.views[changeIndex + 1].ref], prov.getState(prov.current).viewList[changeIndex]);
+            for (let j in selectionChanges) {
+                let changeIndex = +j;
+                if (this.state.views.length > changeIndex + 1) {
+                    CmdUtils.setSelectionTrrack([
+                        this.state.views[changeIndex].ref,
+                        this.state.views[changeIndex + 1].ref,
+                    ], prov.getState(prov.current).viewList[changeIndex]);
+                }
+                else {
+                    CmdUtils.setSelectionTrrack([this.state.views[changeIndex].ref], prov.getState(prov.current).viewList[changeIndex]);
+                }
             }
-            else {
-                CmdUtils.setSelectionTrrack([this.state.views[changeIndex].ref], prov.getState(prov.current).viewList[changeIndex]);
+            if (selections.length === oldSelections.length) {
+                this.setState({
+                    ...this.state
+                });
             }
         });
+        // this doesnt work when youre jumpin non linearly, could have different lengths and still need to change 
         prov.addObserver((state) => state.viewList.map((v) => v.viewId), (id, oldId) => {
-            if (id.length === oldId.length) {
-                let changeIndex = id.indexOf(id.filter((d, i) => d !== oldId[i])[0]);
+            let idChanges = {};
+            for (let j in id) {
+                if (oldId[j] !== undefined && id[j] !== oldId[j]) {
+                    idChanges[j] = id[j];
+                }
+            }
+            for (let j in idChanges) {
+                let changeIndex = +j;
                 if (changeIndex > 0) {
                     CmdUtils.replaceViewTrrack([this.ref, this.state.views[changeIndex].ref], prov.getState(prov.current).viewList[changeIndex], prov.getState(prov.current).viewList[changeIndex - 1]);
                 }
@@ -85,10 +106,12 @@ export class OrdinoApp extends React.Component {
                 }
             }
         });
-        prov.addObserver((state) => state.viewList, (viewList) => {
+        prov.addObserver((state) => state.viewList, (viewList, oldViewList) => {
             let promises = [];
-            if (viewList.length > this.state.views.length) {
-                for (let i = this.state.views.length; i < viewList.length; i += 1) {
+            console.log(viewList);
+            //we added a view/views. add them.
+            if (viewList.length > oldViewList.length) {
+                for (let i = oldViewList.length; i < viewList.length; i += 1) {
                     if (i > 0) {
                         promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], viewList[i - 1], viewList.length == 1));
                     }
@@ -98,20 +121,28 @@ export class OrdinoApp extends React.Component {
                 }
                 Promise.all(promises).then((d) => {
                     this.setState({
-                        views: [...this.state.views, ...d]
-                    }, () => this.focusImpl(viewList.length - 1));
+                        views: [...this.state.views, ...d],
+                    }, () => this.focusImpl(prov.getState(prov.current).focusView));
                 });
             }
-            else if (viewList.length < this.state.views.length) {
-                for (let i = this.state.views.length - 1; i >= viewList.length; i -= 1) {
+            //we removed a view/views. remove them. 
+            else if (viewList.length < oldViewList.length) {
+                console.log(viewList, oldViewList, this.state.views);
+                for (let i = oldViewList.length - 1; i >= viewList.length; i -= 1) {
                     promises.push(CmdUtils.removeViewTrrack([this.ref, this.state.views[i].ref]));
                 }
                 Promise.all(promises).then((d) => {
-                    this.focusImpl(viewList.length - 1);
+                    this.setState({
+                        views: this.state.views.slice(0, viewList.length),
+                    });
                 });
             }
         });
+        //if the focus view isnt in the current view scope, dont do anything, let create view handle it. 
         prov.addObserver((state) => state.focusView, (focused) => {
+            if (focused >= this.state.views.length) {
+                return;
+            }
             this.setState({
                 currentIndex: focused,
             }, () => this.focusImpl(focused));
@@ -397,14 +428,6 @@ export class OrdinoApp extends React.Component {
         view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-        let filteredViews = this.state.views.filter((v) => {
-            return (prov.getState(prov.current).viewList.filter((d) => {
-                return d.viewId === v.desc.id;
-            }).length > 0);
-        });
-        this.setState({
-            views: [...filteredViews]
-        });
         view.destroy();
         return Promise.resolve(NaN);
     }

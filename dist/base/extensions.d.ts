@@ -48,6 +48,14 @@ export interface IStartMenuTab {
     readonly desc: IStartMenuTabDesc;
     update?(): void;
 }
+export declare const EP_ORDINO_START_MENU_TAB_SHORTCUT = "epOrdinoStartMenuTabShortcut";
+/**
+ * Add a shortcut for a start menu tab
+ */
+export interface IStartMenuTabShortcutDesc extends Omit<IStartMenuTabDesc, 'menu'> {
+    tabId: string;
+    setHighlight?: boolean;
+}
 export declare const EP_ORDINO_STARTMENU_SESSION_SECTION = "epOrdinoStartMenuSessionSection";
 /**
  * Register a new section in the start menu sessions tab

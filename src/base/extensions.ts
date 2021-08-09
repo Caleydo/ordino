@@ -58,6 +58,16 @@ export interface IStartMenuTab {
 }
 
 
+export const EP_ORDINO_START_MENU_TAB_SHORTCUT = 'epOrdinoStartMenuTabShortcut';
+
+/**
+ * Add a shortcut for a start menu tab
+ */
+export interface IStartMenuTabShortcutDesc extends Omit<IStartMenuTabDesc, 'menu'> {
+  tabId: string;
+  setHighlight?: boolean;
+}
+
 export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
 
 /**
@@ -158,8 +168,8 @@ export interface IOrdinoFooterMenuDesc extends IPluginDesc {
    * - First level = list group
    * - Second level = list items (= links)
    */
-   readonly lists: IOrdinoFooterMenuLink[][];
-  }
+  readonly lists: IOrdinoFooterMenuLink[][];
+}
 
 export interface IOrdinoFooterMenuLink {
   page: string;

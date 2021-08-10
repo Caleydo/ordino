@@ -13,7 +13,7 @@ interface ITourCardProps {
 
 export function TourCard({id, image, title, text, onClickHandler, href}: ITourCardProps) {
     return (
-        <div className="col">
+        <div className="col position-relative">
             <div className="card ordino-tour-card shadow-sm" data-id={id}>
                 {image ?
                     <img className="card-img-top p-2" style={{height: '200px'}} src={image} alt="Tour Image" />
@@ -23,7 +23,7 @@ export function TourCard({id, image, title, text, onClickHandler, href}: ITourCa
                     <p className="card-text">
                         {text}
                     </p>
-                    <a className="btn btn-light" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')} href={href} onClick={onClickHandler}><i className="mr-1 fas fa-angle-right"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')}</a>
+                    <a className="btn btn-light" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')} href={href} onClick={onClickHandler}><i className="me-1 fas fa-angle-right"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')}</a>
                 </div>
             </div>
         </div>

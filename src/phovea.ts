@@ -100,10 +100,7 @@ export default function (registry: IRegistry) {
     priority: 30
   });
 
-  registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => ({}), <IOrdinoLogoDesc>{
-    loadIcon() {
-      return import('ordino/dist/assets/logos/ordino.svg');
-    },
+  registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('ordino/dist/assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), <IOrdinoLogoDesc>{
     text: 'Ordino',
   });
 

@@ -144,10 +144,6 @@ export declare const EP_ORDINO_LOGO = "epOrdinoLogo";
  */
 export interface IOrdinoLogoDesc extends IPluginDesc {
     /**
-     * Use `import('/my/asset.jpg')` to load image as module
-     */
-    readonly loadIcon: () => Promise<string>;
-    /**
      * Name of the app
      */
     readonly text: string;

@@ -9,8 +9,9 @@ export function OrdinoLogo() {
   const loadOrdinoLogo = useMemo(() => async () => {
     const plugins = PluginRegistry.getInstance().listPlugins(EP_ORDINO_LOGO);
     const plugin = plugins?.[plugins.length - 1]; // take the last registered plugin
+    const module = await (await plugin.load()).factory();
     return {
-      icon: (await plugin.loadIcon()).default,
+      icon: module.default,
       text: plugin.text
     };
   }, []);

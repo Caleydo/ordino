@@ -84,10 +84,7 @@ export default function (registry) {
         menu: EStartMenuSection.MAIN,
         priority: 30
     });
-    registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => ({}), {
-        loadIcon() {
-            return import('ordino/dist/assets/logos/ordino.svg');
-        },
+    registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('ordino/dist/assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), {
         text: 'Ordino',
     });
     registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {

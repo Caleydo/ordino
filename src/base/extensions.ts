@@ -174,10 +174,6 @@ export const EP_ORDINO_LOGO = 'epOrdinoLogo';
  * Only the last registration is considered
  */
 export interface IOrdinoLogoDesc extends IPluginDesc {
-  /**
-   * Use `import('/my/asset.jpg')` to load image as module
-   */
-  readonly loadIcon:  () => Promise<string>;
 
   /**
    * Name of the app

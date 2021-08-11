@@ -1,0 +1,26 @@
+// change the order of the navbar menus in the app header
+
+[data-header="mainMenu"] {
+  order: -10; // first of *left* navbar menus
+}
+
+.current-session {
+  order: -1; // first of *right* navbar menus
+}
+
+// all other right are `order: 0` by default
+
+[data-header="rightMenu"] {
+  order: 10; // most right navbar menu
+}
+
+
+// when the class is added to body to toggle CLUE button mode selector and side panels via CSS (see StartMenu.ts)
+// use CSS solution here, because there is no object reference to the button mode selector and side panels available in JS
+// TODO: refactor this solution once the CLUE mode selector and side panels are React based.
+body.ordino-start-menu-open {
+  .content > aside,
+  .clue-modeselector {
+    display: none;
+  }
+}

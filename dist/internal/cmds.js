@@ -99,7 +99,6 @@ export class CmdUtils {
         // create new (inner) view
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
         await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
-        app.update();
         return {
             inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
         };

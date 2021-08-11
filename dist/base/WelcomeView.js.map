@@ -1,1 +1,0 @@
-{"version":3,"file":"WelcomeView.js","sourceRoot":"","sources":["../../src/base/WelcomeView.ts"],"names":[],"mappings":"AAAA,OAAO,mBAAmB,MAAM,gCAAgC,CAAC;AAGjE,MAAM,OAAO,WAAW;IAEtB,YAAoB,MAAmB;QAAnB,WAAM,GAAN,MAAM,CAAa;QACrC,EAAE;IACJ,CAAC;IAED,KAAK;QACH,IAAI,CAAC,MAAM,CAAC,kBAAkB,CAAC,YAAY,EAAE,mBAAmB,CAAC,CAAC;IACpE,CAAC;CACF"}

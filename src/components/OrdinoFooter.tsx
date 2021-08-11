@@ -37,12 +37,12 @@ export function OrdinoFooter(props) {
       <nav className="ordino-footer-navigation row">
         {lists && lists.map((list, index) => {
           return (
-          <div className="list-group" key={index}>
+          <div className="list-group col-sm-auto" key={index}>
             {
               list && list.map((link) => {
                 return (
                   <FooterLink key={link.page} to={link.page} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-                    <i className={`mr-2 ${link.faIcon}`}></i> {link.text}
+                    <i className={`me-2 ${link.faIcon}`}></i> {link.text}
                   </FooterLink>
                 );
               })
@@ -52,7 +52,7 @@ export function OrdinoFooter(props) {
         })}
       </nav>
       <div className="row">
-        <div className="col text-right ordino-footer-logo">
+        <div className="col position-relative text-end ordino-footer-logo">
           <FooterLink to="/" openInNewWindow={openInNewWindow}>
             <OrdinoLogo />
           </FooterLink>

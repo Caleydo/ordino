@@ -29,7 +29,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
             <>
               <div className="container pb-10 pt-5">
                 <div className="row">
-                  <div className="col">
+                  <div className="col position-relative">
                     {items?.map((item, index) => {
                       return (
                         // `id` attribute must match the one in the scrollspy

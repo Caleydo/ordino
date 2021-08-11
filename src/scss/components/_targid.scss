@@ -241,7 +241,7 @@ div.filmstrip {
     }
 
     // hide close button for the first view
-    &:nth-child(1) > .view > button.close {
+    &:nth-child(1) > .view > .btn-close {
       display: none;
     }
 
@@ -292,8 +292,12 @@ div.filmstrip {
 
       > .inner,
       > .parameters,
-      button.close {
+      button.btn-close {
         margin: 10px;
+      }
+
+      .btn-close {
+        float: right;
       }
 
       > .parameters {
@@ -339,7 +343,7 @@ div.filmstrip {
     }
 
     &.t-context > .view {
-      //border-top: 8px solid lighten($core_border, 10%);
+      //border-top: 8px solid tint-color($core_border, 10%);
 
       > div {
         opacity: 0.6;
@@ -347,7 +351,7 @@ div.filmstrip {
     }
 
     &.t-focus > .view {
-      //border-top: 8px solid lighten($core_border, 5%);
+      //border-top: 8px solid tint-color($core_border, 5%);
 
       > div {
         opacity: 1;
@@ -395,7 +399,7 @@ div.filmstrip {
         &:active,
         &:focus,
         &:hover {
-          background: lighten($core_colour, 3%);
+          background: tint-color($core_colour, 3%);
           border-color: $hover-data-color;
         }
 

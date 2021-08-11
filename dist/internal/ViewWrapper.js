@@ -102,9 +102,8 @@ export class ViewWrapper extends EventHandler {
             .attr('class', 'view-actions');
         $viewActions.append('button')
             .attr('type', 'button')
-            .attr('class', 'close')
+            .attr('class', 'btn-close')
             .attr('aria-label', 'Close')
-            .html(`<span aria-hidden="true">×</span>`)
             .on('click', (d) => {
             this.remove();
         });

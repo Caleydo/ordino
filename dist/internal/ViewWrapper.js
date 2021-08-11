@@ -50,6 +50,19 @@ export class ViewWrapper extends EventHandler {
             this.chooseNextViews(newSelection.idtype, newSelection.range);
             this.fire(AView.EVENT_ITEM_SELECT, oldSelection, newSelection);
         };
+        this.listenerSortTrrack = (event, rid, columns, isSorting) => {
+            this.fire(AView.EVENT_SORT_TRRACK, rid, columns, isSorting);
+        };
+        this.listenerGroupTrrack = (event, rid, columns) => {
+            console.log("event in viewWrapper");
+            this.fire(AView.EVENT_GROUP_TRRACK, rid, columns);
+        };
+        this.listenerFilterTrrack = (event, column, rid, value, isRegExp, filterMissing) => {
+            this.fire(AView.EVENT_FILTER_TRRACK, column, rid, value, isRegExp, filterMissing);
+        };
+        this.listenerRenameTrrack = (event, column, rid, label, summary, description) => {
+            this.fire(AView.EVENT_RENAME_TRRACK, column, rid, label, summary, description);
+        };
         /**
          * Forward event from view to app instance
          * @param event
@@ -69,7 +82,10 @@ export class ViewWrapper extends EventHandler {
         this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generate_hash(plugin.desc, selection));
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
-        this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+        this.$viewWrapper = d3
+            .select(parent)
+            .append("div")
+            .classed("viewWrapper", true);
         this.built = ResolveNow.resolveImmediately(this.createView(selection, itemSelection, plugin, options));
     }
     /**
@@ -91,33 +107,42 @@ export class ViewWrapper extends EventHandler {
      * @param options
      */
     createView(selection, itemSelection, plugin, options) {
-        this.$node = this.$viewWrapper.append('div')
-            .classed('view', true)
+        this.$node = this.$viewWrapper
+            .append("div")
+            .classed("view", true)
             .datum(this);
-        this.$chooser = this.$viewWrapper.append('div')
-            .classed('chooser', true)
-            .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
+        this.$chooser = this.$viewWrapper
+            .append("div")
+            .classed("chooser", true)
+            .classed("hidden", true) // closed by default --> opened on selection (@see this.chooseNextViews())
             .datum(this);
-        this.$node.append('button')
-            .attr('type', 'button')
-            .attr('class', 'close')
-            .attr('aria-label', 'Close')
+        this.$node
+            .append("button")
+            .attr("type", "button")
+            .attr("class", "close")
+            .attr("aria-label", "Close")
             .html(`<span aria-hidden="true">×</span>`)
-            .on('click', (d) => {
+            .on("click", (d) => {
             this.remove();
         });
-        const $params = this.$node.append('div')
-            .attr('class', 'parameters')
+        const $params = this.$node
+            .append("div")
+            .attr("class", "parameters")
             .datum(this);
-        const $inner = this.$node.append('div')
-            .classed('inner', true);
+        const $inner = this.$node.append("div").classed("inner", true);
         this.instance = plugin.factory(this.context, selection, $inner.node(), options, plugin.desc);
-        return ResolveNow.resolveImmediately(this.instance.init($params.node(), this.onParameterChange.bind(this))).then(() => {
+        return ResolveNow.resolveImmediately(this.instance.init($params.node(), this.onParameterChange.bind(this)))
+            .then(() => {
             if (itemSelection) {
                 return this.instance.setItemSelection(itemSelection);
             }
-        }).then(() => {
+        })
+            .then(() => {
             this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
+            this.instance.on(AView.EVENT_SORT_TRRACK, this.listenerSortTrrack);
+            this.instance.on(AView.EVENT_GROUP_TRRACK, this.listenerGroupTrrack);
+            this.instance.on(AView.EVENT_FILTER_TRRACK, this.listenerFilterTrrack);
+            this.instance.on(AView.EVENT_RENAME_TRRACK, this.listenerRenameTrrack);
             this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
             this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
         });
@@ -151,8 +176,20 @@ export class ViewWrapper extends EventHandler {
         this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
         this.instance.off(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
         this.instance.destroy();
-        this.$viewWrapper.select('.view').remove();
+        this.$viewWrapper.select(".view").remove();
         this.$chooser.remove();
+    }
+    sortTrrack(rid, columns, isSorting) {
+        this.instance.setSortTrrack(rid, columns, isSorting);
+    }
+    groupTrrack(rid, columns) {
+        this.instance.setGroupTrrack(rid, columns);
+    }
+    filterTrrack(column, rid, value, isRegExp, filterMissing) {
+        this.instance.setFilterTrrack(column, rid, value, isRegExp, filterMissing);
+    }
+    setMetadataTrrack(column, rid, label, summary, description) {
+        this.instance.setMetadataTrrack(column, rid, label, summary, description);
     }
     /**
      * Destroys the inner view and the ViewWrapper's root node
@@ -168,7 +205,7 @@ export class ViewWrapper extends EventHandler {
         if (isInitializion) {
             if (this.firstTime) {
                 return this.context.graph.pushWithResult(TDPApplicationUtils.setParameter(this.ref, name, value, previousValue), {
-                    inverse: TDPApplicationUtils.setParameter(this.ref, name, previousValue, value)
+                    inverse: TDPApplicationUtils.setParameter(this.ref, name, previousValue, value),
                 });
             }
             return; // dummy;
@@ -184,6 +221,9 @@ export class ViewWrapper extends EventHandler {
     getItemSelection() {
         return this.instance.getItemSelection();
     }
+    getColumns() {
+        return this.instance.getColumns();
+    }
     setItemSelection(sel) {
         // turn listener off, to prevent an infinite event loop
         this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
@@ -197,6 +237,7 @@ export class ViewWrapper extends EventHandler {
         if (ViewUtils.isSameSelection(this.selection, selection)) {
             return;
         }
+        5;
         this.selection = selection;
         return ResolveNow.resolveImmediately(this.instance.setInputSelection(selection));
     }
@@ -204,7 +245,8 @@ export class ViewWrapper extends EventHandler {
         return this.selection;
     }
     matchSelectionLength(length) {
-        return ViewUtils.matchLength(this.desc.selection, length) || (ViewUtils.showAsSmallMultiple(this.desc) && length > 1);
+        return (ViewUtils.matchLength(this.desc.selection, length) ||
+            (ViewUtils.showAsSmallMultiple(this.desc) && length > 1));
     }
     set mode(mode) {
         if (this._mode === mode) {
@@ -212,17 +254,16 @@ export class ViewWrapper extends EventHandler {
         }
         const b = this._mode;
         this.modeChanged(mode);
-        this.fire(ViewWrapper.EVENT_MODE_CHANGED, this._mode = mode, b);
+        this.fire(ViewWrapper.EVENT_MODE_CHANGED, (this._mode = mode), b);
     }
     modeChanged(mode) {
         // update css classes
         this.$viewWrapper
-            .classed('t-hide', mode === EViewMode.HIDDEN)
-            .classed('t-focus', mode === EViewMode.FOCUS)
-            .classed('t-context', mode === EViewMode.CONTEXT)
-            .classed('t-active', mode === EViewMode.CONTEXT || mode === EViewMode.FOCUS);
-        this.$chooser
-            .classed('t-hide', mode === EViewMode.HIDDEN);
+            .classed("t-hide", mode === EViewMode.HIDDEN)
+            .classed("t-focus", mode === EViewMode.FOCUS)
+            .classed("t-context", mode === EViewMode.CONTEXT)
+            .classed("t-active", mode === EViewMode.CONTEXT || mode === EViewMode.FOCUS);
+        this.$chooser.classed("t-hide", mode === EViewMode.HIDDEN);
         // trigger modeChanged
         this.instance.modeChanged(mode);
         this.updateAfterAnimation();
@@ -232,11 +273,12 @@ export class ViewWrapper extends EventHandler {
         }
     }
     updateAfterAnimation() {
-        if (!this.instance || typeof this.instance.update !== 'function') {
+        if (!this.instance || typeof this.instance.update !== "function") {
             return;
         }
         setTimeout(() => {
-            if (this.instance && typeof this.instance.update === 'function') {
+            if (this.instance &&
+                typeof this.instance.update === "function") {
                 this.instance.update();
             }
         }, MODE_ANIMATION_TIME);
@@ -245,7 +287,7 @@ export class ViewWrapper extends EventHandler {
         const prev = this.$viewWrapper.node().previousSibling;
         const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
         const $app = $(this.$viewWrapper.node()).parent();
-        $app.scrollTo(scrollToPos, 500, { axis: 'x' });
+        $app.scrollTo(scrollToPos, 500, { axis: "x" });
     }
     /**
      * Decide if a chooser for the next view should be shown and if so, which next views are available
@@ -255,25 +297,31 @@ export class ViewWrapper extends EventHandler {
     chooseNextViews(idtype, range) {
         const that = this;
         // show chooser if selection available
-        this.$chooser.classed('hidden', range.isNone);
+        this.$chooser.classed("hidden", range.isNone);
         if (range.isNone) {
-            this.$chooser.selectAll('button').classed('active', false);
+            this.$chooser.selectAll("button").classed("active", false);
         }
         FindViewUtils.findViews(idtype, range).then((views) => {
             const groups = FindViewUtils.groupByCategory(views);
-            const $categories = this.$chooser.selectAll('div.category').data(groups);
-            $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d.label);
+            const $categories = this.$chooser.selectAll("div.category").data(groups);
+            $categories
+                .enter()
+                .append("div")
+                .classed("category", true)
+                .append("header")
+                .append("h1")
+                .text((d) => d.label);
             $categories.exit().remove();
             // sort data that buttons inside groups are sorted
-            const $buttons = $categories.selectAll('button').data((d) => d.views);
-            $buttons.enter().append('button')
-                .classed('btn btn-white', true);
-            $buttons.attr('data-viewid', (d) => d.v.id);
-            $buttons.text((d) => d.v.name)
-                .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
-                .on('click', function (d) {
-                $buttons.classed('active', false);
-                d3.select(this).classed('active', true);
+            const $buttons = $categories.selectAll("button").data((d) => d.views);
+            $buttons.enter().append("button").classed("btn btn-white", true);
+            $buttons.attr("data-viewid", (d) => d.v.id);
+            $buttons
+                .text((d) => d.v.name)
+                .attr("disabled", (d) => (d.v.mockup || !d.enabled ? "disabled" : null))
+                .on("click", function (d) {
+                $buttons.classed("active", false);
+                d3.select(this).classed("active", true);
                 that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
             });
             $buttons.exit().remove();
@@ -282,11 +330,11 @@ export class ViewWrapper extends EventHandler {
     setActiveNextView(viewId) {
         const chooser = this.$chooser.node();
         //disable old don't use d3 to don't screw up the data binding
-        Array.from(chooser.querySelectorAll('button.active')).forEach((d) => d.classList.remove('active'));
+        Array.from(chooser.querySelectorAll("button.active")).forEach((d) => d.classList.remove("active"));
         if (viewId) {
             const button = chooser.querySelector(`button[data-viewid="${viewId}"]`);
             if (button) {
-                button.classList.add('active');
+                button.classList.add("active");
             }
         }
     }
@@ -306,15 +354,19 @@ export class ViewWrapper extends EventHandler {
         this.fire(ViewWrapper.EVENT_FOCUS, this);
     }
     static createViewWrapper(graph, selection, itemSelection, parent, plugin, firstTime, options) {
-        return plugin.load().then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
+        return plugin
+            .load()
+            .then((p) => new ViewWrapper(graph, selection, itemSelection, parent, p, firstTime, options));
     }
     static replaceViewWrapper(existingView, selection, itemSelection, plugin, firstTime, options) {
-        return plugin.load().then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
+        return plugin
+            .load()
+            .then((p) => existingView.replaceView(selection, itemSelection, p, firstTime, options));
     }
 }
-ViewWrapper.EVENT_CHOOSE_NEXT_VIEW = 'open';
-ViewWrapper.EVENT_FOCUS = 'focus';
-ViewWrapper.EVENT_REMOVE = 'remove';
-ViewWrapper.EVENT_MODE_CHANGED = 'modeChanged';
-ViewWrapper.EVENT_REPLACE_VIEW = 'replaceView';
+ViewWrapper.EVENT_CHOOSE_NEXT_VIEW = "open";
+ViewWrapper.EVENT_FOCUS = "focus";
+ViewWrapper.EVENT_REMOVE = "remove";
+ViewWrapper.EVENT_MODE_CHANGED = "modeChanged";
+ViewWrapper.EVENT_REPLACE_VIEW = "replaceView";
 //# sourceMappingURL=ViewWrapper.js.map

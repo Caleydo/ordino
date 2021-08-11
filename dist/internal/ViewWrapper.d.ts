@@ -9,7 +9,8 @@ import { IObjectRef, ProvenanceGraph } from 'phovea_core';
 import 'jquery.scrollto/jquery.scrollTo.js';
 import { EventHandler } from 'phovea_core';
 import { IPlugin, IPluginDesc } from 'phovea_core';
-import { EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
+import { IView, IAdditionalColumnDesc } from 'tdp_core';
+import { EViewMode, ISelection, IViewContext } from 'tdp_core';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;
     selection: ISelection;
@@ -34,6 +35,10 @@ export declare class ViewWrapper extends EventHandler {
      * @param newSelection
      */
     private listenerItemSelect;
+    private listenerSortTrrack;
+    private listenerGroupTrrack;
+    private listenerFilterTrrack;
+    private listenerRenameTrrack;
     /**
      * Forward event from view to app instance
      * @param event
@@ -91,6 +96,13 @@ export declare class ViewWrapper extends EventHandler {
      * De-attache the event listener to (inner) view, destroys instance and removes the DOM elements
      */
     private destroyView;
+    sortTrrack(rid: number, columns: {
+        asc: boolean;
+        col: string;
+    }[], isSorting: boolean): void;
+    groupTrrack(rid: number, columns: string[]): void;
+    filterTrrack(column: string, rid: number, value: string | string[] | null, isRegExp: boolean, filterMissing: boolean): void;
+    setMetadataTrrack(column: string, rid: number, label: string, summary: string, description: string): void;
     /**
      * Destroys the inner view and the ViewWrapper's root node
      */
@@ -100,6 +112,7 @@ export declare class ViewWrapper extends EventHandler {
     getParameter(name: string): any;
     setParameterImpl(name: string, value: any): void;
     getItemSelection(): ISelection;
+    getColumns(): Promise<IAdditionalColumnDesc[]>;
     setItemSelection(sel: ISelection): PromiseLike<void>;
     setParameterSelection(selection: ISelection): PromiseLike<void>;
     getParameterSelection(): ISelection;

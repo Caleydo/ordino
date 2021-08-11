@@ -41,6 +41,7 @@ export class CmdUtils {
     static async createViewTrrack(graph, inputs, currentParam, previousParam, firstRun = false) {
         const app = inputs[0].value;
         const viewId = currentParam.viewId;
+        console.log(currentParam);
         const mySelection = currentParam
             ? CmdUtils.asSelection({
                 idtype: currentParam.idType,

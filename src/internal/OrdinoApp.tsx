@@ -9,7 +9,7 @@
 import * as React from 'react';
 import {BaseUtils, NodeUtils, ICmdResult, AppContext, ResolveNow} from 'phovea_core';
 import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'phovea_core';
-import {AView, TDPApplicationUtils, TourUtils, ARankingView} from 'tdp_core';
+import {AView, TDPApplicationUtils, TourUtils, ARankingView, IAdditionalColumnDesc} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {CLUEGraphManager} from 'phovea_clue';
@@ -20,11 +20,10 @@ import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
 import {OrdinoBreadcrumbs} from './components/navigation';
-import { provenanceActions, prov, DemoState } from "./TrrackFunctions";
+import { provenanceActions, prov, DemoState, Sort, Group, Filter, Metadata, Column } from "./TrrackFunctions";
 import { ProvVis } from '../trrackvis/src/index'
 import {eventConfig} from './TrrackIcons'
 import "semantic-ui-css/semantic.min.css";
-import {LocalDataProvider} from 'lineupjs';
 
 
 // tslint:disable-next-line: variable-name
@@ -82,6 +81,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);
   private readonly replaceViewInViewWrapper = (_event: any, _view: ViewWrapper) => this.updateDetailViewChoosers();
   private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(event.target as ViewWrapper, old, newValue);
+  private readonly sortTrrackEvent = (event: IEvent, rid: number, columns: {asc: boolean, col: string}[], isSorting) => this.sortTrrackAction(event.target as ViewWrapper, rid, columns, isSorting);
+  private readonly groupTrrackEvent = (event: IEvent, rid: number, columns: string[]) => this.groupTrrackAction(event.target as ViewWrapper, rid, columns);
+  private readonly filterTrrackEvent = (event: IEvent, column: string, rid: number, value: string | string[], isRegExp: boolean, filterMissing: boolean) => this.filterTrrackAction(event.target as ViewWrapper, column, rid, value, isRegExp, filterMissing);
+  private readonly renameTrrackEvent = (event: IEvent, column: string, rid: number, label: string, summary: string, description: string) => this.setMetadataTrrackAction(event.target as ViewWrapper, column, rid, label, summary, description);
 
   constructor(props) {
     super(props);
@@ -115,6 +118,168 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   async setupObservers()
   {
 
+    // prov.addObserver(
+    //   (state) => {
+    //     let changeList: Metadata[][] = []
+
+
+    //     state.viewList.forEach(v => {
+    //       let singleChange: Metadata[] = []
+    //       v.rankings.forEach(r => r.columns.forEach(c => singleChange.push(c.metadata)))
+    //       changeList.push(singleChange)
+    //     })
+    //     return changeList;
+    //   },
+    //   (meta, oldMeta) => {
+
+    //     console.log(meta, oldMeta)
+    //     let metaChangesNew: { [key: number]:  Metadata }  = {};
+    //     let metaChangesOld: { [key: number]:  Metadata } = {};
+
+    //     for (let i in meta) {
+    //       if (oldMeta[i] !== undefined && meta[i] !== oldMeta[i]) {
+    //         metaChangesNew[i] = meta[i];
+    //         metaChangesOld[i] = oldMeta[i];
+    //       }
+    //     }
+
+    //     for (let i in metaChangesNew) {
+    //       for (let j in metaChangesNew[i]) {
+    //         console.log(i, j);
+    //         if (meta[i][j] !== oldMeta[i][j]) {
+    //           this.setMetadataTrrack(
+    //             this.state.views[i],
+    //             j,
+    //             meta[i][j].rid,
+    //             meta[i][j].label,
+    //             meta[i][j].summary,
+    //             meta[i][j].description
+    //           );
+    //         }
+    //       }
+    //     }
+
+    //     for (let i in metaChangesOld) {
+    //       for (let j in metaChangesOld[i]) {
+    //         console.log(i, j);
+    //         if (!meta[i][j]) {
+    //           this.setMetadataTrrack(
+    //             this.state.views[i],
+    //             j,
+    //             oldMeta[i][j].rid,
+    //             null,
+    //             null,
+    //             null
+    //           );
+    //         }
+    //       }
+    //     }
+    //   }
+    // );
+
+    // prov.addObserver(
+    //   (state) => state.viewList.map(v => v.filters),
+    //   (filter, oldFilter) => {
+    //     console.log(filter, oldFilter)
+    //     let filterChangesNew: { [key: number]: { [key: string] : Filter } } = {};
+    //     let filterChangesOld: { [key: number]: { [key: string] : Filter } } = {};
+
+    //     for (let i in filter) {
+    //       if (oldFilter[i] !== undefined && filter[i] !== oldFilter[i]) {
+    //         filterChangesNew[i] = filter[i];
+    //         filterChangesOld[i] = oldFilter[i];
+    //       }
+    //     }
+
+    //     console.log(filterChangesNew);
+    //     for (let i in filterChangesNew) {
+    //       for (let j in filterChangesNew[i]) {
+    //         console.log(i, j);
+    //         if (filter[i][j] !== oldFilter[i][j]) {
+    //           this.filterTrrack(
+    //             this.state.views[i],
+    //             j,
+    //             filter[i][j].rid,
+    //             filter[i][j].value,
+    //             filter[i][j].isRegExp,
+    //             filter[i][j].filterMissing
+    //           );
+    //         }
+    //       }
+    //     }
+
+    //     for (let i in filterChangesOld) {
+    //       for (let j in filterChangesOld[i]) {
+    //         console.log(i, j);
+    //         if (!filter[i][j]) {
+    //           this.filterTrrack(
+    //             this.state.views[i],
+    //             j,
+    //             oldFilter[i][j].rid,
+    //             null,
+    //             false,
+    //             false
+    //           );
+    //         }
+    //       }
+    //     }
+    //   }
+    // );
+
+    // prov.addObserver(
+    //   (state => state.viewList.map((v) => v.sort)), 
+    //   (sort, oldSort) => {
+
+    //     console.log(sort, oldSort)
+
+    //     let sortChanges: { [key: number]: Sort } = {};
+
+    //     for(let j in sort)
+    //     {
+    //       if(oldSort[j] !== undefined && sort[j] !== oldSort[j])
+    //       {
+    //         sortChanges[j] = sort[j]
+    //       }
+    //     }
+
+    //     for (let j in sortChanges)
+    //     {
+    //       console.log("sending changes")
+    //       this.sortTrrack(
+    //         this.state.views[j],
+    //         sort[j].rid,
+    //         sort[j].columns,
+    //         sort[j].isSingleSort
+    //       );
+    //     }
+    //   }
+    // )
+
+    // //Grouping observer
+    // prov.addObserver(
+    //   (state) => state.viewList.map((v) => v.group),
+    //   (group, oldGroup) => {
+    //     let groupChanges: { [key: number]: Group } = {};
+
+    //     console.log("group obs called")
+
+    //     console.log(group, oldGroup)
+
+    //     for (let j in group) {
+    //       if (oldGroup[j] !== undefined && group[j] !== oldGroup[j]) {
+    //         groupChanges[j] = group[j];
+    //       }
+    //     }
+
+    //     for (let j in groupChanges) {
+    //       this.groupTrrack(
+    //         this.state.views[j],
+    //         group[j].rid,
+    //         group[j].columns
+    //       );
+    //     }
+    //   }
+    // );
     //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically. 
     prov.addObserver(
       (state) => state.viewList.map((v) => v.selection),
@@ -194,7 +359,6 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       (state) => state.viewList,
       (viewList, oldViewList) => {
         let promises = [];
-        console.log(viewList);
 
         //we added a view/views. add them.
         if (viewList.length > oldViewList.length) {
@@ -208,6 +372,42 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
                   viewList[i - 1],
                   viewList.length == 1
                 )
+                // .then((viewWrapper) => { //do all of the necessary setup after the view is created
+                //   this.sortTrrack(
+                //     viewWrapper,
+                //     viewList[i].sort.rid,
+                //     viewList[i].sort.columns,
+                //     viewList[i].sort.isSingleSort
+                //   );
+                //   this.groupTrrack(
+                //     viewWrapper,
+                //     viewList[i].group.rid,
+                //     viewList[i].group.columns
+                //   );
+                //   for (let j in viewList[i].filters) {
+                //     this.filterTrrack(
+                //       viewWrapper,
+                //       j,
+                //       viewList[i].filters[j].rid,
+                //       viewList[i].filters[j].value,
+                //       viewList[i].filters[j].isRegExp,
+                //       viewList[i].filters[j].filterMissing
+                //     );
+                //   }
+
+                //   for (let j in viewList[i].metadata) {
+                //     this.setMetadataTrrack(
+                //       viewWrapper,
+                //       j,
+                //       viewList[i].metadata[j].rid,
+                //       viewList[i].metadata[j].label,
+                //       viewList[i].metadata[j].summary,
+                //       viewList[i].metadata[j].description
+                //     );
+                //   }
+
+                //   return viewWrapper;
+                // })
               );
             } else {
               promises.push(
@@ -218,6 +418,32 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
                   null,
                   viewList.length == 1
                 )
+                // .then((viewWrapper) => {
+                //   //do all of the necessary setup after the view is created
+                //   this.sortTrrack(
+                //     viewWrapper,
+                //     viewList[i].sort.rid,
+                //     viewList[i].sort.columns,
+                //     viewList[i].sort.isSingleSort
+                //   );
+                //   this.groupTrrack(
+                //     viewWrapper,
+                //     viewList[i].group.rid,
+                //     viewList[i].group.columns
+                //   );
+                //   for (let j in viewList[i].filters) {
+                //     this.filterTrrack(
+                //       viewWrapper,
+                //       j,
+                //       viewList[i].filters[j].rid,
+                //       viewList[i].filters[j].value,
+                //       viewList[i].filters[j].isRegExp,
+                //       viewList[i].filters[j].filterMissing
+                //     );
+                //   }
+
+                //   return viewWrapper;
+                // })
               );
             }
           }
@@ -233,7 +459,6 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
         } 
         //we removed a view/views. remove them. 
         else if (viewList.length < oldViewList.length) {
-          console.log(viewList, oldViewList, this.state.views)
           for (
             let i = oldViewList.length - 1;
             i >= viewList.length;
@@ -271,9 +496,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       }
     );
 
-    prov.addGlobalObserver((graph) => {
-      console.log(graph);
-    });
+    // prov.addGlobalObserver((graph) => {
+    //   console.log(graph);
+    // });
   }
 
   /**
@@ -442,6 +667,126 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     }
   }
 
+  private sortTrrack(viewWrapper: ViewWrapper, rid: number, columns: {asc: boolean, col: string}[], isSorting: boolean) {
+    viewWrapper.sortTrrack(rid, columns, isSorting)
+  }
+
+  private sortTrrackAction(viewWrapper: ViewWrapper, rid: number, columns: {asc: boolean, col: string}[], isSorting: boolean) {
+    const { sortAction } = provenanceActions;
+
+    sortAction.setLabel("Sort");
+    prov.apply(sortAction(rid, columns, isSorting, this.state.views.indexOf(viewWrapper)));
+  }
+
+  private groupTrrack(viewWrapper: ViewWrapper, rid: number, columns: string[]) {
+    viewWrapper.groupTrrack(rid, columns)
+  }
+
+  private groupTrrackAction(viewWrapper: ViewWrapper, rid: number, columns: string[]) {
+    const { groupAction } = provenanceActions;
+
+    groupAction.setLabel("Group");
+    prov.apply(
+      groupAction(rid, columns, this.state.views.indexOf(viewWrapper))
+    );
+  }
+
+  private filterTrrack(viewWrapper: ViewWrapper, column: string, rid: number, value: string | string[] | null, isRegExp: boolean, filterMissing: boolean) {
+    viewWrapper.filterTrrack(column, rid, value, isRegExp, filterMissing)
+  }
+
+  private filterTrrackAction(viewWrapper: ViewWrapper, column: string, rid: number, value: string | string[] | null, isRegExp: boolean, filterMissing: boolean) {
+    console.log("making a filter action")
+    const { filterAction } = provenanceActions;
+
+    filterAction.setLabel("Filter");
+    prov.apply(
+      filterAction(column, rid, value, isRegExp, filterMissing, this.state.views.indexOf(viewWrapper))
+    );
+  }
+
+  private setMetadataTrrack(viewWrapper: ViewWrapper, column: string, rid: number, label: string, summary: string, description: string) {
+    viewWrapper.setMetadataTrrack(column, rid, label, summary, description)
+  }
+
+  private setMetadataTrrackAction(viewWrapper: ViewWrapper, column: string, rid: number, label: string, summary: string, description: string) {
+    let colInfo = null;
+
+    if (
+      prov.getState(prov.current).viewList[
+        this.state.views.indexOf(viewWrapper)
+      ].rankings[rid].columns.length === 0
+    ) {
+      colInfo = viewWrapper.getColumns();
+    }
+
+    const { setMetadataAction } = provenanceActions;
+
+    setMetadataAction.setLabel("Rename");
+
+    if(!colInfo)
+    {
+      prov.apply(
+        setMetadataAction(
+          column,
+          rid,
+          label,
+          summary,
+          description,
+          this.state.views.indexOf(viewWrapper),
+          null
+        )
+      );
+    }
+    else {
+      colInfo.then(c => {
+        prov.apply(
+          setMetadataAction(
+            column,
+            rid,
+            label,
+            summary,
+            description,
+            this.state.views.indexOf(viewWrapper),
+            this.cleanColumnInfo(c)
+          )
+        );
+      })
+    }
+  }
+
+  private cleanColumnInfo(cols: IAdditionalColumnDesc[]) : Column[]
+  {
+    let cleanCols: Column[] = []
+    console.log(cols)
+    let counter = 0;
+    for(let c of cols)
+    {
+      if(c.initialRanking)
+      {
+        cleanCols.push({
+          id: `@${counter + 3}`,
+          filter: {
+            rid: 0,
+            col: `@${counter + 3}`,
+            value: null,
+            isRegExp: null,
+            filterMissing: null,
+          },
+          metadata: {
+            rid: 0,
+            col: `@${counter + 3}`,
+            label: c.label,
+            summary: "",
+            description: "",
+          },
+        });
+      }
+      counter += 1
+    }
+    return cleanCols
+  }
+
   /**
    * The last view of the list of open views
    */
@@ -575,12 +920,16 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * Add a new view wrapper to the list of open views.
    * The return value is index in the list of views.
    * @param view ViewWrapper
-   */
+   */4
   pushImpl(view: ViewWrapper) {
     view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    view.on(AView.EVENT_SORT_TRRACK, this.sortTrrackEvent);
+    view.on(AView.EVENT_GROUP_TRRACK, this.groupTrrackEvent);
+    view.on(AView.EVENT_FILTER_TRRACK, this.filterTrrackEvent);
+    view.on(AView.EVENT_RENAME_TRRACK, this.renameTrrackEvent);
     // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
 
     // this.setState({

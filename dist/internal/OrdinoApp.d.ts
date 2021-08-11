@@ -65,6 +65,10 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     private readonly chooseNextView;
     private readonly replaceViewInViewWrapper;
     private readonly updateSelection;
+    private readonly sortTrrackEvent;
+    private readonly groupTrrackEvent;
+    private readonly filterTrrackEvent;
+    private readonly renameTrrackEvent;
     constructor(props: any);
     /**
      * This function can be used to load some initial content async
@@ -115,6 +119,15 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @param options
      */
     private updateItemSelection;
+    private sortTrrack;
+    private sortTrrackAction;
+    private groupTrrack;
+    private groupTrrackAction;
+    private filterTrrack;
+    private filterTrrackAction;
+    private setMetadataTrrack;
+    private setMetadataTrrackAction;
+    private cleanColumnInfo;
     /**
      * The last view of the list of open views
      */
@@ -163,7 +176,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * Add a new view wrapper to the list of open views.
      * The return value is index in the list of views.
      * @param view ViewWrapper
-     */
+     */ 4: any;
     pushImpl(view: ViewWrapper): ViewWrapper;
     /**
      * Remove the given and focus on the view with the given index.

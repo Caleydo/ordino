@@ -39,6 +39,10 @@ export class OrdinoApp extends React.Component {
         this.chooseNextView = (event, viewId, idtype, selection) => this.handleNextView(event.target, viewId, idtype, selection);
         this.replaceViewInViewWrapper = (_event, _view) => this.updateDetailViewChoosers();
         this.updateSelection = (event, old, newValue) => this.updateItemSelection(event.target, old, newValue);
+        this.sortTrrackEvent = (event, rid, columns, isSorting) => this.sortTrrackAction(event.target, rid, columns, isSorting);
+        this.groupTrrackEvent = (event, rid, columns) => this.groupTrrackAction(event.target, rid, columns);
+        this.filterTrrackEvent = (event, column, rid, value, isRegExp, filterMissing) => this.filterTrrackAction(event.target, column, rid, value, isRegExp, filterMissing);
+        this.renameTrrackEvent = (event, column, rid, label, summary, description) => this.setMetadataTrrackAction(event.target, column, rid, label, summary, description);
         this.nodeRef = React.createRef();
         this.setupObservers();
         prov.done();
@@ -62,6 +66,148 @@ export class OrdinoApp extends React.Component {
      * Sets up needed observers for trrack. These observers get called when the related state changes.
      */
     async setupObservers() {
+        // prov.addObserver(
+        //   (state) => {
+        //     let changeList: Metadata[][] = []
+        //     state.viewList.forEach(v => {
+        //       let singleChange: Metadata[] = []
+        //       v.rankings.forEach(r => r.columns.forEach(c => singleChange.push(c.metadata)))
+        //       changeList.push(singleChange)
+        //     })
+        //     return changeList;
+        //   },
+        //   (meta, oldMeta) => {
+        //     console.log(meta, oldMeta)
+        //     let metaChangesNew: { [key: number]:  Metadata }  = {};
+        //     let metaChangesOld: { [key: number]:  Metadata } = {};
+        //     for (let i in meta) {
+        //       if (oldMeta[i] !== undefined && meta[i] !== oldMeta[i]) {
+        //         metaChangesNew[i] = meta[i];
+        //         metaChangesOld[i] = oldMeta[i];
+        //       }
+        //     }
+        //     for (let i in metaChangesNew) {
+        //       for (let j in metaChangesNew[i]) {
+        //         console.log(i, j);
+        //         if (meta[i][j] !== oldMeta[i][j]) {
+        //           this.setMetadataTrrack(
+        //             this.state.views[i],
+        //             j,
+        //             meta[i][j].rid,
+        //             meta[i][j].label,
+        //             meta[i][j].summary,
+        //             meta[i][j].description
+        //           );
+        //         }
+        //       }
+        //     }
+        //     for (let i in metaChangesOld) {
+        //       for (let j in metaChangesOld[i]) {
+        //         console.log(i, j);
+        //         if (!meta[i][j]) {
+        //           this.setMetadataTrrack(
+        //             this.state.views[i],
+        //             j,
+        //             oldMeta[i][j].rid,
+        //             null,
+        //             null,
+        //             null
+        //           );
+        //         }
+        //       }
+        //     }
+        //   }
+        // );
+        // prov.addObserver(
+        //   (state) => state.viewList.map(v => v.filters),
+        //   (filter, oldFilter) => {
+        //     console.log(filter, oldFilter)
+        //     let filterChangesNew: { [key: number]: { [key: string] : Filter } } = {};
+        //     let filterChangesOld: { [key: number]: { [key: string] : Filter } } = {};
+        //     for (let i in filter) {
+        //       if (oldFilter[i] !== undefined && filter[i] !== oldFilter[i]) {
+        //         filterChangesNew[i] = filter[i];
+        //         filterChangesOld[i] = oldFilter[i];
+        //       }
+        //     }
+        //     console.log(filterChangesNew);
+        //     for (let i in filterChangesNew) {
+        //       for (let j in filterChangesNew[i]) {
+        //         console.log(i, j);
+        //         if (filter[i][j] !== oldFilter[i][j]) {
+        //           this.filterTrrack(
+        //             this.state.views[i],
+        //             j,
+        //             filter[i][j].rid,
+        //             filter[i][j].value,
+        //             filter[i][j].isRegExp,
+        //             filter[i][j].filterMissing
+        //           );
+        //         }
+        //       }
+        //     }
+        //     for (let i in filterChangesOld) {
+        //       for (let j in filterChangesOld[i]) {
+        //         console.log(i, j);
+        //         if (!filter[i][j]) {
+        //           this.filterTrrack(
+        //             this.state.views[i],
+        //             j,
+        //             oldFilter[i][j].rid,
+        //             null,
+        //             false,
+        //             false
+        //           );
+        //         }
+        //       }
+        //     }
+        //   }
+        // );
+        // prov.addObserver(
+        //   (state => state.viewList.map((v) => v.sort)), 
+        //   (sort, oldSort) => {
+        //     console.log(sort, oldSort)
+        //     let sortChanges: { [key: number]: Sort } = {};
+        //     for(let j in sort)
+        //     {
+        //       if(oldSort[j] !== undefined && sort[j] !== oldSort[j])
+        //       {
+        //         sortChanges[j] = sort[j]
+        //       }
+        //     }
+        //     for (let j in sortChanges)
+        //     {
+        //       console.log("sending changes")
+        //       this.sortTrrack(
+        //         this.state.views[j],
+        //         sort[j].rid,
+        //         sort[j].columns,
+        //         sort[j].isSingleSort
+        //       );
+        //     }
+        //   }
+        // )
+        // //Grouping observer
+        // prov.addObserver(
+        //   (state) => state.viewList.map((v) => v.group),
+        //   (group, oldGroup) => {
+        //     let groupChanges: { [key: number]: Group } = {};
+        //     console.log("group obs called")
+        //     console.log(group, oldGroup)
+        //     for (let j in group) {
+        //       if (oldGroup[j] !== undefined && group[j] !== oldGroup[j]) {
+        //         groupChanges[j] = group[j];
+        //       }
+        //     }
+        //     for (let j in groupChanges) {
+        //       this.groupTrrack(
+        //         this.state.views[j],
+        //         group[j].rid,
+        //         group[j].columns
+        //       );
+        //     }
+        //   }
+        // );
         //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically. 
         prov.addObserver((state) => state.viewList.map((v) => v.selection), (selections, oldSelections) => {
             let selectionChanges = {};
@@ -108,15 +254,75 @@ export class OrdinoApp extends React.Component {
         });
         prov.addObserver((state) => state.viewList, (viewList, oldViewList) => {
             let promises = [];
-            console.log(viewList);
             //we added a view/views. add them.
             if (viewList.length > oldViewList.length) {
                 for (let i = oldViewList.length; i < viewList.length; i += 1) {
                     if (i > 0) {
-                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], viewList[i - 1], viewList.length == 1));
+                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], viewList[i - 1], viewList.length == 1)
+                        // .then((viewWrapper) => { //do all of the necessary setup after the view is created
+                        //   this.sortTrrack(
+                        //     viewWrapper,
+                        //     viewList[i].sort.rid,
+                        //     viewList[i].sort.columns,
+                        //     viewList[i].sort.isSingleSort
+                        //   );
+                        //   this.groupTrrack(
+                        //     viewWrapper,
+                        //     viewList[i].group.rid,
+                        //     viewList[i].group.columns
+                        //   );
+                        //   for (let j in viewList[i].filters) {
+                        //     this.filterTrrack(
+                        //       viewWrapper,
+                        //       j,
+                        //       viewList[i].filters[j].rid,
+                        //       viewList[i].filters[j].value,
+                        //       viewList[i].filters[j].isRegExp,
+                        //       viewList[i].filters[j].filterMissing
+                        //     );
+                        //   }
+                        //   for (let j in viewList[i].metadata) {
+                        //     this.setMetadataTrrack(
+                        //       viewWrapper,
+                        //       j,
+                        //       viewList[i].metadata[j].rid,
+                        //       viewList[i].metadata[j].label,
+                        //       viewList[i].metadata[j].summary,
+                        //       viewList[i].metadata[j].description
+                        //     );
+                        //   }
+                        //   return viewWrapper;
+                        // })
+                        );
                     }
                     else {
-                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], null, viewList.length == 1));
+                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], null, viewList.length == 1)
+                        // .then((viewWrapper) => {
+                        //   //do all of the necessary setup after the view is created
+                        //   this.sortTrrack(
+                        //     viewWrapper,
+                        //     viewList[i].sort.rid,
+                        //     viewList[i].sort.columns,
+                        //     viewList[i].sort.isSingleSort
+                        //   );
+                        //   this.groupTrrack(
+                        //     viewWrapper,
+                        //     viewList[i].group.rid,
+                        //     viewList[i].group.columns
+                        //   );
+                        //   for (let j in viewList[i].filters) {
+                        //     this.filterTrrack(
+                        //       viewWrapper,
+                        //       j,
+                        //       viewList[i].filters[j].rid,
+                        //       viewList[i].filters[j].value,
+                        //       viewList[i].filters[j].isRegExp,
+                        //       viewList[i].filters[j].filterMissing
+                        //     );
+                        //   }
+                        //   return viewWrapper;
+                        // })
+                        );
                     }
                 }
                 Promise.all(promises).then((d) => {
@@ -127,7 +333,6 @@ export class OrdinoApp extends React.Component {
             }
             //we removed a view/views. remove them. 
             else if (viewList.length < oldViewList.length) {
-                console.log(viewList, oldViewList, this.state.views);
                 for (let i = oldViewList.length - 1; i >= viewList.length; i -= 1) {
                     promises.push(CmdUtils.removeViewTrrack([this.ref, this.state.views[i].ref]));
                 }
@@ -147,9 +352,9 @@ export class OrdinoApp extends React.Component {
                 currentIndex: focused,
             }, () => this.focusImpl(focused));
         });
-        prov.addGlobalObserver((graph) => {
-            console.log(graph);
-        });
+        // prov.addGlobalObserver((graph) => {
+        //   console.log(graph);
+        // });
     }
     /**
      * Set the mode and open/close state of the start menu.
@@ -295,6 +500,78 @@ export class OrdinoApp extends React.Component {
             }
         }
     }
+    sortTrrack(viewWrapper, rid, columns, isSorting) {
+        viewWrapper.sortTrrack(rid, columns, isSorting);
+    }
+    sortTrrackAction(viewWrapper, rid, columns, isSorting) {
+        const { sortAction } = provenanceActions;
+        sortAction.setLabel("Sort");
+        prov.apply(sortAction(rid, columns, isSorting, this.state.views.indexOf(viewWrapper)));
+    }
+    groupTrrack(viewWrapper, rid, columns) {
+        viewWrapper.groupTrrack(rid, columns);
+    }
+    groupTrrackAction(viewWrapper, rid, columns) {
+        const { groupAction } = provenanceActions;
+        groupAction.setLabel("Group");
+        prov.apply(groupAction(rid, columns, this.state.views.indexOf(viewWrapper)));
+    }
+    filterTrrack(viewWrapper, column, rid, value, isRegExp, filterMissing) {
+        viewWrapper.filterTrrack(column, rid, value, isRegExp, filterMissing);
+    }
+    filterTrrackAction(viewWrapper, column, rid, value, isRegExp, filterMissing) {
+        console.log("making a filter action");
+        const { filterAction } = provenanceActions;
+        filterAction.setLabel("Filter");
+        prov.apply(filterAction(column, rid, value, isRegExp, filterMissing, this.state.views.indexOf(viewWrapper)));
+    }
+    setMetadataTrrack(viewWrapper, column, rid, label, summary, description) {
+        viewWrapper.setMetadataTrrack(column, rid, label, summary, description);
+    }
+    setMetadataTrrackAction(viewWrapper, column, rid, label, summary, description) {
+        let colInfo = null;
+        if (prov.getState(prov.current).viewList[this.state.views.indexOf(viewWrapper)].rankings[rid].columns.length === 0) {
+            colInfo = viewWrapper.getColumns();
+        }
+        const { setMetadataAction } = provenanceActions;
+        setMetadataAction.setLabel("Rename");
+        if (!colInfo) {
+            prov.apply(setMetadataAction(column, rid, label, summary, description, this.state.views.indexOf(viewWrapper), null));
+        }
+        else {
+            colInfo.then(c => {
+                prov.apply(setMetadataAction(column, rid, label, summary, description, this.state.views.indexOf(viewWrapper), this.cleanColumnInfo(c)));
+            });
+        }
+    }
+    cleanColumnInfo(cols) {
+        let cleanCols = [];
+        console.log(cols);
+        let counter = 0;
+        for (let c of cols) {
+            if (c.initialRanking) {
+                cleanCols.push({
+                    id: `@${counter + 3}`,
+                    filter: {
+                        rid: 0,
+                        col: `@${counter + 3}`,
+                        value: null,
+                        isRegExp: null,
+                        filterMissing: null,
+                    },
+                    metadata: {
+                        rid: 0,
+                        col: `@${counter + 3}`,
+                        label: c.label,
+                        summary: "",
+                        description: "",
+                    },
+                });
+            }
+            counter += 1;
+        }
+        return cleanCols;
+    }
     /**
      * The last view of the list of open views
      */
@@ -399,16 +676,15 @@ export class OrdinoApp extends React.Component {
         removeViewAction.setLabel("Remove " + viewWrapper.desc.name);
         prov.apply(removeViewAction(index));
     }
-    /**
-     * Add a new view wrapper to the list of open views.
-     * The return value is index in the list of views.
-     * @param view ViewWrapper
-     */
     pushImpl(view) {
         view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
         view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+        view.on(AView.EVENT_SORT_TRRACK, this.sortTrrackEvent);
+        view.on(AView.EVENT_GROUP_TRRACK, this.groupTrrackEvent);
+        view.on(AView.EVENT_FILTER_TRRACK, this.filterTrrackEvent);
+        view.on(AView.EVENT_RENAME_TRRACK, this.renameTrrackEvent);
         // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
         // this.setState({
         //   views: [...this.state.views, view]

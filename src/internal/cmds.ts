@@ -70,6 +70,8 @@ export class CmdUtils {
     const app: IOrdinoApp = inputs[0].value;
     const viewId: string = currentParam.viewId;
 
+    console.log(currentParam)
+
     const mySelection = currentParam
       ? CmdUtils.asSelection({
           idtype: currentParam.idType,

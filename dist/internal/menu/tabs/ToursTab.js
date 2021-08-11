@@ -50,7 +50,7 @@ export function ToursSection(props) {
                 // either hrefBase or onClickHandler
                 const href = (props.hrefBase) ? props.hrefBase.replace('{id}', tour.desc.id) : null;
                 const onClickHandler = (!props.hrefBase) ? (evt) => TourUtils.startTour(tour.desc.id) : null;
-                return React.createElement(TourCard, { key: tour.desc.id, id: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images[index] || null, onClickHandler: onClickHandler, href: href });
+                return React.createElement(TourCard, { key: tour.desc.id, id: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: (images === null || images === void 0 ? void 0 : images[index]) || null, onClickHandler: onClickHandler, href: href });
             })))
         : null));
 }

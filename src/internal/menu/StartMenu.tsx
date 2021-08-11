@@ -219,14 +219,11 @@ function StartMenuLinks(props: IStartMenuTabWrapperProps) {
 
 
 function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
-  if (props.activeTab === null) {
-    return null;
-  }
 
   return (
     <>
       {props.status === 'success' &&
-        <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : ''} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}`}>
+        <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}`}>
           {props.tabs.map((tab) => (
             <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
               key={tab.desc.id}

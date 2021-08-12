@@ -28,6 +28,7 @@ import {
 import {ResolveNow} from 'phovea_core';
 import {FindViewUtils} from 'tdp_core';
 import {MODE_ANIMATION_TIME} from './constants';
+import {IDataProviderDump} from 'lineupjs';
 
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
@@ -71,6 +72,11 @@ export class ViewWrapper extends EventHandler {
   private listenerUpdateEntryPoint = (event: any, namedSet: INamedSet) => {
     this.fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
   }
+
+  private dumpChangeTrrack = (event: any, dump: IDataProviderDump) => {
+    this.fire(AView.EVENT_DUMP_CHANGE_TRRACK, dump);
+  }
+
 
   /**
    * Wrapper function for event listener
@@ -172,6 +178,8 @@ export class ViewWrapper extends EventHandler {
       this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
 
       this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+      this.instance.on(AView.EVENT_DUMP_CHANGE_TRRACK, this.dumpChangeTrrack);
+
     });
   }
 
@@ -222,6 +230,11 @@ export class ViewWrapper extends EventHandler {
 
   getInstance() {
     return this.instance;
+  }
+
+  restoreDump(dump: IDataProviderDump)
+  {
+    this.instance.restoreDump(dump)
   }
 
 

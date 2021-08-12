@@ -59,6 +59,9 @@ export class ViewWrapper extends EventHandler {
         this.listenerUpdateEntryPoint = (event, namedSet) => {
             this.fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
         };
+        this.dumpChangeTrrack = (event, dump) => {
+            this.fire(AView.EVENT_DUMP_CHANGE_TRRACK, dump);
+        };
         /**
          * Wrapper function for event listener
          */
@@ -120,6 +123,7 @@ export class ViewWrapper extends EventHandler {
             this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
             this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
             this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
+            this.instance.on(AView.EVENT_DUMP_CHANGE_TRRACK, this.dumpChangeTrrack);
         });
     }
     /**
@@ -163,6 +167,9 @@ export class ViewWrapper extends EventHandler {
     }
     getInstance() {
         return this.instance;
+    }
+    restoreDump(dump) {
+        this.instance.restoreDump(dump);
     }
     onParameterChange(name, value, previousValue, isInitializion) {
         if (isInitializion) {

@@ -24,7 +24,7 @@ import { provenanceActions, prov, DemoState } from "./TrrackFunctions";
 import { ProvVis } from '../trrackvis/src/index'
 import {eventConfig} from './TrrackIcons'
 import "semantic-ui-css/semantic.min.css";
-import {LocalDataProvider} from 'lineupjs';
+import {LocalDataProvider, IDataProviderDump} from 'lineupjs';
 
 
 // tslint:disable-next-line: variable-name
@@ -82,6 +82,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);
   private readonly replaceViewInViewWrapper = (_event: any, _view: ViewWrapper) => this.updateDetailViewChoosers();
   private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(event.target as ViewWrapper, old, newValue);
+  private readonly dumpChangedTrrack = (event: IEvent, dump: IDataProviderDump) => this.updateLineupAction(event.target as ViewWrapper, dump);
 
   constructor(props) {
     super(props);
@@ -114,24 +115,42 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   async setupObservers()
   {
+    //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
+    prov.addObserver(
+      (state) => state.viewList.map((v) => v.dump),
+      (dump, oldDump) => {
+        let dumpChanges: { [key: number]: IDataProviderDump } = {};
 
-    //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically. 
+        for (let j in dump) {
+          if (oldDump[j] !== undefined && dump[j] !== oldDump[j]) {
+            dumpChanges[j] = dump[j];
+          }
+        }
+
+        for (let j in dumpChanges) {4
+          let changeIndex: number = +j;
+          this.updateLineup(this.views[j], dumpChanges[j])
+        }
+      }
+    );
+
+    //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
     prov.addObserver(
       (state) => state.viewList.map((v) => v.selection),
       (selections, oldSelections) => {
+        let selectionChanges: { [key: number]: string } = {};
 
-        let selectionChanges: { [key: number] : string } = {};
-
-        for(let j in selections)
-        {
-          if(oldSelections[j] !== undefined && selections[j] !== oldSelections[j])
-          {
-            selectionChanges[j] = selections[j]
+        for (let j in selections) {
+          if (
+            oldSelections[j] !== undefined &&
+            selections[j] !== oldSelections[j]
+          ) {
+            selectionChanges[j] = selections[j];
           }
         }
 
         for (let j in selectionChanges) {
-          let changeIndex: number = +j
+          let changeIndex: number = +j;
           if (this.state.views.length > changeIndex + 1) {
             CmdUtils.setSelectionTrrack(
               [
@@ -148,20 +167,18 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
           }
         }
 
-        if(selections.length === oldSelections.length)
-        {
+        if (selections.length === oldSelections.length) {
           this.setState({
-            ...this.state
-          })
+            ...this.state,
+          });
         }
       }
     );
 
-      // this doesnt work when youre jumpin non linearly, could have different lengths and still need to change 
+    // this doesnt work when youre jumpin non linearly, could have different lengths and still need to change
     prov.addObserver(
       (state) => state.viewList.map((v) => v.viewId),
       (id, oldId) => {
-
         let idChanges: { [key: number]: string } = {};
 
         for (let j in id) {
@@ -170,9 +187,8 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
           }
         }
 
-        for (let j in idChanges)
-        {
-          let changeIndex: number = +j
+        for (let j in idChanges) {
+          let changeIndex: number = +j;
           if (changeIndex > 0) {
             CmdUtils.replaceViewTrrack(
               [this.ref, this.state.views[changeIndex].ref],
@@ -230,15 +246,11 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
               () => this.focusImpl(prov.getState(prov.current).focusView)
             );
           });
-        } 
-        //we removed a view/views. remove them. 
+        }
+        //we removed a view/views. remove them.
         else if (viewList.length < oldViewList.length) {
-          console.log(viewList, oldViewList, this.state.views)
-          for (
-            let i = oldViewList.length - 1;
-            i >= viewList.length;
-            i -= 1
-          ) {
+          console.log(viewList, oldViewList, this.state.views);
+          for (let i = oldViewList.length - 1; i >= viewList.length; i -= 1) {
             promises.push(
               CmdUtils.removeViewTrrack([this.ref, this.state.views[i].ref])
             );
@@ -253,13 +265,12 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       }
     );
 
-    //if the focus view isnt in the current view scope, dont do anything, let create view handle it. 
+    //if the focus view isnt in the current view scope, dont do anything, let create view handle it.
     prov.addObserver(
       (state) => state.focusView,
       (focused) => {
-        if(focused >= this.state.views.length)
-        {
-          return
+        if (focused >= this.state.views.length) {
+          return;
         }
 
         this.setState(
@@ -459,6 +470,19 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     }
   }
 
+  private updateLineupAction(viewWrapper: ViewWrapper, dump: IDataProviderDump) {
+    const { allLineupActions } = provenanceActions;
+
+    allLineupActions.setLabel("Somethin happened");
+    prov.apply(
+      allLineupActions(dump, this.views.indexOf(viewWrapper))
+    );
+  }
+
+  private updateLineup(viewWrapper: ViewWrapper, dump: IDataProviderDump) {
+    viewWrapper.restoreDump(dump)
+  }
+
   /**
    * Starts a new analysis session with a given view and additional options.
    * The default session values are permanently stored in the provenance graph and the session storage.
@@ -581,6 +605,8 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    view.on(AView.EVENT_DUMP_CHANGE_TRRACK, this.dumpChangedTrrack);
+
     // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
 
     // this.setState({

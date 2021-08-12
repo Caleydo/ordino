@@ -65,6 +65,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     private readonly chooseNextView;
     private readonly replaceViewInViewWrapper;
     private readonly updateSelection;
+    private readonly dumpChangedTrrack;
     constructor(props: any);
     /**
      * This function can be used to load some initial content async
@@ -120,6 +121,8 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     get lastView(): ViewWrapper;
     push(viewId: string, idtype: IDType, selection: Range, options?: any): void | PromiseLike<void>;
+    private updateLineupAction;
+    private updateLineup;
     /**
      * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.

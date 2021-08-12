@@ -2,6 +2,7 @@ import { initProvenance, createAction, ProvenanceGraph, Provenance } from "../tr
 import { ViewWrapper } from "./ViewWrapper";
 import {IDType} from 'phovea_core';
 import { Range } from "phovea_core";
+import {IDataProviderDump} from 'lineupjs';
 
 export type DemoState = {
   viewList: View[];
@@ -13,6 +14,7 @@ type View = {
   idType: string,
   selection: string, 
   options: any, 
+  dump: IDataProviderDump
 }
 
 export type OrdinoEvents = "Create View" | "Remove View" | "Replace View" | "Change Focus View" | "Select Focus" | "Select Secondary";
@@ -30,6 +32,7 @@ const createViewAction = createAction<DemoState, [string, string, string, any], 
       idType: idType, 
       selection: selection, 
       options: options,
+      dump: {}
     })
     state.focusView = state.viewList.length - 1;
   }
@@ -75,6 +78,7 @@ const replaceViewAction = createAction<DemoState, [number, string, string, strin
       idType: idType,
       selection: selection,
       options: options,
+      dump: {}
     });
     state.focusView = state.viewList.length - 1;
   }
@@ -88,13 +92,20 @@ const focusViewAction = createAction<DemoState, [number], OrdinoEvents>(
 )
 .setEventType("Change Focus View")
 
+const allLineupActions = createAction<DemoState, [IDataProviderDump, number], OrdinoEvents>(
+  (state: DemoState, dump: IDataProviderDump, index: number) => {
+    state.viewList[index].dump = dump
+  }
+)
+
 export const provenanceActions = {
   createViewAction, 
   removeViewAction, 
   focusViewAction,
   selectFocusAction, 
   selectSecondaryAction,
-  replaceViewAction
+  replaceViewAction,
+  allLineupActions
 };
 
 export const prov: Provenance<DemoState, any, OrdinoEvents> = initProvenance<DemoState, any, OrdinoEvents>(initialState, {

@@ -10,6 +10,7 @@ import 'jquery.scrollto/jquery.scrollTo.js';
 import { EventHandler } from 'phovea_core';
 import { IPlugin, IPluginDesc } from 'phovea_core';
 import { EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
+import { IDataProviderDump } from 'lineupjs';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;
     selection: ISelection;
@@ -41,6 +42,7 @@ export declare class ViewWrapper extends EventHandler {
      * @param namedSet
      */
     private listenerUpdateEntryPoint;
+    private dumpChangeTrrack;
     /**
      * Wrapper function for event listener
      */
@@ -96,6 +98,7 @@ export declare class ViewWrapper extends EventHandler {
      */
     destroy(): void;
     getInstance(): IView;
+    restoreDump(dump: IDataProviderDump): void;
     private onParameterChange;
     getParameter(name: string): any;
     setParameterImpl(name: string, value: any): void;

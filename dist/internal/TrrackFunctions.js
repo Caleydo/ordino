@@ -10,6 +10,7 @@ const createViewAction = createAction((state, id, idType, selection, options) =>
         idType: idType,
         selection: selection,
         options: options,
+        dump: {}
     });
     state.focusView = state.viewList.length - 1;
 })
@@ -35,6 +36,7 @@ const replaceViewAction = createAction((state, newIndex, id, idType, selection, 
         idType: idType,
         selection: selection,
         options: options,
+        dump: {}
     });
     state.focusView = state.viewList.length - 1;
 }).setEventType("Replace View");
@@ -43,13 +45,17 @@ const focusViewAction = createAction((state, newIndex) => {
     state.focusView = newIndex;
 })
     .setEventType("Change Focus View");
+const allLineupActions = createAction((state, dump, index) => {
+    state.viewList[index].dump = dump;
+});
 export const provenanceActions = {
     createViewAction,
     removeViewAction,
     focusViewAction,
     selectFocusAction,
     selectSecondaryAction,
-    replaceViewAction
+    replaceViewAction,
+    allLineupActions
 };
 export const prov = initProvenance(initialState, {
     loadFromUrl: false,

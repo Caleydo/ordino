@@ -277,11 +277,11 @@ div.filmstrip {
       grid-template-columns: auto min-content;
       grid-template-rows: min-content auto;
       grid-template-areas:
-        "parameters viewActions"
+        "parameters view-actions"
         "inner inner";
 
       > .view-actions {
-        grid-area: viewActions;
+        grid-area: view-actions;
         display: flex;
         justify-content: flex-end;
         justify-self: flex-end;

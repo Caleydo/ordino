@@ -152,4 +152,25 @@ export interface IOrdinoFooterMenuLink {
     faIcon: string;
     text: string;
 }
+export declare const EP_ORDINO_LOGO = "epOrdinoLogo";
+/**
+ * Overwrite the default app icon and name
+ * Only the last registration is considered
+ */
+export interface IOrdinoLogoDesc extends IPluginDesc {
+    /**
+     * Name of the app
+     */
+    readonly text: string;
+    /**
+     * Height of the logo in pixel
+     * @default 30
+     */
+    readonly width?: number;
+    /**
+     * Width of the logo in pixel
+     * @default 30
+     */
+    readonly height?: number;
+}
 export {};

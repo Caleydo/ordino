@@ -296,10 +296,6 @@ div.filmstrip {
         margin: 10px;
       }
 
-      .btn-close {
-        float: right;
-      }
-
       > .parameters {
         margin-bottom: 0;
         grid-area: parameters;
@@ -314,7 +310,7 @@ div.filmstrip {
         .form-inline {
           display: inline-flex;
           flex-wrap: wrap;
-          gap: 3px;
+          gap: 10px;
         }
       }
 
@@ -324,7 +320,7 @@ div.filmstrip {
         padding-top: 10px;
         grid-area: inner;
         height: 1px; // dummy height needed for the overflow-y
-        min-height: 99%;  
+        min-height: 99%;
         overflow-y: auto;
         display: flex;
 

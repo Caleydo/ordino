@@ -64,7 +64,15 @@ export const EP_ORDINO_START_MENU_TAB_SHORTCUT = 'epOrdinoStartMenuTabShortcut';
  * Add a shortcut for a start menu tab
  */
 export interface IStartMenuTabShortcutDesc extends Omit<IStartMenuTabDesc, 'menu'> {
+  /**
+   * Open the selected tab on click
+   */
   tabId: string;
+
+  /**
+   * Highlight a card after opening the tab
+   * Currently, only used to highlight the `CurrentSessionCard`
+   */
   setHighlight?: boolean;
 }
 

@@ -10,7 +10,7 @@ export function OrdinoLogo() {
     const defaultSize = { width: 30, height: 30 };
 
     const plugins = PluginRegistry.getInstance().listPlugins(EP_ORDINO_LOGO);
-    const plugin = plugins?.[0]; // app register comes first
+    const plugin = plugins?.[0]; // use first registerd plugin; the order depends on import order in the phovea_registry.js of the workspace
     const module = await (await plugin.load()).factory();
 
     return {

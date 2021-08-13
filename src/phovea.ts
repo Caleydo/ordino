@@ -82,23 +82,7 @@ export default function (registry: IRegistry) {
     priority: 100
   });
 
-  registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_dataset_tab', () => import('./internal/menu/tabs/DatasetsTab'), {
-    text: 'Datasets',
-    menu: EStartMenuSection.MAIN,
-    priority: 10
-  });
 
-  registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_sessions_tab', () => import('./internal/menu/tabs/SessionsTab'), {
-    text: 'Analysis Sessions',
-    menu: EStartMenuSection.MAIN,
-    priority: 20
-  });
-
-  registry.push(EP_ORDINO_START_MENU_TAB, 'ordino_tours_tab', () => import('./internal/menu/tabs/ToursTab'), {
-    text: 'Onboarding Tours',
-    menu: EStartMenuSection.MAIN,
-    priority: 30
-  });
 
   registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('ordino/dist/assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), <IOrdinoLogoDesc>{
     text: 'Ordino',

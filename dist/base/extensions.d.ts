@@ -48,6 +48,21 @@ export interface IStartMenuTab {
     readonly desc: IStartMenuTabDesc;
     update?(): void;
 }
+export declare const EP_ORDINO_START_MENU_TAB_SHORTCUT = "epOrdinoStartMenuTabShortcut";
+/**
+ * Add a shortcut for a start menu tab
+ */
+export interface IStartMenuTabShortcutDesc extends Omit<IStartMenuTabDesc, 'menu'> {
+    /**
+     * Open the selected tab on click
+     */
+    tabId: string;
+    /**
+     * Highlight a card after opening the tab
+     * Currently, only used to highlight the `CurrentSessionCard`
+     */
+    setHighlight?: boolean;
+}
 export declare const EP_ORDINO_STARTMENU_SESSION_SECTION = "epOrdinoStartMenuSessionSection";
 /**
  * Register a new section in the start menu sessions tab
@@ -136,5 +151,26 @@ export interface IOrdinoFooterMenuLink {
     page: string;
     faIcon: string;
     text: string;
+}
+export declare const EP_ORDINO_LOGO = "epOrdinoLogo";
+/**
+ * Overwrite the default app icon and name
+ * Only the last registration is considered
+ */
+export interface IOrdinoLogoDesc extends IPluginDesc {
+    /**
+     * Name of the app
+     */
+    readonly text: string;
+    /**
+     * Height of the logo in pixel
+     * @default 30
+     */
+    readonly width?: number;
+    /**
+     * Width of the logo in pixel
+     * @default 30
+     */
+    readonly height?: number;
 }
 export {};

@@ -86,6 +86,8 @@ export default function (registry: IRegistry) {
 
   registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('ordino/dist/assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), <IOrdinoLogoDesc>{
     text: 'Ordino',
+    width: 30,
+    height: 30
   });
 
   registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {

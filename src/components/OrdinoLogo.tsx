@@ -7,12 +7,17 @@ import {EP_ORDINO_LOGO} from '../base';
 export function OrdinoLogo() {
 
   const loadOrdinoLogo = useMemo(() => async () => {
+    const defaultSize = { width: 30, height: 30 };
+
     const plugins = PluginRegistry.getInstance().listPlugins(EP_ORDINO_LOGO);
     const plugin = plugins?.[0]; // app register comes first
     const module = await (await plugin.load()).factory();
+
     return {
       icon: module.default,
-      text: plugin.text
+      text: plugin.text,
+      width: plugin.width || defaultSize.width,
+      height: plugin.height || defaultSize.height,
     };
   }, []);
 
@@ -20,7 +25,7 @@ export function OrdinoLogo() {
   return (<>{
     status === 'success' &&
     <div className="ordino-logo">
-      <img alt="" src={value.icon} width="30" height="30" />{' '}{value.text}
+      <img alt="" src={value.icon} width={value.width} height={value.height} />{' '}{value.text}
     </div>
   }</>);
 }

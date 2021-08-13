@@ -70,6 +70,8 @@ export default function (registry) {
     });
     registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('ordino/dist/assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), {
         text: 'Ordino',
+        width: 30,
+        height: 30
     });
     registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
         return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);

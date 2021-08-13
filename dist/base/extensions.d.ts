@@ -162,5 +162,15 @@ export interface IOrdinoLogoDesc extends IPluginDesc {
      * Name of the app
      */
     readonly text: string;
+    /**
+     * Height of the logo in pixel
+     * @default 30
+     */
+    readonly width?: number;
+    /**
+     * Width of the logo in pixel
+     * @default 30
+     */
+    readonly height?: number;
 }
 export {};

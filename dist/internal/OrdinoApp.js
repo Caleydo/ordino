@@ -63,20 +63,21 @@ export class OrdinoApp extends React.Component {
      * Sets up needed observers for trrack. These observers get called when the related state changes.
      */
     async setupObservers() {
-        //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
-        prov.addObserver((state) => state.viewList.map((v) => v.dump), (dump, oldDump) => {
-            let dumpChanges = {};
-            for (let j in dump) {
-                if (oldDump[j] !== undefined && dump[j] !== oldDump[j]) {
-                    dumpChanges[j] = dump[j];
-                }
-            }
-            for (let j in dumpChanges) {
-                4;
-                let changeIndex = +j;
-                this.updateLineup(this.views[j], dumpChanges[j]);
-            }
-        });
+        // prov.addObserver(
+        //   (state) => state.viewList.map((v) => v.dump),
+        //   (dump, oldDump) => {
+        //     let dumpChanges: { [key: number]: IDataProviderDump } = {};
+        //     for (let j in dump) {
+        //       if (oldDump[j] !== undefined && dump[j] !== oldDump[j]) {
+        //         dumpChanges[j] = dump[j];
+        //       }
+        //     }
+        //     for (let j in dumpChanges) {4
+        //       let changeIndex: number = +j;
+        //       this.updateLineup(this.views[j], dumpChanges[j])
+        //     }
+        //   }
+        // );
         //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
         prov.addObserver((state) => state.viewList.map((v) => v.selection), (selections, oldSelections) => {
             let selectionChanges = {};

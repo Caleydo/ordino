@@ -102,12 +102,13 @@ serialize, customLabel) => {
     }
     let saveDiff = isChildNode(currentNode);
     const { state, stateSaveMode, actionType, label, eventType, meta } = actionFn.apply(currentState, customLabel);
+    console.log(stateSaveMode);
     const parentId = graph.current;
     const serializedState = serialize(state);
     const diffs = differ(previousState, serializedState) || [];
-    if (saveDiff && Object.keys(previousState).length / 2 < diffs.length) {
-        saveDiff = false;
-    }
+    // if (saveDiff && Object.keys(previousState).length / 2 < diffs.length) {
+    //   saveDiff = false;
+    // }
     saveDiff = saveDiff && stateSaveMode === 'Diff';
     const newNode = saveDiff
         ? createNewDiffNode(parentId, label, diffs, actionType, previousStateID, eventType, meta)

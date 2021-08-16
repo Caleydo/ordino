@@ -11,7 +11,7 @@ declare type View = {
     options: any;
     dump: IDataProviderDump;
 };
-export declare type OrdinoEvents = "Create View" | "Remove View" | "Replace View" | "Change Focus View" | "Select Focus" | "Select Secondary";
+export declare type OrdinoEvents = "Create View" | "Remove View" | "Replace View" | "Change Focus View" | "Select Focus" | "Select Secondary" | "Lineup Action";
 export declare const provenanceActions: {
     createViewAction: import("../trrack/src").ActionObject<DemoState, OrdinoEvents, [string, string, string, any]>;
     removeViewAction: import("../trrack/src").ActionObject<DemoState, OrdinoEvents, [number]>;

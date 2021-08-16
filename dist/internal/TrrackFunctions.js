@@ -14,7 +14,8 @@ const createViewAction = createAction((state, id, idType, selection, options) =>
     });
     state.focusView = state.viewList.length - 1;
 })
-    .setEventType("Create View");
+    .setEventType("Create View")
+    .saveStateMode("Complete");
 const removeViewAction = createAction((state, removedIndex) => {
     console.log("in remove action");
     state.viewList.splice(removedIndex);
@@ -47,7 +48,8 @@ const focusViewAction = createAction((state, newIndex) => {
     .setEventType("Change Focus View");
 const allLineupActions = createAction((state, dump, index) => {
     state.viewList[index].dump = dump;
-});
+})
+    .setEventType("Lineup Action");
 export const provenanceActions = {
     createViewAction,
     removeViewAction,

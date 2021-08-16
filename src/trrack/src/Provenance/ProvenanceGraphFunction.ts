@@ -151,15 +151,17 @@ export const applyActionFunction = action(
       customLabel,
     );
 
+    console.log(stateSaveMode)
+
     const parentId = graph.current;
 
     const serializedState = serialize(state);
 
     const diffs = differ(previousState, serializedState) || [];
 
-    if (saveDiff && Object.keys(previousState).length / 2 < diffs.length) {
-      saveDiff = false;
-    }
+    // if (saveDiff && Object.keys(previousState).length / 2 < diffs.length) {
+    //   saveDiff = false;
+    // }
 
     saveDiff = saveDiff && stateSaveMode === 'Diff';
 

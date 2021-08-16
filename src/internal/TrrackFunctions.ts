@@ -17,7 +17,7 @@ type View = {
   dump: IDataProviderDump
 }
 
-export type OrdinoEvents = "Create View" | "Remove View" | "Replace View" | "Change Focus View" | "Select Focus" | "Select Secondary";
+export type OrdinoEvents = "Create View" | "Remove View" | "Replace View" | "Change Focus View" | "Select Focus" | "Select Secondary" | "Lineup Action";
 
 const initialState: DemoState = {
   viewList: [],
@@ -37,7 +37,8 @@ const createViewAction = createAction<DemoState, [string, string, string, any], 
     state.focusView = state.viewList.length - 1;
   }
 )
-.setEventType("Create View");
+.setEventType("Create View")
+.saveStateMode("Complete");
 
 const removeViewAction = createAction<DemoState, [number], OrdinoEvents>(
   (state: DemoState, removedIndex: number) => {
@@ -92,11 +93,14 @@ const focusViewAction = createAction<DemoState, [number], OrdinoEvents>(
 )
 .setEventType("Change Focus View")
 
-const allLineupActions = createAction<DemoState, [IDataProviderDump, number], OrdinoEvents>(
-  (state: DemoState, dump: IDataProviderDump, index: number) => {
-    state.viewList[index].dump = dump
-  }
-)
+const allLineupActions = createAction<
+  DemoState,
+  [IDataProviderDump, number],
+  OrdinoEvents
+>((state: DemoState, dump: IDataProviderDump, index: number) => {
+  state.viewList[index].dump = dump;
+})
+  .setEventType("Lineup Action")
 
 export const provenanceActions = {
   createViewAction, 

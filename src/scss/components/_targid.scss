@@ -275,7 +275,7 @@ div.filmstrip {
 
       display: grid;
       grid-template-columns: auto min-content;
-      grid-template-rows: min-content auto;
+      grid-template-rows: minmax(41px, min-content) auto; // 41px = minimum parameter form height with padding + margin of ranking stats and form elements (for a single row)
       grid-template-areas:
         "parameters view-actions"
         "inner inner";

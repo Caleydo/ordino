@@ -63,21 +63,20 @@ export class OrdinoApp extends React.Component {
      * Sets up needed observers for trrack. These observers get called when the related state changes.
      */
     async setupObservers() {
-        // prov.addObserver(
-        //   (state) => state.viewList.map((v) => v.dump),
-        //   (dump, oldDump) => {
-        //     let dumpChanges: { [key: number]: IDataProviderDump } = {};
-        //     for (let j in dump) {
-        //       if (oldDump[j] !== undefined && dump[j] !== oldDump[j]) {
-        //         dumpChanges[j] = dump[j];
-        //       }
-        //     }
-        //     for (let j in dumpChanges) {4
-        //       let changeIndex: number = +j;
-        //       this.updateLineup(this.views[j], dumpChanges[j])
-        //     }
-        //   }
-        // );
+        prov.addObserver((state) => state.viewList.map((v) => v.dump), (dump, oldDump) => {
+            let dumpChanges = {};
+            console.log(dump, oldDump);
+            for (let j in dump) {
+                console.log(j, oldDump[j]);
+                if (oldDump[j] !== undefined && JSON.stringify(dump[j]) !== JSON.stringify(oldDump[j])) {
+                    dumpChanges[j] = dump[j];
+                }
+            }
+            for (let j in dumpChanges) {
+                let changeIndex = +j;
+                this.updateLineup(this.views[j], dumpChanges[j]);
+            }
+        });
         //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
         prov.addObserver((state) => state.viewList.map((v) => v.selection), (selections, oldSelections) => {
             let selectionChanges = {};
@@ -130,10 +129,22 @@ export class OrdinoApp extends React.Component {
             if (viewList.length > oldViewList.length) {
                 for (let i = oldViewList.length; i < viewList.length; i += 1) {
                     if (i > 0) {
-                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], viewList[i - 1], viewList.length == 1));
+                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], viewList[i - 1], viewList.length == 1).then(viewWrapper => {
+                            if (Object.keys(viewList[i].dump).length > 0) {
+                                console.log("in here");
+                                this.updateLineup(viewWrapper, viewList[i].dump);
+                            }
+                            return viewWrapper;
+                        }));
                     }
                     else {
-                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], null, viewList.length == 1));
+                        promises.push(CmdUtils.createViewTrrack(this.props.graph, [this.ref], viewList[i], null, viewList.length == 1).then((viewWrapper) => {
+                            if (Object.keys(viewList[i].dump).length > 0) {
+                                console.log("in here");
+                                this.updateLineup(viewWrapper, viewList[i].dump);
+                            }
+                            return viewWrapper;
+                        }));
                     }
                 }
                 Promise.all(promises).then((d) => {
@@ -329,6 +340,14 @@ export class OrdinoApp extends React.Component {
     }
     updateLineupAction(viewWrapper, dump) {
         const { allLineupActions } = provenanceActions;
+        console.log(prov.getState(prov.current).viewList[this.views.indexOf(viewWrapper)].dump);
+        if (Object.keys(prov.getState(prov.current).viewList[this.views.indexOf(viewWrapper)].dump).length === 0) {
+            console.log("in here");
+            allLineupActions.saveStateMode("Complete");
+        }
+        else {
+            allLineupActions.saveStateMode("Diff");
+        }
         allLineupActions.setLabel("Somethin happened");
         prov.apply(allLineupActions(dump, this.views.indexOf(viewWrapper)));
     }

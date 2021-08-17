@@ -115,23 +115,26 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   async setupObservers()
   {
-    // prov.addObserver(
-    //   (state) => state.viewList.map((v) => v.dump),
-    //   (dump, oldDump) => {
-    //     let dumpChanges: { [key: number]: IDataProviderDump } = {};
+    prov.addObserver(
+      (state) => state.viewList.map((v) => v.dump),
+      (dump, oldDump) => {
+        let dumpChanges: { [key: number]: IDataProviderDump } = {};
 
-    //     for (let j in dump) {
-    //       if (oldDump[j] !== undefined && dump[j] !== oldDump[j]) {
-    //         dumpChanges[j] = dump[j];
-    //       }
-    //     }
+        console.log(dump, oldDump)
 
-    //     for (let j in dumpChanges) {4
-    //       let changeIndex: number = +j;
-    //       this.updateLineup(this.views[j], dumpChanges[j])
-    //     }
-    //   }
-    // );
+        for (let j in dump) {
+          console.log(j, oldDump[j])
+          if (oldDump[j] !== undefined && JSON.stringify(dump[j]) !== JSON.stringify(oldDump[j])) {
+            dumpChanges[j] = dump[j];
+          }
+        }
+
+        for (let j in dumpChanges) {
+          let changeIndex: number = +j;
+          this.updateLineup(this.views[j], dumpChanges[j])
+        }
+      }
+    );
 
     //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
     prov.addObserver(
@@ -222,7 +225,14 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
                   viewList[i],
                   viewList[i - 1],
                   viewList.length == 1
-                )
+                ).then(viewWrapper => {
+                  if(Object.keys(viewList[i].dump).length > 0)
+                  {
+                    console.log("in here")
+                    this.updateLineup(viewWrapper, viewList[i].dump);
+                  }
+                  return viewWrapper
+                })
               );
             } else {
               promises.push(
@@ -232,7 +242,14 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
                   viewList[i],
                   null,
                   viewList.length == 1
-                )
+                ).then((viewWrapper) => {
+                  if(Object.keys(viewList[i].dump).length > 0)
+                  {
+                    console.log("in here");
+                    this.updateLineup(viewWrapper, viewList[i].dump);
+                  }
+                  return viewWrapper
+                })
               );
             }
           }
@@ -472,6 +489,19 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private updateLineupAction(viewWrapper: ViewWrapper, dump: IDataProviderDump) {
     const { allLineupActions } = provenanceActions;
 
+    console.log(
+      prov.getState(prov.current).viewList[this.views.indexOf(viewWrapper)].dump
+    );
+
+    if (Object.keys(prov.getState(prov.current).viewList[this.views.indexOf(viewWrapper)].dump).length === 0)
+    {
+      console.log("in here")
+      allLineupActions.saveStateMode("Complete")
+    }
+    else{
+      allLineupActions.saveStateMode("Diff");
+    }
+    
     allLineupActions.setLabel("Somethin happened");
     prov.apply(
       allLineupActions(dump, this.views.indexOf(viewWrapper))

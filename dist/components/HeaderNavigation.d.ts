@@ -2,6 +2,7 @@
 interface IHeaderNavigationLink {
     text: string;
     page: string;
+    faIcon?: string;
 }
 interface IHeaderNavigationProps {
     /**

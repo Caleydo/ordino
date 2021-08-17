@@ -6,19 +6,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 
-main.targid {
-  display: flex;
-
-  -webkit-flex-direction: column;
-  flex-direction: column;
-
-  > div.wrapper {
-    display: flex;
-    flex-flow: row wrap;
-    height: 100%;
-  }
-}
-
 
 nav.mainNavi {
   display: flex;
@@ -212,9 +199,8 @@ nav.mainNavi {
 // see also src/internal/constants
 $mode-animation-time: 500ms;
 
-
 div.filmstrip {
-  flex: 1;
+  max-height: calc(100vh - 40px - 40px); // viewport height - navbar header - history/breadcrumbs // TODO remove fixed heights
 
   display: flex;
   flex-flow: row;
@@ -314,8 +300,6 @@ div.filmstrip {
         border-top: 1px solid $core_border;
         padding-top: 10px;
         grid-area: inner;
-        height: 1px; // dummy height needed for the overflow-y
-        min-height: 99%;
         overflow-y: auto;
         display: flex;
 
@@ -354,7 +338,6 @@ div.filmstrip {
     }*/
 
     > .chooser {
-      max-height: calc(100vh - 40px - 46px - 1px); // viewport height - header - history/breadcrumbs - viewwrapper border top
       flex: 0 0 15em;
       background-color: $core_colour;
       text-align: center;

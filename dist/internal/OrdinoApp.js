@@ -426,8 +426,7 @@ export class OrdinoApp extends React.Component {
                 React.createElement(OrdinoContext.Provider, { value: { app: this } },
                     React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
                     React.createElement(OrdinoBreadcrumbs, { views: this.state.views, onClick: (view) => this.showInFocus(view) }),
-                    React.createElement("div", { className: "wrapper" },
-                        React.createElement("div", { className: "filmstrip", ref: this.nodeRef }))))));
+                    React.createElement("div", { className: "filmstrip", ref: this.nodeRef })))));
     }
 }
 /**

@@ -49,8 +49,6 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
     main: HTMLElement
   ) {
     return new Promise<OrdinoApp>(async (resolve) => {
-      main.classList.add('targid');
-
       // reconfigure app link to open the homepage in a new tab
       const appLink = document.querySelector('*[data-header="appLink"]') as HTMLAnchorElement;
       appLink.title = I18nextManager.getInstance().i18n.t('tdp:ordino.appLink.title');

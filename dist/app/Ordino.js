@@ -40,7 +40,6 @@ export class Ordino extends ATDPApplication {
     }
     createApp(graph, manager, main) {
         return new Promise(async (resolve) => {
-            main.classList.add('targid');
             // reconfigure app link to open the homepage in a new tab
             const appLink = document.querySelector('*[data-header="appLink"]');
             appLink.title = I18nextManager.getInstance().i18n.t('tdp:ordino.appLink.title');

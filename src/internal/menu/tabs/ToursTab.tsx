@@ -70,7 +70,7 @@ export function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPl
               const href = (props.hrefBase) ? props.hrefBase.replace('{id}', tour.desc.id) : null;
               const onClickHandler = (!props.hrefBase) ? (evt) => TourUtils.startTour(tour.desc.id) : null;
 
-              return <TourCard key={tour.desc.id} id={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images[index] || null} onClickHandler={onClickHandler} href={href}></TourCard>;
+              return <TourCard key={tour.desc.id} id={tour.desc.id} title={tour.desc.name} text={tour.desc.description} image={images?.[index] || null} onClickHandler={onClickHandler} href={href}></TourCard>;
             })}
           </div>
         </>

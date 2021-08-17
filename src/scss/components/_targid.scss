@@ -304,8 +304,6 @@ div.filmstrip {
 
         // TODO: temporary solution, this should be fixed in tdp_core
         .form-inline {
-          display: inline-flex;
-          flex-wrap: wrap;
           gap: 10px;
           height: 100%; // use whole available height to center form children
         }

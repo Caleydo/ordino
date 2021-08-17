@@ -279,6 +279,8 @@ div.filmstrip {
       grid-template-areas:
         "parameters view-actions"
         "inner inner";
+      gap: 10px;
+      padding: 10px;
 
       > .view-actions {
         grid-area: view-actions;
@@ -288,12 +290,6 @@ div.filmstrip {
         > button.close {
           align-self: flex-start;
         }
-      }
-
-      > .inner,
-      > .parameters,
-      button.btn-close {
-        margin: 10px;
       }
 
       > .parameters {

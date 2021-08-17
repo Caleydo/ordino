@@ -16,7 +16,7 @@ export default function DatasetsTab(_props) {
         React.createElement(OrdinoScrollspy, { items: items.map((card) => ({ id: `${card.desc.id}_${suffix}`, name: card.desc.name })) }, (handleOnChange) => React.createElement(React.Fragment, null,
             React.createElement("div", { className: "container pb-10 pt-5" },
                 React.createElement("div", { className: "row" },
-                    React.createElement("div", { className: "col" },
+                    React.createElement("div", { className: "col position-relative" },
                         React.createElement("p", { className: "lead text-ordino-gray-4 mb-0" }, "Start a new analysis session by loading a dataset"),
                         items.map((item, index) => {
                             return (

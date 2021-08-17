@@ -19,7 +19,7 @@ export default function SessionsTab(_props) {
         React.createElement(OrdinoScrollspy, { items: items.map((item) => ({ id: `${item.desc.id}_${suffix}`, name: item.desc.name })) }, (handleOnChange) => React.createElement(React.Fragment, null,
             React.createElement("div", { className: "container pb-10 pt-5" },
                 React.createElement("div", { className: "row" },
-                    React.createElement("div", { className: "col" }, items === null || items === void 0 ? void 0 : items.map((item, index) => {
+                    React.createElement("div", { className: "col position-relative" }, items === null || items === void 0 ? void 0 : items.map((item, index) => {
                         return (
                         // `id` attribute must match the one in the scrollspy
                         React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `${item.desc.id}_${suffix}`, key: item.desc.id, index: index, handleOnChange: handleOnChange },

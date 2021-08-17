@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { OrdinoLogo } from './OrdinoLogo';
-export function HeaderNavigation({ links, fixed, bg = 'ordino-gray-2' }) {
+export function HeaderNavigation({ links, fixed, bg = 'dark' }) {
     return (React.createElement("nav", { className: `ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${fixed === 'top' ? 'fixed-top' : ''} ${fixed === 'bottom' ? 'fixed-bottom' : ''}` },
         React.createElement("a", { href: "#/", className: "navbar-brand" },
             React.createElement(OrdinoLogo, null)),

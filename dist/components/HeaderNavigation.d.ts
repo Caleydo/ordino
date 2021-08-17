@@ -15,7 +15,7 @@ interface IHeaderNavigationProps {
     fixed?: 'top' | 'bottom';
     /**
      * Background color
-     * @default ordino-gray-2 (see variables.scss)
+     * @default dark (see variables.scss)
      */
     bg?: string;
 }

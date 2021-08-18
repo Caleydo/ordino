@@ -93,7 +93,8 @@ serialize, customLabel) => {
     let previousState = null;
     let previousStateID = null;
     if (isDiffNode(currentNode)) {
-        previousState = getState(graph, graph.nodes[currentNode.lastStateNode]);
+        // previousState = getState(graph, graph.nodes[currentNode.lastStateNode]);
+        previousState = getState(graph, currentNode);
         previousStateID = currentNode.lastStateNode;
     }
     else {

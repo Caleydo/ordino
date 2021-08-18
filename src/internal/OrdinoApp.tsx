@@ -115,26 +115,26 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   async setupObservers()
   {
-    prov.addObserver(
-      (state) => state.viewList.map((v) => v.dump),
-      (dump, oldDump) => {
-        let dumpChanges: { [key: number]: IDataProviderDump } = {};
+    // prov.addObserver(
+    //   (state) => state.viewList.map((v) => v.dump),
+    //   (dump, oldDump) => {
+    //     let dumpChanges: { [key: number]: IDataProviderDump } = {};
 
-        console.log(dump, oldDump)
+    //     console.log(dump, oldDump)
 
-        for (let j in dump) {
-          console.log(j, oldDump[j])
-          if (oldDump[j] !== undefined && JSON.stringify(dump[j]) !== JSON.stringify(oldDump[j])) {
-            dumpChanges[j] = dump[j];
-          }
-        }
+    //     for (let j in dump) {
+    //       console.log(j, oldDump[j])
+    //       if (oldDump[j] !== undefined && JSON.stringify(dump[j]) !== JSON.stringify(oldDump[j])) {
+    //         dumpChanges[j] = dump[j];
+    //       }
+    //     }
 
-        for (let j in dumpChanges) {
-          let changeIndex: number = +j;
-          this.updateLineup(this.views[j], dumpChanges[j])
-        }
-      }
-    );
+    //     for (let j in dumpChanges) {
+    //       let changeIndex: number = +j;
+    //       this.updateLineup(this.views[j], dumpChanges[j])
+    //     }
+    //   }
+    // );
 
     //works, need to make sure not to update any selections that are from newly created views. If the oldState didnt have that view, do nothing basically.
     prov.addObserver(

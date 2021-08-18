@@ -64,13 +64,21 @@ export function getState(graph, node) {
     if (isRootNode(node) || isStateNode(node)) {
         return toJS(node.state);
     }
-    // eslint-disable-next-line no-underscore-dangle
-    const _state = toJS(graph.nodes[node.lastStateNode].state);
-    const state = deepCopy(_state);
-    // what is this for?
-    node.diffs.forEach((diff) => {
-        applyChange(state, null, diff);
-    });
+    let currNode = node;
+    let startState = toJS(graph.nodes[node.lastStateNode].state);
+    const state = deepCopy(startState);
+    let nodeList = [];
+    while (isDiffNode(currNode)) {
+        // eslint-disable-next-line no-underscore-dangle
+        nodeList.push(currNode);
+        currNode = graph.nodes[currNode.parent];
+        // what is this for?
+    }
+    for (let n of nodeList.reverse()) {
+        n.diffs.forEach((diff) => {
+            applyChange(state, null, diff);
+        });
+    }
     return state;
 }
 //# sourceMappingURL=Nodes.js.map

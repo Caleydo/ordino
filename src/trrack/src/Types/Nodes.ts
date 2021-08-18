@@ -137,15 +137,27 @@ export function getState<S, A>(
     return toJS(node.state);
   }
 
-  // eslint-disable-next-line no-underscore-dangle
-  const _state = toJS((graph.nodes[node.lastStateNode] as StateNode<S, A>).state);
+  let currNode: ProvenanceNode<S, A> = node;
+  let startState = toJS((graph.nodes[node.lastStateNode] as StateNode<S, A>).state);
+  const state = deepCopy(startState);
 
-  const state = deepCopy(_state);
+  let nodeList: DiffNode<S, A>[] = []
 
-  // what is this for?
-  node.diffs.forEach((diff) => {
-    applyChange(state, null, diff);
-  });
+  while(isDiffNode(currNode)){
+    // eslint-disable-next-line no-underscore-dangle
+    nodeList.push(currNode)
+    currNode = graph.nodes[currNode.parent]
+    // what is this for?
+  }
+
+  for(let n of nodeList.reverse())
+  {
+    n.diffs.forEach((diff) => {
+      applyChange(state, null, diff);
+    });
+  }
+
+
 
   return state;
 }

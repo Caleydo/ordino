@@ -14,8 +14,7 @@ const createViewAction = createAction((state, id, idType, selection, options) =>
     });
     state.focusView = state.viewList.length - 1;
 })
-    .setEventType("Create View")
-    .saveStateMode("Complete");
+    .setEventType("Create View");
 const removeViewAction = createAction((state, removedIndex) => {
     console.log("in remove action");
     state.viewList.splice(removedIndex);

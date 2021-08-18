@@ -38,7 +38,6 @@ const createViewAction = createAction<DemoState, [string, string, string, any], 
   }
 )
 .setEventType("Create View")
-.saveStateMode("Complete");
 
 const removeViewAction = createAction<DemoState, [number], OrdinoEvents>(
   (state: DemoState, removedIndex: number) => {

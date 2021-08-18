@@ -1,0 +1,10 @@
+.dataset-entry {
+  .dataset-entry-item {
+    max-height: $named-set-list-max-height;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  &:not(:first-child) {
+    border-left: 1px solid map-get($theme-colors, "ordino-gray-5");
+  }
+}

@@ -26,28 +26,30 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
         <>
             <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo')}>
                 {(sessionAction) => {
-                    return <>
-                        {status === 'pending' &&
-                            <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
-                        }
-                        {status === 'success' &&
-                            sessions.length === 0 &&
-                            <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>
-                        }
-                        {
-                            status === 'success' && sessions.length > 0 &&
-                            sessions?.map((session) => {
-                                return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
-                                    <button type="button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} onClick={(event) => sessionAction(EAction.SAVE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')}</button>
-                                    <ListItemDropdown>
-                                        <button type="button" className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')}</button>
-                                        <button type="button" className="dropdown-delete dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')} onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}</button>
-                                    </ListItemDropdown>
-                                </SessionListItem>;
-                            })
-                        }
-                        {status === 'error' && <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')}</p>}
-                    </>;
+                    return <div className="position-relative">
+                        <div className="ordino-session-list">
+                            {status === 'pending' &&
+                                <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
+                            }
+                            {status === 'success' &&
+                                sessions.length === 0 &&
+                                <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>
+                            }
+                            {
+                                status === 'success' && sessions.length > 0 &&
+                                sessions?.map((session) => {
+                                    return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
+                                        <button type="button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} onClick={(event) => sessionAction(EAction.SAVE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')}</button>
+                                        <ListItemDropdown>
+                                            <button type="button" className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')}</button>
+                                            <button type="button" className="dropdown-delete dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')} onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}</button>
+                                        </ListItemDropdown>
+                                    </SessionListItem>;
+                                })
+                            }
+                            {status === 'error' && <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')}</p>}
+                        </div>
+                    </div>;
                 }}
             </CommonSessionCard>
         </>

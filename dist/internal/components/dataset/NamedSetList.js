@@ -29,7 +29,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             setNamedSets((namedSets) => namedSets.splice(namedSets.indexOf(namedSet), 1));
         }
     };
-    return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4" },
+    return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4 position-relative" },
         React.createElement("header", null,
             React.createElement("i", { className: `me-2 ${headerIcon}` }),
             headerText),
@@ -44,9 +44,9 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')),
         status === 'success' &&
             value.length > 0 &&
-            React.createElement("div", { role: "group", className: "btn-group-vertical" }, namedSets.map((namedSet, i) => {
+            React.createElement("div", { role: "group", className: "dataset-entry-item vstack" }, namedSets.map((namedSet, i) => {
                 const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
-                return (React.createElement("div", { key: i, className: "dropdown-parent justify-content-between btn-group" },
+                return (React.createElement("div", { key: i, className: "dropdown-parent m-1 justify-content-between hstack" },
                     React.createElement("button", { className: "text-start ps-0 btn btn-link text-ordino-button-primary", title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     canWrite ?
                         React.createElement(ListItemDropdown, null,

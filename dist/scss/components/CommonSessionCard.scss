@@ -1,0 +1,9 @@
+.ordino-session-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: $session-list-max-height;
+}
+
+.session-item:not(:last-child) {
+  border-bottom: 1px solid map-get($theme-colors, "ordino-gray-5");
+}

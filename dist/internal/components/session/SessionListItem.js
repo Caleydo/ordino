@@ -4,7 +4,7 @@ import { ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
 export function SessionListItem({ desc, selectSession, children }) {
     const dateFromNow = (desc === null || desc === void 0 ? void 0 : desc.ts) ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
     return (React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "row dropdown-parent session-item mx-0 mb-1 align-items-start" },
+        React.createElement("div", { className: "row dropdown-parent session-item ms-0 mb-1 me-1 align-items-start" },
             React.createElement("div", { className: "d-flex px-0 flex-column align-items-start col-md-11" },
                 React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession'), disabled: selectSession == null, className: "ps-0 btn btn-link text-ordino-button-primary", onClick: (event) => selectSession(event, desc) },
                     React.createElement("i", { className: `me-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}` }),

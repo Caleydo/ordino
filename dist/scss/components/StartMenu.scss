@@ -75,8 +75,8 @@
   }
 
   .list-item-dropdown {
-    // showing a dropdown in and element whose overflow is set to hidden does not work reliably
-    // therefore, we overwrite the `position relative` of a dropdown and manually set as relative a parent element whose overflow is not hidden
+    // showing a dropdown in an element whose overflow is set to hidden, does not work (the dropdown is cut off)
+    // therefore, we overwrite the `position relative` of a dropdown, and manually set as relative a parent element whose overflow is not hidden
     position: initial;
     visibility: hidden;
 

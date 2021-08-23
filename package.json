@@ -75,7 +75,7 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "github:datavisyn/tdp_core#develop",
+    "tdp_core": "github:datavisyn/tdp_core#vstoiber/BS_5_1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-dropzone": "^11.3.1",

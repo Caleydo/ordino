@@ -17,7 +17,7 @@ export default function DatasetsTab(_props) {
             React.createElement("div", { className: "container pb-10 pt-5" },
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col position-relative" },
-                        React.createElement("p", { className: "lead text-ordino-gray-4 mb-0" }, "Start a new analysis session by loading a dataset"),
+                        React.createElement("p", { className: "lead text-gray-500 mb-0" }, "Start a new analysis session by loading a dataset"),
                         items.map((item, index) => {
                             return (
                             // `id` attribute must match the one in the scrollspy

@@ -24,7 +24,7 @@ export default function ToursTab(_props: IStartMenuTabProps) {
     {status === 'success' ?
       <OrdinoScrollspy>
         <div className="container pb-10 pt-5 tours-tab">
-          <p className="lead text-ordino-gray-4">Learn more about Ordino by taking an interactive guided tour</p>
+          <p className="lead text-gray-600">Learn more about Ordino by taking an interactive guided tour</p>
           {beginnerTours ?
             <ToursSection level="beginner" tours={beginnerTours}></ToursSection>
           : null}

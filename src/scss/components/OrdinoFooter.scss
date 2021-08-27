@@ -1,5 +1,5 @@
 .ordino-footer {
-  background-color: map-get($theme-colors, 'ordino-gray-2');
+  background-color: $gray-800;
 
   .ordino-footer-navigation {
     gap: 1rem;
@@ -10,10 +10,10 @@
     }
 
     a {
-      color: map-get($theme-colors, 'ordino-white');
+      color: $white;
 
       &:hover {
-        color: map-get($theme-colors, 'ordino-white-hover');
+        color: $ordino-white-hover;
       }
     }
   }

@@ -163,6 +163,37 @@ export interface IStartMenuDatasetSection {
 }
 
 
+export const EP_ORDINO_HEADER_MENU = 'epOrdinoHeaderMenu';
+
+/**
+ * Register links to the header menu
+ * Only a single header menu is considered
+ */
+ export interface IOrdinoHeaderMenuDesc extends IPluginDesc {
+  /**
+   * List of links
+   */
+  readonly links: IOrdinoHeaderMenuLink[];
+}
+
+export interface IOrdinoHeaderMenuLink {
+  /**
+   * URL to the page
+   */
+  page: string;
+
+  /**
+   * Link text
+   */
+  text: string;
+
+  /**
+   * FontAwesome icon
+   * @example `fas fa-question`
+   */
+  faIcon?: string;
+}
+
 
 export const EP_ORDINO_FOOTER_MENU = 'epOrdinoFooterMenu';
 
@@ -180,9 +211,21 @@ export interface IOrdinoFooterMenuDesc extends IPluginDesc {
 }
 
 export interface IOrdinoFooterMenuLink {
-  page: string;
-  faIcon: string;
-  text: string;
+  /**
+   * URL to the page
+   */
+   page: string;
+
+   /**
+    * Link text
+    */
+   text: string;
+
+   /**
+    * FontAwesome icon
+    * @example `fas fa-question`
+    */
+   faIcon?: string;
 }
 
 export const EP_ORDINO_LOGO = 'epOrdinoLogo';

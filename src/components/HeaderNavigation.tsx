@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {NavLink} from 'react-router-dom';
 import {OrdinoLogo} from './OrdinoLogo';
+import {PluginRegistry} from 'phovea_core';
+import {EP_ORDINO_HEADER_MENU, IOrdinoHeaderMenuDesc, IOrdinoHeaderMenuLink} from '../base';
 
 interface IHeaderNavigationLink {
   text: string;
@@ -10,11 +12,6 @@ interface IHeaderNavigationLink {
 
 interface IHeaderNavigationProps {
 
-  /**
-   * Specify the links of the header
-   * @default []
-   */
-  links?: IHeaderNavigationLink[];
   /**
    * Defines if the header is sticky and visible when scrolling the page down
    */
@@ -27,7 +24,11 @@ interface IHeaderNavigationProps {
   bg?: string;
 }
 
-export function HeaderNavigation({links, fixed, bg = 'dark'}: IHeaderNavigationProps) {
+export function HeaderNavigation({fixed, bg = 'dark'}: IHeaderNavigationProps) {
+
+  const links: IOrdinoHeaderMenuLink[] = PluginRegistry.getInstance().listPlugins(EP_ORDINO_HEADER_MENU)
+    .map((d) => d as IOrdinoHeaderMenuDesc) // no need to load the plugin; everything is contained in the plugin desc
+    .map((d) => d.links)[0]; // take only the first footer menu
 
   return (
     <nav className={`ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${fixed === 'top' ? 'fixed-top' : ''} ${fixed === 'bottom' ? 'fixed-bottom' : ''}`}>

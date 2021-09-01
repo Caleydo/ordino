@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { OrdinoLogo } from './OrdinoLogo';
-export function HeaderNavigation({ links, fixed, bg = 'dark' }) {
+import { PluginRegistry } from 'phovea_core';
+import { EP_ORDINO_HEADER_MENU } from '../base';
+export function HeaderNavigation({ fixed, bg = 'dark' }) {
+    const links = PluginRegistry.getInstance().listPlugins(EP_ORDINO_HEADER_MENU)
+        .map((d) => d) // no need to load the plugin; everything is contained in the plugin desc
+        .map((d) => d.links)[0]; // take only the first footer menu
     return (React.createElement("nav", { className: `ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${fixed === 'top' ? 'fixed-top' : ''} ${fixed === 'bottom' ? 'fixed-bottom' : ''}` },
         React.createElement("div", { className: "container-fluid" },
             React.createElement("a", { href: "#/", className: "navbar-brand" },

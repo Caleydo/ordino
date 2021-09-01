@@ -134,6 +134,32 @@ export interface IStartMenuDatasetSection {
     push(namedSet: INamedSet): boolean;
     update(): void;
 }
+export declare const EP_ORDINO_HEADER_MENU = "epOrdinoHeaderMenu";
+/**
+ * Register links to the header menu
+ * Only a single header menu is considered
+ */
+export interface IOrdinoHeaderMenuDesc extends IPluginDesc {
+    /**
+     * List of links
+     */
+    readonly links: IOrdinoHeaderMenuLink[];
+}
+export interface IOrdinoHeaderMenuLink {
+    /**
+     * URL to the page
+     */
+    page: string;
+    /**
+     * Link text
+     */
+    text: string;
+    /**
+     * FontAwesome icon
+     * @example `fas fa-question`
+     */
+    faIcon?: string;
+}
 export declare const EP_ORDINO_FOOTER_MENU = "epOrdinoFooterMenu";
 /**
  * Register links to the footer menu
@@ -148,9 +174,19 @@ export interface IOrdinoFooterMenuDesc extends IPluginDesc {
     readonly lists: IOrdinoFooterMenuLink[][];
 }
 export interface IOrdinoFooterMenuLink {
+    /**
+     * URL to the page
+     */
     page: string;
-    faIcon: string;
+    /**
+     * Link text
+     */
     text: string;
+    /**
+     * FontAwesome icon
+     * @example `fas fa-question`
+     */
+    faIcon?: string;
 }
 export declare const EP_ORDINO_LOGO = "epOrdinoLogo";
 /**

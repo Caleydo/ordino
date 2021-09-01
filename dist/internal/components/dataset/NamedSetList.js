@@ -31,22 +31,22 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
     };
     return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4 position-relative" },
         React.createElement("header", null,
-            React.createElement("i", { className: `me-2 ${headerIcon}` }),
+            React.createElement("i", { className: `ms-1 me-2 ${headerIcon}` }),
             headerText),
         status === 'pending' &&
-            React.createElement("p", null,
+            React.createElement("p", { className: "p-1" },
                 React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),
                 " ",
                 I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets'),
                 " "),
         status === 'success' &&
             value.length === 0 &&
-            React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')),
+            React.createElement("p", { className: "p-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')),
         status === 'success' &&
             value.length > 0 &&
-            React.createElement("div", { role: "group", className: "dataset-entry-item vstack" }, namedSets.map((namedSet, i) => {
+            React.createElement("div", { role: "group", className: "dataset-entry-item btn-group-vertical position-static p-1" }, namedSets.map((namedSet, i) => {
                 const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
-                return (React.createElement("div", { key: i, className: "dropdown-parent m-1 justify-content-between hstack" },
+                return (React.createElement("div", { key: i, className: "dropdown-parent justify-content-between btn-group position-static" },
                     React.createElement("button", { className: "text-start ps-0 btn btn-link text-ordino-button-primary", title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                     canWrite ?
                         React.createElement(ListItemDropdown, null,

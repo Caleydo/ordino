@@ -5,6 +5,6 @@
     overflow-x: hidden;
   }
   &:not(:first-child) {
-    border-left: 1px solid map-get($theme-colors, "ordino-gray-5");
+    border-left: 1px solid $gray-300;
   }
 }

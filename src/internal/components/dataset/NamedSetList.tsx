@@ -47,21 +47,21 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
 
   return (
     <div className="dataset-entry d-flex flex-column col-md-4 position-relative">
-      <header><i className={`me-2 ${headerIcon}`}></i>{headerText}</header>
+      <header><i className={`ms-1 me-2 ${headerIcon}`}></i>{headerText}</header>
       {status === 'pending' &&
-        <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')} </p>
+        <p className="p-1"><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')} </p>
       }
       {status === 'success' &&
         value.length === 0 &&
-        <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>
+        <p className="p-1">{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>
       }
       {status === 'success' &&
         value.length > 0 &&
-        <div role="group" className="dataset-entry-item vstack">
+        <div role="group" className="dataset-entry-item btn-group-vertical position-static p-1">
           {namedSets.map((namedSet, i) => {
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
-              <div key={i} className="dropdown-parent m-1 justify-content-between hstack">
+              <div key={i} className="dropdown-parent justify-content-between btn-group position-static">
                 <button className="text-start ps-0 btn btn-link text-ordino-button-primary" title={DatasetUtils.toNamedSetTitle(namedSet)} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
                 {canWrite ?
                   <ListItemDropdown>

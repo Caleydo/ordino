@@ -288,6 +288,7 @@ div.filmstrip {
 
       > .parameters {
         opacity: 1;
+        margin: 10px 0px;
         transition: opacity 0.3s ease;
         p {
           margin: 5px 0;
@@ -372,6 +373,7 @@ div.filmstrip {
         border-radius: 0;
         line-height: 1;
         border: 1px solid #ccc;
+        background-color: $white;
 
         &:active,
         &:focus,

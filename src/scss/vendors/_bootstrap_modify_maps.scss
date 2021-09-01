@@ -1,18 +1,7 @@
 // Modify the Boostrap SASS maps before importing the components
 // @see https://getbootstrap.com/docs/5.0/customize/sass/#maps-and-loops
 
-$ordino-theme-colors: (
-  "ordino-white": #FFFFFF,
-  "ordino-white-hover": #FFFFFFBF, // add some alpha on hover
-  "ordino-gray-1": #F1F2F4,
-  "ordino-gray-2": #2F353A,
-  "ordino-gray-3": #6c757d,
-  "ordino-gray-4": #72818d,
-  "ordino-gray-5":  #D4D7DD,
-  "ordino-gray-6":  #aab3bb
-) !default;
-
-$theme-colors: map-merge($theme-colors, $ordino-theme-colors);
+$ordino-white-hover: #FFFFFFBF !default; // add some alpha on hover
 
 $ordino-grid-breakpoints: (
   xxxl: 1800px // additional breakpoint to hide scrollspy nav

@@ -24,9 +24,9 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
           {(handleOnChange) =>
             <>
               <div className="container pb-10 pt-5">
-                <div className="row">
-                  <div className="col position-relative">
-                    <p className="lead text-ordino-gray-4 mb-0">Start a new analysis session by loading a dataset</p>
+                <div className="row justify-content-center">
+                  <div className="col-11 position-relative">
+                    <p className="lead text-gray-600 mb-0">Start a new analysis session by loading a dataset</p>
                     {items.map((item, index) => {
                       return (
                         // `id` attribute must match the one in the scrollspy

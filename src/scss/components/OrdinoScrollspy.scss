@@ -8,7 +8,7 @@
   position: fixed;
 
   .list-group-item {
-    color: map-get($theme-colors, "ordino-gray-4");
+    color: $gray-600;
     font-size: 1.12rem;
     display: flex;
     align-items: baseline;

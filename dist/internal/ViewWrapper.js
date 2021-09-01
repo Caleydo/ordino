@@ -106,7 +106,7 @@ export class ViewWrapper extends EventHandler {
             this.remove();
         });
         const $params = this.$node.append('div')
-            .attr('class', 'parameters')
+            .attr('class', 'parameters container-fluid')
             .datum(this);
         const $inner = this.$node.append('div')
             .classed('inner', true);
@@ -266,7 +266,7 @@ export class ViewWrapper extends EventHandler {
             // sort data that buttons inside groups are sorted
             const $buttons = $categories.selectAll('button').data((d) => d.views);
             $buttons.enter().append('button')
-                .classed('btn btn-white', true);
+                .classed('btn', true);
             $buttons.attr('data-viewid', (d) => d.v.id);
             $buttons.text((d) => d.v.name)
                 .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)

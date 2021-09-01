@@ -19,7 +19,7 @@ export default function TemporarySessionCard({ name, faIcon }) {
     return (React.createElement(React.Fragment, null,
         React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo') }, (sessionAction) => {
             return React.createElement("div", { className: "position-relative" },
-                React.createElement("div", { className: "ordino-session-list" },
+                React.createElement("div", { className: "ordino-session-list p-1" },
                     status === 'pending' &&
                         React.createElement("p", null,
                             React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),

@@ -36,7 +36,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                 React.createElement("div", { className: "row pt-4" },
                     React.createElement("div", { className: "col" },
                         React.createElement("div", { className: "tab-content position-relative" },
-                            React.createElement("div", { className: "tab-pane fade show active ordino-session-list", role: "tabpanel", id: `saved-session-mine-panel-${id}`, "aria-labelledby": `saved-session-mine-tab-${id}` },
+                            React.createElement("div", { className: "tab-pane fade show active ordino-session-list p-1", role: "tabpanel", id: `saved-session-mine-panel-${id}`, "aria-labelledby": `saved-session-mine-tab-${id}` },
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),

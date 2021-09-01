@@ -27,7 +27,7 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
             <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tempCardInfo')}>
                 {(sessionAction) => {
                     return <div className="position-relative">
-                        <div className="ordino-session-list">
+                        <div className="ordino-session-list p-1">
                             {status === 'pending' &&
                                 <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
                             }

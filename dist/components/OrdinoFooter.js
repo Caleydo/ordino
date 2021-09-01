@@ -19,8 +19,7 @@ export function OrdinoFooter(props) {
         React.createElement("nav", { className: "ordino-footer-navigation row" }, lists && lists.map((list, index) => {
             return (React.createElement("div", { className: "list-group col-sm-auto", key: index }, list && list.map((link) => {
                 return (React.createElement(FooterLink, { key: link.page, to: link.page, openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },
-                    React.createElement("i", { className: `me-2 ${link.faIcon}` }),
-                    " ",
+                    link.faIcon && (React.createElement("i", { className: `${link.faIcon} me-2` })),
                     link.text));
             })));
         })),

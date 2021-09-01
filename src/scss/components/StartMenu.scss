@@ -5,7 +5,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: map-get($theme-colors, "ordino-gray-1");
+  background-color: $gray-100;
   z-index: 99; // above all other content
   overflow: auto;
 
@@ -36,8 +36,8 @@
   }
 
   .ordino-icon-2 {
-    background-color: map-get($theme-colors, "ordino-gray-2");
-    color: map-get($theme-colors, "ordino-white");
+    background-color: $gray-800;
+    color: $white;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -49,7 +49,7 @@
 
   .nav-link {
     position: relative;
-    color: map-get($theme-colors, "ordino-gray-4");
+    color: $gray-600;
     font-size: 1.12rem;
 
     .active {
@@ -67,6 +67,10 @@
     }
   }
 
+  .dataset-entry:not(:first-child) {
+    border-left: 1px solid $gray-300;
+  }
+
   .dropdown-parent:hover,
   .dropdown-parent:focus-within {
     .list-item-dropdown {
@@ -81,7 +85,7 @@
     visibility: hidden;
 
     .dropdown-toggle {
-      color: map-get($theme-colors, "ordino-gray-4");
+      color: $gray-600;
     }
 
     .dropdown-toggle::after {
@@ -97,7 +101,7 @@
 
   .session-tab {
     height: 46px;
-    border-bottom: 2px solid map-get($theme-colors, "ordino-gray-5");
+    border-bottom: 2px solid $gray-300;
 
     &.card-header-pills {
       margin-left: 0 !important;
@@ -138,18 +142,22 @@
   }
 
   .session-dropzone {
-    border: 1px dashed map-get($theme-colors, "ordino-gray-4");
+    border: 1px dashed $gray-600;
     border-radius: 6px;
     padding: 0.6rem;
 
     p:nth-child(1) {
       font-weight: 500;
-      color: map-get($theme-colors, "ordino-gray-4");
+      color: $gray-600;
     }
     p:nth-child(2) {
-      color: map-get($theme-colors, "ordino-gray-6");
+      color: $gray-500;
     }
   }
+}
+
+.session-item:not(:last-child) {
+  border-bottom: 1px solid $gray-300;
 }
 
 .col.position-relative {
@@ -163,37 +171,34 @@
 
 .ordino-start-menu-overlay {
   // make background color more transparent in overlay mode ...
-  background-color: rgba(map-get($theme-colors, "ordino-gray-1"), 0.9);
+  background-color: rgba($gray-100, 0.9);
 
   // ... but use full-colored background with some gradient at the edges for text containers
   .start-menu-close {
-    background: map-get($theme-colors, "ordino-gray-1");
-    background: radial-gradient(
-      circle,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 1) 40%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 0) 80%
+    background: $gray-100;
+    background: radial-gradient(circle,
+      rgba($gray-100, 1) 40%,
+      rgba($gray-100, 0) 80%
     );
   }
 
   .ordino-scrollspy-container > .container {
-    background: map-get($theme-colors, "ordino-gray-1");
-    background: linear-gradient(
-      90deg,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 0) 0%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 1) 5%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 1) 95%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 0) 100%
+    background: $gray-100;
+    background: linear-gradient(90deg,
+      rgba($gray-100, 0) 0%,
+      rgba($gray-100, 1) 5%,
+      rgba($gray-100, 1) 95%,
+      rgba($gray-100, 0) 100%
     );
   }
 
   .ordino-scrollspy-nav {
-    background: map-get($theme-colors, "ordino-gray-1");
-    background: linear-gradient(
-      90deg,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 0) 0%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 1) 20%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 1) 80%,
-      rgba(map-get($theme-colors, "ordino-gray-1"), 0) 100%
+    background: $gray-100;
+    background: linear-gradient(90deg,
+      rgba($gray-100, 0) 0%,
+      rgba($gray-100, 1) 20%,
+      rgba($gray-100, 1) 80%,
+      rgba($gray-100, 0) 100%
     ); // same as container scrollspy container above, but with different gradient stops
   }
 }

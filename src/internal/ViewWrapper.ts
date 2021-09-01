@@ -154,7 +154,7 @@ export class ViewWrapper extends EventHandler {
       });
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters')
+      .attr('class', 'parameters container-fluid')
       .datum(this);
 
     const $inner = this.$node.append('div')

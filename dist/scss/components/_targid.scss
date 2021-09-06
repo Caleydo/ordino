@@ -310,18 +310,21 @@ div.filmstrip {
       }
 
       > .parameters:not(.hidden) ~ .inner {
+        grid-area: inner;
         position: relative;
         border-top: 1px solid $core_border;
         padding-top: 10px;
-        grid-area: inner;
-        height: 1px; // dummy height needed for the overflow-y
-        min-height: 99%;
         overflow-y: auto;
-        display: flex;
 
-        > .tdp-view {
-          flex: 1 1 auto;
-        }
+        // grid item with 100% height of its parent (@see https://stackoverflow.com/a/58488563)
+        height: 0;
+        min-height: 100%;
+
+        // use grid again for child elements
+        display: grid;
+        // children must only use the available space and should not exceed this container
+        // @see https://css-tricks.com/preventing-a-grid-blowout/
+        grid-template-columns: minmax(0, 1fr);
       }
 
       > div {

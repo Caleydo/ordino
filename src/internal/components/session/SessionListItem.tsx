@@ -14,6 +14,7 @@ interface ISessionListItemProps {
 }
 
 export function SessionListItem({desc, selectSession, children}: ISessionListItemProps) {
+  const dateString = desc.ts ? new Date(desc.ts).toUTCString() : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
   const dateFromNow = desc?.ts ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
   return (
     <>
@@ -26,7 +27,7 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
           {desc.description ? <p className="ms-4">{desc.description} </p> : null}
           <div className="pe-0 align-self-stretch row">
             <div className="col position-relative">
-              {dateFromNow ? <p className="flex-grow-1 ms-4 text-muted">{dateFromNow} </p> : null}
+              {dateFromNow ? <p className="flex-grow-1 ms-4 text-muted" title={dateString}>{dateFromNow} </p> : null}
             </div>
             {desc.local ? null :
               <div className="col position-relative">

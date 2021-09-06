@@ -7,7 +7,7 @@ interface IListItemDropdownProps {
 // tslint:disable-next-line: variable-name
 export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps, ref) => {
   return (
-    <div className="dropdown list-item-dropdown">
+    <div className="dropdown btn-group-vertical list-item-dropdown">
       <button className="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i className="fas fa-ellipsis-v"></i>
       </button>

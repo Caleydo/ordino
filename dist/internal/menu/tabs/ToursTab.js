@@ -16,7 +16,7 @@ export default function ToursTab(_props) {
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(OrdinoScrollspy, null,
             React.createElement("div", { className: "container pb-10 pt-5 tours-tab" },
-                React.createElement("p", { className: "lead text-ordino-gray-4" }, "Learn more about Ordino by taking an interactive guided tour"),
+                React.createElement("p", { className: "lead text-gray-600" }, "Learn more about Ordino by taking an interactive guided tour"),
                 beginnerTours ?
                     React.createElement(ToursSection, { level: "beginner", tours: beginnerTours })
                     : null,

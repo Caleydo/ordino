@@ -159,7 +159,7 @@ export class ViewWrapper extends EventHandler {
       });
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters')
+      .attr('class', 'parameters container-fluid')
       .datum(this);
 
     const $inner = this.$node.append('div')
@@ -355,7 +355,7 @@ export class ViewWrapper extends EventHandler {
       const $buttons = $categories.selectAll('button').data((d) => d.views);
 
       $buttons.enter().append('button')
-        .classed('btn btn-white', true);
+        .classed('btn', true);
 
       $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)

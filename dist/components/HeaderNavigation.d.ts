@@ -10,5 +10,5 @@ interface IHeaderNavigationProps {
      */
     bg?: string;
 }
-export declare function HeaderNavigation(props: IHeaderNavigationProps): JSX.Element;
+export declare function HeaderNavigation({ fixed, bg }: IHeaderNavigationProps): JSX.Element;
 export {};

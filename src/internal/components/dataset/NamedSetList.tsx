@@ -57,7 +57,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
       }
       {status === 'success' &&
         value.length > 0 &&
-        <div role="group" className="dataset-entry-item btn-group-vertical position-static p-1">
+        <div role="group" className="dataset-entry-item btn-group-vertical justify-content-start position-static p-1">
           {namedSets.map((namedSet, i) => {
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (

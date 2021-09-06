@@ -44,7 +44,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             React.createElement("p", { className: "p-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')),
         status === 'success' &&
             value.length > 0 &&
-            React.createElement("div", { role: "group", className: "dataset-entry-item btn-group-vertical position-static p-1" }, namedSets.map((namedSet, i) => {
+            React.createElement("div", { role: "group", className: "dataset-entry-item btn-group-vertical justify-content-start position-static p-1" }, namedSets.map((namedSet, i) => {
                 const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
                 return (React.createElement("div", { key: i, className: "dropdown-parent justify-content-between btn-group position-static" },
                     React.createElement("button", { className: "text-start ps-0 btn btn-link text-ordino-button-primary", title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),

@@ -5,7 +5,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: $gray-100;
+  background-color: $light;
   z-index: 99; // above all other content
   overflow: auto;
 
@@ -79,6 +79,9 @@
   }
 
   .list-item-dropdown {
+    // showing a dropdown in an element whose overflow is set to hidden, does not work (the dropdown is cut off)
+    // therefore, we overwrite the `position relative` of a dropdown, and manually set as relative a parent element whose overflow is not hidden
+    position: initial;
     visibility: hidden;
 
     .dropdown-toggle {

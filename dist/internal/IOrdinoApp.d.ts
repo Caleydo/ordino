@@ -1,4 +1,4 @@
-import { ViewWrapper } from './ViewWrapper';
+import { ViewWrapper } from 'tdp_core';
 export interface IOrdinoApp {
     /**
      * Root HTML node of the Ordino App
@@ -17,7 +17,8 @@ export interface IOrdinoApp {
      * The return value is index in the list of views.
      * @param view ViewWrapper
      */
-    pushImpl(view: ViewWrapper): Promise<number>;
+    pushImpl(view: ViewWrapper): any;
+    replaceImpl(previous: ViewWrapper, next: ViewWrapper): any;
     /**
      * Remove the given and focus on the view with the given index.
      * If the focus index is -1 the previous view of the given view will be focused.

@@ -7,11 +7,11 @@
  ********************************************************************/
 
 import * as React from 'react';
-import {BaseUtils, NodeUtils, ICmdResult, AppContext} from 'phovea_core';
+import {BaseUtils, NodeUtils, ICmdResult, AppContext, IPluginDesc} from 'phovea_core';
 import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'phovea_core';
-import {AView, TDPApplicationUtils, TourUtils} from 'tdp_core';
+import {AView, IViewPluginDesc, TDPApplicationUtils, TourUtils} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
-import {ViewWrapper} from './ViewWrapper';
+import {ViewWrapper} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
 import {CmdUtils} from './cmds';
 import {Range} from 'phovea_core';
@@ -20,6 +20,8 @@ import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
 import {AppHeader} from 'phovea_ui';
 import {OrdinoBreadcrumbs} from './components/navigation';
+import {OrdinoViewWrapper} from './OrdinoViewWrapper';
+import {Chooser} from './Chooser';
 
 // tslint:disable-next-line: variable-name
 export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null});
@@ -28,7 +30,7 @@ export const OrdinoContext = React.createContext<{app: IOrdinoApp}>({app: null})
 export const GraphContext = React.createContext<{graph: ProvenanceGraph, manager: CLUEGraphManager}>({graph: null, manager: null});
 
 // tslint:disable-next-line: variable-name
-export const HighlightSessionCardContext = React.createContext<{highlight: boolean, setHighlight: React.Dispatch<React.SetStateAction<boolean>>}>({highlight: false, setHighlight: () => { /* dummy function */ }});
+export const HighlightSessionCardContext = React.createContext<{highlight: boolean, setHighlight: React.Dispatch<React.SetStateAction<boolean>>}>({highlight: false, setHighlight: () => { /* dummy function */}});
 
 interface IOrdinoAppProps {
   graph: ProvenanceGraph;
@@ -49,7 +51,7 @@ interface IOrdinoAppState {
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
-export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp  {
+export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp {
   /**
    * Key for the session storage that is temporarily used when starting a new analysis session
    */
@@ -70,11 +72,6 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * React DOM node reference
    */
   private readonly nodeRef: React.RefObject<HTMLDivElement>;
-
-  private readonly removeWrapper = (_event: any, view: ViewWrapper) => this.remove(view);
-  private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);
-  private readonly replaceViewInViewWrapper = (_event: any, _view: ViewWrapper) => this.updateDetailViewChoosers();
-  private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(event.target as ViewWrapper, old, newValue);
 
   constructor(props) {
     super(props);
@@ -133,17 +130,16 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param selection
    * @param options
    */
-  private handleNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
-    const index = this.state.views.indexOf(viewWrapper);
-    const nextView = this.state.views[index + 1];
+  private handleNextView = (openViewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) => {
+    const index = this.state.views.indexOf(openViewWrapper);
 
     // close instead of "re-open" the same view again
-    if (nextView !== undefined && nextView.desc.id === viewId) {
-      this.remove(nextView);
+    if (this.lastView.plugin.id === viewId) {
+      return;
 
       // open or replace the new view to the right
     } else {
-      this.openOrReplaceNextView(viewWrapper, viewId, idtype, selection, options);
+      this.openOrReplaceNextView(openViewWrapper, viewId, idtype, selection, options);
     }
   }
 
@@ -159,35 +155,6 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private openOrReplaceNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
     const mode = 2; // select opener mode
     switch (mode) {
-      /**
-       * Branch for every new detail view:
-       * - Focus on view that triggered the open event --> jumps back in provenance graph
-       * - Then branch the provenance graph with a new open view and set the old selection to the opener view
-       */
-      // case 0:
-      //   // first focus, then push the view
-      //   this.focus(viewWrapper).then(() => {
-      //     this.pushView(viewId, idtype, selection, options);
-      //     viewWrapper.setItemSelection({idtype, range:selection});
-      //   });
-      //
-      //   break;
-
-      /**
-       * Linear history with remove and add action:
-       * - Remove the old view --> new remove action in provenance graph
-       * - Add the new view --> new add action in provenance graph
-       * - Branches are only created for non-focus/context views (that triggered the open event)
-       */
-      // case 1:
-      //   // remove old views first, if the opener is not the last view
-      //   if(this.lastView !== viewWrapper) {
-      //     this.remove(this.lastView);
-      //   }
-      //   // then push the new view
-      //   this.pushView(viewId, idtype, selection, options);
-      //
-      //   break;
 
       /**
        * Linear history with replace action (instead of dedicated remove/add action):
@@ -204,7 +171,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
         // find the next view
         const index = this.state.views.lastIndexOf(viewWrapper);
         if (index === -1) {
-          console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
+          console.error('Current view not found:', viewWrapper.plugin.name, `(${viewWrapper.plugin.id})`);
           return;
         }
         const nextView = this.state.views[index + 1];
@@ -231,13 +198,14 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param newSelection
    * @param options
    */
-  private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
+  private updateItemSelection = (viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) => {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
+      console.log("updating slection")
       this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
-
       // check last view and if it will stay open for the new given selection
     } else {
+      console.log('more here')
       const i = this.state.views.indexOf(viewWrapper);
       const right = this.state.views[i + 1];
 
@@ -285,7 +253,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any = null) {
     // use current emtpy session to start analysis and skip reload to create a new provenance graph
-    if(this.props.graph.isEmpty) {
+    if (this.props.graph.isEmpty) {
       this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
       return;
     }
@@ -325,7 +293,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
 
       // start a tour if a tour ID is passed as URL hash
-      if(AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
+      if (AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
         const tourId = AppContext.getInstance().hash.getProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
         // remove hash to avoid starting the tour again after another page load (e.g., starting a new session)
         AppContext.getInstance().hash.removeProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
@@ -372,7 +340,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
         //this.remove(d);
         const viewRef = this.props.graph.findObject(view);
         if (viewRef === null) {
-          console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
+          console.warn('remove view:', 'view not found in graph', (view ? `'${view.plugin.id}'` : view));
           return;
         }
         return this.props.graph.push(CmdUtils.removeView(this.ref, viewRef));
@@ -385,17 +353,17 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param view ViewWrapper
    */
   pushImpl(view: ViewWrapper) {
-    view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
-    view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
-    view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    // view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
+    // view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
+    // view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
+    // view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
     // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
 
     this.setState({
       views: [...this.state.views, view]
     });
 
-    return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
+    // return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
   }
 
   /**
@@ -407,10 +375,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   removeImpl(view: ViewWrapper, focus: number = -1) {
     const i = this.state.views.indexOf(view);
-    view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
-    view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
-    view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
+    // view.off(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
+    // view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
+    // view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
+    // view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
 
     this.setState({
       views: this.state.views.filter((v) => v !== view)
@@ -429,7 +397,17 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   }
 
   private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): Promise<ICmdResult> {
+
     return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
+  }
+
+  replaceImpl(existingView: ViewWrapper, nextView: ViewWrapper) {
+    this.setState(({views}) => {
+      const index = views.indexOf(existingView);
+      views.splice(index, 1, nextView);
+      return {views};
+    });
+
   }
 
   /**
@@ -510,15 +488,36 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * updates the views information, e.g. history
    */
   render() {
-    this.updateDetailViewChoosers();
-    return(
+    // this.updateDetailViewChoosers();
+    console.log(this.state.views, 'views')
+    return (
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
           <OrdinoContext.Provider value={{app: this}}>
             <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
-            <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
+            {/* <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs> */}
             <div className="wrapper">
-              <div className="filmstrip" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}</div>
+              <div className="filmstrip" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}
+                {this.state.views.map((v, i) => {
+                  const viewCount = this.state.views.length;
+                  const isLastView = this.state.views.indexOf(v) === viewCount - 1;
+
+                  const previousView = this.state.views[i - 1];
+                  return <React.Fragment key={v.plugin.id}>
+                    <OrdinoViewWrapper
+                      key={v.plugin.id}
+                      graph={this.props.graph}
+                      wrapper={v}
+                      onSelectionChanged={this.updateItemSelection}
+                    >
+                      {i > 0 && <Chooser previousWrapper={previousView} selection={previousView.getItemSelection()} onOpenView={this.handleNextView} />}
+                    </OrdinoViewWrapper>
+
+                    {isLastView &&
+                      <Chooser selection={v.getItemSelection()} previousWrapper={v} onOpenView={this.handleNextView} />}
+                  </React.Fragment>;
+                })}
+              </div>
             </div>
           </OrdinoContext.Provider>
         </GraphContext.Provider>
@@ -535,4 +534,18 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
 function isCreateView(stateNode: StateNode) {
   const creator = stateNode.creator;
   return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
+}
+
+
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IViewPluginDesc, firstTime: boolean, options?: unknown): Promise<ViewWrapper> {
+  return new Promise(async (resolve) => {
+    const wrapper = new ViewWrapper(plugin, graph, parent.ownerDocument, () => options);
+    console.log(selection)
+    wrapper.setInputSelection(selection);
+    wrapper.visible = true;
+    wrapper.node.classList.add('active');
+    wrapper.on(ViewWrapper.EVENT_VIEW_INITIALIZED, () => {
+      resolve(wrapper)
+    });
+  });
 }

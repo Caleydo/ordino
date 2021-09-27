@@ -3,6 +3,10 @@ import * as ReactDOM from 'react-dom';
 import { GlobalEventHandler, PluginRegistry } from 'phovea_core';
 import { EP_ORDINO_START_MENU_TAB, Ordino, useAsync } from '../..';
 import { HighlightSessionCardContext } from '../OrdinoApp';
+import { EP_ORDINO_START_MENU_TAB_SHORTCUT } from '../../base';
+import { StartMenuLinks } from './StartMenuLinks';
+import { StartMenuTabWrapper } from './StartMenuTabWrapper';
+import { StartMenuTabShortcuts } from './StartMenuTabShortcuts';
 export var EStartMenuSection;
 (function (EStartMenuSection) {
     /**
@@ -64,34 +68,14 @@ export function StartMenuComponent({ header, mode, open }) {
         // tabs are sorted, the one with the lowest priority will be the default open tab
         setActiveTab((open === EStartMenuOpen.OPEN) ? tabs === null || tabs === void 0 ? void 0 : tabs[0] : null);
     }, [status, open]);
+    // create shortcuts rightMenu
     React.useEffect(() => {
-        // add short cut button to current session card to navbar in header
-        let currentSessionNav = header.rightMenu.parentElement.querySelector('.current-session');
-        // skip if tabs are not available (yet) or nav item is already initialized
-        if (!tabs || currentSessionNav) {
-            return;
-        }
-        currentSessionNav = header.rightMenu.ownerDocument.createElement('ul');
-        currentSessionNav.classList.add('navbar-nav', 'navbar-right', 'current-session');
-        ReactDOM.render(React.createElement("a", { href: "#", className: "nav-link", role: "button" },
-            React.createElement("i", { className: "fas fa-history me-2" }),
-            "Current Analysis Session"), currentSessionNav);
-        const clickListener = (event) => {
-            event.preventDefault();
-            setActiveTab(tabs.find((tab) => tab.desc.id === 'ordino_sessions_tab')); // TODO: find better way to identify the tabs
-            setHighlight(true); // the value is set to `false` when the animation in `CommonSessionCard` ends
-        };
-        currentSessionNav.addEventListener('click', clickListener);
-        header.insertCustomRightMenu(currentSessionNav);
-        return () => {
-            currentSessionNav.removeEventListener('click', clickListener);
-        };
-    }, [tabs]);
+        const shortcutMenu = header.rightMenu.ownerDocument.createElement('ul');
+        shortcutMenu.classList.add('navbar-nav', 'navbar-right', 'shortcut-menu');
+        header.insertCustomRightMenu(shortcutMenu);
+    }, []);
     React.useEffect(() => {
-        var _a;
         const isMenuOpen = (activeTab) ? true : false;
-        // hide current session button when start menu is open
-        (_a = header.rightMenu.parentElement.querySelector('.current-session')) === null || _a === void 0 ? void 0 : _a.toggleAttribute('hidden', isMenuOpen);
         // add class to body to toggle CLUE button mode selector and side panels via CSS (see _header.scss)
         // use CSS solution here, because there is no object reference to the button mode selector and side panels available
         // TODO: refactor this solution once the CLUE mode selector and side panels are React based
@@ -99,38 +83,12 @@ export function StartMenuComponent({ header, mode, open }) {
     }, [activeTab]);
     const mainMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
     const rightMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
+    const shortcuts = PluginRegistry.getInstance().listPlugins(EP_ORDINO_START_MENU_TAB_SHORTCUT).map((d) => d).sort(byPriority);
     return (React.createElement(React.Fragment, null,
         ReactDOM.createPortal(React.createElement(StartMenuLinks, { tabs: mainMenuTabs, status: status, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.mainMenu),
         ReactDOM.createPortal(React.createElement(StartMenuLinks, { tabs: rightMenuTabs, status: status, activeTab: activeTab, setActiveTab: (a) => setActiveTab(a), mode: mode }), header.rightMenu),
+        tabs && !activeTab && ReactDOM.createPortal(React.createElement(StartMenuTabShortcuts, { tabs: tabs, shortcuts: shortcuts, status: status, setActiveTab: (a) => setActiveTab(a), setHighlight: setHighlight }), header.mainMenu.ownerDocument.querySelector('.shortcut-menu')),
         React.createElement(HighlightSessionCardContext.Provider, { value: { highlight, setHighlight } },
             React.createElement(StartMenuTabWrapper, { tabs: tabs, status: status, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode }))));
-}
-function StartMenuLinks(props) {
-    return (React.createElement(React.Fragment, null, props.status === 'success' && props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.activeTab === tab ? 'active' : ''}`, key: tab.desc.id },
-        React.createElement("a", { className: "nav-link", href: `#${tab.desc.id}`, id: `${tab.desc.id}-tab`, role: "tab", "aria-controls": tab.desc.id, "aria-selected": (props.activeTab === tab), onClick: (evt) => {
-                evt.preventDefault();
-                if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab) {
-                    // remove :focus from link to remove highlight color
-                    evt.currentTarget.blur();
-                    // close tab only in overlay mode
-                    props.setActiveTab(null);
-                }
-                else {
-                    props.setActiveTab(tab);
-                }
-                return false;
-            } },
-            tab.desc.icon ? React.createElement("i", { className: tab.desc.icon }) : null,
-            tab.desc.text))))));
-}
-function StartMenuTabWrapper(props) {
-    return (React.createElement(React.Fragment, null, props.status === 'success' &&
-        React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}` }, props.tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: tab.desc.id, id: tab.desc.id, role: "tabpanel", "aria-labelledby": `${tab.desc.id}-tab` },
-            props.mode === EStartMenuMode.OVERLAY &&
-                React.createElement("div", { className: "container-fluid" },
-                    React.createElement("div", { className: "row" },
-                        React.createElement("div", { className: "col position-relative d-flex justify-content-end" },
-                            React.createElement("button", { className: "btn-close", onClick: () => { props.setActiveTab(null); } })))),
-            React.createElement(tab.factory, { isActive: props.activeTab === tab })))))));
 }
 //# sourceMappingURL=StartMenu.js.map

@@ -1,4 +1,4 @@
-import {ViewWrapper} from './ViewWrapper';
+import {ViewWrapper} from 'tdp_core';
 
 export interface IOrdinoApp {
   /**
@@ -21,7 +21,10 @@ export interface IOrdinoApp {
    * The return value is index in the list of views.
    * @param view ViewWrapper
    */
-  pushImpl(view: ViewWrapper): Promise<number>;
+  pushImpl(view: ViewWrapper);
+
+
+  replaceImpl(previous: ViewWrapper, next:ViewWrapper);
 
   /**
    * Remove the given and focus on the view with the given index.

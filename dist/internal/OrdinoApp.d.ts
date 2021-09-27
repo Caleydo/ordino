@@ -8,7 +8,9 @@
 import * as React from 'react';
 import { ICmdResult } from 'phovea_core';
 import { IObjectRef, ProvenanceGraph, IDType } from 'phovea_core';
-import { ViewWrapper } from './ViewWrapper';
+import { IViewPluginDesc } from 'tdp_core';
+import { ISelection } from 'tdp_core';
+import { ViewWrapper } from 'tdp_core';
 import { CLUEGraphManager } from 'phovea_clue';
 import { Range } from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
@@ -60,10 +62,6 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * React DOM node reference
      */
     private readonly nodeRef;
-    private readonly removeWrapper;
-    private readonly chooseNextView;
-    private readonly replaceViewInViewWrapper;
-    private readonly updateSelection;
     constructor(props: any);
     /**
      * This function can be used to load some initial content async
@@ -159,7 +157,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * The return value is index in the list of views.
      * @param view ViewWrapper
      */
-    pushImpl(view: ViewWrapper): Promise<number>;
+    pushImpl(view: ViewWrapper): void;
     /**
      * Remove the given and focus on the view with the given index.
      * If the focus index is -1 the previous view of the given view will be focused.
@@ -169,6 +167,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     removeImpl(view: ViewWrapper, focus?: number): Promise<number>;
     private replaceView;
+    replaceImpl(existingView: ViewWrapper, nextView: ViewWrapper): void;
     /**
      * Jumps to a given viewWrapper in the provenance graph
      * @param view
@@ -193,4 +192,5 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     render(): JSX.Element;
 }
+export declare function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IViewPluginDesc, firstTime: boolean, options?: unknown): Promise<ViewWrapper>;
 export {};

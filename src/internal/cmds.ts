@@ -20,10 +20,11 @@ import {
 import {PluginRegistry} from 'phovea_core';
 import {Range, ParseRangeUtils} from 'phovea_core';
 import {IDTypeManager, IDType} from 'phovea_core';
-import {ViewWrapper} from './ViewWrapper';
+import {IViewPluginDesc, ViewWrapper} from 'tdp_core';
 import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core';
 import {Compression} from 'phovea_clue';
-import { IOrdinoApp } from './IOrdinoApp';
+import {IOrdinoApp} from './IOrdinoApp';
+import {createViewWrapper} from './OrdinoApp';
 
 
 const CMD_CREATE_VIEW = 'targidCreateView';
@@ -36,7 +37,7 @@ export class CmdUtils {
   static asSelection(data: {idtype: string, selection: string}): ISelection {
     return {
       range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
-      idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
+      idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : new IDType('Start', 'Start', '', true)
     };
   }
 
@@ -44,7 +45,7 @@ export class CmdUtils {
     if (!selection || !selection.idtype || !selection.range || selection.range.isNone) {
       return null;
     }
-    return { idtype: selection.idtype.id, selection: selection.range.toString() };
+    return {idtype: selection.idtype.id, selection: selection.range.toString()};
   }
 
   /**
@@ -59,14 +60,12 @@ export class CmdUtils {
     const viewId: string = parameter.viewId;
     const selection = CmdUtils.asSelection(parameter);
     const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
-    const options: any & { app: IOrdinoApp } = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
+    const options: any & {app: IOrdinoApp} = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
 
-    const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
+    const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
 
-    const viewWrapperInstance = await ViewWrapper.createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
-    if (viewWrapperInstance.built) {
-      await viewWrapperInstance.built;
-    }
+    const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
+
     const oldFocus = await app.pushImpl(viewWrapperInstance);
     return {
       created: [viewWrapperInstance.ref],
@@ -84,14 +83,13 @@ export class CmdUtils {
     const app: IOrdinoApp = inputs[0].value;
     const existingView: ViewWrapper = inputs[1].value;
     const oldFocus: number = parameter.focus;
-
-    const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
-    delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
+    console.log('existingView', existingView)
+    const existingViewOptions = {}; // clone options to avoid mutation of the original object
 
     app.removeImpl(existingView, oldFocus);
     return {
       removed: [inputs[1]],
-      inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
+      inverse: CmdUtils.createView(inputs[0], existingView.plugin.id, existingView.getInputSelection()?.idtype, existingView.getInputSelection()?.range, existingViewOptions, existingView.getItemSelection())
     };
   }
 
@@ -104,33 +102,33 @@ export class CmdUtils {
    * @param parameter Parameter such idtype, selection and view options
    * @returns {Promise<ICmdResult>}
    */
-  static async replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult> {
+  static async replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult> {
     const app: IOrdinoApp = inputs[0].value;
     const existingView: ViewWrapper = inputs[1].value;
 
-    const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
-    delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
+    // const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
+    // delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
 
     const oldParams = {
-      viewId: existingView.desc.id,
-      idtype: existingView.selection.idtype,
-      selection: existingView.selection.range,
+      viewId: existingView.plugin.id,
+      idtype: existingView.itemIDType,
+      selection: existingView.getInputSelection()?.range,
       itemSelection: existingView.getItemSelection(),
-      options: existingViewOptions
+      options: {}
     };
 
     const viewId: string = parameter.viewId;
     const selection = CmdUtils.asSelection(parameter);
     const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
-    const options: any & { app: IOrdinoApp } = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
+    const options: any & {app: IOrdinoApp} = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
 
-    // create new (inner) view
-    const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
-
-    await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
+    const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
+    const next = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
+    
+    app.replaceImpl(existingView,next);
 
     return {
-      inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
+      inverse: CmdUtils.replaceView(inputs[0], next.ref, oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
     };
   }
 
@@ -165,7 +163,7 @@ export class CmdUtils {
   static removeView<T extends IOrdinoApp>(app: IObjectRef<T>, view: IObjectRef<ViewWrapper>, oldFocus = -1): IAction {
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Remove ' + view.toString(), ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, CmdUtils.removeViewImpl, [app, view], {
-      viewId: view.value.desc.id,
+      viewId: view.value.plugin.id,
       focus: oldFocus
     });
   }
@@ -201,6 +199,8 @@ export class CmdUtils {
 
     const bak = view.getItemSelection();
     await Promise.resolve(view.setItemSelection({idtype, range}));
+    console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS',view,target,bak, idtype,range)
+    console.log('-------------------------------')
     if (target) {
       await Promise.resolve(target.setParameterSelection({idtype, range}));
     }
@@ -283,3 +283,4 @@ export class CmdUtils {
     return Compression.lastOnly(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
   }
 }
+

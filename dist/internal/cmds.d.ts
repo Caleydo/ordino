@@ -8,7 +8,7 @@
 import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph } from 'phovea_core';
 import { Range } from 'phovea_core';
 import { IDType } from 'phovea_core';
-import { ViewWrapper } from './ViewWrapper';
+import { ViewWrapper } from 'tdp_core';
 import { ISelection } from 'tdp_core';
 import { IOrdinoApp } from './IOrdinoApp';
 export declare class CmdUtils {
@@ -44,7 +44,7 @@ export declare class CmdUtils {
      * @param parameter Parameter such idtype, selection and view options
      * @returns {Promise<ICmdResult>}
      */
-    static replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any): Promise<ICmdResult>;
+    static replaceViewImpl(this: ActionNode, inputs: IObjectRef<any>[], parameter: any, graph: ProvenanceGraph): Promise<ICmdResult>;
     /**
      * Creates a view and adds a CLUE command view to the provenance graph
      * @param app

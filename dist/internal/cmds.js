@@ -8,10 +8,10 @@
 import { ActionUtils, ActionMetaData, ObjectRefUtils } from 'phovea_core';
 import { PluginRegistry } from 'phovea_core';
 import { Range, ParseRangeUtils } from 'phovea_core';
-import { IDTypeManager } from 'phovea_core';
-import { ViewWrapper } from './ViewWrapper';
+import { IDTypeManager, IDType } from 'phovea_core';
 import { EXTENSION_POINT_TDP_VIEW } from 'tdp_core';
 import { Compression } from 'phovea_clue';
+import { createViewWrapper } from './OrdinoApp';
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
 const CMD_REPLACE_VIEW = 'targidReplaceView';
@@ -20,7 +20,7 @@ export class CmdUtils {
     static asSelection(data) {
         return {
             range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
-            idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
+            idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : new IDType('Start', 'Start', '', true)
         };
     }
     static serializeSelection(selection) {
@@ -43,10 +43,7 @@ export class CmdUtils {
         const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
         const options = { ...parameter.options, app }; // pass the app in options (e.g., to access the list of open views)
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
-        const viewWrapperInstance = await ViewWrapper.createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
-        if (viewWrapperInstance.built) {
-            await viewWrapperInstance.built;
-        }
+        const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
         const oldFocus = await app.pushImpl(viewWrapperInstance);
         return {
             created: [viewWrapperInstance.ref],
@@ -60,15 +57,16 @@ export class CmdUtils {
      * @returns {ICmdResult}
      */
     static removeViewImpl(inputs, parameter) {
+        var _a, _b;
         const app = inputs[0].value;
         const existingView = inputs[1].value;
         const oldFocus = parameter.focus;
-        const existingViewOptions = { ...existingView.options }; // clone options to avoid mutation of the original object
-        delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
+        console.log('existingView', existingView);
+        const existingViewOptions = {}; // clone options to avoid mutation of the original object
         app.removeImpl(existingView, oldFocus);
         return {
             removed: [inputs[1]],
-            inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
+            inverse: CmdUtils.createView(inputs[0], existingView.plugin.id, (_a = existingView.getInputSelection()) === null || _a === void 0 ? void 0 : _a.idtype, (_b = existingView.getInputSelection()) === null || _b === void 0 ? void 0 : _b.range, existingViewOptions, existingView.getItemSelection())
         };
     }
     /**
@@ -80,27 +78,28 @@ export class CmdUtils {
      * @param parameter Parameter such idtype, selection and view options
      * @returns {Promise<ICmdResult>}
      */
-    static async replaceViewImpl(inputs, parameter) {
+    static async replaceViewImpl(inputs, parameter, graph) {
+        var _a;
         const app = inputs[0].value;
         const existingView = inputs[1].value;
-        const existingViewOptions = { ...existingView.options }; // clone options to avoid mutation of the original object
-        delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
+        // const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
+        // delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
         const oldParams = {
-            viewId: existingView.desc.id,
-            idtype: existingView.selection.idtype,
-            selection: existingView.selection.range,
+            viewId: existingView.plugin.id,
+            idtype: existingView.itemIDType,
+            selection: (_a = existingView.getInputSelection()) === null || _a === void 0 ? void 0 : _a.range,
             itemSelection: existingView.getItemSelection(),
-            options: existingViewOptions
+            options: {}
         };
         const viewId = parameter.viewId;
         const selection = CmdUtils.asSelection(parameter);
         const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
         const options = { ...parameter.options, app }; // pass the app in options (e.g., to access the list of open views)
-        // create new (inner) view
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
-        await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
+        const next = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
+        app.replaceImpl(existingView, next);
         return {
-            inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
+            inverse: CmdUtils.replaceView(inputs[0], next.ref, oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
         };
     }
     /**
@@ -133,7 +132,7 @@ export class CmdUtils {
     static removeView(app, view, oldFocus = -1) {
         // assert view
         return ActionUtils.action(ActionMetaData.actionMeta('Remove ' + view.toString(), ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, CmdUtils.removeViewImpl, [app, view], {
-            viewId: view.value.desc.id,
+            viewId: view.value.plugin.id,
             focus: oldFocus
         });
     }
@@ -166,6 +165,8 @@ export class CmdUtils {
         const range = ParseRangeUtils.parseRangeLike(parameter.range);
         const bak = view.getItemSelection();
         await Promise.resolve(view.setItemSelection({ idtype, range }));
+        console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS', view, target, bak, idtype, range);
+        console.log('-------------------------------');
         if (target) {
             await Promise.resolve(target.setParameterSelection({ idtype, range }));
         }

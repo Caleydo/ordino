@@ -42,7 +42,7 @@ export function OrdinoFooter(props) {
               list && list.map((link) => {
                 return (
                   <FooterLink key={link.page} to={link.page} openInNewWindow={openInNewWindow} className="list-group-item list-group-item-action">
-                    <i className={`me-2 ${link.faIcon}`}></i> {link.text}
+                    {link.faIcon && (<i className={`${link.faIcon} me-2`}></i>)}{link.text}
                   </FooterLink>
                 );
               })

@@ -145,7 +145,12 @@ export class ViewWrapper extends EventHandler {
       .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
       .datum(this);
 
-    this.$node.append('button')
+
+
+    const $viewActions = this.$node.append('div')
+      .attr('class', 'view-actions');
+
+    $viewActions.append('button')
       .attr('type', 'button')
       .attr('class', 'btn-close')
       .attr('aria-label', 'Close')
@@ -154,7 +159,7 @@ export class ViewWrapper extends EventHandler {
       });
 
     const $params = this.$node.append('div')
-      .attr('class', 'parameters')
+      .attr('class', 'parameters container-fluid ps-0 pe-0')
       .datum(this);
 
     const $inner = this.$node.append('div')
@@ -350,7 +355,7 @@ export class ViewWrapper extends EventHandler {
       const $buttons = $categories.selectAll('button').data((d) => d.views);
 
       $buttons.enter().append('button')
-        .classed('btn btn-white', true);
+        .classed('btn', true);
 
       $buttons.attr('data-viewid', (d) => d.v.id);
       $buttons.text((d) => d.v.name)

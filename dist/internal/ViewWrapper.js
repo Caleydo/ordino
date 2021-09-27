@@ -98,7 +98,9 @@ export class ViewWrapper extends EventHandler {
             .classed('chooser', true)
             .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
             .datum(this);
-        this.$node.append('button')
+        const $viewActions = this.$node.append('div')
+            .attr('class', 'view-actions');
+        $viewActions.append('button')
             .attr('type', 'button')
             .attr('class', 'btn-close')
             .attr('aria-label', 'Close')
@@ -106,7 +108,7 @@ export class ViewWrapper extends EventHandler {
             this.remove();
         });
         const $params = this.$node.append('div')
-            .attr('class', 'parameters')
+            .attr('class', 'parameters container-fluid ps-0 pe-0')
             .datum(this);
         const $inner = this.$node.append('div')
             .classed('inner', true);
@@ -266,7 +268,7 @@ export class ViewWrapper extends EventHandler {
             // sort data that buttons inside groups are sorted
             const $buttons = $categories.selectAll('button').data((d) => d.views);
             $buttons.enter().append('button')
-                .classed('btn btn-white', true);
+                .classed('btn', true);
             $buttons.attr('data-viewid', (d) => d.v.id);
             $buttons.text((d) => d.v.name)
                 .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)

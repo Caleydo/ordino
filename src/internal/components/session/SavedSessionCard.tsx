@@ -29,7 +29,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
 
   return (
     <>
-      <p className="lead text-ordino-gray-4 mb-4">Load a previous analysis session</p>
+      <p className="lead text-gray-600 mb-4">Load a previous analysis session</p>
       <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo')}>
         {(sessionAction) => {
           return <>
@@ -46,9 +46,9 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
               </li>
             </ul>
             <div className="row pt-4">
-              <div className="col position-relative">
-                <div className="tab-content">
-                  <div className="tab-pane fade show active" role="tabpanel" id={`saved-session-mine-panel-${id}`} aria-labelledby={`saved-session-mine-tab-${id}`}>
+              <div className="col">
+                <div className="tab-content position-relative">
+                  <div className="tab-pane fade show active ordino-session-list p-1" role="tabpanel" id={`saved-session-mine-panel-${id}`} aria-labelledby={`saved-session-mine-tab-${id}`}>
                     {status === 'pending' &&
                       <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
                     }

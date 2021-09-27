@@ -241,7 +241,7 @@ div.filmstrip {
     }
 
     // hide close button for the first view
-    &:nth-child(1) > .view > .btn-close {
+    &:nth-child(1) .view-actions .btn-close {
       display: none;
     }
 
@@ -273,41 +273,58 @@ div.filmstrip {
       position: relative;
       overflow: hidden;
 
-      //transition: width 0.3s ease;
-      //border-top: 8px solid #fff;
+      display: grid;
+      grid-template-columns: auto min-content;
+      grid-template-rows: minmax(41px, min-content) auto; // 41px = minimum parameter form height with padding + margin of ranking stats and form elements (for a single row)
+      grid-template-areas:
+        "parameters view-actions"
+        "inner inner";
+      gap: 10px;
+      padding: 10px;
 
-      > .inner,
-      > .parameters,
-      button.btn-close {
-        margin: 10px;
-      }
-
-      .btn-close {
-        float: right;
+      > .view-actions {
+        grid-area: view-actions;
+        display: flex;
+        justify-content: flex-end;
+        justify-self: flex-end;
+        > button.close {
+          align-self: flex-start;
+        }
       }
 
       > .parameters {
+        margin-bottom: 0;
+        grid-area: parameters;
         opacity: 1;
         transition: opacity 0.3s ease;
+
         p {
           margin: 5px 0;
+        }
+
+        // TODO: temporary solution, this should be fixed in tdp_core
+        .form-inline {
+          gap: 10px;
+          height: 100%; // use whole available height to center form children
         }
       }
 
       > .parameters:not(.hidden) ~ .inner {
+        grid-area: inner;
+        position: relative;
         border-top: 1px solid $core_border;
         padding-top: 10px;
-        position: absolute;
-        top: 45px;
-        bottom: 0;
-        left: 0;
-        right: 0;
         overflow-y: auto;
-        display: flex;
 
-        > .tdp-view {
-          flex: 1 1 auto;
-        }
+        // grid item with 100% height of its parent (@see https://stackoverflow.com/a/58488563)
+        height: 0;
+        min-height: 100%;
+
+        // use grid again for child elements
+        display: grid;
+        // children must only use the available space and should not exceed this container
+        // @see https://css-tricks.com/preventing-a-grid-blowout/
+        grid-template-columns: minmax(0, 1fr);
       }
 
       > div {
@@ -372,6 +389,7 @@ div.filmstrip {
         border-radius: 0;
         line-height: 1;
         border: 1px solid #ccc;
+        background-color: $white;
 
         &:active,
         &:focus,

@@ -21,7 +21,7 @@ export default function SavedSessionCard({ name, faIcon }) {
     const { status } = useAsync(listSessions);
     const id = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     return (React.createElement(React.Fragment, null,
-        React.createElement("p", { className: "lead text-ordino-gray-4 mb-4" }, "Load a previous analysis session"),
+        React.createElement("p", { className: "lead text-gray-600 mb-4" }, "Load a previous analysis session"),
         React.createElement(CommonSessionCard, { cardName: name, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.savedCardInfo') }, (sessionAction) => {
             return React.createElement(React.Fragment, null,
                 React.createElement("ul", { className: "nav nav-pills session-tab card-header-pills", role: "tablist" },
@@ -34,9 +34,9 @@ export default function SavedSessionCard({ name, faIcon }) {
                             React.createElement("i", { className: "me-2 fas fa-users" }),
                             I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.otherSessions')))),
                 React.createElement("div", { className: "row pt-4" },
-                    React.createElement("div", { className: "col position-relative" },
-                        React.createElement("div", { className: "tab-content" },
-                            React.createElement("div", { className: "tab-pane fade show active", role: "tabpanel", id: `saved-session-mine-panel-${id}`, "aria-labelledby": `saved-session-mine-tab-${id}` },
+                    React.createElement("div", { className: "col" },
+                        React.createElement("div", { className: "tab-content position-relative" },
+                            React.createElement("div", { className: "tab-pane fade show active ordino-session-list p-1", role: "tabpanel", id: `saved-session-mine-panel-${id}`, "aria-labelledby": `saved-session-mine-tab-${id}` },
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),

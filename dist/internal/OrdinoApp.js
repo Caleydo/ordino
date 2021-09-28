@@ -8,7 +8,7 @@
 import * as React from 'react';
 import { BaseUtils, NodeUtils, AppContext } from 'phovea_core';
 import { ObjectRefUtils } from 'phovea_core';
-import { TDPApplicationUtils, TourUtils } from 'tdp_core';
+import { TDPApplicationUtils, TourUtils, ViewUtils } from 'tdp_core';
 import { EViewMode } from 'tdp_core';
 import { ViewWrapper } from 'tdp_core';
 import { CmdUtils } from './cmds';
@@ -63,7 +63,6 @@ export class OrdinoApp extends React.Component {
         this.updateItemSelection = (viewWrapper, oldSelection, newSelection, options) => {
             // just update the selection for the last open view
             if (this.lastView === viewWrapper) {
-                console.log("updating slection");
                 this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range) });
                 // check last view and if it will stay open for the new given selection
             }
@@ -71,9 +70,13 @@ export class OrdinoApp extends React.Component {
                 console.log('more here');
                 const i = this.state.views.indexOf(viewWrapper);
                 const right = this.state.views[i + 1];
+                // TODO: add this method to the tdp_core wrapper
+                const matchSelectionLength = (wrapper, length) => {
+                    return ViewUtils.matchLength(wrapper.plugin.selection, length) || (ViewUtils.showAsSmallMultiple(wrapper.plugin) && length > 1);
+                };
                 // update selection with the last open (= right) view
-                if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
-                    right.setParameterSelection(newSelection);
+                if (right === this.lastView && matchSelectionLength(right, newSelection.range.dim(0).length)) {
+                    right.setInputSelection(newSelection);
                     this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range) });
                     // the selection does not match with the last open (= right) view --> close view
                 }
@@ -303,14 +306,14 @@ export class OrdinoApp extends React.Component {
         this.setState({
             views: this.state.views.filter((v) => v !== view)
         });
-        view.destroy();
-        //remove with focus change if not already hidden
-        if (!isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
-            if (focus < 0) {
-                focus = i - 1;
-            }
-            return this.focusImpl(focus);
-        }
+        // view.destroy();
+        // //remove with focus change if not already hidden
+        // if (!isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
+        //   if (focus < 0) {
+        //     focus = i - 1;
+        //   }
+        //   return this.focusImpl(focus);
+        // }
         return Promise.resolve(NaN);
     }
     replaceView(existingView, viewId, idtype, selection, options) {
@@ -378,26 +381,9 @@ export class OrdinoApp extends React.Component {
         return BaseUtils.resolveIn(1000).then(() => old);
     }
     /**
-     * Update the detail view chooser of each view wrapper,
-     * because each view wrapper does not know the surrounding view wrappers.
-     *
-     * TODO remove/refactor this function when switching the ViewWrapper and its detail view chooser to React
-     */
-    updateDetailViewChoosers() {
-        this.state.views.forEach((view, i) => {
-            if (i < this.views.length - 1) {
-                view.setActiveNextView(this.views[i + 1].desc.id);
-            }
-            else {
-                view.setActiveNextView(null);
-            }
-        });
-    }
-    /**
      * updates the views information, e.g. history
      */
     render() {
-        // this.updateDetailViewChoosers();
         console.log(this.state.views, 'views');
         return (React.createElement(React.Fragment, null,
             React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },

@@ -11,7 +11,6 @@ export function OrdinoViewWrapper({ graph, wrapper, children, onSelectionChanged
         });
         return () => {
             wrapper.getInstance().off(AView.EVENT_ITEM_SELECT, () => null);
-            FormElementTyp;
         };
     }, [wrapper]);
     React.useEffect(() => {

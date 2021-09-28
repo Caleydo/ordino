@@ -37,7 +37,7 @@ export function OrdinoViewWrapper({
 
         });
         return () => {
-            wrapper.getInstance().off(AView.EVENT_ITEM_SELECT, () => null);FormElementTyp
+            wrapper.getInstance().off(AView.EVENT_ITEM_SELECT, () => null);
         }
     }, [wrapper]);
 

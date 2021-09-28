@@ -15,7 +15,7 @@ export function HeaderNavigation({ fixed, bg = 'dark' }) {
             React.createElement("button", { className: "navbar-toggler", type: "button", "data-bs-toggle": "collapse", "data-bs-target": "#ordino-header-navbar-nav", "aria-controls": "ordino-header-navbar-nav", "aria-expanded": "false", "aria-label": "Toggle navigation" },
                 React.createElement("span", { className: "navbar-toggler-icon" })),
             React.createElement("div", { className: "order-1 navbar-collapse collapse", id: "ordino-header-navbar-nav" }, links &&
-                React.createElement("ul", { className: "navbar-nav" }, links.map(({ text, page, faIcon }) => React.createElement("li", { className: "px-3 nav-item" },
+                React.createElement("ul", { className: "navbar-nav" }, links.map(({ text, page, faIcon }, i) => React.createElement("li", { className: "px-3 nav-item", key: i },
                     React.createElement(NavLink, { to: page, className: "nav-link", activeClassName: "active" },
                         faIcon && (React.createElement("i", { className: `${faIcon} me-2` })),
                         text))))))));

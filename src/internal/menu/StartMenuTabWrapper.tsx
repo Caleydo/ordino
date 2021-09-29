@@ -33,10 +33,6 @@ export interface IStartMenuTabWrapperProps {
 
 
 export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
-    if (props.activeTab === null) {
-        return null;
-    }
-
     return (
         <>
             {props.status === 'success' &&

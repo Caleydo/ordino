@@ -43,7 +43,7 @@ export function HeaderNavigation({fixed, bg = 'dark'}: IHeaderNavigationProps) {
         <div className="order-1 navbar-collapse collapse" id="ordino-header-navbar-nav">
           {links &&
             <ul className="navbar-nav">
-              {links.map(({text, page, faIcon}) => <li className="px-3 nav-item"><NavLink to={page} className="nav-link" activeClassName="active">{faIcon && (<i className={`${faIcon} me-2`}></i>)}{text}</NavLink></li>)}
+              {links.map(({text, page, faIcon}, i) => <li className="px-3 nav-item" key={i}><NavLink to={page} className="nav-link" activeClassName="active">{faIcon && (<i className={`${faIcon} me-2`}></i>)}{text}</NavLink></li>)}
             </ul>
           }
         </div>

@@ -146,6 +146,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   /**
    * Opens a new view using the viewId, idtype, selection and options.
    *
+   * Linear history with replace action (instead of dedicated remove/add action):
+   * - Reuses the old viewWrapper, but creates a new child view inside
+   * - Branches are only created for non-focus/context views (that triggered the open event)
+   *
    * @param viewWrapper The view that triggered the opener event.
    * @param viewId The new view that should be opened to the right.
    * @param idtype
@@ -153,42 +157,27 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param options
    */
   private openOrReplaceNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
-    const mode = 2; // select opener mode
-    switch (mode) {
-
-      /**
-       * Linear history with replace action (instead of dedicated remove/add action):
-       * - Reuses the old viewWrapper, but creates a new child view inside
-       * - Branches are only created for non-focus/context views (that triggered the open event)
-       */
-      case 2:
-        // the opener is the last view, then nothing to replace --> just open the new view
-        if (this.lastView === viewWrapper) {
-          this.pushView(viewId, idtype, selection, options);
-          break;
-        }
-
-        // find the next view
-        const index = this.state.views.lastIndexOf(viewWrapper);
-        if (index === -1) {
-          console.error('Current view not found:', viewWrapper.plugin.name, `(${viewWrapper.plugin.id})`);
-          return;
-        }
-        const nextView = this.state.views[index + 1];
-
-        // if there are more views open, then close them first, before replacing the next view
-        if (nextView !== this.lastView) {
-          this.remove(this.state.views[index + 2]);
-        }
-
-        // trigger the replacement of the view
-        this.replaceView(nextView.ref, viewId, idtype, selection, options);
-
-        break;
-
-      default:
-        console.error('No mode for opening new views selected!');
+    // the opener is the last view, then nothing to replace --> just open the new view
+    if (this.lastView === viewWrapper) {
+      this.pushView(viewId, idtype, selection, options);
+      return;
     }
+
+    // find the next view
+    const index = this.state.views.lastIndexOf(viewWrapper);
+    if (index === -1) {
+      console.error('Current view not found:', viewWrapper.plugin.name, `(${viewWrapper.plugin.id})`);
+      return;
+    }
+
+    const nextView = this.state.views[index + 1];
+    // if there are more views open, then close them first, before replacing the next view
+    if (nextView !== this.lastView) {
+      this.remove(this.state.views[index + 2]);
+    }
+
+    // trigger the replacement of the view
+    this.replaceView(nextView.ref, viewId, idtype, selection, options);
   }
 
   /**
@@ -485,7 +474,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
             <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
             <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
             <div className="wrapper">
-              <div className="filmstrip" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}
+              <div className="filmstrip" ref={this.nodeRef}>
                 {this.state.views.map((v, i) => {
                   const viewCount = this.state.views.length;
                   const isLastView = this.state.views.indexOf(v) === viewCount - 1;

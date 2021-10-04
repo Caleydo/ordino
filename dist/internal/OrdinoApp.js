@@ -125,6 +125,10 @@ export class OrdinoApp extends React.Component {
     /**
      * Opens a new view using the viewId, idtype, selection and options.
      *
+     * Linear history with replace action (instead of dedicated remove/add action):
+     * - Reuses the old viewWrapper, but creates a new child view inside
+     * - Branches are only created for non-focus/context views (that triggered the open event)
+     *
      * @param viewWrapper The view that triggered the opener event.
      * @param viewId The new view that should be opened to the right.
      * @param idtype
@@ -132,36 +136,24 @@ export class OrdinoApp extends React.Component {
      * @param options
      */
     openOrReplaceNextView(viewWrapper, viewId, idtype, selection, options) {
-        const mode = 2; // select opener mode
-        switch (mode) {
-            /**
-             * Linear history with replace action (instead of dedicated remove/add action):
-             * - Reuses the old viewWrapper, but creates a new child view inside
-             * - Branches are only created for non-focus/context views (that triggered the open event)
-             */
-            case 2:
-                // the opener is the last view, then nothing to replace --> just open the new view
-                if (this.lastView === viewWrapper) {
-                    this.pushView(viewId, idtype, selection, options);
-                    break;
-                }
-                // find the next view
-                const index = this.state.views.lastIndexOf(viewWrapper);
-                if (index === -1) {
-                    console.error('Current view not found:', viewWrapper.plugin.name, `(${viewWrapper.plugin.id})`);
-                    return;
-                }
-                const nextView = this.state.views[index + 1];
-                // if there are more views open, then close them first, before replacing the next view
-                if (nextView !== this.lastView) {
-                    this.remove(this.state.views[index + 2]);
-                }
-                // trigger the replacement of the view
-                this.replaceView(nextView.ref, viewId, idtype, selection, options);
-                break;
-            default:
-                console.error('No mode for opening new views selected!');
+        // the opener is the last view, then nothing to replace --> just open the new view
+        if (this.lastView === viewWrapper) {
+            this.pushView(viewId, idtype, selection, options);
+            return;
         }
+        // find the next view
+        const index = this.state.views.lastIndexOf(viewWrapper);
+        if (index === -1) {
+            console.error('Current view not found:', viewWrapper.plugin.name, `(${viewWrapper.plugin.id})`);
+            return;
+        }
+        const nextView = this.state.views[index + 1];
+        // if there are more views open, then close them first, before replacing the next view
+        if (nextView !== this.lastView) {
+            this.remove(this.state.views[index + 2]);
+        }
+        // trigger the replacement of the view
+        this.replaceView(nextView.ref, viewId, idtype, selection, options);
     }
     /**
      * The last view of the list of open views

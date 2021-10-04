@@ -93,6 +93,10 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     /**
      * Opens a new view using the viewId, idtype, selection and options.
      *
+     * Linear history with replace action (instead of dedicated remove/add action):
+     * - Reuses the old viewWrapper, but creates a new child view inside
+     * - Branches are only created for non-focus/context views (that triggered the open event)
+     *
      * @param viewWrapper The view that triggered the opener event.
      * @param viewId The new view that should be opened to the right.
      * @param idtype

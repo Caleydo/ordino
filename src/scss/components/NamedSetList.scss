@@ -1,8 +1,11 @@
 .dataset-entry {
   .dataset-entry-item {
     max-height: $named-set-list-max-height;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
+    &:hover{
+      overflow-y: auto;
+    }
   }
   &:not(:first-child) {
     border-left: 1px solid $gray-300;

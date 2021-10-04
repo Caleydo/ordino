@@ -1,9 +1,6 @@
-import {GlobalEventHandler, IDType, PluginRegistry, ProvenanceGraph, Range} from 'phovea_core';
+import {ProvenanceGraph} from 'phovea_core';
 import React, {ReactNode} from 'react';
-import {AView, EViewMode, EXTENSION_POINT_TDP_VIEW, FindViewUtils, ISelection, IViewPluginDesc, ViewWrapper} from 'tdp_core';
-import {useAsync} from '../hooks';
-import {TreeRenderer, ITreeElement, viewPluginDescToTreeElementHelper} from 'tdp_ui';
-import {Chooser} from './Chooser';
+import {AView, EViewMode, ISelection, ViewWrapper} from 'tdp_core';
 import {MODE_ANIMATION_TIME} from './constants';
 
 const modeViewClass = (mode: EViewMode) => {

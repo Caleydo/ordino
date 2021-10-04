@@ -204,14 +204,14 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
       // check last view and if it will stay open for the new given selection
     } else {
-      console.log('more here')
+
       const i = this.state.views.indexOf(viewWrapper);
       const right = this.state.views[i + 1];
 
       // TODO: add this method to the tdp_core wrapper
       const matchSelectionLength = (wrapper: ViewWrapper, length: number) => {
         return ViewUtils.matchLength(wrapper.plugin.selection, length) || (ViewUtils.showAsSmallMultiple(wrapper.plugin) && length > 1);
-      }
+      };
 
       // update selection with the last open (= right) view
       if (right === this.lastView && matchSelectionLength(right, newSelection.range.dim(0).length)) {
@@ -308,7 +308,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   }
 
   /**
-   * Push availabe default session values to provenance graph first.
+   * Push available default session values to provenance graph first.
    * Then push the first view and close the start menu.
    *
    * @param startViewId First view of the analysis session
@@ -356,18 +356,15 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * The return value is index in the list of views.
    * @param view ViewWrapper
    */
-  pushImpl(view: ViewWrapper) {
-    // view.on(ViewWrapper.EVENT_REMOVE, this.removeWrapper);
-    // view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
-    // view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
-    // view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
-
-    this.setState({
-      views: [...this.state.views, view]
+  async pushImpl(view: ViewWrapper) {
+    await new Promise<ViewWrapper>((resolve) => {
+      this.setState({
+        views: [...this.state.views, view]
+      });
+      view.on(ViewWrapper.EVENT_VIEW_INITIALIZED, () => resolve(view));
     });
 
-    // return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
+    return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
   }
 
   /**
@@ -405,13 +402,16 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
   }
 
-  replaceImpl(existingView: ViewWrapper, nextView: ViewWrapper) {
-    this.setState(({views}) => {
-      const index = views.indexOf(existingView);
-      views.splice(index, 1, nextView);
-      return {views};
+  async replaceImpl(existingView: ViewWrapper, nextView: ViewWrapper) {
+    await new Promise<ViewWrapper>((resolve) => {
+      this.setState(({views}) => {
+        const index = views.indexOf(existingView);
+        views.splice(index, 1, nextView);
+        return {views};
+      });
+      nextView.on(ViewWrapper.EVENT_VIEW_INITIALIZED, () => resolve(nextView));
     });
-
+    return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
   }
 
   /**
@@ -477,19 +477,18 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * updates the views information, e.g. history
    */
   render() {
-    console.log(this.state.views, 'views')
+
     return (
       <>
         <GraphContext.Provider value={{manager: this.props.graphManager, graph: this.props.graph}}>
           <OrdinoContext.Provider value={{app: this}}>
             <StartMenuComponent header={this.props.header} mode={this.state.mode} open={this.state.open}></StartMenuComponent>
-            {/* <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs> */}
+            <OrdinoBreadcrumbs views={this.state.views} onClick={(view) => this.showInFocus(view)}></OrdinoBreadcrumbs>
             <div className="wrapper">
               <div className="filmstrip" ref={this.nodeRef}>{/* ViewWrapper will be rendered as child elements here */}
                 {this.state.views.map((v, i) => {
                   const viewCount = this.state.views.length;
                   const isLastView = this.state.views.indexOf(v) === viewCount - 1;
-
                   const previousView = this.state.views[i - 1];
                   return <React.Fragment key={v.plugin.id}>
                     <OrdinoViewWrapper
@@ -498,11 +497,11 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
                       wrapper={v}
                       onSelectionChanged={this.updateItemSelection}
                     >
-                      {i > 0 && <Chooser previousWrapper={previousView} selection={previousView.getItemSelection()} onOpenView={this.handleNextView} />}
+                      {i > 0 && <Chooser previousWrapper={previousView} onOpenView={this.handleNextView} />}
                     </OrdinoViewWrapper>
 
                     {isLastView &&
-                      <Chooser selection={v.getItemSelection()} previousWrapper={v} onOpenView={this.handleNextView} />}
+                      <Chooser previousWrapper={v} onOpenView={this.handleNextView} />}
                   </React.Fragment>;
                 })}
               </div>
@@ -525,15 +524,10 @@ function isCreateView(stateNode: StateNode) {
 }
 
 
-export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IViewPluginDesc, firstTime: boolean, options?: unknown): Promise<ViewWrapper> {
-  return new Promise(async (resolve) => {
-    const wrapper = new ViewWrapper(plugin, graph, parent.ownerDocument, () => options);
-    console.log(selection)
-    wrapper.setInputSelection(selection);
-    wrapper.visible = true;
-    wrapper.node.classList.add('active');
-    wrapper.on(ViewWrapper.EVENT_VIEW_INITIALIZED, () => {
-      resolve(wrapper)
-    });
-  });
+export function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IViewPluginDesc, firstTime: boolean, options?: unknown) {
+  const wrapper = new ViewWrapper(plugin, graph, parent.ownerDocument, () => options);
+  wrapper.setInputSelection(selection);
+  wrapper.visible = true;
+  wrapper.node.classList.add('active');
+  return wrapper;
 }

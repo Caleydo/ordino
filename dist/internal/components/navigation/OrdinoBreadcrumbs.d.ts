@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { ViewWrapper } from '../../ViewWrapper';
+import { ViewWrapper } from 'tdp_core';
 interface IOrdinoBreadcrumbsProps {
     /**
      * List of open views

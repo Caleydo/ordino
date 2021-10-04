@@ -3,9 +3,10 @@ import { AView, FindViewUtils } from 'tdp_core';
 import { TreeRenderer, viewPluginDescToTreeElementHelper } from 'tdp_ui';
 import { useAsync } from '..';
 // tslint:disable-next-line: variable-name
-export const Chooser = ({ previousWrapper, selection, onOpenView }) => {
-    const [inputSelection, setInputSelection] = React.useState(selection);
+export const Chooser = ({ previousWrapper, onOpenView }) => {
+    const [inputSelection, setInputSelection] = React.useState(previousWrapper.getItemSelection());
     const [openView, setOpenView] = React.useState(false);
+    const [initialized, setInitialized] = React.useState(false);
     const loadViews = React.useMemo(() => () => {
         if (!inputSelection || inputSelection.range.isNone) {
             return Promise.resolve([]);
@@ -19,13 +20,13 @@ export const Chooser = ({ previousWrapper, selection, onOpenView }) => {
                 setInputSelection(newSelection);
             }
         };
-        previousWrapper.on(AView.EVENT_ITEM_SELECT, listener);
+        previousWrapper.getInstance().on(AView.EVENT_ITEM_SELECT, listener);
         return () => {
-            previousWrapper.off(AView.EVENT_ITEM_SELECT, listener);
+            var _a;
+            (_a = previousWrapper.getInstance()) === null || _a === void 0 ? void 0 : _a.off(AView.EVENT_ITEM_SELECT, listener);
         };
     }, [previousWrapper]);
     const { value: views, status } = useAsync(loadViews);
-    console.log(status, views, previousWrapper, inputSelection);
     return React.createElement(React.Fragment, null, status === 'success' && views.length > 0 &&
         React.createElement("div", { className: "chooser" },
             React.createElement(TreeRenderer, { groups: views, itemAction: (view) => {

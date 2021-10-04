@@ -8,15 +8,16 @@ import {Range} from 'phovea_core';
 
 interface IChooserProps {
     previousWrapper: ViewWrapper;
-    selection: ISelection;
     onOpenView: (viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) => void;
 
 }
 
 // tslint:disable-next-line: variable-name
-export const Chooser = ({previousWrapper, selection, onOpenView}: IChooserProps) => {
-    const [inputSelection, setInputSelection] = React.useState<ISelection>(selection);
-    const [openView,setOpenView] = React.useState<Boolean>(false);
+export const Chooser = ({previousWrapper, onOpenView}: IChooserProps) => {
+    const [inputSelection, setInputSelection] = React.useState<ISelection>(previousWrapper.getItemSelection());
+    const [openView, setOpenView] = React.useState<Boolean>(false);
+    const [initialized, setInitialized] = React.useState(false);
+
     const loadViews = React.useMemo(() => () => {
 
         if (!inputSelection || inputSelection.range.isNone) {
@@ -34,15 +35,15 @@ export const Chooser = ({previousWrapper, selection, onOpenView}: IChooserProps)
             }
         };
 
-        previousWrapper.on(AView.EVENT_ITEM_SELECT, listener);
+        previousWrapper.getInstance().on(AView.EVENT_ITEM_SELECT, listener);
+
         return () => {
-            previousWrapper.off(AView.EVENT_ITEM_SELECT, listener);
+            previousWrapper.getInstance()?.off(AView.EVENT_ITEM_SELECT, listener);
         };
     }, [previousWrapper]);
 
-
     const {value: views, status} = useAsync(loadViews);
-    console.log(status,views, previousWrapper,inputSelection)
+
     return <>{status === 'success' && views.length > 0 &&
         < div className="chooser">
             <TreeRenderer groups={views} itemAction={(view) => {

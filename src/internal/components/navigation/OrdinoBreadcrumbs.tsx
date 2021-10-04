@@ -1,5 +1,5 @@
 import React from 'react';
-import {ViewWrapper} from '../../ViewWrapper';
+import {ViewWrapper} from 'tdp_core';
 import {EViewMode} from 'tdp_core';
 
 interface IOrdinoBreadcrumbsProps {
@@ -25,7 +25,7 @@ export function OrdinoBreadcrumbs(props: IOrdinoBreadcrumbsProps) {
     <ul className="tdp-button-group history" aria-label="breadcrumb">
       {props.views.map((view) => {
         return (
-          <OrdinoBreadcrumbItem key={view.desc.id} view={view} onClick={props.onClick}></OrdinoBreadcrumbItem>
+          <OrdinoBreadcrumbItem key={view.plugin.id} view={view} onClick={props.onClick}></OrdinoBreadcrumbItem>
         );
       })}
     </ul>
@@ -48,7 +48,7 @@ function OrdinoBreadcrumbItem(props: IOrdinoBreadcrumbItemProps) {
 
   // TODO Refactor/remove the `useState` and `useEffect` when switching the ViewWrapper to React
   const [viewMode, setViewMode] = React.useState(EViewMode.HIDDEN);
-  const [viewName, setViewName] = React.useState(props.view.desc.name);
+  const [viewName, setViewName] = React.useState(props.view.plugin.name);
 
   // listen to mode changes of the view and update the state accordingly
   React.useEffect(() => {
@@ -57,15 +57,13 @@ function OrdinoBreadcrumbItem(props: IOrdinoBreadcrumbItemProps) {
     };
 
     const replaceViewListener = (_event, view: ViewWrapper) => {
-      setViewName(view.desc.name);
+      setViewName(view.plugin.name);
     };
 
     props.view.on(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
-    props.view.on(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
 
     return () => { // cleanup
       props.view.off(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
-      props.view.off(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
     };
   }, [props.view]);
 

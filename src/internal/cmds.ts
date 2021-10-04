@@ -64,12 +64,12 @@ export class CmdUtils {
 
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
 
-    const viewWrapperInstance = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
+    const viewWrapperInstance = createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
 
-    const oldFocus = await app.pushImpl(viewWrapperInstance);
+    await app.pushImpl(viewWrapperInstance);
     return {
       created: [viewWrapperInstance.ref],
-      inverse: (inputs, created, removed) => CmdUtils.removeView(inputs[0], created[0], oldFocus)
+      inverse: (inputs, created, removed) => CmdUtils.removeView(inputs[0], created[0], -1)
     };
   }
 
@@ -83,7 +83,6 @@ export class CmdUtils {
     const app: IOrdinoApp = inputs[0].value;
     const existingView: ViewWrapper = inputs[1].value;
     const oldFocus: number = parameter.focus;
-    console.log('existingView', existingView)
     const existingViewOptions = {}; // clone options to avoid mutation of the original object
 
     app.removeImpl(existingView, oldFocus);
@@ -106,6 +105,7 @@ export class CmdUtils {
     const app: IOrdinoApp = inputs[0].value;
     const existingView: ViewWrapper = inputs[1].value;
 
+    // TODO: tdp_core does not expose options
     // const existingViewOptions = {...existingView.options}; // clone options to avoid mutation of the original object
     // delete existingViewOptions.app; // remove Ordino app from options to avoid circular referencenc on JSON stringify in the provenance graph
 
@@ -123,9 +123,9 @@ export class CmdUtils {
     const options: any & {app: IOrdinoApp} = {...parameter.options, app}; // pass the app in options (e.g., to access the list of open views)
 
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
-    const next = await createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
-    
-    app.replaceImpl(existingView,next);
+    const next = createViewWrapper(graph, selection, itemSelection, app.node, view, !this.onceExecuted, options);
+
+    await app.replaceImpl(existingView, next);
 
     return {
       inverse: CmdUtils.replaceView(inputs[0], next.ref, oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
@@ -199,8 +199,7 @@ export class CmdUtils {
 
     const bak = view.getItemSelection();
     await Promise.resolve(view.setItemSelection({idtype, range}));
-    console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS',view,target,bak, idtype,range)
-    console.log('-------------------------------')
+
     if (target) {
       await Promise.resolve(target.setParameterSelection({idtype, range}));
     }

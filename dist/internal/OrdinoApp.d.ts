@@ -138,7 +138,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     initNewSessionAfterPageReload(): void;
     /**
-     * Push availabe default session values to provenance graph first.
+     * Push available default session values to provenance graph first.
      * Then push the first view and close the start menu.
      *
      * @param startViewId First view of the analysis session
@@ -157,7 +157,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * The return value is index in the list of views.
      * @param view ViewWrapper
      */
-    pushImpl(view: ViewWrapper): void;
+    pushImpl(view: ViewWrapper): Promise<number>;
     /**
      * Remove the given and focus on the view with the given index.
      * If the focus index is -1 the previous view of the given view will be focused.
@@ -167,7 +167,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     removeImpl(view: ViewWrapper, focus?: number): Promise<number>;
     private replaceView;
-    replaceImpl(existingView: ViewWrapper, nextView: ViewWrapper): void;
+    replaceImpl(existingView: ViewWrapper, nextView: ViewWrapper): Promise<number>;
     /**
      * Jumps to a given viewWrapper in the provenance graph
      * @param view
@@ -185,5 +185,5 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      */
     render(): JSX.Element;
 }
-export declare function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IViewPluginDesc, firstTime: boolean, options?: unknown): Promise<ViewWrapper>;
+export declare function createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IViewPluginDesc, firstTime: boolean, options?: unknown): ViewWrapper;
 export {};

@@ -1,19 +1,27 @@
 import {GlobalEventHandler, IDType, PluginRegistry, ProvenanceGraph, Range} from 'phovea_core';
 import React, {ReactNode} from 'react';
-import {AView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, ISelection, IViewPluginDesc, ViewWrapper} from 'tdp_core';
+import {AView, EViewMode, EXTENSION_POINT_TDP_VIEW, FindViewUtils, ISelection, IViewPluginDesc, ViewWrapper} from 'tdp_core';
 import {useAsync} from '../hooks';
 import {TreeRenderer, ITreeElement, viewPluginDescToTreeElementHelper} from 'tdp_ui';
 import {Chooser} from './Chooser';
+import {MODE_ANIMATION_TIME} from './constants';
+
+const modeViewClass = (mode: EViewMode) => {
+    switch (mode) {
+        case EViewMode.HIDDEN:
+            return 't-hide';
+        case EViewMode.FOCUS:
+            return 't-focus';
+        case EViewMode.CONTEXT:
+            return 't-context';
+    }
+};
 
 
 interface IOrdinoViewWrapperProps {
     graph: ProvenanceGraph;
     wrapper: ViewWrapper;
-    // onCreated: () => void;
     onSelectionChanged: (viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?: any) => void;
-    // onReplaceView?: (view: IViewPluginDesc) => void;
-    // onRemoveView?: (view: IViewPluginDesc) => void;
-    // onModeChanged?: (view: IViewPluginDesc) => void;
     children?: ReactNode;
 }
 
@@ -24,29 +32,91 @@ export function OrdinoViewWrapper({
     onSelectionChanged
 }: IOrdinoViewWrapperProps) {
     const ref = React.useRef<HTMLDivElement>(null);
+    const [viewMode, setViewMode] = React.useState(EViewMode.FOCUS);
+    const [initialized, setInitialized] = React.useState(false);
 
     React.useEffect(() => {
-        wrapper.getInstance().on(AView.EVENT_ITEM_SELECT, (_, oldSelection: ISelection, newSelection: ISelection) => {
+        const listener = () => setInitialized(true);
 
-            // TODO: wrapper has not changed yet ignore itemSelection
-            if (!(oldSelection.range.isNone && newSelection.range.isNone)) {
-
-                onSelectionChanged(wrapper, oldSelection, newSelection);
-            }
-
-
-        });
-        return () => {
-            wrapper.getInstance().off(AView.EVENT_ITEM_SELECT, () => null);
-        }
-    }, [wrapper]);
-
-
-    React.useEffect(() => {
+        wrapper.on(ViewWrapper.EVENT_VIEW_INITIALIZED, listener);
         ref.current.appendChild(wrapper.node);
+        return () => {
+            wrapper.off(ViewWrapper.EVENT_VIEW_INITIALIZED, listener);
+        };
     }, [wrapper]);
 
-    return <div className="viewWrapper" ref={ref}>
+
+    React.useEffect(() => {
+        // listen to mode changed
+
+        const modeChangedListener = (_event, currentMode: EViewMode, _previousMode: EViewMode) => {
+            setViewMode(currentMode);
+        };
+
+        wrapper.on(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+
+        return () => {
+            wrapper.off(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+        };
+    }, []);
+
+    React.useEffect(() => {
+        if (!initialized) {
+            return;
+        }
+
+        // listen to selection
+        const selectionListener = (_, oldSelection: ISelection, newSelection: ISelection) => {
+
+            onSelectionChanged(wrapper, oldSelection, newSelection);
+        };
+
+        wrapper.getInstance().on(AView.EVENT_ITEM_SELECT, selectionListener);
+
+        return () => {
+            wrapper.getInstance()?.off(AView.EVENT_ITEM_SELECT, selectionListener);
+            // wrapper.off(ViewWrapper.EVENT_MODE_CHANGED, modeChangedListener);
+        };
+    }, [initialized]);
+
+    React.useEffect(() => {
+        const listener = () => setInitialized(true);
+
+        wrapper.on(ViewWrapper.EVENT_VIEW_INITIALIZED, listener);
+        ref.current.appendChild(wrapper.node);
+        return () => {
+            wrapper.off(ViewWrapper.EVENT_VIEW_INITIALIZED, listener);
+        };
+    }, [wrapper]);
+
+    React.useEffect(() => {
+
+        if (viewMode === EViewMode.FOCUS) {
+            const prev = (ref.current).previousSibling as HTMLElement;
+            const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
+            const $app = $(ref.current).parent();
+            ($app).scrollTo(scrollToPos, 500, {axis: 'x'});
+        }
+
+        const instance = wrapper.getInstance();
+
+        if (!instance || typeof (instance).update !== 'function') {
+            return;
+        }
+        setTimeout(() => {
+            if ((instance) && typeof (instance).update === 'function') {
+                (instance).update();
+            }
+        }, MODE_ANIMATION_TIME);
+
+
+    }, [viewMode]);
+
+    const modeClass = modeViewClass(viewMode);
+    const activeClass = viewMode === EViewMode.CONTEXT || viewMode === EViewMode.FOCUS ? 't-active' : '';
+
+
+    return <div className={`viewWrapper ${modeClass} ${activeClass}`} ref={ref}>
         {children && <div>
             {children}
         </div>}

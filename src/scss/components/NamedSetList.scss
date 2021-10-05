@@ -3,7 +3,8 @@
     max-height: $named-set-list-max-height;
     overflow-y: hidden;
     overflow-x: hidden;
-    &:hover{
+    &:hover,
+    &:focus-within {
       overflow-y: auto;
     }
   }

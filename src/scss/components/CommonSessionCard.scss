@@ -1,7 +1,12 @@
 .ordino-session-list {
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   max-height: $session-list-max-height;
+
+  &:hover,
+  &:focus-within {
+    overflow-y: auto;
+  }
 }
 
 .session-item:not(:last-child) {

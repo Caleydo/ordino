@@ -12,8 +12,11 @@ import { OrdinoComponent } from './OrdinoComponent';
 export class Ordino extends ATDPApplication {
     createApp(graph, manager, main) {
         document.title = 'Ordino';
+        // TODO remove
+        document.querySelector('.phovea-navbar').setAttribute('hidden', '');
+        document.querySelectorAll('.content > aside').forEach((node) => node.setAttribute('hidden', ''));
         return new Promise(async (resolve) => {
-            ReactDOM.render(React.createElement(OrdinoComponent, { header: this.header, onCreated: (instance) => {
+            ReactDOM.render(React.createElement(OrdinoComponent, { onCreated: (instance) => {
                     resolve(instance);
                 } }), main);
         });

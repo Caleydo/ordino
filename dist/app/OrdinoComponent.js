@@ -9,15 +9,13 @@ export const OrdinoComponent = (props) => {
             },
             initEmptySession: () => Promise.resolve(),
         });
-        // set project id to null if the app logo is clicked to return to the project browser
-        const appLink = document.querySelector('*[data-header="appLink"]');
-        appLink.addEventListener("click", (evt) => {
-            evt.preventDefault();
-        });
         return () => {
             mounted = false;
         };
     }, []);
-    return React.createElement("div", null, "Ordino Component");
+    return (React.createElement("div", { className: "ordinoApp" },
+        React.createElement("div", null, "Navbar"),
+        React.createElement("div", null, "Breadcrumbs"),
+        React.createElement("div", null, "Filmstrip")));
 };
 //# sourceMappingURL=OrdinoComponent.js.map

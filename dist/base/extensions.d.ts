@@ -9,7 +9,6 @@
 import { IPluginDesc } from 'phovea_core';
 import { INamedSet } from 'tdp_core';
 import { CLUEGraphManager } from 'phovea_clue';
-import { EStartMenuSection, IStartMenuTabProps } from '../internal';
 export declare const EP_ORDINO_START_MENU_TAB = "epOrdinoStartMenuTab";
 /**
  * Register a new tab in the ordino start menu
@@ -33,7 +32,7 @@ export interface IStartMenuTabDesc extends IPluginDesc {
     /**
      * Whether to render the tab on the `mainMenu` or the `rightMenu` section in the header
      */
-    readonly menu: EStartMenuSection;
+    readonly menu: any;
     /**
      * Function for loading this plugin
      * @returns a promise for the loaded plugin
@@ -42,7 +41,7 @@ export interface IStartMenuTabDesc extends IPluginDesc {
 }
 export interface IStartMenuTabPlugin {
     desc: IStartMenuTabDesc;
-    factory(props: IStartMenuTabProps): JSX.Element;
+    factory(props: any): JSX.Element;
 }
 export interface IStartMenuTab {
     readonly desc: IStartMenuTabDesc;

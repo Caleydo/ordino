@@ -25,10 +25,14 @@ export class Ordino extends ATDPApplication<IOrdinoInstance> {
     main: HTMLElement
   ) {
     document.title = 'Ordino';
+
+    // TODO remove
+    document.querySelector('.phovea-navbar').setAttribute('hidden', '');
+    document.querySelectorAll('.content > aside').forEach((node) => node.setAttribute('hidden', ''));
+
     return new Promise<IOrdinoInstance>(async (resolve) => {
       ReactDOM.render(
         <OrdinoComponent
-          header={this.header}
           onCreated={(instance) => {
             resolve(instance);
           }}

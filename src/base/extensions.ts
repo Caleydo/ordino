@@ -9,33 +9,247 @@
 import {IPluginDesc} from 'phovea_core';
 import {INamedSet} from 'tdp_core';
 import {CLUEGraphManager} from 'phovea_clue';
+import {EStartMenuSection, IStartMenuTabProps} from '../internal';
 
-export const EXTENSION_POINT_START_MENU = 'ordinoStartMenuSection';
+export const EP_ORDINO_START_MENU_TAB = 'epOrdinoStartMenuTab';
 
+/**
+ * Register a new tab in the ordino start menu
+ */
+export interface IStartMenuTabDesc extends IPluginDesc {
+  /**
+   * Name of the plugin, should be unique within a type
+   */
+  id: string;
 
-export interface IStartMenuSectionDesc extends IPluginDesc {
-  readonly name: string;
-  readonly cssClass: string;
+  /**
+   * Used as text for the NavTab button
+   */
+  text?: string;
+  /**
+   * Font Awesome icon
+   * Will be used a as button icon
+   * @see https://fontawesome.com/
+   * @example `fas fa-database`
+   */
+  icon?: string;
 
-  load(): Promise<IStartMenuSectionPlugin>;
+  /**
+   * Whether to render the tab on the `mainMenu` or the `rightMenu` section in the header
+   */
+  readonly menu: EStartMenuSection;
+
+  /**
+   * Function for loading this plugin
+   * @returns a promise for the loaded plugin
+   */
+  load(): Promise<IStartMenuTabPlugin>;
 }
 
-export interface IStartMenuSectionOptions {
-  session?(viewId: string, options: { namedSet?: INamedSet, [key: string]: any }, defaultSessionValues: any): void;
+export interface IStartMenuTabPlugin {
+  desc: IStartMenuTabDesc;
 
+  factory(props: IStartMenuTabProps): JSX.Element;
+}
+
+export interface IStartMenuTab {
+  readonly desc: IStartMenuTabDesc;
+  update?(): void;
+}
+
+
+export const EP_ORDINO_START_MENU_TAB_SHORTCUT = 'epOrdinoStartMenuTabShortcut';
+
+/**
+ * Add a shortcut for a start menu tab
+ */
+export interface IStartMenuTabShortcutDesc extends Omit<IStartMenuTabDesc, 'menu'> {
+  /**
+   * Open the selected tab on click
+   */
+  tabId: string;
+
+  /**
+   * Highlight a card after opening the tab
+   * Currently, only used to highlight the `CurrentSessionCard`
+   */
+  setHighlight?: boolean;
+}
+
+export const EP_ORDINO_STARTMENU_SESSION_SECTION = 'epOrdinoStartMenuSessionSection';
+
+/**
+ * Register a new section in the start menu sessions tab
+ */
+export interface IStartMenuSessionSectionDesc extends IPluginDesc {
+  readonly name: string;
+  readonly faIcon: string;
+  load(): Promise<IStartMenuSessionSectionPlugin>;
+}
+
+export interface IStartMenuSessionSectionOptions {
+  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
   graphManager: CLUEGraphManager;
 }
 
-interface IStartMenuSectionPlugin {
-  desc: IStartMenuSectionDesc;
+interface IStartMenuSessionSectionPlugin {
+  desc: IStartMenuSessionSectionDesc;
 
-  factory(parent: HTMLElement, desc: IStartMenuSectionDesc, options: IStartMenuSectionOptions): IStartMenuSection;
+  factory(props: IStartMenuSessionSectionDesc): JSX.Element;
 }
 
-export interface IStartMenuSection {
+export interface IStartMenuSessionSection {
   readonly desc: IPluginDesc;
 
   push(namedSet: INamedSet): boolean;
 
   update?(): void;
+}
+
+/**
+ * Register a new section in the start menu datasets tab
+ */
+export const EP_ORDINO_STARTMENU_DATASET_SECTION = 'epOrdinoStartMenuDatasetSection';
+
+/**
+ * Interface describing a section for the datasets tab of the start menu
+ */
+export interface IStartMenuDatasetSectionDesc extends IPluginDesc {
+  /**
+   * Name of the plugin, should be unique within a type
+   */
+  id: string;
+
+  /**
+   * Human readable name of this plugin
+   */
+  name: string;
+
+  /**
+   * Font Awesome icon
+   * Could be used in the section header
+   * @see https://fontawesome.com/
+   * @example `fas fa-database`
+   */
+  icon: string;
+
+  /**
+   * IDType of the section
+   * Can be used to fetch matching data from the backend
+   */
+  idType: string;
+
+  /**
+   * View ID used as first view when selecting a dataset
+   */
+  startViewId: string;
+
+  /**
+   * Function for loading this plugin
+   * @returns a promise for the loaded plugin
+   */
+  load(): Promise<IStartMenuDatasetSectionPlugin>;
+}
+
+interface IStartMenuDatasetSectionPlugin {
+  desc: IStartMenuDatasetSectionDesc;
+
+  factory(props: IStartMenuDatasetSectionDesc): JSX.Element;
+}
+
+export interface IStartMenuDatasetSection {
+  push(namedSet: INamedSet): boolean;
+  update(): void;
+}
+
+
+export const EP_ORDINO_HEADER_MENU = 'epOrdinoHeaderMenu';
+
+/**
+ * Register links to the header menu
+ * Only a single header menu is considered
+ */
+ export interface IOrdinoHeaderMenuDesc extends IPluginDesc {
+  /**
+   * List of links
+   */
+  readonly links: IOrdinoHeaderMenuLink[];
+}
+
+export interface IOrdinoHeaderMenuLink {
+  /**
+   * URL to the page
+   */
+  page: string;
+
+  /**
+   * Link text
+   */
+  text: string;
+
+  /**
+   * FontAwesome icon
+   * @example `fas fa-question`
+   */
+  faIcon?: string;
+}
+
+
+export const EP_ORDINO_FOOTER_MENU = 'epOrdinoFooterMenu';
+
+/**
+ * Register links to the footer menu
+ * Only a single footer menu is considered
+ */
+export interface IOrdinoFooterMenuDesc extends IPluginDesc {
+  /**
+   * Nested list of links for the menu
+   * - First level = list group
+   * - Second level = list items (= links)
+   */
+  readonly lists: IOrdinoFooterMenuLink[][];
+}
+
+export interface IOrdinoFooterMenuLink {
+  /**
+   * URL to the page
+   */
+   page: string;
+
+   /**
+    * Link text
+    */
+   text: string;
+
+   /**
+    * FontAwesome icon
+    * @example `fas fa-question`
+    */
+   faIcon?: string;
+}
+
+export const EP_ORDINO_LOGO = 'epOrdinoLogo';
+
+/**
+ * Overwrite the default app icon and name
+ * Only the last registration is considered
+ */
+export interface IOrdinoLogoDesc extends IPluginDesc {
+
+  /**
+   * Name of the app
+   */
+  readonly text: string;
+
+  /**
+   * Height of the logo in pixel
+   * @default 30
+   */
+  readonly width?: number;
+
+  /**
+   * Width of the logo in pixel
+   * @default 30
+   */
+  readonly height?: number;
 }

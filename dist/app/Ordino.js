@@ -5,58 +5,65 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
-import { UserSession } from 'phovea_core';
-import { ViewUtils } from 'tdp_core';
-import { SESSION_KEY_NEW_ENTRY_POINT } from '../internal/constants';
-import { TDPApplicationUtils } from 'tdp_core';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { I18nextManager } from 'phovea_core';
+import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication } from 'tdp_core';
+import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenu';
 export class Ordino extends ATDPApplication {
     constructor(options = {}) {
         super(Object.assign({
             prefix: 'ordino',
-            name: 'Ordino'
+            name: 'Ordino',
+            /**
+             * Show content in the `Ordino at a Glance` page instead
+             */
+            showAboutLink: false,
+            /**
+             * Show content in the `Ordino at a Glance` page instead
+             */
+            showReportBugLink: false,
+            /**
+             * Hide help and show help in `Ordino at a Glance` page instead
+             */
+            showHelpLink: false,
+            /**
+             * Hide tours link and show tours in a separate tours tab instead
+             */
+            showTourLink: false,
+            /**
+             * Functionality is included in the sessions tab
+             */
+            showProvenanceMenu: false
         }, options));
     }
     createApp(graph, manager, main) {
-        main.classList.add('targid');
-        const startMenuNode = main.ownerDocument.createElement('div');
-        startMenuNode.classList.add('startMenu');
-        main.appendChild(startMenuNode);
-        // lazy loading for better module bundling
-        return Promise.all([import('../internal/OrdinoApp'), import('../internal/StartMenu')]).then((modules) => {
-            const app = new modules[0].OrdinoApp(graph, manager, main);
-            const startMenu = new modules[1].StartMenu(startMenuNode, app);
-            this.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-            app.on(Ordino.EVENT_OPEN_START_MENU, () => startMenu.open());
-            app.on(ViewUtils.VIEW_EVENT_UPDATE_ENTRY_POINT, (event, namedSet) => startMenu.pushNamedSet(namedSet));
-            return app;
+        return new Promise(async (resolve) => {
+            main.classList.add('targid');
+            // reconfigure app link to open the homepage in a new tab
+            const appLink = document.querySelector('*[data-header="appLink"]');
+            appLink.title = I18nextManager.getInstance().i18n.t('tdp:ordino.appLink.title');
+            appLink.href = '/'; // domain root
+            appLink.target = '_blank';
+            appLink.rel = 'noopener noreferrer';
+            appLink.onclick = null; // remove default click listener from `ATDPApplication.createHeader()`
+            ReactDOM.render(React.createElement(OrdinoApp, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
+                    resolve(instance); // Promise is resolved when the component is intialized
+                } }), main);
         });
     }
     initSessionImpl(app) {
-        const hasInitScript = UserSession.getInstance().has(SESSION_KEY_NEW_ENTRY_POINT);
-        const graph = app.graph;
-        if (graph.isEmpty && !hasInitScript) {
-            const hasSeenWelcomePage = `${this.options.prefix}_has_seen_welcome_page`;
-            // open start menu only if the user has the welcome page once
-            if (localStorage.getItem(hasSeenWelcomePage) === '1') {
-                this.fire(Ordino.EVENT_OPEN_START_MENU);
+        app.initApp().then(() => {
+            if (app.props.graph.isEmpty) {
+                app.initNewSessionAfterPageReload();
             }
             else {
-                localStorage.setItem(hasSeenWelcomePage, '1');
+                //just if no other option applies jump to the stored state
+                app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
+                this.jumpToStoredOrLastState();
             }
-        }
-        else if (hasInitScript) {
-            const { view, options, defaultSessionValues } = UserSession.getInstance().retrieve(SESSION_KEY_NEW_ENTRY_POINT);
-            if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-                graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
-            }
-            app.push(view, null, null, options);
-            UserSession.getInstance().remove(SESSION_KEY_NEW_ENTRY_POINT);
-        }
-        else {
-            //just if no other option applies jump to the stored state
-            this.jumpToStoredOrLastState();
-        }
+        });
     }
 }
 //# sourceMappingURL=Ordino.js.map

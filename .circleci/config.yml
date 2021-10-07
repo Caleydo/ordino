@@ -56,4 +56,4 @@ workflows:
 #      - build
   build-branches-and-tags:
     jobs:
-      - build
+      - build     

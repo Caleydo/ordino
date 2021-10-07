@@ -1,6 +1,5 @@
-import { EventHandler } from 'phovea_core';
 import { ViewWrapper } from './ViewWrapper';
-export interface IOrdinoApp extends EventHandler {
+export interface IOrdinoApp {
     /**
      * Root HTML node of the Ordino App
      */
@@ -28,7 +27,17 @@ export interface IOrdinoApp extends EventHandler {
      */
     removeImpl(view: ViewWrapper, focus: number): Promise<number>;
     /**
-     * Updates the views information, e.g. history
+     * Starts a new analysis session with a given view and additional options.
+     * The default session values are permanently stored in the provenance graph and the session storage.
+     *
+     * All provided parameters are persisted to the session storage.
+     * Then a new analysis session (provenance graph) is created by reloading the page.
+     * After the page load a new session is available and new actions for the initial view
+     * are pushed to the provenance graph (see `initNewSession()`).
+     *
+     * @param startViewId First view of the analysis session
+     * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
+     * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
      */
-    update(): void;
+    startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any): any;
 }

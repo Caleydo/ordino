@@ -1,0 +1,85 @@
+#root {
+  display: flex;
+  flex-flow: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+#content {
+  flex: 1 1 0;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.ordino-filmstrip {
+  flex: 1 1 auto;
+  min-height: 0px;
+  position: relative;
+  display: flex;
+}
+
+.ordino-workbench {
+  background: white;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  max-height: 100%;
+  min-height: 100%;
+  position: absolute;
+  transition: transform 0.6s ease-in-out, width 0.6s ease-in-out;
+}
+
+.ordino-workbench.notransition {
+  transition: none;
+}
+
+.ordino-workbench.previous {
+  transform: translateX(-15vw);
+  width: 15vw;
+}
+
+.ordino-workbench.context {
+  width: 15vw;
+  transform: translateX(0vw);
+}
+
+.ordino-workbench.focus {
+  width: calc(85vw - 50px);
+  transform: translateX(15vw);
+}
+
+.ordino-workbench.first {
+  width: calc(100vw - 50px);
+  transform: translateX(0vw);
+}
+
+.ordino-workbench.next {
+  transform: translateX(100vw);
+}
+
+.ordino-workbench.next_dvc {
+  position: fixed;
+  border-color: rgba(33, 37, 41, 1) !important;
+  transform: translateX(calc(100vw - 50px));
+  width: auto;
+}
+
+.ordino-workbench.next_dvc.expanded {
+  transform: translateX(calc(100vw - 255px));
+  width: 250px;
+  border-left-width: 3px !important;
+}
+
+.ordino-workbench.next_dvc.collapsed {
+  transform: translateX(calc(100vw - 58px));
+  width: 55px;
+  border-left-width: 0px !important;
+}
+
+.viewContent {
+  min-height: 0px;
+  min-width: 0px;
+  overflow: auto;
+}

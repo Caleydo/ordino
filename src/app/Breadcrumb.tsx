@@ -8,7 +8,7 @@ export function Breadcrumb() {
 
     return (
         <nav className="ms-1 d-flex" aria-label="breadcrumb">
-            <ol className="breadcrumb m-1">
+            <ol className="breadcrumb m-2">
                 {ordino.views.map((v: any) => {
                     return (
                         <li className="breadcrumb-item" key={v.id}>

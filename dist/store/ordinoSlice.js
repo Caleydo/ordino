@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -23,12 +23,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     views: [
         {
-            id: "view_0",
+            id: 'view_0',
             index: 0,
-            name: "Start view",
-            selection: "multiple",
+            name: 'Start view',
+            selection: 'multiple',
             group: {
-                name: "General",
+                name: 'General',
                 order: 10
             }
         }
@@ -37,7 +37,7 @@ const initialState = {
     previousFocusIndex: 0
 };
 const ordinoSlice = createSlice({
-    name: "ordino",
+    name: 'ordino',
     initialState,
     reducers: {
         addView(state, action) {

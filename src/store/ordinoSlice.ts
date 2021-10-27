@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { IViewPluginDesc } from "tdp_core";
+import { createSlice } from '@reduxjs/toolkit';
+import { IViewPluginDesc } from 'tdp_core';
 
 export interface IOrdinoAppState {
   /**
@@ -21,7 +21,7 @@ export interface IOrdinoAppState {
 
 // Make this generic to support multiple types of views
 // rename to IOrdinoViewPlugin, store the state of the view
-export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, "load" | "preview"> {
+export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, 'load' | 'preview'> {
   index: number;
 
   /**
@@ -71,12 +71,12 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 const initialState: IOrdinoAppState = {
   views: [
     {
-      id: "view_0",
+      id: 'view_0',
       index: 0,
-      name: "Start view",
-      selection: "multiple",
+      name: 'Start view',
+      selection: 'multiple',
       group: {
-        name: "General",
+        name: 'General',
         order: 10
       }
     }
@@ -86,7 +86,7 @@ const initialState: IOrdinoAppState = {
 };
 
 const ordinoSlice = createSlice({
-  name: "ordino",
+  name: 'ordino',
   initialState,
   reducers: {
     addView(state, action) {

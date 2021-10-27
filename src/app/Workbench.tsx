@@ -65,7 +65,7 @@ export function Workbench(props: {
                 ) : null}
 
                 <div className={`viewContent w-100 py-7`}>
-                    <Lineup />
+                    <Lineup/>
                 </div>
             </>
         </div>

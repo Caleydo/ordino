@@ -1,5 +1,5 @@
 $collapsed-chooser-width: 50px;
-$chooser-width: 250px;
+$chooser-width: 220px;
 
 .detail-view-chooser {
   min-width: $collapsed-chooser-width;
@@ -8,9 +8,16 @@ $chooser-width: 250px;
     100vh - 40px - 46px - 1px
   ); // viewport height - header - history/breadcrumbs - viewwrapper border top
 
+  border: 1px solid $light;
+  border-left: 2px solid $secondary;
+
+  transition: all 0.2s;
   &.embedded {
     min-width: $chooser-width;
     width: $chooser-width;
+    box-shadow: 0px 16px 10px 0px #00000024, 0px 11px 18px 0px #0000001f,
+      0px 13px 5px -1px #00000033;
+    transition: all 0.2s;
   }
 
   &:not(.overlay) > .selected-view-wrapper {
@@ -19,6 +26,8 @@ $chooser-width: 250px;
 
   &.overlay {
     width: 50px;
+
+    transition: all 0.2s;
     .view-filter,
     .view-buttons {
       display: none;
@@ -44,6 +53,14 @@ $chooser-width: 250px;
   & > .view-buttons {
     height: calc(100% - 70px);
 
+    .selected-group {
+      background-color: $gray-200 !important;
+    }
+
+    .selected-view {
+      background-color: $gray-200 !important;
+    }
+
     .accordion-button:not(.collapsed),
     .accordion-button:not(.collapsed)::after {
       color: #6c757d;
@@ -51,12 +68,15 @@ $chooser-width: 250px;
       border-color: transparent;
       box-shadow: none;
     }
+    .accordion-button::after {
+      display: none;
+    }
 
     .accordion-item {
       border: none;
 
       &:not(:last-child) {
-        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 13%);
+        border-bottom: 1px solid $light;
       }
     }
   }

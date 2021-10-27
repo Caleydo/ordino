@@ -1,4 +1,4 @@
-import { IViewPluginDesc } from "tdp_core";
+import { IViewPluginDesc } from 'tdp_core';
 export interface IViewGroupDesc {
     name: string;
     items: IViewPluginDesc[];

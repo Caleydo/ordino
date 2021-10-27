@@ -38,7 +38,7 @@ export function Workbench(props) {
                         }));
                     }, 0);
                 } })) : null,
-            React.createElement("div", { className: `viewContent w-100` },
+            React.createElement("div", { className: `viewContent w-100 py-7` },
                 React.createElement(Lineup, null)))));
 }
 //# sourceMappingURL=Workbench.js.map

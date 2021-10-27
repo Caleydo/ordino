@@ -21,8 +21,28 @@ export const views = [
     },
     {
         index: 0,
-        id: 'view_3',
-        name: 'Dummy 2',
+        id: 'view_23',
+        name: 'Dummy 9',
+        selection: 'multiple',
+        group: {
+            name: 'Dummy group',
+            order: 10
+        }
+    },
+    {
+        index: 0,
+        id: 'view_222',
+        name: 'Dummy 54',
+        selection: 'multiple',
+        group: {
+            name: 'Dummy group',
+            order: 10
+        }
+    },
+    {
+        index: 0,
+        id: 'view_33',
+        name: 'Dummy 21',
         selection: 'multiple',
         group: {
             name: 'Dummy 2',

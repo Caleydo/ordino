@@ -14,7 +14,7 @@ export function DummyWorkbench(props: {view: IViewPluginDesc | null}) {
     return (
         <>
             <div
-                className={`ordino-workbench d-flex align-items-stretch next_dvc border-top border-start border-3 ${embedded ? 'expanded' : 'collapsed'
+                className={`ordino-workbench d-flex next_dvc border-top border-start border-3 ${embedded ? 'expanded' : 'collapsed'
                     }`}
                 data-ordino-workbench-type="DummyNext"
             >

@@ -8,7 +8,6 @@
 #content {
   flex: 1 1 0;
   display: flex;
-  align-items: stretch;
   flex-direction: column;
   height: 100%;
   width: 100%;
@@ -17,6 +16,7 @@
 .ordino-filmstrip {
   flex: 1 1 auto;
   min-height: 0px;
+  overflow-x: hidden;
   position: relative;
   display: flex;
 }

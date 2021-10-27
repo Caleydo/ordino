@@ -32,7 +32,7 @@ export function Workbench(props: {
     };
 
     return (
-        <div className={`d-flex align-items-stretch ordino-workbench ${classNames[props.type]}`}>
+        <div className={`d-flex ordino-workbench ${classNames[props.type]}`}>
             <>
                 {props.type === 'Focus' || props.type === 'Next_DVC' ? (
                     <DetailViewChooser

@@ -21,7 +21,7 @@ export function Workbench(props) {
             ? 'notransition'
             : ''}`
     };
-    return (React.createElement("div", { className: `d-flex align-items-stretch ordino-workbench ${classNames[props.type]}` },
+    return (React.createElement("div", { className: `d-flex ordino-workbench ${classNames[props.type]}` },
         React.createElement(React.Fragment, null,
             props.type === 'Focus' || props.type === 'Next_DVC' ? (React.createElement(DetailViewChooser, { index: props.view.index, embedded: embedded, setEmbedded: setEmbedded, views: views, selectedView: props.view, onSelectedView: (view, viewIndex) => {
                     dispatch(replaceView({

@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { IViewPluginDesc } from "tdp_core";
+import {createSlice} from '@reduxjs/toolkit';
+import {IViewPluginDesc} from 'tdp_core';
 
 export interface IOrdinoAppState {
   /**
@@ -21,7 +21,7 @@ export interface IOrdinoAppState {
 
 // Make this generic to support multiple types of views
 // rename to IOrdinoViewPlugin, store the state of the view
-export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, "load" | "preview"> {
+export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, 'load' | 'preview'> {
   index: number;
 
   /**
@@ -71,12 +71,13 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 const initialState: IOrdinoAppState = {
   views: [
     {
-      id: "view_0",
+      id: 'view_0',
       index: 0,
-      name: "Start view",
-      selection: "multiple",
+      name: 'Start view',
+      selection: 'multiple',
+      selections: [],
       group: {
-        name: "General",
+        name: 'General',
         order: 10
       }
     }
@@ -86,7 +87,7 @@ const initialState: IOrdinoAppState = {
 };
 
 const ordinoSlice = createSlice({
-  name: "ordino",
+  name: 'ordino',
   initialState,
   reducers: {
     addView(state, action) {
@@ -100,7 +101,7 @@ const ordinoSlice = createSlice({
       state.views.push(action.payload);
     },
     addSelection(state, action) {
-      state.views[action.payload.index].selections.push(action.payload.newSelection);
+      state.views[action.payload.index].selections = action.payload.newSelection;
     },
     addFilter(state, action) {
       state.views[action.payload.index].filters.push(action.payload.newFilter);
@@ -112,6 +113,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus } = ordinoSlice.actions;
+export const {addView, removeView, replaceView, addSelection, addFilter, changeFocus} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

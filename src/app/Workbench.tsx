@@ -1,40 +1,37 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {views} from '../base/constants';
-import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc} from '../store/ordinoSlice';
+import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc, addSelection} from '../store/ordinoSlice';
 import {DetailViewChooser} from './DetailViewChooser';
+import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
 
 // these props should be made optional
 export function Workbench(props: {
     view: IOrdinoViewPluginDesc;
-    type: 'Previous' | 'Context' | 'Focus' | 'Next' | 'First' | 'Next_DVC';
+    type: EWorkbenchType;
+    style: React.CSSProperties
 }) {
     const [embedded, setEmbedded] = React.useState<boolean>(false);
-
-    const ordino: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
     const dispatch = useDispatch();
+    const ordino: any = useSelector<any>((state) => state.ordino) as any;
 
     const classNames = {
-        Context: 'context border-top border-3 border-success',
-        Focus: 'focus border border-3 border-bottom-0 border-primary',
-        Next: `next ${props.view.index !== ordino.previousFocusIndex && props.view.index !== ordino.previousFocusIndex - 1
-            ? 'notransition'
-            : ''
-            }`,
-        Next_DVC: `next_dvc overflow-hidden border-top border-start border-3 ${embedded ? 'expanded' : 'collapsed'
-            }`,
-        First: 'first border border-3 border-bottom-0 border-start-0 border-primary',
-        Previous: `previous ${props.view.index !== ordino.previousFocusIndex && props.view.index !== ordino.previousFocusIndex - 1
-            ? 'notransition'
-            : ''
-            }`
+        [EWorkbenchType.CONTEXT]: 't-context border-top border-3 border-success',
+        [EWorkbenchType.FOCUS]: 't-focus border border-3 border-bottom-0 border-primary',
+        [EWorkbenchType.NEXT]: `t-next`,
+        [EWorkbenchType.PREVIOUS]: `t-previous`
     };
 
+    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.view.selections?.length && ordino.views.length - 1 === props.view.index ? 'open-chooser' : '';
+    const setSelection = React.useMemo(() => (s) => {
+        dispatch(addSelection({index: props.view.index, newSelection: Object.keys(s.selectedRowIds)}));
+    }, []);
+
     return (
-        <div className={`d-flex align-items-stretch ordino-workbench ${classNames[props.type]}`}>
+        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${classNames[props.type]} ${chooserIsOpenClass}`}>
             <>
-                {props.type === 'Focus' || props.type === 'Next_DVC' ? (
+                {props.view.index !== 0 ? (
                     <DetailViewChooser
                         index={props.view.index}
                         embedded={embedded}
@@ -65,7 +62,7 @@ export function Workbench(props: {
                 ) : null}
 
                 <div className={`viewContent w-100 py-7`}>
-                    <Lineup />
+                    <Lineup onSelectionChanged={setSelection} />
                 </div>
             </>
         </div>

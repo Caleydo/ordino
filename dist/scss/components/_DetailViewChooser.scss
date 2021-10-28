@@ -1,6 +1,3 @@
-$collapsed-chooser-width: 50px;
-$chooser-width: 220px;
-
 .detail-view-chooser {
   min-width: $collapsed-chooser-width;
   width: $collapsed-chooser-width;
@@ -8,15 +5,15 @@ $chooser-width: 220px;
     100vh - 40px - 46px - 1px
   ); // viewport height - header - history/breadcrumbs - viewwrapper border top
 
-  border: 1px solid $light;
-  border-left: 2px solid $secondary;
+  border: 1px solid $gray-200;
+  // border-left: 2px solid $secondary;
 
   transition: all 0.2s;
   &.embedded {
     min-width: $chooser-width;
     width: $chooser-width;
-    box-shadow: 0px 16px 10px 0px #00000024, 0px 11px 18px 0px #0000001f,
-      0px 13px 5px -1px #00000033;
+    // box-shadow: 0px 16px 10px 0px #00000024, 0px 11px 18px 0px #0000001f,
+    //   0px 13px 5px -1px #00000033;
     transition: all 0.2s;
   }
 

@@ -8,7 +8,7 @@ import LineUpLite, {
 } from '@lineup-lite/table';
 import '@lineup-lite/table/dist/table.css';
 
-export function Lineup() {
+export function Lineup(props) {
     const data = React.useMemo(
         () => [
             {
@@ -94,6 +94,7 @@ export function Lineup() {
             data={repeatedData}
             columns={columns as any}
             features={features}
+            onStateChange={props.onSelectionChanged}
         />
     );
 }

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -23,12 +23,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     views: [
         {
-            id: "view_0",
+            id: 'view_0',
             index: 0,
-            name: "Start view",
-            selection: "multiple",
+            name: 'Start view',
+            selection: 'multiple',
+            selections: [],
             group: {
-                name: "General",
+                name: 'General',
                 order: 10
             }
         }
@@ -37,7 +38,7 @@ const initialState = {
     previousFocusIndex: 0
 };
 const ordinoSlice = createSlice({
-    name: "ordino",
+    name: 'ordino',
     initialState,
     reducers: {
         addView(state, action) {
@@ -51,7 +52,7 @@ const ordinoSlice = createSlice({
             state.views.push(action.payload);
         },
         addSelection(state, action) {
-            state.views[action.payload.index].selections.push(action.payload.newSelection);
+            state.views[action.payload.index].selections = action.payload.newSelection;
         },
         addFilter(state, action) {
             state.views[action.payload.index].filters.push(action.payload.newFilter);

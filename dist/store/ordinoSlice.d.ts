@@ -1,4 +1,4 @@
-import { IViewPluginDesc } from "tdp_core";
+import { IViewPluginDesc } from 'tdp_core';
 export interface IOrdinoAppState {
     /**
      * List of open views
@@ -14,7 +14,7 @@ export interface IOrdinoAppState {
      */
     previousFocusIndex: number;
 }
-export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, "load" | "preview"> {
+export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, 'load' | 'preview'> {
     index: number;
     /**
      * List selected rows

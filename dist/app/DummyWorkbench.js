@@ -7,9 +7,9 @@ import { DetailViewChooser } from './DetailViewChooser';
 export function DummyWorkbench(props) {
     const ordino = useSelector((state) => state.ordino);
     const dispatch = useDispatch();
-    const [embedded, setEmbedded] = React.useState(false);
+    const [embedded, setEmbedded] = React.useState(true);
     return (React.createElement(React.Fragment, null,
-        React.createElement("div", { className: `ordino-workbench d-flex align-items-stretch next_dvc border-top border-start border-3 ${embedded ? 'expanded' : 'collapsed'}`, "data-ordino-workbench-type": "DummyNext" },
+        React.createElement("div", { className: `ordino-workbench empty d-flex align-items-stretch ${embedded ? 'expanded' : 'collapsed'}`, "data-ordino-workbench-type": "empty" },
             React.createElement(DetailViewChooser, { index: props.view ? props.view.index : ordino.focusViewIndex + 1, embedded: embedded, setEmbedded: setEmbedded, views: views, selectedView: props.view, onSelectedView: (view, viewIndex) => {
                     // TODO create addOrReplaceViewReducer
                     dispatch(addView({

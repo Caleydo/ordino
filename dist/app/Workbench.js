@@ -11,17 +11,11 @@ export function Workbench(props) {
     const [embedded, setEmbedded] = React.useState(false);
     const dispatch = useDispatch();
     const ordino = useSelector((state) => state.ordino);
-    const classNames = {
-        [EWorkbenchType.CONTEXT]: 't-context border-top border-3 border-success',
-        [EWorkbenchType.FOCUS]: 't-focus border border-3 border-bottom-0 border-primary',
-        [EWorkbenchType.NEXT]: `t-next`,
-        [EWorkbenchType.PREVIOUS]: `t-previous`
-    };
     const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && ((_a = props.view.selections) === null || _a === void 0 ? void 0 : _a.length) && ordino.views.length - 1 === props.view.index ? 'open-chooser' : '';
     const setSelection = React.useMemo(() => (s) => {
         dispatch(addSelection({ index: props.view.index, newSelection: Object.keys(s.selectedRowIds) }));
     }, []);
-    return (React.createElement("div", { style: props.style, className: `d-flex align-items-stretch ordino-workbench ${classNames[props.type]} ${chooserIsOpenClass}` },
+    return (React.createElement("div", { style: props.style, className: `d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}` },
         React.createElement(React.Fragment, null,
             props.view.index !== 0 ? (React.createElement(DetailViewChooser, { index: props.view.index, embedded: embedded, setEmbedded: setEmbedded, views: views, selectedView: props.view, onSelectedView: (view, viewIndex) => {
                     dispatch(replaceView({

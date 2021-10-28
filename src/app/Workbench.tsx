@@ -16,20 +16,13 @@ export function Workbench(props: {
     const dispatch = useDispatch();
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
 
-    const classNames = {
-        [EWorkbenchType.CONTEXT]: 't-context border-top border-3 border-success',
-        [EWorkbenchType.FOCUS]: 't-focus border border-3 border-bottom-0 border-primary',
-        [EWorkbenchType.NEXT]: `t-next`,
-        [EWorkbenchType.PREVIOUS]: `t-previous`
-    };
-
     const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.view.selections?.length && ordino.views.length - 1 === props.view.index ? 'open-chooser' : '';
     const setSelection = React.useMemo(() => (s) => {
         dispatch(addSelection({index: props.view.index, newSelection: Object.keys(s.selectedRowIds)}));
     }, []);
 
     return (
-        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${classNames[props.type]} ${chooserIsOpenClass}`}>
+        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
             <>
                 {props.view.index !== 0 ? (
                     <DetailViewChooser

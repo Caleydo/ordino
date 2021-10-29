@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {IViewPluginDesc} from 'tdp_core';
 
-interface IDetailViewFilterProps {
+interface IViewChooserFilterProps {
     views: IViewPluginDesc[] | [];
     setFilteredViews: (views: IViewPluginDesc[]) => void;
 }
-export function DetailViewFilter(props: IDetailViewFilterProps) {
+export function ViewChooserFilter(props: IViewChooserFilterProps) {
     const [filter, setFilter] = React.useState<string>('');
 
     React.useEffect(() => {

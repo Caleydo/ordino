@@ -1,45 +1,47 @@
 import * as React from 'react';
 import {UniqueIdManager} from 'phovea_core';
-import {DetailViewFilter} from './chooser/DetailViewFilter';
+import {ViewChooserFilter} from './chooser/ViewChooserFilter';
 import {SelectedViewIndicator} from './chooser/SelectedViewIndicator';
 import {BurgerMenu} from './chooser/BurgerMenu';
 import {SelectionCountIndicator} from './chooser/SelectionCountIndicator';
 import {EViewMode, IViewPluginDesc} from 'tdp_core';
 import {groupBy} from 'lodash';
-import {ChooserFooter} from './chooser/ChooserFooter';
+import {ViewChooserFooter} from './chooser/ViewChooserFooter';
 
 export interface IViewGroupDesc {
   name: string;
   items: IViewPluginDesc[];
 }
 
-interface IDetailViewChooserProps {
+interface IViewChooserProps {
   index: number;
-  embedded: boolean;
-  setEmbedded: (b: boolean) => void;
   views: IViewPluginDesc[];
-  selectedView: IViewPluginDesc;
+  selectedView?: IViewPluginDesc;
   onSelectedView: (view: IViewPluginDesc, viewIndex: number) => void;
 }
 
-export function DetailViewChooser(props: IDetailViewChooserProps) {
-  // TODO split into smaller components
+export function ViewChooser(props: IViewChooserProps) {
+  const [collapsed, setCollapsed] = React.useState<boolean>(true);
+  const [embedded, setEmbedded] = React.useState<boolean>(false);
   const [filteredViews, setFilteredViews] = React.useState<IViewPluginDesc[] | []>(props.views);
+
   const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
   const groupedViews = groupBy(filteredViews, (view) => view.group.name);
 
   return (
-    <>
-      <div
-        className={`detail-view-chooser d-flex flex-column justify-content-stretch m-1 rounded-1 ${props.embedded ? 'embedded' : 'overlay'
-          }`}
-      >
+    <> <div
+      className={`view-chooser d-flex align-items-stretch ${collapsed ? 'collapsed' : ''}`}
+      onMouseEnter={() => setCollapsed(false)}
+      onMouseLeave={() => setCollapsed(true)}
+    >
+      <div className="view-chooser-content d-flex flex-column justify-content-stretch">
+
         <header className="d-flex my-2 px-1 justify-content-center align-items-center">
-          <BurgerMenu onClick={() => props.setEmbedded(!props.embedded)} />
-          <DetailViewFilter views={props.views} setFilteredViews={setFilteredViews} />
+          <BurgerMenu onClick={() => setEmbedded(!embedded)} />
+          <ViewChooserFilter views={props.views} setFilteredViews={setFilteredViews} />
         </header>
 
-        {!props.embedded && (
+        {collapsed && (
           <div className="selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center">
             <SelectionCountIndicator selectionCount={5} viewMode={EViewMode.FOCUS} idType="Cellines" />
             <SelectedViewIndicator
@@ -86,8 +88,10 @@ export function DetailViewChooser(props: IDetailViewChooserProps) {
             ))}
           </div>
         </div>
-        <ChooserFooter />
+        <ViewChooserFooter />
       </div>
+    </div>
+
     </>
   );
 }

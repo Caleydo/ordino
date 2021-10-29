@@ -1,36 +1,33 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {views} from '../base/constants';
-import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc, addSelection} from '../store/ordinoSlice';
-import {DetailViewChooser} from './DetailViewChooser';
+import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc, addSelection, addView} from '../store/ordinoSlice';
+import {ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
 
-// these props should be made optional
-export function Workbench(props: {
+interface IWorkbenchProps {
     view: IOrdinoViewPluginDesc;
-    type: EWorkbenchType;
-    style: React.CSSProperties
-}) {
-    const [embedded, setEmbedded] = React.useState<boolean>(false);
+    type?: EWorkbenchType;
+    style?: React.CSSProperties;
+}
+
+
+export function Workbench({view, type = EWorkbenchType.PREVIOUS, style = {}}) {
     const dispatch = useDispatch();
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
-
-    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.view.selections?.length && ordino.views.length - 1 === props.view.index ? 'open-chooser' : '';
     const setSelection = React.useMemo(() => (s) => {
-        dispatch(addSelection({index: props.view.index, newSelection: Object.keys(s.selectedRowIds)}));
+        dispatch(addSelection({index: view.index, newSelection: Object.keys(s.selectedRowIds)}));
     }, []);
 
     return (
-        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
+        <div style={style} className={`d-flex align-items-stretch ordino-workbench ${type}`}>
             <>
-                {props.view.index !== 0 ? (
-                    <DetailViewChooser
-                        index={props.view.index}
-                        embedded={embedded}
-                        setEmbedded={setEmbedded}
+                {view.index !== 0 ? (
+                    <ViewChooser
+                        index={view.index}
                         views={views}
-                        selectedView={props.view}
+                        selectedView={view}
                         onSelectedView={(view, viewIndex) => {
                             dispatch(
                                 replaceView({
@@ -41,8 +38,8 @@ export function Workbench(props: {
                                     filters: []
                                 })
                             );
-                            //this timeout is needed for the animation
 
+                            //this timeout is needed for the animation
                             setTimeout(() => {
                                 dispatch(
                                     changeFocus({
@@ -57,6 +54,29 @@ export function Workbench(props: {
                 <div className={`viewContent w-100 py-7`}>
                     <Lineup onSelectionChanged={setSelection} />
                 </div>
+                <ViewChooser
+                    index={ordino.focusViewIndex + 1}
+                    views={views}
+                    onSelectedView={(view, viewIndex) => {
+                        // TODO create addOrReplaceViewReducer
+                        dispatch(
+                            addView({
+                                id: view.id,
+                                name: view.name,
+                                index: viewIndex,
+                                selection: [],
+                                filters: []
+                            })
+                        );
+                        setTimeout(() => {
+                            dispatch(
+                                changeFocus({
+                                    index: viewIndex
+                                })
+                            );
+                        }, 0);
+                    }}
+                />
             </>
         </div>
     );

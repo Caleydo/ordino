@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {useSelector} from 'react-redux';
 import {Workbench} from './Workbench';
-import {DummyWorkbench} from './DummyWorkbench';
 
 
 export enum EWorkbenchType {
@@ -42,10 +41,6 @@ export function Filmstrip() {
                     <Workbench type={type} style={styles} view={v} key={v.id} />
                 );
             })}
-
-            { isLastFocused ? (
-                <DummyWorkbench view={null} key={'chooserOnlyView'} />
-            ) : null}
         </div>
     );
 }

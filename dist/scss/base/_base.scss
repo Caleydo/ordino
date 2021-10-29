@@ -21,7 +21,7 @@
   min-height: 0px;
   position: relative;
   display: flex;
-  overflow: hidden;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
 }
 
@@ -43,9 +43,6 @@
 
   &:nth-child(1).t-focus {
     width: 100vw;
-    &.open-chooser {
-      width: calc(100vw - #{$chooser-width} - #{$chooser-margin});
-    }
   }
 
   &.t-context {
@@ -56,15 +53,5 @@
   &.t-focus {
     width: $workbench-focus-width;
     border-color: $primary;
-    &.open-chooser {
-      width: calc(
-        #{$workbench-focus-width} - #{$chooser-width} - #{$chooser-margin}
-      );
-    }
-  }
-
-  &.empty {
-    width: calc(#{$chooser-width} + #{$chooser-margin});
-    border-color: rgba(33, 37, 41, 1) !important;
   }
 }

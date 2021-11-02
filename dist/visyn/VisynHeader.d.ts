@@ -1,5 +1,5 @@
-import * as React from "react";
-export interface VisynHeaderProps {
+import * as React from 'react';
+export interface IVisynHeaderProps {
     extensions?: {
         AppLogo?: React.ReactElement | null;
         VisynLogo?: React.ReactElement | null;
@@ -20,4 +20,4 @@ export interface VisynHeaderProps {
     burgerMenuEnabled?: boolean;
     configMenuEnabled?: boolean;
 }
-export declare function VisynHeader({ extensions: { VisynLogo, CustomerLogo, configurationMenu, burgerMenu, AppLogo, LeftExtensions, RightExtensions }, burgerMenuEnabled, configMenuEnabled }: VisynHeaderProps): JSX.Element;
+export declare function VisynHeader({ extensions: { VisynLogo, CustomerLogo, configurationMenu, burgerMenu, AppLogo, LeftExtensions, RightExtensions }, burgerMenuEnabled, configMenuEnabled }: IVisynHeaderProps): JSX.Element;

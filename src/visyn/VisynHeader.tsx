@@ -1,12 +1,12 @@
-import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "./usersSlice";
-import { DatavisynLogo } from "./headerComponents/DatavisynLogo";
-import { CustomerDefaultLogo } from "./headerComponents/CustomerDefaultLogo";
-import { AppDefaultLogo } from "./headerComponents/AppDefaultLogo";
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUser } from './usersSlice';
+import { DatavisynLogo } from './headerComponents/DatavisynLogo';
+import { CustomerDefaultLogo } from './headerComponents/CustomerDefaultLogo';
+import { AppDefaultLogo } from './headerComponents/AppDefaultLogo';
 
-import { BurgerMenu } from "./headerComponents/BurgerMenu";
-import { ConfigurationMenu } from "./headerComponents/ConfigurationMenu";
+import { BurgerMenu } from './headerComponents/BurgerMenu';
+import { ConfigurationMenu } from './headerComponents/ConfigurationMenu';
 
 // export interface ICommonVisynHeaderPluginProps {
 //   //
@@ -16,7 +16,7 @@ import { ConfigurationMenu } from "./headerComponents/ConfigurationMenu";
 //   props: ICommonVisynHeaderPluginProps & T
 // ) => React.ReactElement | null;
 
-export interface VisynHeaderProps {
+export interface IVisynHeaderProps {
   extensions?: {
     AppLogo?: React.ReactElement | null;
     VisynLogo?: React.ReactElement | null;
@@ -50,12 +50,12 @@ export function VisynHeader({
   } = {},
   burgerMenuEnabled = true,
   configMenuEnabled = true
-}: VisynHeaderProps) {
+}: IVisynHeaderProps) {
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark phovea-navbar">
         <div className="container-fluid">
-          {burgerMenu}
+          {burgerMenuEnabled ? burgerMenu : null}
           {AppLogo}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerNavbar">
             <span className="navbar-toggler-icon"></span>
@@ -68,7 +68,7 @@ export function VisynHeader({
         <div className="container-fluid justify-content-end">
           {CustomerLogo}
           {VisynLogo}
-          {configurationMenu}
+          {configMenuEnabled ? configurationMenu : null}
         </div>
       </nav>
     </>

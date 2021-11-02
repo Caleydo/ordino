@@ -1,11 +1,11 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function DatavisynLogo() {
     return (
         <a href="https://datavisyn.io/" rel="noreferrer" target="_blank">
             <svg
-                width="9rem"
-                height="3rem"
+                width="6rem"
+                height="2rem"
                 id="Logo"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 1800 361.17"

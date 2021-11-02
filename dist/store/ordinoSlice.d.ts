@@ -1,4 +1,10 @@
 import { IViewPluginDesc } from 'tdp_core';
+export declare enum ETabStates {
+    NONE = "none",
+    DATASETS = "datasets",
+    ANALYSIS = "analysis",
+    TOURS = "tours"
+}
 export interface IOrdinoAppState {
     /**
      * List of open views
@@ -8,11 +14,7 @@ export interface IOrdinoAppState {
      * Id of the current focus view
      */
     focusViewIndex: number;
-    /**
-     * Id of the previous focus view. Used for animations between views.
-     * This needs to be changed. Doesnt work at all for Provenance
-     */
-    previousFocusIndex: number;
+    activeTab: ETabStates;
 }
 export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, 'load' | 'preview'> {
     index: number;
@@ -31,6 +33,6 @@ interface IBaseState {
 export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc {
     state: S;
 }
-export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, replaceView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>;
+export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, replaceView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, setActiveTab: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};

@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function BILogo() {
   return (
@@ -11,8 +11,8 @@ export function BILogo() {
       <svg
         x="0px"
         y="0px"
-        width="5.8rem"
-        height="1.8rem"
+        width="4.65rem"
+        height="1.44rem"
         viewBox="0 0 582.56 180.29"
       >
         <path

@@ -1,4 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+export var ETabStates;
+(function (ETabStates) {
+    ETabStates["NONE"] = "none";
+    ETabStates["DATASETS"] = "datasets";
+    ETabStates["ANALYSIS"] = "analysis";
+    ETabStates["TOURS"] = "tours";
+})(ETabStates || (ETabStates = {}));
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -34,7 +41,7 @@ const initialState = {
         }
     ],
     focusViewIndex: 0,
-    previousFocusIndex: 0
+    activeTab: ETabStates.NONE
 };
 const ordinoSlice = createSlice({
     name: 'ordino',
@@ -56,12 +63,11 @@ const ordinoSlice = createSlice({
         addFilter(state, action) {
             state.views[action.payload.index].filters.push(action.payload.newFilter);
         },
-        changeFocus(state, action) {
-            state.previousFocusIndex = state.focusViewIndex;
-            state.focusViewIndex = action.payload.index;
+        setActiveTab(state, action) {
+            state.activeTab = action.payload.activeTab;
         }
     }
 });
-export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus } = ordinoSlice.actions;
+export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

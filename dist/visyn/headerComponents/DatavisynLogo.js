@@ -1,7 +1,7 @@
-import * as React from "react";
+import * as React from 'react';
 export function DatavisynLogo() {
     return (React.createElement("a", { href: "https://datavisyn.io/", rel: "noreferrer", target: "_blank" },
-        React.createElement("svg", { width: "9rem", height: "3rem", id: "Logo", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 1800 361.17" },
+        React.createElement("svg", { width: "6rem", height: "2rem", id: "Logo", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 1800 361.17" },
             React.createElement("defs", null,
                 React.createElement("style", null, `.cls-1{fill:#fff;}`)),
             React.createElement("title", null, "datavisyn_RGB_white_monochrome"),

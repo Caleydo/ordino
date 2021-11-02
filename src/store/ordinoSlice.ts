@@ -1,6 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IViewPluginDesc } from 'tdp_core';
 
+export enum ETabStates {
+  NONE = 'none',
+  DATASETS = 'datasets',
+  ANALYSIS = 'analysis',
+  TOURS = 'tours'
+}
+
 export interface IOrdinoAppState {
   /**
    * List of open views
@@ -12,11 +19,7 @@ export interface IOrdinoAppState {
    */
   focusViewIndex: number;
 
-  /**
-   * Id of the previous focus view. Used for animations between views.
-   * This needs to be changed. Doesnt work at all for Provenance
-   */
-  previousFocusIndex: number;
+  activeTab: ETabStates;
 }
 
 // Make this generic to support multiple types of views
@@ -82,7 +85,7 @@ const initialState: IOrdinoAppState = {
     }
   ],
   focusViewIndex: 0,
-  previousFocusIndex: 0
+  activeTab: ETabStates.NONE
 };
 
 const ordinoSlice = createSlice({
@@ -105,13 +108,12 @@ const ordinoSlice = createSlice({
     addFilter(state, action) {
       state.views[action.payload.index].filters.push(action.payload.newFilter);
     },
-    changeFocus(state, action) {
-      state.previousFocusIndex = state.focusViewIndex;
-      state.focusViewIndex = action.payload.index;
+    setActiveTab(state, action) {
+      state.activeTab = action.payload.activeTab;
     }
   }
 });
 
-export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus } = ordinoSlice.actions;
+export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

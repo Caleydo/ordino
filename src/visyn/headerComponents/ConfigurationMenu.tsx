@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 
-export const ConfigurationMenu = ({
-    extensions: {menuItems = null}
+export function ConfigurationMenu ({
+    extensions: {menuItems}
 }: {
     extensions: {
         menuItems: React.ReactElement | null;
     };
-}) => {
+}) {
     return (
         <>
             <ul className="ms-2 navbar-right navbar-nav">
@@ -27,4 +27,4 @@ export const ConfigurationMenu = ({
             </ul>
         </>
     );
-};
+}

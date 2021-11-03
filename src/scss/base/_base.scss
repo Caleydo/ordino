@@ -11,24 +11,29 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  overflow-y: hidden;
 }
 
 .ordino-filmstrip {
+  width: 100vw;
   flex: 1 1 auto;
   min-height: 0px;
   overflow-x: hidden;
   position: relative;
   display: flex;
+  overflow: hidden;
+  scroll-snap-type: x mandatory;
 }
 
 .ordino-workbench {
+  width: 100vw;
+  flex: 0 0 auto;
   background: white;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
   max-height: 100%;
   min-height: 100%;
-  position: absolute;
-  transition: transform 0.6s ease-in-out, width 0.6s ease-in-out;
+  transition: margin-left 2s ease 0s, width 2s ease 0s; // TODO: faster transition for chooser
+  border: 2px solid $gray-400;
 
   .viewContent {
     min-height: 0px;
@@ -36,43 +41,30 @@
     overflow: auto;
   }
 
-  &.notransition {
-    transition: none;
-  }
-  &.previous {
-    transform: translateX(-15vw);
-    width: 15vw;
-  }
-  &.context {
-    width: 15vw;
-    transform: translateX(0vw);
-  }
-  &.focus {
-    width: calc(85vw - 50px);
-    transform: translateX(15vw);
-  }
-  &.first {
-    width: calc(100vw - 50px);
-    transform: translateX(0vw);
-  }
-  &.next {
-    transform: translateX(100vw);
-  }
-  &.next_dvc {
-    position: fixed;
-    border-color: rgba(33, 37, 41, 1) !important;
-    transform: translateX(calc(100vw - 50px));
-    width: auto;
+  &:nth-child(1).t-focus {
+    width: 100vw;
+    &.open-chooser {
+      width: calc(100vw - #{$chooser-width} - #{$chooser-margin});
+    }
   }
 
-  &.next_dvc.expanded {
-    transform: translateX(calc(100vw - 255px));
-    width: 250px;
-    border-left-width: 3px !important;
+  &.t-context {
+    border-color: $success;
+    width: 30vw;
   }
-  &.next_dvc.collapsed {
-    transform: translateX(calc(100vw - 58px));
-    width: 55px;
-    border-left-width: 0px !important;
+
+  &.t-focus {
+    width: $workbench-focus-width;
+    border-color: $primary;
+    &.open-chooser {
+      width: calc(
+        #{$workbench-focus-width} - #{$chooser-width} - #{$chooser-margin}
+      );
+    }
+  }
+
+  &.empty {
+    width: calc(#{$chooser-width} + #{$chooser-margin});
+    border-color: rgba(33, 37, 41, 1) !important;
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import LineUpLite, { asTextColumn, asNumberColumn, asCategoricalColumn, asDateColumn, featureDefault } from '@lineup-lite/table';
 import '@lineup-lite/table/dist/table.css';
-export function Lineup() {
+export function Lineup(props) {
     const data = React.useMemo(() => [
         {
             name: 'Panchito Green',
@@ -68,6 +68,6 @@ export function Lineup() {
         asDateColumn('birthday2')
     ], []);
     const features = React.useMemo(() => featureDefault(), []);
-    return (React.createElement(LineUpLite, { data: repeatedData, columns: columns, features: features }));
+    return (React.createElement(LineUpLite, { data: repeatedData, columns: columns, features: features, onStateChange: props.onSelectionChanged }));
 }
 //# sourceMappingURL=lite.js.map

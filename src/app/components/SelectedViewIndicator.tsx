@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-interface ISelectedViewIndicatorProps {
+export interface ISelectedViewIndicatorProps {
     selectedView: string | null;
     availableViews: number;
 }

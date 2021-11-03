@@ -6,7 +6,7 @@ export function Breadcrumb() {
     const dispatch = useDispatch();
     return (React.createElement("nav", { className: "ms-1 d-flex", "aria-label": "breadcrumb" },
         React.createElement("ol", { className: "breadcrumb m-2" }, ordino.views.map((v) => {
-            return (React.createElement("li", { className: "breadcrumb-item", key: v.id },
+            return (React.createElement("li", { className: "breadcrumb-item", key: v.index },
                 React.createElement("button", { type: "button", className: `btn p-0 shadow-none ${ordino.focusViewIndex === v.index
                         ? 'btn-icon-primary fw-bold'
                         : ordino.focusViewIndex - 1 === v.index

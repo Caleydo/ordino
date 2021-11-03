@@ -1,6 +1,8 @@
+import { IOrdinoViewPluginDesc } from '../store/ordinoSlice';
 import { EWorkbenchType } from './Filmstrip';
-export declare function Workbench({ view, type, style }: {
-    view: any;
+interface IWorkbenchProps {
+    view: IOrdinoViewPluginDesc;
     type?: EWorkbenchType;
-    style?: {};
-}): JSX.Element;
+}
+export declare function Workbench({ view, type }: IWorkbenchProps): JSX.Element;
+export {};

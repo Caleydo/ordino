@@ -6,39 +6,24 @@ import {Workbench} from './Workbench';
 export enum EWorkbenchType {
     PREVIOUS = 't-previous',
     FOCUS = 't-focus',
-    FOCUS_CHOOSER = 't-focus-chooser',
     CONTEXT = 't-context',
     NEXT = 't-next'
 }
 
 export function Filmstrip() {
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
-    const isLastFocused = ordino.focusViewIndex === ordino.views.length - 1;
+
     return (
-        <div className="ordino-filmstrip">
+        <div className="ordino-filmstrip w-100 flex-1 position-relative d-flex overflow-auto"
+            style={{scrollSnapType: 'x mandatory'}}>
             {ordino.views.map((v) => {
+                const focused = ordino.focusViewIndex;
 
-                let type = EWorkbenchType.PREVIOUS;
-                let styles = {};
-
-                if (ordino.focusViewIndex === v.index + 1) {
-                    type = EWorkbenchType.CONTEXT;
-
-                } else if (ordino.focusViewIndex === v.index) {
-                    type = EWorkbenchType.FOCUS;
-                    if (ordino.focusViewIndex === 0) {
-                        styles = {marginLeft: `calc(${ordino.focusViewIndex * -1}*100vw)`};
-                    }
-
-                } else if (v.index > ordino.focusViewIndex) {
-                    type = EWorkbenchType.NEXT;
-                }
-
-                if (v.index === 0 && ordino.focusViewIndex !== v.index) {
-                    styles = v.index === 0 ? {marginLeft: `calc(${ordino.focusViewIndex * -1} * 100vw + 100vw)`} : {};
-                }
                 return (
-                    <Workbench type={type} style={styles} view={v} key={v.id} />
+                    <Workbench
+                        type={v.index === focused - 1 ? EWorkbenchType.CONTEXT : v.index === focused ? EWorkbenchType.FOCUS : v.index > focused ? EWorkbenchType.NEXT : EWorkbenchType.PREVIOUS}
+                        view={v}
+                        key={v.index} />
                 );
             })}
         </div>

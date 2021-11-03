@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {IViewPluginDesc} from 'tdp_core';
 
-interface IViewChooserFilterProps {
+export interface IViewChooserFilterProps {
     views: IViewPluginDesc[] | [];
     setFilteredViews: (views: IViewPluginDesc[]) => void;
 }
+
 export function ViewChooserFilter(props: IViewChooserFilterProps) {
     const [filter, setFilter] = React.useState<string>('');
 
@@ -15,7 +16,7 @@ export function ViewChooserFilter(props: IViewChooserFilterProps) {
     }, [filter]);
 
     return (
-        <div className="view-filter input-group ms-1">
+        <div className="view-filter input-group flex-nowrap">
             <input
                 className="form-control border-end-0"
                 type="search"

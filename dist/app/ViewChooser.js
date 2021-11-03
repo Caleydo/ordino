@@ -1,38 +1,42 @@
 import * as React from 'react';
-import { UniqueIdManager } from 'phovea_core';
-import { ViewChooserFilter } from './chooser/ViewChooserFilter';
-import { SelectedViewIndicator } from './chooser/SelectedViewIndicator';
-import { BurgerMenu } from './chooser/BurgerMenu';
-import { SelectionCountIndicator } from './chooser/SelectionCountIndicator';
 import { EViewMode } from 'tdp_core';
-import { groupBy } from 'lodash';
-import { ViewChooserFooter } from './chooser/ViewChooserFooter';
-export function ViewChooser(props) {
-    var _a;
+import { chooserComponents } from './components';
+export var ECollapseDirection;
+(function (ECollapseDirection) {
+    ECollapseDirection["LEFT"] = "left";
+    ECollapseDirection["RIGHT"] = "right";
+})(ECollapseDirection || (ECollapseDirection = {}));
+export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu = true, showFilter = true, showHeader = true, collapseDirection = ECollapseDirection.LEFT, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter } = chooserComponents }) {
     const [collapsed, setCollapsed] = React.useState(true);
     const [embedded, setEmbedded] = React.useState(false);
-    const [filteredViews, setFilteredViews] = React.useState(props.views);
-    const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
-    const groupedViews = groupBy(filteredViews, (view) => view.group.name);
+    const [filteredViews, setFilteredViews] = React.useState(views);
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+        setCollapsed(!embedded);
+    }, [embedded]);
     return (React.createElement(React.Fragment, null,
         " ",
-        React.createElement("div", { className: `view-chooser d-flex align-items-stretch ${collapsed ? 'collapsed' : ''}`, onMouseEnter: () => setCollapsed(false), onMouseLeave: () => setCollapsed(true) },
-            React.createElement("div", { className: "view-chooser-content d-flex flex-column justify-content-stretch" },
-                React.createElement("header", { className: "d-flex my-2 px-1 justify-content-center align-items-center" },
-                    React.createElement(BurgerMenu, { onClick: () => setEmbedded(!embedded) }),
-                    React.createElement(ViewChooserFilter, { views: props.views, setFilteredViews: setFilteredViews })),
-                collapsed && (React.createElement("div", { className: "selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center" },
-                    React.createElement(SelectionCountIndicator, { selectionCount: 5, viewMode: EViewMode.FOCUS, idType: "Cellines" }),
-                    React.createElement(SelectedViewIndicator, { selectedView: (_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.name, availableViews: props.views.length }))),
-                React.createElement("div", { className: "view-buttons flex-grow-1 flex-row overflow-auto border-top border-light" },
-                    React.createElement("div", null, Object.keys(groupedViews).map((v, i) => (React.createElement("div", { className: "accordion-item", key: i },
-                        React.createElement("h2", { className: "accordion-header d-flex", id: v },
-                            React.createElement("button", { className: `accordion-button btn-text-gray py-2 ${groupedViews[v].some((v) => { var _a; return v.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id); }) ? 'selected-group' : ''}`, type: "button", "data-bs-toggle": "collapse", "data-bs-target": `#collapse-${i}-${uniqueSuffix}`, "aria-expanded": "true", "aria-controls": `collapse-${i}-${uniqueSuffix}` }, v)),
-                        React.createElement("div", { id: `collapse-${i}-${uniqueSuffix}`, className: "accordion-collapse collapse show", "aria-labelledby": v },
-                            React.createElement("div", { className: "accordion-body d-grid gap-2 px-0 py-1" }, groupedViews[v].map((view, idx) => {
-                                var _a;
-                                return (React.createElement("button", { className: `btn btn-text-gray py-1 ps-4 text-start ${view.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id) ? 'selected-view ' : ''}`, key: idx, onClick: () => props.onSelectedView(view, props.index) }, view.name));
-                            })))))))),
+        React.createElement("div", { className: `view-chooser d-flex flex-shrink-0 align-items-stretch ${collapsed ? 'collapsed' : ''} ${embedded ? 'embedded' : ''}
+      ${!embedded ? collapseDirection || ECollapseDirection.LEFT : ''}`, onMouseEnter: () => {
+                if (embedded) {
+                    return;
+                }
+                setCollapsed(false);
+            }, onMouseLeave: (evt) => {
+                if (embedded) {
+                    return;
+                }
+                setCollapsed(true);
+            } },
+            React.createElement("div", { ref: ref, className: "view-chooser-content d-flex flex-column justify-content-stretch" },
+                showHeader && React.createElement(ViewChooserHeader, null,
+                    showBurgerMenu && React.createElement(BurgerButton, { onClick: () => setEmbedded(!embedded) }),
+                    (!collapsed && showFilter) && React.createElement(ViewChooserFilter, { views: views, setFilteredViews: setFilteredViews })),
+                collapsed ?
+                    React.createElement("div", { className: "selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center" },
+                        React.createElement(SelectionCountIndicator, { selectionCount: 5, viewMode: EViewMode.FOCUS, idType: "Cellines" }),
+                        React.createElement(SelectedViewIndicator, { selectedView: selectedView === null || selectedView === void 0 ? void 0 : selectedView.name, availableViews: views.length })) :
+                    React.createElement(ViewChooserAccordion, { views: filteredViews, selectedView: selectedView, onSelectedView: onSelectedView }),
                 React.createElement(ViewChooserFooter, null)))));
 }
 //# sourceMappingURL=ViewChooser.js.map

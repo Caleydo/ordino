@@ -1,94 +1,123 @@
 import * as React from 'react';
-import {UniqueIdManager} from 'phovea_core';
-import {ViewChooserFilter} from './chooser/ViewChooserFilter';
-import {SelectedViewIndicator} from './chooser/SelectedViewIndicator';
-import {BurgerMenu} from './chooser/BurgerMenu';
-import {SelectionCountIndicator} from './chooser/SelectionCountIndicator';
 import {EViewMode, IViewPluginDesc} from 'tdp_core';
-import {groupBy} from 'lodash';
-import {ViewChooserFooter} from './chooser/ViewChooserFooter';
+import {ViewChooserFooter} from './components/ViewChooserFooter';
+import {ViewChooserHeader} from './components/ViewChooserHeader';
+import {chooserComponents, ViewChooserExtensions} from './components';
 
+export enum ECollapseDirection {
+  LEFT = 'left',
+  RIGHT = 'right'
+}
 export interface IViewGroupDesc {
   name: string;
   items: IViewPluginDesc[];
 }
 
 interface IViewChooserProps {
-  index: number;
+  /**
+   * Available views for idType
+   */
   views: IViewPluginDesc[];
+
+  /**
+   * Open the view callback
+   */
+  onSelectedView: (view: IViewPluginDesc) => void;
+
+  /**
+   * Currently open view
+   */
   selectedView?: IViewPluginDesc;
-  onSelectedView: (view: IViewPluginDesc, viewIndex: number) => void;
+
+  /**
+   * Show burger menu
+   * @default true
+   */
+  showBurgerMenu?: boolean;
+
+  /**
+   * Show filter
+   * @default true
+   */
+  showFilter?: boolean;
+
+  /**
+   * Show header
+   * @default true
+   */
+  showHeader?: boolean;
+
+  /**
+   * Show footer
+   * @default true
+   */
+  showFooter?: boolean;
+
+  /**
+   * @default left
+   */
+
+  collapseDirection?: ECollapseDirection;
+  extensions?: ViewChooserExtensions;
+  // innerProps?: JSX.IntrinsicElements['div'];
 }
 
-export function ViewChooser(props: IViewChooserProps) {
+export function ViewChooser({
+  views,
+  onSelectedView,
+  selectedView,
+  showBurgerMenu = true,
+  showFilter = true,
+  showHeader = true,
+  collapseDirection = ECollapseDirection.LEFT,
+  extensions: {
+    ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter
+  } = chooserComponents
+
+}: IViewChooserProps) {
   const [collapsed, setCollapsed] = React.useState<boolean>(true);
   const [embedded, setEmbedded] = React.useState<boolean>(false);
-  const [filteredViews, setFilteredViews] = React.useState<IViewPluginDesc[] | []>(props.views);
+  const [filteredViews, setFilteredViews] = React.useState<IViewPluginDesc[] | []>(views);
+  const ref = React.useRef(null);
 
-  const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
-  const groupedViews = groupBy(filteredViews, (view) => view.group.name);
+  React.useEffect(() => {
+    setCollapsed(!embedded);
+
+  }, [embedded]);
 
   return (
     <> <div
-      className={`view-chooser d-flex align-items-stretch ${collapsed ? 'collapsed' : ''}`}
-      onMouseEnter={() => setCollapsed(false)}
-      onMouseLeave={() => setCollapsed(true)}
-    >
-      <div className="view-chooser-content d-flex flex-column justify-content-stretch">
+      className={`view-chooser d-flex flex-shrink-0 align-items-stretch ${collapsed ? 'collapsed' : ''} ${embedded ? 'embedded' : ''}
+      ${!embedded ? collapseDirection || ECollapseDirection.LEFT : ''}`}
+      onMouseEnter={() => {
+        if (embedded) {
+          return;
+        }
+        setCollapsed(false);
+      }}
+      onMouseLeave={(evt) => {
+        if (embedded) {
+          return;
+        }
+        setCollapsed(true);
+      }}>
 
-        <header className="d-flex my-2 px-1 justify-content-center align-items-center">
-          <BurgerMenu onClick={() => setEmbedded(!embedded)} />
-          <ViewChooserFilter views={props.views} setFilteredViews={setFilteredViews} />
-        </header>
+      <div ref={ref} className="view-chooser-content d-flex flex-column justify-content-stretch" >
 
-        {collapsed && (
+        {showHeader && <ViewChooserHeader>
+          {showBurgerMenu && <BurgerButton onClick={() => setEmbedded(!embedded)} />}
+          {(!collapsed && showFilter) && <ViewChooserFilter views={views} setFilteredViews={setFilteredViews} />}
+        </ViewChooserHeader>}
+
+        {collapsed ?
           <div className="selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center">
             <SelectionCountIndicator selectionCount={5} viewMode={EViewMode.FOCUS} idType="Cellines" />
-            <SelectedViewIndicator
-              selectedView={props.selectedView?.name}
-              availableViews={props.views.length}
-            />
-          </div>
-        )}
-
-        <div className="view-buttons flex-grow-1 flex-row overflow-auto border-top border-light">
-          <div >
-            {Object.keys(groupedViews).map((v, i) => (
-              <div className="accordion-item" key={i}>
-                <h2 className="accordion-header d-flex" id={v}>
-                  <button
-                    className={`accordion-button btn-text-gray py-2 ${groupedViews[v].some((v) => v.id === props.selectedView?.id) ? 'selected-group' : ''}`}
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target={`#collapse-${i}-${uniqueSuffix}`}
-                    aria-expanded="true"
-                    aria-controls={`collapse-${i}-${uniqueSuffix}`}
-                  >
-                    {v}
-                  </button>
-                </h2>
-                <div
-                  id={`collapse-${i}-${uniqueSuffix}`}
-                  className="accordion-collapse collapse show"
-                  aria-labelledby={v}
-                >
-                  <div className="accordion-body d-grid gap-2 px-0 py-1">
-                    {groupedViews[v].map((view, idx) => (
-                      <button
-                        className={`btn btn-text-gray py-1 ps-4 text-start ${view.id === props.selectedView?.id ? 'selected-view ' : ''}`}
-                        key={idx}
-                        onClick={() => props.onSelectedView(view, props.index)}
-                      >
-                        {view.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+            <SelectedViewIndicator selectedView={selectedView?.name} availableViews={views.length} />
+          </div> :
+          <ViewChooserAccordion views={filteredViews} selectedView={selectedView} onSelectedView={onSelectedView} />
+        }
         <ViewChooserFooter />
+
       </div>
     </div>
 

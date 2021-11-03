@@ -7,7 +7,6 @@ export function HeaderTabs() {
 
   const dispatch = useDispatch();
 
-
   return (
     <ul className="navbar-nav me-auto" data-header="mainMenu">
       <li className={`nav-item ${ordinoState.activeTab === ETabStates.DATASETS ? 'active' : ''}`}>

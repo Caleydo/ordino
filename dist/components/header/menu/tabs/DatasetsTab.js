@@ -10,8 +10,10 @@ export default function DatasetsTab({ extensions: { preExtensions = null, postEx
                 React.createElement("div", { className: "row justify-content-center" },
                     React.createElement("div", { className: "col-11 position-relative" },
                         React.createElement("p", { className: "lead text-gray-600 mb-0" }, "Start a new analysis session by loading a dataset"),
+                        preExtensions,
                         React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `dataLandScapeCard`, key: 'dataLandscapeCard', index: 0, handleOnChange: handleOnChange }, dataLandscape),
-                        React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `entitySelectionCard`, key: 'entitySelectionCard', index: 1, handleOnChange: handleOnChange }, entityRelation)))),
+                        React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `entitySelectionCard`, key: 'entitySelectionCard', index: 1, handleOnChange: handleOnChange }, entityRelation),
+                        postExtensions))),
             React.createElement(BrowserRouter, { basename: "/#" },
                 React.createElement(OrdinoFooter, { openInNewWindow: true }))))));
 }

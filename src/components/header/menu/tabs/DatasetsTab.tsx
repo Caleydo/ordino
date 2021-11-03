@@ -27,6 +27,7 @@ export default function DatasetsTab({
 }: IDatasetsTabProps) {
   return (
     <>
+        {/* TODO: Figure out how to dynamically add the extensions here */}
         <OrdinoScrollspy items={[{id: `dataLandScapeCard`, name: `Data Landscape`}, {id: `entitySelectionCard`, name: `Entity Selection`}]}>
           {(handleOnChange) =>
             <>
@@ -34,12 +35,14 @@ export default function DatasetsTab({
                 <div className="row justify-content-center">
                   <div className="col-11 position-relative">
                     <p className="lead text-gray-600 mb-0">Start a new analysis session by loading a dataset</p>
+                      {preExtensions}
                         <OrdinoScrollspyItem className="pt-3 pb-5" id={`dataLandScapeCard`} key={'dataLandscapeCard'} index={0} handleOnChange={handleOnChange}>
                           {dataLandscape}
                         </OrdinoScrollspyItem>
                         <OrdinoScrollspyItem className="pt-3 pb-5" id={`entitySelectionCard`} key={'entitySelectionCard'} index={1} handleOnChange={handleOnChange}>
                           {entityRelation}
                         </OrdinoScrollspyItem>
+                        {postExtensions}
                   </div>
                 </div>
               </div>

@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {ComponentType} from 'react';
 
-export function ConfigurationMenu ({
-    extensions: {menuItems}
-}: {
+export interface IConfigurationMenuProps {
     extensions: {
         menuItems: React.ReactElement | null;
     };
-}) {
+}
+
+export function ConfigurationMenu({
+    extensions: {menuItems}
+}: IConfigurationMenuProps) {
     return (
         <>
             <ul className="ms-2 navbar-right navbar-nav">

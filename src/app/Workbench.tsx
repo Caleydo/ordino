@@ -1,8 +1,8 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {views} from '../base/constants';
-import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc, addSelection, addView} from '../store/ordinoSlice';
-import {ECollapseDirection, ViewChooser} from './ViewChooser';
+import {replaceView, IOrdinoViewPluginDesc} from '../store/ordinoSlice';
+import {EExpandMode, EViewChooserMode, ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
 import {IViewPluginDesc} from 'tdp_core';
@@ -59,8 +59,9 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS}: IWorkbenchProp
                     <ViewChooser
                         views={views}
                         selectedView={view}
-                        collapseDirection={ECollapseDirection.RIGHT}
                         onSelectedView={onReplaceView}
+                        mode={EViewChooserMode.OVERLAY}
+                        expand={EExpandMode.RIGHT}
                     />
                 ) : null}
 
@@ -72,6 +73,8 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS}: IWorkbenchProp
                     <ViewChooser
                         views={views}
                         onSelectedView={onAddView}
+                        mode={EViewChooserMode.OVERLAY}
+                        expand={EExpandMode.LEFT}
                     />}
             </>
         </div>

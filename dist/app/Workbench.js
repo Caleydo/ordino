@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { views } from '../base/constants';
 import { replaceView } from '../store/ordinoSlice';
-import { ECollapseDirection, ViewChooser } from './ViewChooser';
+import { EExpandMode, EViewChooserMode, ViewChooser } from './ViewChooser';
 import { EWorkbenchType } from './Filmstrip';
 import { Lineup } from './lite';
 export function Workbench({ view, type = EWorkbenchType.PREVIOUS }) {
@@ -35,10 +35,10 @@ export function Workbench({ view, type = EWorkbenchType.PREVIOUS }) {
     };
     return (React.createElement("div", { ref: ref, className: `d-flex align-items-stretch flex-shrink-0 ordino-workbench overflow-hidden ${type}` },
         React.createElement(React.Fragment, null,
-            view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: view, collapseDirection: ECollapseDirection.RIGHT, onSelectedView: onReplaceView })) : null,
+            view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: view, onSelectedView: onReplaceView, mode: EViewChooserMode.OVERLAY, expand: EExpandMode.RIGHT })) : null,
             React.createElement("div", { className: `viewContent flex-shrink-1 w-100 py-7 mh-0 mw-0` },
                 React.createElement(Lineup, { onSelectionChanged: () => null })),
             showNextChooser &&
-                React.createElement(ViewChooser, { views: views, onSelectedView: onAddView }))));
+                React.createElement(ViewChooser, { views: views, onSelectedView: onAddView, mode: EViewChooserMode.OVERLAY, expand: EExpandMode.LEFT }))));
 }
 //# sourceMappingURL=Workbench.js.map

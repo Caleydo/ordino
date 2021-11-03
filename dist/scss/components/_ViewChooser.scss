@@ -11,7 +11,7 @@
     }
   }
 
-  &.left {
+  &.expand-left {
     .view-chooser-content {
       margin-left: calc(#{$collapsed-chooser-width} - #{$chooser-width});
       box-shadow: -2px 16px 10px 0px #00000024, -2px 11px 18px 0px #0000001f,
@@ -19,7 +19,7 @@
     }
   }
 
-  &.right {
+  &.expand-right {
     .view-chooser-content {
       margin-right: calc(#{$chooser-width} - #{$collapsed-chooser-width});
       box-shadow: 2px 16px 10px 0px #00000024, 2px 11px 18px 0px #0000001f,

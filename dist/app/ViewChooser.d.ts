@@ -1,8 +1,12 @@
 import { IViewPluginDesc } from 'tdp_core';
 import { ViewChooserExtensions } from './components';
-export declare enum ECollapseDirection {
-    LEFT = "left",
-    RIGHT = "right"
+export declare enum EViewChooserMode {
+    EMBEDDED = 0,
+    OVERLAY = 1
+}
+export declare enum EExpandMode {
+    LEFT = 0,
+    RIGHT = 1
 }
 export interface IViewGroupDesc {
     name: string;
@@ -42,10 +46,24 @@ interface IViewChooserProps {
      */
     showFooter?: boolean;
     /**
-     * @default left
+     * EMBEDDED = ViewChooser has full width and does not collapse
+     * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
      */
-    collapseDirection?: ECollapseDirection;
+    mode?: EViewChooserMode;
+    expand?: EExpandMode;
+    /**
+     * Pass custom classes to chooser
+     */
+    classNames?: string;
+    /**
+     * Weather it should be embedded
+     */
+    isEmbedded: boolean;
+    /**
+     * Overwrite default components with custom ones
+     *
+     */
     extensions?: ViewChooserExtensions;
 }
-export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, collapseDirection, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter } }: IViewChooserProps): JSX.Element;
+export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, mode, expand, classNames, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter } }: IViewChooserProps): JSX.Element;
 export {};

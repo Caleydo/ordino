@@ -1,13 +1,18 @@
 import * as React from 'react';
 import {EViewMode, IViewPluginDesc} from 'tdp_core';
-import {ViewChooserFooter} from './components/ViewChooserFooter';
-import {ViewChooserHeader} from './components/ViewChooserHeader';
 import {chooserComponents, ViewChooserExtensions} from './components';
 
-export enum ECollapseDirection {
-  LEFT = 'left',
-  RIGHT = 'right'
+
+export enum EViewChooserMode {
+  EMBEDDED,
+  OVERLAY
 }
+
+export enum EExpandMode {
+  LEFT,
+  RIGHT
+}
+
 export interface IViewGroupDesc {
   name: string;
   items: IViewPluginDesc[];
@@ -54,12 +59,29 @@ interface IViewChooserProps {
   showFooter?: boolean;
 
   /**
-   * @default left
+   * EMBEDDED = ViewChooser has full width and does not collapse
+   * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
    */
+  mode?: EViewChooserMode;
 
-  collapseDirection?: ECollapseDirection;
+  expand?: EExpandMode;
+
+  /**
+   * Pass custom classes to chooser
+   */
+  classNames?: string;
+
+  /**
+   * Weather it should be embedded
+   */
+  isEmbedded: boolean;
+
+
+  /**
+   * Overwrite default components with custom ones
+   *
+   */
   extensions?: ViewChooserExtensions;
-  // innerProps?: JSX.IntrinsicElements['div'];
 }
 
 export function ViewChooser({
@@ -69,44 +91,49 @@ export function ViewChooser({
   showBurgerMenu = true,
   showFilter = true,
   showHeader = true,
-  collapseDirection = ECollapseDirection.LEFT,
+  showFooter = true,
+  mode = EViewChooserMode.EMBEDDED,
+  expand = EExpandMode.RIGHT,
+  classNames = '',
   extensions: {
-    ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter
-  } = chooserComponents
+    ViewChooserHeader = chooserComponents.ViewChooserHeader,
+    BurgerButton = chooserComponents.BurgerButton,
+    SelectedViewIndicator = chooserComponents.SelectedViewIndicator,
+    SelectionCountIndicator = chooserComponents.SelectionCountIndicator,
+    ViewChooserAccordion = chooserComponents.ViewChooserAccordion,
+    ViewChooserFilter = chooserComponents.ViewChooserFilter,
+    ViewChooserFooter = chooserComponents.ViewChooserFooter
+  } = {}
 
 }: IViewChooserProps) {
-  const [collapsed, setCollapsed] = React.useState<boolean>(true);
-  const [embedded, setEmbedded] = React.useState<boolean>(false);
+  const [collapsed, setCollapsed] = React.useState<boolean>(mode !== EViewChooserMode.EMBEDDED);
+  const [embedded, setEmbedded] = React.useState<boolean>(mode === EViewChooserMode.EMBEDDED);
   const [filteredViews, setFilteredViews] = React.useState<IViewPluginDesc[] | []>(views);
-  const ref = React.useRef(null);
 
   React.useEffect(() => {
     setCollapsed(!embedded);
-
   }, [embedded]);
+
+
+  const collapsedProps = embedded ? {} : {
+    onMouseEnter: () => setCollapsed(false),
+    onMouseLeave: () => setCollapsed(true),
+  };
+
 
   return (
     <> <div
-      className={`view-chooser d-flex flex-shrink-0 align-items-stretch ${collapsed ? 'collapsed' : ''} ${embedded ? 'embedded' : ''}
-      ${!embedded ? collapseDirection || ECollapseDirection.LEFT : ''}`}
-      onMouseEnter={() => {
-        if (embedded) {
-          return;
-        }
-        setCollapsed(false);
-      }}
-      onMouseLeave={(evt) => {
-        if (embedded) {
-          return;
-        }
-        setCollapsed(true);
-      }}>
-
-      <div ref={ref} className="view-chooser-content d-flex flex-column justify-content-stretch" >
+      className={`view-chooser  d-flex flex-shrink-0 align-items-stretch
+       ${classNames}
+       ${collapsed ? 'collapsed' : ''}
+       ${embedded ? 'embedded' : ''}
+       ${!embedded ? expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left' : ''}`}
+      {...collapsedProps}>
+      <div className="view-chooser-content d-flex flex-column justify-content-stretch" >
 
         {showHeader && <ViewChooserHeader>
-          {showBurgerMenu && <BurgerButton onClick={() => setEmbedded(!embedded)} />}
-          {(!collapsed && showFilter) && <ViewChooserFilter views={views} setFilteredViews={setFilteredViews} />}
+          {showBurgerMenu ? <BurgerButton onClick={() => setEmbedded(!embedded)} /> : null}
+          {(!collapsed && showFilter) ? <ViewChooserFilter views={views} setFilteredViews={setFilteredViews} /> : null}
         </ViewChooserHeader>}
 
         {collapsed ?
@@ -114,10 +141,10 @@ export function ViewChooser({
             <SelectionCountIndicator selectionCount={5} viewMode={EViewMode.FOCUS} idType="Cellines" />
             <SelectedViewIndicator selectedView={selectedView?.name} availableViews={views.length} />
           </div> :
+
           <ViewChooserAccordion views={filteredViews} selectedView={selectedView} onSelectedView={onSelectedView} />
         }
-        <ViewChooserFooter />
-
+        {showFooter ? <ViewChooserFooter /> : null}
       </div>
     </div>
 

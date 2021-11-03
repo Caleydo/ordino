@@ -27,6 +27,7 @@ const initialState = {
             index: 0,
             name: 'Start view',
             selection: 'multiple',
+            selections: [],
             group: {
                 name: 'General',
                 order: 10
@@ -51,7 +52,7 @@ const ordinoSlice = createSlice({
             state.views.push(action.payload);
         },
         addSelection(state, action) {
-            state.views[action.payload.index].selections.push(action.payload.newSelection);
+            state.views[action.payload.index].selections = action.payload.newSelection;
         },
         addFilter(state, action) {
             state.views[action.payload.index].filters.push(action.payload.newFilter);

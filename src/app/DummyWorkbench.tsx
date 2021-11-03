@@ -9,14 +9,14 @@ import {DetailViewChooser} from './DetailViewChooser';
 export function DummyWorkbench(props: {view: IViewPluginDesc | null}) {
     const ordino: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
     const dispatch = useDispatch();
-    const [embedded, setEmbedded] = React.useState<boolean>(false);
+    const [embedded, setEmbedded] = React.useState<boolean>(true);
 
     return (
         <>
             <div
-                className={`ordino-workbench d-flex next_dvc border-top border-start border-3 ${embedded ? 'expanded' : 'collapsed'
+                className={`ordino-workbench empty d-flex align-items-stretch ${embedded ? 'expanded' : 'collapsed'
                     }`}
-                data-ordino-workbench-type="DummyNext"
+                data-ordino-workbench-type="empty"
             >
                 <DetailViewChooser
                     index={props.view ? props.view.index : ordino.focusViewIndex + 1}

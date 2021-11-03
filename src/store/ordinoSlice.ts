@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { IViewPluginDesc } from 'tdp_core';
+import {createSlice} from '@reduxjs/toolkit';
+import {IViewPluginDesc} from 'tdp_core';
 
 export interface IOrdinoAppState {
   /**
@@ -75,6 +75,7 @@ const initialState: IOrdinoAppState = {
       index: 0,
       name: 'Start view',
       selection: 'multiple',
+      selections: [],
       group: {
         name: 'General',
         order: 10
@@ -100,7 +101,7 @@ const ordinoSlice = createSlice({
       state.views.push(action.payload);
     },
     addSelection(state, action) {
-      state.views[action.payload.index].selections.push(action.payload.newSelection);
+      state.views[action.payload.index].selections = action.payload.newSelection;
     },
     addFilter(state, action) {
       state.views[action.payload.index].filters.push(action.payload.newFilter);
@@ -112,6 +113,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus } = ordinoSlice.actions;
+export const {addView, removeView, replaceView, addSelection, addFilter, changeFocus} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

@@ -72,7 +72,6 @@ export function DetailViewChooser(props: IDetailViewChooserProps) {
                 >
                   <div className="accordion-body d-grid gap-2 px-0 py-1">
                     {groupedViews[v].map((view, idx) => (
-                      <div className="d-flex">
                       <button
                         className={`btn btn-text-gray py-1 ps-4 text-start ${view.id === props.selectedView?.id ? 'selected-view ' : ''}`}
                         key={idx}
@@ -80,7 +79,6 @@ export function DetailViewChooser(props: IDetailViewChooserProps) {
                       >
                         {view.name}
                       </button>
-                      </div>
                     ))}
                   </div>
                 </div>

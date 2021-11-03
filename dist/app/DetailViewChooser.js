@@ -28,8 +28,7 @@ export function DetailViewChooser(props) {
                     React.createElement("div", { id: `collapse-${i}-${uniqueSuffix}`, className: "accordion-collapse collapse show", "aria-labelledby": v },
                         React.createElement("div", { className: "accordion-body d-grid gap-2 px-0 py-1" }, groupedViews[v].map((view, idx) => {
                             var _a;
-                            return (React.createElement("div", { className: "d-flex" },
-                                React.createElement("button", { className: `btn btn-text-gray py-1 ps-4 text-start ${view.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id) ? 'selected-view ' : ''}`, key: idx, onClick: () => props.onSelectedView(view, props.index) }, view.name)));
+                            return (React.createElement("button", { className: `btn btn-text-gray py-1 ps-4 text-start ${view.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id) ? 'selected-view ' : ''}`, key: idx, onClick: () => props.onSelectedView(view, props.index) }, view.name));
                         })))))))),
             React.createElement(ChooserFooter, null))));
 }

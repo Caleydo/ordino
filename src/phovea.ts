@@ -10,4 +10,5 @@ export default function (registry: IRegistry) {
   // generator-phovea:begin
 
   // generator-phovea:end
+
 }

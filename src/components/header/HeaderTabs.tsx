@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {ETabStates, IOrdinoAppState, setActiveTab} from '../../store';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {ETabStates, setActiveTab} from '../../store';
 
 export function HeaderTabs() {
-  const ordinoState: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
+  const ordinoState = useAppSelector((state) => state.ordino);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   return (
     <ul className="navbar-nav me-auto" data-header="mainMenu">

@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addUser } from './usersSlice';
 import { DatavisynLogo } from './headerComponents/DatavisynLogo';
-import { CustomerDefaultLogo } from './headerComponents/CustomerDefaultLogo';
 import { AppDefaultLogo } from './headerComponents/AppDefaultLogo';
 
 import { BurgerMenu } from './headerComponents/BurgerMenu';

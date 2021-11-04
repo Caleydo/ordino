@@ -1,6 +1,6 @@
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {ETabStates, IOrdinoAppState} from '../../../../dist';
+import {ETabStates} from '../../../../dist';
+import {useAppDispatch, useAppSelector} from '../../../hooks';
 import {setActiveTab} from '../../../store';
 import DatasetsTab from './tabs/DatasetsTab';
 
@@ -25,8 +25,8 @@ export function StartMenuTabWrapper({
     tabs = [{id: ETabStates.DATASETS, tab: <DatasetsTab/>}],
     mode = 'overlay'
 }: IStartMenuTabWrapperProps) {
-    const ordinoState: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
-    const dispatch = useDispatch();
+    const ordinoState = useAppSelector((state) => state.ordino);
+    const dispatch = useAppDispatch();
 
     return (
         <>

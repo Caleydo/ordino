@@ -1,44 +1,60 @@
 import React from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import Split from 'react-split';
 import {views} from '../base/constants';
-import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc, addSelection} from '../store/ordinoSlice';
+import {useAppDispatch, useAppSelector} from '../hooks';
+import { changeFocus, addSelection, IWorkbench, replaceWorkbench} from '../store/ordinoSlice';
 import {DetailViewChooser} from './DetailViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
 
 // these props should be made optional
 export function Workbench(props: {
-    view: IOrdinoViewPluginDesc;
+    workbench: IWorkbench;
     type: EWorkbenchType;
     style: React.CSSProperties
 }) {
     const [embedded, setEmbedded] = React.useState<boolean>(false);
-    const dispatch = useDispatch();
-    const ordino: any = useSelector<any>((state) => state.ordino) as any;
+    const dispatch = useAppDispatch();
+    const ordino = useAppSelector((state) => state.ordino);
 
-    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.view.selections?.length && ordino.views.length - 1 === props.view.index ? 'open-chooser' : '';
+    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.workbench.selections?.length && ordino.workbenches.length - 1 === props.workbench.index ? 'open-chooser' : '';
+
     const setSelection = React.useMemo(() => (s) => {
-        dispatch(addSelection({index: props.view.index, newSelection: Object.keys(s.selectedRowIds)}));
+        console.log(s);
+        dispatch(addSelection({workbenchIndex: props.workbench.index, viewIndex: 0, newSelection: Object.keys(s.selectedRowIds)}));
     }, []);
 
     return (
         <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
             <>
-                {props.view.index !== 0 ? (
+                {props.workbench.index !== 0 ? (
                     <DetailViewChooser
-                        index={props.view.index}
+                        index={props.workbench.index}
                         embedded={embedded}
                         setEmbedded={setEmbedded}
                         views={views}
-                        selectedView={props.view}
+                        selectedView={props.workbench.views[0] as any}
                         onSelectedView={(view, viewIndex) => {
                             dispatch(
-                                replaceView({
-                                    id: view.id,
-                                    name: view.name,
-                                    index: viewIndex,
-                                    selection: [],
-                                    filters: []
+                                replaceWorkbench({
+                                    workbenchIndex: props.workbench.index,
+                                    newWorkbench:
+                                    {
+                                        index: 0,
+                                        views: [
+                                            {
+                                                id: view.id,
+                                                name: view.name,
+                                                index: viewIndex,
+                                                selection: [],
+                                                filters: []
+                                            }
+                                        ],
+                                        id: view.id,
+                                        name: view.name,
+                                        selections: [],
+                                        filters: []
+                                    }
                                 })
                             );
                             //this timeout is needed for the animation
@@ -54,9 +70,16 @@ export function Workbench(props: {
                     />
                 ) : null}
 
-                <div className={`viewContent w-100 py-7`}>
-                    <Lineup onSelectionChanged={setSelection} />
-                </div>
+
+                <Split className = "split viewContent w-100 py-7" gutterSize={20} key={props.workbench.views.length}>
+                    {props.workbench.views.map((d, i) => {
+                        return (
+                            <div key={`randomComp${i}`} className = "shadow p-3 m-3 bg-body workbenchView rounded">
+                                <Lineup onSelectionChanged={setSelection} />
+                            </div>
+                        );
+                    })}
+                </Split>
             </>
         </div>
     );

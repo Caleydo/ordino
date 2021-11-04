@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {BILogo, ConfigMenuOptions, ConfigurationMenu, HeaderTabs, OrdinoLogo2, VisynHeader} from '../..';
+import {ConfigMenuOptions, ConfigurationMenu, HeaderTabs, OrdinoLogo2, VisynHeader} from '../..';
 import {ITab} from './menu/StartMenuTabWrapper';
 
 export interface IOrdinoHeaderProps {

@@ -28,19 +28,26 @@ export var ETabStates;
 //   }
 // }
 const initialState = {
-    views: [
-        {
-            id: 'view_0',
+    workbenches: [{
             index: 0,
-            name: 'Start view',
-            selection: 'multiple',
+            views: [
+                {
+                    id: 'view_0',
+                    index: 0,
+                    name: 'Start view',
+                    selection: 'multiple',
+                    selections: [],
+                    group: {
+                        name: 'General',
+                        order: 10
+                    }
+                }
+            ],
+            name: 'Start View',
+            id: 'startView',
             selections: [],
-            group: {
-                name: 'General',
-                order: 10
-            }
-        }
-    ],
+            filters: []
+        }],
     focusViewIndex: 0,
     activeTab: ETabStates.NONE
 };
@@ -48,21 +55,27 @@ const ordinoSlice = createSlice({
     name: 'ordino',
     initialState,
     reducers: {
+        addWorkbench(state, action) {
+            state.workbenches.push(action.payload);
+        },
         addView(state, action) {
-            state.views.push(action.payload);
+            state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
+        },
+        removeWorkbench(state, action) {
+            state.workbenches.slice(action.payload.index);
         },
         removeView(state, action) {
-            state.views.slice(action.payload.index);
+            state.workbenches[action.payload.workbenchIndex].views.slice(action.payload.viewIndex);
         },
-        replaceView(state, action) {
-            state.views.splice(action.payload.index);
-            state.views.push(action.payload);
+        replaceWorkbench(state, action) {
+            state.workbenches.splice(action.payload.workbenchIndex);
+            state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            state.views[action.payload.index].selections = action.payload.newSelection;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
         },
         addFilter(state, action) {
-            state.views[action.payload.index].filters.push(action.payload.newFilter);
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;
@@ -72,6 +85,6 @@ const ordinoSlice = createSlice({
         }
     }
 });
-export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus } = ordinoSlice.actions;
+export const { addView, removeView, replaceWorkbench, addSelection, addFilter, setActiveTab, changeFocus, addWorkbench } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

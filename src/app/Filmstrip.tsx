@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {useSelector} from 'react-redux';
 import {Workbench} from './Workbench';
 import {DummyWorkbench} from './DummyWorkbench';
+import {useAppSelector} from '../hooks';
 
 
 export enum EWorkbenchType {
@@ -13,33 +13,35 @@ export enum EWorkbenchType {
 }
 
 export function Filmstrip() {
-    const ordino: any = useSelector<any>((state) => state.ordino) as any;
-    const isLastFocused = ordino.focusViewIndex === ordino.views.length - 1;
+    const ordino = useAppSelector((state) => state.ordino);
+    const isLastFocused = ordino.focusViewIndex === ordino.workbenches.length - 1;
+
     return (
         <div className="ordino-filmstrip">
-            {ordino.views.map((v) => {
+            {ordino.workbenches.map((w) => {
 
                 let type = EWorkbenchType.PREVIOUS;
                 let styles = {};
 
-                if (ordino.focusViewIndex === v.index + 1) {
+                if (ordino.focusViewIndex === w.index + 1) {
                     type = EWorkbenchType.CONTEXT;
 
-                } else if (ordino.focusViewIndex === v.index) {
+                } else if (ordino.focusViewIndex === w.index) {
                     type = EWorkbenchType.FOCUS;
                     if (ordino.focusViewIndex === 0) {
                         styles = {marginLeft: `calc(${ordino.focusViewIndex * -1}*100vw)`};
                     }
 
-                } else if (v.index > ordino.focusViewIndex) {
+                } else if (w.index > ordino.focusViewIndex) {
                     type = EWorkbenchType.NEXT;
                 }
 
-                if (v.index === 0 && ordino.focusViewIndex !== v.index) {
-                    styles = v.index === 0 ? {marginLeft: `calc(${ordino.focusViewIndex * -1} * 100vw + 100vw)`} : {};
+                if (w.index === 0 && ordino.focusViewIndex !== w.index) {
+                    styles = w.index === 0 ? {marginLeft: `calc(${ordino.focusViewIndex * -1} * 100vw + 100vw)`} : {};
                 }
+
                 return (
-                    <Workbench type={type} style={styles} view={v} key={v.id} />
+                    <Workbench type={type} style={styles} workbench={w} key={`wb${w.index}`} />
                 );
             })}
 

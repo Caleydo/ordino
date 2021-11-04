@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {IViewPluginDesc} from 'tdp_core';
 
 export enum ETabStates {
@@ -8,11 +8,15 @@ export enum ETabStates {
   TOURS = 'tours'
 }
 
+export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
+
+}
+
 export interface IOrdinoAppState {
   /**
-   * List of open views
+   * List of open views. TODO: This should be changed to "workbenches" probably
    */
-  views: IOrdinoViewPluginDesc[];
+  workbenches: IWorkbench[];
 
   /**
    * Id of the current focus view
@@ -22,20 +26,27 @@ export interface IOrdinoAppState {
   activeTab: ETabStates;
 }
 
-// Make this generic to support multiple types of views
-// rename to IOrdinoViewPlugin, store the state of the view
-export interface IOrdinoViewPluginDesc extends Omit<IViewPluginDesc, 'load' | 'preview'> {
+export interface IWorkbench {
+  /**
+   * List of open views.
+   */
+  views: IWorkbenchView[];
+
+  name: string;
+
+  id: string;
+
   index: number;
 
   /**
    * List selected rows
    */
-  selections?: any[]; // TODO define selection, probably IROW
+  selections: any[]; // TODO define selection, probably IROW
 
   /**
    * Selected filters in this view
    */
-  filters?: any[]; // TODO define filter
+  filters: any[]; // TODO define filter
 }
 
 interface IBaseState {
@@ -72,19 +83,27 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 // }
 
 const initialState: IOrdinoAppState = {
-  views: [
-    {
-      id: 'view_0',
-      index: 0,
-      name: 'Start view',
-      selection: 'multiple',
-      selections: [],
-      group: {
-        name: 'General',
-        order: 10
+  workbenches:
+  [{
+    index: 0,
+    views: [
+      {
+        id: 'view_0',
+        index: 0,
+        name: 'Start view',
+        selection: 'multiple',
+        selections: [],
+        group: {
+          name: 'General',
+          order: 10
+        }
       }
-    }
-  ],
+    ],
+    name: 'Start View',
+    id: 'startView',
+    selections: [],
+    filters: []
+  }],
   focusViewIndex: 0,
   activeTab: ETabStates.NONE
 };
@@ -93,31 +112,37 @@ const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
-    addView(state, action) {
-      state.views.push(action.payload);
+    addWorkbench(state, action: PayloadAction<IWorkbench>) {
+      state.workbenches.push(action.payload);
     },
-    removeView(state, action) {
-      state.views.slice(action.payload.index);
+    addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
+      state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
-    replaceView(state, action) {
-      state.views.splice(action.payload.index);
-      state.views.push(action.payload);
+    removeWorkbench(state, action: PayloadAction<{index: number}>) {
+      state.workbenches.slice(action.payload.index);
     },
-    addSelection(state, action) {
-      state.views[action.payload.index].selections = action.payload.newSelection;
+    removeView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number}>) {
+      state.workbenches[action.payload.workbenchIndex].views.slice(action.payload.viewIndex);
     },
-    addFilter(state, action) {
-      state.views[action.payload.index].filters.push(action.payload.newFilter);
+    replaceWorkbench(state, action: PayloadAction<{workbenchIndex: number, newWorkbench: IWorkbench}>) {
+      state.workbenches.splice(action.payload.workbenchIndex);
+      state.workbenches.push(action.payload.newWorkbench);
     },
-    changeFocus(state, action) {
+    addSelection(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newSelection: any}>) {
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
+    },
+    addFilter(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newFilter: any}>) {
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
+    },
+    changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
     },
-    setActiveTab(state, action) {
+    setActiveTab(state, action: PayloadAction<{activeTab: ETabStates}>) {
       state.activeTab = action.payload.activeTab;
     }
   }
 });
 
-export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus } = ordinoSlice.actions;
+export const { addView, removeView, replaceWorkbench, addSelection, addFilter, setActiveTab, changeFocus, addWorkbench } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

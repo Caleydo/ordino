@@ -1,8 +1,8 @@
 import React from 'react';
-import { IOrdinoViewPluginDesc } from '../store/ordinoSlice';
+import { IWorkbench } from '../store/ordinoSlice';
 import { EWorkbenchType } from './Filmstrip';
 export declare function Workbench(props: {
-    view: IOrdinoViewPluginDesc;
+    workbench: IWorkbench;
     type: EWorkbenchType;
     style: React.CSSProperties;
 }): JSX.Element;

@@ -1,6 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = [
+interface IUserState {
+  id: string;
+  name: string;
+  password: string;
+}
+
+const initialState: IUserState[] = [
   { id: '1', name: 'Zach Cutler', password: 'admin' },
   { id: '2', name: 'Holger Stitz', password: 'admin' }
 ];
@@ -13,8 +19,8 @@ const usersSlice = createSlice({
       console.log(action.payload);
       state.push(action.payload);
     },
-    changePassword(state, action) {
-      state[action.payload.user] = action.payload.password;
+    changePassword(state, action: PayloadAction<{userIndex: number, password: string}>) {
+      state[action.payload.userIndex].password = action.payload.password;
     }
   }
 });

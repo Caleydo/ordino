@@ -1,15 +1,15 @@
 import React from 'react';
-import {useSelector, useDispatch} from 'react-redux';
 import {IViewPluginDesc} from 'tdp_core';
-import {IOrdinoAppState, addView, changeFocus} from '..';
+import { addView, addWorkbench, changeFocus} from '..';
 import {views} from '../base/constants';
+import {useAppDispatch, useAppSelector} from '../hooks';
 import {DetailViewChooser} from './DetailViewChooser';
 
 // these props should be made optional
 export function DummyWorkbench(props: {view: IViewPluginDesc | null}) {
-    const ordino: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
-    const dispatch = useDispatch();
-    const [embedded, setEmbedded] = React.useState<boolean>(true);
+    const ordino = useAppSelector((state) => state.ordino);
+    const dispatch = useAppDispatch();
+    const [embedded, setEmbedded] = React.useState<boolean>(false);
 
     return (
         <>
@@ -27,13 +27,24 @@ export function DummyWorkbench(props: {view: IViewPluginDesc | null}) {
                     onSelectedView={(view, viewIndex) => {
                         // TODO create addOrReplaceViewReducer
                         dispatch(
-                            addView({
-                                id: view.id,
-                                name: view.name,
-                                index: viewIndex,
-                                selection: [],
-                                filters: []
-                            })
+                            addWorkbench(
+                                {
+                                    index: 0,
+                                    views: [
+                                        {
+                                            id: view.id,
+                                            name: view.name,
+                                            index: viewIndex,
+                                            selection: [],
+                                            filters: []
+                                        }
+                                    ],
+                                    id: view.id,
+                                    name: view.name,
+                                    selections: [],
+                                    filters: []
+                                  }
+                            )
                         );
                         //this timeout is needed for the animation
 

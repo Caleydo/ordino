@@ -50,6 +50,9 @@ interface IViewChooserProps {
      * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
      */
     mode?: EViewChooserMode;
+    /**
+     * Expand direction when in Overlay mode
+     */
     expand?: EExpandMode;
     /**
      * Pass custom classes to chooser

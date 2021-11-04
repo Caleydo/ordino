@@ -64,6 +64,9 @@ interface IViewChooserProps {
    */
   mode?: EViewChooserMode;
 
+  /**
+   * Expand direction when in Overlay mode
+   */
   expand?: EExpandMode;
 
   /**
@@ -75,7 +78,6 @@ interface IViewChooserProps {
    * Weather it should be embedded
    */
   isEmbedded: boolean;
-
 
   /**
    * Overwrite default components with custom ones
@@ -147,7 +149,6 @@ export function ViewChooser({
         {showFooter ? <ViewChooserFooter /> : null}
       </div>
     </div>
-
     </>
   );
 }

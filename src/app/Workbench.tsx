@@ -1,62 +1,100 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {views} from '../base/constants';
-import {IOrdinoAppState, changeFocus, replaceView, IOrdinoViewPluginDesc, addSelection} from '../store/ordinoSlice';
-import {DetailViewChooser} from './DetailViewChooser';
+import {replaceView, IOrdinoViewPluginDesc, changeFocus, addView, changeOffsetLeft} from '../store/ordinoSlice';
+import {EExpandMode, EViewChooserMode, ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
+import {IViewPluginDesc} from 'tdp_core';
 
-// these props should be made optional
-export function Workbench(props: {
+interface IWorkbenchProps {
     view: IOrdinoViewPluginDesc;
-    type: EWorkbenchType;
-    style: React.CSSProperties
-}) {
-    const [embedded, setEmbedded] = React.useState<boolean>(false);
+    type?: EWorkbenchType;
+    onScrollTo?: (scrollAmount: number) => void;
+}
+
+
+export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IWorkbenchProps) {
     const dispatch = useDispatch();
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
+    const ref = React.useRef(null);
 
-    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.view.selections?.length && ordino.views.length - 1 === props.view.index ? 'open-chooser' : '';
-    const setSelection = React.useMemo(() => (s) => {
-        dispatch(addSelection({index: props.view.index, newSelection: Object.keys(s.selectedRowIds)}));
-    }, []);
+    React.useEffect(() => {
+        if (type === EWorkbenchType.CONTEXT) {
+            dispatch(
+                changeOffsetLeft({
+                    index: view.index,
+                    offsetLeft: ref.current.offsetLeft || 0
+                })
+            );
+        }
+    }, [ref.current, ordino]);
+
+    React.useEffect(() => {
+        if (type === EWorkbenchType.FOCUS && ordino.views.length > 2) {
+            if (ordino.previousFocusIndex === ordino.focusViewIndex) {
+                return;
+            }
+
+            const offsetLeft = ordino.views.find((v) => v.index === view.index - 1)?.offsetLeft;
+            const scrollAmount = ordino.previousFocusIndex < ordino.focusViewIndex ? offsetLeft : -offsetLeft;
+            setTimeout(() => onScrollTo(scrollAmount), 0);
+        }
+    }, [ref.current, ordino]);
+
+    const showNextChooser = type === EWorkbenchType.FOCUS && view.index === ordino.views.length - 1;
+
+    const onAddView = (view: IViewPluginDesc, viewIndex: number) => {
+        dispatch(
+            addView({
+                id: view.id,
+                name: view.name,
+                index: viewIndex,
+                selection: [],
+                filters: []
+            })
+        );
+        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
+    };
+
+
+    const onReplaceView = (view: IViewPluginDesc, viewIndex: number) => {
+        dispatch(
+            replaceView({
+                id: view.id,
+                name: view.name,
+                index: viewIndex,
+                selection: [],
+                filters: []
+            })
+        );
+        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
+    };
 
     return (
-        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
+        <div ref={ref} className={`d-flex align-items-stretch flex-shrink-0 ordino-workbench overflow-hidden ${type}`}>
             <>
-                {props.view.index !== 0 ? (
-                    <DetailViewChooser
-                        index={props.view.index}
-                        embedded={embedded}
-                        setEmbedded={setEmbedded}
+                {view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
+                    <ViewChooser
                         views={views}
-                        selectedView={props.view}
-                        onSelectedView={(view, viewIndex) => {
-                            dispatch(
-                                replaceView({
-                                    id: view.id,
-                                    name: view.name,
-                                    index: viewIndex,
-                                    selection: [],
-                                    filters: []
-                                })
-                            );
-                            //this timeout is needed for the animation
-
-                            setTimeout(() => {
-                                dispatch(
-                                    changeFocus({
-                                        index: viewIndex
-                                    })
-                                );
-                            }, 0);
-                        }}
+                        selectedView={view}
+                        onSelectedView={(v) => onReplaceView(v, view.index)}
+                        mode={EViewChooserMode.OVERLAY}
+                        expand={EExpandMode.RIGHT}
                     />
                 ) : null}
 
-                <div className={`viewContent w-100 py-7`}>
-                    <Lineup onSelectionChanged={setSelection} />
+                <div className={`viewContent flex-shrink-1 w-100 py-7 mh-0 mw-0`}>
+                    <Lineup onSelectionChanged={() => null} />
                 </div>
+
+                {showNextChooser &&
+                    <ViewChooser
+                        views={views}
+                        onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
+                        mode={EViewChooserMode.OVERLAY}
+                        expand={EExpandMode.LEFT}
+                    />}
             </>
         </div>
     );

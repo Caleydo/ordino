@@ -1,13 +1,13 @@
 import React from 'react';
 import {BSTooltip, EViewMode} from 'tdp_core';
 
-interface ISelectionIndicatorProps {
+export interface ISelectionCountIndicatorProps {
     idType: string;
     selectionCount: number;
     viewMode: EViewMode;
 }
 
-export function SelectionCountIndicator({selectionCount, viewMode = EViewMode.HIDDEN, idType = 'Genes'}: ISelectionIndicatorProps) {
+export function SelectionCountIndicator({selectionCount, viewMode = EViewMode.HIDDEN, idType = 'Genes'}: ISelectionCountIndicatorProps) {
     const modeClass = viewMode === EViewMode.FOCUS ? 't-focus' : viewMode === EViewMode.CONTEXT ? 't-context' : '';
 
     return (

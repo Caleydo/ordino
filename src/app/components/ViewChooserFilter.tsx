@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {IViewPluginDesc} from 'tdp_core';
 
-interface IDetailViewFilterProps {
+export interface IViewChooserFilterProps {
     views: IViewPluginDesc[] | [];
     setFilteredViews: (views: IViewPluginDesc[]) => void;
 }
-export function DetailViewFilter(props: IDetailViewFilterProps) {
+
+export function ViewChooserFilter(props: IViewChooserFilterProps) {
     const [filter, setFilter] = React.useState<string>('');
 
     React.useEffect(() => {
@@ -15,7 +16,7 @@ export function DetailViewFilter(props: IDetailViewFilterProps) {
     }, [filter]);
 
     return (
-        <div className="view-filter input-group ms-1">
+        <div className="view-filter input-group flex-nowrap">
             <input
                 className="form-control border-end-0"
                 type="search"
@@ -24,7 +25,7 @@ export function DetailViewFilter(props: IDetailViewFilterProps) {
                 onChange={(evt) => setFilter(evt.target.value)}
             />
             <span className="input-group-text text-secondary bg-transparent border-start-0">
-                <button className="btn btn-icon-gray py-0 px-1" type="button">
+                <button className="btn btn-icon-gray shadow-none py-0 px-1" type="button">
                     <i className="fas fa-search"></i>
                 </button>
             </span>

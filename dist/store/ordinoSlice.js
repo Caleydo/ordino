@@ -55,7 +55,7 @@ const ordinoSlice = createSlice({
             state.views.slice(action.payload.index);
         },
         replaceView(state, action) {
-            state.views.splice(action.payload.index);
+            state.views.splice(action.payload.index, state.views.length - action.payload.index);
             state.views.push(action.payload);
         },
         addSelection(state, action) {
@@ -69,9 +69,12 @@ const ordinoSlice = createSlice({
         },
         setActiveTab(state, action) {
             state.activeTab = action.payload.activeTab;
+        },
+        changeOffsetLeft(state, action) {
+            state.views[action.payload.index].offsetLeft = action.payload.offsetLeft;
         }
     }
 });
-export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus } = ordinoSlice.actions;
+export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus, changeOffsetLeft } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

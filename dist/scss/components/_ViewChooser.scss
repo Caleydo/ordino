@@ -1,0 +1,42 @@
+.view-chooser {
+  width: calc(#{$chooser-collapsed-width} + 2px);
+  position: relative;
+  height: 100%;
+  border: 1px solid $gray-200;
+
+  .view-chooser-content {
+    position: absolute;
+    width: $chooser-width;
+    z-index: 1000;
+    height: 100%;
+    transition-property: width, margin;
+    transition-duration: 0.15s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &.embedded {
+    width: $chooser-width;
+    .view-chooser-content {
+      width: 100%;
+      transition: none;
+    }
+  }
+
+  &.expand-left {
+    .view-chooser-content {
+      margin-left: calc(#{$chooser-collapsed-width} - #{$chooser-width});
+    }
+  }
+
+  &.expand-right {
+    .view-chooser-content {
+      margin-right: calc(#{$chooser-width} - #{$chooser-collapsed-width});
+    }
+  }
+
+  &.collapsed > .view-chooser-content {
+    width: $chooser-collapsed-width;
+    margin-left: 0px;
+    box-shadow: none;
+  }
+}

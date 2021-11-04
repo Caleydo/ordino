@@ -1,0 +1,12 @@
+.selection-count-indicator {
+  width: calc(50px - 12px);
+  height: calc(50px - 12px);
+  background-color: #ffcf76;
+
+  &.t-focus:hover {
+    box-shadow: 0 0 0 0.18rem #337ab7;
+  }
+  &.t-context:hover {
+    box-shadow: 0 0 0 0.18rem #75c4c2;
+  }
+}

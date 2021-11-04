@@ -11,7 +11,7 @@ export function Breadcrumb() {
             <ol className="breadcrumb m-2">
                 {ordino.views.map((v: any) => {
                     return (
-                        <li className="breadcrumb-item" key={v.id}>
+                        <li className="breadcrumb-item" key={v.index}>
                             <button
                                 type="button"
                                 className={`btn p-0 shadow-none ${ordino.focusViewIndex === v.index

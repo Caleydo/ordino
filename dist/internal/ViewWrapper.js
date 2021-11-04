@@ -5,15 +5,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
-import { ObjectRefUtils } from 'phovea_core';
+import { ObjectRefUtils } from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
-import { EventHandler } from 'phovea_core';
+import { EventHandler } from 'tdp_core';
 import { TDPApplicationUtils } from 'tdp_core';
 import { AView } from 'tdp_core';
 import { EViewMode, ViewUtils } from 'tdp_core';
-import { ResolveNow } from 'phovea_core';
+import { ResolveNow } from 'tdp_core';
 import { FindViewUtils } from 'tdp_core';
 import { MODE_ANIMATION_TIME } from './constants';
 function generate_hash(desc, selection) {

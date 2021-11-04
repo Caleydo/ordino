@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {PluginRegistry, UniqueIdManager} from 'phovea_core';
+import {PluginRegistry, UniqueIdManager} from 'tdp_core';
 import {useAsync} from '../../../hooks';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
 import {OrdinoScrollspy, OrdinoScrollspyItem} from '../../components';

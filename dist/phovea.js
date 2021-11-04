@@ -3,9 +3,9 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { PluginRegistry } from 'phovea_core';
-import { ParseRangeUtils } from 'phovea_core';
-import { EP_PHOVEA_CORE_LOCALE } from 'phovea_core';
+import { PluginRegistry } from 'tdp_core';
+import { ParseRangeUtils } from 'tdp_core';
+import { EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '.';
 import { EP_ORDINO_LOGO } from './base';
 export default function (registry) {

@@ -7,7 +7,7 @@
  ********************************************************************/
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I18nextManager } from 'phovea_core';
+import { I18nextManager } from 'tdp_core';
 import { OrdinoApp } from '../internal/OrdinoApp';
 import { ATDPApplication } from 'tdp_core';
 import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenu';

@@ -1,5 +1,5 @@
-import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'phovea_core';
-import {FormDialog} from 'phovea_ui';
+import {GlobalEventHandler, I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'tdp_core';
+import {PHOVEA_UI_FormDialog} from 'tdp_core';
 import React, {useRef, AnimationEventHandler} from 'react';
 import {ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler} from 'tdp_core';
 import {GraphContext} from '../../OrdinoApp';
@@ -147,7 +147,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
     const deleteSession = async (event: React.MouseEvent, desc: IProvenanceGraphDataDescription, callback?: any) => {
         event.preventDefault();
         event.stopPropagation();
-        const deleteIt = await FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', {name: desc.name}));
+        const deleteIt = await PHOVEA_UI_FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', {name: desc.name}));
         if (deleteIt) {
             await Promise.resolve(manager.delete(desc)).then((r) => {
                 if (callback && desc.id !== graph.desc.id) {

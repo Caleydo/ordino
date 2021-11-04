@@ -1,4 +1,4 @@
-import { EPermission, Permission } from 'phovea_core';
+import { EPermission, Permission } from 'tdp_core';
 import { ENamedSetType } from 'tdp_core';
 export class DatasetUtils {
     /**

@@ -1,4 +1,4 @@
-import { I18nextManager } from 'phovea_core';
+import { I18nextManager } from 'tdp_core';
 import React from 'react';
 import { ProvenanceGraphMenuUtils } from 'tdp_core';
 import { useAsync } from '../../../hooks';

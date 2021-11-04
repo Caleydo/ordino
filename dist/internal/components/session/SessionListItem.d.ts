@@ -1,4 +1,4 @@
-import { IProvenanceGraphDataDescription } from 'phovea_core';
+import { IProvenanceGraphDataDescription } from 'tdp_core';
 import React from 'react';
 import { SessionAction } from './CommonSessionCard';
 interface ISessionListItemProps {

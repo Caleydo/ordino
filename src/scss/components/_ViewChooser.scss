@@ -1,7 +1,18 @@
 .view-chooser {
-  width: $chooser-collapsed-width;
+  width: calc(#{$chooser-collapsed-width} + 2px);
   position: relative;
   height: 100%;
+  border: 1px solid $gray-200;
+
+  .view-chooser-content {
+    position: absolute;
+    width: $chooser-width;
+    z-index: 1000;
+    height: 100%;
+    transition-property: width, margin;
+    transition-duration: 0.15s;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
   &.embedded {
     width: $chooser-width;
@@ -14,38 +25,18 @@
   &.expand-left {
     .view-chooser-content {
       margin-left: calc(#{$chooser-collapsed-width} - #{$chooser-width});
-      box-shadow: $chooser-box-shadow-left;
     }
   }
 
   &.expand-right {
     .view-chooser-content {
       margin-right: calc(#{$chooser-width} - #{$chooser-collapsed-width});
-      box-shadow: $chooser-box-shadow-right;
     }
-  }
-
-  .view-chooser-content {
-    transition: width 0.4s ease-out, margin 0.4s ease-out,
-      box-shadow 0.3s ease-out;
-    width: $chooser-width;
-    position: absolute;
-    z-index: 1000;
-
-    height: 100%;
-    background-color: white;
   }
 
   &.collapsed > .view-chooser-content {
-    border-right: 1px solid $gray-200;
     width: $chooser-collapsed-width;
     margin-left: 0px;
-    width: $chooser-collapsed-width;
     box-shadow: none;
-
-    .view-filter,
-    .view-buttons {
-      display: none;
-    }
   }
 }

@@ -25,7 +25,7 @@ export function ViewChooserFilter(props: IViewChooserFilterProps) {
                 onChange={(evt) => setFilter(evt.target.value)}
             />
             <span className="input-group-text text-secondary bg-transparent border-start-0">
-                <button className="btn btn-icon-gray py-0 px-1" type="button">
+                <button className="btn btn-icon-gray shadow-none py-0 px-1" type="button">
                     <i className="fas fa-search"></i>
                 </button>
             </span>

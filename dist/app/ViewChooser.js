@@ -29,7 +29,7 @@ export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMen
        ${collapsed ? 'collapsed' : ''}
        ${embedded ? 'embedded' : ''}
        ${!embedded ? expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left' : ''}` }, collapsedProps),
-            React.createElement("div", { className: "view-chooser-content d-flex flex-column justify-content-stretch" },
+            React.createElement("div", { className: `view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}` },
                 showHeader && React.createElement(ViewChooserHeader, null,
                     showBurgerMenu ? React.createElement(BurgerButton, { onClick: () => setEmbedded(!embedded) }) : null,
                     (!collapsed && showFilter) ? React.createElement(ViewChooserFilter, { views: views, setFilteredViews: setFilteredViews }) : null),

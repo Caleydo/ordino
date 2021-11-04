@@ -131,7 +131,7 @@ export function ViewChooser({
        ${embedded ? 'embedded' : ''}
        ${!embedded ? expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left' : ''}`}
       {...collapsedProps}>
-      <div className="view-chooser-content d-flex flex-column justify-content-stretch" >
+      <div className={`view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}`} >
 
         {showHeader && <ViewChooserHeader>
           {showBurgerMenu ? <BurgerButton onClick={() => setEmbedded(!embedded)} /> : null}

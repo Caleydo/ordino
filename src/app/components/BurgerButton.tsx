@@ -6,7 +6,7 @@ export interface IBurgerButtonProps {
 
 export function BurgerButton(props: IBurgerButtonProps) {
     return (
-        <button className="btn btn-icon-gray shadow-none" type="button" onClick={() => props.onClick()}>
+        <button className="btn btn-icon-gray shadow-none transition-one" type="button" onClick={() => props.onClick()}>
             <i className="fas fa-bars"></i>
         </button>
     );

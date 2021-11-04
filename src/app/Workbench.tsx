@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {views} from '../base/constants';
-import {replaceView, IOrdinoViewPluginDesc} from '../store/ordinoSlice';
+import {replaceView, IOrdinoViewPluginDesc, changeFocus, addView, changeOffsetLeft} from '../store/ordinoSlice';
 import {EExpandMode, EViewChooserMode, ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
@@ -10,46 +10,65 @@ import {IViewPluginDesc} from 'tdp_core';
 interface IWorkbenchProps {
     view: IOrdinoViewPluginDesc;
     type?: EWorkbenchType;
+    onScrollTo?: (scrollAmount: number) => void;
 }
 
 
-export function Workbench({view, type = EWorkbenchType.PREVIOUS}: IWorkbenchProps) {
+export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IWorkbenchProps) {
     const dispatch = useDispatch();
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
     const ref = React.useRef(null);
 
     React.useEffect(() => {
-        if (type === EWorkbenchType.FOCUS && ordino.views.length > 2) {
-            ref.current.scrollIntoView({block: 'center', behavior: 'smooth', inline: 'end'});
+        if (type === EWorkbenchType.CONTEXT) {
+            dispatch(
+                changeOffsetLeft({
+                    index: view.index,
+                    offsetLeft: ref.current.offsetLeft || 0
+                })
+            );
         }
     }, [ref.current, ordino]);
 
+    React.useEffect(() => {
+        if (type === EWorkbenchType.FOCUS && ordino.views.length > 2) {
+            if (ordino.previousFocusIndex === ordino.focusViewIndex) {
+                return;
+            }
+
+            const offsetLeft = ordino.views.find((v) => v.index === view.index - 1)?.offsetLeft;
+            const scrollAmount = ordino.previousFocusIndex < ordino.focusViewIndex ? offsetLeft : -offsetLeft;
+            setTimeout(() => onScrollTo(scrollAmount), 0);
+        }
+    }, [ref.current, ordino]);
 
     const showNextChooser = type === EWorkbenchType.FOCUS && view.index === ordino.views.length - 1;
 
-    const onAddView = (view: IViewPluginDesc, viewIndex) => {
+    const onAddView = (view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
-            replaceView({
+            addView({
                 id: view.id,
                 name: view.name,
-                index: ordino.focusViewIndex + 1,
+                index: viewIndex,
                 selection: [],
                 filters: []
             })
         );
+        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
     };
 
 
-    const onReplaceView = (view: IViewPluginDesc) => {
+    const onReplaceView = (view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             replaceView({
                 id: view.id,
                 name: view.name,
-                index: view.index,
+                index: viewIndex,
                 selection: [],
                 filters: []
             })
         );
+        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
     };
 
     return (
@@ -59,7 +78,7 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS}: IWorkbenchProp
                     <ViewChooser
                         views={views}
                         selectedView={view}
-                        onSelectedView={onReplaceView}
+                        onSelectedView={(v) => onReplaceView(v, view.index)}
                         mode={EViewChooserMode.OVERLAY}
                         expand={EExpandMode.RIGHT}
                     />
@@ -72,7 +91,7 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS}: IWorkbenchProp
                 {showNextChooser &&
                     <ViewChooser
                         views={views}
-                        onSelectedView={onAddView}
+                        onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
                         mode={EViewChooserMode.OVERLAY}
                         expand={EExpandMode.LEFT}
                     />}

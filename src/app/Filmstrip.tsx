@@ -12,18 +12,23 @@ export enum EWorkbenchType {
 
 export function Filmstrip() {
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
+    const ref = React.useRef(null);
+
+    const onScrollTo = (scrollAmount: number) => {
+        ref.current.scrollTo({left: scrollAmount, behavior: 'smooth'});
+    };
 
     return (
-        <div className="ordino-filmstrip w-100 flex-1 position-relative d-flex overflow-auto"
+        <div ref={ref} className="ordino-filmstrip w-100 flex-1 position-relative d-flex overflow-auto"
             style={{scrollSnapType: 'x mandatory'}}>
             {ordino.views.map((v) => {
                 const focused = ordino.focusViewIndex;
-
                 return (
                     <Workbench
                         type={v.index === focused - 1 ? EWorkbenchType.CONTEXT : v.index === focused ? EWorkbenchType.FOCUS : v.index > focused ? EWorkbenchType.NEXT : EWorkbenchType.PREVIOUS}
                         view={v}
-                        key={v.index} />
+                        key={v.index}
+                        onScrollTo={onScrollTo} />
                 );
             })}
         </div>

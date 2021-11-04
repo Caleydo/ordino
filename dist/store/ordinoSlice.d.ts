@@ -31,6 +31,6 @@ interface IBaseState {
 export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc {
     state: S;
 }
-export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, replaceView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>;
+export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, replaceView: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changeOffsetLeft: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};

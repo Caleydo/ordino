@@ -92,16 +92,13 @@ const ordinoSlice = createSlice({
   reducers: {
     addView(state, action) {
       state.views.push(action.payload);
-      state.focusViewIndex = action.payload.index;
     },
     removeView(state, action) {
       state.views.slice(action.payload.index);
     },
     replaceView(state, action) {
-      state.views.splice(action.payload.index , state.views.length - action.payload.index + 1);
+      state.views.splice(action.payload.index, state.views.length - action.payload.index);
       state.views.push(action.payload);
-      state.focusViewIndex = action.payload.index;
-
     },
     addSelection(state, action) {
       state.views[action.payload.index].selections = action.payload.newSelection;
@@ -112,10 +109,13 @@ const ordinoSlice = createSlice({
     changeFocus(state, action) {
       state.previousFocusIndex = state.focusViewIndex;
       state.focusViewIndex = action.payload.index;
+    },
+    changeOffsetLeft(state, action) {
+      state.views[action.payload.index].offsetLeft = action.payload.offsetLeft;
     }
   }
 });
 
-export const {addView, removeView, replaceView, addSelection, addFilter, changeFocus} = ordinoSlice.actions;
+export const {addView, removeView, replaceView, addSelection, addFilter, changeFocus, changeOffsetLeft} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

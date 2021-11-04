@@ -1,5 +1,5 @@
 .view-chooser {
-  width: $collapsed-chooser-width;
+  width: $chooser-collapsed-width;
   position: relative;
   height: 100%;
 
@@ -13,17 +13,15 @@
 
   &.expand-left {
     .view-chooser-content {
-      margin-left: calc(#{$collapsed-chooser-width} - #{$chooser-width});
-      box-shadow: -2px 16px 10px 0px #00000024, -2px 11px 18px 0px #0000001f,
-        -2px 13px 5px -1px #00000033;
+      margin-left: calc(#{$chooser-collapsed-width} - #{$chooser-width});
+      box-shadow: $chooser-box-shadow-left;
     }
   }
 
   &.expand-right {
     .view-chooser-content {
-      margin-right: calc(#{$chooser-width} - #{$collapsed-chooser-width});
-      box-shadow: 2px 16px 10px 0px #00000024, 2px 11px 18px 0px #0000001f,
-        2px 13px 5px -1px #00000033;
+      margin-right: calc(#{$chooser-width} - #{$chooser-collapsed-width});
+      box-shadow: $chooser-box-shadow-right;
     }
   }
 
@@ -36,25 +34,13 @@
 
     height: 100%;
     background-color: white;
-
-    .selected-group {
-      background-color: rgba($gray-600, 0.15) !important;
-    }
-
-    .selected-view {
-      background-color: rgba($gray-600, 0.15) !important;
-    }
-
-    .accordion-item:not(:last-child) {
-      border-bottom: 1px solid $light;
-    }
   }
 
   &.collapsed > .view-chooser-content {
     border-right: 1px solid $gray-200;
-    width: $collapsed-chooser-width;
+    width: $chooser-collapsed-width;
     margin-left: 0px;
-    width: $collapsed-chooser-width;
+    width: $chooser-collapsed-width;
     box-shadow: none;
 
     .view-filter,

@@ -2,9 +2,13 @@ $named-set-list-max-height: 23em !default; // show 10 items
 $session-list-max-height: 31em !default; // show 6 items
 $accordion-button-active-icon: $accordion-button-icon;
 
-$workbench-width: 100vw;
-$workbench-focus-width: 80vw;
-$workbench-hide-width: 20vw;
+$workbench-width: 100vw !default;
+$workbench-focus-width: 80vw !default;
+$workbench-hide-width: 20vw !default;
 
-$collapsed-chooser-width: 60px;
-$chooser-width: 250px;
+$chooser-width: 220px !default;
+$chooser-collapsed-width: 50px !default;
+$chooser-box-shadow-left: -2px 16px 10px 0px #00000024,
+  -2px 11px 18px 0px #0000001f, -2px 13px 5px -1px #00000033 !default;
+$chooser-box-shadow-right: 2px 16px 10px 0px #00000024,
+  2px 11px 18px 0px #0000001f, 2px 13px 5px -1px #00000033 !default;

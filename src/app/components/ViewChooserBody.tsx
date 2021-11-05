@@ -1,7 +1,5 @@
 import React from 'react';
 
-
-
 interface IViewChooserBodyProps {
     children?: React.ReactNode;
 }

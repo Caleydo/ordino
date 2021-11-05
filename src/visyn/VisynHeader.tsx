@@ -5,8 +5,10 @@ import { DatavisynLogo } from './headerComponents/DatavisynLogo';
 import { CustomerDefaultLogo } from './headerComponents/CustomerDefaultLogo';
 import { AppDefaultLogo } from './headerComponents/AppDefaultLogo';
 
-import { BurgerMenu } from './headerComponents/BurgerMenu';
-import { ConfigurationMenu } from './headerComponents/ConfigurationMenu';
+import { BurgerMenu, IBurgerMenuProps } from './headerComponents/BurgerMenu';
+import { ConfigurationMenu, IConfigurationMenuProps } from './headerComponents/ConfigurationMenu';
+import {ComponentType} from 'react';
+import {IBurgerButtonProps} from '../app/components';
 
 // export interface ICommonVisynHeaderPluginProps {
 //   //
@@ -17,34 +19,30 @@ import { ConfigurationMenu } from './headerComponents/ConfigurationMenu';
 // ) => React.ReactElement | null;
 
 export interface IVisynHeaderProps {
+  ConfigMenuOptions?: ComponentType;
+  BurgerSidebar?: ComponentType;
   extensions?: {
-    AppLogo?: React.ReactElement | null;
-    VisynLogo?: React.ReactElement | null;
-    LeftExtensions?: React.ReactElement | null;
-    RightExtensions?: React.ReactElement | null;
-    CustomerLogo?: React.ReactElement | null;
-    configurationMenu?: React.ReactElement<{
-      extensions: {
-        menuItems: React.ReactElement | null;
-      };
-    }> | null;
-    burgerMenu?: React.ReactElement<{
-      extensions: {
-        sidebar: React.ReactElement | null;
-      };
-    }> | null;
+    AppLogo?: ComponentType;
+    VisynLogo?: ComponentType;
+    LeftExtensions?: ComponentType;
+    RightExtensions?: ComponentType;
+    CustomerLogo?: ComponentType;
+    ConfigMenu?: ComponentType<IConfigurationMenuProps>;
+    BurgerButton?: ComponentType<IBurgerMenuProps>
   };
   burgerMenuEnabled?: boolean;
   configMenuEnabled?: boolean;
 }
 
 export function VisynHeader({
+  ConfigMenuOptions = null,
+  BurgerSidebar = null,
   extensions: {
-    VisynLogo = <DatavisynLogo />,
+    VisynLogo = DatavisynLogo,
     CustomerLogo = null,
-    configurationMenu = <ConfigurationMenu extensions={{ menuItems: null }} />,
-    burgerMenu = <BurgerMenu extensions={{ sidebar: null }} />,
-    AppLogo = <AppDefaultLogo />,
+    ConfigMenu = ConfigurationMenu,
+    BurgerButton = BurgerMenu,
+    AppLogo = AppDefaultLogo,
     LeftExtensions = null,
     RightExtensions = null
   } = {},
@@ -55,7 +53,7 @@ export function VisynHeader({
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark phovea-navbar">
         <div className="container-fluid">
-          {burgerMenuEnabled ? burgerMenu : null}
+          {burgerMenuEnabled ? <BurgerButton sidebar={<BurgerSidebar/>}/> : null}
           {AppLogo}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerNavbar">
             <span className="navbar-toggler-icon"></span>
@@ -68,7 +66,7 @@ export function VisynHeader({
         <div className="container-fluid justify-content-end">
           {CustomerLogo}
           {VisynLogo}
-          {configMenuEnabled ? configurationMenu : null}
+          {configMenuEnabled ? <ConfigMenu menuItems={<ConfigMenuOptions/>}/> : null}
         </div>
       </nav>
     </>

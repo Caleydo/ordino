@@ -1,13 +1,11 @@
 import React, {ComponentType} from 'react';
 
 export interface IConfigurationMenuProps {
-    extensions: {
-        menuItems: React.ReactElement | null;
-    };
+    menuItems?: React.ReactElement | null;
 }
 
 export function ConfigurationMenu({
-    extensions: {menuItems}
+    menuItems = null
 }: IConfigurationMenuProps) {
     return (
         <>

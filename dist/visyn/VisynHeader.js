@@ -3,11 +3,11 @@ import { DatavisynLogo } from './headerComponents/DatavisynLogo';
 import { AppDefaultLogo } from './headerComponents/AppDefaultLogo';
 import { BurgerMenu } from './headerComponents/BurgerMenu';
 import { ConfigurationMenu } from './headerComponents/ConfigurationMenu';
-export function VisynHeader({ extensions: { VisynLogo = React.createElement(DatavisynLogo, null), CustomerLogo = null, configurationMenu = React.createElement(ConfigurationMenu, { extensions: { menuItems: null } }), burgerMenu = React.createElement(BurgerMenu, { extensions: { sidebar: null } }), AppLogo = React.createElement(AppDefaultLogo, null), LeftExtensions = null, RightExtensions = null } = {}, burgerMenuEnabled = true, configMenuEnabled = true }) {
+export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions: { VisynLogo = DatavisynLogo, CustomerLogo = null, ConfigMenu = ConfigurationMenu, BurgerButton = BurgerMenu, AppLogo = AppDefaultLogo, LeftExtensions = null, RightExtensions = null } = {}, burgerMenuEnabled = true, configMenuEnabled = true }) {
     return (React.createElement(React.Fragment, null,
         React.createElement("nav", { className: "navbar navbar-expand-lg navbar-dark bg-dark phovea-navbar" },
             React.createElement("div", { className: "container-fluid" },
-                burgerMenuEnabled ? burgerMenu : null,
+                burgerMenuEnabled ? React.createElement(BurgerButton, { sidebar: React.createElement(BurgerSidebar, null) }) : null,
                 AppLogo,
                 React.createElement("button", { className: "navbar-toggler", type: "button", "data-toggle": "collapse", "data-target": "#headerNavbar" },
                     React.createElement("span", { className: "navbar-toggler-icon" })),
@@ -15,6 +15,6 @@ export function VisynHeader({ extensions: { VisynLogo = React.createElement(Data
             React.createElement("div", { className: "container-fluid justify-content-end" },
                 CustomerLogo,
                 VisynLogo,
-                configMenuEnabled ? configurationMenu : null))));
+                configMenuEnabled ? React.createElement(ConfigMenu, { menuItems: React.createElement(ConfigMenuOptions, null) }) : null))));
 }
 //# sourceMappingURL=VisynHeader.js.map

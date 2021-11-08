@@ -1,11 +1,34 @@
-import React from 'react';
-import Split from 'react-split';
+import React, {useEffect, useRef, useState} from 'react';
+import {useMemo} from 'react';
+import GridLayout from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import {views} from '../base/constants';
 import {useAppDispatch, useAppSelector} from '../hooks';
-import { changeFocus, addSelection, IWorkbench, replaceWorkbench} from '../store/ordinoSlice';
+import { changeFocus, addSelection, IWorkbench, replaceWorkbench, IWorkbenchView} from '../store/ordinoSlice';
 import {DetailViewChooser} from './DetailViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
+
+// tslint:disable-next-line:variable-name
+// const GridLayoutWithWitdth = WidthProvider(GridLayout);
+// function takeSpace(layout: GridLayout.Layout[]) {
+//     const counter = 0;
+//     while(true) {
+//         layout[counter];
+//     }
+// }
+
+function findBiggestViewIndex(layout: GridLayout.Layout[], height: number, width: number) {
+    let counter = 0;
+    for(const j of layout) {
+        if(j.h === height || j.w === width) {
+            return counter;
+        }
+        counter += 1;
+    }
+}
+
+const WORKBENCH_PADDING = 50;
 
 // these props should be made optional
 export function Workbench(props: {
@@ -13,19 +36,138 @@ export function Workbench(props: {
     type: EWorkbenchType;
     style: React.CSSProperties
 }) {
+    const [workbenchWidth, setWorkbenchWidth] = React.useState<number>(1000);
+    const [workbenchHeight, setWorkbenchHeight] = React.useState<number>(1000);
+
+    const workbenchRef = useRef<HTMLDivElement>(null);
+
     const [embedded, setEmbedded] = React.useState<boolean>(false);
+    const [workbenchLayout, setWorkbenchLayout] = useState<GridLayout.Layout[]>([
+        { i: 'randomComp0', x: 0, y: 0, w: workbenchWidth, h: workbenchHeight },
+      ]);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
+
+    console.log(workbenchLayout);
+
+    // console.log(workbenchWidth, workbenchHeight, workbenchLayout);
 
     const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.workbench.selections?.length && ordino.workbenches.length - 1 === props.workbench.index ? 'open-chooser' : '';
 
     const setSelection = React.useMemo(() => (s) => {
-        console.log(s);
         dispatch(addSelection({workbenchIndex: props.workbench.index, viewIndex: 0, newSelection: Object.keys(s.selectedRowIds)}));
     }, []);
 
+    //this use effect is for keeping the width/height consistent
+    useEffect(() => {
+        if(workbenchRef) {
+            setWorkbenchWidth(workbenchRef.current.offsetWidth - WORKBENCH_PADDING);
+            setWorkbenchHeight(workbenchRef.current.offsetHeight - WORKBENCH_PADDING);
+            setWorkbenchLayout([
+                { i: 'randomComp0', x: 0, y: 0, w: workbenchRef.current.offsetWidth - WORKBENCH_PADDING, h: workbenchRef.current.offsetHeight - WORKBENCH_PADDING},
+              ]);
+        }
+    }, [workbenchRef]);
+
+    // //this use effect allows for adding views to properly shrink/take the space of other views.
+    useEffect(() => {
+        const layoutCopy = JSON.parse(JSON.stringify(workbenchLayout));
+        if(props.workbench.views.length > workbenchLayout.length) {
+            const biggestViewIndex = findBiggestViewIndex(workbenchLayout, workbenchHeight, workbenchWidth);
+            const biggestView = workbenchLayout[biggestViewIndex];
+
+            // console.log(biggestView);
+            if(biggestView.h === workbenchHeight) {
+                layoutCopy[biggestViewIndex].h = biggestView.h / 2;
+                layoutCopy.push({ i: `randomComp${props.workbench.views.length - 1}`, x: biggestView.x, y: biggestView.h / 2, w: biggestView.w, h: biggestView.h / 2});
+            } else if(biggestView.w === workbenchWidth) {
+                layoutCopy[biggestViewIndex].w = biggestView.w / 2;
+                layoutCopy.push({ i: `randomComp${props.workbench.views.length - 1}`, x: biggestView.w / 2, y: biggestView.y, w: biggestView.w / 2, h: biggestView.h});
+            }
+
+            setWorkbenchLayout(layoutCopy);
+        }
+    }, [props.workbench.views.length]);
+
+    const fixTopLayout = (layout: GridLayout.Layout[]) => {
+
+        const layoutCopy = JSON.parse(JSON.stringify(layout));
+
+        console.log(JSON.parse(JSON.stringify(layoutCopy)), workbenchWidth);
+
+        const topLayouts = layoutCopy.filter((l) => l.y === 0);
+
+        if(topLayouts.length === 1) {
+            const currentTopLayout = topLayouts[0];
+            if(currentTopLayout.w === workbenchWidth) {
+                return layoutCopy;
+            } else {
+                console.log('editing');
+                const layoutToBeMoved = layoutCopy.filter((l) => l.w === workbenchWidth - currentTopLayout.w && l.y !== 0 && l.h === currentTopLayout.h)[0];
+                layoutToBeMoved.y = 0;
+                layoutToBeMoved.x = currentTopLayout.w;
+
+                // console.log(layoutToBeMoved);
+            }
+        }
+
+        return layoutCopy;
+    };
+
+    const fixBottomLayout = (layout: GridLayout.Layout[]) => {
+
+        const layoutCopy = JSON.parse(JSON.stringify(layout));
+
+        console.log(JSON.parse(JSON.stringify(layoutCopy)));
+
+        const bottomLayouts = layoutCopy.filter((l) => l.y !== 0);
+
+        if(bottomLayouts.length > 1) {
+            if(bottomLayouts[0].y === bottomLayouts[1].y) {
+                return layoutCopy;
+            } else if(bottomLayouts[0].y < bottomLayouts[1].y) {
+                bottomLayouts[1].y = bottomLayouts[0].y;
+                bottomLayouts[1].x = bottomLayouts[0].w;
+            } else {
+                bottomLayouts[0].y = bottomLayouts[1].y;
+                bottomLayouts[0].x = bottomLayouts[1].w;
+            }
+        }
+
+        return layoutCopy;
+    };
+
+    const onLayoutChange = useMemo(() => (layout: GridLayout.Layout[]) => {
+        // console.log(JSON.parse(JSON.stringify(layout)));
+        if(layout.length === 1) {
+            setWorkbenchLayout(layout);
+            return;
+        }
+
+        let newLayout = fixTopLayout(layout);
+        newLayout = fixBottomLayout(newLayout);
+
+        console.log(JSON.parse(JSON.stringify(newLayout)));
+        // fixBottomLayout(layout);
+
+        setWorkbenchLayout(newLayout);
+    }, [workbenchWidth, workbenchHeight, workbenchLayout]);
+
+    console.log(onLayoutChange);
+
+    const children = React.useMemo(() => {
+        return props.workbench.views.map((d: IWorkbenchView, i) => {
+            return (
+                <div key={`randomComp${i}`} className = "shadow p-3 m-3 bg-body workbenchView rounded">
+                    <Lineup onSelectionChanged={setSelection} />
+                </div>
+            );
+        });
+      }, [props.workbench.views.length]);
+
+
     return (
-        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
+        <div ref={workbenchRef} style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
             <>
                 {props.workbench.index !== 0 ? (
                     <DetailViewChooser
@@ -69,9 +211,21 @@ export function Workbench(props: {
                         }}
                     />
                 ) : null}
-
-
-                <Split className = "split viewContent w-100 py-7" gutterSize={20} key={props.workbench.views.length}>
+                <GridLayout key={workbenchWidth} className="layout" layout={workbenchLayout} rowHeight={1} cols={workbenchWidth} width={workbenchWidth} margin={[20, 0]} containerPadding={[0, 0]} onLayoutChange={onLayoutChange}>
+                    {children}
+                </GridLayout>
+                {/*
+                <GridLayout className="layout" layout={layout} cols={4} containerWidth={500}>
+                    {props.workbench.views.map((d: IWorkbenchView, i) => {
+                        console.log(i)
+                        return (
+                            <div key={`randomComp${i}`} data-grid={{x: i, y: i, w: 1, h: 1}} className = "shadow p-3 m-3 bg-body workbenchView rounded">
+                                <Lineup onSelectionChanged={setSelection} />
+                            </div>
+                        );
+                    })}
+                </GridLayout> */}
+                {/* <Split className = "split viewContent w-100" gutterSize={20} key={props.workbench.views.length}>
                     {props.workbench.views.map((d, i) => {
                         return (
                             <div key={`randomComp${i}`} className = "shadow p-3 m-3 bg-body workbenchView rounded">
@@ -79,8 +233,9 @@ export function Workbench(props: {
                             </div>
                         );
                     })}
-                </Split>
+                </Split> */}
             </>
         </div>
     );
 }
+

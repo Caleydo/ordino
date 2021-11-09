@@ -33,7 +33,7 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
 
     }, [ref.current, ordino.focusViewIndex]);
 
-    const showNextChooser = type === EWorkbenchType.FOCUS && view.index === ordino.views.length - 1;
+    const showNextChooser = view.index === ordino.views.length - 1;
 
     const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(

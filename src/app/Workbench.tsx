@@ -62,8 +62,8 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
         setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
     }, []);
 
-    return (
-        <div ref={ref} className={`d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type}`}>
+    return (<>
+        <div ref={ref} className={`d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type} ${ordino.views.length === 1 ? 'start' : ''}`}>
             <>
                 {view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
                     <ViewChooser
@@ -75,18 +75,20 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
                     />
                 ) : null}
 
-                <div className={`viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0`}>
+                <div className={`viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0 ${type !== EWorkbenchType.FOCUS ? 'overflow-hidden' : 'overflow-auto'}`}>
                     <Lineup onSelectionChanged={() => null} />
                 </div>
 
-                {showNextChooser &&
-                    <ViewChooser
-                        views={views}
-                        onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
-                        mode={EViewChooserMode.OVERLAY}
-                        expand={EExpandMode.LEFT}
-                    />}
             </>
         </div>
+        {showNextChooser &&
+            <ViewChooser
+                views={views}
+                onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
+                mode={EViewChooserMode.OVERLAY}
+                expand={EExpandMode.LEFT}
+                showBurgerMenu={false}
+            />}
+    </>
     );
 }

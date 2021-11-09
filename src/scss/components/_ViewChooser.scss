@@ -1,5 +1,5 @@
 .view-chooser {
-  width: calc(#{$chooser-collapsed-width} + 1px);
+  width: $chooser-collapsed-width;
   position: relative;
   height: 100%;
 
@@ -36,7 +36,7 @@
   }
 
   &.collapsed > .view-chooser-content {
-    width: $chooser-collapsed-width;
+    width: calc(#{$chooser-collapsed-width} - 1px);
     margin-left: 0px;
     box-shadow: none;
   }

@@ -41,12 +41,13 @@ export function Workbench({ view, type = EWorkbenchType.PREVIOUS, onScrollTo }) 
         }));
         setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
     }, []);
-    return (React.createElement("div", { ref: ref, className: `d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type}` },
-        React.createElement(React.Fragment, null,
-            view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: view, onSelectedView: (v) => onReplaceView(v, view.index), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.RIGHT })) : null,
-            React.createElement("div", { className: `viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0` },
-                React.createElement(Lineup, { onSelectionChanged: () => null })),
-            showNextChooser &&
-                React.createElement(ViewChooser, { views: views, onSelectedView: (view) => onAddView(view, ordino.focusViewIndex + 1), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.LEFT }))));
+    return (React.createElement(React.Fragment, null,
+        React.createElement("div", { ref: ref, className: `d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type} ${ordino.views.length === 1 ? 'start' : ''}` },
+            React.createElement(React.Fragment, null,
+                view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: view, onSelectedView: (v) => onReplaceView(v, view.index), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.RIGHT })) : null,
+                React.createElement("div", { className: `viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0 ${type !== EWorkbenchType.FOCUS ? 'overflow-hidden' : 'overflow-auto'}` },
+                    React.createElement(Lineup, { onSelectionChanged: () => null })))),
+        showNextChooser &&
+            React.createElement(ViewChooser, { views: views, onSelectedView: (view) => onAddView(view, ordino.focusViewIndex + 1), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.LEFT, showBurgerMenu: false })));
 }
 //# sourceMappingURL=Workbench.js.map

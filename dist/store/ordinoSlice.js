@@ -60,12 +60,9 @@ const ordinoSlice = createSlice({
         changeFocus(state, action) {
             state.previousFocusIndex = state.focusViewIndex;
             state.focusViewIndex = action.payload.index;
-        },
-        changeOffsetLeft(state, action) {
-            state.views[action.payload.index].offsetLeft = action.payload.offsetLeft;
         }
     }
 });
-export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus, changeOffsetLeft } = ordinoSlice.actions;
+export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {views} from '../base/constants';
-import {replaceView, IOrdinoViewPluginDesc, changeFocus, addView, changeOffsetLeft} from '../store/ordinoSlice';
+import {replaceView, IOrdinoViewPluginDesc, changeFocus, addView} from '../store/ordinoSlice';
 import {EExpandMode, EViewChooserMode, ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';

@@ -24,9 +24,9 @@ export interface IViewChooserAccordionProps {
 export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
     const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
     const groups = groupBy(props.views, (view) => view.group.name);
-    return <div className="view-buttons flex-grow-1 flex-row border-top border-light">
+    return <div className="view-buttons flex-grow-1 flex-row border-top border-light overflow-auto">
         {Object.keys(groups).map((v, i) => (
-            <div className={`accordion-item ${i < Object.keys(groups).length ? 'border-0 border-bottom border-light' : ''}`} key={i}>
+            <div className={`accordion-item ${i < Object.keys(groups).length - 1 ? 'border-0 border-bottom border-light' : ''}`} key={i}>
                 <button
                     className={`accordion-button py-2 btn-text-gray shadow-none text-nowrap ${groups[v].some((v) => v.id === props.selectedView?.id) ? 'active' : ''}`}
                     type="button"

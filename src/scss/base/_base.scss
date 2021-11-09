@@ -20,7 +20,7 @@
     width: $workbench-width;
     transition: width 0.5s ease;
     border: 2px solid $gray-400;
-
+    overflow: hidden;
     &:nth-child(1).t-focus:only-child {
       width: $workbench-width;
     }
@@ -37,6 +37,7 @@
     &.t-focus {
       width: $workbench-focus-width;
       border-color: $primary;
+      overflow-x: auto;
     }
 
     &.t-next,

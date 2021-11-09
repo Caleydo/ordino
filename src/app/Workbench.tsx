@@ -10,7 +10,7 @@ import {IViewPluginDesc} from 'tdp_core';
 interface IWorkbenchProps {
     view: IOrdinoViewPluginDesc;
     type?: EWorkbenchType;
-    onScrollTo?: (scrollAmount: number) => void;
+    onScrollTo?: (ref: React.MutableRefObject<any>) => void;
 }
 
 
@@ -20,31 +20,22 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
     const ref = React.useRef(null);
 
     React.useEffect(() => {
-        if (type === EWorkbenchType.CONTEXT) {
-            dispatch(
-                changeOffsetLeft({
-                    index: view.index,
-                    offsetLeft: ref.current.offsetLeft || 0
-                })
-            );
+        if (ordino.previousFocusIndex === ordino.focusViewIndex || !ref.current || ordino.views.length <= 2) {
+            return;
         }
-    }, [ref.current, ordino]);
 
-    React.useEffect(() => {
-        if (type === EWorkbenchType.FOCUS && ordino.views.length > 2) {
-            if (ordino.previousFocusIndex === ordino.focusViewIndex) {
-                return;
-            }
+        if ((type === EWorkbenchType.CONTEXT)) {
+            onScrollTo(ref);
 
-            const offsetLeft = ordino.views.find((v) => v.index === view.index - 1)?.offsetLeft;
-            const scrollAmount = ordino.previousFocusIndex < ordino.focusViewIndex ? offsetLeft : -offsetLeft;
-            setTimeout(() => onScrollTo(scrollAmount), 0);
+        } else if (ordino.focusViewIndex === 0) {
+            onScrollTo(null);
         }
-    }, [ref.current, ordino]);
+
+    }, [ref.current, ordino.focusViewIndex]);
 
     const showNextChooser = type === EWorkbenchType.FOCUS && view.index === ordino.views.length - 1;
 
-    const onAddView = (view: IViewPluginDesc, viewIndex: number) => {
+    const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             addView({
                 id: view.id,
@@ -55,10 +46,10 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
             })
         );
         setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
-    };
+    }, []);
 
 
-    const onReplaceView = (view: IViewPluginDesc, viewIndex: number) => {
+    const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             replaceView({
                 id: view.id,
@@ -69,10 +60,10 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
             })
         );
         setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
-    };
+    }, []);
 
     return (
-        <div ref={ref} className={`d-flex align-items-stretch flex-shrink-0 ordino-workbench overflow-hidden ${type}`}>
+        <div ref={ref} className={`d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type}`}>
             <>
                 {view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
                     <ViewChooser
@@ -84,7 +75,7 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
                     />
                 ) : null}
 
-                <div className={`viewContent flex-shrink-1 w-100 py-7 mh-0 mw-0`}>
+                <div className={`viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0`}>
                     <Lineup onSelectionChanged={() => null} />
                 </div>
 

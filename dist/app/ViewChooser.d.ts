@@ -12,7 +12,7 @@ export interface IViewGroupDesc {
     name: string;
     items: IViewPluginDesc[];
 }
-interface IViewChooserProps {
+export interface IViewChooserProps {
     /**
      * Available views for idType
      */
@@ -69,4 +69,3 @@ interface IViewChooserProps {
     extensions?: ViewChooserExtensions;
 }
 export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, mode, expand, classNames, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter } }: IViewChooserProps): JSX.Element;
-export {};

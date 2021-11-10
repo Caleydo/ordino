@@ -19,7 +19,6 @@ export default function CurrentSessionCard({ name, faIcon }) {
             return false;
         }
         ProvenanceGraphMenuUtils.persistProvenanceGraphMetaData(graph.desc).then((extras) => {
-            console.log('extra', graph, extras);
             if (extras !== null) {
                 Promise.resolve(manager.migrateGraph(graph, extras)).catch(ErrorAlertHandler.getInstance().errorAlert).then(() => {
                     setDesc(graph.desc);

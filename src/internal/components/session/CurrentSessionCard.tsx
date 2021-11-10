@@ -11,7 +11,7 @@ import {SessionListItem} from './SessionListItem';
 export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSectionDesc) {
     const {manager, graph} = React.useContext(GraphContext);
     const {highlight, setHighlight} = React.useContext(HighlightSessionCardContext);
-    const [desc, setDesc] = React.useState(graph.desc)
+    const [desc, setDesc] = React.useState(graph.desc);
 
     const onHighlightAnimationEnd = () => {
         setHighlight(false);
@@ -24,10 +24,9 @@ export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSect
             return false;
         }
         ProvenanceGraphMenuUtils.persistProvenanceGraphMetaData(graph.desc).then((extras: any) => {
-            console.log('extra', graph, extras)
             if (extras !== null) {
                 Promise.resolve(manager.migrateGraph(graph, extras)).catch(ErrorAlertHandler.getInstance().errorAlert).then(() => {
-                    setDesc(graph.desc)
+                    setDesc(graph.desc);
                     const p = new PropertyHandler(location.hash);
                     const hash = new Map<string, string>();
                     p.forEach((key, value) => {

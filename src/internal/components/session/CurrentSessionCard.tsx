@@ -43,7 +43,7 @@ export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSect
             }
         });
         return false;
-    }
+    };
 
     return (
         <CommonSessionCard cardName={name} highlight={highlight} onHighlightAnimationEnd={onHighlightAnimationEnd} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo')}>

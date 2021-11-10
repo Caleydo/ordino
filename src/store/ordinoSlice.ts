@@ -8,8 +8,16 @@ export enum ETabStates {
   TOURS = 'tours'
 }
 
-export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
+export enum EViewDirections {
+  N = 'n',
+  S = 's',
+  W = 'w',
+  E = 'e'
+}
 
+export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
+  directionFromParent: EViewDirections;
+  children: IWorkbenchView[];
 }
 
 export interface IOrdinoAppState {
@@ -30,7 +38,7 @@ export interface IWorkbench {
   /**
    * List of open views.
    */
-  views: IWorkbenchView[];
+  startingView: IWorkbenchView;
 
   name: string;
 
@@ -86,19 +94,20 @@ const initialState: IOrdinoAppState = {
   workbenches:
   [{
     index: 0,
-    views: [
-      {
-        id: 'view_0',
-        index: 0,
-        name: 'Start view',
-        selection: 'multiple',
-        selections: [],
-        group: {
-          name: 'General',
-          order: 10
-        }
+    startingView:
+    {
+      directionFromParent: EViewDirections.E,
+      children: [],
+      id: 'view_0',
+      index: 0,
+      name: 'Start view',
+      selection: 'multiple',
+      selections: [],
+      group: {
+        name: 'General',
+        order: 10
       }
-    ],
+    },
     name: 'Start View',
     id: 'startView',
     selections: [],
@@ -108,6 +117,24 @@ const initialState: IOrdinoAppState = {
   activeTab: ETabStates.NONE
 };
 
+function getNode(id: string, currNode: IWorkbenchView) {
+  if(currNode.id === id) {
+    return currNode;
+  }
+
+  let result: IWorkbenchView = null;
+
+  if(currNode.children.length > 0) {
+    for(let i = 0; result == null && i < currNode.children.length; i++) {
+      result = getNode(id, currNode.children[i]);
+    }
+
+    return result;
+  } else {
+    return null;
+  }
+}
+
 const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
@@ -115,24 +142,26 @@ const ordinoSlice = createSlice({
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
-    addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
-      state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
+    addView(state, action: PayloadAction<{workbenchId: number, parentId: string, direction: EViewDirections, view: IWorkbenchView}>) {
+      const parentView = getNode(action.payload.parentId, state.workbenches[action.payload.workbenchId].startingView);
+
+      parentView.children.push(action.payload.view);
     },
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
       state.workbenches.slice(action.payload.index);
     },
     removeView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number}>) {
-      state.workbenches[action.payload.workbenchIndex].views.slice(action.payload.viewIndex);
+      // state.workbenches[action.payload.workbenchIndex].views.slice(action.payload.viewIndex);
     },
     replaceWorkbench(state, action: PayloadAction<{workbenchIndex: number, newWorkbench: IWorkbench}>) {
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
     addSelection(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newSelection: any}>) {
-      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
+      // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
     },
     addFilter(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newFilter: any}>) {
-      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
+      // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;

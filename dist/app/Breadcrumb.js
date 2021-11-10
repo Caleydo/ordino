@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { addView, changeFocus } from '../store/ordinoSlice';
+import { changeFocus } from '../store/ordinoSlice';
+import { AddButton } from './workbench/AddButton';
 export function Breadcrumb() {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -14,24 +15,6 @@ export function Breadcrumb() {
                                 ? 'btn-icon-success'
                                 : 'btn-icon-gray'}`, onClick: () => dispatch(changeFocus({ index: w.index })) }, w.name)));
             }))),
-        React.createElement("button", { type: "button", onClick: () => {
-                dispatch(addView({
-                    workbenchIndex: ordino.focusViewIndex,
-                    view: {
-                        id: 'view_0',
-                        index: 0,
-                        name: 'Start view',
-                        selection: 'multiple',
-                        selections: [],
-                        group: {
-                            name: 'General',
-                            order: 10
-                        }
-                    }
-                }));
-            }, className: "btn btn-primary" }, "Add View"),
-        React.createElement("button", { type: "button", onClick: () => {
-                console.log('hello');
-            }, className: "btn btn-primary" }, "Remove View")));
+        React.createElement(AddButton, null)));
 }
 //# sourceMappingURL=Breadcrumb.js.map

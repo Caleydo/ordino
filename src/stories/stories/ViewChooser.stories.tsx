@@ -2,14 +2,14 @@ import React from 'react';
 import {ComponentStory, ComponentMeta} from '@storybook/react';
 import {ViewChooser, EViewChooserMode, EExpandMode} from 'ordino';
 
-const views = [...Array(10).keys()].map((a, i) => (
+const views = [...Array(5).keys()].map((a, i) => (
     {
         index: i, // dummy index
         id: 'view_1',
-        name: 'Dummy' + i,
+        name: 'Dummy ' + i,
         selection: 'multiple',
         group: {
-            name: 'General' + i,
+            name: 'General ' + i,
             order: 10 + i
         }
     }));
@@ -45,5 +45,4 @@ OverlayLeft.args = {
     views,
     mode: EViewChooserMode.OVERLAY,
     expand: EExpandMode.LEFT
-
 };

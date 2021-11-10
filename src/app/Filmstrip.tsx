@@ -15,8 +15,8 @@ export function Filmstrip() {
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
     const ref = React.useRef(null);
 
-    const onScrollTo = React.useCallback(debounce((ref2) => {
-        ref.current.scrollTo({left: ref2?.current?.offsetLeft || 0, behavior: 'smooth'});
+    const onScrollTo = React.useCallback(debounce((contextRef: React.MutableRefObject<HTMLDivElement>) => {
+        ref.current.scrollTo({left: contextRef?.current?.offsetLeft || 0, behavior: 'smooth'});
     }, 500), []);
 
     return (

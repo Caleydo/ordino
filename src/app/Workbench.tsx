@@ -10,7 +10,7 @@ import {IViewPluginDesc} from 'tdp_core';
 interface IWorkbenchProps {
     view: IOrdinoViewPluginDesc;
     type?: EWorkbenchType;
-    onScrollTo?: (ref: React.MutableRefObject<any>) => void;
+    onScrollTo?: (ref: React.MutableRefObject<HTMLDivElement>) => void;
 }
 
 

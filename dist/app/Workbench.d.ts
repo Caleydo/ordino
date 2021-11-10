@@ -4,7 +4,7 @@ import { EWorkbenchType } from './Filmstrip';
 interface IWorkbenchProps {
     view: IOrdinoViewPluginDesc;
     type?: EWorkbenchType;
-    onScrollTo?: (ref: React.MutableRefObject<any>) => void;
+    onScrollTo?: (ref: React.MutableRefObject<HTMLDivElement>) => void;
 }
 export declare function Workbench({ view, type, onScrollTo }: IWorkbenchProps): JSX.Element;
 export {};

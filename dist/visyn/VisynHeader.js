@@ -7,14 +7,12 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
     return (React.createElement(React.Fragment, null,
         React.createElement("nav", { className: "navbar navbar-expand-lg navbar-dark bg-dark phovea-navbar" },
             React.createElement("div", { className: "container-fluid" },
-                burgerMenuEnabled ? React.createElement(BurgerButton, { sidebar: React.createElement(BurgerSidebar, null) }) : null,
                 AppLogo,
                 React.createElement("button", { className: "navbar-toggler", type: "button", "data-toggle": "collapse", "data-target": "#headerNavbar" },
                     React.createElement("span", { className: "navbar-toggler-icon" })),
                 React.createElement("div", { className: "ms-2 collapse navbar-collapse", id: "headerNavbar" }, LeftExtensions)),
             React.createElement("div", { className: "container-fluid justify-content-end" },
                 CustomerLogo,
-                VisynLogo,
-                configMenuEnabled ? React.createElement(ConfigMenu, { menuItems: React.createElement(ConfigMenuOptions, null) }) : null))));
+                VisynLogo))));
 }
 //# sourceMappingURL=VisynHeader.js.map

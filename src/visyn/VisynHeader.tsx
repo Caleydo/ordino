@@ -53,7 +53,7 @@ export function VisynHeader({
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark phovea-navbar">
         <div className="container-fluid">
-          {burgerMenuEnabled ? <BurgerButton sidebar={<BurgerSidebar/>}/> : null}
+          {/* {burgerMenuEnabled ? <BurgerButton sidebar={<BurgerSidebar/>}/> : null} */}
           {AppLogo}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerNavbar">
             <span className="navbar-toggler-icon"></span>
@@ -66,7 +66,7 @@ export function VisynHeader({
         <div className="container-fluid justify-content-end">
           {CustomerLogo}
           {VisynLogo}
-          {configMenuEnabled ? <ConfigMenu menuItems={<ConfigMenuOptions/>}/> : null}
+          {/* {configMenuEnabled ? <ConfigMenu menuItems={<ConfigMenuOptions/>}/> : null} */}
         </div>
       </nav>
     </>

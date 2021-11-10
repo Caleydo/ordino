@@ -18,7 +18,7 @@ export interface IViewGroupDesc {
   items: IViewPluginDesc[];
 }
 
-interface IViewChooserProps {
+export interface IViewChooserProps {
   /**
    * Available views for idType
    */
@@ -129,7 +129,7 @@ export function ViewChooser({
        ${classNames}
        ${collapsed ? 'collapsed' : ''}
        ${embedded ? 'embedded' : ''}
-       ${!embedded ? expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left' : ''}`}
+       ${!embedded && !collapsed ? expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left' : ''}`}
       {...collapsedProps}>
       <div className={`view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}`} >
 

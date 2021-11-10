@@ -69,12 +69,9 @@ const ordinoSlice = createSlice({
         },
         setActiveTab(state, action) {
             state.activeTab = action.payload.activeTab;
-        },
-        changeOffsetLeft(state, action) {
-            state.views[action.payload.index].offsetLeft = action.payload.offsetLeft;
         }
     }
 });
-export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus, changeOffsetLeft } = ordinoSlice.actions;
+export const { addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

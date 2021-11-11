@@ -2,10 +2,10 @@ import React, {useMemo} from 'react';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
 import {OrdinoScrollspy, OrdinoScrollspyItem} from '../../components';
 import {EP_ORDINO_STARTMENU_DATASET_SECTION, IStartMenuDatasetSectionDesc} from '../../..';
-import {useAsync} from '../../../hooks';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
 import {IStartMenuTabProps} from '../StartMenu';
+import {useAsync} from 'tdp_core';
 
 export default function DatasetsTab(_props: IStartMenuTabProps) {
   const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
@@ -15,7 +15,7 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
     return Promise.all(sectionEntries.map((section) => section.load()));
   }, []);
 
-  const {status, value: items} = useAsync(loadCards);
+  const {status, value: items} = useAsync(loadCards, []);
 
   return (
     <>

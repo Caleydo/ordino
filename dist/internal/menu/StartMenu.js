@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { GlobalEventHandler, PluginRegistry } from 'phovea_core';
-import { EP_ORDINO_START_MENU_TAB, Ordino, useAsync } from '../..';
+import { EP_ORDINO_START_MENU_TAB, Ordino } from '../..';
 import { HighlightSessionCardContext } from '../OrdinoApp';
 import { EP_ORDINO_START_MENU_TAB_SHORTCUT } from '../../base';
 import { StartMenuLinks } from './StartMenuLinks';
 import { StartMenuTabWrapper } from './StartMenuTabWrapper';
 import { StartMenuTabShortcuts } from './StartMenuTabShortcuts';
+import { useAsync } from 'tdp_core';
 export var EStartMenuSection;
 (function (EStartMenuSection) {
     /**
@@ -54,7 +55,7 @@ export function StartMenuComponent({ header, mode, open }) {
         return Promise.all(tabEntries.map((section) => section.load()));
     }, []);
     // load all registered tabs
-    const { status, value: tabs } = useAsync(loadTabs);
+    const { status, value: tabs } = useAsync(loadTabs, []);
     React.useEffect(() => {
         // legacy event from ATDPApplication
         const listener = () => setActiveTab(tabs === null || tabs === void 0 ? void 0 : tabs[0]);

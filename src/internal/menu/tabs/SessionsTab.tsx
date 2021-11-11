@@ -1,11 +1,11 @@
 import React, {useMemo} from 'react';
 import {PluginRegistry, UniqueIdManager} from 'phovea_core';
-import {useAsync} from '../../../hooks';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
 import {OrdinoScrollspy, OrdinoScrollspyItem} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
 import {IStartMenuTabProps} from '../StartMenu';
+import {useAsync} from 'tdp_core';
 
 function byPriority(a: any, b: any) {
   return (a.priority || 10) - (b.priority || 10);
@@ -19,7 +19,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
     return Promise.all(sectionEntries.map((section) => section.load()));
   }, []);
 
-  const {status, value: items} = useAsync(loadSections);
+  const {status, value: items} = useAsync(loadSections, []);
 
   return (
     <>

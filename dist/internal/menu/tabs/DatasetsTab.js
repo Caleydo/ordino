@@ -2,16 +2,16 @@ import React, { useMemo } from 'react';
 import { PluginRegistry, UniqueIdManager } from 'phovea_core';
 import { OrdinoScrollspy, OrdinoScrollspyItem } from '../../components';
 import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../..';
-import { useAsync } from '../../../hooks';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoFooter } from '../../../components';
+import { useAsync } from 'tdp_core';
 export default function DatasetsTab(_props) {
     const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     const loadCards = useMemo(() => () => {
         const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_DATASET_SECTION).map((d) => d);
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
-    const { status, value: items } = useAsync(loadCards);
+    const { status, value: items } = useAsync(loadCards, []);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(OrdinoScrollspy, { items: items.map((card) => ({ id: `${card.desc.id}_${suffix}`, name: card.desc.name })) }, (handleOnChange) => React.createElement(React.Fragment, null,
             React.createElement("div", { className: "container pb-10 pt-5" },

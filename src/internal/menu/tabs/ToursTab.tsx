@@ -2,9 +2,8 @@ import React, {useMemo} from 'react';
 import {TourCard, OrdinoScrollspy} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
-import {TourUtils, ITDPTourExtensionDesc, ITDPTourExtension} from 'tdp_core';
+import {TourUtils, ITDPTourExtensionDesc, ITDPTourExtension, useAsync} from 'tdp_core';
 import {PluginRegistry, IPlugin, I18nextManager} from 'phovea_core';
-import {useAsync} from '../../../hooks';
 import {IStartMenuTabProps} from '../StartMenu';
 
 
@@ -14,8 +13,7 @@ export default function ToursTab(_props: IStartMenuTabProps) {
     return Promise.all(tourEntries.map((tour) => tour.load()));
   }, []);
 
-  const {status, value: tours} = useAsync(loadTours);
-
+  const {status, value: tours} = useAsync(loadTours, []);
   const beginnerTours = tours?.filter((tour) => tour.desc.level === 'beginner');
   const advancedTours = tours?.filter((tour) => tour.desc.level === 'advanced');
 
@@ -57,7 +55,7 @@ export function ToursSection(props: {level: 'beginner' | 'advanced', tours: (IPl
     }));
   }, [props.tours]);
 
-  const {status, value: images} = useAsync(loadTourImages);
+  const {status, value: images} = useAsync(loadTourImages, []);
 
   return (
     <>

@@ -2,15 +2,14 @@ import React, { useMemo } from 'react';
 import { TourCard, OrdinoScrollspy } from '../../components';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoFooter } from '../../../components';
-import { TourUtils } from 'tdp_core';
+import { TourUtils, useAsync } from 'tdp_core';
 import { PluginRegistry, I18nextManager } from 'phovea_core';
-import { useAsync } from '../../../hooks';
 export default function ToursTab(_props) {
     const loadTours = useMemo(() => () => {
         const tourEntries = PluginRegistry.getInstance().listPlugins(TourUtils.EXTENSION_POINT_TDP_TOUR).map((d) => d);
         return Promise.all(tourEntries.map((tour) => tour.load()));
     }, []);
-    const { status, value: tours } = useAsync(loadTours);
+    const { status, value: tours } = useAsync(loadTours, []);
     const beginnerTours = tours === null || tours === void 0 ? void 0 : tours.filter((tour) => tour.desc.level === 'beginner');
     const advancedTours = tours === null || tours === void 0 ? void 0 : tours.filter((tour) => tour.desc.level === 'advanced');
     return (React.createElement(React.Fragment, null, status === 'success' ?
@@ -39,7 +38,7 @@ export function ToursSection(props) {
             return module.default; // use default export of module -> contains the URL as string from Webpack loader
         }));
     }, [props.tours]);
-    const { status, value: images } = useAsync(loadTourImages);
+    const { status, value: images } = useAsync(loadTourImages, []);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(React.Fragment, null,
             React.createElement("h4", { className: "text-start mt-4 mb-3  d-flex align-items-center text-capitalize" },

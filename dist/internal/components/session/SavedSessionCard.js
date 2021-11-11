@@ -1,7 +1,6 @@
 import { I18nextManager, UserSession, UniqueIdManager } from 'phovea_core';
 import React from 'react';
-import { ProvenanceGraphMenuUtils } from 'tdp_core';
-import { useAsync } from '../../../hooks';
+import { ProvenanceGraphMenuUtils, useAsync } from 'tdp_core';
 import { GraphContext } from '../../OrdinoApp';
 import { ListItemDropdown } from '../../../components';
 import { CommonSessionCard } from './CommonSessionCard';
@@ -18,7 +17,7 @@ export default function SavedSessionCard({ name, faIcon }) {
     const me = UserSession.getInstance().currentUserNameOrAnonymous();
     const savedSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator === me);
     const otherSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator !== me);
-    const { status } = useAsync(listSessions);
+    const { status } = useAsync(listSessions, []);
     const id = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     return (React.createElement(React.Fragment, null,
         React.createElement("p", { className: "lead text-gray-600 mb-4" }, "Load a previous analysis session"),

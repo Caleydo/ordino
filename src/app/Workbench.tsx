@@ -1,8 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useMemo} from 'react';
 import {useDrop} from 'react-dnd';
-import GridLayout from 'react-grid-layout';
-import { Responsive, WidthProvider } from 'react-grid-layout';
 import Split from 'react-split';
 // import Split from 'react-split-grid'
 

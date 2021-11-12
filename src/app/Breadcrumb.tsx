@@ -8,31 +8,27 @@ export function Breadcrumb() {
     const dispatch = useAppDispatch();
 
     return (
-        <>
-            <nav className="ms-1 d-flex" aria-label="breadcrumb">
-                <ol className="breadcrumb m-2">
-                    {ordino.workbenches.map((w) => {
-                        return (
-                            <li className="breadcrumb-item" key={w.id}>
-                                <button
-                                    type="button"
-                                    className={`btn p-0 shadow-none ${ordino.focusViewIndex === w.index
-                                        ? 'btn-icon-primary fw-bold'
-                                        : ordino.focusViewIndex - 1 === w.index
-                                            ? 'btn-icon-success'
-                                            : 'btn-icon-gray'
-                                        }`}
-                                    onClick={() => dispatch(changeFocus({index: w.index}))}
-                                >
-                                    {w.name}
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ol>
-            </nav>
-
-            <AddButton/>
-        </>
+        <nav className="ms-1 d-flex" aria-label="breadcrumb">
+            <ol className="breadcrumb m-2">
+                {ordino.views.map((v: any) => {
+                    return (
+                        <li className="breadcrumb-item" key={v.index}>
+                            <button
+                                type="button"
+                                className={`btn p-0 shadow-none ${ordino.focusViewIndex === v.index
+                                    ? 'btn-icon-primary fw-bold'
+                                    : ordino.focusViewIndex - 1 === v.index
+                                        ? 'btn-icon-success'
+                                        : 'btn-icon-gray'
+                                    }`}
+                                onClick={() => dispatch(changeFocus({index: v.index}))}
+                            >
+                                {v.name}
+                            </button>
+                        </li>
+                    );
+                })}
+            </ol>
+        </nav>
     );
 }

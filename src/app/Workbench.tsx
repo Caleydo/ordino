@@ -5,137 +5,95 @@ import Split from 'react-split';
 // import Split from 'react-split-grid'
 
 import {views} from '../base/constants';
-import {useAppDispatch, useAppSelector} from '../hooks';
-import { changeFocus, addSelection, IWorkbench, replaceWorkbench, IWorkbenchView} from '../store/ordinoSlice';
-import {DetailViewChooser} from './DetailViewChooser';
+import {replaceView, IOrdinoViewPluginDesc, changeFocus, addView} from '../store/ordinoSlice';
+import {EExpandMode, EViewChooserMode, ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
-import {EDragTypes} from './workbench/utils';
-import {WorkbenchSingleView} from './workbench/WorkbenchSingleView';
-import {WorkbenchViews} from './workbench/WorkbenchViews';
+import {IViewPluginDesc} from 'tdp_core';
 
-// tslint:disable-next-line:variable-name
-// const GridLayoutWithWitdth = WidthProvider(GridLayout);
-// function takeSpace(layout: GridLayout.Layout[]) {
-//     const counter = 0;
-//     while(true) {
-//         layout[counter];
-//     }
-// }
-
-function findBiggestViewIndex(layout: GridLayout.Layout[], height: number, width: number) {
-    let counter = 0;
-    for(const j of layout) {
-        if(j.h === height || j.w === width) {
-            return counter;
-        }
-        counter += 1;
-    }
+interface IWorkbenchProps {
+    view: IOrdinoViewPluginDesc;
+    type?: EWorkbenchType;
+    onScrollTo?: (ref: React.MutableRefObject<HTMLDivElement>) => void;
 }
 
-const WORKBENCH_PADDING = 50;
 
-// these props should be made optional
-export function Workbench(props: {
-    workbench: IWorkbench;
-    type: EWorkbenchType;
-    style: React.CSSProperties
-}) {
-    const [embedded, setEmbedded] = React.useState<boolean>(false);
-    const dispatch = useAppDispatch();
-    const ordino = useAppSelector((state) => state.ordino);
+export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IWorkbenchProps) {
+    const dispatch = useDispatch();
+    const ordino: any = useSelector<any>((state) => state.ordino) as any;
+    const ref = React.useRef(null);
 
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: EDragTypes.ADD,
-        drop: () => {console.log('dropped'); return true;},
-        collect: (monitor) => ({
-          isOver: !!monitor.isOver(),
-        }),
-      }), []);
+    React.useEffect(() => {
+        if (ordino.previousFocusIndex === ordino.focusViewIndex || !ref.current || ordino.views.length <= 2) {
+            return;
+        }
 
-    // console.log(workbenchWidth, workbenchHeight, workbenchLayout);
+        if ((type === EWorkbenchType.CONTEXT)) {
+            onScrollTo(ref);
 
-    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && props.workbench.selections?.length && ordino.workbenches.length - 1 === props.workbench.index ? 'open-chooser' : '';
+        } else if (ordino.focusViewIndex === 0) {
+            onScrollTo(null);
+        }
 
-    const setSelection = React.useMemo(() => (s) => {
-        dispatch(addSelection({workbenchIndex: props.workbench.index, viewIndex: 0, newSelection: Object.keys(s.selectedRowIds)}));
+    }, [ref.current, ordino.focusViewIndex]);
+
+    const showNextChooser = view.index === ordino.views.length - 1;
+
+    const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
+        dispatch(
+            addView({
+                id: view.id,
+                name: view.name,
+                index: viewIndex,
+                selection: [],
+                filters: []
+            })
+        );
+        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
     }, []);
 
-    // const children = React.useMemo(() => {
-    //     return props.workbench.views.map((d: IWorkbenchView, i) => {
-    //         return (
-    //             <div key={`randomComp${i}`} className = "shadow p-3 m-3 bg-body workbenchView rounded">
-    //                 <Lineup onSelectionChanged={setSelection} />
-    //             </div>
-    //         );
-    //     });
-    //   }, [props.workbench.views.length]);
 
-    console.log(ordino.workbenches[0].startingView);
+    const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
+        dispatch(
+            replaceView({
+                id: view.id,
+                name: view.name,
+                index: viewIndex,
+                selection: [],
+                filters: []
+            })
+        );
+        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
+    }, []);
 
-
-    return (
-        <div style={props.style} className={`d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}`}>
+    return (<>
+        <div ref={ref} className={`d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type} ${ordino.views.length === 1 ? 'start' : ''}`}>
             <>
-                {/* {props.workbench.index !== 0 ? (
-                    <DetailViewChooser
-                        index={props.workbench.index}
-                        embedded={embedded}
-                        setEmbedded={setEmbedded}
+                {view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
+                    <ViewChooser
                         views={views}
-                        selectedView={props.workbench.views[0] as any}
-                        onSelectedView={(view, viewIndex) => {
-                            dispatch(
-                                replaceWorkbench({
-                                    workbenchIndex: props.workbench.index,
-                                    newWorkbench:
-                                    {
-                                        index: 0,
-                                        views: [
-                                            {
-                                                id: view.id,
-                                                name: view.name,
-                                                index: viewIndex,
-                                                selection: [],
-                                                filters: []
-                                            }
-                                        ],
-                                        id: view.id,
-                                        name: view.name,
-                                        selections: [],
-                                        filters: []
-                                    }
-                                })
-                            );
-                            //this timeout is needed for the animation
-
-                            setTimeout(() => {
-                                dispatch(
-                                    changeFocus({
-                                        index: viewIndex
-                                    })
-                                );
-                            }, 0);
-                        }}
+                        selectedView={view}
+                        onSelectedView={(v) => onReplaceView(v, view.index)}
+                        mode={EViewChooserMode.OVERLAY}
+                        expand={EExpandMode.RIGHT}
                     />
-                ) : null} */}
-                {/* <GridLayout key={workbenchWidth} className="layout" layout={workbenchLayout} rowHeight={1} cols={workbenchWidth} width={workbenchWidth} margin={[20, 0]} containerPadding={[0, 0]} onLayoutChange={onLayoutChange}>
-                    {children}
-                </GridLayout> */}
-                {/*
-                <GridLayout className="layout" layout={layout} cols={4} containerWidth={500}>
-                    {props.workbench.views.map((d: IWorkbenchView, i) => {
-                        console.log(i)
-                        return (
-                            <div key={`randomComp${i}`} data-grid={{x: i, y: i, w: 1, h: 1}} className = "shadow p-3 m-3 bg-body workbenchView rounded">
-                                <Lineup onSelectionChanged={setSelection} />
-                            </div>
-                        );
-                    })}
-                </GridLayout> */}
-                <WorkbenchViews currentView={props.workbench.startingView}/>
+                ) : null}
+
+                <div className={`viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0 ${type !== EWorkbenchType.FOCUS ? 'overflow-hidden' : 'overflow-auto'}`}>
+                    <Lineup onSelectionChanged={() => null} />
+                </div>
+
             </>
         </div>
+        {showNextChooser &&
+            <ViewChooser
+                views={views}
+                onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
+                mode={EViewChooserMode.OVERLAY}
+                expand={EExpandMode.LEFT}
+                showBurgerMenu={false}
+            />}
+    </>
     );
 }
 

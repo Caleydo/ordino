@@ -11,60 +11,37 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .ordino-filmstrip {
-  width: 100vw;
-  flex: 1 1 auto;
-  min-height: 0px;
-  overflow-x: hidden;
-  position: relative;
-  display: flex;
-  overflow: hidden;
-  scroll-snap-type: x mandatory;
-}
+  .ordino-workbench {
+    width: $workbench-width;
+    transition: width 0.5s ease;
+    border: 2px solid $gray-400;
+    overflow: hidden;
 
-.ordino-workbench {
-  width: 100vw;
-  flex: 0 0 auto;
-  background: white;
-  overflow: hidden;
-  max-height: 100%;
-  min-height: 100%;
-  transition: margin-left 2s ease 0s, width 2s ease 0s; // TODO: faster transition for chooser
-  border: 2px solid $gray-400;
-
-  .viewContent {
-    min-height: 0px;
-    min-width: 0px;
-    overflow: auto;
-  }
-
-  &:nth-child(1).t-focus {
-    width: 100vw;
-    &.open-chooser {
-      width: calc(100vw - #{$chooser-width} - #{$chooser-margin});
+    &.start.t-focus {
+      width: $workbench-width;
     }
-  }
 
-  &.t-context {
-    border-color: $success;
-    width: 30vw;
-  }
-
-  &.t-focus {
-    width: $workbench-focus-width;
-    border-color: $primary;
-    &.open-chooser {
-      width: calc(
-        #{$workbench-focus-width} - #{$chooser-width} - #{$chooser-margin}
-      );
+    &:not(:only-child) {
+      border-right: none;
     }
-  }
 
-  &.empty {
-    width: calc(#{$chooser-width} + #{$chooser-margin});
-    border-color: rgba(33, 37, 41, 1) !important;
+    &.t-context {
+      border-color: $success;
+      width: $workbench-hide-width;
+    }
+
+    &.t-focus {
+      width: $workbench-focus-width;
+      border-color: $primary;
+    }
+
+    &.t-next,
+    &.t-previous {
+      width: $workbench-hide-width;
+    }
   }
 }

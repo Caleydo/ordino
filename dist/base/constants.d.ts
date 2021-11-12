@@ -1,2 +1,10 @@
-import { IOrdinoViewPluginDesc } from '../store/ordinoSlice';
-export declare const views: IOrdinoViewPluginDesc[];
+export declare const views: {
+    index: number;
+    id: string;
+    name: string;
+    selection: string;
+    group: {
+        name: string;
+        order: number;
+    };
+}[];

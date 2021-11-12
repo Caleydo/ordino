@@ -1,58 +1,53 @@
 import React from 'react';
-import { useDrop } from 'react-dnd';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { addSelection } from '../store/ordinoSlice';
+// import Split from 'react-split-grid'
+import { views } from '../base/constants';
+import { replaceView, changeFocus, addView } from '../store/ordinoSlice';
+import { EExpandMode, EViewChooserMode, ViewChooser } from './ViewChooser';
 import { EWorkbenchType } from './Filmstrip';
-import { EDragTypes } from './workbench/utils';
-import { WorkbenchViews } from './workbench/WorkbenchViews';
-// tslint:disable-next-line:variable-name
-// const GridLayoutWithWitdth = WidthProvider(GridLayout);
-// function takeSpace(layout: GridLayout.Layout[]) {
-//     const counter = 0;
-//     while(true) {
-//         layout[counter];
-//     }
-// }
-function findBiggestViewIndex(layout, height, width) {
-    let counter = 0;
-    for (const j of layout) {
-        if (j.h === height || j.w === width) {
-            return counter;
+import { Lineup } from './lite';
+export function Workbench({ view, type = EWorkbenchType.PREVIOUS, onScrollTo }) {
+    const dispatch = useDispatch();
+    const ordino = useSelector((state) => state.ordino);
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+        if (ordino.previousFocusIndex === ordino.focusViewIndex || !ref.current || ordino.views.length <= 2) {
+            return;
         }
-        counter += 1;
-    }
-}
-const WORKBENCH_PADDING = 50;
-// these props should be made optional
-export function Workbench(props) {
-    var _a;
-    const [embedded, setEmbedded] = React.useState(false);
-    const dispatch = useAppDispatch();
-    const ordino = useAppSelector((state) => state.ordino);
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: EDragTypes.ADD,
-        drop: () => { console.log('dropped'); return true; },
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    }), []);
-    // console.log(workbenchWidth, workbenchHeight, workbenchLayout);
-    const chooserIsOpenClass = props.type === EWorkbenchType.FOCUS && ((_a = props.workbench.selections) === null || _a === void 0 ? void 0 : _a.length) && ordino.workbenches.length - 1 === props.workbench.index ? 'open-chooser' : '';
-    const setSelection = React.useMemo(() => (s) => {
-        dispatch(addSelection({ workbenchIndex: props.workbench.index, viewIndex: 0, newSelection: Object.keys(s.selectedRowIds) }));
+        if ((type === EWorkbenchType.CONTEXT)) {
+            onScrollTo(ref);
+        }
+        else if (ordino.focusViewIndex === 0) {
+            onScrollTo(null);
+        }
+    }, [ref.current, ordino.focusViewIndex]);
+    const showNextChooser = view.index === ordino.views.length - 1;
+    const onAddView = React.useCallback((view, viewIndex) => {
+        dispatch(addView({
+            id: view.id,
+            name: view.name,
+            index: viewIndex,
+            selection: [],
+            filters: []
+        }));
+        setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
     }, []);
-    // const children = React.useMemo(() => {
-    //     return props.workbench.views.map((d: IWorkbenchView, i) => {
-    //         return (
-    //             <div key={`randomComp${i}`} className = "shadow p-3 m-3 bg-body workbenchView rounded">
-    //                 <Lineup onSelectionChanged={setSelection} />
-    //             </div>
-    //         );
-    //     });
-    //   }, [props.workbench.views.length]);
-    console.log(ordino.workbenches[0].startingView);
-    return (React.createElement("div", { style: props.style, className: `d-flex align-items-stretch ordino-workbench ${props.type} ${chooserIsOpenClass}` },
-        React.createElement(React.Fragment, null,
-            React.createElement(WorkbenchViews, { currentView: props.workbench.startingView }))));
+    const onReplaceView = React.useCallback((view, viewIndex) => {
+        dispatch(replaceView({
+            id: view.id,
+            name: view.name,
+            index: viewIndex,
+            selection: [],
+            filters: []
+        }));
+        setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
+    }, []);
+    return (React.createElement(React.Fragment, null,
+        React.createElement("div", { ref: ref, className: `d-flex align-items-stretch flex-shrink-0 ordino-workbench ${type} ${ordino.views.length === 1 ? 'start' : ''}` },
+            React.createElement(React.Fragment, null,
+                view.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: view, onSelectedView: (v) => onReplaceView(v, view.index), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.RIGHT })) : null,
+                React.createElement("div", { className: `viewContent flex-shrink-2 w-100 py-7 mh-0 mw-0 ${type !== EWorkbenchType.FOCUS ? 'overflow-hidden' : 'overflow-auto'}` },
+                    React.createElement(Lineup, { onSelectionChanged: () => null })))),
+        showNextChooser &&
+            React.createElement(ViewChooser, { views: views, onSelectedView: (view) => onAddView(view, ordino.focusViewIndex + 1), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.LEFT, showBurgerMenu: false })));
 }
 //# sourceMappingURL=Workbench.js.map

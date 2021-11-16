@@ -7,7 +7,7 @@
     border: 1px solid $gray-200;
     width: $chooser-width;
     position: absolute;
-    z-index: 1000;
+    z-index: 90; // above content -below menu
     height: 100%;
     transition-property: width, margin, box-shadow;
     transition-duration: 0.2s;

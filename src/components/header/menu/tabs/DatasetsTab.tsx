@@ -1,12 +1,8 @@
 import React, {useMemo} from 'react';
-import {PluginRegistry, UniqueIdManager} from 'phovea_core';
-import {EP_ORDINO_STARTMENU_DATASET_SECTION, IStartMenuDatasetSectionDesc} from '../../../..';
-import {useAsync} from '../../../../hooks';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter, OrdinoScrollspy, OrdinoScrollspyItem} from '../../..';
 import DataLandscapeCard from 'reprovisyn/dist/views/DataLandscapeCard';
 import EntitySelectionCard from 'reprovisyn/dist/views/EntitySelectionCard';
-import {handleInputChange} from 'react-select/src/utils';
 
 export interface IDatasetsTabProps {
   extensions?: {

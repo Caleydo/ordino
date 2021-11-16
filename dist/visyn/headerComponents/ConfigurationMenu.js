@@ -1,5 +1,5 @@
 import React from 'react';
-export function ConfigurationMenu({ menuItems = null }) {
+export function SettingsMenu({ menuItems = null }) {
     return (React.createElement(React.Fragment, null,
         React.createElement("ul", { className: "ms-2 navbar-right navbar-nav" },
             React.createElement("li", { className: "nav-item dropdown", id: "user_menu" },

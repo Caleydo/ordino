@@ -1,23 +1,6 @@
 import * as React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {addUser} from './usersSlice';
-import {DatavisynLogo} from './headerComponents/DatavisynLogo';
-import {CustomerDefaultLogo} from './headerComponents/CustomerDefaultLogo';
-import {AppDefaultLogo} from './headerComponents/AppDefaultLogo';
-
-import {BurgerMenu, IBurgerMenuProps} from './headerComponents/BurgerMenu';
-import {ConfigurationMenu, IConfigurationMenuProps} from './headerComponents/ConfigurationMenu';
 import {ComponentType} from 'react';
-import {IBurgerButtonProps} from '../app/components';
 import {IVisynHeaderComponents, visynHeaderComponents} from './headerConfig';
-
-// export interface ICommonVisynHeaderPluginProps {
-//   //
-// }
-
-// export type IVisynHeaderPlugin<T extends {} = {}> = (
-//   props: ICommonVisynHeaderPluginProps & T
-// ) => React.ReactElement | null;
 
 export interface IVisynHeaderProps {
   ConfigMenuOptions?: ComponentType;
@@ -32,29 +15,27 @@ export function VisynHeader({
   BurgerSidebar = null,
   extensions = {},
   burgerMenuEnabled = true,
-  configMenuEnabled = true
 }: IVisynHeaderProps) {
 
 
-  const {AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, ConfigMenu} = {...visynHeaderComponents, ...extensions};
+  const {AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu} = {...visynHeaderComponents, ...extensions};
 
-  console.log(AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, ConfigMenu);
+  console.log(AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu);
 
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark phovea-navbar">
         <div className="container-fluid">
-          {/* {burgerMenuEnabled ? <BurgerButton sidebar={<BurgerSidebar/>}/> : null} */}
           {<AppLogo />}
           <div className="ms-2 collapse navbar-collapse" id="headerNavbar">
-            {/* {LeftExtensions} */}
+            {LeftExtensions ? <LeftExtensions /> : null}
           </div>
         </div>
 
         <div className="container-fluid justify-content-end">
           <CustomerLogo />
           <VisynLogo />
-          {/* {configMenuEnabled ? <ConfigMenu menuItems={<ConfigMenuOptions/>}/> : null} */}
+          {SettingsMenu ? <SettingsMenu menuItems={ConfigMenuOptions ? <ConfigMenuOptions /> : null} /> : null}
         </div>
       </nav>
     </>

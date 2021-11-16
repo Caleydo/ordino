@@ -1,5 +1,4 @@
-import { DatavisynLogo, BurgerMenu, CustomerDefaultLogo } from '.';
-import { AppDefaultLogo } from './headerComponents';
+import { DatavisynLogo, BurgerMenu, CustomerDefaultLogo, SettingsMenu, AppDefaultLogo } from '.';
 export const visynHeaderComponents = {
     VisynLogo: DatavisynLogo,
     CustomerLogo: CustomerDefaultLogo,
@@ -7,6 +6,6 @@ export const visynHeaderComponents = {
     AppLogo: AppDefaultLogo,
     LeftExtensions: null,
     RightExtensions: null,
-    ConfigMenu: null
+    SettingsMenu: SettingsMenu
 };
 //# sourceMappingURL=headerConfig.js.map

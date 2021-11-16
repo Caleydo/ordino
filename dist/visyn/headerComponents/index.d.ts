@@ -1,5 +1,5 @@
 export * from './AppDefaultLogo';
 export * from './BurgerMenu';
-export * from './ConfigurationMenu';
+export * from './SettingsMenu';
 export * from './CustomerDefaultLogo';
 export * from './DatavisynLogo';

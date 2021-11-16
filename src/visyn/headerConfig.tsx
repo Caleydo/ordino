@@ -1,24 +1,23 @@
 import React, {ComponentType} from 'react';
-import {IConfigurationMenuProps, IBurgerMenuProps, DatavisynLogo, BurgerMenu, CustomerDefaultLogo} from '.';
-import {AppDefaultLogo} from './headerComponents';
+import {ISettingsMenuProps, IBurgerMenuProps, DatavisynLogo, BurgerMenu, CustomerDefaultLogo, SettingsMenu, AppDefaultLogo} from '.';
 export interface IVisynHeaderComponents {
+    BurgerButton?: ComponentType<IBurgerMenuProps>;
     AppLogo?: ComponentType;
     VisynLogo?: ComponentType;
     LeftExtensions?: ComponentType;
     RightExtensions?: ComponentType;
     CustomerLogo?: ComponentType;
-    ConfigMenu?: ComponentType<IConfigurationMenuProps>;
-    BurgerButton?: ComponentType<IBurgerMenuProps>;
+    SettingsMenu?: ComponentType<ISettingsMenuProps>;
 }
 
 export const visynHeaderComponents: Partial<IVisynHeaderComponents> = {
     VisynLogo: DatavisynLogo,
     CustomerLogo: CustomerDefaultLogo,
     BurgerButton: BurgerMenu,
-    AppLogo:AppDefaultLogo,
+    AppLogo: AppDefaultLogo,
     LeftExtensions: null,
     RightExtensions: null,
-    ConfigMenu: null
+    SettingsMenu: SettingsMenu
 };
 
 export type visynHeaderExtensions = Partial<IVisynHeaderComponents>;

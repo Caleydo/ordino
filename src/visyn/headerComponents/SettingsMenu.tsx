@@ -1,12 +1,12 @@
 import React, {ComponentType} from 'react';
 
-export interface IConfigurationMenuProps {
+export interface ISettingsMenuProps {
     menuItems?: React.ReactElement | null;
 }
 
-export function ConfigurationMenu({
+export function SettingsMenu({
     menuItems = null
-}: IConfigurationMenuProps) {
+}: ISettingsMenuProps) {
     return (
         <>
             <ul className="ms-2 navbar-right navbar-nav">
@@ -22,7 +22,13 @@ export function ConfigurationMenu({
                     >
                         <i className="fas fa-ellipsis-v text-light"></i>
                     </a>
-                    {menuItems}
+                    <div
+                        className="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="userMenuDropdown"
+                    >
+                        <button className="dropdown-item">Login</button>
+                        <button className="dropdown-item">Logout</button>
+                    </div>
                 </li>
             </ul>
         </>

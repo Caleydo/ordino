@@ -7,4 +7,4 @@ export interface IVisynHeaderProps {
     burgerMenuEnabled?: boolean;
     configMenuEnabled?: boolean;
 }
-export declare function VisynHeader({ ConfigMenuOptions, BurgerSidebar, extensions, burgerMenuEnabled, configMenuEnabled }: IVisynHeaderProps): JSX.Element;
+export declare function VisynHeader({ ConfigMenuOptions, BurgerSidebar, extensions, burgerMenuEnabled, }: IVisynHeaderProps): JSX.Element;

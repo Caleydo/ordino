@@ -6,5 +6,5 @@ const allReducers = combineReducers({
     ordino: ordinoReducer,
     ...allVisynReducers()
 });
-export default createStore(allReducers);
+export const store = createStore(allReducers);
 //# sourceMappingURL=store.js.map

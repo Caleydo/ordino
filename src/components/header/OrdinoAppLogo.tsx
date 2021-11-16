@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-export function OrdinoLogo2() {
+export function OrdinoAppLogo() {
   return (
-    <a rel="noreferrer" target="_blank" className="text-decoration-none" href = "https://ordino-daily.caleydoapp.org/#/">
+    <a rel="noreferrer" target="_blank" className="text-decoration-none navbar-brand" href="https://ordino-daily.caleydoapp.org/#/">
       <div className="align-items-center h-100 d-flex">
         <svg
           version="1.1"

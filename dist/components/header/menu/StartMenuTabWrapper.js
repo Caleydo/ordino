@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ETabStates } from '../../../../dist';
-import { setActiveTab } from '../../../store';
+import { ETabStates, setActiveTab } from '../../../store';
 import DatasetsTab from './tabs/DatasetsTab';
 export function StartMenuTabWrapper({ tabs = [{ id: ETabStates.DATASETS, tab: React.createElement(DatasetsTab, null) }], mode = 'overlay' }) {
     const ordinoState = useSelector((state) => state.ordino);

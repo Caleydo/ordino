@@ -32,6 +32,7 @@ export default function DatasetsTab({
                   <div className="col-11 position-relative">
                     <p className="lead text-gray-600 mb-0">Start a new analysis session by loading a dataset</p>
                       {preExtensions}
+                      
                         <OrdinoScrollspyItem className="pt-3 pb-5" id={`dataLandScapeCard`} key={'dataLandscapeCard'} index={0} handleOnChange={handleOnChange}>
                           {dataLandscape}
                         </OrdinoScrollspyItem>

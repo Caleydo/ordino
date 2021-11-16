@@ -1,4 +1,4 @@
-import { ETabStates } from '../../../../dist';
+import { ETabStates } from '../../../store';
 export interface ITab {
     id: ETabStates;
     tab: JSX.Element;

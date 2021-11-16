@@ -1,4 +1,4 @@
-import { combineReducers, createStore } from '@reduxjs/toolkit';
+import {combineReducers, createStore} from '@reduxjs/toolkit';
 import {ordinoReducer} from './ordinoSlice';
 import {usersReducer} from '../visyn/usersSlice';
 import {allVisynReducers} from '../visyn/visynReducers';
@@ -9,4 +9,4 @@ const allReducers = combineReducers({
   ...allVisynReducers()
 });
 
-export default createStore(allReducers);
+export const store = createStore(allReducers);

@@ -17,14 +17,9 @@ export function WorkbenchRightIcon({
     const [{ isOver }, drop] = useDrop(() => ({
         accept: [EDragTypes.ADD, EDragTypes.MOVE],
         drop: (d) => {
-            console.log(d);
             dispatch(addView({
                 workbenchIndex: ordino.focusViewIndex,
-                direction: EViewDirections.E,
-                parentId: view.id,
                 view: {
-                    directionFromParent: EViewDirections.E,
-                    children: [],
                     id: (Math.random() + 1).toString(36).substring(7),
                     index: 0,
                     name: 'Start view',

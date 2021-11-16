@@ -21,6 +21,10 @@ export function WorkbenchSingleView({
         }),
     }), []);
 
+    if(!view) {
+        return <div></div>;
+    }
+
     return (
         <div ref={drop} className = "position-relative shadow bg-body workbenchView rounded">
             <MoveButton view={view}/>

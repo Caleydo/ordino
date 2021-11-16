@@ -1,5 +1,4 @@
-import { IWorkbenchView } from '../../store';
 export interface IWorkbenchViewsProps {
-    currentView: IWorkbenchView;
+    index: number;
 }
-export declare function WorkbenchViews({ currentView }: IWorkbenchViewsProps): JSX.Element;
+export declare function WorkbenchViews({ index }: IWorkbenchViewsProps): JSX.Element;

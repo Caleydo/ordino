@@ -7,15 +7,23 @@
     margin: 1.5rem;
     border: 1px solid lightgray;
   }
+
+  .workbenchWrapper {
+    flex: 1 1 auto;
+  }
   
   .Pane {
     display: flex;
-    min-height: 100px;
-    min-width: 100px;
+    min-height: 300px;
+    min-width: 300px;
+  }
+
+  .Pane2 {
+    flex: 0 1 auto !important;
   }
 
   .SplitPane {
-    width: inherit !important;
+    width: 100% !important;
   }
 
   .gutter {
@@ -26,11 +34,6 @@
 
   .workbenchOverlayButton {
     opacity: 1;
-  }
-  
-  .gutter.gutter-horizontal {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
-    cursor: col-resize;
   }
 
   .Resizer {

@@ -11,6 +11,9 @@ export function WorkbenchSingleView({ view }) {
             isOver: !!monitor.isOver(),
         }),
     }), []);
+    if (!view) {
+        return React.createElement("div", null);
+    }
     return (React.createElement("div", { ref: drop, className: "position-relative shadow bg-body workbenchView rounded" },
         React.createElement(MoveButton, { view: view }),
         React.createElement(Lineup, null),

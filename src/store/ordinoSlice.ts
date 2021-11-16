@@ -16,8 +16,7 @@ export enum EViewDirections {
 }
 
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
-  directionFromParent: EViewDirections;
-  children: IWorkbenchView[];
+
 }
 
 export interface IOrdinoAppState {
@@ -38,7 +37,7 @@ export interface IWorkbench {
   /**
    * List of open views.
    */
-  startingView: IWorkbenchView;
+  views: IWorkbenchView[];
 
   name: string;
 
@@ -94,10 +93,8 @@ const initialState: IOrdinoAppState = {
   workbenches:
   [{
     index: 0,
-    startingView:
-    {
-      directionFromParent: EViewDirections.E,
-      children: [],
+    views:
+    [{
       id: 'view_0',
       index: 0,
       name: 'Start view',
@@ -107,7 +104,7 @@ const initialState: IOrdinoAppState = {
         name: 'General',
         order: 10
       }
-    },
+    }],
     name: 'Start View',
     id: 'startView',
     selections: [],
@@ -117,24 +114,6 @@ const initialState: IOrdinoAppState = {
   activeTab: ETabStates.NONE
 };
 
-function getNode(id: string, currNode: IWorkbenchView) {
-  if(currNode.id === id) {
-    return currNode;
-  }
-
-  let result: IWorkbenchView = null;
-
-  if(currNode.children.length > 0) {
-    for(let i = 0; result == null && i < currNode.children.length; i++) {
-      result = getNode(id, currNode.children[i]);
-    }
-
-    return result;
-  } else {
-    return null;
-  }
-}
-
 const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
@@ -142,10 +121,8 @@ const ordinoSlice = createSlice({
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
-    addView(state, action: PayloadAction<{workbenchIndex: number, parentId: string, direction: EViewDirections, view: IWorkbenchView}>) {
-      const parentView = getNode(action.payload.parentId, state.workbenches[action.payload.workbenchIndex].startingView);
-
-      parentView.children.push(action.payload.view);
+    addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
+      state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
       state.workbenches.slice(action.payload.index);

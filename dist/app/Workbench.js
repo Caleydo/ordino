@@ -1,7 +1,7 @@
 import React from 'react';
 // import Split from 'react-split-grid'
 import { views } from '../base/constants';
-import { changeFocus, addWorkbench, EViewDirections, replaceWorkbench } from '../store/ordinoSlice';
+import { changeFocus, addWorkbench, replaceWorkbench } from '../store/ordinoSlice';
 import { EExpandMode, EViewChooserMode, ViewChooser } from './ViewChooser';
 import { EWorkbenchType } from './Filmstrip';
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -24,10 +24,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
     const showNextChooser = workbench.index === ordino.workbenches.length - 1;
     const onAddView = React.useCallback((view, viewIndex) => {
         dispatch(addWorkbench({
-            startingView: {
-                directionFromParent: EViewDirections.E,
-                children: [],
-            },
+            views: [{}],
             id: view.id,
             name: view.name,
             index: viewIndex,
@@ -38,10 +35,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
     }, []);
     const onReplaceView = React.useCallback((view, viewIndex) => {
         dispatch(replaceWorkbench({ workbenchIndex: viewIndex, newWorkbench: {
-                startingView: {
-                    directionFromParent: EViewDirections.E,
-                    children: [],
-                },
+                views: [{}],
                 id: view.id,
                 name: view.name,
                 index: viewIndex,
@@ -54,7 +48,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
         React.createElement("div", { ref: ref, className: `d-flex ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}` },
             React.createElement(React.Fragment, null,
                 workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: null, onSelectedView: (v) => onReplaceView(v, workbench.index), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.RIGHT })) : null,
-                React.createElement(WorkbenchViews, { currentView: workbench.startingView }))),
+                React.createElement(WorkbenchViews, { index: workbench.index }))),
         showNextChooser &&
             React.createElement(ViewChooser, { views: views, onSelectedView: (view) => onAddView(view, ordino.focusViewIndex + 1), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.LEFT, showBurgerMenu: false })));
 }

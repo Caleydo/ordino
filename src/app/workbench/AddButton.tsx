@@ -1,7 +1,7 @@
 import React from 'react';
 import { EDragTypes } from './utils';
 import { useDrag } from 'react-dnd';
-import {addView, useAppDispatch, useAppSelector} from '../..';
+import {addView, EViewDirections, useAppDispatch, useAppSelector} from '../..';
 
 export function AddButton() {
     const dispatch = useAppDispatch();
@@ -14,6 +14,21 @@ export function AddButton() {
     }));
 
     return (
-        <button ref={drag} type="button" className="btn btn-primary">Add View</button>
+        <button onClick={() => {
+            dispatch(addView({
+                workbenchIndex: ordino.focusViewIndex,
+                view: {
+                    id: (Math.random() + 1).toString(36).substring(7),
+                    index: 0,
+                    name: 'Start view',
+                    selection: 'multiple',
+                    selections: [],
+                    group: {
+                        name: 'General',
+                        order: 10
+                    }
+                }
+            }));
+        }}type="button" className="btn btn-primary">Add View</button>
     );
 }

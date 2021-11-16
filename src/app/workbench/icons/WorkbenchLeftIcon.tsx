@@ -18,11 +18,7 @@ export function WorkbenchLeftIcon({
         drop: () => {
             dispatch(addView({
                 workbenchIndex: ordino.focusViewIndex,
-                direction: EViewDirections.W,
-                parentId: view.id,
                 view: {
-                    directionFromParent: EViewDirections.W,
-                    children: [],
                     id: (Math.random() + 1).toString(36).substring(7),
                     index: 0,
                     name: 'Start view',

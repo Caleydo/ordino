@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import { addView, EViewDirections, useAppDispatch, useAppSelector } from '../../..';
+import { addView, useAppDispatch, useAppSelector } from '../../..';
 import { EDragTypes } from '../utils';
 export function WorkbenchTopIcon({ view }) {
     const dispatch = useAppDispatch();
@@ -10,11 +10,7 @@ export function WorkbenchTopIcon({ view }) {
         drop: () => {
             dispatch(addView({
                 workbenchIndex: ordino.focusViewIndex,
-                direction: EViewDirections.N,
-                parentId: view.id,
                 view: {
-                    directionFromParent: EViewDirections.N,
-                    children: [],
                     id: (Math.random() + 1).toString(36).substring(7),
                     index: 0,
                     name: 'Start view',

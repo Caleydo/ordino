@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import SplitPane, { Pane} from 'react-split-pane';
+import SplitPane from 'react-split-pane';
 import {addView, useAppDispatch, useAppSelector} from '../..';
 import {EViewDirections, IWorkbenchView} from '../../store';
 
@@ -10,51 +10,56 @@ import {EDragTypes} from './utils';
 import {WorkbenchSingleView} from './WorkbenchSingleView';
 
 export interface IWorkbenchViewsProps {
-    currentView: IWorkbenchView;
+    index: number;
 }
 
 export function WorkbenchViews({
-    currentView
+    index
 }: IWorkbenchViewsProps) {
-
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
 
-    console.log(currentView);
-    console.log(ordino.workbenches[0]);
+    const views = ordino.workbenches[index].views;
 
-    const northViews = currentView.children.filter((c) => c.directionFromParent === EViewDirections.N);
-    const southViews = currentView.children.filter((c) => c.directionFromParent === EViewDirections.S);
-    const eastViews = currentView.children.filter((c) => c.directionFromParent === EViewDirections.E);
-    const westViews = currentView.children.filter((c) => c.directionFromParent === EViewDirections.W);
+    let wb = null;
 
-    const horizontalPane = (
-            <SplitPane split="horizontal" className = "" size={'50%'}>
-
-                {northViews.map((c) => <WorkbenchViews key={`view ${c.id}`} currentView={c}/>)}
-
-                <WorkbenchSingleView view={currentView}/>
-
-                {southViews.map((c) => <WorkbenchViews key={`view ${c.id}`} currentView={c}/>)}
-
+    if(views.length === 1) {
+        wb = (<WorkbenchSingleView view={views[0]}/>);
+    } else if(views.length === 2) {
+        wb = (
+            <SplitPane split="vertical" primary="second" className = "" minSize={300} size={'50%'}>
+                <WorkbenchSingleView view={views[0]}/>
+                <WorkbenchSingleView view={views[1]}/>
             </SplitPane>
-    );
-
-    const verticalPane = (
-            <SplitPane split="vertical" className = "" size={'50%'}>
-
-                {westViews.map((c) => <WorkbenchViews key={`view ${c.id}`} currentView={c}/>)}
-
-                {northViews.length + southViews.length > 0 ? horizontalPane : <WorkbenchSingleView view={currentView}/>}
-
-                {eastViews.map((c) => <WorkbenchViews key={`view ${c.id}`} currentView={c}/>)}
-
+        );
+    } else if(views.length === 3) {
+        wb = (
+            <SplitPane split="vertical" primary="second" className = "" minSize={300} size={'50%'}>
+                <WorkbenchSingleView view={views[0]}/>
+                <SplitPane split="horizontal" primary="second" className = "" minSize={300} size={'50%'}>
+                    <WorkbenchSingleView view={views[1]}/>
+                    <WorkbenchSingleView view={views[2]}/>
+                </SplitPane>
             </SplitPane>
-    );
+        );
+    } else {
+        wb = (
+            <SplitPane split="vertical" primary="second" className = "" minSize={300} size={'50%'}>
+                <SplitPane split="horizontal" primary="second" className = "" minSize={300} size={'50%'}>
+                    <WorkbenchSingleView view={views[0]}/>
+                    <WorkbenchSingleView view={views[1]}/>
+                </SplitPane>
+                <SplitPane split="horizontal" primary="second" className = "" minSize={300} size={'50%'}>
+                    <WorkbenchSingleView view={views[2]}/>
+                    <WorkbenchSingleView view={views[3]}/>
+                </SplitPane>
+            </SplitPane>
+        );
+    }
 
     return (
-        <>
-            {currentView.children.length === 0 ? <WorkbenchSingleView view={currentView}/> : eastViews.length + westViews.length > 0 ? verticalPane : horizontalPane}
-        </>
-    );
+        <div className="position-relative workbenchWrapper">
+            {wb}
+        </div>
+    )
 }

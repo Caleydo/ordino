@@ -43,10 +43,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             addWorkbench({
-                startingView: {
-                    directionFromParent: EViewDirections.E,
-                    children: [],
-                },
+                views: [{}],
                 id: view.id,
                 name: view.name,
                 index: viewIndex,
@@ -61,10 +58,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             replaceWorkbench({workbenchIndex: viewIndex, newWorkbench: {
-                startingView: {
-                    directionFromParent: EViewDirections.E,
-                    children: [],
-                },
+                views: [{}],
                 id: view.id,
                 name: view.name,
                 index: viewIndex,
@@ -88,7 +82,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
                     />
                 ) : null}
 
-                <WorkbenchViews currentView={workbench.startingView}/>
+                <WorkbenchViews index={workbench.index}/>
             </>
         </div>
         {showNextChooser &&

@@ -5,5 +5,5 @@ $chooser-width: 220px !default;
 $chooser-collapsed-width: 50px !default;
 
 $workbench-width: calc(100vw - #{$chooser-collapsed-width}) !default;
-$workbench-focus-width: calc(80vw - #{$chooser-collapsed-width} ) !default;
-$workbench-hide-width: 20vw !default;
+$workbench-focus-width: calc(90vw - #{$chooser-collapsed-width} ) !default;
+$workbench-hide-width: 10vw !default;

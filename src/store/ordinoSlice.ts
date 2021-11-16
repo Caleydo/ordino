@@ -142,8 +142,8 @@ const ordinoSlice = createSlice({
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
-    addView(state, action: PayloadAction<{workbenchId: number, parentId: string, direction: EViewDirections, view: IWorkbenchView}>) {
-      const parentView = getNode(action.payload.parentId, state.workbenches[action.payload.workbenchId].startingView);
+    addView(state, action: PayloadAction<{workbenchIndex: number, parentId: string, direction: EViewDirections, view: IWorkbenchView}>) {
+      const parentView = getNode(action.payload.parentId, state.workbenches[action.payload.workbenchIndex].startingView);
 
       parentView.children.push(action.payload.view);
     },

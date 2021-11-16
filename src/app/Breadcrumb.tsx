@@ -10,7 +10,7 @@ export function Breadcrumb() {
     return (
         <nav className="ms-1 d-flex" aria-label="breadcrumb">
             <ol className="breadcrumb m-2">
-                {ordino.views.map((v: any) => {
+                {ordino.workbenches.map((v: any) => {
                     return (
                         <li className="breadcrumb-item" key={v.index}>
                             <button
@@ -28,6 +28,10 @@ export function Breadcrumb() {
                         </li>
                     );
                 })}
+
+                <li className="breadcrumb-item" >
+                    <AddButton/>
+                </li>
             </ol>
         </nav>
     );

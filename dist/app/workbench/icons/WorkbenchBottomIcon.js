@@ -6,11 +6,10 @@ export function WorkbenchBottomIcon({ view }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [{ isOver }, drop] = useDrop(() => ({
-        accept: EDragTypes.ADD,
+        accept: [EDragTypes.ADD, EDragTypes.MOVE],
         drop: () => {
-            console.log('droppin in bottom');
             dispatch(addView({
-                workbenchId: ordino.focusViewIndex,
+                workbenchIndex: ordino.focusViewIndex,
                 direction: EViewDirections.S,
                 parentId: view.id,
                 view: {

@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import * as React from 'react';
 import { Workbench } from './Workbench';
 import { useAppSelector } from '../hooks';
@@ -10,26 +11,14 @@ export var EWorkbenchType;
 })(EWorkbenchType || (EWorkbenchType = {}));
 export function Filmstrip() {
     const ordino = useAppSelector((state) => state.ordino);
-    const isLastFocused = ordino.focusViewIndex === ordino.workbenches.length - 1;
-    return (React.createElement("div", { className: "ordino-filmstrip" }, ordino.workbenches.map((w) => {
-        let type = EWorkbenchType.PREVIOUS;
-        let styles = {};
-        if (ordino.focusViewIndex === w.index + 1) {
-            type = EWorkbenchType.CONTEXT;
-        }
-        else if (ordino.focusViewIndex === w.index) {
-            type = EWorkbenchType.FOCUS;
-            if (ordino.focusViewIndex === 0) {
-                styles = { marginLeft: `calc(${ordino.focusViewIndex * -1}*100vw)` };
-            }
-        }
-        else if (w.index > ordino.focusViewIndex) {
-            type = EWorkbenchType.NEXT;
-        }
-        if (w.index === 0 && ordino.focusViewIndex !== w.index) {
-            styles = w.index === 0 ? { marginLeft: `calc(${ordino.focusViewIndex * -1} * 100vw + 100vw)` } : {};
-        }
-        return (React.createElement(Workbench, { type: type, style: styles, workbench: w, key: `wb${w.index}` }));
+    const ref = React.useRef(null);
+    const onScrollTo = React.useCallback(debounce((contextRef) => {
+        var _a;
+        ref.current.scrollTo({ left: ((_a = contextRef === null || contextRef === void 0 ? void 0 : contextRef.current) === null || _a === void 0 ? void 0 : _a.offsetLeft) || 0, behavior: 'smooth' });
+    }, 500), []);
+    return (React.createElement("div", { ref: ref, className: "ordino-filmstrip w-100 flex-1 position-relative d-flex overflow-auto", style: { scrollSnapType: 'x mandatory' } }, ordino.workbenches.map((v) => {
+        const focused = ordino.focusViewIndex;
+        return (React.createElement(Workbench, { type: v.index === focused - 1 ? EWorkbenchType.CONTEXT : v.index === focused ? EWorkbenchType.FOCUS : v.index > focused ? EWorkbenchType.NEXT : EWorkbenchType.PREVIOUS, workbench: v, key: v.index, onScrollTo: onScrollTo }));
     })));
 }
 //# sourceMappingURL=Filmstrip.js.map

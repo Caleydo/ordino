@@ -1,3 +1,4 @@
 export declare enum EDragTypes {
-    ADD = "add"
+    ADD = "add",
+    MOVE = "move"
 }

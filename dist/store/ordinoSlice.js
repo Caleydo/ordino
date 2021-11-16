@@ -81,7 +81,7 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload);
         },
         addView(state, action) {
-            const parentView = getNode(action.payload.parentId, state.workbenches[action.payload.workbenchId].startingView);
+            const parentView = getNode(action.payload.parentId, state.workbenches[action.payload.workbenchIndex].startingView);
             parentView.children.push(action.payload.view);
         },
         removeWorkbench(state, action) {

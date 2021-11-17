@@ -1,4 +1,4 @@
-import { I18nextManager } from 'phovea_core';
+import { I18nextManager } from 'tdp_core';
 import React from 'react';
 import { ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
 export function SessionListItem({ desc, selectSession, children }) {

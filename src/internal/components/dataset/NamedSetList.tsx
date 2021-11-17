@@ -1,4 +1,4 @@
-import {I18nextManager, UserSession} from 'phovea_core';
+import {I18nextManager, UserSession} from 'tdp_core';
 import React from 'react';
 import {ENamedSetType, FormDialog, INamedSet, IStoredNamedSet, NotificationHandler, RestStorageUtils, StoreUtils} from 'tdp_core';
 import {ListItemDropdown} from '../../../components';

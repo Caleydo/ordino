@@ -8,8 +8,8 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {ProvenanceGraph, I18nextManager} from 'phovea_core';
-import {CLUEGraphManager} from 'phovea_clue';
+import {ProvenanceGraph, I18nextManager} from 'tdp_core';
+import {CLUEGraphManager} from 'tdp_core';
 import {OrdinoApp} from '../internal/OrdinoApp';
 import {ATDPApplication, ITDPOptions} from 'tdp_core';
 import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenu';

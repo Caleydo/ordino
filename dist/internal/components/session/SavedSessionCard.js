@@ -1,4 +1,4 @@
-import { I18nextManager, UserSession, UniqueIdManager } from 'phovea_core';
+import { I18nextManager, UserSession, UniqueIdManager } from 'tdp_core';
 import React from 'react';
 import { ProvenanceGraphMenuUtils, useAsync } from 'tdp_core';
 import { GraphContext } from '../../OrdinoApp';

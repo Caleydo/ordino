@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { PluginRegistry, UniqueIdManager } from 'phovea_core';
+import { PluginRegistry, UniqueIdManager } from 'tdp_core';
 import { OrdinoScrollspy, OrdinoScrollspyItem } from '../../components';
 import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../..';
 import { BrowserRouter } from 'react-router-dom';

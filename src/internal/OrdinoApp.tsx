@@ -7,18 +7,18 @@
  ********************************************************************/
 
 import * as React from 'react';
-import {BaseUtils, NodeUtils, ICmdResult, AppContext} from 'phovea_core';
-import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'phovea_core';
+import {BaseUtils, NodeUtils, ICmdResult, AppContext} from 'tdp_core';
+import {IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent} from 'tdp_core';
 import {AView, TDPApplicationUtils, TourUtils} from 'tdp_core';
 import {EViewMode, ISelection} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
-import {CLUEGraphManager} from 'phovea_clue';
+import {CLUEGraphManager} from 'tdp_core';
 import {CmdUtils} from './cmds';
-import {Range} from 'phovea_core';
-import {UserSession} from 'phovea_core';
+import {Range} from 'tdp_core';
+import {UserSession} from 'tdp_core';
 import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
-import {AppHeader} from 'phovea_ui';
+import {AppHeader} from 'tdp_core';
 import {OrdinoBreadcrumbs} from './components/navigation';
 
 // tslint:disable-next-line: variable-name

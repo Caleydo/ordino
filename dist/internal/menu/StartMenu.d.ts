@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { AppHeader } from 'phovea_ui';
+import { AppHeader } from 'tdp_core';
 export declare enum EStartMenuSection {
     /**
      * Main menu section in the header

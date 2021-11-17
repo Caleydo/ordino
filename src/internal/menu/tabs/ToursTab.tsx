@@ -3,7 +3,7 @@ import {TourCard, OrdinoScrollspy} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoFooter} from '../../../components';
 import {TourUtils, ITDPTourExtensionDesc, ITDPTourExtension, useAsync} from 'tdp_core';
-import {PluginRegistry, IPlugin, I18nextManager} from 'phovea_core';
+import {PluginRegistry, IPlugin, I18nextManager} from 'tdp_core';
 import {IStartMenuTabProps} from '../StartMenu';
 
 

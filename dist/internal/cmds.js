@@ -5,13 +5,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
-import { ActionUtils, ActionMetaData, ObjectRefUtils } from 'phovea_core';
-import { PluginRegistry } from 'phovea_core';
-import { Range, ParseRangeUtils } from 'phovea_core';
-import { IDTypeManager } from 'phovea_core';
+import { ActionUtils, ActionMetaData, ObjectRefUtils } from 'tdp_core';
+import { PluginRegistry } from 'tdp_core';
+import { Range, ParseRangeUtils } from 'tdp_core';
+import { IDTypeManager } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { EXTENSION_POINT_TDP_VIEW } from 'tdp_core';
-import { Compression } from 'phovea_clue';
+import { Compression } from 'tdp_core';
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
 const CMD_REPLACE_VIEW = 'targidReplaceView';

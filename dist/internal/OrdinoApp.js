@@ -6,13 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import * as React from 'react';
-import { BaseUtils, NodeUtils, AppContext } from 'phovea_core';
-import { ObjectRefUtils } from 'phovea_core';
+import { BaseUtils, NodeUtils, AppContext } from 'tdp_core';
+import { ObjectRefUtils } from 'tdp_core';
 import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
 import { EViewMode } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
-import { UserSession } from 'phovea_core';
+import { UserSession } from 'tdp_core';
 import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenu';
 import { OrdinoBreadcrumbs } from './components/navigation';
 // tslint:disable-next-line: variable-name

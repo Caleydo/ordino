@@ -1,4 +1,4 @@
-import {I18nextManager, IProvenanceGraphDataDescription} from 'phovea_core';
+import {I18nextManager, IProvenanceGraphDataDescription} from 'tdp_core';
 import React from 'react';
 import {ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
 import {SessionAction} from './CommonSessionCard';

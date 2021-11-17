@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { OrdinoLogo } from './OrdinoLogo';
-import { PluginRegistry } from 'phovea_core';
+import { PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_HEADER_MENU } from '../base';
 export function HeaderNavigation({ fixed, bg = 'dark' }) {
     const links = PluginRegistry.getInstance().listPlugins(EP_ORDINO_HEADER_MENU)

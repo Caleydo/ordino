@@ -3,7 +3,7 @@ import { TourCard, OrdinoScrollspy } from '../../components';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoFooter } from '../../../components';
 import { TourUtils, useAsync } from 'tdp_core';
-import { PluginRegistry, I18nextManager } from 'phovea_core';
+import { PluginRegistry, I18nextManager } from 'tdp_core';
 export default function ToursTab(_props) {
     const loadTours = useMemo(() => () => {
         const tourEntries = PluginRegistry.getInstance().listPlugins(TourUtils.EXTENSION_POINT_TDP_TOUR).map((d) => d);

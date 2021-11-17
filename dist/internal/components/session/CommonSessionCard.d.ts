@@ -1,4 +1,4 @@
-import { IProvenanceGraphDataDescription } from 'phovea_core';
+import { IProvenanceGraphDataDescription } from 'tdp_core';
 import React, { AnimationEventHandler } from 'react';
 interface ICommonSessionCardProps {
     cardName: string;

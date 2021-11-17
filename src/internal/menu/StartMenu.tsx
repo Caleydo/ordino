@@ -1,14 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {GlobalEventHandler, PluginRegistry} from 'phovea_core';
+import {GlobalEventHandler, PluginRegistry, useAsync, AppHeader} from 'tdp_core';
 import {EP_ORDINO_START_MENU_TAB, Ordino} from '../..';
-import {AppHeader} from 'phovea_ui';
 import {HighlightSessionCardContext} from '../OrdinoApp';
 import {EP_ORDINO_START_MENU_TAB_SHORTCUT, IStartMenuTabDesc, IStartMenuTabShortcutDesc} from '../../base';
 import {StartMenuLinks} from './StartMenuLinks';
 import {StartMenuTabWrapper} from './StartMenuTabWrapper';
 import {StartMenuTabShortcuts} from './StartMenuTabShortcuts';
-import {useAsync} from 'tdp_core';
 
 
 export enum EStartMenuSection {

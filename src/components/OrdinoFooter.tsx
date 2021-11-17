@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {OrdinoLogo} from './OrdinoLogo';
-import {PluginRegistry} from 'phovea_core';
+import {PluginRegistry} from 'tdp_core';
 import {EP_ORDINO_FOOTER_MENU, IOrdinoFooterMenuDesc, IOrdinoFooterMenuLink} from '../base';
 
 interface IFooterLinkProps {

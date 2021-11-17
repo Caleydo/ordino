@@ -1,4 +1,4 @@
-import { I18nextManager } from 'phovea_core';
+import { I18nextManager } from 'tdp_core';
 import React from 'react';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionDropzone } from './SessionDropzone';

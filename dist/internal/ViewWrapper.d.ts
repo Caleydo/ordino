@@ -5,10 +5,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
-import { IObjectRef, ProvenanceGraph } from 'phovea_core';
+import { IObjectRef, ProvenanceGraph } from 'tdp_core';
 import 'jquery.scrollto/jquery.scrollTo.js';
-import { EventHandler } from 'phovea_core';
-import { IPlugin, IPluginDesc } from 'phovea_core';
+import { EventHandler } from 'tdp_core';
+import { IPlugin, IPluginDesc } from 'tdp_core';
 import { EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;

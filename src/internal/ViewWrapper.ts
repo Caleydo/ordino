@@ -7,14 +7,14 @@
  ********************************************************************/
 
 
-import {IObjectRef, ObjectRefUtils, ProvenanceGraph} from 'phovea_core';
-import {IDType} from 'phovea_core';
-import {Range} from 'phovea_core';
+import {IObjectRef, ObjectRefUtils, ProvenanceGraph} from 'tdp_core';
+import {IDType} from 'tdp_core';
+import {Range} from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
-import {EventHandler} from 'phovea_core';
-import {IPlugin, IPluginDesc} from 'phovea_core';
+import {EventHandler} from 'tdp_core';
+import {IPlugin, IPluginDesc} from 'tdp_core';
 import {INamedSet} from 'tdp_core';
 import {TDPApplicationUtils} from 'tdp_core';
 import {AView} from 'tdp_core';
@@ -25,7 +25,7 @@ import {
   IView,
   IViewContext
 } from 'tdp_core';
-import {ResolveNow} from 'phovea_core';
+import {ResolveNow} from 'tdp_core';
 import {FindViewUtils} from 'tdp_core';
 import {MODE_ANIMATION_TIME} from './constants';
 

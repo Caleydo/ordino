@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { GlobalEventHandler, PluginRegistry } from 'phovea_core';
+import { GlobalEventHandler, PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_START_MENU_TAB, Ordino, useAsync } from '../..';
 import { HighlightSessionCardContext } from '../OrdinoApp';
 import { EP_ORDINO_START_MENU_TAB_SHORTCUT } from '../../base';

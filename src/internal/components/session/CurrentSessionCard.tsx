@@ -1,6 +1,5 @@
-import {GlobalEventHandler, I18nextManager, PropertyHandler, ProvenanceGraph} from 'phovea_core';
 import React from 'react';
-import {ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
+import {GlobalEventHandler, I18nextManager, PropertyHandler, ProvenanceGraph, ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
 import {GraphContext, HighlightSessionCardContext} from '../../OrdinoApp';
 import {ListItemDropdown} from '../../../components';

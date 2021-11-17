@@ -5,7 +5,7 @@ import {ITab} from "./header/menu/StartMenuTabWrapper";
 
 
 export interface IOrdinoHeaderProps extends IVisynHeaderProps {
-    tabs?: ITab[],
+    tabs?: ITab[];
 }
 
 export function OrdinoHeader(props: IOrdinoHeaderProps) {

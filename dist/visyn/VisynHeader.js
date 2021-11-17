@@ -3,7 +3,7 @@ import { visynHeaderComponents } from './headerConfig';
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false, }) {
     const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
     return (React.createElement(React.Fragment, null,
-        React.createElement("nav", { className: "navbar navbar-expand-lg navbar-dark bg-dark", style: { height: '50px' } },
+        React.createElement("nav", { className: " visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark" },
             React.createElement("div", { className: "container-fluid" },
                 AppLogo ? React.createElement(AppLogo, null) : null,
                 React.createElement("button", { className: "navbar-toggler", type: "button", "data-toggle": "collapse", "data-target": "#navbarSupportedContent", "aria-controls": "navbarSupportedContent", "aria-expanded": "false", "aria-label": "Toggle navigation" },

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {ComponentType} from 'react';
 import {IVisynHeaderComponents, visynHeaderComponents} from './headerConfig';
+
 export interface IVisynHeaderProps {
   ConfigMenuOptions?: ComponentType;
   BurgerSidebar?: ComponentType;
@@ -20,7 +21,7 @@ export function VisynHeader({
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{height: '50px'}}>
+      <nav className=" visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
           {AppLogo ? <AppLogo /> : null}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

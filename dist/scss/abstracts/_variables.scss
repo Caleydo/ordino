@@ -1,3 +1,5 @@
+$visyn-header-height: 50px !default;
+
 $named-set-list-max-height: 23em !default; // show 10 items
 $session-list-max-height: 31em !default; // show 6 items
 
@@ -5,5 +7,5 @@ $chooser-width: 220px !default;
 $chooser-collapsed-width: 50px !default;
 
 $workbench-width: calc(100vw - #{$chooser-collapsed-width}) !default;
-$workbench-focus-width: calc(80vw - #{$chooser-collapsed-width} ) !default;
+$workbench-focus-width: calc(80vw - #{$chooser-collapsed-width}) !default;
 $workbench-hide-width: 20vw !default;

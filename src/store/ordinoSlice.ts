@@ -130,7 +130,6 @@ const ordinoSlice = createSlice({
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
 
-
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
       temp.index = action.payload.secondViewIndex;
@@ -146,8 +145,14 @@ const ordinoSlice = createSlice({
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
       state.workbenches.slice(action.payload.index);
     },
+    //TODO:: When we remove the views jump too much. We need to something smarter based on what the direction is to figure out where to move the still existing views.
     removeView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number}>) {
-      // state.workbenches[action.payload.workbenchIndex].views.slice(action.payload.viewIndex);
+      const workbench = state.workbenches[action.payload.workbenchIndex];
+      workbench.views.splice(action.payload.viewIndex, 1);
+
+      for(let j = 0; j < workbench.views.length; j++) {
+        workbench.views[j].index = j;
+      }
     },
     replaceWorkbench(state, action: PayloadAction<{workbenchIndex: number, newWorkbench: IWorkbench}>) {
       state.workbenches.splice(action.payload.workbenchIndex);

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import {IWorkbenchView} from '../../store';
+import {useAppDispatch, useAppSelector} from '../..';
+import {IWorkbenchView, removeView} from '../../store';
 
 import {Lineup} from '../lite';
 import {DropOverlay} from './DropOverlay';
@@ -14,6 +15,9 @@ export interface IWorkbenchSingleViewProps {
 export function WorkbenchSingleView({
     view
 }: IWorkbenchSingleViewProps) {
+    const dispatch = useAppDispatch();
+    const ordino = useAppSelector((state) => state.ordino);
+
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
         canDrop: (d: {type: EDragTypes, viewId: string}) => {
@@ -28,6 +32,9 @@ export function WorkbenchSingleView({
     return (
         <div ref={drop} className = "position-relative shadow bg-body workbenchView rounded">
             <MoveButton view={view}/>
+            <button type="button" onClick={() => dispatch(removeView({workbenchIndex: ordino.focusViewIndex, viewIndex: view.index}))} className="position-absolute btn bg-none end-0">
+                <i className="fas fa-times"></i>
+            </button>
             <div style={{flex: '1 1 auto', justifyContent: 'center', display: 'flex', alignItems: 'center'}}>
                 <span style={{fontSize: 30}}>
                 {view.id}

@@ -36,6 +36,7 @@ export var EViewDirections;
 // }
 const initialState = {
     workbenches: [{
+            viewDirection: 'vertical',
             index: 0,
             views: [{
                     id: 'view_0',
@@ -66,6 +67,17 @@ const ordinoSlice = createSlice({
         addView(state, action) {
             state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
         },
+        switchViews(state, action) {
+            console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
+            const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
+            temp.index = action.payload.secondViewIndex;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex].index = action.payload.firstViewIndex;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
+        },
+        setWorkbenchDirection(state, action) {
+            state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
+        },
         removeWorkbench(state, action) {
             state.workbenches.slice(action.payload.index);
         },
@@ -90,6 +102,6 @@ const ordinoSlice = createSlice({
         }
     }
 });
-export const { addView, removeView, replaceWorkbench, addSelection, addFilter, setActiveTab, changeFocus, addWorkbench } = ordinoSlice.actions;
+export const { addView, removeView, replaceWorkbench, addSelection, addFilter, setActiveTab, changeFocus, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

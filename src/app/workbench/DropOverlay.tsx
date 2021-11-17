@@ -6,6 +6,7 @@ import {IWorkbenchView} from '../../store';
 import {WorkbenchBottomIcon} from './icons/WorkbenchBottomIcon';
 import {WorkbenchLeftIcon} from './icons/WorkbenchLeftIcon';
 import {WorkbenchRightIcon} from './icons/WorkbenchRightIcon';
+import {WorkbenchSwitchIcon} from './icons/WorkbenchSwitchIcon';
 import {WorkbenchTopIcon} from './icons/WorkbenchTopIcon';
 
 import {EDragTypes} from './utils';
@@ -17,34 +18,6 @@ export interface IDropOverlayProps {
 export function DropOverlay({
     view
 }: IDropOverlayProps) {
-
-    // const dispatch = useAppDispatch();
-    // const ordino = useAppSelector((state) => state.ordino);
-
-    // const [{ isOver }, drop] = useDrop(() => ({
-    //     accept: EDragTypes.ADD,
-    //     drop: () => {
-    //         console.log('droppin in ' + viewNum);
-    //         dispatch(addView({
-    //             workbenchIndex: ordino.focusViewIndex,
-    //             view: {
-    //                 id: 'view_0',
-    //                 index: 0,
-    //                 name: 'Start view',
-    //                 selection: 'multiple',
-    //                 selections: [],
-    //                 group: {
-    //                     name: 'General',
-    //                     order: 10
-    //                 }
-    //                 }
-    //         }));
-    //     },
-    //     collect: (monitor) => ({
-    //         isOver: !!monitor.isOver(),
-    //     }),
-    // }), []);
-
     return (
         <div
             style={{
@@ -54,14 +27,11 @@ export function DropOverlay({
                 height: '100%',
                 width: '100%',
                 zIndex: 1,
-                opacity: .5,
+                opacity: 1,
                 backgroundColor: 'lightgray',
             }}
         >
-            <WorkbenchBottomIcon view={view}/>
-            <WorkbenchTopIcon view={view}/>
-            <WorkbenchLeftIcon view={view}/>
-            <WorkbenchRightIcon view={view}/>
+            <WorkbenchSwitchIcon view={view}/>
         </div>
     );
 }

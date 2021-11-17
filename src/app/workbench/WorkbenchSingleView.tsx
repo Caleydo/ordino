@@ -14,22 +14,26 @@ export interface IWorkbenchSingleViewProps {
 export function WorkbenchSingleView({
     view
 }: IWorkbenchSingleViewProps) {
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: [EDragTypes.ADD, EDragTypes.MOVE],
+    const [{ isOver, canDrop }, drop] = useDrop(() => ({
+        accept: [EDragTypes.MOVE],
+        canDrop: (d: {type: EDragTypes, viewId: string}) => {
+            return d.viewId !== view.id;
+        },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
+            canDrop: !!monitor.canDrop(),
         }),
-    }), []);
-
-    if(!view) {
-        return <div></div>;
-    }
+    }), [view.id]);
 
     return (
         <div ref={drop} className = "position-relative shadow bg-body workbenchView rounded">
             <MoveButton view={view}/>
-            <Lineup/>
-            {isOver ? <DropOverlay view={view}/> : null }
+            <div style={{flex: '1 1 auto', justifyContent: 'center', display: 'flex', alignItems: 'center'}}>
+                <span style={{fontSize: 30}}>
+                {view.id}
+                </span>
+            </div>
+            {isOver && canDrop ? <DropOverlay view={view}/> : null }
         </div>
     );
 }

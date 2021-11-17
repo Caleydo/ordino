@@ -15,8 +15,8 @@ export function MoveButton({
 
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
-        item: {type: EDragTypes.MOVE, viewId: view.id},
-    }));
+        item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
+    }), [view.id, view.index]);
 
     return (
         <button ref={drag} type="button" className="position-absolute btn btn-primary">Move View</button>

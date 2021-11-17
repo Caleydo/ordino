@@ -43,6 +43,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             addWorkbench({
+                viewDirection: 'vertical',
                 views: [{}],
                 id: view.id,
                 name: view.name,
@@ -58,6 +59,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             replaceWorkbench({workbenchIndex: viewIndex, newWorkbench: {
+                viewDirection: 'vertical',
                 views: [{}],
                 id: view.id,
                 name: view.name,

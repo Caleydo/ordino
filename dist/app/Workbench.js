@@ -24,6 +24,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
     const showNextChooser = workbench.index === ordino.workbenches.length - 1;
     const onAddView = React.useCallback((view, viewIndex) => {
         dispatch(addWorkbench({
+            viewDirection: 'vertical',
             views: [{}],
             id: view.id,
             name: view.name,
@@ -35,6 +36,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
     }, []);
     const onReplaceView = React.useCallback((view, viewIndex) => {
         dispatch(replaceWorkbench({ workbenchIndex: viewIndex, newWorkbench: {
+                viewDirection: 'vertical',
                 views: [{}],
                 id: view.id,
                 name: view.name,

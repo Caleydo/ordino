@@ -39,6 +39,8 @@ export interface IWorkbench {
    */
   views: IWorkbenchView[];
 
+  viewDirection: 'vertical' | 'horizontal';
+
   name: string;
 
   id: string;
@@ -92,6 +94,7 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 const initialState: IOrdinoAppState = {
   workbenches:
   [{
+    viewDirection: 'vertical',
     index: 0,
     views:
     [{
@@ -124,6 +127,22 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
+      console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
+
+
+      const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
+
+      temp.index = action.payload.secondViewIndex;
+
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex].index = action.payload.firstViewIndex;
+
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
+    },
+    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: 'vertical' | 'horizontal'}>) {
+      state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
+    },
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
       state.workbenches.slice(action.payload.index);
     },
@@ -149,6 +168,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const { addView, removeView, replaceWorkbench, addSelection, addFilter, setActiveTab, changeFocus, addWorkbench } = ordinoSlice.actions;
+export const { addView, removeView, replaceWorkbench, addSelection, addFilter, setActiveTab, changeFocus, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

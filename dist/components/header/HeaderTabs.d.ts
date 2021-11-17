@@ -1,1 +1,2 @@
-export declare function HeaderTabs(): JSX.Element;
+import { IStartMenuTabWrapperProps } from './menu/StartMenuTabWrapper';
+export declare function HeaderTabs(props: IStartMenuTabWrapperProps): JSX.Element;

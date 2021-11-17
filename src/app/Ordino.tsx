@@ -9,8 +9,7 @@ export function Ordino() {
     const ordino: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
     return (
         <div id="content">
-            <main data-anchor = "main" className="targid">
-                <StartMenuTabWrapper/>
+            <main data-anchor="main" className="targid">
                 <Breadcrumb />
                 <Filmstrip />
             </main>

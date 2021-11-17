@@ -18,7 +18,6 @@ export function Workbench({view, type = EWorkbenchType.PREVIOUS, onScrollTo}: IW
     const dispatch = useDispatch();
     const ordino: any = useSelector<any>((state) => state.ordino) as any;
     const ref = React.useRef(null);
-
     React.useEffect(() => {
         if (ordino.previousFocusIndex === ordino.focusViewIndex || !ref.current || ordino.views.length <= 2) {
             return;

@@ -1,19 +1,39 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ETabStates, setActiveTab } from '../../../store';
-import DatasetsTab from './tabs/DatasetsTab';
-export function StartMenuTabWrapper({ tabs = [{ id: ETabStates.DATASETS, tab: React.createElement(DatasetsTab, null) }], mode = 'overlay' }) {
-    const ordinoState = useSelector((state) => state.ordino);
+import { useSelector, useDispatch } from 'react-redux';
+import { setActiveTab } from '../../../store';
+export var EStartMenuMode;
+(function (EStartMenuMode) {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    EStartMenuMode["START"] = "start";
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    EStartMenuMode["OVERLAY"] = "overlay";
+})(EStartMenuMode || (EStartMenuMode = {}));
+export var EStartMenuOpen;
+(function (EStartMenuOpen) {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    EStartMenuOpen["OPEN"] = "open";
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    EStartMenuOpen["CLOSED"] = "closed";
+})(EStartMenuOpen || (EStartMenuOpen = {}));
+export function StartMenuTabWrapper(props) {
+    const ordino = useSelector((state) => state.ordino);
+    const menu = useSelector((state) => state.menu);
     const dispatch = useDispatch();
     return (React.createElement(React.Fragment, null,
-        React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${ordinoState.activeTab !== ETabStates.NONE ? 'ordino-start-menu-open' : 'd-none'} ${mode === 'overlay' ? 'ordino-start-menu-overlay' : ''}` }, tabs.map((tab) => (React.createElement("div", { className: `tab-pane fade ${ordinoState.activeTab === tab.id ? `active show` : ''} ${mode === 'start' ? `pt-5` : ''}`, key: tab.id, id: tab.id, role: "tabpanel", "aria-labelledby": `${tab.id}-tab` },
-            mode === 'overlay' &&
+        React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}` }, props.tabs.map(({ id, Tab }) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === id ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: id, id: id, role: "tabpanel", "aria-labelledby": `${id}-tab` },
+            props.mode === EStartMenuMode.OVERLAY &&
                 React.createElement("div", { className: "container-fluid" },
                     React.createElement("div", { className: "row" },
                         React.createElement("div", { className: "col position-relative d-flex justify-content-end" },
-                            React.createElement("button", { className: "btn-close", onClick: () => dispatch(setActiveTab({
-                                    activeTab: ETabStates.NONE
-                                })) })))),
-            tab.tab))))));
+                            React.createElement("button", { className: "btn-close", onClick: () => { dispatch(setActiveTab(null)); } })))),
+            React.createElement(Tab, null)))))));
 }
 //# sourceMappingURL=StartMenuTabWrapper.js.map

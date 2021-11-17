@@ -1,2 +1,2 @@
-export * from './tabs/DatasetsTab';
+export * from './tabs';
 //# sourceMappingURL=index.js.map

@@ -1,63 +1,86 @@
-import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {ETabStates, IOrdinoAppState, setActiveTab} from '../../../store';
-import DatasetsTab from './tabs/DatasetsTab';
+import React, {ComponentType} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {setActiveTab} from '../../../store';
+
 
 export interface ITab {
-    id: ETabStates;
-    tab: JSX.Element;
+    id: string;
+    Tab: ComponentType;
+    name: string;
+}
+
+
+export enum EStartMenuMode {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    START = 'start',
+
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    OVERLAY = 'overlay'
+}
+
+export enum EStartMenuOpen {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    OPEN = 'open',
+
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    CLOSED = 'closed'
 }
 
 export interface IStartMenuTabWrapperProps {
     /**
      * List of tabs
      */
-    tabs?: ITab[];
+    tabs: ITab[];
+
+    /**
+     * The currently active (i.e., visible tab)
+     * `null` = all tabs are closed
+     */
+    activeTab: string;
 
     /**
      * Define the mode of the start menu
      */
-    mode?: 'overlay' | 'start';
+    mode: EStartMenuMode;
 }
 
-export function StartMenuTabWrapper({
-    tabs = [{id: ETabStates.DATASETS, tab: <DatasetsTab/>}],
-    mode = 'overlay'
-}: IStartMenuTabWrapperProps) {
-    const ordinoState: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
+
+export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
+    const ordino: any = useSelector<any>((state) => state.ordino) as any;
+    const menu: any = useSelector<any>((state) => state.menu) as any;
     const dispatch = useDispatch();
 
     return (
         <>
-            <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${ordinoState.activeTab !== ETabStates.NONE ? 'ordino-start-menu-open' : 'd-none'} ${mode === 'overlay' ? 'ordino-start-menu-overlay' : ''}`}>
-                {tabs.map((tab) => (
-                    <div className={`tab-pane fade ${ordinoState.activeTab === tab.id ? `active show` : ''} ${mode === 'start' ? `pt-5` : ''}`}
-                        key={tab.id}
-                        id={tab.id}
+            <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}`}>
+                {props.tabs.map(({id, Tab}) => (
+                    <div className={`tab-pane fade ${props.activeTab === id ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
+                        key={id}
+                        id={id}
                         role="tabpanel"
-                        aria-labelledby={`${tab.id}-tab`}
+                        aria-labelledby={`${id}-tab`}
                     >
-                        {mode === 'overlay' &&
+                        {props.mode === EStartMenuMode.OVERLAY &&
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col position-relative d-flex justify-content-end">
-                                        <button
-                                        className="btn-close"
-                                        onClick={() =>
-                                            dispatch(
-                                                setActiveTab({
-                                                    activeTab: ETabStates.NONE
-                                            }))
-                                        }>
+                                        <button className="btn-close" onClick={() => {dispatch(setActiveTab(null));}}>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         }
-                        {tab.tab}
+                        <Tab />
                     </div>
                 ))}
-            </div>
-        </>
+            </div></>
     );
 }

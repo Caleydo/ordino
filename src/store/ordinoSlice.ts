@@ -1,12 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {IViewPluginDesc} from 'tdp_core';
 
-export enum ETabStates {
-  NONE = 'none',
-  DATASETS = 'datasets',
-  ANALYSIS = 'analysis',
-  TOURS = 'tours'
-}
 
 export interface IOrdinoAppState {
   /**
@@ -19,7 +13,6 @@ export interface IOrdinoAppState {
    */
   focusViewIndex: number;
 
-  activeTab: ETabStates;
 }
 
 // Make this generic to support multiple types of views
@@ -86,7 +79,6 @@ const initialState: IOrdinoAppState = {
     }
   ],
   focusViewIndex: 0,
-  activeTab: ETabStates.NONE
 };
 
 const ordinoSlice = createSlice({
@@ -94,6 +86,7 @@ const ordinoSlice = createSlice({
   initialState,
   reducers: {
     addView(state, action) {
+      console.log('pushing view')
       state.views.push(action.payload);
     },
     removeView(state, action) {
@@ -111,13 +104,10 @@ const ordinoSlice = createSlice({
     },
     changeFocus(state, action) {
       state.focusViewIndex = action.payload.index;
-    },
-    setActiveTab(state, action) {
-      state.activeTab = action.payload.activeTab;
     }
   }
 });
 
-export const {addView, removeView, replaceView, addSelection, addFilter, setActiveTab, changeFocus} = ordinoSlice.actions;
+export const {addView, removeView, replaceView, addSelection, addFilter, changeFocus} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

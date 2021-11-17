@@ -1,31 +1,42 @@
-import * as React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {ETabStates, IOrdinoAppState, setActiveTab} from '../../store';
+import React from 'react';
+import {useDispatch} from 'react-redux';
+import {setActiveTab} from '../../store';
+import {IStartMenuTabWrapperProps, EStartMenuMode} from './menu/StartMenuTabWrapper';
 
-export function HeaderTabs() {
-  const ordinoState: IOrdinoAppState = useSelector<any>((state) => state.ordino) as IOrdinoAppState;
-
+export function HeaderTabs(props: IStartMenuTabWrapperProps) {
   const dispatch = useDispatch();
 
   return (
-    <ul className="navbar-nav me-auto" data-header="mainMenu">
-      <li className={`nav-item ${ordinoState.activeTab === ETabStates.DATASETS ? 'active' : ''}`}>
-        <a
-          className="nav-link"
-          href="#ordino_dataset_tab"
-          id="ordino_dataset_tab-tab"
-          role="tab"
-          aria-controls="ordino_dataset_tab"
-          aria-selected="true"
-          onClick={
-            () => dispatch(setActiveTab({
-              activeTab: ETabStates.DATASETS
-            }))
-          }
-        >
-          Datasets
-        </a>
-      </li>
-    </ul>
+    <>
+      <ul className="navbar-nav me-auto align-items-center">
+        {props.tabs.map((tab) => (
+          <li className={`nav-item ${props.activeTab === tab.id ? 'active' : ''}`} key={tab.id}>
+            <a className="nav-link"
+              href={`#${tab.id}`}
+              id={`${tab.id}-tab`}
+              role="tab"
+              aria-controls={tab.id}
+              aria-selected={(props.activeTab === tab.id)}
+              onClick={(evt) => {
+                evt.preventDefault();
+                if (props.mode === EStartMenuMode.OVERLAY && props.activeTab === tab.id) {
+                  // remove :focus from link to remove highlight color
+                  evt.currentTarget.blur();
+
+                  // close tab only in overlay mode
+                  dispatch(setActiveTab(null));
+                } else {
+                  dispatch(setActiveTab(tab.id));
+                }
+
+                return false;
+              }}
+            >
+              {tab.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

@@ -3,10 +3,10 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import {IRegistry, PluginRegistry} from 'phovea_core';
-import {ParseRangeUtils} from 'phovea_core';
-import {ActionNode} from 'phovea_core';
-import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'phovea_core';
+import {IRegistry, PluginRegistry} from 'tdp_core';
+import {ParseRangeUtils} from 'tdp_core';
+import {ActionNode} from 'tdp_core';
+import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'tdp_core';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_START_MENU_TAB} from '.';
 import {EP_ORDINO_LOGO, IOrdinoLogoDesc} from './base';
 import {EStartMenuSection} from './internal';

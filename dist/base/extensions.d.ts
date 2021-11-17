@@ -6,9 +6,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 /// <reference types="react" />
-import { IPluginDesc } from 'phovea_core';
+import { IPluginDesc } from 'tdp_core';
 import { INamedSet } from 'tdp_core';
-import { CLUEGraphManager } from 'phovea_clue';
+import { CLUEGraphManager } from 'tdp_core';
 import { EStartMenuSection, IStartMenuTabProps } from '../internal';
 export declare const EP_ORDINO_START_MENU_TAB = "epOrdinoStartMenuTab";
 /**

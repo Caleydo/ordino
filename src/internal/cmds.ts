@@ -16,13 +16,13 @@ import {
   ICmdResult,
   IObjectRef,
   ProvenanceGraph
-} from 'phovea_core';
-import {PluginRegistry} from 'phovea_core';
-import {Range, ParseRangeUtils} from 'phovea_core';
-import {IDTypeManager, IDType} from 'phovea_core';
+} from 'tdp_core';
+import {PluginRegistry} from 'tdp_core';
+import {Range, ParseRangeUtils} from 'tdp_core';
+import {IDTypeManager, IDType} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core';
-import {Compression} from 'phovea_clue';
+import {Compression} from 'tdp_core';
 import { IOrdinoApp } from './IOrdinoApp';
 
 

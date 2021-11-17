@@ -6,14 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
 import * as React from 'react';
-import { ICmdResult } from 'phovea_core';
-import { IObjectRef, ProvenanceGraph, IDType } from 'phovea_core';
+import { ICmdResult } from 'tdp_core';
+import { IObjectRef, ProvenanceGraph, IDType } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
-import { CLUEGraphManager } from 'phovea_clue';
-import { Range } from 'phovea_core';
+import { CLUEGraphManager } from 'tdp_core';
+import { Range } from 'tdp_core';
 import { IOrdinoApp } from './IOrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenu';
-import { AppHeader } from 'phovea_ui';
+import { AppHeader } from 'tdp_core';
 export declare const OrdinoContext: React.Context<{
     app: IOrdinoApp;
 }>;

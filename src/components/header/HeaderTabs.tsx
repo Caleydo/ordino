@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useAppDispatch, useAppSelector} from '../../hooks';
+import {useAppDispatch} from '../../hooks';
 import {setActiveTab} from '../../store';
 import {EStartMenuMode} from './menu/StartMenuTabWrapper';
 

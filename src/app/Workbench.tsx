@@ -23,6 +23,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);
+
     React.useEffect(() => {
         if (!ref.current || ordino.workbenches.length <= 2) {
             return;
@@ -71,7 +72,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     }, []);
 
     return (<>
-        <div ref={ref} className={`d-flex ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}`}>
+        <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}`}>
             <>
                 {workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
                     <ViewChooser

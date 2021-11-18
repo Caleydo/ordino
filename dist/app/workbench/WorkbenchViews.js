@@ -32,6 +32,6 @@ export function WorkbenchViews({ index }) {
                 React.createElement(WorkbenchSingleView, { view: views[1] }),
                 React.createElement(WorkbenchSingleView, { view: views[2] }))));
     }
-    return (React.createElement("div", { className: "position-relative workbenchWrapper" }, wb));
+    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, wb));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

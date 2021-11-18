@@ -18,7 +18,7 @@ export function WorkbenchSingleView({ view }) {
             canDrop: !!monitor.canDrop(),
         }),
     }), [view.id]);
-    return (React.createElement("div", { ref: drop, className: "position-relative shadow bg-body workbenchView rounded" },
+    return (React.createElement("div", { ref: drop, className: "position-relative shadow bg-body workbenchView rounded flex-grow-1" },
         React.createElement(MoveButton, { view: view }),
         React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex: ordino.focusViewIndex, viewIndex: view.index })), className: "position-absolute btn bg-none end-0" },
             React.createElement("i", { className: "fas fa-times" })),

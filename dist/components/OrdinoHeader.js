@@ -1,25 +1,26 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { HeaderTabs, } from '.';
+import { useAppSelector } from '..';
 import { setActiveTab, setMode } from '../store';
 import { VisynHeader } from '../visyn';
 import { EStartMenuMode, StartMenuTabWrapper } from './header/menu/StartMenuTabWrapper';
 export function OrdinoHeader(props) {
-    const ordino = useSelector((state) => state.ordino);
-    const menu = useSelector((state) => state.menu);
+    const ordino = useAppSelector((state) => state.ordino);
+    const menu = useAppSelector((state) => state.menu);
     const dispatch = useDispatch();
     React.useEffect(() => {
         // opening first ranking --> close start menu
-        if (ordino.views.length === 1) {
+        if (ordino.workbenches.length === 1) {
             setMode({ mode: EStartMenuMode.OVERLAY });
             setActiveTab(null);
         }
-    }, [ordino.views.length]);
+    }, [ordino.workbenches.length]);
     React.useEffect(() => {
-        if (ordino.views.length === 0) {
+        if (ordino.workbenches.length === 0) {
             dispatch(setActiveTab(props.tabs[0].id));
         }
-    }, [ordino.views.length]);
+    }, [ordino.workbenches.length]);
     return (React.createElement(React.Fragment, null,
         React.createElement(VisynHeader, { extensions: {
                 LeftExtensions: () => React.createElement(HeaderTabs, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }),

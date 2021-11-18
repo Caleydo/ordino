@@ -20,7 +20,7 @@ export function Filmstrip() {
     }, 500), []);
 
     return (
-        <div ref={ref} className="ordino-filmstrip w-100 flex-1 position-relative d-flex overflow-auto"
+        <div ref={ref} className="ordino-filmstrip w-100 flex-grow-1 position-relative d-flex align-content-stretch overflow-auto"
             style={{scrollSnapType: 'x mandatory'}}>
             {ordino.workbenches.map((v) => {
                 const focused = ordino.focusViewIndex;

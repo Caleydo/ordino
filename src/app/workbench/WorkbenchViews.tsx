@@ -60,7 +60,7 @@ export function WorkbenchViews({
     }
 
     return (
-        <div className="position-relative workbenchWrapper">
+        <div className="position-relative workbenchWrapper d-flex flex-grow-1">
             {wb}
         </div>
     );

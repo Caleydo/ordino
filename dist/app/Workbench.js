@@ -47,7 +47,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
         setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
     }, []);
     return (React.createElement(React.Fragment, null,
-        React.createElement("div", { ref: ref, className: `d-flex ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}` },
+        React.createElement("div", { ref: ref, className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}` },
             React.createElement(React.Fragment, null,
                 workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (React.createElement(ViewChooser, { views: views, selectedView: null, onSelectedView: (v) => onReplaceView(v, workbench.index), mode: EViewChooserMode.OVERLAY, expand: EExpandMode.RIGHT })) : null,
                 React.createElement(WorkbenchViews, { index: workbench.index }))),

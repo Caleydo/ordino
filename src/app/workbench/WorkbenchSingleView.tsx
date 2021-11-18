@@ -30,7 +30,7 @@ export function WorkbenchSingleView({
     }), [view.id]);
 
     return (
-        <div ref={drop} className = "position-relative shadow bg-body workbenchView rounded">
+        <div ref={drop} className = "position-relative shadow bg-body workbenchView rounded flex-grow-1">
             <MoveButton view={view}/>
             <button type="button" onClick={() => dispatch(removeView({workbenchIndex: ordino.focusViewIndex, viewIndex: view.index}))} className="position-absolute btn bg-none end-0">
                 <i className="fas fa-times"></i>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { LoginMenu } from './headerComponents/LoginMenu';
 import { visynHeaderComponents } from './headerConfig';
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false, }) {
     const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
@@ -13,7 +14,9 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
                     React.createElement("ul", { className: "navbar-nav ms-auto align-items-center" },
                         CustomerLogo ? React.createElement(CustomerLogo, null) : null,
                         VisynLogo ? React.createElement(VisynLogo, null) : null,
+                        React.createElement(LoginMenu, { username: "admin" }),
                         SettingsMenu ? React.createElement(SettingsMenu, { menuItems: ConfigMenuOptions ? React.createElement(ConfigMenuOptions, null) : null }) : null),
-                    RightExtensions ? React.createElement(RightExtensions, null) : null)))));
+                    RightExtensions ? React.createElement(RightExtensions, null) : null))),
+        React.createElement("div", { id: "headerWaitingOverlay", className: "phovea-busy", hidden: true })));
 }
 //# sourceMappingURL=VisynHeader.js.map

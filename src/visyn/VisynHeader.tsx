@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ComponentType} from 'react';
+import {LoginMenu} from './headerComponents/LoginMenu';
 import {IVisynHeaderComponents, visynHeaderComponents} from './headerConfig';
 
 export interface IVisynHeaderProps {
@@ -32,12 +33,15 @@ export function VisynHeader({
             <ul className="navbar-nav ms-auto align-items-center">
               {CustomerLogo ? <CustomerLogo /> : null}
               {VisynLogo ? <VisynLogo /> : null}
+              <LoginMenu username="admin" />
               {SettingsMenu ? <SettingsMenu menuItems={ConfigMenuOptions ? <ConfigMenuOptions /> : null} /> : null}
             </ul>
             {RightExtensions ? <RightExtensions /> : null}
           </div>
         </div>
       </nav>
+      <div id="headerWaitingOverlay" className="phovea-busy" hidden>
+      </div>
     </>
   );
 }

@@ -3,8 +3,8 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import {IRegistry, PluginRegistry} from 'phovea_core';
-import {EP_ORDINO_LOGO, IOrdinoLogoDesc} from '.';
+import {IRegistry, PluginRegistry} from 'tdp_core';
+import {EP_ORDINO_LOGO, IOrdinoLogoDesc} from './base';
 
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});

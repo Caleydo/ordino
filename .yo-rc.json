@@ -5,7 +5,7 @@
     "author": "The Caleydo Team",
     "githubAccount": "Caleydo",
     "modules": [
-      "phovea_clue"
+      "tdp_core"
     ],
     "registry": {
       "exclude": [

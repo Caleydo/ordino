@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { IWorkbenchView } from '../..';
 export interface IWorkbenchSingleViewProps {
     view: IWorkbenchView;

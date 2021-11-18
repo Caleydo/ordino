@@ -1,8 +1,10 @@
 import React from 'react';
-import { IOrdinoViewPluginDesc } from '../store/ordinoSlice';
+import { IWorkbench } from '../store/ordinoSlice';
 import { EWorkbenchType } from './Filmstrip';
-export declare function Workbench(props: {
-    view: IOrdinoViewPluginDesc;
-    type: EWorkbenchType;
-    style: React.CSSProperties;
-}): JSX.Element;
+interface IWorkbenchProps {
+    workbench: IWorkbench;
+    type?: EWorkbenchType;
+    onScrollTo?: (ref: React.MutableRefObject<HTMLDivElement>) => void;
+}
+export declare function Workbench({ workbench, type, onScrollTo }: IWorkbenchProps): JSX.Element;
+export {};

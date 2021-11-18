@@ -1,20 +1,19 @@
-import * as React from "react";
-import { DatavisynLogo } from "./headerComponents/DatavisynLogo";
-import { AppDefaultLogo } from "./headerComponents/AppDefaultLogo";
-import { BurgerMenu } from "./headerComponents/BurgerMenu";
-import { ConfigurationMenu } from "./headerComponents/ConfigurationMenu";
-export function VisynHeader({ extensions: { VisynLogo = React.createElement(DatavisynLogo, null), CustomerLogo = null, configurationMenu = React.createElement(ConfigurationMenu, { extensions: { menuItems: null } }), burgerMenu = React.createElement(BurgerMenu, { extensions: { sidebar: null } }), AppLogo = React.createElement(AppDefaultLogo, null), LeftExtensions = null, RightExtensions = null } = {}, burgerMenuEnabled = true, configMenuEnabled = true }) {
+import * as React from 'react';
+import { visynHeaderComponents } from './headerConfig';
+export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false, }) {
+    const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
     return (React.createElement(React.Fragment, null,
-        React.createElement("nav", { className: "navbar navbar-expand-lg navbar-dark bg-dark" },
+        React.createElement("nav", { className: " visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark" },
             React.createElement("div", { className: "container-fluid" },
-                burgerMenu,
-                AppLogo,
-                React.createElement("button", { className: "navbar-toggler", type: "button", "data-toggle": "collapse", "data-target": "#headerNavbar" },
+                AppLogo ? React.createElement(AppLogo, null) : null,
+                React.createElement("button", { className: "navbar-toggler", type: "button", "data-toggle": "collapse", "data-target": "#navbarSupportedContent", "aria-controls": "navbarSupportedContent", "aria-expanded": "false", "aria-label": "Toggle navigation" },
                     React.createElement("span", { className: "navbar-toggler-icon" })),
-                React.createElement("div", { className: "ms-2 collapse navbar-collapse", id: "headerNavbar" }, LeftExtensions)),
-            React.createElement("div", { className: "container-fluid justify-content-end" },
-                CustomerLogo,
-                VisynLogo,
-                configurationMenu))));
+                React.createElement("div", { className: "collapse navbar-collapse" },
+                    LeftExtensions ? React.createElement(LeftExtensions, null) : null,
+                    React.createElement("ul", { className: "navbar-nav ms-auto align-items-center" },
+                        CustomerLogo ? React.createElement(CustomerLogo, null) : null,
+                        VisynLogo ? React.createElement(VisynLogo, null) : null,
+                        SettingsMenu ? React.createElement(SettingsMenu, { menuItems: ConfigMenuOptions ? React.createElement(ConfigMenuOptions, null) : null }) : null),
+                    RightExtensions ? React.createElement(RightExtensions, null) : null)))));
 }
 //# sourceMappingURL=VisynHeader.js.map

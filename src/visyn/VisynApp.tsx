@@ -1,5 +1,5 @@
-import * as React from "react";
-import { VisynHeader } from "./VisynHeader";
+import * as React from 'react';
+import { VisynHeader } from './VisynHeader';
 
 interface IVisynAppProps {
   extensions?: {

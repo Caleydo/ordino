@@ -1,1 +1,1 @@
-{"version":3,"file":"CustomerDefaultLogo.js","sourceRoot":"","sources":["../../../src/visyn/headerComponents/CustomerDefaultLogo.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAE/B,MAAM,UAAU,mBAAmB;IACjC,OAAO,6BAAK,SAAS,EAAC,6BAA6B,oBAAoB,CAAC;AAC1E,CAAC"}
+{"version":3,"file":"CustomerDefaultLogo.js","sourceRoot":"","sources":["../../../src/visyn/headerComponents/CustomerDefaultLogo.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAE/B,MAAM,UAAU,mBAAmB;IACjC,OAAO,4BAAI,SAAS,EAAC,UAAU;QAAC,2BAAG,SAAS,EAAC,sCAAsC,oBAAkB,CAAK,CAAC;AAC7G,CAAC"}

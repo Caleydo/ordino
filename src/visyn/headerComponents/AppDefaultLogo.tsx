@@ -1,5 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function AppDefaultLogo() {
-  return <a className="navbar-brand h3 text-center text-light">AppName</a>;
+  return <li className="nav-item">
+    <a className="navbar-brand nav-link fs-4 text-center text-light">AppName</a>
+  </li>;
 }
+

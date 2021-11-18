@@ -1,51 +1,37 @@
+import {debounce} from 'lodash';
 import * as React from 'react';
-import {useSelector} from 'react-redux';
 import {Workbench} from './Workbench';
-import {DummyWorkbench} from './DummyWorkbench';
+import {useAppSelector} from '../hooks';
 
 
 export enum EWorkbenchType {
     PREVIOUS = 't-previous',
     FOCUS = 't-focus',
-    FOCUS_CHOOSER = 't-focus-chooser',
     CONTEXT = 't-context',
     NEXT = 't-next'
 }
 
 export function Filmstrip() {
-    const ordino: any = useSelector<any>((state) => state.ordino) as any;
-    const isLastFocused = ordino.focusViewIndex === ordino.views.length - 1;
+    const ordino = useAppSelector((state) => state.ordino);
+    const ref = React.useRef(null);
+
+    const onScrollTo = React.useCallback(debounce((contextRef: React.MutableRefObject<HTMLDivElement>) => {
+        ref.current.scrollTo({left: contextRef?.current?.offsetLeft || 0, behavior: 'smooth'});
+    }, 500), []);
+
     return (
-        <div className="ordino-filmstrip">
-            {ordino.views.map((v) => {
-
-                let type = EWorkbenchType.PREVIOUS;
-                let styles = {};
-
-                if (ordino.focusViewIndex === v.index + 1) {
-                    type = EWorkbenchType.CONTEXT;
-
-                } else if (ordino.focusViewIndex === v.index) {
-                    type = EWorkbenchType.FOCUS;
-                    if (ordino.focusViewIndex === 0) {
-                        styles = {marginLeft: `calc(${ordino.focusViewIndex * -1}*100vw)`};
-                    }
-
-                } else if (v.index > ordino.focusViewIndex) {
-                    type = EWorkbenchType.NEXT;
-                }
-
-                if (v.index === 0 && ordino.focusViewIndex !== v.index) {
-                    styles = v.index === 0 ? {marginLeft: `calc(${ordino.focusViewIndex * -1} * 100vw + 100vw)`} : {};
-                }
+        <div ref={ref} className="ordino-filmstrip w-100 flex-grow-1 position-relative d-flex align-content-stretch overflow-auto"
+            style={{scrollSnapType: 'x mandatory'}}>
+            {ordino.workbenches.map((v) => {
+                const focused = ordino.focusViewIndex;
                 return (
-                    <Workbench type={type} style={styles} view={v} key={v.id} />
+                    <Workbench
+                        type={v.index === focused - 1 ? EWorkbenchType.CONTEXT : v.index === focused ? EWorkbenchType.FOCUS : v.index > focused ? EWorkbenchType.NEXT : EWorkbenchType.PREVIOUS}
+                        workbench={v}
+                        key={v.index}
+                        onScrollTo={onScrollTo} />
                 );
             })}
-
-            { isLastFocused ? (
-                <DummyWorkbench view={null} key={'chooserOnlyView'} />
-            ) : null}
         </div>
     );
 }

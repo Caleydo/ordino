@@ -1,5 +1,5 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function CustomerDefaultLogo() {
-  return <div className="me-3 text-center text-light">Customer Logo</div>;
+  return <li className="nav-item"><a className="me-3 text nav-link-center text-light">Customer Logo</a></li>;
 }

@@ -1,74 +1,41 @@
-import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "./usersSlice";
-import { DatavisynLogo } from "./headerComponents/DatavisynLogo";
-import { CustomerDefaultLogo } from "./headerComponents/CustomerDefaultLogo";
-import { AppDefaultLogo } from "./headerComponents/AppDefaultLogo";
+import * as React from 'react';
+import {ComponentType} from 'react';
+import {IVisynHeaderComponents, visynHeaderComponents} from './headerConfig';
 
-import { BurgerMenu } from "./headerComponents/BurgerMenu";
-import { ConfigurationMenu } from "./headerComponents/ConfigurationMenu";
-
-// export interface ICommonVisynHeaderPluginProps {
-//   //
-// }
-
-// export type IVisynHeaderPlugin<T extends {} = {}> = (
-//   props: ICommonVisynHeaderPluginProps & T
-// ) => React.ReactElement | null;
-
-export interface VisynHeaderProps {
-  extensions?: {
-    AppLogo?: React.ReactElement | null;
-    VisynLogo?: React.ReactElement | null;
-    LeftExtensions?: React.ReactElement | null;
-    RightExtensions?: React.ReactElement | null;
-    CustomerLogo?: React.ReactElement | null;
-    configurationMenu?: React.ReactElement<{
-      extensions: {
-        menuItems: React.ReactElement | null;
-      };
-    }> | null;
-    burgerMenu?: React.ReactElement<{
-      extensions: {
-        sidebar: React.ReactElement | null;
-      };
-    }> | null;
-  };
+export interface IVisynHeaderProps {
+  ConfigMenuOptions?: ComponentType;
+  BurgerSidebar?: ComponentType;
+  extensions?: IVisynHeaderComponents;
   burgerMenuEnabled?: boolean;
   configMenuEnabled?: boolean;
 }
 
 export function VisynHeader({
-  extensions: {
-    VisynLogo = <DatavisynLogo />,
-    CustomerLogo = null,
-    configurationMenu = <ConfigurationMenu extensions={{ menuItems: null }} />,
-    burgerMenu = <BurgerMenu extensions={{ sidebar: null }} />,
-    AppLogo = <AppDefaultLogo />,
-    LeftExtensions = null,
-    RightExtensions = null
-  } = {},
-  burgerMenuEnabled = true,
-  configMenuEnabled = true
-}: VisynHeaderProps) {
+  ConfigMenuOptions = null,
+  BurgerSidebar = null,
+  extensions = {},
+  burgerMenuEnabled = false,
+}: IVisynHeaderProps) {
+  const {AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu} = {...visynHeaderComponents, ...extensions};
+
+
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className=" visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
-          {burgerMenu}
-          {AppLogo}
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#headerNavbar">
+          {AppLogo ? <AppLogo /> : null}
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="ms-2 collapse navbar-collapse" id="headerNavbar">
-            {LeftExtensions}
+          <div className="collapse navbar-collapse">
+            {LeftExtensions ? <LeftExtensions /> : null}
+            <ul className="navbar-nav ms-auto align-items-center">
+              {CustomerLogo ? <CustomerLogo /> : null}
+              {VisynLogo ? <VisynLogo /> : null}
+              {SettingsMenu ? <SettingsMenu menuItems={ConfigMenuOptions ? <ConfigMenuOptions /> : null} /> : null}
+            </ul>
+            {RightExtensions ? <RightExtensions /> : null}
           </div>
-        </div>
-
-        <div className="container-fluid justify-content-end">
-          {CustomerLogo}
-          {VisynLogo}
-          {configurationMenu}
         </div>
       </nav>
     </>

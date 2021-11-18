@@ -1,10 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 const initialState = [
-    { id: "1", name: "Zach Cutler", password: "admin" },
-    { id: "2", name: "Holger Stitz", password: "admin" }
+    { id: '1', name: 'Zach Cutler', password: 'admin' },
+    { id: '2', name: 'Holger Stitz', password: 'admin' }
 ];
 const usersSlice = createSlice({
-    name: "users",
+    name: 'users',
     initialState,
     reducers: {
         addUser(state, action) {
@@ -12,7 +12,7 @@ const usersSlice = createSlice({
             state.push(action.payload);
         },
         changePassword(state, action) {
-            state[action.payload.user] = action.payload.password;
+            state[action.payload.userIndex].password = action.payload.password;
         }
     }
 });

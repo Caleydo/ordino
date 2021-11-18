@@ -1,12 +1,11 @@
+$visyn-header-height: 50px !default;
+
 $named-set-list-max-height: 23em !default; // show 10 items
 $session-list-max-height: 31em !default; // show 6 items
-$accordion-button-active-icon: $accordion-button-icon;
-$accordion-icon-active-color: red;
-$accordion-icon-color: red;
 
-$workbench-focus-width: 70vw;
-$workbench-context-width: 70vw;
+$chooser-width: 220px !default;
+$chooser-collapsed-width: 50px !default;
 
-$collapsed-chooser-width: 22px;
-$chooser-width: 220px;
-$chooser-margin: 10px;
+$workbench-width: calc(100vw - #{$chooser-collapsed-width}) !default;
+$workbench-focus-width: calc(90vw - #{$chooser-collapsed-width}) !default;
+$workbench-hide-width: 10vw !default;

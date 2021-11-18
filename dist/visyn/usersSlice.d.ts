@@ -1,6 +1,11 @@
-export declare const addUser: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changePassword: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>;
-export declare const usersReducer: import("redux").Reducer<{
+interface IUserState {
     id: string;
     name: string;
     password: string;
-}[], import("redux").AnyAction>;
+}
+export declare const addUser: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changePassword: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    userIndex: number;
+    password: string;
+}, string>;
+export declare const usersReducer: import("redux").Reducer<IUserState[], import("redux").AnyAction>;
+export {};

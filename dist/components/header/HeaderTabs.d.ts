@@ -1,1 +1,1 @@
-export declare function HeaderTabs(): JSX.Element;
+export declare function HeaderTabs(props: any): JSX.Element;

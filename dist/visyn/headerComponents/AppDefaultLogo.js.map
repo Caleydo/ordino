@@ -1,1 +1,1 @@
-{"version":3,"file":"AppDefaultLogo.js","sourceRoot":"","sources":["../../../src/visyn/headerComponents/AppDefaultLogo.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAE/B,MAAM,UAAU,cAAc;IAC5B,OAAO,2BAAG,SAAS,EAAC,wCAAwC,cAAY,CAAC;AAC3E,CAAC"}
+{"version":3,"file":"AppDefaultLogo.js","sourceRoot":"","sources":["../../../src/visyn/headerComponents/AppDefaultLogo.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,KAAK,MAAM,OAAO,CAAC;AAE/B,MAAM,UAAU,cAAc;IAC5B,OAAO,4BAAI,SAAS,EAAC,UAAU;QAC7B,2BAAG,SAAS,EAAC,mDAAmD,cAAY,CACzE,CAAC;AACR,CAAC"}

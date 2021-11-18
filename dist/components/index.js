@@ -4,4 +4,5 @@ export * from './OrdinoFooter';
 export * from './ListItemDropdown';
 export * from './OrdinoScrollspy';
 export * from './header';
+export * from './OrdinoHeader';
 //# sourceMappingURL=index.js.map

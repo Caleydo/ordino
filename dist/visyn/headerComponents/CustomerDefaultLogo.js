@@ -1,5 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 export function CustomerDefaultLogo() {
-    return React.createElement("div", { className: "me-3 text-center text-light" }, "Customer Logo");
+    return React.createElement("li", { className: "nav-item" },
+        React.createElement("a", { className: "me-3 text nav-link-center text-light" }, "Customer Logo"));
 }
 //# sourceMappingURL=CustomerDefaultLogo.js.map

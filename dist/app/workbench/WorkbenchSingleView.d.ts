@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { IWorkbenchView } from '../../store';
 export interface IWorkbenchSingleViewProps {
     view: IWorkbenchView;

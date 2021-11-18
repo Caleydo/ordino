@@ -1,8 +1,6 @@
 import {groupBy} from 'lodash';
-import {UniqueIdManager} from 'phovea_core';
+import {IViewPluginDesc, UniqueIdManager} from 'tdp_core';
 import React from 'react';
-import {IViewPluginDesc} from 'tdp_core';
-
 export interface IViewChooserAccordionProps {
     /**
      * Views to render

@@ -1,4 +1,3 @@
-/// <reference types="react" />
 export declare enum EWorkbenchType {
     PREVIOUS = "t-previous",
     FOCUS = "t-focus",

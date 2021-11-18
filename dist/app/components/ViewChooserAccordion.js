@@ -1,5 +1,5 @@
 import { groupBy } from 'lodash';
-import { UniqueIdManager } from 'phovea_core';
+import { UniqueIdManager } from 'tdp_core';
 import React from 'react';
 export function ViewChooserAccordion(props) {
     const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();

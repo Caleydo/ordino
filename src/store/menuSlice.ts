@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {EStartMenuMode} from '../components/header/menu/StartMenuTabWrapper';
 
 
@@ -19,10 +19,10 @@ const menuSlice = createSlice({
   name: 'menu',
   initialState,
   reducers: {
-    setActiveTab(state, action) {
+    setActiveTab(state, action: PayloadAction<string>) {
       state.activeTab = action.payload;
     },
-    setMode(state, action) {
+    setMode(state, action: PayloadAction<EStartMenuMode>) {
       state.mode = action.payload;
     }
   }

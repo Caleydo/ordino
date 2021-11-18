@@ -1,7 +1,7 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderTabs, } from '.';
-import {useAppSelector} from '..';
+import {useAppDispatch, useAppSelector} from '..';
 import {setActiveTab, setMode} from '../store';
 import {IVisynHeaderProps, VisynHeader} from '../visyn';
 import {EStartMenuMode, ITab, StartMenuTabWrapper} from './header/menu/StartMenuTabWrapper';
@@ -15,13 +15,13 @@ export function OrdinoHeader(props: IOrdinoHeaderProps) {
 
     const ordino = useAppSelector((state) => state.ordino);
     const menu = useAppSelector((state) => state.menu);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     React.useEffect(() => {
         // opening first ranking --> close start menu
         if (ordino.workbenches.length === 1) {
-            setMode({mode: EStartMenuMode.OVERLAY});
-            setActiveTab(null);
+            dispatch(setMode(EStartMenuMode.OVERLAY));
+            dispatch(setActiveTab(null));
         }
 
     }, [ordino.workbenches.length]);

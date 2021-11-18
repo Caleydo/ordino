@@ -1,9 +1,9 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import * as React from 'react';
+import { useAppDispatch } from '../../hooks';
 import { setActiveTab } from '../../store';
 import { EStartMenuMode } from './menu/StartMenuTabWrapper';
 export function HeaderTabs(props) {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     return (React.createElement(React.Fragment, null,
         React.createElement("ul", { className: "navbar-nav me-auto align-items-center" }, props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.activeTab === tab.id ? 'active' : ''}`, key: tab.id },
             React.createElement("a", { className: "nav-link", href: `#${tab.id}`, id: `${tab.id}-tab`, role: "tab", "aria-controls": tab.id, "aria-selected": (props.activeTab === tab.id), onClick: (evt) => {

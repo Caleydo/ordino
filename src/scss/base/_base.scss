@@ -16,7 +16,10 @@
 
 .ordino-filmstrip {
   .ordino-workbench {
+    height: 93vh;
+    z-index: 10;
     width: $workbench-width;
+    position: relative;
     transition: width 0.5s ease;
     border: 2px solid $gray-400;
     overflow: hidden;

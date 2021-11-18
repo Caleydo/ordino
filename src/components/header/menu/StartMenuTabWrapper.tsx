@@ -1,5 +1,5 @@
 import React, {ComponentType} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../..';
 import {setActiveTab} from '../../../store';
 
 
@@ -52,11 +52,10 @@ export interface IStartMenuTabWrapperProps {
     mode: EStartMenuMode;
 }
 
-
 export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
-    const ordino: any = useSelector<any>((state) => state.ordino) as any;
-    const menu: any = useSelector<any>((state) => state.menu) as any;
-    const dispatch = useDispatch();
+    const ordinoState = useAppSelector((state) => state.ordino);
+    const menu: any = useAppSelector<any>((state) => state.menu) as any;
+    const dispatch = useAppDispatch();
 
     return (
         <>

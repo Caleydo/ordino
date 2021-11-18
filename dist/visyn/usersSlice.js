@@ -12,7 +12,7 @@ const usersSlice = createSlice({
             state.push(action.payload);
         },
         changePassword(state, action) {
-            state[action.payload.user] = action.payload.password;
+            state[action.payload.userIndex].password = action.payload.password;
         }
     }
 });

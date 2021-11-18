@@ -1,6 +1,5 @@
-import {combineReducers, createStore} from '@reduxjs/toolkit';
+import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import {ordinoReducer} from './ordinoSlice';
-import {usersReducer} from '../visyn/usersSlice';
 import {allVisynReducers} from '../visyn/visynReducers';
 import {menuReducer} from './menuSlice';
 
@@ -11,4 +10,9 @@ const allReducers = combineReducers({
   ...allVisynReducers()
 });
 
-export const store = createStore(allReducers);
+export const store = configureStore({reducer: allReducers});
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch;

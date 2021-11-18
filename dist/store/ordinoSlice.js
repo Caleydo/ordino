@@ -1,4 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+export var EViewDirections;
+(function (EViewDirections) {
+    EViewDirections["N"] = "n";
+    EViewDirections["S"] = "s";
+    EViewDirections["W"] = "w";
+    EViewDirections["E"] = "e";
+})(EViewDirections || (EViewDirections = {}));
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -21,47 +28,74 @@ import { createSlice } from '@reduxjs/toolkit';
 //   }
 // }
 const initialState = {
-    views: [
-        {
-            id: 'view_0',
+    workbenches: [{
+            viewDirection: 'vertical',
             index: 0,
-            name: 'Start view',
-            selection: 'multiple',
+            views: [{
+                    id: 'view_0',
+                    index: 0,
+                    name: 'Start view',
+                    selection: 'multiple',
+                    selections: [],
+                    group: {
+                        name: 'General',
+                        order: 10
+                    }
+                }],
+            name: 'Start View',
+            id: 'startView',
             selections: [],
-            group: {
-                name: 'General',
-                order: 10
-            }
-        }
-    ],
+            filters: []
+        }],
     focusViewIndex: 0,
 };
 const ordinoSlice = createSlice({
     name: 'ordino',
     initialState,
     reducers: {
+        addWorkbench(state, action) {
+            state.workbenches.push(action.payload);
+        },
         addView(state, action) {
-            console.log('pushing view');
-            state.views.push(action.payload);
+            state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
         },
+        switchViews(state, action) {
+            console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
+            const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
+            temp.index = action.payload.secondViewIndex;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex].index = action.payload.firstViewIndex;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
+        },
+        setWorkbenchDirection(state, action) {
+            state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
+        },
+        removeWorkbench(state, action) {
+            state.workbenches.slice(action.payload.index);
+        },
+        //TODO:: When we remove the views jump too much. We need to something smarter based on what the direction is to figure out where to move the still existing views.
         removeView(state, action) {
-            state.views.slice(action.payload.index);
+            const workbench = state.workbenches[action.payload.workbenchIndex];
+            workbench.views.splice(action.payload.viewIndex, 1);
+            for (let j = 0; j < workbench.views.length; j++) {
+                workbench.views[j].index = j;
+            }
         },
-        replaceView(state, action) {
-            state.views.splice(action.payload.index, state.views.length - action.payload.index);
-            state.views.push(action.payload);
+        replaceWorkbench(state, action) {
+            state.workbenches.splice(action.payload.workbenchIndex);
+            state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            state.views[action.payload.index].selections = action.payload.newSelection;
+            // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
         },
         addFilter(state, action) {
-            state.views[action.payload.index].filters.push(action.payload.newFilter);
+            // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;
         }
     }
 });
-export const { addView, removeView, replaceView, addSelection, addFilter, changeFocus } = ordinoSlice.actions;
+export const { addView, removeView, replaceWorkbench, addSelection, addFilter, changeFocus, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

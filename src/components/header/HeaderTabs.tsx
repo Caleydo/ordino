@@ -1,10 +1,10 @@
-import React from 'react';
-import {useDispatch} from 'react-redux';
+import * as React from 'react';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {setActiveTab} from '../../store';
-import {IStartMenuTabWrapperProps, EStartMenuMode} from './menu/StartMenuTabWrapper';
+import {EStartMenuMode} from './menu/StartMenuTabWrapper';
 
-export function HeaderTabs(props: IStartMenuTabWrapperProps) {
-  const dispatch = useDispatch();
+export function HeaderTabs(props) {
+  const dispatch = useAppDispatch();
 
   return (
     <>

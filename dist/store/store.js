@@ -1,4 +1,4 @@
-import { combineReducers, createStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { ordinoReducer } from './ordinoSlice';
 import { allVisynReducers } from '../visyn/visynReducers';
 import { menuReducer } from './menuSlice';
@@ -8,5 +8,5 @@ const allReducers = combineReducers({
     menu: menuReducer,
     ...allVisynReducers()
 });
-export const store = createStore(allReducers);
+export const store = configureStore({ reducer: allReducers });
 //# sourceMappingURL=store.js.map

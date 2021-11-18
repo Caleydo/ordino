@@ -15,4 +15,5 @@ export default function (registry: IRegistry) {
     height: 30
   });
   // generator-phovea:end
+
 }

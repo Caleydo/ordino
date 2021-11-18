@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAsync } from '../hooks';
+import { useAsync } from 'tdp_core';
 import { useMemo } from 'react';
 import { PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_LOGO } from '../base';
@@ -16,7 +16,7 @@ export function OrdinoLogo() {
             height: plugin.height || defaultSize.height,
         };
     }, []);
-    const { status, value } = useAsync(loadOrdinoLogo);
+    const { status, value } = useAsync(loadOrdinoLogo, []);
     return (React.createElement(React.Fragment, null, status === 'success' &&
         React.createElement("div", { className: "ordino-logo" },
             React.createElement("img", { alt: "", src: value.icon, width: value.width, height: value.height }),

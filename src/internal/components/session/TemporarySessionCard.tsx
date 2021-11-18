@@ -1,8 +1,7 @@
 import {IProvenanceGraphDataDescription, I18nextManager} from 'tdp_core';
 import React from 'react';
-import {ProvenanceGraphMenuUtils} from 'tdp_core';
+import {ProvenanceGraphMenuUtils, useAsync} from 'tdp_core';
 import {IStartMenuSessionSectionDesc} from '../../..';
-import {useAsync} from '../../../hooks';
 import {GraphContext} from '../../OrdinoApp';
 import {ListItemDropdown} from '../../../components';
 import {EAction, CommonSessionCard} from './CommonSessionCard';
@@ -20,7 +19,7 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
         setSessions(all);
     }, []);
 
-    const {status} = useAsync(listSessions);
+    const {status} = useAsync(listSessions, []);
 
     return (
         <>

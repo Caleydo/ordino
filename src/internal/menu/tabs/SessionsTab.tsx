@@ -1,6 +1,5 @@
 import React, {useMemo} from 'react';
-import {PluginRegistry, UniqueIdManager} from 'tdp_core';
-import {useAsync} from '../../../hooks';
+import {PluginRegistry, UniqueIdManager, useAsync} from 'tdp_core';
 import {EP_ORDINO_STARTMENU_SESSION_SECTION, IStartMenuSessionSectionDesc} from '../../..';
 import {OrdinoScrollspy, OrdinoScrollspyItem} from '../../components';
 import {BrowserRouter} from 'react-router-dom';
@@ -19,7 +18,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
     return Promise.all(sectionEntries.map((section) => section.load()));
   }, []);
 
-  const {status, value: items} = useAsync(loadSections);
+  const {status, value: items} = useAsync(loadSections, []);
 
   return (
     <>

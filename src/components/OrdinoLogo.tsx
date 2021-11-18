@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useAsync} from '../hooks';
+import {useAsync} from 'tdp_core';
 import {useMemo} from 'react';
 import {PluginRegistry} from 'tdp_core';
 import {EP_ORDINO_LOGO} from '../base';
@@ -21,7 +21,7 @@ export function OrdinoLogo() {
     };
   }, []);
 
-  const {status, value} = useAsync(loadOrdinoLogo);
+  const {status, value} = useAsync(loadOrdinoLogo, []);
   return (<>{
     status === 'success' &&
     <div className="ordino-logo">

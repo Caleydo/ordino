@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { PluginRegistry, UniqueIdManager } from 'tdp_core';
-import { useAsync } from '../../../hooks';
+import { PluginRegistry, UniqueIdManager, useAsync } from 'tdp_core';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '../../..';
 import { OrdinoScrollspy, OrdinoScrollspyItem } from '../../components';
 import { BrowserRouter } from 'react-router-dom';
@@ -14,7 +13,7 @@ export default function SessionsTab(_props) {
         const sectionEntries = PluginRegistry.getInstance().listPlugins(EP_ORDINO_STARTMENU_SESSION_SECTION).map((d) => d).sort(byPriority);
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
-    const { status, value: items } = useAsync(loadSections);
+    const { status, value: items } = useAsync(loadSections, []);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(OrdinoScrollspy, { items: items.map((item) => ({ id: `${item.desc.id}_${suffix}`, name: item.desc.name })) }, (handleOnChange) => React.createElement(React.Fragment, null,
             React.createElement("div", { className: "container pb-10 pt-5" },

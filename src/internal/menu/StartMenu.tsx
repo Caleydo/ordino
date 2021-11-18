@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {GlobalEventHandler, PluginRegistry} from 'tdp_core';
-import {EP_ORDINO_START_MENU_TAB, Ordino, useAsync} from '../..';
-import {AppHeader} from 'tdp_core';
+import {GlobalEventHandler, PluginRegistry, useAsync, AppHeader} from 'tdp_core';
+import {EP_ORDINO_START_MENU_TAB, Ordino} from '../..';
 import {HighlightSessionCardContext} from '../OrdinoApp';
 import {EP_ORDINO_START_MENU_TAB_SHORTCUT, IStartMenuTabDesc, IStartMenuTabShortcutDesc} from '../../base';
 import {StartMenuLinks} from './StartMenuLinks';
@@ -73,7 +72,7 @@ export function StartMenuComponent({header, mode, open}: {header: AppHeader, mod
   }, []);
 
   // load all registered tabs
-  const {status, value: tabs} = useAsync(loadTabs);
+  const {status, value: tabs} = useAsync(loadTabs, []);
 
 
   React.useEffect(() => {

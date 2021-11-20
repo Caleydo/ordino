@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {ComponentType} from 'react';
-import {useAppDispatch, useAppSelector} from '..';
 import {IVisynHeaderComponents, visynHeaderComponents} from './headerConfig';
 import {useLoginMenu} from './hooks/useLoginMenu';
 

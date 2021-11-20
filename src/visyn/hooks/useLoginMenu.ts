@@ -49,7 +49,7 @@ export function useLoginMenu(): {ref: (element: HTMLElement | null) => void, log
 
             instance.on(LoginMenu.EVENT_LOGGED_IN, () => {
                 dispatch(login());
-                clearTimeout(forceShowLoginDialogTimeout)
+                clearTimeout(forceShowLoginDialogTimeout);
             });
 
             if (!user.loggedIn) {
@@ -59,9 +59,9 @@ export function useLoginMenu(): {ref: (element: HTMLElement | null) => void, log
             }
 
             return () => {
-                instance.off(LoginMenu.EVENT_LOGGED_OUT)
-                instance.off(LoginMenu.EVENT_LOGGED_IN)
-            }
+                instance.off(LoginMenu.EVENT_LOGGED_OUT);
+                instance.off(LoginMenu.EVENT_LOGGED_IN);
+            };
         }
     }, [instance]);
 

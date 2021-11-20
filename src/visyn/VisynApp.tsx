@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { VisynHeader } from './VisynHeader';
+import {useAppSelector} from '..';
+import {VisynHeader} from './VisynHeader';
 
 interface IVisynAppProps {
   extensions?: {
@@ -8,11 +9,19 @@ interface IVisynAppProps {
   children?: React.ReactNode;
 }
 
-export function VisynApp({ extensions: { header = <VisynHeader /> } = {}, children = null }: IVisynAppProps) {
+export function VisynApp({extensions: {header = <VisynHeader />} = {}, children = null}: IVisynAppProps) {
+  const user = useAppSelector((state) => state.user);
+
+  const [initialized, setInitialized] = React.useState<boolean>(false);
   return (
     <>
       {header}
-      {children}
+      {user.loggedIn ?
+        <>
+          {children}
+        </>
+        : null}
     </>
+
   );
 }

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { LoginMenu } from './headerComponents/LoginMenu';
 import { visynHeaderComponents } from './headerConfig';
+import { useLoginMenu } from './hooks/useLoginMenu';
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false, }) {
+    const { ref, loggedIn } = useLoginMenu();
     const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
     return (React.createElement(React.Fragment, null,
         React.createElement("nav", { className: " visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark" },
@@ -11,12 +12,12 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
                     React.createElement("span", { className: "navbar-toggler-icon" })),
                 React.createElement("div", { className: "collapse navbar-collapse" },
                     LeftExtensions ? React.createElement(LeftExtensions, null) : null,
-                    React.createElement("ul", { className: "navbar-nav ms-auto align-items-center" },
+                    React.createElement("ul", { className: "navbar-nav ms-auto align-items-end" },
                         CustomerLogo ? React.createElement(CustomerLogo, null) : null,
-                        VisynLogo ? React.createElement(VisynLogo, null) : null,
-                        React.createElement(LoginMenu, { username: "admin" }),
-                        SettingsMenu ? React.createElement(SettingsMenu, { menuItems: ConfigMenuOptions ? React.createElement(ConfigMenuOptions, null) : null }) : null),
+                        VisynLogo ? React.createElement(VisynLogo, null) : null),
+                    React.createElement("ul", { ref: ref, className: "navbar-nav align-items-end" }),
+                    React.createElement("ul", { className: "navbar-nav align-items-end" }, SettingsMenu ? React.createElement(SettingsMenu, { menuItems: ConfigMenuOptions ? React.createElement(ConfigMenuOptions, null) : null }) : null),
                     RightExtensions ? React.createElement(RightExtensions, null) : null))),
-        React.createElement("div", { id: "headerWaitingOverlay", className: "phovea-busy", hidden: true })));
+        loggedIn ? null : React.createElement("div", { id: "headerWaitingOverlay", className: "phovea-busy" })));
 }
 //# sourceMappingURL=VisynHeader.js.map

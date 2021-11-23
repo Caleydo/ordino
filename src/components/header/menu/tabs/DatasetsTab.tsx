@@ -75,8 +75,6 @@ const datasets = [
 
 export function DatasetsTab() {
   const suffix = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
-
-
   return (
     <>
       <OrdinoScrollspy items={datasets}>

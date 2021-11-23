@@ -85,27 +85,7 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 // }
 
 const initialState: IOrdinoAppState = {
-  workbenches:
-    [{
-      viewDirection: 'vertical',
-      index: 0,
-      views:
-        [{
-          id: 'view_0',
-          index: 0,
-          name: 'Start view',
-          selection: 'multiple',
-          selections: [],
-          group: {
-            name: 'General',
-            order: 10
-          }
-        }],
-      name: 'Start View',
-      id: 'startView',
-      selections: [],
-      filters: []
-    }],
+  workbenches: [],
   focusViewIndex: 0,
 };
 
@@ -113,6 +93,10 @@ const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
+    addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
+      state.workbenches.splice(0, state.workbenches.length);
+      state.workbenches.push(action.payload);
+    },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
@@ -162,6 +146,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const {addView, removeView, replaceWorkbench, addSelection, addFilter, changeFocus, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, removeView, replaceWorkbench, addSelection, addFilter, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

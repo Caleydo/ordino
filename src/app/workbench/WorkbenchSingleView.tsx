@@ -17,7 +17,6 @@ export function WorkbenchSingleView({
 }: IWorkbenchSingleViewProps) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
         canDrop: (d: {type: EDragTypes, viewId: string}) => {
@@ -35,10 +34,8 @@ export function WorkbenchSingleView({
             <button type="button" onClick={() => dispatch(removeView({workbenchIndex: ordino.focusViewIndex, viewIndex: view.index}))} className="position-absolute btn bg-none end-0">
                 <i className="fas fa-times"></i>
             </button>
-            <div style={{flex: '1 1 auto', justifyContent: 'center', display: 'flex', alignItems: 'center'}}>
-                <span style={{fontSize: 30}}>
-                {view.id}
-                </span>
+            <div style={{flex: '1 1 auto', justifyContent: 'stretch', display: 'flex', alignItems: 'center'}}>
+
             </div>
             {isOver && canDrop ? <DropOverlay view={view}/> : null }
         </div>

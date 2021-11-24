@@ -16,9 +16,9 @@ export function Filmstrip() {
         var _a;
         ref.current.scrollTo({ left: ((_a = contextRef === null || contextRef === void 0 ? void 0 : contextRef.current) === null || _a === void 0 ? void 0 : _a.offsetLeft) || 0, behavior: 'smooth' });
     }, 500), []);
-    return (React.createElement("div", { ref: ref, className: "ordino-filmstrip w-100 flex-grow-1 position-relative d-flex align-content-stretch overflow-auto", style: { scrollSnapType: 'x mandatory' } }, ordino.workbenches.map((v) => {
+    return (React.createElement("div", { ref: ref, className: "ordino-filmstrip w-100 flex-grow-1 position-relative d-flex align-content-stretch overflow-auto", style: { scrollSnapType: 'x mandatory' } }, ordino.workbenches.map((v, index) => {
         const focused = ordino.focusViewIndex;
-        return (React.createElement(Workbench, { type: v.index === focused - 1 ? EWorkbenchType.CONTEXT : v.index === focused ? EWorkbenchType.FOCUS : v.index > focused ? EWorkbenchType.NEXT : EWorkbenchType.PREVIOUS, workbench: v, key: v.index, onScrollTo: onScrollTo }));
+        return (React.createElement(Workbench, { type: v.index === focused - 1 ? EWorkbenchType.CONTEXT : v.index === focused ? EWorkbenchType.FOCUS : v.index > focused ? EWorkbenchType.NEXT : EWorkbenchType.PREVIOUS, workbench: v, key: index, onScrollTo: onScrollTo }));
     })));
 }
 //# sourceMappingURL=Filmstrip.js.map

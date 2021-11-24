@@ -22,8 +22,7 @@ export function WorkbenchSingleView({ view }) {
         React.createElement(MoveButton, { view: view }),
         React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex: ordino.focusViewIndex, viewIndex: view.index })), className: "position-absolute btn bg-none end-0" },
             React.createElement("i", { className: "fas fa-times" })),
-        React.createElement("div", { style: { flex: '1 1 auto', justifyContent: 'center', display: 'flex', alignItems: 'center' } },
-            React.createElement("span", { style: { fontSize: 30 } }, view.id)),
+        React.createElement("div", { style: { flex: '1 1 auto', justifyContent: 'stretch', display: 'flex', alignItems: 'center' } }),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchSingleView.js.map

@@ -5,7 +5,6 @@ export function useLoadViewPlugin(viewId) {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
     const dispatch = useAppDispatch();
     const [instance, setInstance] = React.useState(null);
-    console.log(view);
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);
@@ -18,7 +17,10 @@ export function useLoadViewPlugin(viewId) {
             }
             // Create a new one if there is a ref
             if (ref && status === 'success') {
-                const context = { graph: null, ref: null, desc: view };
+                // TODO: Refactor score in ARanking view to load without tracking
+                // at the moment scores do not work
+                // dummy context
+                const context = { graph: null, ref: { value: { data: null } }, desc: view };
                 const selection = { idtype: new IDType('Start', 'Start', '', true), range: Range.none() };
                 const i = viewPlugin.factory(context, selection, ref, {});
                 ref.append(i.node);

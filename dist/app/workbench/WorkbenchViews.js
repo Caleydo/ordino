@@ -6,7 +6,6 @@ export function WorkbenchViews({ index }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const views = ordino.workbenches[index].views;
-    console.log(views);
     let wb = null;
     if (views.length === 1) {
         wb = (React.createElement(WorkbenchSingleView, { view: views[0] }));

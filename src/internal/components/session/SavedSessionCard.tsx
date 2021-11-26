@@ -73,7 +73,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                     {status === 'error' && <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')}</p>}
                   </div>
 
-                  <div className="tab-pane fade" role="tabpanel" id={`saved-session-other-panel-${id}`} aria-labelledby={`saved-session-other-tab-${id}`}>
+                  <div className="tab-pane fade ordino-session-list p-1" id={`saved-session-other-panel-${id}`} aria-labelledby={`saved-session-other-tab-${id}`}>
                     {status === 'pending' &&
                       <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
                     }

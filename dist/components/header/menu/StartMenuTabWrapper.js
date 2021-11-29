@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../..';
+import { useAppDispatch } from '../../..';
 import { setActiveTab } from '../../../store';
 export var EStartMenuMode;
 (function (EStartMenuMode) {
@@ -24,8 +24,6 @@ export var EStartMenuOpen;
     EStartMenuOpen["CLOSED"] = "closed";
 })(EStartMenuOpen || (EStartMenuOpen = {}));
 export function StartMenuTabWrapper(props) {
-    const ordinoState = useAppSelector((state) => state.ordino);
-    const menu = useAppSelector((state) => state.menu);
     const dispatch = useAppDispatch();
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { id: "ordino-start-menu", className: `ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}` }, props.tabs.map(({ id, Tab }) => (React.createElement("div", { className: `tab-pane fade ${props.activeTab === id ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`, key: id, id: id, role: "tabpanel", "aria-labelledby": `${id}-tab` },

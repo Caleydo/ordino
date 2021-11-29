@@ -20,9 +20,9 @@ export function AddButton() {
                 dispatch(addView({
                     workbenchIndex: ordino.focusViewIndex,
                     view: {
-                        id: (Math.random() + 1).toString(36).substring(7),
+                        id: 'reprovisyn_ranking_ordino-public.public.tdp_gene',
                         index: ordino.workbenches[ordino.focusViewIndex].views.length,
-                        name: 'Start view',
+                        name: 'Gene',
                         selection: 'multiple',
                         selections: [],
                         group: {

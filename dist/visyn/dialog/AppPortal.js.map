@@ -1,0 +1,1 @@
+{"version":3,"file":"AppPortal.js","sourceRoot":"","sources":["../../../src/visyn/dialog/AppPortal.tsx"],"names":[],"mappings":"AACA,OAAO,EAAC,YAAY,EAAC,MAAM,WAAW,CAAC;AAMvC,MAAM,UAAU,SAAS,CAAC,EAAC,QAAQ,EAAkB;IACjD,MAAM,aAAa,GAAG,QAAQ,CAAC,cAAc,CAAC,gBAAgB,CAAC,CAAC;IAChE,OAAO,YAAY,CAAC,QAAQ,EAAE,aAAa,CAAC,CAAC;AACjD,CAAC"}

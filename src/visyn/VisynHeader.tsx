@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {ComponentType} from 'react';
 import {IVisynHeaderComponents, visynHeaderComponents} from './headerConfig';
+import {useLoginMenu} from './hooks/useLoginMenu';
 
 export interface IVisynHeaderProps {
   ConfigMenuOptions?: ComponentType;
@@ -16,8 +17,8 @@ export function VisynHeader({
   extensions = {},
   burgerMenuEnabled = false,
 }: IVisynHeaderProps) {
+  const {ref, loggedIn} = useLoginMenu();
   const {AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu} = {...visynHeaderComponents, ...extensions};
-
 
   return (
     <>
@@ -29,15 +30,20 @@ export function VisynHeader({
           </button>
           <div className="collapse navbar-collapse">
             {LeftExtensions ? <LeftExtensions /> : null}
-            <ul className="navbar-nav ms-auto align-items-center">
+            <ul className="navbar-nav ms-auto align-items-end">
               {CustomerLogo ? <CustomerLogo /> : null}
               {VisynLogo ? <VisynLogo /> : null}
+            </ul>
+            <ul ref={ref} className="navbar-nav align-items-end">
+            </ul>
+            <ul className="navbar-nav align-items-end">
               {SettingsMenu ? <SettingsMenu menuItems={ConfigMenuOptions ? <ConfigMenuOptions /> : null} /> : null}
             </ul>
             {RightExtensions ? <RightExtensions /> : null}
           </div>
         </div>
       </nav>
+      {loggedIn ? null : <div id="headerWaitingOverlay" className="phovea-busy" />}
     </>
   );
 }

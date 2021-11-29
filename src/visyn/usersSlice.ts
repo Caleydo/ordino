@@ -1,31 +1,27 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-interface IUserState {
-  id: string;
-  name: string;
-  password: string;
+export interface IUserState {
+  loggedIn?: boolean;
 }
 
-const initialState: IUserState[] = [
-  { id: '1', name: 'Zach Cutler', password: 'admin' },
-  { id: '2', name: 'Holger Stitz', password: 'admin' }
-];
+const initialState: IUserState = {
+  loggedIn: false
+};
 
-const usersSlice = createSlice({
-  name: 'users',
+const userSlice = createSlice({
+  name: 'user',
   initialState,
   reducers: {
-    addUser(state, action) {
-      console.log(action.payload);
-      state.push(action.payload);
+    login(state) {
+      state.loggedIn = true
     },
-    changePassword(state, action: PayloadAction<{userIndex: number, password: string}>) {
-      state[action.payload.userIndex].password = action.payload.password;
-    }
+    logout(state) {
+      state.loggedIn = false;
+    },
   }
 });
 
 //should this be active or passive voice? random thing but active seems better, but docs are passive
-export const { addUser, changePassword } = usersSlice.actions;
+export const {login, logout} = userSlice.actions;
 
-export const usersReducer = usersSlice.reducer;
+export const userReducer = userSlice.reducer;

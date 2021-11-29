@@ -1,11 +1,5 @@
-interface IUserState {
-    id: string;
-    name: string;
-    password: string;
+export interface IUserState {
+    loggedIn?: boolean;
 }
-export declare const addUser: import("@reduxjs/toolkit").ActionCreatorWithPayload<any, string>, changePassword: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    userIndex: number;
-    password: string;
-}, string>;
-export declare const usersReducer: import("redux").Reducer<IUserState[], import("redux").AnyAction>;
-export {};
+export declare const login: import("@reduxjs/toolkit").ActionCreatorWithoutPayload<string>, logout: import("@reduxjs/toolkit").ActionCreatorWithoutPayload<string>;
+export declare const userReducer: import("redux").Reducer<IUserState, import("redux").AnyAction>;

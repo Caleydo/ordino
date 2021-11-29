@@ -12,7 +12,7 @@ export interface IOrdinoHeaderProps extends IVisynHeaderProps {
 }
 
 export function OrdinoHeader(props: IOrdinoHeaderProps) {
-
+    const app = useAppSelector((state) => state.app);
     const ordino = useAppSelector((state) => state.ordino);
     const menu = useAppSelector((state) => state.menu);
     const dispatch = useAppDispatch();
@@ -24,7 +24,7 @@ export function OrdinoHeader(props: IOrdinoHeaderProps) {
             dispatch(setActiveTab(null));
         }
 
-    }, [ordino.workbenches.length]);
+    }, [ordino.workbenches]);
 
     React.useEffect(() => {
         if (ordino.workbenches.length === 0) {
@@ -37,7 +37,8 @@ export function OrdinoHeader(props: IOrdinoHeaderProps) {
             LeftExtensions: () => <HeaderTabs tabs={props.tabs} activeTab={menu.activeTab} mode={EStartMenuMode.OVERLAY} />,
             ...props.extensions
         }} />
-        <StartMenuTabWrapper tabs={props.tabs} activeTab={menu.activeTab} mode={EStartMenuMode.OVERLAY} />
-    </>
+        {app.ready ? <>
+            <StartMenuTabWrapper tabs={props.tabs} activeTab={menu.activeTab} mode={EStartMenuMode.OVERLAY} /></>
+            : null}</>
     );
 }

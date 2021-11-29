@@ -1,5 +1,22 @@
 .visyn-navbar {
-  // height: $visyn-header-height;
+
+  .visyn-app-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before {
+      content: ' ';
+      white-space: pre;
+      display: block;
+      background: $phovea-navbar-icon-url no-repeat center $phovea-navbar-icon-top;
+      background-size: contain;
+      height: 100%;
+      width: $phovea-navbar-icon-width;
+    }
+  }
+
+  height: $visyn-header-height;
     /**
      * Colors light theme
      */

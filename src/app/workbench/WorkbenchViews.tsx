@@ -21,8 +21,6 @@ export function WorkbenchViews({
 
     const views = ordino.workbenches[index].views;
 
-    console.log(views);
-
     let wb = null;
 
     if(views.length === 1) {

@@ -1,7 +1,7 @@
-import { usersReducer } from './usersSlice';
+import { userReducer } from './usersSlice';
 export function allVisynReducers() {
     return {
-        users: usersReducer
+        user: userReducer
     };
 }
 //# sourceMappingURL=visynReducers.js.map

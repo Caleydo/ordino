@@ -5,17 +5,18 @@ import { PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_FOOTER_MENU } from '../base';
 // tslint:disable-next-line: variable-name
 const FooterLink = (props) => {
+    const testId = props.to === '/' ? '' : `${props.to.replace(/\s+/g, '-').toLowerCase()}-link`; // check if FooterLink is logo, footer logo should not have data-testid in footerlink
     if (props.openInNewWindow) {
-        return (React.createElement(Link, { to: props.to, className: props.className, target: "_blank", rel: "noopener noreferrer" }, props.children));
+        return (React.createElement(Link, { to: props.to, className: props.className, "data-testid": testId, target: "_blank", rel: "noopener noreferrer" }, props.children));
     }
-    return (React.createElement(Link, { to: props.to, className: props.className }, props.children));
+    return (React.createElement(Link, { to: props.to, className: props.className, "data-testid": testId }, props.children));
 };
 export function OrdinoFooter(props) {
     const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
     const lists = PluginRegistry.getInstance().listPlugins(EP_ORDINO_FOOTER_MENU)
         .map((d) => d) // no need to load the plugin; everything is contained in the plugin desc
         .map((d) => d.lists)[0]; // take only the first footer menu
-    return (React.createElement("div", { className: "ordino-footer pt-4 pb-6 px-5" },
+    return (React.createElement("div", { className: "ordino-footer pt-4 pb-6 px-5", "data-testid": "ordino-footer" },
         React.createElement("nav", { className: "ordino-footer-navigation row" }, lists && lists.map((list, index) => {
             return (React.createElement("div", { className: "list-group col-sm-auto", key: index }, list && list.map((link) => {
                 return (React.createElement(FooterLink, { key: link.page, to: link.page, openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },

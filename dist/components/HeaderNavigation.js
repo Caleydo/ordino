@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { OrdinoLogo } from './OrdinoLogo';
 import { PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_HEADER_MENU } from '../base';
-export function HeaderNavigation({ fixed, bg = 'dark', testId: parentTestId }) {
-    const testId = `${parentTestId}-navbar`;
+export function HeaderNavigation({ fixed, bg = 'dark' }) {
+    const testId = 'ordino-navbar';
     const links = PluginRegistry.getInstance().listPlugins(EP_ORDINO_HEADER_MENU)
         .map((d) => d) // no need to load the plugin; everything is contained in the plugin desc
         .map((d) => d.links)[0]; // take only the first footer menu

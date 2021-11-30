@@ -22,11 +22,10 @@ interface IHeaderNavigationProps {
    * @default dark (see variables.scss)
    */
   bg?: string;
-  testId?: string;
 }
 
-export function HeaderNavigation({fixed, bg = 'dark', testId: parentTestId}: IHeaderNavigationProps) {
-  const testId = `${parentTestId}-navbar`;
+export function HeaderNavigation({fixed, bg = 'dark'}: IHeaderNavigationProps) {
+  const testId = 'ordino-navbar';
 
   const links: IOrdinoHeaderMenuLink[] = PluginRegistry.getInstance().listPlugins(EP_ORDINO_HEADER_MENU)
     .map((d) => d as IOrdinoHeaderMenuDesc) // no need to load the plugin; everything is contained in the plugin desc

@@ -52,7 +52,7 @@ export default function SavedSessionCard({ name, faIcon }) {
                                             React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession'), className: "dropdown-item dropdown-delete", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete'))));
                                 })),
                                 status === 'error' && React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError'))),
-                            React.createElement("div", { className: "tab-pane fade ordino-session-list p-1", id: `saved-session-other-panel-${id}`, "aria-labelledby": `saved-session-other-tab-${id}` },
+                            React.createElement("div", { className: "tab-pane fade ordino-session-list p-1", role: "tabpanel", id: `saved-session-other-panel-${id}`, "aria-labelledby": `saved-session-other-tab-${id}` },
                                 status === 'pending' &&
                                     React.createElement("p", null,
                                         React.createElement("i", { className: "fas fa-circle-notch fa-spin" }),

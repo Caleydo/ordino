@@ -9,6 +9,7 @@ interface IHeaderNavigationProps {
      * @default dark (see variables.scss)
      */
     bg?: string;
+    testId?: string;
 }
-export declare function HeaderNavigation({ fixed, bg }: IHeaderNavigationProps): JSX.Element;
+export declare function HeaderNavigation({ fixed, bg, testId: parentTestId }: IHeaderNavigationProps): JSX.Element;
 export {};

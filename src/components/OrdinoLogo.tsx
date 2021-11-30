@@ -24,7 +24,7 @@ export function OrdinoLogo() {
   const {status, value} = useAsync(loadOrdinoLogo, []);
   return (<>{
     status === 'success' &&
-    <div className="ordino-logo">
+    <div className="ordino-logo" data-testid="ordino-logo">
       <img alt="" src={value.icon} width={value.width} height={value.height} />{' '}{value.text}
     </div>
   }</>);

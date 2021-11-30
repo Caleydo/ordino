@@ -13,6 +13,7 @@ interface INamedSetListProps {
 }
 
 export function NamedSetList({headerIcon, headerText, value, status, onOpen}: INamedSetListProps) {
+  const testId = headerText.replace(/\s+/g, '-').toLowerCase(); //replace whtiespace by dash and make lowercase
   const [namedSets, setNamedSets] = React.useState<INamedSet[]>([]);
   React.useEffect(() => {
     setNamedSets(value);
@@ -46,7 +47,7 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
   };
 
   return (
-    <div className="dataset-entry d-flex flex-column col-md-4 position-relative">
+    <div className="dataset-entry d-flex flex-column col-md-4 position-relative" data-testid={testId}>
       <header><i className={`ms-1 me-2 ${headerIcon}`}></i>{headerText}</header>
       {status === 'pending' &&
         <p className="p-1"><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')} </p>
@@ -62,13 +63,13 @@ export function NamedSetList({headerIcon, headerText, value, status, onOpen}: IN
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
               <div key={i} className="dropdown-parent justify-content-between btn-group position-static">
-                <button className="text-start ps-0 btn btn-link text-ordino-button-primary" title={DatasetUtils.toNamedSetTitle(namedSet)} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
+                <button className="text-start ps-0 btn btn-link text-ordino-button-primary" data-testid={`${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`} title={DatasetUtils.toNamedSetTitle(namedSet)} onClick={(event) => onOpen(event, namedSet)} >{namedSet.name}</button>
                 {canWrite ?
                   <ListItemDropdown>
-                    <button className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails')} onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>
+                    <button className="dropdown-item" data-testid={`${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`} title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails')} onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}>
                       {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')}
                     </button>
-                    <button className="dropdown-item dropdown-delete" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')} onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}>
+                    <button className="dropdown-item dropdown-delete" data-testid={`${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`} title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')} onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}>
                       {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}
                     </button>
                   </ListItemDropdown> : null

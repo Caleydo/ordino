@@ -18,7 +18,7 @@ export function OrdinoLogo() {
     }, []);
     const { status, value } = useAsync(loadOrdinoLogo, []);
     return (React.createElement(React.Fragment, null, status === 'success' &&
-        React.createElement("div", { className: "ordino-logo" },
+        React.createElement("div", { className: "ordino-logo", "data-testid": "ordino-logo" },
             React.createElement("img", { alt: "", src: value.icon, width: value.width, height: value.height }),
             ' ',
             value.text)));

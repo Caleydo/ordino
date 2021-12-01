@@ -1,4 +1,4 @@
-import {I18nextManager, IProvenanceGraphDataDescription} from 'tdp_core';
+import {I18nextManager, IProvenanceGraphDataDescription, UserSession} from 'tdp_core';
 import React from 'react';
 import {ProvenanceGraphMenuUtils, TDPApplicationUtils} from 'tdp_core';
 import {SessionAction} from './CommonSessionCard';
@@ -16,6 +16,7 @@ interface ISessionListItemProps {
 export function SessionListItem({desc, selectSession, children}: ISessionListItemProps) {
   const dateString = desc.ts ? new Date(desc.ts).toUTCString() : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
   const dateFromNow = desc?.ts ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
+  const me = UserSession.getInstance().currentUserNameOrAnonymous();
   return (
     <>
       <div className="row dropdown-parent session-item ms-0 mb-1 me-1 align-items-start">
@@ -29,6 +30,7 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
             <div className="col position-relative">
               {dateFromNow ? <p className="flex-grow-1 ms-4 text-muted" title={dateString}>{dateFromNow} </p> : null}
             </div>
+            {desc.creator && desc.creator !== me ? <p className="flex-grow-1 text-muted col" title={`Created by ${desc.creator}`}> Created by <i>{desc.creator}</i></p> : null}
             {desc.local ? null :
               <div className="col position-relative">
                 {ProvenanceGraphMenuUtils.isPublic(desc) ?

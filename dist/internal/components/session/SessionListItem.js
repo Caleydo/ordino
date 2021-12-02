@@ -18,8 +18,8 @@ export function SessionListItem({ desc, selectSession, children }) {
                     React.createElement("div", { className: "col position-relative" }, dateFromNow ? React.createElement("p", { className: "flex-grow-1 ms-4 text-muted", title: dateString },
                         dateFromNow,
                         " ") : null),
-                    desc.creator && desc.creator !== me ? React.createElement("p", { className: "flex-grow-1 text-muted col", title: `Created by ${desc.creator}` },
-                        " Created by ",
+                    desc.creator && desc.creator !== me ? React.createElement("p", { className: "flex-grow-1 text-muted col", title: `${I18nextManager.getInstance().i18n.t('tdp:core.startMenu.createdBy')} ${desc.creator}` },
+                        `${I18nextManager.getInstance().i18n.t('tdp:core.startMenu.createdBy')} `,
                         React.createElement("i", null, desc.creator)) : null,
                     desc.local ? null :
                         React.createElement("div", { className: "col position-relative" }, ProvenanceGraphMenuUtils.isPublic(desc) ?

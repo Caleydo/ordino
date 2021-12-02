@@ -30,7 +30,7 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
             <div className="col position-relative">
               {dateFromNow ? <p className="flex-grow-1 ms-4 text-muted" title={dateString}>{dateFromNow} </p> : null}
             </div>
-            {desc.creator && desc.creator !== me ? <p className="flex-grow-1 text-muted col" title={`Created by ${desc.creator}`}> Created by <i>{desc.creator}</i></p> : null}
+            {desc.creator && desc.creator !== me ? <p className="flex-grow-1 text-muted col" title={`${I18nextManager.getInstance().i18n.t('tdp:core.startMenu.createdBy')} ${desc.creator}`}>{`${I18nextManager.getInstance().i18n.t('tdp:core.startMenu.createdBy')} `}<i>{desc.creator}</i></p> : null}
             {desc.local ? null :
               <div className="col position-relative">
                 {ProvenanceGraphMenuUtils.isPublic(desc) ?

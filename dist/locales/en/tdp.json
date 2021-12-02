@@ -32,6 +32,7 @@
             "saveSession": "Save Session",
             "mySessions": "My Sessions",
             "otherSessions": "Other Sessions",
+            "createdBy": "Created by",
             "clone": "Clone",
             "cloneSession": "Clone Session",
             "cloneToTemporary": "Clone to Temporary Session",

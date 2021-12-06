@@ -280,6 +280,6 @@ export class CmdUtils {
   }
 
   static compressSetSelection(path: ActionNode[]) {
-    return Compression.lastOnly(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
+    return Compression.removeConsecutiveNodes(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
   }
 }

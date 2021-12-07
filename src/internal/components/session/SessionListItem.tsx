@@ -28,9 +28,11 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
           {desc.description ? <p className="ms-4">{desc.description} </p> : null}
           <div className="pe-0 align-self-stretch row">
             <div className="col position-relative">
-              {dateFromNow ? <p className="flex-grow-1 ms-4 text-muted" title={dateString}>{dateFromNow} </p> : null}
+              <p className="flex-grow-1 ms-4 text-muted">
+                {dateFromNow ? <time dateTime={dateString}>{dateFromNow} </time> : null}
+                {desc.creator && desc.creator !== me ? <span>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.by')} {desc.creator}</span> : null}
+              </p>
             </div>
-            {desc.creator && desc.creator !== me ? <p className="flex-grow-1 text-muted col" title={`${I18nextManager.getInstance().i18n.t('tdp:core.startMenu.createdBy')} ${desc.creator}`}>{`${I18nextManager.getInstance().i18n.t('tdp:core.startMenu.createdBy')} `}<i>{desc.creator}</i></p> : null}
             {desc.local ? null :
               <div className="col position-relative">
                 {ProvenanceGraphMenuUtils.isPublic(desc) ?

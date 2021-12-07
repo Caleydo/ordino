@@ -41,7 +41,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
                 </div>
               </div>
               <BrowserRouter basename="/#">
-                <OrdinoFooter openInNewWindow />
+                <OrdinoFooter openInNewWindow testId="sessions-tab" />
               </BrowserRouter>
             </>
           }

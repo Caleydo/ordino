@@ -25,7 +25,7 @@ export default function SessionsTab(_props) {
                             React.createElement(item.factory, Object.assign({}, item.desc))));
                     })))),
             React.createElement(BrowserRouter, { basename: "/#" },
-                React.createElement(OrdinoFooter, { openInNewWindow: true }))))
+                React.createElement(OrdinoFooter, { openInNewWindow: true, testId: "sessions-tab" }))))
         : null));
 }
 //# sourceMappingURL=SessionsTab.js.map

@@ -31,7 +31,7 @@ export default function ToursTab(_props: IStartMenuTabProps) {
           : null}
         </div>
         <BrowserRouter basename="/#">
-          <OrdinoFooter openInNewWindow />
+          <OrdinoFooter openInNewWindow testId="tours-tab" />
         </BrowserRouter>
       </OrdinoScrollspy> : null}
     </>

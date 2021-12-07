@@ -27,6 +27,7 @@ const FooterLink = (props: IFooterLinkProps) => {
 };
 
 export function OrdinoFooter(props) {
+  const testId = props.testId;
   const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
 
   const lists: IOrdinoFooterMenuLink[][] = PluginRegistry.getInstance().listPlugins(EP_ORDINO_FOOTER_MENU)
@@ -34,7 +35,7 @@ export function OrdinoFooter(props) {
     .map((d) => d.lists)[0]; // take only the first footer menu
 
   return (
-    <div className="ordino-footer pt-4 pb-6 px-5" data-testid="ordino-footer">
+    <div className="ordino-footer pt-4 pb-6 px-5" data-testid={`ordino-footer-${testId}`}>
       <nav className="ordino-footer-navigation row">
         {lists && lists.map((list, index) => {
           return (

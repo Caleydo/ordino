@@ -23,7 +23,7 @@ export default function ToursTab(_props) {
                     React.createElement(ToursSection, { level: "advanced", tours: advancedTours })
                     : null),
             React.createElement(BrowserRouter, { basename: "/#" },
-                React.createElement(OrdinoFooter, { openInNewWindow: true }))) : null));
+                React.createElement(OrdinoFooter, { openInNewWindow: true, testId: "tours-tab" }))) : null));
 }
 export function ToursSection(props) {
     if (props.tours.length === 0) {

@@ -25,6 +25,6 @@ export default function DatasetsTab(_props) {
                                 React.createElement(item.factory, Object.assign({}, item.desc))));
                         })))),
             React.createElement(BrowserRouter, { basename: "/#" },
-                React.createElement(OrdinoFooter, { openInNewWindow: true })))) : null));
+                React.createElement(OrdinoFooter, { openInNewWindow: true, testId: "datasets-tab" })))) : null));
 }
 //# sourceMappingURL=DatasetsTab.js.map

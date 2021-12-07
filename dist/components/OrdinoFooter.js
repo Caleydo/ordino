@@ -12,11 +12,12 @@ const FooterLink = (props) => {
     return (React.createElement(Link, { to: props.to, className: props.className, "data-testid": testId }, props.children));
 };
 export function OrdinoFooter(props) {
+    const testId = props.testId;
     const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
     const lists = PluginRegistry.getInstance().listPlugins(EP_ORDINO_FOOTER_MENU)
         .map((d) => d) // no need to load the plugin; everything is contained in the plugin desc
         .map((d) => d.lists)[0]; // take only the first footer menu
-    return (React.createElement("div", { className: "ordino-footer pt-4 pb-6 px-5", "data-testid": "ordino-footer" },
+    return (React.createElement("div", { className: "ordino-footer pt-4 pb-6 px-5", "data-testid": `ordino-footer-${testId}` },
         React.createElement("nav", { className: "ordino-footer-navigation row" }, lists && lists.map((list, index) => {
             return (React.createElement("div", { className: "list-group col-sm-auto", key: index }, list && list.map((link) => {
                 return (React.createElement(FooterLink, { key: link.page, to: link.page, openInNewWindow: openInNewWindow, className: "list-group-item list-group-item-action" },

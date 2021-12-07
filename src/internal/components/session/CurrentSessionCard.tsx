@@ -48,7 +48,7 @@ export default function CurrentSessionCard({name, faIcon}: IStartMenuSessionSect
         <CommonSessionCard cardName={name} highlight={highlight} onHighlightAnimationEnd={onHighlightAnimationEnd} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo')}>
             {(sessionAction) => {
                 return <SessionListItem desc={desc} selectSession={(event) => sessionAction(EAction.SELECT, event, desc)}>
-                    <button type="button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} disabled={ProvenanceGraphMenuUtils.isPersistent(desc)} onClick={(event) => saveCurrentSession(event, graph)}>
+                    <button type="button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" data-testid="saveSession-button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} disabled={ProvenanceGraphMenuUtils.isPersistent(desc)} onClick={(event) => saveCurrentSession(event, graph)}>
                         {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')}
                     </button>
                     <ListItemDropdown>

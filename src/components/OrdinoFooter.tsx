@@ -13,7 +13,7 @@ interface IFooterLinkProps {
 
 // tslint:disable-next-line: variable-name
 const FooterLink = (props: IFooterLinkProps) => {
-  const testId = props.to === '/' ? '' : `${props.to.replace(/\s+/g, '-').toLowerCase()}-link`; // check if FooterLink is logo, footer logo should not have data-testid in footerlink
+  const testId = props.to === '/' ? '' : `${props.to.replace(/\s+/g, '-').toLowerCase()}-footerLink`; // check if FooterLink is logo, footer logo should not have data-testid in footerlink
   if (props.openInNewWindow) {
     return (
       <Link to={props.to} className={props.className} data-testid={testId} target="_blank" rel="noopener noreferrer">{props.children}</Link>

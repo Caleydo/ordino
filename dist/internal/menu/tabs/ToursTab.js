@@ -45,7 +45,7 @@ export function ToursSection(props) {
                 React.createElement("i", { className: "me-2 ordino-icon-1 fas fa-chevron-circle-right" }),
                 " ",
                 (props.level === 'beginner') ? I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tourLevelBeginner') : I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.tourLevelAdvanced')),
-            React.createElement("div", { className: "mb-4 row row-cols-md-3" }, props.tours.map((tour, index) => {
+            React.createElement("div", { className: "mb-4 row row-cols-md-3", "data-testid": "tourssection" }, props.tours.map((tour, index) => {
                 // either hrefBase or onClickHandler
                 const href = (props.hrefBase) ? props.hrefBase.replace('{id}', tour.desc.id) : null;
                 const onClickHandler = (!props.hrefBase) ? (evt) => TourUtils.startTour(tour.desc.id) : null;

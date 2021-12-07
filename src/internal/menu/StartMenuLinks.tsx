@@ -10,6 +10,7 @@ export function StartMenuLinks(props: IStartMenuTabWrapperProps) {
                     <a className="nav-link"
                         href={`#${tab.desc.id}`}
                         id={`${tab.desc.id}-tab`}
+                        data-testid={`${tab.desc.id}-tab`}
                         role="tab"
                         aria-controls={tab.desc.id}
                         aria-selected={(props.activeTab === tab)}

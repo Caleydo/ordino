@@ -18,10 +18,10 @@ export default function SessionsTab(_props) {
         React.createElement(OrdinoScrollspy, { items: items.map((item) => ({ id: `${item.desc.id}_${suffix}`, name: item.desc.name })) }, (handleOnChange) => React.createElement(React.Fragment, null,
             React.createElement("div", { className: "container pb-10 pt-5" },
                 React.createElement("div", { className: "row justify-content-center" },
-                    React.createElement("div", { className: "col-11 position-relative" }, items === null || items === void 0 ? void 0 : items.map((item, index) => {
+                    React.createElement("div", { className: "col-11 position-relative", "data-testid": "sessionstab" }, items === null || items === void 0 ? void 0 : items.map((item, index) => {
                         return (
                         // `id` attribute must match the one in the scrollspy
-                        React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `${item.desc.id}_${suffix}`, key: item.desc.id, index: index, handleOnChange: handleOnChange },
+                        React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `${item.desc.id}_${suffix}`, key: item.desc.id, index: index, handleOnChange: handleOnChange, "data-testid": `${item.desc.id}_${suffix}` },
                             React.createElement(item.factory, Object.assign({}, item.desc))));
                     })))),
             React.createElement(BrowserRouter, { basename: "/#" },

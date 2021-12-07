@@ -25,7 +25,7 @@ export function SessionDropzone() {
                 <section>
                     <div {...getRootProps()}>
                         <input {...getInputProps()} />
-                        <div className="session-dropzone">
+                        <div className="session-dropzone" data-testid="session-dropzone">
                             <p className="text-center mt-2 mb-1">Drop session file here or click to upload</p>
                             <p className="text-center" >Accepted file formats: JSON file</p>
                         </div>

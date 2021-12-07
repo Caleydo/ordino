@@ -38,10 +38,10 @@ export default function TemporarySessionCard({name, faIcon}: IStartMenuSessionSe
                                 status === 'success' && sessions.length > 0 &&
                                 sessions?.map((session) => {
                                     return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
-                                        <button type="button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} onClick={(event) => sessionAction(EAction.SAVE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')}</button>
+                                        <button type="button" data-testid="save-button" className="me-2 pt-1 pb-1 btn btn-outline-secondary" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')} onClick={(event) => sessionAction(EAction.SAVE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')}</button>
                                         <ListItemDropdown>
-                                            <button type="button" className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')}</button>
-                                            <button type="button" className="dropdown-delete dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')} onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}</button>
+                                            <button type="button" data-testid="clone-button" className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')}</button>
+                                            <button type="button" data-testid="delete-button" className="dropdown-delete dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')} onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}</button>
                                         </ListItemDropdown>
                                     </SessionListItem>;
                                 })

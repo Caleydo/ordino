@@ -181,7 +181,7 @@ export function CommonSessionCard({cardName, faIcon, cardInfo, children, highlig
 
     return <>
         <h4 className="text-start d-flex align-items-center mb-3"><i className={`me-2 ordino-icon-2 fas ${faIcon}`} ></i>{cardName}</h4>
-        <div ref={parent} className={`card card-shadow ${highlight ? 'highlight-card' : ''}`} onAnimationStart={onHighlightAnimationStart} onAnimationEnd={onHighlightAnimationEnd}>
+        <div ref={parent} className={`card card-shadow ${highlight ? 'highlight-card' : ''}`} data-testid={`${cardName.replace(/\s+/g, '-').toLowerCase()}-sessionscard`} onAnimationStart={onHighlightAnimationStart} onAnimationEnd={onHighlightAnimationEnd}>
             <div className="card-body p-3">
                 {cardInfo && <p className="card-text mb-4">
                     {cardInfo}

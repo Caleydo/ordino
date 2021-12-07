@@ -25,7 +25,7 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
             <>
               <div className="container pb-10 pt-5">
                 <div className="row justify-content-center">
-                  <div className="col-11 position-relative">
+                  <div className="col-11 position-relative" data-testid="datasets-tab">
                     <p className="lead text-gray-600 mb-0">Start a new analysis session by loading a dataset</p>
                     {items.map((item, index) => {
                       return (

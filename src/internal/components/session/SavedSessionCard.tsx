@@ -34,12 +34,12 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
           return <>
             <ul className="nav nav-pills session-tab card-header-pills" role="tablist">
               <li className="nav-item" role="presentation">
-                <a className="nav-link active" id={`saved-session-tab-${id}`} data-bs-toggle="tab" href={`#saved-session-mine-panel-${id}`} role="tab" aria-controls={`saved-session-mine-panel-${id}`} aria-selected="true">
+                <a className="nav-link active" data-testid="my-sessions-link" id={`saved-session-tab-${id}`} data-bs-toggle="tab" href={`#saved-session-mine-panel-${id}`} role="tab" aria-controls={`saved-session-mine-panel-${id}`} aria-selected="true">
                   <i className="me-2 fas fa-user"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.mySessions')}
                 </a>
               </li>
               <li className="nav-item" role="presentation">
-                <a className="nav-link" id={`saved-session-other-tab-${id}`} data-bs-toggle="tab" href={`#saved-session-other-panel-${id}`} role="tab" aria-controls={`saved-session-other-panel-${id}`} aria-selected="false">
+                <a className="nav-link" data-testid="other-sessions-link" id={`saved-session-other-tab-${id}`} data-bs-toggle="tab" href={`#saved-session-other-panel-${id}`} role="tab" aria-controls={`saved-session-other-panel-${id}`} aria-selected="false">
                   <i className="me-2 fas fa-users"></i>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.otherSessions')}
                 </a>
               </li>
@@ -47,7 +47,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
             <div className="row pt-4">
               <div className="col">
                 <div className="tab-content position-relative">
-                  <div className="tab-pane fade show active ordino-session-list p-1" role="tabpanel" id={`saved-session-mine-panel-${id}`} aria-labelledby={`saved-session-mine-tab-${id}`}>
+                  <div className="tab-pane fade show active ordino-session-list p-1" data-testid="my-sessions" role="tabpanel" id={`saved-session-mine-panel-${id}`} aria-labelledby={`saved-session-mine-tab-${id}`}>
                     {status === 'pending' &&
                       <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
                     }
@@ -59,12 +59,12 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                       status === 'success' && savedSessions.length > 0 &&
                       savedSessions?.map((session) => {
                         return <SessionListItem key={session.id} desc={session} selectSession={(event) => sessionAction(EAction.SELECT, event, session)}>
-                          <button type="button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDetails')} onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)} className="me-2 pt-1 pb-1 btn btn-outline-secondary">{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')}</button>
+                          <button type="button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDetails')} onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)} className="me-2 pt-1 pb-1 btn btn-outline-secondary" data-testid="edit-button">{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')}</button>
                           <ListItemDropdown>
-                            <button type="button" className="dropdown-item" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)}>
+                            <button type="button" className="dropdown-item" data-testid="clone-button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)}>
                               {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')}
                             </button>
-                            <button type="button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')} className="dropdown-item dropdown-delete" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>
+                            <button type="button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')} className="dropdown-item dropdown-delete" data-testid="delete-button" onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}>
                               {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}
                             </button>
                           </ListItemDropdown>
@@ -73,7 +73,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                     {status === 'error' && <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')}</p>}
                   </div>
 
-                  <div className="tab-pane fade" role="tabpanel" id={`saved-session-other-panel-${id}`} aria-labelledby={`saved-session-other-tab-${id}`}>
+                  <div className="tab-pane fade" data-testid="other-sessions" role="tabpanel" id={`saved-session-other-panel-${id}`} aria-labelledby={`saved-session-other-tab-${id}`}>
                     {status === 'pending' &&
                       <p><i className="fas fa-circle-notch fa-spin"></i> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}</p>
                     }
@@ -85,7 +85,7 @@ export default function SavedSessionCard({name, faIcon}: IStartMenuSessionSectio
                       status === 'success' && otherSessions.length > 0 &&
                       otherSessions?.map((session) => {
                         return <SessionListItem key={session.id} desc={session}>
-                          <button type="button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)} className="me-2 pt-1 pb-1 btn btn-outline-secondary">Clone</button>
+                          <button type="button" data-testid="clone-button" title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')} onClick={(event) => sessionAction(EAction.CLONE, event, session)} className="me-2 pt-1 pb-1 btn btn-outline-secondary">Clone</button>
                         </SessionListItem>;
                       })}
                     {status === 'error' && <p>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError')}</p>}

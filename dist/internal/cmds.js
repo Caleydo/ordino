@@ -240,7 +240,7 @@ export class CmdUtils {
         return r;
     }
     static compressSetSelection(path) {
-        return Compression.lastOnly(path, CMD_SET_SELECTION, (p) => `${p.parameter.idtype}@${p.requires[0].id}`);
+        return Compression.lastConsecutive(path, CMD_SET_SELECTION, (p) => `${p.parameter.idtype}@${p.requires[0].id}`);
     }
 }
 //# sourceMappingURL=cmds.js.map

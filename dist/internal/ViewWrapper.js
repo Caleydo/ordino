@@ -283,6 +283,7 @@ export class ViewWrapper extends EventHandler {
             $buttons.enter().append('button')
                 .classed('btn', true);
             $buttons.attr('data-viewid', (d) => d.v.id);
+            $buttons.attr('data-testid', (d) => d.v.id);
             $buttons.text((d) => d.v.name)
                 .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
                 .on('click', function (d) {

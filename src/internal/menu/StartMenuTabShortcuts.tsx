@@ -26,7 +26,7 @@ export function StartMenuTabShortcuts({tabs, shortcuts, setActiveTab, setHighlig
   return <>
     {status === 'success' && shortcuts.map((s) => {
       return < li key={s.id} className={`nav-item`}>
-        <a className="nav-link" role="button" onClick={(evt) => onClick(evt, s)} > {s.icon ? <i className={`me-2 ${s.icon}`}></i> : null}{s.text}</a>
+        <a className="nav-link" data-testid={`${s.id}-link`} role="button" onClick={(evt) => onClick(evt, s)} > {s.icon ? <i className={`me-2 ${s.icon}`}></i> : null}{s.text}</a>
       </li>;
     })}
   </>;

@@ -35,6 +35,17 @@ function generate_hash(desc: IPluginDesc, selection: ISelection) {
   return desc.id + '_' + s;
 }
 
+// function to get the previous siblings of an element, used to calculate a unique id for the viewwrapper
+const previousSiblings = (elem) => {
+  // create an empty array
+  let siblings = [];
+
+  while (elem = elem.previousElementSibling) {
+      siblings.push(elem);
+  }
+  return siblings;
+};
+
 export class ViewWrapper extends EventHandler {
   static EVENT_CHOOSE_NEXT_VIEW = 'open';
   static EVENT_FOCUS = 'focus';
@@ -136,6 +147,10 @@ export class ViewWrapper extends EventHandler {
    * @param options
    */
   private createView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
+    // add data-testid to viewWrapper, use id of viewWrapper and number of previous siblings to make it unique
+    const numPrevSiblings = previousSiblings(<any>this.$viewWrapper.node()).length;
+    this.$viewWrapper.attr('data-testid', `viewWrapper-${numPrevSiblings}`)
+
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)
       .datum(this);
@@ -154,6 +169,7 @@ export class ViewWrapper extends EventHandler {
       .attr('type', 'button')
       .attr('class', 'btn-close')
       .attr('aria-label', 'Close')
+      .attr('data-testid', 'close-button')
       .on('click', (d) => {
         this.remove();
       });

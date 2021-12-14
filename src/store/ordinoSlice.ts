@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {data} from 'jquery';
 import {IViewPluginDesc} from 'tdp_core';
 
 
@@ -10,7 +11,7 @@ export enum EViewDirections {
 }
 
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
-
+  viewType: 'Ranking' | 'Vis';
 }
 
 export interface IOrdinoAppState {
@@ -39,6 +40,9 @@ export interface IWorkbench {
   id: string;
 
   index: number;
+
+  data: {[key: number]: any};
+  columnDescs: any[];
 
   /**
    * List selected rows
@@ -103,6 +107,10 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    addColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
+      console.log(action.payload.descs);
+      state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+    },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
 
@@ -142,10 +150,21 @@ const ordinoSlice = createSlice({
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
+    },
+    setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
+      console.log(action.payload.data);
+      for(const i of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[i._id] = i;
+      }
+    },
+    addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {
+      for(const i of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
+      }
     }
   }
 });
 
-export const {addView, removeView, replaceWorkbench, addSelection, addFilter, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, addColumnDescs, removeView, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

@@ -1,6 +1,6 @@
-import React from "react";
-import { EXTENSION_POINT_TDP_VIEW, PluginRegistry, useAsync, Range, ResolveNow, IDType } from "tdp_core";
-import { useAppDispatch } from "../..";
+import React from 'react';
+import { EXTENSION_POINT_TDP_VIEW, PluginRegistry, useAsync, Range, ResolveNow, IDType } from 'tdp_core';
+import { useAppDispatch } from '../..';
 export function useLoadViewPlugin(viewId) {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
     const dispatch = useAppDispatch();
@@ -23,7 +23,9 @@ export function useLoadViewPlugin(viewId) {
                 const context = { graph: null, ref: { value: { data: null } }, desc: view };
                 const selection = { idtype: new IDType('Start', 'Start', '', true), range: Range.none() };
                 const i = viewPlugin.factory(context, selection, ref, {});
-                ref.append(i.node);
+                console.log(i);
+                context.ref[`v`] = i;
+                console.log(context.ref);
                 ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
                 return i;
             }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useMemo} from 'react';
 import { useDrop } from 'react-dnd';
 import SplitPane from 'react-split-pane';
 import {addView, useAppDispatch, useAppSelector} from '../..';
@@ -21,24 +22,29 @@ export function WorkbenchViews({
 
     const views = ordino.workbenches[index].views;
 
+    console.log(views);
+
+    const children = useMemo(() => {
+        return views.map((v) => <WorkbenchSingleView key={v.id} view={v}/>);
+    }, [views.length]);
+
     let wb = null;
 
     if(views.length === 1) {
-        wb = (<WorkbenchSingleView view={views[0]}/>);
+        wb = children;
     } else if(views.length === 2) {
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'50%'}>
-                <WorkbenchSingleView view={views[0]}/>
-                <WorkbenchSingleView view={views[1]}/>
+                {children}
             </SplitPane>
         );
     } else if(views.length === 3) {
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'50%'}>
-                <WorkbenchSingleView view={views[0]}/>
+                {children[0]}
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'50%'}>
-                    <WorkbenchSingleView view={views[1]}/>
-                    <WorkbenchSingleView view={views[2]}/>
+                    {children[1]}
+                    {children[2]}
                 </SplitPane>
             </SplitPane>
         );

@@ -5,7 +5,6 @@ import { VisynHeader } from './VisynHeader';
 export function VisynApp({ extensions: { header = React.createElement(VisynHeader, null) } = {}, children = null }) {
     const user = useAppSelector((state) => state.user);
     const { status } = useInitVisynApp();
-    console.log(user.loggedIn);
     return (React.createElement(React.Fragment, null, status === 'success' ?
         React.createElement(React.Fragment, null,
             header,

@@ -1,6 +1,6 @@
-import React from "react";
-import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager} from "tdp_core";
-import {useAppDispatch, useAppSelector} from "../..";
+import React from 'react';
+import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager} from 'tdp_core';
+import {useAppDispatch, useAppSelector} from '../..';
 
 
 export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null) => void, IView | null] {
@@ -29,9 +29,12 @@ export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null
                 const context = {graph: null, ref: {value: {data: null}} as any, desc: view};
                 const selection = {idtype: new IDType('Start', 'Start', '', true), range: Range.none()};
                 const i = viewPlugin.factory(context, selection, ref, {});
-                ref.append(i.node);
-                ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection))
-                return i
+                console.log(i);
+                context.ref[`v`] = i;
+
+                console.log(context.ref);
+                ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                return i;
             }
             // Set instance to null if no ref is passed
             return null;
@@ -44,7 +47,7 @@ export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null
 
         }
 
-    }, [instance])
+    }, [instance]);
 
     return [setRef, instance];
 }

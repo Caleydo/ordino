@@ -20,7 +20,8 @@ export function AddButton() {
                 dispatch(addView({
                     workbenchIndex: ordino.focusViewIndex,
                     view: {
-                        id: 'reprovisyn_ranking_ordino-public.public.tdp_gene',
+                        id: 'reprovisyn_ranking_viralland.public.samples',
+                        viewType: 'Ranking',
                         index: ordino.workbenches[ordino.focusViewIndex].views.length,
                         name: 'Gene',
                         selection: 'multiple',
@@ -31,7 +32,16 @@ export function AddButton() {
                         }
                     }
                 }));
-            }}type="button" className="btn btn-primary">Add View</button>
+            }}type="button" className="btn btn-primary">Add Ranking</button>
+
+            <button onClick={() => {
+                dispatch(addView({
+                    workbenchIndex: ordino.focusViewIndex,
+                    view: {
+                        viewType: 'Vis',
+                    }
+                }));
+            }}type="button" className="btn btn-primary">Add Vis</button>
 
             <button onClick={() => {
                 dispatch(setWorkbenchDirection({workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal'}));

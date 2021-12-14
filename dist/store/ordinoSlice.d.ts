@@ -6,6 +6,7 @@ export declare enum EViewDirections {
     E = "e"
 }
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
+    viewType: 'Ranking' | 'Vis';
 }
 export interface IOrdinoAppState {
     /**
@@ -26,6 +27,10 @@ export interface IWorkbench {
     name: string;
     id: string;
     index: number;
+    data: {
+        [key: number]: any;
+    };
+    columnDescs: any[];
     /**
      * List selected rows
      */
@@ -44,12 +49,17 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
+}, string>, addColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    descs: any[];
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
 }, string>, replaceWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newWorkbench: IWorkbench;
+}, string>, addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    columnName: string;
+    data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
@@ -58,6 +68,8 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     workbenchIndex: number;
     viewIndex: number;
     newFilter: any;
+}, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

@@ -47,12 +47,12 @@ export interface IWorkbench {
   /**
    * List selected rows
    */
-  selections: any[]; // TODO define selection, probably IROW
+  selections: number[]; // TODO define selection, probably IROW
 
   /**
    * Selected filters in this view
    */
-  filters: any[]; // TODO define filter
+  filters: number[]; // TODO define filter
 }
 
 interface IBaseState {
@@ -142,11 +142,12 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
-    addSelection(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newSelection: any}>) {
-      // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
+    addSelection(state, action: PayloadAction<{newSelection: number[]}>) {
+      state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
     },
-    addFilter(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newFilter: any}>) {
-      // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
+    addFilter(state, action: PayloadAction<{filter: number[]}>) {
+      console.log(action.payload.filter)
+      state.workbenches[state.focusViewIndex].filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
@@ -161,7 +162,7 @@ const ordinoSlice = createSlice({
       for(const i of action.payload.data) {
         state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
       }
-    }
+    },
   }
 });
 

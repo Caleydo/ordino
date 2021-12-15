@@ -1,11 +1,12 @@
 import React from 'react';
-import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager} from 'tdp_core';
+import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager} from 'tdp_core';
 import {useAppDispatch, useAppSelector} from '../..';
 
 
 export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null) => void, IView | null] {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
     const dispatch = useAppDispatch();
+    const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState<IView | null>(null);
     const loadView = React.useMemo(() => () => {
         return view.load();
@@ -40,6 +41,26 @@ export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null
             return null;
         });
     }, [status]);
+
+    React.useEffect(() => {
+        if(instance) {
+            const view: ARankingView = instance as unknown as ARankingView;
+            const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
+
+            view.selectionHelper.setGeneralVisSelection({idtype: id, range: Range.list(ordino.workbenches[ordino.focusViewIndex].selections)});
+
+        }
+    }, [instance, ordino.workbenches[ordino.focusViewIndex].selections]);
+
+    React.useEffect(() => {
+        if(instance && ordino.workbenches[ordino.focusViewIndex].filters) {
+            const view: ARankingView = instance as unknown as ARankingView;
+            view.provider.setFilter((row) => {
+                return !ordino.workbenches[ordino.focusViewIndex].filters.includes(row.v._id);
+            });
+
+        }
+    }, [instance, ordino.workbenches[ordino.focusViewIndex].filters]);
 
     React.useEffect(() => {
 

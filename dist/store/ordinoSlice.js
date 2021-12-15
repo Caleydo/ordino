@@ -76,10 +76,11 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
+            state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
         },
         addFilter(state, action) {
-            // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
+            console.log(action.payload.filter);
+            state.workbenches[state.focusViewIndex].filters = action.payload.filter;
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;
@@ -94,7 +95,7 @@ const ordinoSlice = createSlice({
             for (const i of action.payload.data) {
                 state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
             }
-        }
+        },
     }
 });
 export const { addView, addColumnDescs, removeView, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;

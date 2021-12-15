@@ -34,11 +34,11 @@ export interface IWorkbench {
     /**
      * List selected rows
      */
-    selections: any[];
+    selections: number[];
     /**
      * Selected filters in this view
      */
-    filters: any[];
+    filters: number[];
 }
 interface IBaseState {
     selection: string[];
@@ -61,13 +61,9 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     columnName: string;
     data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    viewIndex: number;
-    newSelection: any;
+    newSelection: number[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    viewIndex: number;
-    newFilter: any;
+    filter: number[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

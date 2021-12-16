@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { EDragTypes } from './utils';
 import { useDrag } from 'react-dnd';
 import { addView, useAppDispatch, useAppSelector } from '../..';
-import { addWorkbench, setWorkbenchDirection } from '../../store';
+import { addWorkbench, changeFocus, setWorkbenchDirection } from '../../store';
 import { EXTENSION_POINT_TDP_VIEW, PluginRegistry } from 'tdp_core';
 export function AddButton() {
     const dispatch = useAppDispatch();
@@ -66,6 +66,7 @@ export function AddButton() {
                         selections: [],
                         filters: []
                     }));
+                    dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
                 }, type: "button", className: "btn btn-primary" },
                 "Jump to ",
                 j.name));

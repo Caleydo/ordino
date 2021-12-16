@@ -24,6 +24,8 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);
 
+    console.log(ordino);
+
     React.useEffect(() => {
         if (!ref.current || ordino.workbenches.length <= 2) {
             return;
@@ -44,9 +46,11 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
         dispatch(
             addWorkbench({
                 viewDirection: 'horizontal',
-                views: [{}],
+                views: [{viewType: 'Ranking'}],
+                transitionOptions: [],
+                columnDescs: [],
                 data: {},
-                id: view.id,
+                entityId: view.id,
                 name: view.name,
                 index: viewIndex,
                 selections: [],
@@ -75,7 +79,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     return (<>
         <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}`}>
             <>
-                {workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
+                {/* {workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
                     <ViewChooser
                         views={views}
                         selectedView={null}
@@ -83,19 +87,19 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
                         mode={EViewChooserMode.OVERLAY}
                         expand={EExpandMode.RIGHT}
                     />
-                ) : null}
+                ) : null} */}
 
                 <WorkbenchViews index={workbench.index}/>
             </>
         </div>
-        {showNextChooser &&
+        {/* {showNextChooser &&
             <ViewChooser
                 views={views}
                 onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
                 mode={EViewChooserMode.OVERLAY}
                 expand={EExpandMode.LEFT}
                 showBurgerMenu={false}
-            />}
+            />} */}
     </>
     );
 }

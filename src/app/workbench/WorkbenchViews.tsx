@@ -22,10 +22,8 @@ export function WorkbenchViews({
 
     const views = ordino.workbenches[index].views;
 
-    console.log(views);
-
     const children = useMemo(() => {
-        return views.map((v) => <WorkbenchSingleView key={v.id} view={v}/>);
+        return views.map((v) => <WorkbenchSingleView workbenchIndex={index} key={v.id} view={v}/>);
     }, [views.length]);
 
     let wb = null;
@@ -52,12 +50,12 @@ export function WorkbenchViews({
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'50%'}>
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'50%'}>
-                    <WorkbenchSingleView view={views[0]}/>
-                    <WorkbenchSingleView view={views[3]}/>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[0]}/>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[3]}/>
                 </SplitPane>
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'50%'}>
-                    <WorkbenchSingleView view={views[1]}/>
-                    <WorkbenchSingleView view={views[2]}/>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[1]}/>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[2]}/>
                 </SplitPane>
             </SplitPane>
         );

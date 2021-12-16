@@ -7,9 +7,8 @@ export function WorkbenchViews({ index }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const views = ordino.workbenches[index].views;
-    console.log(views);
     const children = useMemo(() => {
-        return views.map((v) => React.createElement(WorkbenchSingleView, { key: v.id, view: v }));
+        return views.map((v) => React.createElement(WorkbenchSingleView, { workbenchIndex: index, key: v.id, view: v }));
     }, [views.length]);
     let wb = null;
     if (views.length === 1) {
@@ -28,11 +27,11 @@ export function WorkbenchViews({ index }) {
     else {
         wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: '50%' },
             React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '50%' },
-                React.createElement(WorkbenchSingleView, { view: views[0] }),
-                React.createElement(WorkbenchSingleView, { view: views[3] })),
+                React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[0] }),
+                React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[3] })),
             React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '50%' },
-                React.createElement(WorkbenchSingleView, { view: views[1] }),
-                React.createElement(WorkbenchSingleView, { view: views[2] }))));
+                React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[1] }),
+                React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[2] }))));
     }
     return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, wb));
 }

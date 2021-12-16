@@ -3,7 +3,7 @@ import { addFilter, addSelection } from '../../store';
 import { Vis } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../..';
 import { EColumnTypes } from '../../../../tdp_core/dist/vis/interfaces';
-export function WorkbenchVisView({ view }) {
+export function WorkbenchVisView({ workbenchIndex, view }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     //move stuff into hooks as needed
@@ -39,7 +39,6 @@ export function WorkbenchVisView({ view }) {
             selectedMap[i] = true;
         }
     }
-    console.log(selectedMap);
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
             React.createElement("div", { className: "view-actions" },
@@ -53,7 +52,7 @@ export function WorkbenchVisView({ view }) {
                         dispatch(addSelection({ newSelection: [] }));
                     }
                     else if (s === 'Filter In') {
-                        dispatch(addFilter({ filter: data.filter((d) => !ordino.workbenches[ordino.focusViewIndex].selections.includes(d._id)).map(d => d._id) }));
+                        dispatch(addFilter({ filter: data.filter((d) => !ordino.workbenches[ordino.focusViewIndex].selections.includes(d._id)).map((d) => d._id) }));
                         dispatch(addSelection({ newSelection: [] }));
                     }
                     else {

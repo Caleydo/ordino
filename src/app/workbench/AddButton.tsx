@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect, useMemo} from 'react';
 import { EDragTypes } from './utils';
 import { useDrag } from 'react-dnd';
 import {addView, EViewDirections, useAppDispatch, useAppSelector} from '../..';
-import {setWorkbenchDirection} from '../../store';
+import {addWorkbench, setWorkbenchDirection} from '../../store';
+import {EXTENSION_POINT_TDP_VIEW, IViewPluginDesc, PluginRegistry} from 'tdp_core';
 
 export function AddButton() {
     const dispatch = useAppDispatch();
@@ -13,6 +14,24 @@ export function AddButton() {
         item: {type: EDragTypes.ADD},
 
     }));
+
+    const possibleJumps = useMemo(() => {
+        if(ordino.workbenches.length > 0) {
+            console.log(ordino);
+
+            const possibleJumps = ordino.workbenches[ordino.focusViewIndex].transitionOptions.map((o) => {
+                console.log(o);
+                return PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${o}`) as IViewPluginDesc;
+            });
+
+            return possibleJumps;
+        }
+
+        return [];
+
+    }, [ordino.workbenches, ordino.focusViewIndex]);
+
+    console.log(possibleJumps);
 
     return (
         <>
@@ -46,6 +65,28 @@ export function AddButton() {
             <button onClick={() => {
                 dispatch(setWorkbenchDirection({workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal'}));
             }}type="button" className="btn btn-primary">Direction</button>
+
+            {possibleJumps.map((j: IViewPluginDesc) => {
+                return (
+                    <button onClick={() => {
+                        dispatch(
+                            addWorkbench({
+                                viewDirection: 'horizontal',
+                                views: [{id: j.id, name: j.name, viewType: 'Ranking'}],
+                                transitionOptions: [],
+                                columnDescs: [],
+                                data: {},
+                                entityId: j.id,
+                                name: j.name,
+                                index: ordino.focusViewIndex + 1,
+                                selections: [],
+                                filters: []
+                            })
+                        );
+                    }}type="button" className="btn btn-primary">Jump to {j.name}</button>
+                );
+            })}
+
         </>
     );
 }

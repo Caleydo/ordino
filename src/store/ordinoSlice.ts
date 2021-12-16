@@ -37,12 +37,14 @@ export interface IWorkbench {
 
   name: string;
 
-  id: string;
+  entityId: string;
 
   index: number;
 
   data: {[key: number]: any};
   columnDescs: any[];
+
+  transitionOptions: string[];
 
   /**
    * List selected rows
@@ -107,8 +109,10 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
+      state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
+    },
     addColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
-      console.log(action.payload.descs);
       state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
@@ -146,14 +150,12 @@ const ordinoSlice = createSlice({
       state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
     },
     addFilter(state, action: PayloadAction<{filter: number[]}>) {
-      console.log(action.payload.filter)
       state.workbenches[state.focusViewIndex].filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
     },
     setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
-      console.log(action.payload.data);
       for(const i of action.payload.data) {
         state.workbenches[state.focusViewIndex].data[i._id] = i;
       }
@@ -166,6 +168,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const {addView, addColumnDescs, removeView, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, addColumnDescs, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

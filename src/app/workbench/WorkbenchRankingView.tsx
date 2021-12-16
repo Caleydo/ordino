@@ -10,13 +10,16 @@ import {useLoadViewPlugin} from './useLoadViewPlugin';
 import {EDragTypes} from './utils';
 
 export interface IWorkbenchRankingViewProps {
+    workbenchIndex: number;
     view: IWorkbenchView;
 }
 
 export function WorkbenchRankingView({
+    workbenchIndex,
     view
 }: IWorkbenchRankingViewProps) {
-    const [ref, instance] = useLoadViewPlugin(view.id);
+    console.log(view);
+    const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
 
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
@@ -30,9 +33,6 @@ export function WorkbenchRankingView({
             canDrop: !!monitor.canDrop(),
         }),
     }), [view.id]);
-
-    console.log(ordino);
-    console.log(view);
 
     return (
         <>

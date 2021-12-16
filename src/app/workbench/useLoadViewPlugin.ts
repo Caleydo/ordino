@@ -1,16 +1,19 @@
 import React from 'react';
-import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager} from 'tdp_core';
-import {useAppDispatch, useAppSelector} from '../..';
+import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
+import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
 
 
-export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null) => void, IView | null] {
+export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
+
+
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState<IView | null>(null);
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);
+
 
     const {status, value: viewPlugin} = useAsync(loadView, []);
 
@@ -27,15 +30,36 @@ export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null
                 // TODO: Refactor score in ARanking view to load without tracking
                 // at the moment scores do not work
                 // dummy context
-                const context = {graph: null, ref: {value: {data: null}} as any, desc: view};
-                const selection = {idtype: new IDType('Start', 'Start', '', true), range: Range.none()};
-                const i = viewPlugin.factory(context, selection, ref, {});
-                console.log(i);
-                context.ref[`v`] = i;
 
-                console.log(context.ref);
-                ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
-                return i;
+                const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
+
+                const selection = {idtype: new IDType(idType, '.*', '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex - 1].selections)};
+
+                console.log(selection.idtype);
+                console.log(viewId);
+                FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
+                    const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : availableViews[0].v};
+
+                    console.log(context);
+
+                    const i = viewPlugin.factory(context, selection, ref, {});
+                    console.log(i);
+                    context.ref[`v`] = i;
+
+                    ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                    return i;
+                });
+
+                FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
+                    const idTargetSet = new Set<string>();
+
+                    availableViews.forEach((v) => {
+                        idTargetSet.add(v.v.itemIDType);
+                    });
+
+                    dispatch(addTransitionOptions({transitionOptions: Array.from(idTargetSet.values()), workbenchIndex}));
+
+                });
             }
             // Set instance to null if no ref is passed
             return null;
@@ -62,13 +86,6 @@ export function useLoadViewPlugin(viewId: string): [(element: HTMLElement | null
         }
     }, [instance, ordino.workbenches[ordino.focusViewIndex].filters]);
 
-    React.useEffect(() => {
-
-        if (instance) {
-
-        }
-
-    }, [instance]);
 
     return [setRef, instance];
 }

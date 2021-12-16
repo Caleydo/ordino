@@ -4,17 +4,19 @@ import {WorkbenchRankingView} from './WorkbenchRankingView';
 import {WorkbenchVisView} from './WorkbenchVisView';
 
 export interface IWorkbenchSingleViewProps {
+    workbenchIndex: number;
     view: IWorkbenchView;
 }
 
 export function WorkbenchSingleView({
+    workbenchIndex,
     view
 }: IWorkbenchSingleViewProps) {
     return (
         <>
             {view.viewType === 'Ranking' ?
-                <WorkbenchRankingView view={view}/>
-                : <WorkbenchVisView view={view}/>
+                <WorkbenchRankingView workbenchIndex={workbenchIndex} view={view}/>
+                : <WorkbenchVisView workbenchIndex={workbenchIndex} view={view}/>
             }
         </>
     );

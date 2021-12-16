@@ -5,10 +5,12 @@ import {useAppDispatch, useAppSelector} from '../..';
 import {EColumnTypes} from '../../../../tdp_core/dist/vis/interfaces';
 
 export interface IWorkbenchVisViewProps {
+    workbenchIndex: number;
     view: IWorkbenchView;
 }
 
 export function WorkbenchVisView({
+    workbenchIndex,
     view
 }: IWorkbenchVisViewProps) {
     const dispatch = useAppDispatch();
@@ -58,9 +60,6 @@ export function WorkbenchVisView({
         }
     }
 
-    console.log(selectedMap);
-
-
     return (
         <>
             <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -76,7 +75,7 @@ export function WorkbenchVisView({
                         dispatch(addFilter({filter: ordino.workbenches[ordino.focusViewIndex].selections}));
                         dispatch(addSelection({newSelection: []}));
                     } else if (s === 'Filter In') {
-                        dispatch(addFilter({filter: data.filter((d) => !ordino.workbenches[ordino.focusViewIndex].selections.includes(d._id)).map(d => d._id)}));
+                        dispatch(addFilter({filter: data.filter((d) => !ordino.workbenches[ordino.focusViewIndex].selections.includes(d._id)).map((d) => d._id)}));
                         dispatch(addSelection({newSelection: []}));
                     } else {
                         dispatch(addFilter({filter: []}));

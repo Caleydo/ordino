@@ -25,12 +25,13 @@ export interface IWorkbench {
     views: IWorkbenchView[];
     viewDirection: 'vertical' | 'horizontal';
     name: string;
-    id: string;
+    entityId: string;
     index: number;
     data: {
         [key: number]: any;
     };
     columnDescs: any[];
+    transitionOptions: string[];
     /**
      * List selected rows
      */
@@ -54,6 +55,9 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
+}, string>, addTransitionOptions: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    transitionOptions: string[];
 }, string>, replaceWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newWorkbench: IWorkbench;

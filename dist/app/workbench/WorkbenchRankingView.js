@@ -5,8 +5,9 @@ import { removeView } from '../../store';
 import { DropOverlay } from './DropOverlay';
 import { useLoadViewPlugin } from './useLoadViewPlugin';
 import { EDragTypes } from './utils';
-export function WorkbenchRankingView({ view }) {
-    const [ref, instance] = useLoadViewPlugin(view.id);
+export function WorkbenchRankingView({ workbenchIndex, view }) {
+    console.log(view);
+    const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
@@ -19,8 +20,6 @@ export function WorkbenchRankingView({ view }) {
             canDrop: !!monitor.canDrop(),
         }),
     }), [view.id]);
-    console.log(ordino);
-    console.log(view);
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { ref: drop, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
             React.createElement("div", { className: "view-actions" },

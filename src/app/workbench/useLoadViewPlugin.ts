@@ -38,7 +38,11 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
                 console.log(selection.idtype);
                 console.log(viewId);
                 FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
-                    const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : availableViews[0].v};
+                    console.log(availableViews, viewId);
+
+                    const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
+
+                    const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : filteredViews[0].v};
 
                     console.log(context);
 

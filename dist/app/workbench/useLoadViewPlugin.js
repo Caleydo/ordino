@@ -26,7 +26,9 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
                 console.log(selection.idtype);
                 console.log(viewId);
                 FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
-                    const context = { graph: null, ref: { value: { data: null } }, desc: workbenchIndex === 0 ? view : availableViews[0].v };
+                    console.log(availableViews, viewId);
+                    const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
+                    const context = { graph: null, ref: { value: { data: null } }, desc: workbenchIndex === 0 ? view : filteredViews[0].v };
                     console.log(context);
                     const i = viewPlugin.factory(context, selection, ref, {});
                     console.log(i);

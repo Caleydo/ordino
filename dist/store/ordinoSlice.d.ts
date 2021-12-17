@@ -7,6 +7,7 @@ export declare enum EViewDirections {
 }
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
     viewType: 'Ranking' | 'Vis';
+    filters: number[];
 }
 export interface IOrdinoAppState {
     /**
@@ -36,10 +37,6 @@ export interface IWorkbench {
      * List selected rows
      */
     selections: number[];
-    /**
-     * Selected filters in this view
-     */
-    filters: number[];
 }
 interface IBaseState {
     selection: string[];
@@ -67,6 +64,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     newSelection: number[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    viewId: string;
     filter: number[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     data: any[];

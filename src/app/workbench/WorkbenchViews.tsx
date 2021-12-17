@@ -24,7 +24,7 @@ export function WorkbenchViews({
 
     const children = useMemo(() => {
         return views.map((v) => <WorkbenchSingleView workbenchIndex={index} key={v.id} view={v}/>);
-    }, [views.length]);
+    }, [views]);
 
     let wb = null;
 

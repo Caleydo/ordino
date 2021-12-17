@@ -46,7 +46,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
         dispatch(
             addWorkbench({
                 viewDirection: 'horizontal',
-                views: [{viewType: 'Ranking'}],
+                views: [{viewType: 'Ranking', filters: []}],
                 transitionOptions: [],
                 columnDescs: [],
                 data: {},
@@ -54,7 +54,6 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
                 name: view.name,
                 index: viewIndex,
                 selections: [],
-                filters: []
             })
         );
         setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);

@@ -3,16 +3,20 @@ import { addFilter, addSelection } from '../../store';
 import { Vis } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../..';
 import { EColumnTypes } from '../../../../tdp_core/dist/vis/interfaces';
+import { getAllFilters } from '../../store/storeUtils';
+import { useMemo } from 'react';
 export function WorkbenchVisView({ workbenchIndex, view }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-    //move stuff into hooks as needed
-    const filter = ordino.workbenches[ordino.focusViewIndex].filters;
-    let data = Object.values(ordino.workbenches[ordino.focusViewIndex].data);
-    if (filter && filter.length > 0) {
-        data = data.filter((d, i) => !filter.includes(d._id));
-    }
-    const colDescriptions = ordino.workbenches[ordino.focusViewIndex].columnDescs;
+    const data = useMemo(() => {
+        let data = Object.values(ordino.workbenches[workbenchIndex].data);
+        const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
+        console.log(ordino);
+        data = data.filter((d, i) => !filteredIds.includes(d._id));
+        console.log('in here');
+        return data;
+    }, [ordino.workbenches[workbenchIndex].data, ordino.workbenches[workbenchIndex].views]);
+    const colDescriptions = ordino.workbenches[workbenchIndex].columnDescs;
     const cols = [];
     for (const c of colDescriptions.filter((d) => d.type === 'number' || d.type === 'categorical')) {
         cols.push({
@@ -27,15 +31,36 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
             type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
         });
     }
+    console.log(view);
+    console.log(ordino);
+    const filterCallback = useMemo(() => (s) => {
+        if (s === 'Filter Out') {
+            const viewCopy = [...view.filters];
+            console.log(viewCopy, view.filters);
+            viewCopy.push(...ordino.workbenches[workbenchIndex].selections);
+            console.log(viewCopy);
+            dispatch(addFilter({ viewId: view.id, filter: viewCopy }));
+            dispatch(addSelection({ newSelection: [] }));
+        }
+        else if (s === 'Filter In') {
+            const viewCopy = [...view.filters];
+            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selections.includes(d._id)).map((d) => d._id));
+            dispatch(addFilter({ viewId: view.id, filter: viewCopy }));
+            dispatch(addSelection({ newSelection: [] }));
+        }
+        else {
+            dispatch(addFilter({ viewId: view.id, filter: [] }));
+        }
+    }, [view.filters, ordino.workbenches[workbenchIndex].selections]);
     const selectedMap = {};
-    const selections = ordino.workbenches[ordino.focusViewIndex].selections;
+    const selections = ordino.workbenches[workbenchIndex].selections;
     if (selections && selections.length > 0) {
-        const allData = ordino.workbenches[ordino.focusViewIndex].data;
+        const allData = ordino.workbenches[workbenchIndex].data;
         // tslint:disable-next-line:forin
         for (const i in allData) {
             selectedMap[i] = false;
         }
-        for (const i of ordino.workbenches[ordino.focusViewIndex].selections) {
+        for (const i of ordino.workbenches[workbenchIndex].selections) {
             selectedMap[i] = true;
         }
     }
@@ -46,18 +71,6 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
             React.createElement("div", { className: "view-parameters" }),
             React.createElement(Vis, { columns: cols, selected: selectedMap, selectionCallback: (s) => {
                     dispatch(addSelection({ newSelection: s }));
-                }, filterCallback: (s) => {
-                    if (s === 'Filter Out') {
-                        dispatch(addFilter({ filter: ordino.workbenches[ordino.focusViewIndex].selections }));
-                        dispatch(addSelection({ newSelection: [] }));
-                    }
-                    else if (s === 'Filter In') {
-                        dispatch(addFilter({ filter: data.filter((d) => !ordino.workbenches[ordino.focusViewIndex].selections.includes(d._id)).map((d) => d._id) }));
-                        dispatch(addSelection({ newSelection: [] }));
-                    }
-                    else {
-                        dispatch(addFilter({ filter: [] }));
-                    }
-                } }))));
+                }, filterCallback: filterCallback }))));
 }
 //# sourceMappingURL=WorkbenchVisView.js.map

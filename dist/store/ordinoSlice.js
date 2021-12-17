@@ -81,7 +81,8 @@ const ordinoSlice = createSlice({
             state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
         },
         addFilter(state, action) {
-            state.workbenches[state.focusViewIndex].filters = action.payload.filter;
+            console.log(action.payload.viewId);
+            state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;

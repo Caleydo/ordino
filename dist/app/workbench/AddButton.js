@@ -28,23 +28,8 @@ export function AddButton() {
                 dispatch(addView({
                     workbenchIndex: ordino.focusViewIndex,
                     view: {
-                        id: 'reprovisyn_ranking_viralland.public.samples',
-                        viewType: 'Ranking',
-                        index: ordino.workbenches[ordino.focusViewIndex].views.length,
-                        name: 'Gene',
-                        selection: 'multiple',
-                        selections: [],
-                        group: {
-                            name: 'General',
-                            order: 10
-                        }
-                    }
-                }));
-            }, type: "button", className: "btn btn-primary" }, "Add Ranking"),
-        React.createElement("button", { onClick: () => {
-                dispatch(addView({
-                    workbenchIndex: ordino.focusViewIndex,
-                    view: {
+                        id: ('Vis' + Math.random()).substring(2, 7),
+                        filters: [],
                         viewType: 'Vis',
                     }
                 }));
@@ -56,7 +41,7 @@ export function AddButton() {
             return (React.createElement("button", { onClick: () => {
                     dispatch(addWorkbench({
                         viewDirection: 'horizontal',
-                        views: [{ id: j.id, name: j.name, viewType: 'Ranking' }],
+                        views: [{ id: j.id, name: j.name, viewType: 'Ranking', filters: [] }],
                         transitionOptions: [],
                         columnDescs: [],
                         data: {},
@@ -64,7 +49,6 @@ export function AddButton() {
                         name: j.name,
                         index: ordino.focusViewIndex + 1,
                         selections: [],
-                        filters: []
                     }));
                     dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
                 }, type: "button", className: "btn btn-primary" },

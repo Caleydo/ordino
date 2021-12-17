@@ -9,7 +9,7 @@ export function WorkbenchViews({ index }) {
     const views = ordino.workbenches[index].views;
     const children = useMemo(() => {
         return views.map((v) => React.createElement(WorkbenchSingleView, { workbenchIndex: index, key: v.id, view: v }));
-    }, [views.length]);
+    }, [views]);
     let wb = null;
     if (views.length === 1) {
         wb = children;

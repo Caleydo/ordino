@@ -23,7 +23,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
     const onAddView = React.useCallback((view, viewIndex) => {
         dispatch(addWorkbench({
             viewDirection: 'horizontal',
-            views: [{ viewType: 'Ranking' }],
+            views: [{ viewType: 'Ranking', filters: [] }],
             transitionOptions: [],
             columnDescs: [],
             data: {},
@@ -31,7 +31,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS, onScrollT
             name: view.name,
             index: viewIndex,
             selections: [],
-            filters: []
         }));
         setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
     }, []);

@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {data} from 'jquery';
+import {useGlobalFilter} from 'react-table';
 import {IViewPluginDesc} from 'tdp_core';
 
 
@@ -12,6 +13,7 @@ export enum EViewDirections {
 
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
   viewType: 'Ranking' | 'Vis';
+  filters: number[];
 }
 
 export interface IOrdinoAppState {
@@ -24,7 +26,6 @@ export interface IOrdinoAppState {
    * Id of the current focus view
    */
   focusViewIndex: number;
-
 }
 
 export interface IWorkbench {
@@ -50,11 +51,6 @@ export interface IWorkbench {
    * List selected rows
    */
   selections: number[]; // TODO define selection, probably IROW
-
-  /**
-   * Selected filters in this view
-   */
-  filters: number[]; // TODO define filter
 }
 
 interface IBaseState {
@@ -64,6 +60,7 @@ interface IBaseState {
 export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc {
   state: S;
 }
+
 
 // const test = ({
 //   headerOverride = Header,
@@ -149,8 +146,11 @@ const ordinoSlice = createSlice({
     addSelection(state, action: PayloadAction<{newSelection: number[]}>) {
       state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
     },
-    addFilter(state, action: PayloadAction<{filter: number[]}>) {
-      state.workbenches[state.focusViewIndex].filters = action.payload.filter;
+    addFilter(state, action: PayloadAction<{viewId: string, filter: number[]}>) {
+
+      console.log(action.payload.viewId);
+
+      state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;

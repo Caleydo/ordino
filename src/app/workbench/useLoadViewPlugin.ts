@@ -1,6 +1,7 @@
 import React from 'react';
 import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
 import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
+import {getAllFilters} from '../../store/storeUtils';
 
 
 export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
@@ -18,56 +19,37 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
     const {status, value: viewPlugin} = useAsync(loadView, []);
 
     const setRef = React.useCallback(async (ref: HTMLElement | null) => {
-        setInstance((currentInstance) => {
-            // If the element ref did not change, do nothing.
-            if (currentInstance && ref) {
-                return currentInstance;
-            }
+        // Create a new one if there is a ref
+        if (ref && status === 'success') {
 
-            // Create a new one if there is a ref
-            if (ref && status === 'success') {
+            const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-                // TODO: Refactor score in ARanking view to load without tracking
-                // at the moment scores do not work
-                // dummy context
+            const selection = {idtype: new IDType(idType, viewId, '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex - 1].selections)};
 
-                const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-                const selection = {idtype: new IDType(idType, '.*', '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex - 1].selections)};
+            FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
+                const idTargetSet = new Set<string>();
 
-                console.log(selection.idtype);
-                console.log(viewId);
-                FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
-                    console.log(availableViews, viewId);
-
-                    const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
-
-                    const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : filteredViews[0].v};
-
-                    console.log(context);
-
-                    const i = viewPlugin.factory(context, selection, ref, {});
-                    console.log(i);
-                    context.ref[`v`] = i;
-
-                    ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
-                    return i;
+                availableViews.forEach((v) => {
+                    idTargetSet.add(v.v.itemIDType);
                 });
 
-                FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
-                    const idTargetSet = new Set<string>();
+                dispatch(addTransitionOptions({transitionOptions: Array.from(idTargetSet.values()), workbenchIndex}));
 
-                    availableViews.forEach((v) => {
-                        idTargetSet.add(v.v.itemIDType);
-                    });
+            });
 
-                    dispatch(addTransitionOptions({transitionOptions: Array.from(idTargetSet.values()), workbenchIndex}));
+            FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
+                const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
 
-                });
-            }
-            // Set instance to null if no ref is passed
-            return null;
-        });
+                const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : filteredViews[0].v};
+
+                const i = viewPlugin.factory(context, selection, ref, {});
+                context.ref[`v`] = i;
+
+                ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                setInstance(i);
+            });
+        }
     }, [status]);
 
     React.useEffect(() => {
@@ -75,21 +57,21 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             const view: ARankingView = instance as unknown as ARankingView;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
 
-            view.selectionHelper.setGeneralVisSelection({idtype: id, range: Range.list(ordino.workbenches[ordino.focusViewIndex].selections)});
+            view.selectionHelper.setGeneralVisSelection({idtype: id, range: Range.list(ordino.workbenches[workbenchIndex].selections)});
 
         }
-    }, [instance, ordino.workbenches[ordino.focusViewIndex].selections]);
+    }, [instance, ordino.workbenches[workbenchIndex].selections]);
 
     React.useEffect(() => {
-        if(instance && ordino.workbenches[ordino.focusViewIndex].filters) {
+        if(instance) {
             const view: ARankingView = instance as unknown as ARankingView;
+            const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
+
             view.provider.setFilter((row) => {
-                return !ordino.workbenches[ordino.focusViewIndex].filters.includes(row.v._id);
+                return !filteredIds.includes(row.v._id);
             });
-
         }
-    }, [instance, ordino.workbenches[ordino.focusViewIndex].filters]);
-
+    }, [instance, ordino.workbenches[workbenchIndex].views]);
 
     return [setRef, instance];
 }

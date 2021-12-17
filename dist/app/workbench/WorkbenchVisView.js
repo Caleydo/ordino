@@ -11,9 +11,7 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
         const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
-        console.log(ordino);
         data = data.filter((d, i) => !filteredIds.includes(d._id));
-        console.log('in here');
         return data;
     }, [ordino.workbenches[workbenchIndex].data, ordino.workbenches[workbenchIndex].views]);
     const colDescriptions = ordino.workbenches[workbenchIndex].columnDescs;
@@ -31,14 +29,10 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
             type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
         });
     }
-    console.log(view);
-    console.log(ordino);
     const filterCallback = useMemo(() => (s) => {
         if (s === 'Filter Out') {
             const viewCopy = [...view.filters];
-            console.log(viewCopy, view.filters);
             viewCopy.push(...ordino.workbenches[workbenchIndex].selections);
-            console.log(viewCopy);
             dispatch(addFilter({ viewId: view.id, filter: viewCopy }));
             dispatch(addSelection({ newSelection: [] }));
         }

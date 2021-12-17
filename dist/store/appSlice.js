@@ -7,7 +7,6 @@ const appSlice = createSlice({
     initialState,
     reducers: {
         setReady(state, action) {
-            console.log('HERE');
             state.ready = action.payload;
         }
     }

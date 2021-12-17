@@ -25,11 +25,7 @@ export function WorkbenchVisView({
 
         const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
 
-        console.log(ordino);
-
         data = data.filter((d, i) => !filteredIds.includes(d._id));
-
-        console.log('in here');
 
         return data;
     }, [ordino.workbenches[workbenchIndex].data, ordino.workbenches[workbenchIndex].views]);
@@ -53,15 +49,10 @@ export function WorkbenchVisView({
         });
     }
 
-    console.log(view);
-    console.log(ordino);
-
     const filterCallback = useMemo(() => (s) => {
         if(s === 'Filter Out') {
             const viewCopy = [...view.filters];
-            console.log(viewCopy, view.filters);
             viewCopy.push(...ordino.workbenches[workbenchIndex].selections);
-            console.log(viewCopy);
             dispatch(addFilter({viewId: view.id, filter: viewCopy}));
             dispatch(addSelection({newSelection: []}));
         } else if (s === 'Filter In') {

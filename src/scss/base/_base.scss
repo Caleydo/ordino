@@ -15,35 +15,50 @@
 }
 
 .ordino-filmstrip {
-  .ordino-workbench {
-    z-index: 10;
+  width: fit-content;
+  height: 100%;
+  min-height: 0px;
+  position: relative;
+  display: flex;
+  overflow-x: visible;
+  transition: transform .7s ease;
+  transition-delay: .7s;
+  overflow-y: hidden;
+}
+
+.ordino-workbench {
+  z-index: 10;
+  width: $workbench-width;
+  position: relative;
+  transition: width .7s ease;
+  border-top: 2px solid $gray-400;
+  border-left: 2px solid $gray-400;
+  border-right: 2px solid $gray-400;
+
+  overflow: hidden;
+
+  &.start.t-focus {
     width: $workbench-width;
-    position: relative;
-    transition: width 0.5s ease;
-    border: 2px solid $gray-400;
-    overflow: hidden;
+  }
 
-    &.start.t-focus {
-      width: $workbench-width;
-    }
+  &:not(:only-child) {
+    border-right: none;
+  }
 
-    &:not(:only-child) {
-      border-right: none;
-    }
+  &.t-context {
+    border-top-color: $success;
+    width: $workbench-context-width;
+  }
 
-    &.t-context {
-      border-color: $success;
-      width: $workbench-hide-width;
-    }
+  &.t-focus {
+    width: $workbench-focus-width;
+    border-top-color: $primary;
+  }
 
-    &.t-focus {
-      width: $workbench-focus-width;
-      border-color: $primary;
-    }
-
-    &.t-next,
-    &.t-previous {
-      width: $workbench-hide-width;
-    }
+  &.t-next {
+    width: $workbench-focus-width;
+  }
+  &.t-previous {
+    width: $workbench-context-width;
   }
 }

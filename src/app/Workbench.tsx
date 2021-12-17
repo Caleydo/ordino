@@ -16,29 +16,15 @@ import {WorkbenchViews} from './workbench/WorkbenchViews';
 interface IWorkbenchProps {
     workbench: IWorkbench;
     type?: EWorkbenchType;
-    onScrollTo?: (ref: React.MutableRefObject<HTMLDivElement>) => void;
 }
 
-export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo}: IWorkbenchProps) {
+
+
+export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenchProps) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);
 
-    console.log(ordino);
-
-    React.useEffect(() => {
-        if (!ref.current || ordino.workbenches.length <= 2) {
-            return;
-        }
-
-        if ((type === EWorkbenchType.CONTEXT)) {
-            onScrollTo(ref);
-
-        } else if (ordino.focusViewIndex === 0) {
-            onScrollTo(null);
-        }
-
-    }, [ref.current, ordino.focusViewIndex]);
 
     const showNextChooser = workbench.index === ordino.workbenches.length - 1;
 
@@ -76,7 +62,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS, onScrollTo
     }, []);
 
     return (<>
-        <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.workbenches.length === 1 ? 'start' : ''}`}>
+        <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`} >
             <>
                 {/* {workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
                     <ViewChooser

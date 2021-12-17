@@ -17,7 +17,6 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     setReady(state, action: PayloadAction<boolean>) {
-      console.log('HERE')
       state.ready = action.payload;
     }
   }

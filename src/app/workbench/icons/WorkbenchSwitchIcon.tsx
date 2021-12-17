@@ -16,7 +16,6 @@ export function WorkbenchSwitchIcon({
     const [{ isOver }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
         drop: (d: {type: EDragTypes, viewId: number, index: number}) => {
-            console.log(d, view);
             dispatch(switchViews({workbenchIndex: ordino.focusViewIndex, firstViewIndex: d.index, secondViewIndex: view.index}));
         },
         collect: (monitor) => ({

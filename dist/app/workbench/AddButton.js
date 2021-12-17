@@ -13,16 +13,13 @@ export function AddButton() {
     }));
     const possibleJumps = useMemo(() => {
         if (ordino.workbenches.length > 0) {
-            console.log(ordino);
             const possibleJumps = ordino.workbenches[ordino.focusViewIndex].transitionOptions.map((o) => {
-                console.log(o);
                 return PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${o}`);
             });
             return possibleJumps;
         }
         return [];
     }, [ordino.workbenches, ordino.focusViewIndex]);
-    console.log(possibleJumps);
     return (React.createElement(React.Fragment, null,
         React.createElement("button", { onClick: () => {
                 dispatch(addView({

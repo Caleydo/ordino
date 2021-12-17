@@ -17,10 +17,8 @@ export function AddButton() {
 
     const possibleJumps = useMemo(() => {
         if(ordino.workbenches.length > 0) {
-            console.log(ordino);
 
             const possibleJumps = ordino.workbenches[ordino.focusViewIndex].transitionOptions.map((o) => {
-                console.log(o);
                 return PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${o}`) as IViewPluginDesc;
             });
 
@@ -31,7 +29,6 @@ export function AddButton() {
 
     }, [ordino.workbenches, ordino.focusViewIndex]);
 
-    console.log(possibleJumps);
 
     return (
         <>

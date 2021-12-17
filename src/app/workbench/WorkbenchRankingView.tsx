@@ -18,7 +18,6 @@ export function WorkbenchRankingView({
     workbenchIndex,
     view
 }: IWorkbenchRankingViewProps) {
-    console.log(view);
     const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
 
     const dispatch = useAppDispatch();

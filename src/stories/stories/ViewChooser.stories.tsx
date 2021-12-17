@@ -14,7 +14,6 @@ const views = [...Array(5).keys()].map((a, i) => (
         }
     }));
 
-console.log(views)
 export default {
     title: 'tdp/ViewChooser',
     component: ViewChooser,

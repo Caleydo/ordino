@@ -113,8 +113,6 @@ const ordinoSlice = createSlice({
       state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
-      console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
-
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
       temp.index = action.payload.secondViewIndex;
@@ -147,9 +145,6 @@ const ordinoSlice = createSlice({
       state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
     },
     addFilter(state, action: PayloadAction<{viewId: string, filter: number[]}>) {
-
-      console.log(action.payload.viewId);
-
       state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {

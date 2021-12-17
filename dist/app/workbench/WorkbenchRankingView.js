@@ -6,7 +6,6 @@ import { DropOverlay } from './DropOverlay';
 import { useLoadViewPlugin } from './useLoadViewPlugin';
 import { EDragTypes } from './utils';
 export function WorkbenchRankingView({ workbenchIndex, view }) {
-    console.log(view);
     const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);

@@ -21,7 +21,7 @@ export function AddButton() {
         return [];
     }, [ordino.workbenches, ordino.focusViewIndex]);
     return (React.createElement(React.Fragment, null,
-        React.createElement("button", { onClick: () => {
+        React.createElement("button", { style: { height: '25px' }, onClick: () => {
                 dispatch(addView({
                     workbenchIndex: ordino.focusViewIndex,
                     view: {
@@ -31,7 +31,7 @@ export function AddButton() {
                     }
                 }));
             }, type: "button", className: "btn btn-primary" }, "Add Vis"),
-        React.createElement("button", { onClick: () => {
+        React.createElement("button", { style: { height: '25px' }, onClick: () => {
                 dispatch(setWorkbenchDirection({ workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal' }));
             }, type: "button", className: "btn btn-primary" }, "Direction"),
         possibleJumps.map((j) => {

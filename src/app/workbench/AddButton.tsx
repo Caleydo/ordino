@@ -32,7 +32,7 @@ export function AddButton() {
 
     return (
         <>
-            <button onClick={() => {
+            <button style={{height: '25px'}} onClick={() => {
                 dispatch(addView({
                     workbenchIndex: ordino.focusViewIndex,
                     view: {
@@ -43,7 +43,7 @@ export function AddButton() {
                 }));
             }}type="button" className="btn btn-primary">Add Vis</button>
 
-            <button onClick={() => {
+            <button style={{height: '25px'}} onClick={() => {
                 dispatch(setWorkbenchDirection({workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal'}));
             }}type="button" className="btn btn-primary">Direction</button>
 

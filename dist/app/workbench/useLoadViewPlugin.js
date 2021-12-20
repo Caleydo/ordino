@@ -7,6 +7,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState(null);
+    console.log(view);
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);

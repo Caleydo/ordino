@@ -11,6 +11,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState<IView | null>(null);
+    console.log(view)
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);

@@ -7,8 +7,8 @@ import { EViewMode } from 'tdp_core';
  * @param props properties
  */
 export function OrdinoBreadcrumbs(props) {
-    return (React.createElement("ul", { className: "tdp-button-group history", "aria-label": "breadcrumb", "data-testid": "history-breadcrumb" }, props.views.map((view) => {
-        return (React.createElement(OrdinoBreadcrumbItem, { key: view.desc.id, view: view, onClick: props.onClick }));
+    return (React.createElement("ul", { className: "tdp-button-group history", "aria-label": "breadcrumb", "data-testid": "history-breadcrumb" }, props.views.map((view, idx) => {
+        return (React.createElement(OrdinoBreadcrumbItem, { key: view.desc.id, view: view, onClick: props.onClick, dataTestId: `item-${idx}` }));
     })));
 }
 function OrdinoBreadcrumbItem(props) {
@@ -35,8 +35,8 @@ function OrdinoBreadcrumbItem(props) {
             props.view.off(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
         };
     }, [props.view]);
-    return (React.createElement("li", { className: `hview ${historyClassNames[viewMode]}`, "data-testid": historyClassNames[viewMode] },
-        React.createElement("a", { href: "#", "data-testid": viewName, onClick: (event) => {
+    return (React.createElement("li", { className: `hview ${historyClassNames[viewMode]}`, "data-testid": props.dataTestId },
+        React.createElement("a", { href: "#", "data-testid": `${props.view.desc.id}-link`, onClick: (event) => {
                 event.preventDefault();
                 props.onClick(props.view);
             } }, viewName)));

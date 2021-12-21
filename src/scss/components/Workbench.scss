@@ -7,9 +7,9 @@
     "inner inner";
   overflow: hidden;
   position: relative;
-  gap: 10px;
-  margin: 1.5rem;
-  padding: 10px;
+  gap: 5px;
+  margin: .5rem;
+  padding: 5px;
   border: 1px solid lightgray;
 
   & > .view-actions {
@@ -29,7 +29,7 @@
     grid-area: inner;
     position: relative;
     border-top: 1px solid #ddd;
-    padding-top: 10px;
+    padding-top: 5px;
     overflow-y: auto;
     height: 0;
     min-height: 100%;
@@ -43,10 +43,14 @@
   flex: 1 1 auto;
 }
 
+.view-title {
+  font-size: 16px;
+}
+
 .Pane {
   display: flex;
-  min-height: 300px;
-  min-width: 300px;
+  min-height: 0px;
+  min-width: 0px;
 }
 
 .Pane2 {

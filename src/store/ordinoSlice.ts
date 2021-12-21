@@ -113,6 +113,7 @@ const ordinoSlice = createSlice({
       state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
+      console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
       temp.index = action.payload.secondViewIndex;

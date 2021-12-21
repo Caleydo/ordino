@@ -12,8 +12,8 @@ export enum EWorkbenchType {
     NEXT = 't-next'
 }
 
-export const focusViewWidth = 80;
-export const contextViewWidth = 20;
+export const focusViewWidth = 85;
+export const contextViewWidth = 15;
 
 export function Filmstrip() {
     const ordino = useAppSelector((state) => state.ordino);
@@ -22,7 +22,7 @@ export function Filmstrip() {
     const translateDistance = useMemo(() => {
         const contextIndex = ordino.focusViewIndex - 1;
         if(ordino.focusViewIndex > 1) {
-            return `translateX(${(ordino.focusViewIndex - 1) * -20}vw)`;
+            return `translateX(${(ordino.focusViewIndex - 1) * -contextViewWidth}vw)`;
         } else {
             return `translateX(0vw)`;
         }

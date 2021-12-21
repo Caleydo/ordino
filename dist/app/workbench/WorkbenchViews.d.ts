@@ -1,4 +1,5 @@
 export interface IWorkbenchViewsProps {
     index: number;
+    onlyRanking?: boolean;
 }
-export declare function WorkbenchViews({ index }: IWorkbenchViewsProps): JSX.Element;
+export declare function WorkbenchViews({ index, onlyRanking, }: IWorkbenchViewsProps): JSX.Element;

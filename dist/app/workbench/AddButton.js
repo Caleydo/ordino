@@ -47,7 +47,9 @@ export function AddButton() {
                         index: ordino.focusViewIndex + 1,
                         selections: [],
                     }));
-                    dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                    setTimeout(() => {
+                        dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                    }, 0);
                 }, type: "button", className: "btn btn-primary" },
                 "Jump to ",
                 j.name));

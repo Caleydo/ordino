@@ -11,7 +11,6 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState<IView | null>(null);
-    console.log(view)
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);
@@ -47,7 +46,9 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
                 const i = viewPlugin.factory(context, selection, ref, {});
                 context.ref[`v`] = i;
 
-                ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                console.log('#' + viewId);
+
+                ResolveNow.resolveImmediately(i.init(document.getElementById(viewId).querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
                 setInstance(i);
             });
         }

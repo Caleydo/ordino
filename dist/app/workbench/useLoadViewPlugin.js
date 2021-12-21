@@ -7,7 +7,6 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState(null);
-    console.log(view);
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);
@@ -29,7 +28,8 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
                 const context = { graph: null, ref: { value: { data: null } }, desc: workbenchIndex === 0 ? view : filteredViews[0].v };
                 const i = viewPlugin.factory(context, selection, ref, {});
                 context.ref[`v`] = i;
-                ResolveNow.resolveImmediately(i.init(document.querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                console.log('#' + viewId);
+                ResolveNow.resolveImmediately(i.init(document.getElementById(viewId).querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
                 setInstance(i);
             });
         }

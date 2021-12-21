@@ -12,13 +12,12 @@ import {Lineup} from './lite';
 import {IViewPluginDesc} from 'tdp_core';
 import {useAppDispatch, useAppSelector} from '../hooks';
 import {WorkbenchViews} from './workbench/WorkbenchViews';
+import {colorPalette} from './Breadcrumb';
 
 interface IWorkbenchProps {
     workbench: IWorkbench;
     type?: EWorkbenchType;
 }
-
-
 
 export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenchProps) {
     const dispatch = useAppDispatch();
@@ -32,7 +31,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
         dispatch(
             addWorkbench({
                 viewDirection: 'horizontal',
-                views: [{viewType: 'Ranking', filters: []}],
+                views: [{viewType: 'Ranking', filters: [], index: 0}],
                 transitionOptions: [],
                 columnDescs: [],
                 data: {},
@@ -62,7 +61,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
     }, []);
 
     return (<>
-        <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`} >
+        <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`} style={{borderTopColor: colorPalette[workbench.index]}} >
             <>
                 {/* {workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
                     <ViewChooser
@@ -74,7 +73,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
                     />
                 ) : null} */}
 
-                <WorkbenchViews index={workbench.index}/>
+                <WorkbenchViews index={workbench.index} onlyRanking={type === EWorkbenchType.CONTEXT}/>
             </>
         </div>
         {/* {showNextChooser &&

@@ -1,13 +1,32 @@
 import * as React from 'react';
-import { addFilter, addSelection } from '../../store';
+import { addFilter, addSelection, removeView } from '../../store';
 import { Vis } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../..';
 import { EColumnTypes } from '../../../../tdp_core/dist/vis/interfaces';
 import { getAllFilters } from '../../store/storeUtils';
 import { useMemo } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import { EDragTypes } from './utils';
+import { DropOverlay } from './DropOverlay';
+import { colorPalette } from '../Breadcrumb';
 export function WorkbenchVisView({ workbenchIndex, view }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
+    const [{ isOver, canDrop }, drop] = useDrop(() => ({
+        accept: [EDragTypes.MOVE],
+        canDrop: (d) => {
+            return d.viewId !== view.id;
+        },
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+            canDrop: !!monitor.canDrop(),
+        }),
+    }), [view.id]);
+    const [{}, drag] = useDrag(() => ({
+        type: EDragTypes.MOVE,
+        item: { type: EDragTypes.MOVE, viewId: view.id, index: view.index },
+    }), [view.id, view.index]);
+    console.log(view.id, view.index);
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
         const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
@@ -59,12 +78,20 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
         }
     }
     return (React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
+        React.createElement("div", { ref: drop, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
             React.createElement("div", { className: "view-actions" },
-                React.createElement("button", { type: "button", className: "btn-close" })),
-            React.createElement("div", { className: "view-parameters" }),
+                React.createElement("button", { onClick: () => dispatch(removeView({ workbenchIndex, viewIndex: view.index })), type: "button", className: "btn-close" })),
+            React.createElement("div", { ref: drag, className: "view-parameters d-flex rounded" },
+                React.createElement("div", null,
+                    React.createElement("button", { type: "button", className: "chevronButton btn btn-outline-primary btn-sm align-middle m-1", style: { color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex] } },
+                        " ",
+                        React.createElement("i", { className: "flex-grow-1 fas fa-chevron-right m-1" }),
+                        "Edit View")),
+                React.createElement("span", { className: 'view-title row align-items-center m-1' },
+                    React.createElement("strong", null, "Vis"))),
             React.createElement(Vis, { columns: cols, selected: selectedMap, selectionCallback: (s) => {
                     dispatch(addSelection({ newSelection: s }));
-                }, filterCallback: filterCallback }))));
+                }, filterCallback: filterCallback }),
+            isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null)));
 }
 //# sourceMappingURL=WorkbenchVisView.js.map

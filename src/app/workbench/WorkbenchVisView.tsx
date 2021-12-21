@@ -1,10 +1,14 @@
 import * as React from 'react';
-import {addFilter, addSelection, IWorkbenchView, removeView} from '../../store';
-import { Vis } from 'tdp_core';
+import {addFilter, addSelection, IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
+import { ViewBuilder, Vis } from 'tdp_core';
 import {useAppDispatch, useAppSelector} from '../..';
 import {EColumnTypes} from '../../../../tdp_core/dist/vis/interfaces';
 import {getAllFilters} from '../../store/storeUtils';
 import {useMemo} from 'react';
+import {useDrag, useDrop} from 'react-dnd';
+import {EDragTypes} from './utils';
+import {DropOverlay} from './DropOverlay';
+import {colorPalette} from '../Breadcrumb';
 
 export interface IWorkbenchVisViewProps {
     workbenchIndex: number;
@@ -19,6 +23,23 @@ export function WorkbenchVisView({
 
     const ordino = useAppSelector((state) => state.ordino);
 
+    const [{isOver, canDrop}, drop] = useDrop(() => ({
+        accept: [EDragTypes.MOVE],
+        canDrop: (d: {type: EDragTypes, viewId: string, index: number}) => {
+            return d.viewId !== view.id;
+        },
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+            canDrop: !!monitor.canDrop(),
+        }),
+    }), [view.id]);
+
+    const [{}, drag] = useDrag(() => ({
+        type: EDragTypes.MOVE,
+        item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
+    }), [view.id, view.index]);
+
+    console.log(view.id, view.index);
 
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
@@ -84,15 +105,22 @@ export function WorkbenchVisView({
 
     return (
         <>
-            <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+            <div ref={drop} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
                 <div className="view-actions">
-                    <button type="button" className="btn-close" />
+                    <button onClick={() => dispatch(removeView({workbenchIndex, viewIndex: view.index}))} type="button" className="btn-close" />
                 </div>
-                <div className="view-parameters"></div>
+
+                <div ref={drag} className="view-parameters d-flex rounded">
+                    <div>
+                        <button type="button" className="chevronButton btn btn-outline-primary btn-sm align-middle m-1" style={{color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex]}}> <i className="flex-grow-1 fas fa-chevron-right m-1"/>Edit View</button>
+                    </div>
+                    <span className={'view-title row align-items-center m-1'}><strong>Vis</strong></span>
+                </div>
 
                 <Vis columns={cols} selected={selectedMap} selectionCallback={(s) => {
                     dispatch(addSelection({newSelection: s}));
                 }} filterCallback={filterCallback}/>
+                {isOver && canDrop ? <DropOverlay view={view} /> : null}
             </div>
         </>
     );

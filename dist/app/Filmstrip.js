@@ -9,15 +9,15 @@ export var EWorkbenchType;
     EWorkbenchType["CONTEXT"] = "t-context";
     EWorkbenchType["NEXT"] = "t-next";
 })(EWorkbenchType || (EWorkbenchType = {}));
-export const focusViewWidth = 80;
-export const contextViewWidth = 20;
+export const focusViewWidth = 85;
+export const contextViewWidth = 15;
 export function Filmstrip() {
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);
     const translateDistance = useMemo(() => {
         const contextIndex = ordino.focusViewIndex - 1;
         if (ordino.focusViewIndex > 1) {
-            return `translateX(${(ordino.focusViewIndex - 1) * -20}vw)`;
+            return `translateX(${(ordino.focusViewIndex - 1) * -contextViewWidth}vw)`;
         }
         else {
             return `translateX(0vw)`;

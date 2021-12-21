@@ -96,6 +96,7 @@
     "react-select-async-paginate": "^0.5.3",
     "react-split": "^2.0.13",
     "react-split-pane": "^0.1.92",
+    "react-spring": "^9.3.2",
     "react-virtualized": "^9.22.3",
     "tdp_core": "github:datavisyn/tdp_core#develop"
   }

@@ -2,9 +2,11 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {useRef} from 'react';
 import {useAppDispatch, useAppSelector} from '../..';
-import {AddButton} from '../../app/workbench/AddButton';
+import {ChevronButtons} from './ChevronButtons';
 import {IWorkbench} from '../../store';
 import {ChevronBreadcrumb} from './ChevronBreadcrumb';
+import {ShowDetailsSwitch} from './ShowDetailsSwitch';
+import {TempChevronJumpButtons} from './TempChevronJumpButtons';
 
 export interface ISingleBreadcrumbProps {
     first?: boolean;
@@ -36,9 +38,6 @@ export function SingleBreadcrumb({
 
     return (
         <div className={'position-relative'} ref={ref} style={{flexGrow: flexWidth}} onClick={onClick}>
-            <div style={{left: '120px'}}className={'position-absolute chevronDiv top-50 translate-middle d-flex'}>
-                {workbench && workbench.index === ordino.focusViewIndex ? <AddButton/> : null}
-            </div>
             <div className={'position-absolute chevronDiv top-50 start-50 translate-middle d-flex'}>
                 {workbench
                     ?
@@ -46,6 +45,24 @@ export function SingleBreadcrumb({
                     :
                     <i className="flex-grow-1 fas fa-plus"></i>
                     }
+            </div>
+
+            <div className={'position-absolute chevronDiv top-50 translate-middle-y d-flex'} style={{left: first? '8px' : '16px'}}>
+                {workbench && workbench.index === ordino.focusViewIndex ?
+                    <>
+                        <ShowDetailsSwitch/>
+                        <ChevronButtons color={color}/>
+                    </>
+                    : null
+                }
+            </div>
+            <div className={'position-absolute chevronDiv top-50 translate-middle-y d-flex'} style={{right: '20px'}}>
+                {workbench && workbench.index === ordino.focusViewIndex ?
+                    <>
+                        <TempChevronJumpButtons color={color}/>
+                    </>
+                    : null
+                }
             </div>
             <ChevronBreadcrumb color={color} width={width} first={first}/>
         </div>

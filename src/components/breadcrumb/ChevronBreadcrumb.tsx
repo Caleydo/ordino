@@ -1,16 +1,18 @@
 import * as React from 'react';
 import {useAppDispatch, useAppSelector} from '../..';
-
+import {useSpring, useSprings, animated} from 'react-spring';
 export interface IChevronBreadcrumbProps {
     width?: number;
     chevronIndent?: number;
     first?: boolean;
+    height?: number;
     color?: string;
     margin?: number;
 }
 
 export function ChevronBreadcrumb({
     width = 50,
+    height = 40,
     chevronIndent = 8,
     first = false,
     margin = 4,
@@ -19,12 +21,13 @@ export function ChevronBreadcrumb({
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
 
+    // const spring = useSpring({width: width - chevronIndent - margin});
+
     return (
-        <svg className={`position-absolute chevronSvg`}>
-            {/* <rect width={width} height={30} fill={'cornflowerblue'}/> */}
+        <svg className={`position-absolute chevronSvg`} style={{height: `${height}px`}}>
             {first ?
-                <path d={`M 0 0 V 30 H ${width - chevronIndent - margin} l ${chevronIndent} -15 l -${chevronIndent} -15 H -${width - chevronIndent - margin}`} stroke="1px solid black" fill={color}/>
-            : <path d={`M 0 0 L ${chevronIndent} 15 L 0 30 H ${width - chevronIndent - margin} l ${chevronIndent} -15 l -${chevronIndent} -15 H -${width - chevronIndent - margin}`} stroke="1px solid black" fill={color}/>}
+                <animated.path d={`M 0 0 V ${height} H ${width - chevronIndent - margin} l ${chevronIndent} ${-height / 2} l -${chevronIndent} ${-height / 2} H -${width - chevronIndent - margin}`} stroke="1px solid black" fill={color}/>
+            : <animated.path d={`M 0 0 L ${chevronIndent} ${height / 2} L 0 ${height} H ${width - chevronIndent - margin} l ${chevronIndent} ${-height / 2} l -${chevronIndent} ${-height / 2} H -${width - chevronIndent - margin}`} stroke="1px solid black" fill={color}/>}
         </svg>
     );
 }

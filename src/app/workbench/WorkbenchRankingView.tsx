@@ -1,7 +1,8 @@
 import * as React from 'react';
-import {useDrop} from 'react-dnd';
+import {useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch, useAppSelector} from '../..';
-import {IWorkbenchView, removeView} from '../../store';
+import {IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
+import {colorPalette} from '../Breadcrumb';
 
 import {Lineup} from '../lite';
 import {DropOverlay} from './DropOverlay';
@@ -33,17 +34,36 @@ export function WorkbenchRankingView({
         }),
     }), [view.id]);
 
+    const [{}, drag] = useDrag(() => ({
+        type: EDragTypes.MOVE,
+        item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
+    }), [view.id, view.index]);
+
     return (
         <>
-            <div ref={drop} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-                <div className="view-actions">
-                    <button type="button" onClick={() => dispatch(removeView({workbenchIndex: ordino.focusViewIndex, viewIndex: view.index}))} className="btn-close" />
-                </div>
+            <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+                {workbenchIndex === ordino.focusViewIndex ?
+                    <>
+                        <div className="view-actions">
+                            <button type="button" onClick={() => dispatch(removeView({workbenchIndex, viewIndex: view.index}))} className="btn-close" />
+                        </div>
 
-                <div className="view-parameters"></div>
+                        <div ref={drag} className="view-parameters d-flex">
+                            <div>
+                                <button type="button" className="chevronButton btn btn-outline-primary btn-sm align-middle m-1" style={{color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex]}}> <i className="flex-grow-1 fas fa-chevron-right m-1"/>Edit View</button>
+                            </div>
+                            <span className={'view-title row align-items-center m-1'}><strong>Ranking</strong></span>
+                        </div>
+                    </> :
+                    <>
+                        <div ref={drag} className="view-parameters d-flex">
+                            <span className={'view-title row align-items-center m-1'}><strong>Ranking</strong></span>
+                        </div>
+                    </>
+                }
                 <div ref={ref} className="inner">
-
                 </div>
+
                 {isOver && canDrop ? <DropOverlay view={view} /> : null}
             </div>
         </>

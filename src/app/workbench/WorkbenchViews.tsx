@@ -12,10 +12,12 @@ import {WorkbenchSingleView} from './WorkbenchSingleView';
 
 export interface IWorkbenchViewsProps {
     index: number;
+    onlyRanking?: boolean;
 }
 
 export function WorkbenchViews({
-    index
+    index,
+    onlyRanking = false,
 }: IWorkbenchViewsProps) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
@@ -28,21 +30,38 @@ export function WorkbenchViews({
 
     let wb = null;
 
+
+
     if(views.length === 1) {
-        wb = children;
+        wb = (
+            <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'0%'}>
+                <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[0]}/>
+                </SplitPane>
+                <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
+                </SplitPane>
+            </SplitPane>
+        );
     } else if(views.length === 2) {
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'50%'}>
-                {children}
+                <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[0]}/>
+                </SplitPane>
+                <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[1]}/>
+                </SplitPane>
             </SplitPane>
         );
     } else if(views.length === 3) {
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'50%'}>
-                {children[0]}
+                <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[0]}/>
+                </SplitPane>
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'50%'}>
-                    {children[1]}
-                    {children[2]}
+                    <WorkbenchSingleView workbenchIndex={index} view={views[1]}/>
+                    <WorkbenchSingleView workbenchIndex={index} view={views[2]}/>
                 </SplitPane>
             </SplitPane>
         );
@@ -63,7 +82,7 @@ export function WorkbenchViews({
 
     return (
         <div className="position-relative workbenchWrapper d-flex flex-grow-1">
-            {wb}
+            {onlyRanking ? <WorkbenchSingleView workbenchIndex={index} view={views.find((v) => v.viewType === 'Ranking')}/> : wb}
         </div>
     );
 }

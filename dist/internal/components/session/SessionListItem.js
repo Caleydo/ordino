@@ -17,7 +17,7 @@ export function SessionListItem({ desc, selectSession, children }) {
                 React.createElement("div", { className: "pe-0 align-self-stretch row" },
                     React.createElement("div", { className: "col position-relative" },
                         React.createElement("p", { className: "flex-grow-1 ms-4 text-muted" },
-                            dateFromNow ? React.createElement("time", { dateTime: dateString },
+                            dateFromNow ? React.createElement("time", { dateTime: dateString, title: dateString },
                                 dateFromNow,
                                 " ") : null,
                             desc.creator && desc.creator !== me ? React.createElement("span", null,

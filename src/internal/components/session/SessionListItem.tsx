@@ -29,7 +29,7 @@ export function SessionListItem({desc, selectSession, children}: ISessionListIte
           <div className="pe-0 align-self-stretch row">
             <div className="col position-relative">
               <p className="flex-grow-1 ms-4 text-muted">
-                {dateFromNow ? <time dateTime={dateString}>{dateFromNow} </time> : null}
+                {dateFromNow ? <time dateTime={dateString} title={dateString}>{dateFromNow} </time> : null}
                 {desc.creator && desc.creator !== me ? <span>{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.by')} {desc.creator}</span> : null}
               </p>
             </div>

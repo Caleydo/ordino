@@ -30,23 +30,22 @@ export function TempChevronJumpButtons({
                 return PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${o}`) as IViewPluginDesc;
             });
 
-            return possibleJumps;
+            return possibleJumps.filter((o) => o !== undefined);
         }
 
         return [];
-
     }, [ordino.workbenches, ordino.focusViewIndex]);
-
 
     return (
         <>
             {possibleJumps.map((j: IViewPluginDesc) => {
+                console.log(j);
                 return (
                         <button onClick={() => {
                             dispatch(
                                 addWorkbench({
                                     viewDirection: 'horizontal',
-                                    views: [{id: j.id, name: j.name, viewType: 'Ranking', filters: [], index: 0}],
+                                    views: [{id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
                                     transitionOptions: [],
                                     columnDescs: [],
                                     data: {},

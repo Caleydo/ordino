@@ -7,4 +7,7 @@ export function getAllFilters(workbench) {
     });
     return Array.from(allFilteredIds);
 }
+export function findViewIndex(uniqueId, workbench) {
+    return workbench.views.findIndex((v) => v.uniqueId === uniqueId);
+}
 //# sourceMappingURL=storeUtils.js.map

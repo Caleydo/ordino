@@ -5,13 +5,14 @@ export declare enum EViewDirections {
     W = "w",
     E = "e"
 }
-export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
-    viewType: 'Ranking' | 'Vis';
+export interface IWorkbenchView {
+    id: string;
+    uniqueId: string;
     filters: number[];
 }
 export interface IOrdinoAppState {
     /**
-     * List of open views. TODO: This should be changed to "workbenches" probably
+     * List of open views.
      */
     workbenches: IWorkbench[];
     /**
@@ -21,7 +22,7 @@ export interface IOrdinoAppState {
 }
 export interface IWorkbench {
     /**
-     * List of open views.
+     * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
      */
     views: IWorkbenchView[];
     viewDirection: 'vertical' | 'horizontal';
@@ -52,6 +53,10 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
+}, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    viewIndex: number;
+    viewId: string;
 }, string>, addTransitionOptions: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     transitionOptions: string[];

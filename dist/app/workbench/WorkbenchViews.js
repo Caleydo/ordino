@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import SplitPane from 'react-split-pane';
-import { useAppDispatch, useAppSelector } from '../..';
+import { useAppSelector } from '../..';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 export function WorkbenchViews({ index, onlyRanking = false, }) {
-    const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const views = ordino.workbenches[index].views;
     const children = useMemo(() => {
@@ -41,6 +40,6 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
                 React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[1] }),
                 React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[2] }))));
     }
-    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, onlyRanking ? React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views.find((v) => v.viewType === 'Ranking') }) : wb));
+    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, onlyRanking ? React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[0] }) : wb));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

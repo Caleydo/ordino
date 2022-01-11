@@ -30,16 +30,15 @@ export function ChevronButtons({
                     dispatch(addView({
                         workbenchIndex: ordino.focusViewIndex,
                         view: {
-                            index: ordino.workbenches[ordino.focusViewIndex].views.length,
-                            id: ('Vis'+Math.random()).substring(2,7),
-                            filters: [],
-                            viewType: 'Vis',
+                            id: '',
+                            uniqueId: (Math.random() + 1).toString(36).substring(7),
+                            filters: []
                         }
                     }));
                 }}type="button" className="chevronButton btn btn-light btn-sm align-middle m-1" style={{color}}> <i className="flex-grow-1 fas fa-chart-bar"/> Add View</button>
             </div>
 
-            <div>
+            {/* <div>
                 <button type="button" className="chevronButton btn btn-light btn-sm align-middle m-1" style={{color}}> <i className="flex-grow-1 fas fa-plus"/> Add Column</button>
             </div>
 
@@ -47,7 +46,7 @@ export function ChevronButtons({
                 <button onClick={() => {
                     dispatch(setWorkbenchDirection({workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal'}));
                 }}type="button" className="chevronButton btn btn-light btn-sm align-middle m-1" style={{color}}> <i className="flex-grow-1 fas fa-compass"/> Direction</button>
-            </div>
+            </div> */}
 
             <div className={'align-middle m-1 d-flex align-items-center'}>
                 <i className="flex-grow-1 fas fa-filter"/>

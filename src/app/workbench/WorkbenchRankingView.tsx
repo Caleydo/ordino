@@ -1,14 +1,19 @@
 import * as React from 'react';
+import {useEffect, useMemo} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch, useAppSelector} from '../..';
+import {useAsync} from 'tdp_core';
 import {IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
+import {findViewIndex} from '../../store/storeUtils';
 import {colorPalette} from '../Breadcrumb';
 
 import {Lineup} from '../lite';
+import {ViewChooser} from '../ViewChooser';
 import {DropOverlay} from './DropOverlay';
 import {MoveButton} from './MoveButton';
 import {useLoadViewPlugin} from './useLoadViewPlugin';
 import {EDragTypes} from './utils';
+import {useLoadAvailableViews} from './useLoadAvailableViews';
 
 export interface IWorkbenchRankingViewProps {
     workbenchIndex: number;
@@ -34,10 +39,15 @@ export function WorkbenchRankingView({
         }),
     }), [view.id]);
 
+    const viewIndex = useMemo(() => {
+        return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
+    }, [ordino.workbenches[workbenchIndex].views]);
+
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
-        item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
-    }), [view.id, view.index]);
+        item: {type: EDragTypes.MOVE, viewId: view.id, index: viewIndex},
+    }), [view.id, viewIndex]);
+
 
     return (
         <>
@@ -45,19 +55,19 @@ export function WorkbenchRankingView({
                 {workbenchIndex === ordino.focusViewIndex ?
                     <>
                         <div className="view-actions">
-                            <button type="button" onClick={() => dispatch(removeView({workbenchIndex, viewIndex: view.index}))} className="btn-close" />
+                            <button type="button" onClick={() => dispatch(removeView({workbenchIndex, viewIndex}))} className="btn-close" />
                         </div>
 
                         <div ref={drag} className="view-parameters d-flex">
                             <div>
                                 <button type="button" className="chevronButton btn btn-outline-primary btn-sm align-middle m-1" style={{color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex]}}> <i className="flex-grow-1 fas fa-chevron-right m-1"/>Edit View</button>
                             </div>
-                            <span className={'view-title row align-items-center m-1'}><strong>Ranking</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
                         </div>
                     </> :
                     <>
                         <div ref={drag} className="view-parameters d-flex">
-                            <span className={'view-title row align-items-center m-1'}><strong>Ranking</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
                         </div>
                     </>
                 }

@@ -11,14 +11,17 @@ export enum EViewDirections {
   E = 'e'
 }
 
-export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
-  viewType: 'Ranking' | 'Vis';
+export interface IWorkbenchView {
+  // this id is used to load the view from the view plugin. It is not unique.
+  id: string;
+  // this id is generated on creation and is simply a unique value used to differentiate views that may have the same id.
+  uniqueId: string;
   filters: number[];
 }
 
 export interface IOrdinoAppState {
   /**
-   * List of open views. TODO: This should be changed to "workbenches" probably
+   * List of open views.
    */
   workbenches: IWorkbench[];
 
@@ -30,7 +33,7 @@ export interface IOrdinoAppState {
 
 export interface IWorkbench {
   /**
-   * List of open views.
+   * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
    */
   views: IWorkbenchView[];
 
@@ -106,6 +109,9 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string}>) {
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
+    },
     addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
@@ -116,10 +122,7 @@ const ordinoSlice = createSlice({
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
-      temp.index = action.payload.secondViewIndex;
-
       state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
-      state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex].index = action.payload.firstViewIndex;
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
     },
@@ -133,10 +136,6 @@ const ordinoSlice = createSlice({
     removeView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number}>) {
       const workbench = state.workbenches[action.payload.workbenchIndex];
       workbench.views.splice(action.payload.viewIndex, 1);
-
-      for (let j = 0; j < workbench.views.length; j++) {
-        workbench.views[j].index = j;
-      }
     },
     replaceWorkbench(state, action: PayloadAction<{workbenchIndex: number, newWorkbench: IWorkbench}>) {
       state.workbenches.splice(action.payload.workbenchIndex);
@@ -164,6 +163,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const {addView, addColumnDescs, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, addColumnDescs, removeView, setView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

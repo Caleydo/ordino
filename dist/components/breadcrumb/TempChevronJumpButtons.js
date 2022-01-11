@@ -16,15 +16,16 @@ export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
             const possibleJumps = ordino.workbenches[ordino.focusViewIndex].transitionOptions.map((o) => {
                 return PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${o}`);
             });
-            return possibleJumps;
+            return possibleJumps.filter((o) => o !== undefined);
         }
         return [];
     }, [ordino.workbenches, ordino.focusViewIndex]);
     return (React.createElement(React.Fragment, null, possibleJumps.map((j) => {
+        console.log(j);
         return (React.createElement("button", { onClick: () => {
                 dispatch(addWorkbench({
                     viewDirection: 'horizontal',
-                    views: [{ id: j.id, name: j.name, viewType: 'Ranking', filters: [], index: 0 }],
+                    views: [{ id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
                     transitionOptions: [],
                     columnDescs: [],
                     data: {},

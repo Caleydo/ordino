@@ -15,6 +15,7 @@ export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMen
     const [collapsed, setCollapsed] = React.useState(mode !== EViewChooserMode.EMBEDDED);
     const [embedded, setEmbedded] = React.useState(mode === EViewChooserMode.EMBEDDED);
     const [filteredViews, setFilteredViews] = React.useState(views);
+    console.log(views);
     React.useEffect(() => {
         setCollapsed(!embedded);
     }, [embedded]);

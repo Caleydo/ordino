@@ -112,6 +112,8 @@ export function ViewChooser({
   const [embedded, setEmbedded] = React.useState<boolean>(mode === EViewChooserMode.EMBEDDED);
   const [filteredViews, setFilteredViews] = React.useState<IViewPluginDesc[] | []>(views);
 
+  console.log(views);
+
   React.useEffect(() => {
     setCollapsed(!embedded);
   }, [embedded]);

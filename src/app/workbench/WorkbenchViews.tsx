@@ -19,7 +19,6 @@ export function WorkbenchViews({
     index,
     onlyRanking = false,
 }: IWorkbenchViewsProps) {
-    const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
 
     const views = ordino.workbenches[index].views;
@@ -82,7 +81,7 @@ export function WorkbenchViews({
 
     return (
         <div className="position-relative workbenchWrapper d-flex flex-grow-1">
-            {onlyRanking ? <WorkbenchSingleView workbenchIndex={index} view={views.find((v) => v.viewType === 'Ranking')}/> : wb}
+            {onlyRanking ? <WorkbenchSingleView workbenchIndex={index} view={views[0]}/> : wb}
         </div>
     );
 }

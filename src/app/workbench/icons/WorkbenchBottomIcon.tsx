@@ -19,18 +19,10 @@ export function WorkbenchBottomIcon({
             dispatch(addView({
                 workbenchIndex: ordino.focusViewIndex,
                 view: {
-                    id: (Math.random() + 1).toString(36).substring(7),
-                    index: 0,
-                    name: 'Start view',
-                    selection: 'multiple',
-                    selections: [],
-                    filters: [],
-                    viewType: 'Ranking',
-                    group: {
-                        name: 'General',
-                        order: 10
-                    }
-                    }
+                    id: '',
+                    uniqueId: (Math.random() + 1).toString(36).substring(7),
+                    filters: []
+                }
             }));
         },
         collect: (monitor) => ({

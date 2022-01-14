@@ -3,7 +3,6 @@ import {data} from 'jquery';
 import {useGlobalFilter} from 'react-table';
 import {IViewPluginDesc} from 'tdp_core';
 
-
 export enum EViewDirections {
   N = 'n',
   S = 's',

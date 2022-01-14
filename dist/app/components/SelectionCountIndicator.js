@@ -9,5 +9,4 @@ export function SelectionCountIndicator({ selectionCount, viewMode = EViewMode.H
                     " ",
                     selectionCount)))));
 }
-;
 //# sourceMappingURL=SelectionCountIndicator.js.map

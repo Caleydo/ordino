@@ -1,4 +1,4 @@
-export interface ShowDetailsSwitchProps {
+export interface IShowDetailsSwitchProps {
     height?: number;
 }
-export declare function ShowDetailsSwitch({ height }: ShowDetailsSwitchProps): JSX.Element;
+export declare function ShowDetailsSwitch({ height }: IShowDetailsSwitchProps): JSX.Element;

@@ -13,7 +13,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login(state) {
-      state.loggedIn = true
+      state.loggedIn = true;
     },
     logout(state) {
       state.loggedIn = false;

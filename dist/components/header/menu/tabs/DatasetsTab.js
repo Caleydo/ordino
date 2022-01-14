@@ -3,12 +3,12 @@
 // import {OrdinoFooter, OrdinoScrollspy, OrdinoScrollspyItem} from '../../..';
 // import DataLandscapeCard from 'reprovisyn/dist/views/DataLandscapeCard';
 // import EntitySelectionCard from 'reprovisyn';
-import { UniqueIdManager } from "tdp_core";
-import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import { OrdinoScrollspy, OrdinoScrollspyItem, OrdinoFooter } from "../../..";
-import DataLandscapeCard from "../../../../../../reprovisyn/dist/views/DataLandscapeCard";
-import EntitySelectionCard from "../../../../../../reprovisyn/dist/views/EntitySelectionCard";
+import { UniqueIdManager } from 'tdp_core';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { OrdinoScrollspy, OrdinoScrollspyItem, OrdinoFooter } from '../../..';
+import DataLandscapeCard from '../../../../../../reprovisyn/dist/views/DataLandscapeCard';
+import EntitySelectionCard from '../../../../../../reprovisyn/dist/views/EntitySelectionCard';
 // export interface IDatasetsTabProps {
 //   extensions?: {
 //     preExtensions?: React.ReactElement | null;

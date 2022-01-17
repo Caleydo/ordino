@@ -1,10 +1,9 @@
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {HeaderTabs, } from '.';
 import {useAppDispatch, useAppSelector} from '..';
 import {setActiveTab, setMode} from '../store';
 import {IVisynHeaderProps, VisynHeader} from '../visyn';
-import {EStartMenuMode, ITab, StartMenuTabWrapper} from './header/menu/StartMenuTabWrapper';
+import {EStartMenuMode, ITab, StartMenuTabWrapper} from './header/StartMenuTabWrapper';
 
 
 export interface IOrdinoHeaderProps extends IVisynHeaderProps {

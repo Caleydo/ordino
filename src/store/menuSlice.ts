@@ -1,13 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {EStartMenuMode} from '../components/header/menu/StartMenuTabWrapper';
-
+import {EStartMenuMode} from '../components/header/StartMenuTabWrapper';
 
 export interface IMenuState {
   activeTab: string;
   mode: EStartMenuMode;
 
 }
-
 
 const initialState: IMenuState = {
   activeTab: null,

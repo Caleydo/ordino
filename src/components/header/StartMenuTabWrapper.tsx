@@ -1,5 +1,5 @@
 import React, {ComponentType} from 'react';
-import {useAppDispatch, useAppSelector} from '../../..';
+import {useAppDispatch, useAppSelector} from '../..';
 import {setActiveTab} from '../../store';
 
 

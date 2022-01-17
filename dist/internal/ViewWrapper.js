@@ -23,7 +23,7 @@ function generate_hash(desc, selection) {
 // function to get the previous siblings of an element, used to calculate a unique id for the viewwrapper
 const previousSiblings = (elem) => {
     // create an empty array
-    let siblings = [];
+    const siblings = [];
     while (elem = elem.previousElementSibling) {
         siblings.push(elem);
     }

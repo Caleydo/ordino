@@ -38,7 +38,7 @@ function generate_hash(desc: IPluginDesc, selection: ISelection) {
 // function to get the previous siblings of an element, used to calculate a unique id for the viewwrapper
 const previousSiblings = (elem) => {
   // create an empty array
-  let siblings = [];
+  const siblings = [];
 
   while (elem = elem.previousElementSibling) {
       siblings.push(elem);
@@ -149,7 +149,7 @@ export class ViewWrapper extends EventHandler {
   private createView(selection: ISelection, itemSelection: ISelection|null, plugin: IPlugin, options?) {
     // add data-testid to viewWrapper, use id of viewWrapper and number of previous siblings to make it unique
     const numPrevSiblings = previousSiblings(<any>this.$viewWrapper.node()).length;
-    this.$viewWrapper.attr('data-testid', `viewWrapper-${numPrevSiblings}`)
+    this.$viewWrapper.attr('data-testid', `viewWrapper-${numPrevSiblings}`);
 
     this.$node = this.$viewWrapper.append('div')
       .classed('view', true)

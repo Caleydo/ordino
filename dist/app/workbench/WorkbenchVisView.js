@@ -2,7 +2,7 @@ import * as React from 'react';
 import { addFilter, addSelection, removeView } from '../../store';
 import { Vis } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../..';
-import { EColumnTypes } from '../../../../tdp_core/dist/vis/interfaces';
+import { EColumnTypes } from 'tdp_core';
 import { getAllFilters } from '../../store/storeUtils';
 import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';

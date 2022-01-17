@@ -7,8 +7,8 @@ import { UniqueIdManager } from 'tdp_core';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoScrollspy, OrdinoScrollspyItem, OrdinoFooter } from '../../..';
-import DataLandscapeCard from '../../../../../../reprovisyn/dist/views/DataLandscapeCard';
-import EntitySelectionCard from '../../../../../../reprovisyn/dist/views/EntitySelectionCard';
+import DataLandscapeCard from 'reprovisyn';
+import EntitySelectionCard from 'reprovisyn';
 // export interface IDatasetsTabProps {
 //   extensions?: {
 //     preExtensions?: React.ReactElement | null;
@@ -76,8 +76,7 @@ export function DatasetsTab() {
                     React.createElement("div", { className: "col-11 position-relative" },
                         React.createElement("p", { className: "lead text-gray-600 mb-0" }, "Start a new analysis session by loading a dataset"),
                         datasets.map(({ id, Card }, index) => {
-                            return (React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: id, key: id, index: index, handleOnChange: handleOnChange },
-                                React.createElement(Card, null)));
+                            return (React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: id, key: id, index: index, handleOnChange: handleOnChange }));
                         })))),
             React.createElement(BrowserRouter, { basename: "/#" },
                 React.createElement(OrdinoFooter, { openInNewWindow: true }))))));

@@ -8,8 +8,8 @@ import {UniqueIdManager} from 'tdp_core';
 import React from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import {OrdinoScrollspy, OrdinoScrollspyItem, OrdinoFooter} from '../../..';
-import DataLandscapeCard from '../../../../../../reprovisyn/dist/views/DataLandscapeCard';
-import EntitySelectionCard from '../../../../../../reprovisyn/dist/views/EntitySelectionCard';
+import DataLandscapeCard from 'reprovisyn';
+import EntitySelectionCard from 'reprovisyn';
 
 // export interface IDatasetsTabProps {
 //   extensions?: {
@@ -87,7 +87,6 @@ export function DatasetsTab() {
                   {datasets.map(({id, Card}, index) => {
                     return (
                       <OrdinoScrollspyItem className="pt-3 pb-5" id={id} key={id} index={index} handleOnChange={handleOnChange}>
-                        <Card />
                       </OrdinoScrollspyItem>
                     );
                   })}

@@ -11,7 +11,8 @@ export function ViewChooserFilter(props: IViewChooserFilterProps) {
 
     React.useEffect(() => {
         props.setFilteredViews(
-            props.views.filter((v) => !filter || v.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()))
+            // have to cast v to any here to account for view being either an IViewPluginDesc[] or an []
+            props.views.filter((v: any) => !filter || v.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()))
         );
     }, [filter]);
 

@@ -2,7 +2,9 @@ import * as React from 'react';
 export function ViewChooserFilter(props) {
     const [filter, setFilter] = React.useState('');
     React.useEffect(() => {
-        props.setFilteredViews(props.views.filter((v) => !filter || v.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())));
+        props.setFilteredViews(
+        // have to cast v to any here to account for view being either an IViewPluginDesc[] or an []
+        props.views.filter((v) => !filter || v.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())));
     }, [filter]);
     return (React.createElement("div", { className: "view-filter input-group flex-nowrap" },
         React.createElement("input", { className: "form-control border-end-0", type: "search", placeholder: "Search", value: filter, onChange: (evt) => setFilter(evt.target.value) }),

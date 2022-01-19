@@ -3,7 +3,7 @@ import { HeaderTabs, } from '.';
 import { useAppDispatch, useAppSelector } from '..';
 import { setActiveTab, setMode } from '../store';
 import { VisynHeader } from '../visyn';
-import { EStartMenuMode, StartMenuTabWrapper } from './header/menu/StartMenuTabWrapper';
+import { EStartMenuMode, StartMenuTabWrapper } from './header/StartMenuTabWrapper';
 export function OrdinoHeader(props) {
     const app = useAppSelector((state) => state.app);
     const ordino = useAppSelector((state) => state.ordino);

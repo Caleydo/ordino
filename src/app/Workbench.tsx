@@ -48,13 +48,15 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
     const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             replaceWorkbench({workbenchIndex: viewIndex, newWorkbench: {
-                viewDirection: 'vertical',
-                views: [{}],
-                id: view.id,
+                viewDirection: 'horizontal',
+                views: [{viewType: 'Ranking', filters: [], index: 0}],
+                transitionOptions: [],
+                columnDescs: [],
+                data: {},
+                entityId: view.id,
                 name: view.name,
                 index: viewIndex,
                 selections: [],
-                filters: []
             }})
         );
         setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);

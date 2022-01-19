@@ -58,7 +58,7 @@
     "@types/jest": "~26.0.20",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
-    "@types/react-select": "^4.0.13",
+    "@types/react-select": "^5.0.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-split-pane": "^0.1.67",
     "@types/react-dnd": "^3.0.2",
@@ -81,7 +81,7 @@
     "@reduxjs/toolkit": "1.6.2",
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "plotly.js": "2.5.1",
+    "plotly.js": "2.8.3",
     "react": "^16.13.0",
     "react-dnd": "^14.0.4",
     "react-dnd-html5-backend": "^14.0.2",
@@ -98,6 +98,6 @@
     "react-split-pane": "^0.1.92",
     "react-spring": "^9.3.2",
     "react-virtualized": "^9.22.3",
-    "tdp_core": "github:datavisyn/tdp_core#ordino-2.0-working"
+    "tdp_core": "github:datavisyn/tdp_core#ordino-2.0"
   }
 }

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { EStartMenuMode } from '../components/header/menu/StartMenuTabWrapper';
+import { EStartMenuMode } from '../components/header/StartMenuTabWrapper';
 const initialState = {
     activeTab: null,
     mode: EStartMenuMode.START

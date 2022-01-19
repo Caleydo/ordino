@@ -1,5 +1,5 @@
 import { IVisynHeaderProps } from '../visyn';
-import { ITab } from './header/menu/StartMenuTabWrapper';
+import { ITab } from './header/StartMenuTabWrapper';
 export interface IOrdinoHeaderProps extends IVisynHeaderProps {
     tabs?: ITab[];
 }

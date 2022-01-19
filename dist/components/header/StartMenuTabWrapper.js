@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../..';
+import { useAppDispatch, useAppSelector } from '../..';
 import { setActiveTab } from '../../store';
 export var EStartMenuMode;
 (function (EStartMenuMode) {

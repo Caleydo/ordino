@@ -1,4 +1,5 @@
-import { IViewPluginDesc } from 'tdp_core';
+import { IRow, IViewPluginDesc } from 'tdp_core';
+import type { IReprovisynServerColumn } from 'reprovisyn';
 export declare enum EViewDirections {
     N = "n",
     S = "s",
@@ -29,9 +30,9 @@ export interface IWorkbench {
     entityId: string;
     index: number;
     data: {
-        [key: number]: any;
+        [key: number]: IRow;
     };
-    columnDescs: any[];
+    columnDescs: IReprovisynServerColumn[];
     transitionOptions: string[];
     /**
      * List selected rows
@@ -47,8 +48,10 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
-}, string>, addColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     descs: any[];
+}, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    desc: any;
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;

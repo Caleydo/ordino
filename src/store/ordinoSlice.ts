@@ -1,7 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {data} from 'jquery';
-import {useGlobalFilter} from 'react-table';
-import {IViewPluginDesc} from 'tdp_core';
+import {IRow, IViewPluginDesc} from 'tdp_core';
+import type {IReprovisynServerColumn} from 'reprovisyn';
 
 export enum EViewDirections {
   N = 'n',
@@ -41,8 +40,9 @@ export interface IWorkbench {
 
   index: number;
 
-  data: {[key: number]: any};
-  columnDescs: any[];
+  data: {[key: number]: IRow};
+  columnDescs: IReprovisynServerColumn[];
+  // TODO: how do we store the lineup-specific column descriptions?
 
   transitionOptions: string[];
 
@@ -108,8 +108,11 @@ const ordinoSlice = createSlice({
     addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    addColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
+    createColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
       state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+    },
+    addColumnDesc(state, action: PayloadAction<{desc: any}>) {
+      state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -163,6 +166,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const {addView, addColumnDescs, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, createColumnDescs, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

@@ -48,8 +48,11 @@ const ordinoSlice = createSlice({
         addTransitionOptions(state, action) {
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
-        addColumnDescs(state, action) {
+        createColumnDescs(state, action) {
             state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+        },
+        addColumnDesc(state, action) {
+            state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -98,6 +101,6 @@ const ordinoSlice = createSlice({
         },
     }
 });
-export const { addView, addColumnDescs, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, createColumnDescs, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

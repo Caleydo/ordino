@@ -5,7 +5,6 @@ import {useAppDispatch, useAppSelector} from '../..';
 import {FindViewUtils, IDType, IViewPluginDesc, useAsync} from 'tdp_core';
 import {IWorkbenchView, setView} from '../../store';
 import {findViewIndex} from '../../store/storeUtils';
-import {useLoadAvailableViews} from './useLoadAvailableViews';
 import {WorkbenchRankingView} from './WorkbenchRankingView';
 import {WorkbenchGenericView} from './WorkbenchGenericView';
 
@@ -28,8 +27,6 @@ export function WorkbenchSingleView({
 
     const {value, status, error} = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
-    console.log(ordino);
-
     useEffect(() => {
         console.log(value, status);
     }, [status]);
@@ -37,14 +34,16 @@ export function WorkbenchSingleView({
     return (
         <>
             {view.id === '' ?
-            <div id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-                <ViewChooser views={value ? value.map((v) => v.v) : []} onSelectedView={(newView:IViewPluginDesc) => {
-                    dispatch(setView({
-                        workbenchIndex,
-                        viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
-                        viewId: newView.id
-                    }));
-                }} isEmbedded={false}/>
+            <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+                <div className="w-100 h-100">
+                    <ViewChooser views={value ? value.map((v) => v.v) : []} onSelectedView={(newView:IViewPluginDesc) => {
+                        dispatch(setView({
+                            workbenchIndex,
+                            viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
+                            viewId: newView.id
+                        }));
+                    }} isEmbedded={false}/>
+                </div>
             </div> : view.id.startsWith('reprovisyn_ranking') ?
             <WorkbenchRankingView workbenchIndex={workbenchIndex} view={view}/> : <WorkbenchGenericView workbenchIndex={workbenchIndex} view={view}/> }
         </>

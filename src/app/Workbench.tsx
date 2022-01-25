@@ -31,7 +31,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
         dispatch(
             addWorkbench({
                 viewDirection: 'horizontal',
-                views: [{viewType: 'Ranking', filters: [], index: 0}],
+                views: [{filters: [], id: view.id, uniqueId: (Math.random() + 1).toString(36).substring(7)}],
                 transitionOptions: [],
                 columnDescs: [],
                 data: {},
@@ -49,7 +49,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
         dispatch(
             replaceWorkbench({workbenchIndex: viewIndex, newWorkbench: {
                 viewDirection: 'horizontal',
-                views: [{viewType: 'Ranking', filters: [], index: 0}],
+                views: [{filters: [], id: view.id, uniqueId: (Math.random() + 1).toString(36).substring(7)}],
                 transitionOptions: [],
                 columnDescs: [],
                 data: {},

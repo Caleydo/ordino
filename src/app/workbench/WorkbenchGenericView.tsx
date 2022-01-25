@@ -1,20 +1,13 @@
 import * as React from 'react';
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch, useAppSelector} from '../..';
-import {useAsync} from 'tdp_core';
-import {IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
-import {findViewIndex} from '../../store/storeUtils';
+import {IWorkbenchView, removeView} from '../../store';
+import {findViewIndex, getAllFilters} from '../../store/storeUtils';
 import {colorPalette} from '../Breadcrumb';
-
-import {Lineup} from '../lite';
-import {ViewChooser} from '../ViewChooser';
 import {DropOverlay} from './DropOverlay';
-import {MoveButton} from './MoveButton';
-import {useLoadViewPlugin} from './useLoadViewPlugin';
 import {EDragTypes} from './utils';
-import {useLoadAvailableViews} from './useLoadAvailableViews';
-import {useLoadWorkbenchViewPlugin} from './useLoadWorkbenchViewPlugin';
+import {useVisynViewPlugin} from './useLoadWorkbenchViewPlugin';
 
 export interface IWorkbenchGenericViewProps {
     workbenchIndex: number;
@@ -25,7 +18,8 @@ export function WorkbenchGenericView({
     workbenchIndex,
     view
 }: IWorkbenchGenericViewProps) {
-    const [ref, instance] = useLoadWorkbenchViewPlugin(view.id, workbenchIndex);
+    const viewPlugin = useVisynViewPlugin(view.id);
+
 
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
@@ -72,7 +66,19 @@ export function WorkbenchGenericView({
                         </div>
                     </>
                 }
-                <div ref={ref} className="inner">
+                <div className="inner">
+                    {viewPlugin ?
+                    <viewPlugin.factory
+                        desc={viewPlugin}
+                        data={ordino.workbenches[workbenchIndex].data}
+                        dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+                        selection={ordino.workbenches[workbenchIndex].selections}
+                        filters={getAllFilters(ordino.workbenches[workbenchIndex])}
+                        parameters={null}
+                        onSelectionChanged={() => console.log('selection changed')}
+                        onParametersChanged={() => console.log('param changed')}
+                        onFiltersChanged={() => console.log('filter changed')}
+                    /> : null}
                 </div>
 
                 {isOver && canDrop ? <DropOverlay view={view} /> : null}

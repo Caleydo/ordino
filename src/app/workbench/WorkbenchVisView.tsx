@@ -3,7 +3,7 @@ import {addFilter, addSelection, IWorkbenchView, removeView, setWorkbenchDirecti
 import { ViewBuilder, Vis } from 'tdp_core';
 import {useAppDispatch, useAppSelector} from '../..';
 import {EColumnTypes} from 'tdp_core';
-import {getAllFilters} from '../../store/storeUtils';
+import {findViewIndex, getAllFilters} from '../../store/storeUtils';
 import {useMemo} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {EDragTypes} from './utils';
@@ -36,10 +36,8 @@ export function WorkbenchVisView({
 
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
-        item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
-    }), [view.id, view.index]);
-
-    console.log(view.id, view.index);
+        item: {type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex])},
+    }), [view.id, ordino.workbenches[ordino.focusViewIndex].views]);
 
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
@@ -107,7 +105,7 @@ export function WorkbenchVisView({
         <>
             <div ref={drop} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
                 <div className="view-actions">
-                    <button onClick={() => dispatch(removeView({workbenchIndex, viewIndex: view.index}))} type="button" className="btn-close" />
+                    <button onClick={() => dispatch(removeView({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex])}))} type="button" className="btn-close" />
                 </div>
 
                 <div ref={drag} className="view-parameters d-flex rounded">

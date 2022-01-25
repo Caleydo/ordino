@@ -1,6 +1,6 @@
 import { IWorkbenchView } from '../../store';
-export interface IWorkbenchGenericViewProps {
+export interface IWorkbenchVisViewProps {
     workbenchIndex: number;
     view: IWorkbenchView;
 }
-export declare function WorkbenchGenericView({ workbenchIndex, view }: IWorkbenchGenericViewProps): JSX.Element;
+export declare function WorkbenchVisView({ workbenchIndex, view }: IWorkbenchVisViewProps): JSX.Element;

@@ -15,7 +15,7 @@ export interface IWorkbenchView {
   id: string;
   // this id is generated on creation and is simply a unique value used to differentiate views that may have the same id.
   uniqueId: string;
-  filters: number[];
+  filters: string[];
 }
 
 export interface IOrdinoAppState {
@@ -52,7 +52,7 @@ export interface IWorkbench {
   /**
    * List selected rows
    */
-  selections: number[]; // TODO define selection, probably IROW
+  selections: string[]; // TODO define selection, probably IROW
 }
 
 interface IBaseState {
@@ -140,10 +140,10 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
-    addSelection(state, action: PayloadAction<{newSelection: number[]}>) {
+    addSelection(state, action: PayloadAction<{newSelection: string[]}>) {
       state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
     },
-    addFilter(state, action: PayloadAction<{viewId: string, filter: number[]}>) {
+    addFilter(state, action: PayloadAction<{viewId: string, filter: string[]}>) {
       state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {

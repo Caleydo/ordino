@@ -3,13 +3,13 @@ import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../..';
 import { removeView } from '../../store';
-import { findViewIndex } from '../../store/storeUtils';
+import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { colorPalette } from '../Breadcrumb';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
-import { useLoadWorkbenchViewPlugin } from './useLoadWorkbenchViewPlugin';
+import { useVisynViewPlugin } from './useLoadWorkbenchViewPlugin';
 export function WorkbenchGenericView({ workbenchIndex, view }) {
-    const [ref, instance] = useLoadWorkbenchViewPlugin(view.id, workbenchIndex);
+    const viewPlugin = useVisynViewPlugin(view.id);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
@@ -47,7 +47,8 @@ export function WorkbenchGenericView({ workbenchIndex, view }) {
                     React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
                         React.createElement("span", { className: 'view-title row align-items-center m-1' },
                             React.createElement("strong", null, view.id)))),
-            React.createElement("div", { ref: ref, className: "inner" }),
+            React.createElement("div", { className: "inner" }, viewPlugin ?
+                React.createElement(viewPlugin.factory, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selections, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: null, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: () => console.log('param changed'), onFiltersChanged: () => console.log('filter changed') }) : null),
             isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null)));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

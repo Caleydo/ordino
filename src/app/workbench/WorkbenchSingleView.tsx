@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useEffect} from 'react';
 import {ViewChooser} from '..';
 import {useAppDispatch, useAppSelector} from '../..';
-import {IViewPluginDesc, useAsync} from '../../../../tdp_core/dist';
+import {FindViewUtils, IDType, IViewPluginDesc, useAsync} from 'tdp_core';
 import {IWorkbenchView, setView} from '../../store';
 import {findViewIndex} from '../../store/storeUtils';
 import {useLoadAvailableViews} from './useLoadAvailableViews';
@@ -14,6 +14,10 @@ export interface IWorkbenchSingleViewProps {
     view: IWorkbenchView;
 }
 
+export function getVisynView(entityId: string) {
+    return FindViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
+}
+
 export function WorkbenchSingleView({
     workbenchIndex,
     view
@@ -21,7 +25,8 @@ export function WorkbenchSingleView({
     const dispatch = useAppDispatch();
 
     const ordino = useAppSelector((state) => state.ordino);
-    const {value, status, error} = useAsync(useLoadAvailableViews, [ordino.workbenches[workbenchIndex].entityId]);
+
+    const {value, status, error} = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
     console.log(ordino);
 
@@ -32,8 +37,8 @@ export function WorkbenchSingleView({
     return (
         <>
             {view.id === '' ?
-            <div>
-                <ViewChooser views={value ? value : []} onSelectedView={(newView:IViewPluginDesc) => {
+            <div id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+                <ViewChooser views={value ? value.map((v) => v.v) : []} onSelectedView={(newView:IViewPluginDesc) => {
                     dispatch(setView({
                         workbenchIndex,
                         viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),

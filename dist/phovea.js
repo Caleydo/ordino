@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { EXTENSION_POINT_TDP_VIEW, PluginRegistry, Vis } from 'tdp_core';
+import { EXTENSION_POINT_VISYN_VIEW, PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_LOGO } from './base';
 export default function (registry) {
     //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
@@ -13,14 +13,14 @@ export default function (registry) {
         width: 24,
         height: 24
     });
-    registry.push(EXTENSION_POINT_TDP_VIEW, 'cosmic', function () {
+    registry.push(EXTENSION_POINT_VISYN_VIEW, 'cosmic', function () {
         return import('./views/CosmicProxyView');
     }, {
-        factory: 'new CosmicProxyView',
+        factory: 'CosmicView',
         name: 'COSMIC',
         site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
         argument: 'cosmicid',
-        idtype: 'reprovisyn_ranking_ordino_public.cellline.tdp_cellline',
+        idtype: 'ordino_public.cellline.tdp_cellline',
         selection: 'chooser',
         group: {
             name: 'External Resources'
@@ -32,11 +32,11 @@ export default function (registry) {
         description: 'Show information on your search from COSMIC',
         topics: ['cellline', 'external']
     });
-    registry.push(EXTENSION_POINT_TDP_VIEW, 'vis', function () {
-        return Vis;
+    registry.push(EXTENSION_POINT_VISYN_VIEW, 'vis', function () {
+        return import('./views/VisVisynView');
     }, {
         name: 'Vis',
-        factory: 'new Vis',
+        factory: 'VisVisynView',
         idtype: 'reprovisyn_ranking_ordino_public.cellline.tdp_cellline',
         selection: 'multiple',
         group: {

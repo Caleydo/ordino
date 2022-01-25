@@ -12,7 +12,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const onAddView = React.useCallback((view, viewIndex) => {
         dispatch(addWorkbench({
             viewDirection: 'horizontal',
-            views: [{ viewType: 'Ranking', filters: [], index: 0 }],
+            views: [{ filters: [], id: view.id, uniqueId: (Math.random() + 1).toString(36).substring(7) }],
             transitionOptions: [],
             columnDescs: [],
             data: {},
@@ -26,7 +26,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const onReplaceView = React.useCallback((view, viewIndex) => {
         dispatch(replaceWorkbench({ workbenchIndex: viewIndex, newWorkbench: {
                 viewDirection: 'horizontal',
-                views: [{ viewType: 'Ranking', filters: [], index: 0 }],
+                views: [{ filters: [], id: view.id, uniqueId: (Math.random() + 1).toString(36).substring(7) }],
                 transitionOptions: [],
                 columnDescs: [],
                 data: {},

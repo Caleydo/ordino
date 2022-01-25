@@ -2,23 +2,25 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { ViewChooser } from '..';
 import { useAppDispatch, useAppSelector } from '../..';
-import { useAsync } from '../../../../tdp_core/dist';
+import { FindViewUtils, IDType, useAsync } from 'tdp_core';
 import { setView } from '../../store';
 import { findViewIndex } from '../../store/storeUtils';
-import { useLoadAvailableViews } from './useLoadAvailableViews';
 import { WorkbenchRankingView } from './WorkbenchRankingView';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
+export function getVisynView(entityId) {
+    return FindViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
+}
 export function WorkbenchSingleView({ workbenchIndex, view }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-    const { value, status, error } = useAsync(useLoadAvailableViews, [ordino.workbenches[workbenchIndex].entityId]);
+    const { value, status, error } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
     console.log(ordino);
     useEffect(() => {
         console.log(value, status);
     }, [status]);
     return (React.createElement(React.Fragment, null, view.id === '' ?
-        React.createElement("div", null,
-            React.createElement(ViewChooser, { views: value ? value : [], onSelectedView: (newView) => {
+        React.createElement("div", { id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
+            React.createElement(ViewChooser, { views: value ? value.map((v) => v.v) : [], onSelectedView: (newView) => {
                     dispatch(setView({
                         workbenchIndex,
                         viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),

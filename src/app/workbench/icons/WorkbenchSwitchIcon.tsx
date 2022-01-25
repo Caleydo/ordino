@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useDrop} from 'react-dnd';
 import {addView, EViewDirections, IWorkbenchView, switchViews, useAppDispatch, useAppSelector} from '../../..';
+import {findViewIndex} from '../../../store/storeUtils';
 import {EDragTypes} from '../utils';
 
 export interface IWorkbenchIconProps {
@@ -17,12 +18,12 @@ export function WorkbenchSwitchIcon({
         accept: [EDragTypes.MOVE],
         drop: (d: {type: EDragTypes, viewId: number, index: number}) => {
             console.log(d);
-            dispatch(switchViews({workbenchIndex: ordino.focusViewIndex, firstViewIndex: d.index, secondViewIndex: view.index}));
+            dispatch(switchViews({workbenchIndex: ordino.focusViewIndex, firstViewIndex: d.index, secondViewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex])}));
         },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
-    }), [view.index]);
+    }), [ordino.workbenches[ordino.focusViewIndex].views]);
 
     return (
         <div ref={drop} className={`position-absolute d-flex align-items-center justify-content-center`} style={{

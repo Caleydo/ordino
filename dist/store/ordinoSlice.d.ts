@@ -8,7 +8,7 @@ export declare enum EViewDirections {
 export interface IWorkbenchView {
     id: string;
     uniqueId: string;
-    filters: number[];
+    filters: string[];
 }
 export interface IOrdinoAppState {
     /**
@@ -37,7 +37,7 @@ export interface IWorkbench {
     /**
      * List selected rows
      */
-    selections: number[];
+    selections: string[];
 }
 interface IBaseState {
     selection: string[];
@@ -67,10 +67,10 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     columnName: string;
     data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    newSelection: number[];
+    newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     viewId: string;
-    filter: number[];
+    filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

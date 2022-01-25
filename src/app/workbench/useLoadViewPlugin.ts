@@ -23,7 +23,8 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-            const selection = {idtype: new IDType(idType, viewId, '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex - 1].selections)};
+            //TODO:: This weird mapping is fine for now since we are still just storing numbers, but needs to be changed when we are truly storing IDs
+            const selection = {idtype: new IDType(idType, viewId, '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex].selections.map((s) => +s))};
 
             console.log(selection);
 
@@ -41,15 +42,10 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
                 const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
 
-                console.log(filteredViews);
-
                 const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : filteredViews[0].v};
-
-                console.log(context);
 
                 const i = viewPlugin.factory(context, selection, ref, {});
                 context.ref[`v`] = i;
-
 
                 ResolveNow.resolveImmediately(i.init(document.getElementById(viewId).querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
                 setInstance(i);
@@ -66,7 +62,8 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             const view: ARankingView = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
 
-            view.selectionHelper.setGeneralVisSelection({idtype: id, range: Range.list(ordino.workbenches[workbenchIndex].selections)});
+            //TODO:: This weird mapping is fine for now since we are still just storing numbers, but needs to be changed when we are truly storing IDs
+            view.selectionHelper.setGeneralVisSelection({idtype: id, range: Range.list(ordino.workbenches[workbenchIndex].selections.map((s) => +s))});
 
         }
     }, [instance, ordino.workbenches[workbenchIndex].selections]);

@@ -48,6 +48,7 @@ export function WorkbenchGenericView({
         item: {type: EDragTypes.MOVE, viewId: view.id, index: viewIndex},
     }), [view.id, viewIndex]);
 
+    console.log(viewPlugin);
 
     return (
         <>
@@ -63,6 +64,17 @@ export function WorkbenchGenericView({
                                 <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
                             </div>
                             <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            {viewPlugin && viewPlugin.headerFactory ? <viewPlugin.headerFactory
+                                desc={viewPlugin}
+                                data={ordino.workbenches[workbenchIndex].data}
+                                dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+                                selection={ordino.workbenches[workbenchIndex].selections}
+                                filters={getAllFilters(ordino.workbenches[workbenchIndex])}
+                                parameters={null}
+                                onSelectionChanged={() => console.log('selection changed')}
+                                onParametersChanged={() => console.log('param changed')}
+                                onFiltersChanged={() => console.log('filter changed')}
+                            /> : null}
                         </div>
                     </> :
                     <>

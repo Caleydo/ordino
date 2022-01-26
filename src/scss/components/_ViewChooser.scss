@@ -4,7 +4,8 @@
   height: 100%;
 
   .view-chooser-content {
-    border: 1px solid $gray-200;
+    border-right: 1px solid $gray-200;
+    border-bottom: none;
     width: $chooser-width;
     position: absolute;
     z-index: 90; // above content -below menu

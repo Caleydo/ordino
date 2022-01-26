@@ -29,6 +29,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
     }), [view.id, viewIndex]);
+    console.log(viewPlugin);
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
             workbenchIndex === ordino.focusViewIndex ?
@@ -41,7 +42,8 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                                 " ",
                                 React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))),
                         React.createElement("span", { className: 'view-title row align-items-center m-1' },
-                            React.createElement("strong", null, view.id)))) :
+                            React.createElement("strong", null, view.id)),
+                        viewPlugin && viewPlugin.headerFactory ? React.createElement(viewPlugin.headerFactory, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selections, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: null, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: () => console.log('param changed'), onFiltersChanged: () => console.log('filter changed') }) : null)) :
                 React.createElement(React.Fragment, null,
                     React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
                         React.createElement("span", { className: 'view-title row align-items-center m-1' },

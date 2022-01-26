@@ -60,12 +60,10 @@ export function WorkbenchEmptyView({
                             <div>
                                 {/* <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button> */}
                             </div>
-                            <span className={'view-title row align-items-center m-1'}><strong>Add A View</strong></span>
                         </div>
                     </> :
                     <>
                         <div ref={drag} className="view-parameters d-flex">
-                            <span className={'view-title row align-items-center m-1'}><strong>Add A View</strong></span>
                         </div>
                     </>
                 }
@@ -78,7 +76,7 @@ export function WorkbenchEmptyView({
                         }));
                     }} isEmbedded={false}/>
                     <div className="w-100 d-flex justify-content-center align-items-center">
-                        <p>Please select a view to display from the sidebar.</p>
+                        <p className="emptyViewText">Select A View</p>
                     </div>
                 </div>
 

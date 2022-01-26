@@ -34,13 +34,9 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }) {
                     React.createElement("div", { className: "view-actions" },
                         React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn-close" })),
                     React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
-                        React.createElement("div", null),
-                        React.createElement("span", { className: 'view-title row align-items-center m-1' },
-                            React.createElement("strong", null, "Add A View")))) :
+                        React.createElement("div", null))) :
                 React.createElement(React.Fragment, null,
-                    React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
-                        React.createElement("span", { className: 'view-title row align-items-center m-1' },
-                            React.createElement("strong", null, "Add A View")))),
+                    React.createElement("div", { ref: drag, className: "view-parameters d-flex" })),
             React.createElement("div", { className: "inner d-flex" },
                 React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
                         dispatch(setView({
@@ -50,7 +46,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }) {
                         }));
                     }, isEmbedded: false }),
                 React.createElement("div", { className: "w-100 d-flex justify-content-center align-items-center" },
-                    React.createElement("p", null, "Please select a view to display from the sidebar."))),
+                    React.createElement("p", { className: "emptyViewText" }, "Select A View"))),
             isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null)));
 }
 //# sourceMappingURL=WorkbenchEmptyView.js.map

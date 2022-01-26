@@ -20,6 +20,7 @@ export default function (registry: IRegistry) {
     return import('./views/CosmicProxyView');
   }, {
     factory: 'CosmicView',
+    headerFactory: 'CosmicViewHeader',
     name: 'COSMIC',
     site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
     argument: 'cosmicid',

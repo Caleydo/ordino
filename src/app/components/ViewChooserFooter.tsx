@@ -6,6 +6,6 @@ export interface IViewChooserFooterProps {
 }
 
 export function ViewChooserFooter() {
-    return <div className="chooser-footer border-top border-light d-flex justify-content-center">
+    return <div className="chooser-footer d-flex justify-content-center">
     </div>;
 }

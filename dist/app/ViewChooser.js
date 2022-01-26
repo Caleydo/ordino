@@ -17,6 +17,9 @@ export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMen
     const [filteredViews, setFilteredViews] = React.useState(views);
     console.log(views);
     React.useEffect(() => {
+        setFilteredViews(views);
+    }, [views]);
+    React.useEffect(() => {
         setCollapsed(!embedded);
     }, [embedded]);
     const collapsedProps = embedded ? {} : {

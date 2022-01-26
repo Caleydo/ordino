@@ -115,6 +115,10 @@ export function ViewChooser({
   console.log(views);
 
   React.useEffect(() => {
+    setFilteredViews(views);
+  }, [views]);
+
+  React.useEffect(() => {
     setCollapsed(!embedded);
   }, [embedded]);
 

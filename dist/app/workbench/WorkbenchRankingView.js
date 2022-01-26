@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../..';
 import { removeView } from '../../store';
 import { findViewIndex } from '../../store/storeUtils';
-import { colorPalette } from '../Breadcrumb';
 import { DropOverlay } from './DropOverlay';
 import { useLoadViewPlugin } from './useLoadViewPlugin';
 import { EDragTypes } from './utils';
-export function WorkbenchRankingView({ workbenchIndex, view }) {
+export function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }) {
+    const [editOpen, setEditOpen] = useState(false);
     const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
@@ -37,10 +37,9 @@ export function WorkbenchRankingView({ workbenchIndex, view }) {
                         React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn-close" })),
                     React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
                         React.createElement("div", null,
-                            React.createElement("button", { type: "button", className: "chevronButton btn btn-outline-primary btn-sm align-middle m-1", style: { color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex] } },
+                            React.createElement("button", { type: "button", onClick: () => setEditOpen(!editOpen), className: "chevronButton btn btn-icon-primary align-middle m-1" },
                                 " ",
-                                React.createElement("i", { className: "flex-grow-1 fas fa-chevron-right m-1" }),
-                                "Edit View")),
+                                React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))),
                         React.createElement("span", { className: 'view-title row align-items-center m-1' },
                             React.createElement("strong", null, view.id)))) :
                 React.createElement(React.Fragment, null,

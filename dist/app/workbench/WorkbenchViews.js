@@ -10,11 +10,11 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
         return views.map((v) => React.createElement(WorkbenchSingleView, { workbenchIndex: index, key: v.id, view: v }));
     }, [views]);
     let wb = null;
+    //TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
     if (views.length === 1) {
         wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: '0%' },
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' },
-                React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[0] })),
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' })));
+            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' }, [React.createElement(WorkbenchSingleView, { key: `${views[0].id}`, workbenchIndex: index, view: views[0] })]),
+            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' }, [React.createElement(React.Fragment, null)])));
     }
     else if (views.length === 2) {
         wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: '50%' },

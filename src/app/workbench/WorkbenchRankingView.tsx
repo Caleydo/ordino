@@ -1,14 +1,14 @@
 import * as React from 'react';
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {useAppDispatch, useAppSelector} from '../..';
-import {useAsync} from 'tdp_core';
-import {IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
+import {IViewPluginDesc, useAsync} from 'tdp_core';
+import {IWorkbenchView, removeView, setView, setWorkbenchDirection} from '../../store';
 import {findViewIndex} from '../../store/storeUtils';
 import {colorPalette} from '../Breadcrumb';
 
 import {Lineup} from '../lite';
-import {ViewChooser} from '../ViewChooser';
+import {EViewChooserMode, ViewChooser} from '../ViewChooser';
 import {DropOverlay} from './DropOverlay';
 import {MoveButton} from './MoveButton';
 import {useLoadViewPlugin} from './useLoadViewPlugin';
@@ -18,12 +18,16 @@ import {useLoadAvailableViews} from './useLoadAvailableViews';
 export interface IWorkbenchRankingViewProps {
     workbenchIndex: number;
     view: IWorkbenchView;
+    chooserOptions: IViewPluginDesc[];
 }
 
 export function WorkbenchRankingView({
     workbenchIndex,
-    view
+    view,
+    chooserOptions
 }: IWorkbenchRankingViewProps) {
+    const [editOpen, setEditOpen] = useState<boolean>(false);
+
     const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
 
     const dispatch = useAppDispatch();
@@ -60,7 +64,7 @@ export function WorkbenchRankingView({
 
                         <div ref={drag} className="view-parameters d-flex">
                             <div>
-                                <button type="button" className="chevronButton btn btn-outline-primary btn-sm align-middle m-1" style={{color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex]}}> <i className="flex-grow-1 fas fa-chevron-right m-1"/>Edit View</button>
+                                <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
                             </div>
                             <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
                         </div>

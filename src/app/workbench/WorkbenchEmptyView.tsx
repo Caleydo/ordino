@@ -16,14 +16,13 @@ export interface IWorkbenchGenericViewProps {
     chooserOptions: IViewPluginDesc[];
 }
 
-export function WorkbenchGenericView({
+export function WorkbenchEmptyView({
     workbenchIndex,
     view,
     chooserOptions
 }: IWorkbenchGenericViewProps) {
     const [editOpen, setEditOpen] = useState<boolean>(false);
 
-    const viewPlugin = useVisynViewPlugin(view.id);
 
 
     const dispatch = useAppDispatch();
@@ -48,7 +47,6 @@ export function WorkbenchGenericView({
         item: {type: EDragTypes.MOVE, viewId: view.id, index: viewIndex},
     }), [view.id, viewIndex]);
 
-
     return (
         <>
             <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -60,37 +58,28 @@ export function WorkbenchGenericView({
 
                         <div ref={drag} className="view-parameters d-flex">
                             <div>
-                                <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
+                                {/* <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button> */}
                             </div>
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>Add A View</strong></span>
                         </div>
                     </> :
                     <>
                         <div ref={drag} className="view-parameters d-flex">
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>Add A View</strong></span>
                         </div>
                     </>
                 }
                 <div className="inner d-flex">
-                    {editOpen ? <ViewChooser views={chooserOptions} showBurgerMenu={false} mode={EViewChooserMode.EMBEDDED} onSelectedView={(newView:IViewPluginDesc) => {
+                    <ViewChooser views={chooserOptions} showBurgerMenu={false} mode={EViewChooserMode.EMBEDDED} onSelectedView={(newView:IViewPluginDesc) => {
                         dispatch(setView({
                             workbenchIndex,
                             viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
                             viewId: newView.id
                         }));
-                    }} isEmbedded={false}/> : null}
-                    {viewPlugin ?
-                    <viewPlugin.factory
-                        desc={viewPlugin}
-                        data={ordino.workbenches[workbenchIndex].data}
-                        dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
-                        selection={ordino.workbenches[workbenchIndex].selections}
-                        filters={getAllFilters(ordino.workbenches[workbenchIndex])}
-                        parameters={null}
-                        onSelectionChanged={() => console.log('selection changed')}
-                        onParametersChanged={() => console.log('param changed')}
-                        onFiltersChanged={() => console.log('filter changed')}
-                    /> : null}
+                    }} isEmbedded={false}/>
+                    <div className="w-100 d-flex justify-content-center align-items-center">
+                        <p>Please select a view to display from the sidebar.</p>
+                    </div>
                 </div>
 
                 {isOver && canDrop ? <DropOverlay view={view} /> : null}

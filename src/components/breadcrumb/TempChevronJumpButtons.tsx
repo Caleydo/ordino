@@ -41,7 +41,7 @@ export function TempChevronJumpButtons({
             {possibleJumps.map((j: IViewPluginDesc) => {
                 console.log(j);
                 return (
-                        <button onClick={() => {
+                        <button key={`${j.id}Jump`} onClick={() => {
                             dispatch(
                                 addWorkbench({
                                     viewDirection: 'horizontal',

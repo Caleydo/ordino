@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {ViewChooser} from '..';
 import {useAppDispatch, useAppSelector} from '../..';
 import {FindViewUtils, IDType, IViewPluginDesc, useAsync} from 'tdp_core';
@@ -7,6 +7,8 @@ import {IWorkbenchView, setView} from '../../store';
 import {findViewIndex} from '../../store/storeUtils';
 import {WorkbenchRankingView} from './WorkbenchRankingView';
 import {WorkbenchGenericView} from './WorkbenchGenericView';
+import {EViewChooserMode} from '../ViewChooser';
+import {WorkbenchEmptyView} from './WorkbenchEmptyView';
 
 export interface IWorkbenchSingleViewProps {
     workbenchIndex: number;
@@ -27,25 +29,18 @@ export function WorkbenchSingleView({
 
     const {value, status, error} = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
-    useEffect(() => {
-        console.log(value, status);
-    }, [status]);
+    const chooserOptions = useMemo(() => {
+        return value ? value.map((v) => v.v) : [];
+    }, [value]);
 
     return (
         <>
             {view.id === '' ?
-            <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-                <div className="w-100 h-100">
-                    <ViewChooser views={value ? value.map((v) => v.v) : []} onSelectedView={(newView:IViewPluginDesc) => {
-                        dispatch(setView({
-                            workbenchIndex,
-                            viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
-                            viewId: newView.id
-                        }));
-                    }} isEmbedded={false}/>
-                </div>
-            </div> : view.id.startsWith('reprovisyn_ranking') ?
-            <WorkbenchRankingView workbenchIndex={workbenchIndex} view={view}/> : <WorkbenchGenericView workbenchIndex={workbenchIndex} view={view}/> }
+            <WorkbenchEmptyView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view}/>
+             : view.id.startsWith('reprovisyn_ranking') ?
+            <WorkbenchRankingView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view}/>
+            :
+            <WorkbenchGenericView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view}/> }
         </>
     );
 }

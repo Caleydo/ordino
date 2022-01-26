@@ -1,13 +1,7 @@
 import * as React from 'react';
 import {useMemo} from 'react';
-import { useDrop } from 'react-dnd';
 import SplitPane from 'react-split-pane';
-import {addView, useAppDispatch, useAppSelector} from '../..';
-import {EViewDirections, IWorkbenchView} from '../../store';
-
-import {Lineup} from '../lite';
-import {DropOverlay} from './DropOverlay';
-import {EDragTypes} from './utils';
+import {useAppSelector} from '../..';
 import {WorkbenchSingleView} from './WorkbenchSingleView';
 
 export interface IWorkbenchViewsProps {
@@ -29,15 +23,16 @@ export function WorkbenchViews({
 
     let wb = null;
 
-
-
+    //TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
     if(views.length === 1) {
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'0%'}>
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
-                    <WorkbenchSingleView workbenchIndex={index} view={views[0]}/>
+                    {[<WorkbenchSingleView key={`${views[0].id}`} workbenchIndex={index} view={views[0]}/>]}
                 </SplitPane>
+                {/* //@ts-expect-error */}
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
+                    {[<></>]}
                 </SplitPane>
             </SplitPane>
         );

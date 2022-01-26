@@ -4,12 +4,10 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 import {IRegistry, PluginRegistry} from 'tdp_core';
-import {ParseRangeUtils} from 'tdp_core';
 import {ActionNode} from 'tdp_core';
 import {ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE} from 'tdp_core';
-import {EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_START_MENU_TAB} from '.';
+import {EP_ORDINO_STARTMENU_SESSION_SECTION} from '.';
 import {EP_ORDINO_LOGO, IOrdinoLogoDesc} from './base';
-import {EStartMenuSection} from './internal';
 
 export default function (registry: IRegistry) {
   //registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
@@ -44,7 +42,8 @@ export default function (registry: IRegistry) {
     analytics: {
       category: 'view',
       action: 'setSelection',
-      value: (node: ActionNode) => ParseRangeUtils.parseRangeLike(node.parameter.range).dim(0).length // retrieve the number of selected items
+      // TODO: Changed
+      value: (node: ActionNode) => node.parameter.selection.length
     }
   });
 

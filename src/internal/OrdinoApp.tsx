@@ -14,7 +14,6 @@ import {EViewMode, ISelection} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {CLUEGraphManager} from 'tdp_core';
 import {CmdUtils} from './cmds';
-import {Range} from 'tdp_core';
 import {UserSession} from 'tdp_core';
 import {IOrdinoApp} from './IOrdinoApp';
 import {EStartMenuMode, EStartMenuOpen, StartMenuComponent} from './menu/StartMenu';
@@ -72,7 +71,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private readonly nodeRef: React.RefObject<HTMLDivElement>;
 
   private readonly removeWrapper = (_event: any, view: ViewWrapper) => this.remove(view);
-  private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: Range) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);
+  private readonly chooseNextView = (event: IEvent, viewId: string, idtype: IDType, selection: string[]) => this.handleNextView(event.target as ViewWrapper, viewId, idtype, selection);
   private readonly replaceViewInViewWrapper = (_event: any, _view: ViewWrapper) => this.updateDetailViewChoosers();
   private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) => this.updateItemSelection(event.target as ViewWrapper, old, newValue);
 
@@ -133,7 +132,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param selection
    * @param options
    */
-  private handleNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
+  private handleNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: string[], options?) {
     const index = this.state.views.indexOf(viewWrapper);
     const nextView = this.state.views[index + 1];
 
@@ -156,7 +155,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param selection
    * @param options
    */
-  private openOrReplaceNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: Range, options?) {
+  private openOrReplaceNextView(viewWrapper: ViewWrapper, viewId: string, idtype: IDType, selection: string[], options?) {
     const mode = 2; // select opener mode
     switch (mode) {
       /**
@@ -234,7 +233,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range)});
+      this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.selectionIds), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.selectionIds)});
 
       // check last view and if it will stay open for the new given selection
     } else {
@@ -242,9 +241,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       const right = this.state.views[i + 1];
 
       // update selection with the last open (= right) view
-      if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
+      if (right === this.lastView && right.matchSelectionLength(newSelection.selectionIds.length)) {
         right.setParameterSelection(newSelection);
-        this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range)});
+        this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.selectionIds), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.selectionIds)});
 
         // the selection does not match with the last open (= right) view --> close view
       } else {
@@ -260,7 +259,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     return this.state.views[this.state.views.length - 1];
   }
 
-  push(viewId: string, idtype: IDType, selection: Range, options?) {
+  push(viewId: string, idtype: IDType, selection: string[], options?) {
     // create the first view without changing the focus for the (non existing) previous view
     if (this.state.views.length === 0) {
       return this.pushView(viewId, idtype, selection, options);
@@ -353,7 +352,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     this.push(startViewId, null, null, viewOptions);
   }
 
-  private pushView(viewId: string, idtype: IDType, selection: Range, options?) {
+  private pushView(viewId: string, idtype: IDType, selection: string[], options?) {
     return this.props.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));
   }
 
@@ -428,7 +427,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     return Promise.resolve(NaN);
   }
 
-  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?): Promise<ICmdResult> {
+  private replaceView(existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: string[], options?): Promise<ICmdResult> {
     return this.props.graph.push(CmdUtils.replaceView(this.ref, existingView, viewId, idtype, selection, options));
   }
 

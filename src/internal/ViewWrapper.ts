@@ -9,7 +9,6 @@
 
 import {IObjectRef, ObjectRefUtils, ProvenanceGraph} from 'tdp_core';
 import {IDType} from 'tdp_core';
-import {Range} from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
@@ -31,7 +30,7 @@ import {MODE_ANIMATION_TIME} from './constants';
 
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
-  const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.range.toString());
+  const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.selectionIds);
   return desc.id + '_' + s;
 }
 
@@ -58,7 +57,7 @@ export class ViewWrapper extends EventHandler {
    * @param newSelection
    */
   private listenerItemSelect = (event: any, oldSelection: ISelection, newSelection: ISelection) => {
-    this.chooseNextViews(newSelection.idtype, newSelection.range);
+    this.chooseNextViews(newSelection.idtype, newSelection.selectionIds);
     this.fire(AView.EVENT_ITEM_SELECT, oldSelection, newSelection);
   }
 
@@ -257,7 +256,7 @@ export class ViewWrapper extends EventHandler {
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
 
     return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
-      this.chooseNextViews(sel.idtype, sel.range);
+      this.chooseNextViews(sel.idtype, sel.selectionIds);
 
       // turn listener on again
       this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
@@ -331,19 +330,19 @@ export class ViewWrapper extends EventHandler {
   /**
    * Decide if a chooser for the next view should be shown and if so, which next views are available
    * @param idtype
-   * @param range
+   * @param selection
    */
-  private chooseNextViews(idtype: IDType, range: Range) {
+  private chooseNextViews(idtype: IDType, selection: string[]) {
     const that = this;
-
+    const isSelNone = selection?.length === 0;
     // show chooser if selection available
-    this.$chooser.classed('hidden', range.isNone);
+    this.$chooser.classed('hidden', isSelNone);
 
-    if (range.isNone) {
+    if (isSelNone) {
       this.$chooser.selectAll('button').classed('active', false);
     }
 
-    FindViewUtils.findViews(idtype, range).then((views) => {
+    FindViewUtils.findViews(idtype, selection).then((views) => {
       const groups = FindViewUtils.groupByCategory(views);
 
       const $categories = this.$chooser.selectAll('div.category').data(groups);
@@ -364,7 +363,7 @@ export class ViewWrapper extends EventHandler {
           $buttons.classed('active', false);
           d3.select(this).classed('active', true);
 
-          that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
+          that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, selection);
         });
 
       $buttons.exit().remove();

@@ -4,7 +4,6 @@
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
 import { PluginRegistry } from 'tdp_core';
-import { ParseRangeUtils } from 'tdp_core';
 import { EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from '.';
 import { EP_ORDINO_LOGO } from './base';
@@ -37,7 +36,8 @@ export default function (registry) {
         analytics: {
             category: 'view',
             action: 'setSelection',
-            value: (node) => ParseRangeUtils.parseRangeLike(node.parameter.range).dim(0).length // retrieve the number of selected items
+            // TODO: Changed
+            value: (node) => node.parameter.selection.length
         }
     });
     registry.push('actionCompressor', 'targidCreateRemoveCompressor', () => import('./internal/cmds').then((c) => c.CmdUtils), {

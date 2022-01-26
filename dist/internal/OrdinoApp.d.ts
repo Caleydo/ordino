@@ -10,7 +10,6 @@ import { ICmdResult } from 'tdp_core';
 import { IObjectRef, ProvenanceGraph, IDType } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CLUEGraphManager } from 'tdp_core';
-import { Range } from 'tdp_core';
 import { IOrdinoApp } from './IOrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenu';
 import { AppHeader } from 'tdp_core';
@@ -114,7 +113,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * The last view of the list of open views
      */
     get lastView(): ViewWrapper;
-    push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
+    push(viewId: string, idtype: IDType, selection: string[], options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
     /**
      * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.

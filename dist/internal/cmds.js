@@ -7,7 +7,6 @@
  ********************************************************************/
 import { ActionUtils, ActionMetaData, ObjectRefUtils } from 'tdp_core';
 import { PluginRegistry } from 'tdp_core';
-import { Range, ParseRangeUtils } from 'tdp_core';
 import { IDTypeManager } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { EXTENSION_POINT_TDP_VIEW } from 'tdp_core';
@@ -19,15 +18,15 @@ const CMD_SET_SELECTION = 'targidSetSelection';
 export class CmdUtils {
     static asSelection(data) {
         return {
-            range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
+            selectionIds: data.selection || [],
             idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
         };
     }
     static serializeSelection(selection) {
-        if (!selection || !selection.idtype || !selection.range || selection.range.isNone) {
+        if (!selection || !selection.idtype || !selection.selectionIds || selection.selectionIds.length === 0) {
             return null;
         }
-        return { idtype: selection.idtype.id, selection: selection.range.toString() };
+        return { idtype: selection.idtype.id, selection: selection.selectionIds };
     }
     /**
      * Creates a view instance and wraps the instance with the inverse action in a CLUE command
@@ -68,7 +67,7 @@ export class CmdUtils {
         app.removeImpl(existingView, oldFocus);
         return {
             removed: [inputs[1]],
-            inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
+            inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.selectionIds, existingViewOptions, existingView.getItemSelection())
         };
     }
     /**
@@ -88,7 +87,7 @@ export class CmdUtils {
         const oldParams = {
             viewId: existingView.desc.id,
             idtype: existingView.selection.idtype,
-            selection: existingView.selection.range,
+            selection: existingView.selection.selectionIds,
             itemSelection: existingView.getItemSelection(),
             options: existingViewOptions
         };
@@ -118,7 +117,7 @@ export class CmdUtils {
         return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, CmdUtils.createViewImpl, [app], {
             viewId,
             idtype: idtype ? idtype.id : null,
-            selection: selection ? selection.toString() : Range.none().toString(),
+            selection,
             itemSelection: CmdUtils.serializeSelection(itemSelection),
             options
         });
@@ -153,7 +152,7 @@ export class CmdUtils {
         return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
             viewId,
             idtype: idtype ? idtype.id : null,
-            selection: selection ? selection.toString() : Range.none().toString(),
+            selection: selection,
             itemSelection: CmdUtils.serializeSelection(itemSelection),
             options
         });
@@ -163,28 +162,28 @@ export class CmdUtils {
         const view = views[0];
         const target = views[1];
         const idtype = parameter.idtype ? IDTypeManager.getInstance().resolveIdType(parameter.idtype) : null;
-        const range = ParseRangeUtils.parseRangeLike(parameter.range);
+        const selectionIds = parameter.selection;
         const bak = view.getItemSelection();
-        await Promise.resolve(view.setItemSelection({ idtype, range }));
+        await Promise.resolve(view.setItemSelection({ idtype, selectionIds }));
         if (target) {
-            await Promise.resolve(target.setParameterSelection({ idtype, range }));
+            await Promise.resolve(target.setParameterSelection({ idtype, selectionIds }));
         }
         return {
-            inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.range)
+            inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.selectionIds) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.selectionIds)
         };
     }
-    static setSelection(view, idtype, range) {
+    static setSelection(view, idtype, selection) {
         // assert view
         return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view], {
             idtype: idtype ? idtype.id : null,
-            range: range.toString()
+            selection
         });
     }
-    static setAndUpdateSelection(view, target, idtype, range) {
+    static setAndUpdateSelection(view, target, idtype, selection) {
         // assert view
         return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view, target], {
             idtype: idtype ? idtype.id : null,
-            range: range.toString()
+            selection
         });
     }
     /**

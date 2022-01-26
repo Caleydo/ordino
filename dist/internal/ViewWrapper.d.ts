@@ -111,7 +111,7 @@ export declare class ViewWrapper extends EventHandler {
     /**
      * Decide if a chooser for the next view should be shown and if so, which next views are available
      * @param idtype
-     * @param range
+     * @param selection
      */
     private chooseNextViews;
     setActiveNextView(viewId?: string): void;

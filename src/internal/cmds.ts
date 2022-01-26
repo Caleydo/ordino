@@ -18,7 +18,6 @@ import {
   ProvenanceGraph
 } from 'tdp_core';
 import {PluginRegistry} from 'tdp_core';
-import {Range, ParseRangeUtils} from 'tdp_core';
 import {IDTypeManager, IDType} from 'tdp_core';
 import {ViewWrapper} from './ViewWrapper';
 import {EXTENSION_POINT_TDP_VIEW, ISelection} from 'tdp_core';
@@ -33,18 +32,18 @@ const CMD_SET_SELECTION = 'targidSetSelection';
 
 export class CmdUtils {
 
-  static asSelection(data: {idtype: string, selection: string}): ISelection {
+  static asSelection(data: ReturnType<(typeof CmdUtils)['serializeSelection']>): ISelection {
     return {
-      range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
+      selectionIds: data.selection || [],
       idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
     };
   }
 
   static serializeSelection(selection?: ISelection) {
-    if (!selection || !selection.idtype || !selection.range || selection.range.isNone) {
+    if (!selection || !selection.idtype || !selection.selectionIds || selection.selectionIds.length === 0) {
       return null;
     }
-    return { idtype: selection.idtype.id, selection: selection.range.toString() };
+    return { idtype: selection.idtype.id, selection: selection.selectionIds };
   }
 
   /**
@@ -91,7 +90,7 @@ export class CmdUtils {
     app.removeImpl(existingView, oldFocus);
     return {
       removed: [inputs[1]],
-      inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
+      inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.selectionIds, existingViewOptions, existingView.getItemSelection())
     };
   }
 
@@ -114,7 +113,7 @@ export class CmdUtils {
     const oldParams = {
       viewId: existingView.desc.id,
       idtype: existingView.selection.idtype,
-      selection: existingView.selection.range,
+      selection: existingView.selection.selectionIds,
       itemSelection: existingView.getItemSelection(),
       options: existingViewOptions
     };
@@ -143,13 +142,13 @@ export class CmdUtils {
    * @param options
    * @returns {IAction}
    */
-  static createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
+  static createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: string[], options?, itemSelection?: ISelection): IAction {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, CmdUtils.createViewImpl, [app], {
       viewId,
       idtype: idtype ? idtype.id : null,
-      selection: selection ? selection.toString() : Range.none().toString(),
+      selection,
       itemSelection: CmdUtils.serializeSelection(itemSelection),
       options
     });
@@ -180,13 +179,13 @@ export class CmdUtils {
    * @param options
    * @returns {IAction}
    */
-  static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
+  static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: string[], options?, itemSelection?: ISelection): IAction {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
       viewId,
       idtype: idtype ? idtype.id : null,
-      selection: selection ? selection.toString() : Range.none().toString(),
+      selection: selection,
       itemSelection: CmdUtils.serializeSelection(itemSelection),
       options
     });
@@ -197,31 +196,31 @@ export class CmdUtils {
     const view = views[0];
     const target = views[1];
     const idtype = parameter.idtype ? IDTypeManager.getInstance().resolveIdType(parameter.idtype) : null;
-    const range = ParseRangeUtils.parseRangeLike(parameter.range);
+    const selectionIds = parameter.selection;
 
     const bak = view.getItemSelection();
-    await Promise.resolve(view.setItemSelection({idtype, range}));
+    await Promise.resolve(view.setItemSelection({idtype, selectionIds}));
     if (target) {
-      await Promise.resolve(target.setParameterSelection({idtype, range}));
+      await Promise.resolve(target.setParameterSelection({idtype, selectionIds}));
     }
     return {
-      inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.range)
+      inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.selectionIds) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.selectionIds)
     };
   }
 
-  static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+  static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, selection: string[]) {
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view], {
       idtype: idtype ? idtype.id : null,
-      range: range.toString()
+      selection
     });
   }
 
-  static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+  static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, selection: string[]) {
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view, target], {
       idtype: idtype ? idtype.id : null,
-      range: range.toString()
+      selection
     });
   }
 

@@ -1,7 +1,6 @@
 import React from 'react';
-import { PHOVEA_SECURITY_FLASK_LoginMenu as LoginMenu } from 'tdp_core';
+import { AppHeader, LoginMenu } from 'tdp_core';
 import { login, logout, useAppDispatch, useAppSelector } from '../..';
-import { HeaderAdapter } from './HeaderAdapter';
 /**
  * Instantiates the login menu and appends the user dropdown to the header
  */
@@ -19,7 +18,7 @@ export function useLoginMenu() {
             // Create a new one if there is a ref
             if (ref) {
                 containerRef.current = ref;
-                const menu = new LoginMenu(new HeaderAdapter(), { watch: true });
+                const menu = new LoginMenu(new AppHeader(ref), { watch: true });
                 return menu;
             }
             // Set instance to null if no ref is passed

@@ -1,5 +1,5 @@
 import React from 'react';
-import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, Range, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
+import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, LoginMenu, PluginRegistry, useAsync, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
 import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
 import {getAllFilters} from '../../store/storeUtils';
 
@@ -24,7 +24,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-            const selection = {idtype: new IDType(idType, viewId, '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex - 1].selections)};
+            const selection = {idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds};
 
 
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
@@ -59,10 +59,10 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             const view: ARankingView = instance as unknown as ARankingView;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
 
-            view.selectionHelper.setGeneralVisSelection({idtype: id, range: Range.list(ordino.workbenches[workbenchIndex].selections)});
+            view.selectionHelper.setGeneralVisSelection({idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds});
 
         }
-    }, [instance, ordino.workbenches[workbenchIndex].selections]);
+    }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);
 
     React.useEffect(() => {
         if(instance) {
@@ -70,7 +70,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
 
             view.provider.setFilter((row) => {
-                return !filteredIds.includes(row.v._id);
+                return !filteredIds.includes(row.v._visyn_id);
             });
         }
     }, [instance, ordino.workbenches[workbenchIndex].views]);

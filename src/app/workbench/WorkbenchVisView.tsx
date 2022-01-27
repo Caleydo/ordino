@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {addFilter, addSelection, IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
-import { ViewBuilder, Vis } from 'tdp_core';
+import { Vis, EColumnTypes, IRow } from 'tdp_core';
 import {useAppDispatch, useAppSelector} from '../..';
-import {EColumnTypes} from 'tdp_core';
 import {getAllFilters} from '../../store/storeUtils';
 import {useMemo} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
@@ -44,7 +43,7 @@ export function WorkbenchVisView({
 
         const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
 
-        data = data.filter((d, i) => !filteredIds.includes(d._id));
+        data = data.filter((d, i) => !filteredIds.includes(d._visyn_id));
 
         return data;
     }, [ordino.workbenches[workbenchIndex].data, ordino.workbenches[workbenchIndex].views]);
@@ -61,8 +60,8 @@ export function WorkbenchVisView({
                 description: c.summary,
                 id: c.label + (c)._id
             },
-            values: data.map((d, i) => {
-                return {id: d._id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--'};
+            values: data.map((d: IRow, i) => {
+                return {id: d._visyn_id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--'};
             }),
             type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
         });
@@ -71,22 +70,22 @@ export function WorkbenchVisView({
     const filterCallback = useMemo(() => (s) => {
         if(s === 'Filter Out') {
             const viewCopy = [...view.filters];
-            viewCopy.push(...ordino.workbenches[workbenchIndex].selections);
+            viewCopy.push(...ordino.workbenches[workbenchIndex].selectionIds);
             dispatch(addFilter({viewId: view.id, filter: viewCopy}));
             dispatch(addSelection({newSelection: []}));
         } else if (s === 'Filter In') {
             const viewCopy = [...view.filters];
-            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selections.includes(d._id)).map((d) => d._id));
+            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selectionIds.includes(d._visyn_id)).map((d) => d._visyn_id));
             dispatch(addFilter({viewId: view.id, filter: viewCopy}));
             dispatch(addSelection({newSelection: []}));
         } else {
             dispatch(addFilter({viewId: view.id, filter: []}));
         }
-    }, [view.filters, ordino.workbenches[workbenchIndex].selections]);
+    }, [view.filters, ordino.workbenches[workbenchIndex].selectionIds]);
 
     const selectedMap: { [key: number]: boolean } = {};
 
-    const selections = ordino.workbenches[workbenchIndex].selections;
+    const selections = ordino.workbenches[workbenchIndex].selectionIds;
     if(selections && selections.length > 0) {
 
         const allData = ordino.workbenches[workbenchIndex].data;
@@ -96,7 +95,7 @@ export function WorkbenchVisView({
             selectedMap[i] = false;
         }
 
-        for(const i of ordino.workbenches[workbenchIndex].selections) {
+        for(const i of ordino.workbenches[workbenchIndex].selectionIds) {
             selectedMap[i] = true;
         }
     }

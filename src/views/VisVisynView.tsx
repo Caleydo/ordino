@@ -1,8 +1,7 @@
 // Gets into the phovea.ts
 import * as React from 'react';
 import {useMemo} from 'react';
-import {EColumnTypes, Vis} from 'tdp_core';
-import {IVisynViewProps} from '../visyn/VisynView';
+import {EColumnTypes, IVisynViewProps, Vis} from 'tdp_core';
 
 export function VisVisynView({
     desc, data, dataDesc, selection, filters, parameters = {

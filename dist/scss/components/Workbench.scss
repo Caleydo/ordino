@@ -1,87 +1,122 @@
+.workbenchView {
+  display: grid;
+  grid-template-columns: auto min-content;
+  grid-template-rows: minmax(41px, min-content) auto;
+  grid-template-areas:
+    "parameters view-actions"
+    "inner inner";
+  overflow: hidden;
+  position: relative;
+  gap: 5px;
+  margin: .5rem;
+  padding: 5px;
+  border: 1px solid lightgray;
 
-  .workbenchView {
+  & > .view-actions {
+    grid-area: view-actions;
     display: flex;
-    width: 100%;
-    overflow-y: auto;
-    overflow-x: auto;
-    margin: 1.5rem;
-    border: 1px solid lightgray;
+    justify-content: flex-end;
+    justify-self: flex-end;
   }
-
-  .workbenchWrapper {
-    flex: 1 1 auto;
-  }
-  
-  .Pane {
-    display: flex;
-    min-height: 300px;
-    min-width: 300px;
-  }
-
-  .Pane2 {
-    flex: 0 1 auto !important;
-  }
-
-  .SplitPane {
-    width: 100% !important;
-  }
-
-  .gutter {
-    background-color: #eee;
-    background-repeat: no-repeat;
-    background-position: 50%;
-  }
-
-  .workbenchOverlayButton {
+  & > .view-parameters {
+    margin-bottom: 0;
+    grid-area: parameters;
     opacity: 1;
+    transition: opacity 0.3s ease;
   }
 
-  .Resizer {
-    background: #000;
-    opacity: 0.2;
-    z-index: 1;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding;
-    background-clip: padding-box;
+  & > .inner {
+    grid-area: inner;
+    position: relative;
+    border-top: 1px solid #ddd;
+    padding-top: 5px;
+    overflow-y: auto;
+    height: 0;
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
-  
-  .Resizer:hover {
-    -webkit-transition: all 2s ease;
-    transition: all 2s ease;
-  }
-  
-  .Resizer.horizontal {
-    height: 11px;
-    margin: -5px 0;
-    border-top: 5px solid rgba(255, 255, 255, 0);
-    border-bottom: 5px solid rgba(255, 255, 255, 0);
-    cursor: row-resize;
-    width: 100%;
-  }
-  
-  .Resizer.horizontal:hover {
-    border-top: 5px solid rgba(0, 0, 0, 0.5);
-    border-bottom: 5px solid rgba(0, 0, 0, 0.5);
-  }
-  
-  .Resizer.vertical {
-    width: 11px;
-    margin: 0 -5px;
-    border-left: 5px solid rgba(255, 255, 255, 0);
-    border-right: 5px solid rgba(255, 255, 255, 0);
-    cursor: col-resize;
-  }
-  
-  .Resizer.vertical:hover {
-    border-left: 5px solid rgba(0, 0, 0, 0.5);
-    border-right: 5px solid rgba(0, 0, 0, 0.5);
-  }
-  .Resizer.disabled {
-    cursor: not-allowed;
-  }
-  .Resizer.disabled:hover {
-    border-color: transparent;
-  }
+  @import '~tdp_core/dist/scss/components/view';
+}
+
+.workbenchWrapper {
+  flex: 1 1 auto;
+}
+
+.view-title {
+  font-size: 16px;
+}
+
+.Pane {
+  display: flex;
+  min-height: 0px;
+  min-width: 0px;
+}
+
+.Pane2 {
+  flex: 0 1 auto !important;
+}
+
+.SplitPane {
+  width: 100% !important;
+}
+
+.gutter {
+  background-color: #eee;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.workbenchOverlayButton {
+  opacity: 1;
+}
+
+.Resizer {
+  background: #000;
+  opacity: 0.2;
+  z-index: 1;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.Resizer:hover {
+  -webkit-transition: all 2s ease;
+  transition: all 2s ease;
+}
+
+.Resizer.horizontal {
+  height: 11px;
+  margin: -5px 0;
+  border-top: 5px solid rgba(255, 255, 255, 0);
+  border-bottom: 5px solid rgba(255, 255, 255, 0);
+  cursor: row-resize;
+  width: 100%;
+}
+
+.Resizer.horizontal:hover {
+  border-top: 5px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.vertical {
+  width: 11px;
+  margin: 0 -5px;
+  border-left: 5px solid rgba(255, 255, 255, 0);
+  border-right: 5px solid rgba(255, 255, 255, 0);
+  cursor: col-resize;
+}
+
+.Resizer.vertical:hover {
+  border-left: 5px solid rgba(0, 0, 0, 0.5);
+  border-right: 5px solid rgba(0, 0, 0, 0.5);
+}
+.Resizer.disabled {
+  cursor: not-allowed;
+}
+.Resizer.disabled:hover {
+  border-color: transparent;
+}

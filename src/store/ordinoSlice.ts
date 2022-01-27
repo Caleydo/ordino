@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {IViewPluginDesc} from 'tdp_core';
-
+import {IRow, IViewPluginDesc} from 'tdp_core';
+import type {IReprovisynServerColumn} from 'reprovisyn';
 
 export enum EViewDirections {
   N = 'n',
@@ -10,7 +10,8 @@ export enum EViewDirections {
 }
 
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
-
+  viewType: 'Ranking' | 'Vis';
+  filters: number[];
 }
 
 export interface IOrdinoAppState {
@@ -23,7 +24,11 @@ export interface IOrdinoAppState {
    * Id of the current focus view
    */
   focusViewIndex: number;
+}
 
+export enum EWorkbenchDirection {
+  VERTICAL = 'vertical',
+  HORIZONTAL = 'horizontal'
 }
 
 export interface IWorkbench {
@@ -32,23 +37,24 @@ export interface IWorkbench {
    */
   views: IWorkbenchView[];
 
-  viewDirection: 'vertical' | 'horizontal';
+  viewDirection: EWorkbenchDirection;
 
   name: string;
 
-  id: string;
+  entityId: string;
 
   index: number;
+
+  data: {[key: number]: IRow};
+  columnDescs: IReprovisynServerColumn[];
+  // TODO: how do we store the lineup-specific column descriptions?
+
+  transitionOptions: string[];
 
   /**
    * List selected rows
    */
-  selections: any[]; // TODO define selection, probably IROW
-
-  /**
-   * Selected filters in this view
-   */
-  filters: any[]; // TODO define filter
+  selections: number[]; // TODO define selection, probably IROW
 }
 
 interface IBaseState {
@@ -58,6 +64,7 @@ interface IBaseState {
 export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc {
   state: S;
 }
+
 
 // const test = ({
 //   headerOverride = Header,
@@ -85,27 +92,7 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 // }
 
 const initialState: IOrdinoAppState = {
-  workbenches:
-    [{
-      viewDirection: 'vertical',
-      index: 0,
-      views:
-        [{
-          id: 'view_0',
-          index: 0,
-          name: 'Start view',
-          selection: 'multiple',
-          selections: [],
-          group: {
-            name: 'General',
-            order: 10
-          }
-        }],
-      name: 'Start View',
-      id: 'startView',
-      selections: [],
-      filters: []
-    }],
+  workbenches: [],
   focusViewIndex: 0,
 };
 
@@ -113,15 +100,27 @@ const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
+    addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
+      state.workbenches.splice(0, state.workbenches.length);
+      state.workbenches.push(action.payload);
+    },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
+      state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
+    },
+    createColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
+      state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+    },
+    addColumnDesc(state, action: PayloadAction<{desc: any}>) {
+      state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
+    },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
-
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
       temp.index = action.payload.secondViewIndex;
@@ -131,13 +130,13 @@ const ordinoSlice = createSlice({
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
     },
-    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: 'vertical' | 'horizontal'}>) {
+    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: EWorkbenchDirection}>) {
       state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
     },
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
       state.workbenches.slice(action.payload.index);
     },
-    //TODO:: When we remove the views jump too much. We need to something smarter based on what the direction is to figure out where to move the still existing views.
+    //TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
     removeView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number}>) {
       const workbench = state.workbenches[action.payload.workbenchIndex];
       workbench.views.splice(action.payload.viewIndex, 1);
@@ -150,18 +149,28 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
-    addSelection(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newSelection: any}>) {
-      // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].selections = action.payload.newSelection;
+    addSelection(state, action: PayloadAction<{newSelection: number[]}>) {
+      state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
     },
-    addFilter(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, newFilter: any}>) {
-      // state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].filters.push(action.payload.newFilter);
+    addFilter(state, action: PayloadAction<{viewId: string, filter: number[]}>) {
+      state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
-    }
+    },
+    setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
+      for(const row of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[row._id] = row;
+      }
+    },
+    addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {
+      for(const row of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
+      }
+    },
   }
 });
 
-export const {addView, removeView, replaceWorkbench, addSelection, addFilter, changeFocus, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, createColumnDescs, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

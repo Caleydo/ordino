@@ -1,0 +1,32 @@
+.breadcrumb {
+    height: 50px;
+    margin-bottom: 2px !important;
+    overflow-x: hidden;
+    max-height: $session-list-max-height;
+}
+
+.chevronSvg {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    height: 100%
+}
+
+.chevronText {
+    font-size: 18px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.chevronDiv {
+    align-items: center;
+    z-index: 2;
+    color: white
+}
+
+.chevronButton {
+    color: cornflowerblue;
+    // font-size: 14px!important;
+    // padding: .2rem .4rem !important;
+}
+

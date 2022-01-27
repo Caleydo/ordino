@@ -24,6 +24,6 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "tsd.d.ts"
-  ],
+, "../ordino_reprovisyn/src/dataSlice.ts"  ],
   "exclude": ["src/stories/*"]
 }

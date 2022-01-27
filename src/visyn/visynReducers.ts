@@ -1,8 +1,8 @@
 import {Reducer} from '@reduxjs/toolkit';
-import {usersReducer} from './usersSlice';
+import {userReducer} from './usersSlice';
 
-export function allVisynReducers(): {[key: string]: Reducer} {
+export function allVisynReducers() {
     return {
-        users: usersReducer
+        user: userReducer
     };
 }

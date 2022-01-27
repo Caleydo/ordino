@@ -25,6 +25,8 @@ export function WorkbenchRightIcon({
                     name: 'Start view',
                     selection: 'multiple',
                     selections: [],
+                    filters: [],
+                    viewType: 'Ranking',
                     group: {
                         name: 'General',
                         order: 10

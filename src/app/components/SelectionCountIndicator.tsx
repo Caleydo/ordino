@@ -23,4 +23,4 @@ export function SelectionCountIndicator({selectionCount, viewMode = EViewMode.HI
             </BSTooltip>
         </>
     );
-};
+}

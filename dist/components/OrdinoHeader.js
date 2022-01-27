@@ -3,8 +3,9 @@ import { HeaderTabs, } from '.';
 import { useAppDispatch, useAppSelector } from '..';
 import { setActiveTab, setMode } from '../store';
 import { VisynHeader } from '../visyn';
-import { EStartMenuMode, StartMenuTabWrapper } from './header/menu/StartMenuTabWrapper';
+import { EStartMenuMode, StartMenuTabWrapper } from './header/StartMenuTabWrapper';
 export function OrdinoHeader(props) {
+    const app = useAppSelector((state) => state.app);
     const ordino = useAppSelector((state) => state.ordino);
     const menu = useAppSelector((state) => state.menu);
     const dispatch = useAppDispatch();
@@ -14,7 +15,7 @@ export function OrdinoHeader(props) {
             dispatch(setMode(EStartMenuMode.OVERLAY));
             dispatch(setActiveTab(null));
         }
-    }, [ordino.workbenches.length]);
+    }, [ordino.workbenches]);
     React.useEffect(() => {
         if (ordino.workbenches.length === 0) {
             dispatch(setActiveTab(props.tabs[0].id));
@@ -25,6 +26,8 @@ export function OrdinoHeader(props) {
                 LeftExtensions: () => React.createElement(HeaderTabs, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }),
                 ...props.extensions
             } }),
-        React.createElement(StartMenuTabWrapper, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY })));
+        app.ready ? React.createElement(React.Fragment, null,
+            React.createElement(StartMenuTabWrapper, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }))
+            : null));
 }
 //# sourceMappingURL=OrdinoHeader.js.map

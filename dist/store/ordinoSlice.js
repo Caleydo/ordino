@@ -6,6 +6,11 @@ export var EViewDirections;
     EViewDirections["W"] = "w";
     EViewDirections["E"] = "e";
 })(EViewDirections || (EViewDirections = {}));
+export var EWorkbenchDirection;
+(function (EWorkbenchDirection) {
+    EWorkbenchDirection["VERTICAL"] = "vertical";
+    EWorkbenchDirection["HORIZONTAL"] = "horizontal";
+})(EWorkbenchDirection || (EWorkbenchDirection = {}));
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -51,8 +56,11 @@ const ordinoSlice = createSlice({
         addTransitionOptions(state, action) {
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
-        addColumnDescs(state, action) {
+        createColumnDescs(state, action) {
             state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+        },
+        addColumnDesc(state, action) {
+            state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -85,17 +93,17 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
-            for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i._id] = i;
+            for (const row of action.payload.data) {
+                state.workbenches[state.focusViewIndex].data[row._id] = row;
             }
         },
         addScoreColumn(state, action) {
-            for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
+            for (const row of action.payload.data) {
+                state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
             }
         },
     }
 });
-export const { addView, addColumnDescs, removeView, setView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

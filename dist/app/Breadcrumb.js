@@ -28,7 +28,6 @@ export function Breadcrumb() {
         }
         return counter;
     }, [ordino.workbenches.length, ordino.focusViewIndex]);
-    console.log(startFlexNum, endFlexNum);
     //Obviously change this to the right way of importing these colors
     //always show first, last, context, +, otherwise show ...
     return (React.createElement("div", { className: "d-flex breadcrumb overflow-hidden" },

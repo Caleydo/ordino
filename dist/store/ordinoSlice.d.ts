@@ -1,4 +1,5 @@
-import { IViewPluginDesc } from 'tdp_core';
+import { IRow, IViewPluginDesc } from 'tdp_core';
+import type { IReprovisynServerColumn } from 'reprovisyn';
 export declare enum EViewDirections {
     N = "n",
     S = "s",
@@ -20,19 +21,23 @@ export interface IOrdinoAppState {
      */
     focusViewIndex: number;
 }
+export declare enum EWorkbenchDirection {
+    VERTICAL = "vertical",
+    HORIZONTAL = "horizontal"
+}
 export interface IWorkbench {
     /**
      * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
      */
     views: IWorkbenchView[];
-    viewDirection: 'vertical' | 'horizontal';
+    viewDirection: EWorkbenchDirection;
     name: string;
     entityId: string;
     index: number;
     data: {
-        [key: number]: any;
+        [key: number]: IRow;
     };
-    columnDescs: any[];
+    columnDescs: IReprovisynServerColumn[];
     transitionOptions: string[];
     /**
      * List selected rows
@@ -48,15 +53,17 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
-}, string>, addColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     descs: any[];
-}, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    viewIndex: number;
 }, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
     viewId: string;
+}, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    desc: any;
+}, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    viewIndex: number;
 }, string>, addTransitionOptions: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     transitionOptions: string[];
@@ -81,7 +88,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     secondViewIndex: number;
 }, string>, setWorkbenchDirection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
-    direction: 'vertical' | 'horizontal';
+    direction: EWorkbenchDirection;
 }, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};

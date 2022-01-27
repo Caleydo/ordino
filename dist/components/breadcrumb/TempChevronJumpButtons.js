@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { EDragTypes } from '../../app/workbench/utils';
 import { useDrag } from 'react-dnd';
 import { useAppDispatch, useAppSelector } from '../..';
-import { addWorkbench, changeFocus } from '../../store';
+import { addWorkbench, changeFocus, EWorkbenchDirection } from '../../store';
 import { EXTENSION_POINT_TDP_VIEW, PluginRegistry } from 'tdp_core';
 export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
     const dispatch = useAppDispatch();
@@ -24,8 +24,8 @@ export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
         console.log(j);
         return (React.createElement("button", { key: `${j.id}Jump`, onClick: () => {
                 dispatch(addWorkbench({
-                    viewDirection: 'horizontal',
                     views: [{ id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
+                    viewDirection: EWorkbenchDirection.HORIZONTAL,
                     transitionOptions: [],
                     columnDescs: [],
                     data: {},

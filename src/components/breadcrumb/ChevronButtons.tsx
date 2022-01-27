@@ -2,7 +2,7 @@ import React, {useEffect, useMemo} from 'react';
 import { EDragTypes } from '../../app/workbench/utils';
 import { useDrag } from 'react-dnd';
 import {addView, EViewDirections, useAppDispatch, useAppSelector} from '../..';
-import {addWorkbench, changeFocus, setWorkbenchDirection} from '../../store';
+import {addWorkbench, changeFocus, EWorkbenchDirection, setWorkbenchDirection} from '../../store';
 import {EXTENSION_POINT_TDP_VIEW, IViewPluginDesc, PluginRegistry} from 'tdp_core';
 import {IChevronBreadcrumbProps} from './ChevronBreadcrumb';
 import {getAllFilters} from '../../store/storeUtils';
@@ -44,7 +44,7 @@ export function ChevronButtons({
 
             <div>
                 <button onClick={() => {
-                    dispatch(setWorkbenchDirection({workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal'}));
+                    dispatch(setWorkbenchDirection({workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === EWorkbenchDirection.HORIZONTAL ? EWorkbenchDirection.VERTICAL : EWorkbenchDirection.HORIZONTAL}));
                 }}type="button" className="chevronButton btn btn-light btn-sm align-middle m-1" style={{color}}> <i className="flex-grow-1 fas fa-compass"/> Direction</button>
             </div> */}
 

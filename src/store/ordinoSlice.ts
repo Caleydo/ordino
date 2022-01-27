@@ -1,7 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {data} from 'jquery';
-import {useGlobalFilter} from 'react-table';
-import {IViewPluginDesc} from 'tdp_core';
+import {IRow, IViewPluginDesc} from 'tdp_core';
+import type {IReprovisynServerColumn} from 'reprovisyn';
 
 export enum EViewDirections {
   N = 'n',
@@ -30,13 +29,18 @@ export interface IOrdinoAppState {
   focusViewIndex: number;
 }
 
+export enum EWorkbenchDirection {
+  VERTICAL = 'vertical',
+  HORIZONTAL = 'horizontal'
+}
+
 export interface IWorkbench {
   /**
    * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
    */
   views: IWorkbenchView[];
 
-  viewDirection: 'vertical' | 'horizontal';
+  viewDirection: EWorkbenchDirection;
 
   name: string;
 
@@ -44,8 +48,9 @@ export interface IWorkbench {
 
   index: number;
 
-  data: {[key: number]: any};
-  columnDescs: any[];
+  data: {[key: number]: IRow};
+  columnDescs: IReprovisynServerColumn[];
+  // TODO: how do we store the lineup-specific column descriptions?
 
   transitionOptions: string[];
 
@@ -114,8 +119,11 @@ const ordinoSlice = createSlice({
     addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    addColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
+    createColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
       state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+    },
+    addColumnDesc(state, action: PayloadAction<{desc: any}>) {
+      state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -125,7 +133,7 @@ const ordinoSlice = createSlice({
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
     },
-    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: 'vertical' | 'horizontal'}>) {
+    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: EWorkbenchDirection}>) {
       state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
     },
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
@@ -150,18 +158,18 @@ const ordinoSlice = createSlice({
       state.focusViewIndex = action.payload.index;
     },
     setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
-      for(const i of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[i._id] = i;
+      for(const row of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[row._id] = row;
       }
     },
     addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {
-      for(const i of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
+      for(const row of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
       }
     },
   }
 });
 
-export const {addView, addColumnDescs, removeView, setView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, createColumnDescs, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

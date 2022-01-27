@@ -8,7 +8,6 @@ export function getAllFilters(workbench: IWorkbench) {
         });
     });
 
-
     return Array.from(allFilteredIds);
 }
 

@@ -101,7 +101,13 @@ const ordinoSlice = createSlice({
         },
         addScoreColumn(state, action) {
             for (const row of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
+                const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+                if (dataRow) {
+                    dataRow[action.payload.columnName] = row.score;
+                }
+                else {
+                    state.workbenches[state.focusViewIndex].data[row.id] = row;
+                }
             }
         },
     }

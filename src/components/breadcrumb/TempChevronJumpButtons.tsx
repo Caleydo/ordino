@@ -2,7 +2,7 @@ import React, {useEffect, useMemo} from 'react';
 import { EDragTypes } from '../../app/workbench/utils';
 import { useDrag } from 'react-dnd';
 import {addView, EViewDirections, useAppDispatch, useAppSelector} from '../..';
-import {addWorkbench, changeFocus, setWorkbenchDirection} from '../../store';
+import {addWorkbench, changeFocus, EWorkbenchDirection, setWorkbenchDirection} from '../../store';
 import {EXTENSION_POINT_TDP_VIEW, IViewPluginDesc, PluginRegistry} from 'tdp_core';
 import {IChevronBreadcrumbProps} from './ChevronBreadcrumb';
 import {getAllFilters} from '../../store/storeUtils';
@@ -45,7 +45,7 @@ export function TempChevronJumpButtons({
                         <button onClick={() => {
                             dispatch(
                                 addWorkbench({
-                                    viewDirection: 'horizontal',
+                                    viewDirection: EWorkbenchDirection.HORIZONTAL,
                                     views: [{id: j.id, name: j.name, viewType: 'Ranking', filters: [], index: 0}],
                                     transitionOptions: [],
                                     columnDescs: [],

@@ -6,6 +6,11 @@ export var EViewDirections;
     EViewDirections["W"] = "w";
     EViewDirections["E"] = "e";
 })(EViewDirections || (EViewDirections = {}));
+export var EWorkbenchDirection;
+(function (EWorkbenchDirection) {
+    EWorkbenchDirection["VERTICAL"] = "vertical";
+    EWorkbenchDirection["HORIZONTAL"] = "horizontal";
+})(EWorkbenchDirection || (EWorkbenchDirection = {}));
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -90,13 +95,13 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
-            for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i._id] = i;
+            for (const row of action.payload.data) {
+                state.workbenches[state.focusViewIndex].data[row._id] = row;
             }
         },
         addScoreColumn(state, action) {
-            for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
+            for (const row of action.payload.data) {
+                state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
             }
         },
     }

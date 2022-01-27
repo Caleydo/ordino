@@ -39,8 +39,6 @@ export function WorkbenchVisView({
         item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
     }), [view.id, view.index]);
 
-    console.log(view.id, view.index);
-
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
 

@@ -26,13 +26,18 @@ export interface IOrdinoAppState {
   focusViewIndex: number;
 }
 
+export enum EWorkbenchDirection {
+  VERTICAL = 'vertical',
+  HORIZONTAL = 'horizontal'
+}
+
 export interface IWorkbench {
   /**
    * List of open views.
    */
   views: IWorkbenchView[];
 
-  viewDirection: 'vertical' | 'horizontal';
+  viewDirection: EWorkbenchDirection;
 
   name: string;
 
@@ -125,7 +130,7 @@ const ordinoSlice = createSlice({
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
     },
-    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: 'vertical' | 'horizontal'}>) {
+    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: EWorkbenchDirection}>) {
       state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
     },
     removeWorkbench(state, action: PayloadAction<{index: number}>) {
@@ -154,13 +159,13 @@ const ordinoSlice = createSlice({
       state.focusViewIndex = action.payload.index;
     },
     setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
-      for(const i of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[i._id] = i;
+      for(const row of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[row._id] = row;
       }
     },
     addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {
-      for(const i of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[i.id][action.payload.columnName] = i.score;
+      for(const row of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
       }
     },
   }

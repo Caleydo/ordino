@@ -12,15 +12,12 @@ export enum EWorkbenchType {
     NEXT = 't-next'
 }
 
-export const focusViewWidth = 85;
-export const contextViewWidth = 15;
+export const focusViewWidth = 85; // viewport width (vw)
+export const contextViewWidth = 15; // viewport width (vw)
 
 export function Filmstrip() {
     const ordino = useAppSelector((state) => state.ordino);
-    const ref = React.useRef(null);
-
     const translateDistance = useMemo(() => {
-        const contextIndex = ordino.focusViewIndex - 1;
         if(ordino.focusViewIndex > 1) {
             return `translateX(${(ordino.focusViewIndex - 1) * -contextViewWidth}vw)`;
         } else {
@@ -29,7 +26,7 @@ export function Filmstrip() {
     }, [ordino.focusViewIndex]);
 
     return (
-        <div ref={ref} className="ordino-filmstrip flex-grow-1 align-content-stretch" style={{transform: translateDistance}}>
+        <div className="ordino-filmstrip flex-grow-1 align-content-stretch" style={{transform: translateDistance}}>
             {ordino.workbenches.map((v, index) => {
                 const focused = ordino.focusViewIndex;
                 return (

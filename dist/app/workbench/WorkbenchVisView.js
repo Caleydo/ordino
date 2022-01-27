@@ -26,7 +26,6 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: view.index },
     }), [view.id, view.index]);
-    console.log(view.id, view.index);
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
         const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);

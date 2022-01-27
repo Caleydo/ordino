@@ -20,12 +20,16 @@ export interface IOrdinoAppState {
      */
     focusViewIndex: number;
 }
+export declare enum EWorkbenchDirection {
+    VERTICAL = "vertical",
+    HORIZONTAL = "horizontal"
+}
 export interface IWorkbench {
     /**
      * List of open views.
      */
     views: IWorkbenchView[];
-    viewDirection: 'vertical' | 'horizontal';
+    viewDirection: EWorkbenchDirection;
     name: string;
     entityId: string;
     index: number;
@@ -79,7 +83,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     secondViewIndex: number;
 }, string>, setWorkbenchDirection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
-    direction: 'vertical' | 'horizontal';
+    direction: EWorkbenchDirection;
 }, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};

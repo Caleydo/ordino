@@ -1,5 +1,5 @@
 import React from 'react';
-import { changeFocus, addWorkbench, replaceWorkbench } from '../store/ordinoSlice';
+import { changeFocus, addWorkbench, replaceWorkbench, EWorkbenchDirection } from '../store/ordinoSlice';
 import { EWorkbenchType } from './Filmstrip';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { WorkbenchViews } from './workbench/WorkbenchViews';
@@ -11,7 +11,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const showNextChooser = workbench.index === ordino.workbenches.length - 1;
     const onAddView = React.useCallback((view, viewIndex) => {
         dispatch(addWorkbench({
-            viewDirection: 'horizontal',
+            viewDirection: EWorkbenchDirection.HORIZONTAL,
             views: [{ viewType: 'Ranking', filters: [], index: 0 }],
             transitionOptions: [],
             columnDescs: [],
@@ -25,7 +25,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     }, []);
     const onReplaceView = React.useCallback((view, viewIndex) => {
         dispatch(replaceWorkbench({ workbenchIndex: viewIndex, newWorkbench: {
-                viewDirection: 'horizontal',
+                viewDirection: EWorkbenchDirection.HORIZONTAL,
                 views: [{ viewType: 'Ranking', filters: [], index: 0 }],
                 transitionOptions: [],
                 columnDescs: [],

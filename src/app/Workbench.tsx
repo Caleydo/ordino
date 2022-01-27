@@ -5,7 +5,7 @@ import Split from 'react-split';
 // import Split from 'react-split-grid'
 
 import {views} from '../base/constants';
-import { changeFocus, addView, addWorkbench, EViewDirections, replaceWorkbench, IWorkbench} from '../store/ordinoSlice';
+import { changeFocus, addView, addWorkbench, EViewDirections, replaceWorkbench, IWorkbench, EWorkbenchDirection} from '../store/ordinoSlice';
 import {EExpandMode, EViewChooserMode, ViewChooser} from './ViewChooser';
 import {EWorkbenchType} from './Filmstrip';
 import {Lineup} from './lite';
@@ -30,7 +30,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
     const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             addWorkbench({
-                viewDirection: 'horizontal',
+                viewDirection: EWorkbenchDirection.HORIZONTAL,
                 views: [{viewType: 'Ranking', filters: [], index: 0}],
                 transitionOptions: [],
                 columnDescs: [],
@@ -48,7 +48,7 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
     const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
         dispatch(
             replaceWorkbench({workbenchIndex: viewIndex, newWorkbench: {
-                viewDirection: 'horizontal',
+                viewDirection: EWorkbenchDirection.HORIZONTAL,
                 views: [{viewType: 'Ranking', filters: [], index: 0}],
                 transitionOptions: [],
                 columnDescs: [],

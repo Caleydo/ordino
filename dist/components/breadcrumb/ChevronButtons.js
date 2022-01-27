@@ -2,7 +2,7 @@ import React from 'react';
 import { EDragTypes } from '../../app/workbench/utils';
 import { useDrag } from 'react-dnd';
 import { addView, useAppDispatch, useAppSelector } from '../..';
-import { setWorkbenchDirection } from '../../store';
+import { EWorkbenchDirection, setWorkbenchDirection } from '../../store';
 import { getAllFilters } from '../../store/storeUtils';
 export function ChevronButtons({ color = 'cornflowerblue' }) {
     const dispatch = useAppDispatch();
@@ -34,7 +34,7 @@ export function ChevronButtons({ color = 'cornflowerblue' }) {
                 " Add Column")),
         React.createElement("div", null,
             React.createElement("button", { onClick: () => {
-                    dispatch(setWorkbenchDirection({ workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'horizontal' ? 'vertical' : 'horizontal' }));
+                    dispatch(setWorkbenchDirection({ workbenchIndex: ordino.focusViewIndex, direction: ordino.workbenches[ordino.focusViewIndex].viewDirection === EWorkbenchDirection.HORIZONTAL ? EWorkbenchDirection.VERTICAL : EWorkbenchDirection.HORIZONTAL }));
                 }, type: "button", className: "chevronButton btn btn-light btn-sm align-middle m-1", style: { color } },
                 " ",
                 React.createElement("i", { className: "flex-grow-1 fas fa-compass" }),

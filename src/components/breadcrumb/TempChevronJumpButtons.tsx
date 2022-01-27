@@ -52,7 +52,7 @@ export function TempChevronJumpButtons({
                                     entityId: j.id,
                                     name: j.name,
                                     index: ordino.focusViewIndex + 1,
-                                    selections: [],
+                                    selectionIds: [],
                                 })
                             );
                             setTimeout(() => {

@@ -48,16 +48,16 @@ export interface IWorkbench {
 
   index: number;
 
-  data: {[key: number]: IRow};
+  data: {[key: string]: IRow};
   columnDescs: IReprovisynServerColumn[];
   // TODO: how do we store the lineup-specific column descriptions?
 
-  transitionOptions: string[];
+  transitionOptions: IRow['_visyn_id'][];
 
   /**
    * List selected rows
    */
-  selections: string[]; // TODO define selection, probably IROW
+  selectionIds: IRow['_visyn_id'][];
 }
 
 interface IBaseState {
@@ -149,7 +149,7 @@ const ordinoSlice = createSlice({
       state.workbenches.push(action.payload.newWorkbench);
     },
     addSelection(state, action: PayloadAction<{newSelection: string[]}>) {
-      state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
+      state.workbenches[state.focusViewIndex].selectionIds = action.payload.newSelection;
     },
     addFilter(state, action: PayloadAction<{viewId: string, filter: string[]}>) {
       state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
@@ -158,8 +158,8 @@ const ordinoSlice = createSlice({
       state.focusViewIndex = action.payload.index;
     },
     setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
-      for(const row of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[row._id] = row;
+      for(const i of action.payload.data) {
+        state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
       }
     },
     addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {

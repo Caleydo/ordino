@@ -1,13 +1,15 @@
 import * as React from 'react';
 import {useDrag, useDrop} from 'react-dnd';
+import {ReprovisynRestBaseUtils} from 'reprovisyn';
+import {IDType, useAsync, Range} from 'tdp_core';
 import {useAppDispatch, useAppSelector} from '../..';
-import {IWorkbenchView, removeView, setWorkbenchDirection} from '../../store';
+import {Ranking} from '../../ranking';
+import {IWorkbenchView, removeView} from '../../store';
 import {colorPalette} from '../Breadcrumb';
-
-import {Lineup} from '../lite';
 import {DropOverlay} from './DropOverlay';
-import {MoveButton} from './MoveButton';
-import {useLoadViewPlugin} from './useLoadViewPlugin';
+import {useLoadColumnDesc} from './useLoadColumnDesc';
+import {useLoadData} from './useLoadData';
+import {useLoadView} from './useLoadView';
 import {EDragTypes} from './utils';
 
 export interface IWorkbenchRankingViewProps {
@@ -15,12 +17,7 @@ export interface IWorkbenchRankingViewProps {
     view: IWorkbenchView;
 }
 
-export function WorkbenchRankingView({
-    workbenchIndex,
-    view
-}: IWorkbenchRankingViewProps) {
-    const [ref, instance] = useLoadViewPlugin(view.id, workbenchIndex);
-
+export function WorkbenchRankingView({workbenchIndex, view}: IWorkbenchRankingViewProps) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [{isOver, canDrop}, drop] = useDrop(() => ({
@@ -34,11 +31,21 @@ export function WorkbenchRankingView({
         }),
     }), [view.id]);
 
-    const [{}, drag] = useDrag(() => ({
+    const [{ }, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
         item: {type: EDragTypes.MOVE, viewId: view.id, index: view.index},
     }), [view.id, view.index]);
 
+    const {status, value: plugin} = useLoadView(view.id);
+    const loadMetaData = React.useMemo(() => () => {
+        if (!plugin?.desc.itemIDType) {
+            return null;
+        }
+        return ReprovisynRestBaseUtils.getEntityMetadata({entityId: plugin?.desc.itemIDType});
+    }, [status]);
+    const {status: metadataStatus, value: entityMetadata} = useAsync(loadMetaData, []);
+    const {data} = useLoadData(plugin?.desc?.itemIDType, entityMetadata, plugin?.desc);
+    const {value: columnDesc} = useLoadColumnDesc(plugin?.desc.itemIDType, entityMetadata);
     return (
         <>
             <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -50,7 +57,7 @@ export function WorkbenchRankingView({
 
                         <div ref={drag} className="view-parameters d-flex">
                             <div>
-                                <button type="button" className="chevronButton btn btn-outline-primary btn-sm align-middle m-1" style={{color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex]}}> <i className="flex-grow-1 fas fa-chevron-right m-1"/>Edit View</button>
+                                <button type="button" className="chevronButton btn btn-outline-primary btn-sm align-middle m-1" style={{color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex]}}> <i className="flex-grow-1 fas fa-chevron-right m-1" />Edit View</button>
                             </div>
                             <span className={'view-title row align-items-center m-1'}><strong>Ranking</strong></span>
                         </div>
@@ -61,7 +68,19 @@ export function WorkbenchRankingView({
                         </div>
                     </>
                 }
-                <div ref={ref} className="inner">
+                <div className="inner">
+                    {data?.length && columnDesc ?
+                        <Ranking
+                            data={data}
+                            columnDesc={columnDesc}
+                            selection={{
+                                idtype: new IDType('start', null, null),
+                                range: Range.none()
+                            }}
+                            options={{
+                                itemIDType: 'idtype'
+                            }} />
+                        : null}
                 </div>
 
                 {isOver && canDrop ? <DropOverlay view={view} /> : null}

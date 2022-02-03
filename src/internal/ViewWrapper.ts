@@ -30,7 +30,7 @@ import {MODE_ANIMATION_TIME} from './constants';
 
 
 function generate_hash(desc: IPluginDesc, selection: ISelection) {
-  const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.selectionIds);
+  const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.ids);
   return desc.id + '_' + s;
 }
 
@@ -57,7 +57,7 @@ export class ViewWrapper extends EventHandler {
    * @param newSelection
    */
   private listenerItemSelect = (event: any, oldSelection: ISelection, newSelection: ISelection) => {
-    this.chooseNextViews(newSelection.idtype, newSelection.selectionIds);
+    this.chooseNextViews(newSelection.idtype, newSelection.ids);
     this.fire(AView.EVENT_ITEM_SELECT, oldSelection, newSelection);
   }
 
@@ -256,7 +256,7 @@ export class ViewWrapper extends EventHandler {
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
 
     return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
-      this.chooseNextViews(sel.idtype, sel.selectionIds);
+      this.chooseNextViews(sel.idtype, sel.ids);
 
       // turn listener on again
       this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);

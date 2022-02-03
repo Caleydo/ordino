@@ -233,7 +233,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
   private updateItemSelection(viewWrapper: ViewWrapper, oldSelection: ISelection, newSelection: ISelection, options?) {
     // just update the selection for the last open view
     if (this.lastView === viewWrapper) {
-      this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.selectionIds), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.selectionIds)});
+      this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.ids), {inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.ids)});
 
       // check last view and if it will stay open for the new given selection
     } else {
@@ -241,9 +241,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       const right = this.state.views[i + 1];
 
       // update selection with the last open (= right) view
-      if (right === this.lastView && right.matchSelectionLength(newSelection.selectionIds.length)) {
+      if (right === this.lastView && right.matchSelectionLength(newSelection.ids.length)) {
         right.setParameterSelection(newSelection);
-        this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.selectionIds), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.selectionIds)});
+        this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.ids), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.ids)});
 
         // the selection does not match with the last open (= right) view --> close view
       } else {

@@ -34,16 +34,16 @@ export class CmdUtils {
 
   static asSelection(data: ReturnType<(typeof CmdUtils)['serializeSelection']>): ISelection {
     return {
-      selectionIds: data.selection || [],
+      ids: data.selection || [],
       idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
     };
   }
 
   static serializeSelection(selection?: ISelection) {
-    if (!selection || !selection.idtype || !selection.selectionIds || selection.selectionIds.length === 0) {
+    if (!selection || !selection.idtype || !selection.ids || selection.ids.length === 0) {
       return null;
     }
-    return { idtype: selection.idtype.id, selection: selection.selectionIds };
+    return { idtype: selection.idtype.id, selection: selection.ids };
   }
 
   /**
@@ -90,7 +90,7 @@ export class CmdUtils {
     app.removeImpl(existingView, oldFocus);
     return {
       removed: [inputs[1]],
-      inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.selectionIds, existingViewOptions, existingView.getItemSelection())
+      inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.ids, existingViewOptions, existingView.getItemSelection())
     };
   }
 
@@ -113,7 +113,7 @@ export class CmdUtils {
     const oldParams = {
       viewId: existingView.desc.id,
       idtype: existingView.selection.idtype,
-      selection: existingView.selection.selectionIds,
+      selection: existingView.selection.ids,
       itemSelection: existingView.getItemSelection(),
       options: existingViewOptions
     };
@@ -185,7 +185,7 @@ export class CmdUtils {
     return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
       viewId,
       idtype: idtype ? idtype.id : null,
-      selection: selection,
+      selection,
       itemSelection: CmdUtils.serializeSelection(itemSelection),
       options
     });
@@ -196,15 +196,15 @@ export class CmdUtils {
     const view = views[0];
     const target = views[1];
     const idtype = parameter.idtype ? IDTypeManager.getInstance().resolveIdType(parameter.idtype) : null;
-    const selectionIds = parameter.selection;
+    const ids = parameter.selection;
 
     const bak = view.getItemSelection();
-    await Promise.resolve(view.setItemSelection({idtype, selectionIds}));
+    await Promise.resolve(view.setItemSelection({idtype, ids}));
     if (target) {
-      await Promise.resolve(target.setParameterSelection({idtype, selectionIds}));
+      await Promise.resolve(target.setParameterSelection({idtype, ids}));
     }
     return {
-      inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.selectionIds) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.selectionIds)
+      inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.ids) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.ids)
     };
   }
 

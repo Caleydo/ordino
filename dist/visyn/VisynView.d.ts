@@ -1,3 +1,3 @@
-export interface ICosmicViewPluginDesc {
+export interface ICosmicViewPluginParams {
     currentId: string;
 }

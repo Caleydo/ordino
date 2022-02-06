@@ -10,6 +10,7 @@ export interface IWorkbenchView {
     id: string;
     uniqueId: string;
     filters: string[];
+    parameters?: any;
 }
 export interface IOrdinoAppState {
     /**
@@ -35,14 +36,14 @@ export interface IWorkbench {
     entityId: string;
     index: number;
     data: {
-        [key: number]: IRow;
+        [key: string]: IRow;
     };
     columnDescs: IReprovisynServerColumn[];
-    transitionOptions: string[];
+    transitionOptions: IRow['_visyn_id'][];
     /**
      * List selected rows
      */
-    selections: string[];
+    selectionIds: IRow['_visyn_id'][];
 }
 interface IBaseState {
     selection: string[];
@@ -53,6 +54,10 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
+}, string>, setViewParameters: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    viewIndex: number;
+    parameters: any;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     descs: any[];
 }, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

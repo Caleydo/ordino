@@ -15,6 +15,7 @@ export interface IWorkbenchView {
   // this id is generated on creation and is simply a unique value used to differentiate views that may have the same id.
   uniqueId: string;
   filters: string[];
+  parameters?: any;
 }
 
 export interface IOrdinoAppState {
@@ -113,6 +114,9 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    setViewParameters(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, parameters: any}>) {
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
+    },
     setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string}>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
     },
@@ -170,6 +174,6 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const {addView, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {addView, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

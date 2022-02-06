@@ -42,6 +42,7 @@ export default function (registry: IRegistry) {
   }, {
     name: 'Vis',
     factory: 'VisVisynView',
+    tabFactory: 'VisViewSidebar',
     idtype: 'reprovisyn_ranking_ordino_public.cellline.tdp_cellline',
     selection: 'multiple',
     group: {

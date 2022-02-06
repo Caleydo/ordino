@@ -1,5 +1,5 @@
 import React from 'react';
-import { EXTENSION_POINT_TDP_VIEW, PluginRegistry, useAsync, Range, ResolveNow, IDType, ARankingView, IDTypeManager, FindViewUtils } from 'tdp_core';
+import { EXTENSION_POINT_TDP_VIEW, PluginRegistry, useAsync, ResolveNow, IDType, ARankingView, IDTypeManager, FindViewUtils } from 'tdp_core';
 import { addTransitionOptions, useAppDispatch, useAppSelector } from '../..';
 import { getAllFilters } from '../../store/storeUtils';
 export function useLoadViewPlugin(viewId, workbenchIndex) {
@@ -15,9 +15,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
-            //TODO:: This weird mapping is fine for now since we are still just storing numbers, but needs to be changed when we are truly storing IDs
-            const selection = { idtype: new IDType(idType, viewId, '', true), range: workbenchIndex === 0 ? Range.none() : Range.list(ordino.workbenches[workbenchIndex].selections.map((s) => +s)) };
-            console.log(selection);
+            const selection = { idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds };
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
                 const idTargetSet = new Set();
                 availableViews.forEach((v) => {
@@ -42,16 +40,15 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
         if (instance && instance instanceof ARankingView) {
             const view = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
-            //TODO:: This weird mapping is fine for now since we are still just storing numbers, but needs to be changed when we are truly storing IDs
-            view.selectionHelper.setGeneralVisSelection({ idtype: id, range: Range.list(ordino.workbenches[workbenchIndex].selections.map((s) => +s)) });
+            view.selectionHelper.setGeneralVisSelection({ idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds });
         }
-    }, [instance, ordino.workbenches[workbenchIndex].selections]);
+    }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);
     React.useEffect(() => {
         if (instance && instance instanceof ARankingView) {
             const view = instance;
             const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
             view.provider.setFilter((row) => {
-                return !filteredIds.includes(row.v._id);
+                return !filteredIds.includes(row.v._visyn_id);
             });
         }
     }, [instance, ordino.workbenches[workbenchIndex].views]);

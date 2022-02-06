@@ -32,7 +32,7 @@ export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
                     entityId: j.id,
                     name: j.name,
                     index: ordino.focusViewIndex + 1,
-                    selections: [],
+                    selectionIds: [],
                 }));
                 setTimeout(() => {
                     dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));

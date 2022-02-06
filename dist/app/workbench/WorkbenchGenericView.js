@@ -2,14 +2,15 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser } from '../..';
-import { removeView, setView } from '../../store';
+import { removeView, setView, setViewParameters } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
 import { useVisynViewPlugin } from './useLoadWorkbenchViewPlugin';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
-    const [editOpen, setEditOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(true);
     const viewPlugin = useVisynViewPlugin(view.id);
+    const [settingsTabSelected, setSettingsTabSelected] = useState(false);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
@@ -43,21 +44,36 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                                 React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))),
                         React.createElement("span", { className: 'view-title row align-items-center m-1' },
                             React.createElement("strong", null, view.id)),
-                        viewPlugin && viewPlugin.headerFactory ? React.createElement(viewPlugin.headerFactory, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selections, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: null, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: () => console.log('param changed'), onFiltersChanged: () => console.log('filter changed') }) : null)) :
+                        viewPlugin && viewPlugin.headerFactory ? React.createElement(viewPlugin.headerFactory, { desc: viewPlugin, entityId: ordino.workbenches[workbenchIndex].entityId, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selectionIds, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onFiltersChanged: () => console.log('filter changed') }) : null)) :
                 React.createElement(React.Fragment, null,
                     React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
                         React.createElement("span", { className: 'view-title row align-items-center m-1' },
                             React.createElement("strong", null, view.id)))),
             React.createElement("div", { className: "inner d-flex" },
-                editOpen ? React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
-                        dispatch(setView({
-                            workbenchIndex,
-                            viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
-                            viewId: newView.id
-                        }));
-                    }, isEmbedded: false }) : null,
+                editOpen ? React.createElement(React.Fragment, null,
+                    React.createElement("div", { className: 'd-flex flex-column' },
+                        React.createElement("ul", { className: "nav nav-tabs", id: "myTab", role: "tablist" },
+                            React.createElement("li", { className: "nav-item", role: "presentation" },
+                                React.createElement("button", { className: `nav-link ${settingsTabSelected || !viewPlugin || !viewPlugin.tabFactory ? 'active' : ''}`, onClick: () => setSettingsTabSelected(true), "data-bs-toggle": "tab", "data-bs-target": "#home", type: "button", role: "tab", "aria-controls": "home", "aria-selected": "true" }, "Settings")),
+                            viewPlugin && viewPlugin.tabFactory ?
+                                React.createElement("li", { className: "nav-item", role: "presentation" },
+                                    React.createElement("button", { className: `nav-link ${!settingsTabSelected ? 'active' : ''}`, onClick: () => setSettingsTabSelected(false), "data-bs-toggle": "tab", "data-bs-target": "#profile", type: "button", role: "tab", "aria-controls": "profile", "aria-selected": "false" }, "View")) : null),
+                        React.createElement("div", { className: "h-100 tab-content", style: { width: '220px' } },
+                            React.createElement("div", { className: `h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPlugin.tabFactory ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "settings-tab" },
+                                React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
+                                        dispatch(setView({
+                                            workbenchIndex,
+                                            viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
+                                            viewId: newView.id
+                                        }));
+                                    }, isEmbedded: false })),
+                            viewPlugin && viewPlugin.tabFactory ?
+                                React.createElement("div", { className: `tab-pane ${!settingsTabSelected ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "view-tab" },
+                                    React.createElement(viewPlugin.tabFactory, { desc: viewPlugin, entityId: ordino.workbenches[workbenchIndex].entityId, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selectionIds, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onFiltersChanged: () => console.log('filter changed') }))
+                                : null)))
+                    : null,
                 viewPlugin ?
-                    React.createElement(viewPlugin.factory, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selections, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: null, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: () => console.log('param changed'), onFiltersChanged: () => console.log('filter changed') }) : null),
+                    React.createElement(viewPlugin.factory, { desc: viewPlugin, entityId: ordino.workbenches[workbenchIndex].entityId, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selectionIds, filters: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: () => console.log('selection changed'), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onFiltersChanged: () => console.log('filter changed') }) : null),
             isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null)));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

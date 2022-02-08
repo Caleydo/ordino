@@ -28,11 +28,10 @@ export function WorkbenchViews({
         wb = (
             <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'} primary="second" className = "" minSize={300} size={'0%'}>
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
-                    {[<WorkbenchSingleView key={`${views[0].id}`} workbenchIndex={index} view={views[0]}/>]}
+                    <WorkbenchSingleView key={`${views[0].id}`} workbenchIndex={index} view={views[0]}/>
                 </SplitPane>
                 {/* //@ts-expect-error */}
                 <SplitPane split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'} primary="second" className = "" minSize={300} size={'0%'}>
-                    {[<></>]}
                 </SplitPane>
             </SplitPane>
         );
@@ -74,9 +73,18 @@ export function WorkbenchViews({
         );
     }
 
+    const wbWithSidebar = (
+        <div className={'d-flex flex-col w-100'}>
+            <div style={{flexGrow: 8.5}}>
+                {wb}
+            </div>
+            <div style={{flexGrow: 1.5}}>Hello</div>
+        </div>
+    );
+
     return (
         <div className="position-relative workbenchWrapper d-flex flex-grow-1">
-            {onlyRanking ? <WorkbenchSingleView workbenchIndex={index} view={views[0]}/> : wb}
+            {onlyRanking ? <WorkbenchSingleView workbenchIndex={index} view={views[0]}/> : wbWithSidebar}
         </div>
     );
 }

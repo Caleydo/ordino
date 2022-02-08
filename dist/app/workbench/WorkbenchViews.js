@@ -13,8 +13,9 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
     //TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
     if (views.length === 1) {
         wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: '0%' },
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' }, [React.createElement(WorkbenchSingleView, { key: `${views[0].id}`, workbenchIndex: index, view: views[0] })]),
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' }, [React.createElement(React.Fragment, null)])));
+            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' },
+                React.createElement(WorkbenchSingleView, { key: `${views[0].id}`, workbenchIndex: index, view: views[0] })),
+            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: '0%' })));
     }
     else if (views.length === 2) {
         wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: '50%' },
@@ -40,6 +41,9 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
                 React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[1] }),
                 React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[2] }))));
     }
-    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, onlyRanking ? React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[0] }) : wb));
+    const wbWithSidebar = (React.createElement("div", { className: 'd-flex flex-col w-100' },
+        React.createElement("div", { style: { flexGrow: 8.5 } }, wb),
+        React.createElement("div", { style: { flexGrow: 1.5 } }, "Hello")));
+    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, onlyRanking ? React.createElement(WorkbenchSingleView, { workbenchIndex: index, view: views[0] }) : wbWithSidebar));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

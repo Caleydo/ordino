@@ -21,6 +21,7 @@ export interface IOrdinoAppState {
      * Id of the current focus view
      */
     focusViewIndex: number;
+    sidebarOpen: boolean;
 }
 export declare enum EWorkbenchDirection {
     VERTICAL = "vertical",
@@ -58,6 +59,8 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     workbenchIndex: number;
     viewIndex: number;
     parameters: any;
+}, string>, setSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    open: boolean;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     descs: any[];
 }, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

@@ -28,6 +28,7 @@ export interface IOrdinoAppState {
    * Id of the current focus view
    */
   focusViewIndex: number;
+  sidebarOpen: boolean;
 }
 
 export enum EWorkbenchDirection {
@@ -98,6 +99,7 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 const initialState: IOrdinoAppState = {
   workbenches: [],
   focusViewIndex: 0,
+  sidebarOpen: false,
 };
 
 const ordinoSlice = createSlice({
@@ -113,6 +115,9 @@ const ordinoSlice = createSlice({
     },
     addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
+    },
+    setSidebarOpen(state, action: PayloadAction<{open: boolean}>) {
+      state.sidebarOpen = action.payload.open;
     },
     setViewParameters(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, parameters: any}>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
@@ -174,6 +179,25 @@ const ordinoSlice = createSlice({
   }
 });
 
-export const {addView, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection} = ordinoSlice.actions;
+export const {
+  addView,
+  setViewParameters,
+  setSidebarOpen,
+  createColumnDescs,
+  setView,
+  addColumnDesc,
+  removeView,
+  addTransitionOptions,
+  replaceWorkbench,
+  addScoreColumn,
+  addSelection,
+  addFilter,
+  setWorkbenchData,
+  changeFocus,
+  addFirstWorkbench,
+  addWorkbench,
+  switchViews,
+  setWorkbenchDirection
+} = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

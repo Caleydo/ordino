@@ -4,7 +4,7 @@ import {ChevronBreadcrumb} from '../components/breadcrumb/ChevronBreadcrumb';
 import {CollapsedBreadcrumb} from '../components/breadcrumb/CollapsedBreadcrumb';
 import {SingleBreadcrumb} from '../components/breadcrumb/SingleBreadcrumb';
 import {useAppDispatch, useAppSelector} from '../hooks';
-import {changeFocus} from '../store/ordinoSlice';
+import {changeFocus, setSidebarOpen} from '../store/ordinoSlice';
 
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 
@@ -46,7 +46,7 @@ export function Breadcrumb() {
 
             <SingleBreadcrumb workbench={ordino.workbenches[ordino.focusViewIndex]} color={colorPalette[ordino.focusViewIndex % colorPalette.length]} flexWidth={70 + 5 * (2 - endFlexNum)} first={ordino.focusViewIndex === 0} onClick={() => dispatch(changeFocus({index: ordino.focusViewIndex}))}/>
 
-            <SingleBreadcrumb color={'gray'} flexWidth={3} first={false}/>
+            <SingleBreadcrumb onClick={() => dispatch(setSidebarOpen({open: true}))}color={'gray'} flexWidth={3} first={false}/>
 
             {ordino.focusViewIndex + 1 < ordino.workbenches.length ? <SingleBreadcrumb workbench={ordino.workbenches[ordino.focusViewIndex + 1]} color={colorPalette[ordino.focusViewIndex + 1]} flexWidth={5} first={false} onClick={() => dispatch(changeFocus({index: ordino.focusViewIndex + 1}))}/> : null}
 

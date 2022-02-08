@@ -23,7 +23,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-            const selection = {idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds};
+            const selection = {idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds};
 
 
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
@@ -59,7 +59,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             const view: ARankingView = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
 
-            view.selectionHelper.setGeneralVisSelection({idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds});
+            view.selectionHelper.setGeneralVisSelection({idtype: id, ids: ordino.workbenches[workbenchIndex].selectionIds});
 
         }
     }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);

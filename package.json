@@ -75,7 +75,7 @@
     "@types/react-highlight-words": "^0.16.1",
     "@types/react-redux": "7.1.18",
     "@types/react-plotly.js": "2.5.0",
-    "@types/reprovisyn": "github:datavisyn/reprovisyn#ordino-2.0-working"
+    "@types/reprovisyn": "github:datavisyn/reprovisyn#develop-string-ids"
   },
   "dependencies": {
     "@lineup-lite/table": "1.6.0",
@@ -99,6 +99,6 @@
     "react-split-pane": "^0.1.92",
     "react-spring": "^9.3.2",
     "react-virtualized": "^9.22.3",
-    "tdp_core": "github:datavisyn/tdp_core#ordino-2.0"
+    "tdp_core": "github:datavisyn/tdp_core#ordino-2.0-string-ids"
   }
 }

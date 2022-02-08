@@ -1,8 +1,7 @@
 import React from 'react';
-import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, PluginRegistry, useAsync, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
+import {EXTENSION_POINT_TDP_VIEW, IViewPluginDesc, PluginRegistry, useAsync, IView, ResolveNow, IDType, ARankingView, IDTypeManager, FindViewUtils, ISelection} from 'tdp_core';
 import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
 import {getAllFilters} from '../../store/storeUtils';
-import {useLoadAvailableViews} from './useLoadAvailableViews';
 
 
 export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
@@ -23,7 +22,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-            const selection = {idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds};
+            const selection: ISelection = {idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds};
 
 
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {

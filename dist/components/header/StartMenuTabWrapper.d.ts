@@ -40,3 +40,4 @@ export interface IStartMenuTabWrapperProps {
     mode: EStartMenuMode;
 }
 export declare function StartMenuTabWrapper(props: IStartMenuTabWrapperProps): JSX.Element;
+//# sourceMappingURL=StartMenuTabWrapper.d.ts.map

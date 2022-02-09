@@ -4,3 +4,4 @@ export interface IWorkbenchRankingViewProps {
     view: IWorkbenchView;
 }
 export declare function WorkbenchRankingView({ workbenchIndex, view }: IWorkbenchRankingViewProps): JSX.Element;
+//# sourceMappingURL=WorkbenchRankingView.d.ts.map

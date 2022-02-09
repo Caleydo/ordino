@@ -1,8 +1,8 @@
 export function getAllFilters(workbench) {
-    const allFilteredIds = new Set();
-    workbench.views.forEach((view) => {
-        view.filters.forEach((id) => {
-            allFilteredIds.add(id);
+    const allFilteredIds = [];
+    workbench.views.forEach((f) => {
+        f.filters.forEach((id) => {
+            allFilteredIds.push(id);
         });
     });
     return Array.from(allFilteredIds);

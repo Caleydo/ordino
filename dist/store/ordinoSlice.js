@@ -86,7 +86,7 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            state.workbenches[state.focusViewIndex].selections = action.payload.newSelection;
+            state.workbenches[state.focusViewIndex].selection = action.payload.newSelection;
         },
         addFilter(state, action) {
             state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
@@ -95,13 +95,19 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
-            for (const row of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[row._id] = row;
+            for (const i of action.payload.data) {
+                state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
             }
         },
         addScoreColumn(state, action) {
             for (const row of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
+                const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+                if (dataRow) {
+                    dataRow[action.payload.columnName] = row.score;
+                }
+                else {
+                    state.workbenches[state.focusViewIndex].data[row.id] = row;
+                }
             }
         },
     }

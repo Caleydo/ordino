@@ -11,3 +11,4 @@ export interface IChooserComponents {
 }
 export declare const chooserComponents: Partial<IChooserComponents>;
 export declare type ViewChooserExtensions = Partial<IChooserComponents>;
+//# sourceMappingURL=config.d.ts.map

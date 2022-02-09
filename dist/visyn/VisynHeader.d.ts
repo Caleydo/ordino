@@ -8,3 +8,4 @@ export interface IVisynHeaderProps {
     configMenuEnabled?: boolean;
 }
 export declare function VisynHeader({ ConfigMenuOptions, BurgerSidebar, extensions, burgerMenuEnabled, }: IVisynHeaderProps): JSX.Element;
+//# sourceMappingURL=VisynHeader.d.ts.map

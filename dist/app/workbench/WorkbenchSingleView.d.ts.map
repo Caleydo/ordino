@@ -1,0 +1,1 @@
+{"version":3,"file":"WorkbenchSingleView.d.ts","sourceRoot":"","sources":["../../../src/app/workbench/WorkbenchSingleView.tsx"],"names":[],"mappings":"AACA,OAAO,EAAC,cAAc,EAAC,MAAM,aAAa,CAAC;AAI3C,MAAM,WAAW,yBAAyB;IACtC,cAAc,EAAE,MAAM,CAAC;IACvB,IAAI,EAAE,cAAc,CAAC;CACxB;AAED,wBAAgB,mBAAmB,CAAC,EAChC,cAAc,EACd,IAAI,EACP,EAAE,yBAAyB,eAS3B"}

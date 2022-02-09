@@ -7,3 +7,4 @@ interface IVisynAppProps {
 }
 export declare function VisynApp({ extensions: { header }, children }: IVisynAppProps): JSX.Element;
 export {};
+//# sourceMappingURL=VisynApp.d.ts.map

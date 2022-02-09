@@ -7,3 +7,4 @@ export interface ISingleBreadcrumbProps {
     workbench?: IWorkbench;
 }
 export declare function SingleBreadcrumb({ first, flexWidth, onClick, color, workbench, }: ISingleBreadcrumbProps): JSX.Element;
+//# sourceMappingURL=SingleBreadcrumb.d.ts.map

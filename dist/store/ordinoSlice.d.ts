@@ -8,7 +8,7 @@ export declare enum EViewDirections {
 }
 export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
     viewType: 'Ranking' | 'Vis';
-    filters: number[];
+    filters: string[];
 }
 export interface IOrdinoAppState {
     /**
@@ -34,14 +34,14 @@ export interface IWorkbench {
     entityId: string;
     index: number;
     data: {
-        [key: number]: IRow;
+        [key: string]: IRow;
     };
     columnDescs: IReprovisynServerColumn[];
-    transitionOptions: string[];
+    transitionOptions: IRow['_visyn_id'][];
     /**
      * List selected rows
      */
-    selections: number[];
+    selection: IRow['_visyn_id'][];
 }
 interface IBaseState {
     selection: string[];
@@ -69,10 +69,10 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     columnName: string;
     data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    newSelection: number[];
+    newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     viewId: string;
-    filter: number[];
+    filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
@@ -87,3 +87,4 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};
+//# sourceMappingURL=ordinoSlice.d.ts.map

@@ -1,4 +1,4 @@
-import { PHOVEA_SECURITY_FLASK_LoginMenu as LoginMenu } from 'tdp_core';
+import { LoginMenu } from 'tdp_core';
 /**
  * Instantiates the login menu and appends the user dropdown to the header
  */
@@ -7,3 +7,4 @@ export declare function useLoginMenu(): {
     loggedIn: boolean;
     instance: LoginMenu | null;
 };
+//# sourceMappingURL=useLoginMenu.d.ts.map

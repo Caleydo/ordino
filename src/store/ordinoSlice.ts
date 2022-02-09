@@ -123,11 +123,11 @@ const ordinoSlice = createSlice({
     addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    createColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
-      state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+    createColumnDescs(state, action: PayloadAction<{entityId: string, desc: any}>) {
+      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
-    addColumnDesc(state, action: PayloadAction<{desc: any}>) {
-      state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
+    addColumnDesc(state, action: PayloadAction<{entityId: string, desc: any}>) {
+      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -161,9 +161,10 @@ const ordinoSlice = createSlice({
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
     },
-    setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
+    setWorkbenchData(state, action: PayloadAction<{entityId: string, data: any[]}>) {
+      console.log(action.payload.data, action.payload.entityId);
       for(const i of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
+        state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
       }
     },
     addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {

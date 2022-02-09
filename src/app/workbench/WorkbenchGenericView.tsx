@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {useMemo, useState} from 'react';
+import {Suspense, useMemo, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser} from '../..';
-import {IWorkbenchView, removeView, setView, setViewParameters} from '../../store';
+import {addFilter, addSelection, IWorkbenchView, removeView, setView, setViewParameters} from '../../store';
 import {findViewIndex, getAllFilters} from '../../store/storeUtils';
 import {colorPalette} from '../Breadcrumb';
 import {DropOverlay} from './DropOverlay';
@@ -22,7 +22,7 @@ export function WorkbenchGenericView({
     chooserOptions
 }: IWorkbenchGenericViewProps) {
     const [editOpen, setEditOpen] = useState<boolean>(true);
-    const viewPlugin = useVisynViewPlugin(view.id);
+    const [viewPlugin, viewPluginComponents] = useVisynViewPlugin(view.id);
 
     const [settingsTabSelected, setSettingsTabSelected] = useState<boolean>(false);
 
@@ -48,7 +48,7 @@ export function WorkbenchGenericView({
         item: {type: EDragTypes.MOVE, viewId: view.id, index: viewIndex},
     }), [view.id, viewIndex]);
 
-    console.log(viewPlugin);
+    console.log(ordino.workbenches);
 
     return (
         <>
@@ -64,18 +64,19 @@ export function WorkbenchGenericView({
                                 <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
                             </div>
                             <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
-                            {viewPlugin && viewPlugin.headerFactory ? <viewPlugin.headerFactory
+                            {viewPluginComponents?.header ?
+                            <Suspense fallback={'Loading..'}>
+                                <viewPluginComponents.header
                                 desc={viewPlugin}
-                                entityId={ordino.workbenches[workbenchIndex].entityId}
                                 data={ordino.workbenches[workbenchIndex].data}
                                 dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                                 selection={ordino.workbenches[workbenchIndex].selectionIds}
-                                filters={getAllFilters(ordino.workbenches[workbenchIndex])}
+                                idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                                 parameters={view.parameters}
-                                onSelectionChanged={() => console.log('selection changed')}
+                                onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
                                 onParametersChanged={(p) => dispatch(setViewParameters({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p}))}
-                                onFiltersChanged={() => console.log('filter changed')}
-                            /> : null}
+                                onIdFilterChanged={(filt: string[]) => dispatch(addFilter({viewId: view.id, filter: filt}))}
+                            /></Suspense> : null}
                         </div>
                     </> :
                     <>
@@ -89,9 +90,9 @@ export function WorkbenchGenericView({
                     <div className={'d-flex flex-column'}>
                         <ul className="nav nav-tabs" id="myTab" role="tablist">
                             <li className="nav-item" role="presentation">
-                                <button className={`nav-link ${settingsTabSelected || !viewPlugin || !viewPlugin.tabFactory ? 'active' : ''}`} onClick={() => setSettingsTabSelected(true)} data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Settings</button>
+                                <button className={`nav-link ${settingsTabSelected || !viewPlugin || !viewPluginComponents.tab ? 'active' : ''}`} onClick={() => setSettingsTabSelected(true)} data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Settings</button>
                             </li>
-                            {viewPlugin && viewPlugin.tabFactory ?
+                            {viewPlugin && viewPluginComponents.tab ?
                             <li className="nav-item" role="presentation">
                                 <button className={`nav-link ${!settingsTabSelected ? 'active' : ''}`} onClick={() => setSettingsTabSelected(false)} data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">View</button>
                             </li> : null}
@@ -99,7 +100,7 @@ export function WorkbenchGenericView({
                         </ul>
 
                         <div className="h-100 tab-content" style={{width: '220px'}}>
-                            <div className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPlugin.tabFactory ? 'active' : ''}`} role="tabpanel" aria-labelledby="settings-tab">
+                            <div className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPluginComponents.tab ? 'active' : ''}`} role="tabpanel" aria-labelledby="settings-tab">
                                 <ViewChooser views={chooserOptions} showBurgerMenu={false} mode={EViewChooserMode.EMBEDDED} onSelectedView={(newView:IViewPluginDesc) => {
                                     dispatch(setView({
                                         workbenchIndex,
@@ -108,20 +109,19 @@ export function WorkbenchGenericView({
                                     }));
                                 }} isEmbedded={false}/>
                             </div>
-                            {viewPlugin && viewPlugin.tabFactory ?
+                            {viewPlugin && viewPluginComponents.tab ?
                             <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
-                                <viewPlugin.tabFactory
+                                <viewPluginComponents.tab
                                     desc={viewPlugin}
-                                    entityId={ordino.workbenches[workbenchIndex].entityId}
                                     data={ordino.workbenches[workbenchIndex].data}
                                     dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                                     selection={ordino.workbenches[workbenchIndex].selectionIds}
-                                    filters={getAllFilters(ordino.workbenches[workbenchIndex])}
+                                    idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                                     parameters={view.parameters}
-                                    onSelectionChanged={() => console.log('selection changed')}
+                                    onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
                                     onParametersChanged={(p) => dispatch(setViewParameters({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p}))}
-                                    onFiltersChanged={() => console.log('filter changed')}
-                                />
+                                    onIdFilterChanged={(filt: string[]) => dispatch(addFilter({viewId: view.id, filter: filt}))}
+                                    />
                             </div>
                             : null}
                         </div>
@@ -129,18 +129,17 @@ export function WorkbenchGenericView({
                     </>
                     : null}
                     {viewPlugin ?
-                    <viewPlugin.factory
+                    <viewPluginComponents.view
                         desc={viewPlugin}
-                        entityId={ordino.workbenches[workbenchIndex].entityId}
                         data={ordino.workbenches[workbenchIndex].data}
                         dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                         selection={ordino.workbenches[workbenchIndex].selectionIds}
-                        filters={getAllFilters(ordino.workbenches[workbenchIndex])}
+                        idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                         parameters={view.parameters}
-                        onSelectionChanged={() => console.log('selection changed')}
+                        onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
                         onParametersChanged={(p) => dispatch(setViewParameters({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p}))}
-                        onFiltersChanged={() => console.log('filter changed')}
-                    /> : null}
+                        onIdFilterChanged={(filt: string[]) => dispatch(addFilter({viewId: view.id, filter: filt}))}
+                        /> : null}
                 </div>
 
                 {isOver && canDrop ? <DropOverlay view={view} /> : null}

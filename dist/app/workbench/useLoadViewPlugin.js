@@ -15,7 +15,8 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
-            const selection = { idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds };
+            const inputSelection = { idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selectionIds) };
+            const selection = { idtype: new IDType(idType, viewId, '', true), selectionIds: Array.from(ordino.workbenches[workbenchIndex].selectionIds) };
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
                 const idTargetSet = new Set();
                 availableViews.forEach((v) => {
@@ -26,9 +27,13 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
             FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
                 const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
                 const context = { graph: null, ref: { value: { data: null } }, desc: workbenchIndex === 0 ? view : filteredViews[0].v };
-                const i = viewPlugin.factory(context, selection, ref, {});
+                const i = viewPlugin.factory(context, inputSelection, ref, {});
                 context.ref[`v`] = i;
-                ResolveNow.resolveImmediately(i.init(document.getElementById(viewId).querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                ResolveNow.resolveImmediately(i.init(null, () => null)).then(() => {
+                    // i.setInputSelection(inputSelection);
+                    // console.log(selection);
+                    i.setItemSelection(selection);
+                });
                 setInstance(i);
             });
         }
@@ -37,9 +42,11 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?
      */
     React.useEffect(() => {
+        console.log(instance, workbenchIndex);
         if (instance && instance instanceof ARankingView) {
             const view = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
+            console.log('setting shit in here', ordino.workbenches[workbenchIndex].selectionIds);
             view.selectionHelper.setGeneralVisSelection({ idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds });
         }
     }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);

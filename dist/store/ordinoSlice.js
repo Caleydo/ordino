@@ -60,10 +60,10 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
         },
         addColumnDesc(state, action) {
-            state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
         },
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -96,8 +96,9 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
+            console.log(action.payload.data, action.payload.entityId);
             for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
+                state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
             }
         },
         addScoreColumn(state, action) {

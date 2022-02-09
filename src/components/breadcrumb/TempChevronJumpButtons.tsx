@@ -39,13 +39,12 @@ export function TempChevronJumpButtons({
     return (
         <>
             {possibleJumps.map((j: IViewPluginDesc) => {
-                console.log(j);
                 return (
                         <button key={`${j.id}Jump`} onClick={() => {
                             dispatch(
                                 addWorkbench({
                                     views: [{id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
-                                    viewDirection: EWorkbenchDirection.HORIZONTAL,
+                                    viewDirection: EWorkbenchDirection.VERTICAL,
                                     transitionOptions: [],
                                     columnDescs: [],
                                     data: {},

@@ -1,9 +1,9 @@
+import {values} from 'lodash';
 import React from 'react';
 import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, PluginRegistry, useAsync, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
 import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
 import {getAllFilters} from '../../store/storeUtils';
 import {useLoadAvailableViews} from './useLoadAvailableViews';
-
 
 export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
@@ -23,8 +23,9 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-            const selection = {idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds};
+            const inputSelection = {idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selectionIds)};
 
+            const selection = {idtype: new IDType(idType, viewId, '', true), selectionIds: Array.from(ordino.workbenches[workbenchIndex].selectionIds)};
 
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
                 const idTargetSet = new Set<string>();
@@ -41,23 +42,29 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
                 const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : filteredViews[0].v};
 
-                const i = viewPlugin.factory(context, selection, ref, {});
+                const i = viewPlugin.factory(context, inputSelection, ref, {});
                 context.ref[`v`] = i;
 
-                ResolveNow.resolveImmediately(i.init(document.getElementById(viewId).querySelector('.view-parameters'), () => null)).then(() => i.setInputSelection(selection));
+                ResolveNow.resolveImmediately(i.init(null, () => null)).then(() => {
+                    // i.setInputSelection(inputSelection);
+                    // console.log(selection);
+                    i.setItemSelection(selection);
+                });
                 setInstance(i);
             });
         }
     }, [status]);
 
-
     /**
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?
      */
     React.useEffect(() => {
+        console.log(instance, workbenchIndex);
         if(instance && instance instanceof ARankingView) {
             const view: ARankingView = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
+
+            console.log('setting shit in here', ordino.workbenches[workbenchIndex].selectionIds);
 
             view.selectionHelper.setGeneralVisSelection({idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds});
 

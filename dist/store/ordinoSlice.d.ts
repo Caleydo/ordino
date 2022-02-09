@@ -59,12 +59,14 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     viewIndex: number;
     parameters: any;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    descs: any[];
+    entityId: string;
+    desc: any;
 }, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
     viewId: string;
 }, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     desc: any;
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
@@ -84,6 +86,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;

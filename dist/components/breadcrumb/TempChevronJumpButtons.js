@@ -21,11 +21,10 @@ export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
         return [];
     }, [ordino.workbenches, ordino.focusViewIndex]);
     return (React.createElement(React.Fragment, null, possibleJumps.map((j) => {
-        console.log(j);
         return (React.createElement("button", { key: `${j.id}Jump`, onClick: () => {
                 dispatch(addWorkbench({
                     views: [{ id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
-                    viewDirection: EWorkbenchDirection.HORIZONTAL,
+                    viewDirection: EWorkbenchDirection.VERTICAL,
                     transitionOptions: [],
                     columnDescs: [],
                     data: {},

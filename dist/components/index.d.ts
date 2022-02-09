@@ -6,3 +6,4 @@ export * from './OrdinoScrollspy';
 export * from './header';
 export * from './OrdinoHeader';
 export * from './ErrorMessage';
+//# sourceMappingURL=index.d.ts.map

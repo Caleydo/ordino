@@ -6,3 +6,4 @@ interface IWorkbenchProps {
 }
 export declare function Workbench({ workbench, type }: IWorkbenchProps): JSX.Element;
 export {};
+//# sourceMappingURL=Workbench.d.ts.map

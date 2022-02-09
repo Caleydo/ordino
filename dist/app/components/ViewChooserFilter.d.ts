@@ -4,3 +4,4 @@ export interface IViewChooserFilterProps {
     setFilteredViews: (views: IViewPluginDesc[]) => void;
 }
 export declare function ViewChooserFilter(props: IViewChooserFilterProps): JSX.Element;
+//# sourceMappingURL=ViewChooserFilter.d.ts.map

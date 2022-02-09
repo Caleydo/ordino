@@ -6,3 +6,4 @@ export * from './ViewChooserHeader';
 export * from './ViewChooserFilter';
 export * from './ViewChooserFooter';
 export * from './config';
+//# sourceMappingURL=index.d.ts.map

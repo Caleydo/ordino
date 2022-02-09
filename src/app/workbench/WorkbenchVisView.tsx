@@ -70,22 +70,22 @@ export function WorkbenchVisView({
     const filterCallback = useMemo(() => (s) => {
         if(s === 'Filter Out') {
             const viewCopy = [...view.filters];
-            viewCopy.push(...ordino.workbenches[workbenchIndex].selectionIds);
+            viewCopy.push(...ordino.workbenches[workbenchIndex].selection);
             dispatch(addFilter({viewId: view.id, filter: viewCopy}));
             dispatch(addSelection({newSelection: []}));
         } else if (s === 'Filter In') {
             const viewCopy = [...view.filters];
-            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selectionIds.includes(d._visyn_id)).map((d) => d._visyn_id));
+            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selection.includes(d._visyn_id)).map((d) => d._visyn_id));
             dispatch(addFilter({viewId: view.id, filter: viewCopy}));
             dispatch(addSelection({newSelection: []}));
         } else {
             dispatch(addFilter({viewId: view.id, filter: []}));
         }
-    }, [view.filters, ordino.workbenches[workbenchIndex].selectionIds]);
+    }, [view.filters, ordino.workbenches[workbenchIndex].selection]);
 
     const selectedMap: { [key: number]: boolean } = {};
 
-    const selections = ordino.workbenches[workbenchIndex].selectionIds;
+    const selections = ordino.workbenches[workbenchIndex].selection;
     if(selections && selections.length > 0) {
 
         const allData = ordino.workbenches[workbenchIndex].data;
@@ -95,7 +95,7 @@ export function WorkbenchVisView({
             selectedMap[i] = false;
         }
 
-        for(const i of ordino.workbenches[workbenchIndex].selectionIds) {
+        for(const i of ordino.workbenches[workbenchIndex].selection) {
             selectedMap[i] = true;
         }
     }

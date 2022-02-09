@@ -15,7 +15,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
-            const selection = { idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selectionIds };
+            const selection = { idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : ordino.workbenches[workbenchIndex - 1].selection };
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
                 const idTargetSet = new Set();
                 availableViews.forEach((v) => {
@@ -38,9 +38,9 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
         if (instance) {
             const view = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
-            view.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selectionIds });
+            view.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selection });
         }
-    }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);
+    }, [instance, ordino.workbenches[workbenchIndex].selection]);
     React.useEffect(() => {
         if (instance) {
             const view = instance;

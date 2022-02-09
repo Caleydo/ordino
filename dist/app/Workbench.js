@@ -19,7 +19,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
             entityId: view.id,
             name: view.name,
             index: viewIndex,
-            selectionIds: [],
+            selection: [],
         }));
         setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
     }, []);
@@ -33,7 +33,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                 entityId: view.id,
                 name: view.name,
                 index: viewIndex,
-                selectionIds: [],
+                selection: [],
             } }));
         setTimeout(() => dispatch(changeFocus({ index: viewIndex })), 0);
     }, []);

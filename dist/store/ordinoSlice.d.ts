@@ -41,7 +41,7 @@ export interface IWorkbench {
     /**
      * List selected rows
      */
-    selectionIds: IRow['_visyn_id'][];
+    selection: IRow['_visyn_id'][];
 }
 interface IBaseState {
     selection: string[];
@@ -87,3 +87,4 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};
+//# sourceMappingURL=ordinoSlice.d.ts.map

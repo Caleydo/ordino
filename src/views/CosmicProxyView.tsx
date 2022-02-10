@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {useEffect} from 'react';
 import Select from 'react-select';
+import {IVisynViewPluginFactory} from '../../../tdp_core/dist';
 import {IVisynViewProps} from '../../../tdp_core/dist/views/VisynView';
 import {ICosmicViewPluginParams} from '../visyn/VisynView';
 
@@ -35,3 +36,11 @@ export function CosmicViewHeader({
       }}/>
     </div>;
 }
+
+export const cosmicConfiguration: () => IVisynViewPluginFactory = () => {
+  return {
+      view: CosmicView,
+      tab: null,
+      header: CosmicViewHeader
+  };
+};

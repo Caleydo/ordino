@@ -21,4 +21,11 @@ export function CosmicViewHeader({ desc, data, dataDesc, selection, idFilter, pa
                 onParametersChanged({ currentId: e.value });
             } }));
 }
+export const cosmicConfiguration = () => {
+    return {
+        view: CosmicView,
+        tab: null,
+        header: CosmicViewHeader
+    };
+};
 //# sourceMappingURL=CosmicProxyView.js.map

@@ -76,7 +76,7 @@ export function WorkbenchGenericView({
                                 desc={viewPlugin}
                                 data={ordino.workbenches[workbenchIndex].data}
                                 dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
-                                selection={ordino.workbenches[workbenchIndex].selectionIds}
+                                selection={ordino.workbenches[workbenchIndex].selection}
                                 idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                                 parameters={view.parameters}
                                 onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
@@ -123,7 +123,7 @@ export function WorkbenchGenericView({
                                     desc={viewPlugin}
                                     data={ordino.workbenches[workbenchIndex].data}
                                     dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
-                                    selection={ordino.workbenches[workbenchIndex].selectionIds}
+                                    selection={ordino.workbenches[workbenchIndex].selection}
                                     idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                                     parameters={view.parameters}
                                     onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
@@ -144,7 +144,7 @@ export function WorkbenchGenericView({
                         desc={viewPlugin}
                         data={ordino.workbenches[workbenchIndex].data}
                         dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
-                        selection={ordino.workbenches[workbenchIndex].selectionIds}
+                        selection={ordino.workbenches[workbenchIndex].selection}
                         idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                         parameters={view.parameters}
                         onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}

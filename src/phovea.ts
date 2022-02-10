@@ -16,33 +16,32 @@ export default function (registry: IRegistry) {
     height: 24
   });
 
-  // registry.push(EXTENSION_POINT_VISYN_VIEW, 'cosmic', function () {
-  //   return import('./views/CosmicProxyView');
-  // }, {
-  //   factory: 'CosmicView',
-  //   headerFactory: 'CosmicViewHeader',
-  //   name: 'COSMIC',
-  //   site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
-  //   argument: 'cosmicid',
-  //   idtype: 'ordino_public.cellline.tdp_cellline',
-  //   selection: 'chooser',
-  //   group: {
-  //     name: 'External Resources'
-  //     // 'order: 0
-  //   },
-  //   filter: {
-  //     species: 'human'
-  //   },
-  //   description: 'Show information on your search from COSMIC',
-  //   topics: ['cellline', 'external']
-  // });
+  registry.pushVisynView('cosmic', function () {
+    return import('./views/CosmicProxyView');
+  }, {
+    factory: 'cosmicConfiguration',
+    name: 'COSMIC',
+    site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
+    argument: 'cosmicid',
+    idtype: 'ordino_public.cellline.tdp_cellline',
+    selection: 'chooser',
+    group: {
+      name: 'External Resources',
+      order: 0
+    },
+    filter: {
+      species: 'human'
+    },
+    description: 'Show information on your search from COSMIC',
+    topics: ['cellline', 'external']
+  });
 
   registry.pushVisynView('vis', function () {
     return import('./views/VisVisynView');
   }, {
     name: 'Vis',
     factory: 'visConfiguration',
-    idtype: 'reprovisyn_ranking_ordino_public.cellline.tdp_cellline',
+    idtype: 'ordino_public.cellline.tdp_cellline',
     selection: 'multiple',
     group: {
       name: 'Vis',
@@ -52,58 +51,35 @@ export default function (registry: IRegistry) {
     topics: ['tcga', 'information']
   });
 
-  // registry.push(EXTENSION_POINT_VISYN_VIEW, 'cosmic', function () {
-  //   return import('./views/CosmicProxyView');
-  // }, {
-  //   factory: 'CosmicView',
-  //   headerFactory: 'CosmicViewHeader',
-  //   name: 'COSMIC',
-  //   site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
-  //   argument: 'cosmicid',
-  //   idtype: 'ordino_public.tissue.tdp_tissue',
-  //   selection: 'chooser',
-  //   group: {
-  //     name: 'External Resources'
-  //     // 'order: 0
-  //   },
-  //   filter: {
-  //     species: 'human'
-  //   },
-  //   description: 'Show information on your search from COSMIC',
-  //   topics: ['cellline', 'external']
-  // });
+  registry.pushVisynView('vis', function () {
+    return import('./views/VisVisynView');
+  }, {
+    name: 'Vis',
+    factory: 'visConfiguration',
+    idtype: 'ordino_public.tissue.tdp_tissue',
+    selection: 'multiple',
+    group: {
+      name: 'Vis',
+      order: 0
+    },
+    description: 'Shows all information from the database for the searched genes',
+    topics: ['tcga', 'information']
+  });
 
-  // registry.push(EXTENSION_POINT_VISYN_VIEW, 'vis', function () {
-  //   return import('./views/VisVisynView');
-  // }, {
-  //   name: 'Vis',
-  //   factory: 'VisVisynView',
-  //   tabFactory: 'VisViewSidebar',
-  //   idtype: 'ordino_public.tissue.tdp_tissue',
-  //   selection: 'multiple',
-  //   group: {
-  //     name: 'Vis',
-  //     order: 0
-  //   },
-  //   description: 'Shows all information from the database for the searched genes',
-  //   topics: ['tcga', 'information']
-  // });
-
-  // registry.push(EXTENSION_POINT_VISYN_VIEW, 'vis', function () {
-  //   return import('./views/VisVisynView');
-  // }, {
-  //   name: 'Vis',
-  //   factory: 'VisVisynView',
-  //   tabFactory: 'VisViewSidebar',
-  //   idtype: 'ordino_public.public.tdp_gene',
-  //   selection: 'multiple',
-  //   group: {
-  //     name: 'Vis',
-  //     order: 0
-  //   },
-  //   description: 'Shows all information from the database for the searched genes',
-  //   topics: ['tcga', 'information']
-  // });
+  registry.pushVisynView('vis', function () {
+    return import('./views/VisVisynView');
+  }, {
+    name: 'Vis',
+    factory: 'visConfiguration',
+    idtype: 'ordino_public.public.tdp_gene',
+    selection: 'multiple',
+    group: {
+      name: 'Vis',
+      order: 0
+    },
+    description: 'Shows all information from the database for the searched genes',
+    topics: ['tcga', 'information']
+  });
 
   // generator-phovea:end
 }

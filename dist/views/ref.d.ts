@@ -10,3 +10,4 @@ export declare class CosmicProxyView extends ProxyView {
      */
     protected showErrorMessage(selectedItemId: string): void;
 }
+//# sourceMappingURL=ref.d.ts.map

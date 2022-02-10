@@ -1,12 +1,11 @@
 import {values} from 'lodash';
 import React from 'react';
-import {AView, EXTENSION_POINT_TDP_VIEW, IViewPlugin, IViewPluginDesc, PluginRegistry, useAsync, IView, ObjectRefUtils, ResolveNow, IDType, LocalStorageProvenanceGraphManager, ARankingView, IDTypeManager, FindViewUtils, IDiscoveredView} from 'tdp_core';
 import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
+import {ARankingView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IDTypeManager, IView, PluginRegistry, ResolveNow, useAsync} from 'tdp_core';
 import {getAllFilters} from '../../store/storeUtils';
-import {useLoadAvailableViews} from './useLoadAvailableViews';
 
 export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
-    const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId) as IViewPluginDesc;
+    const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
@@ -23,9 +22,9 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 
-            const inputSelection = {idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selectionIds)};
+            const inputSelection = {idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selectionIds)};
 
-            const selection = {idtype: new IDType(idType, viewId, '', true), selectionIds: Array.from(ordino.workbenches[workbenchIndex].selectionIds)};
+            const selection = {idtype: new IDType(idType, viewId, '', true), ids: Array.from(ordino.workbenches[workbenchIndex].selectionIds)};
 
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
                 const idTargetSet = new Set<string>();
@@ -66,7 +65,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
             console.log('setting shit in here', ordino.workbenches[workbenchIndex].selectionIds);
 
-            view.selectionHelper.setGeneralVisSelection({idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds});
+            view.selectionHelper.setGeneralVisSelection({idtype: id, ids: ordino.workbenches[workbenchIndex].selectionIds});
 
         }
     }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);

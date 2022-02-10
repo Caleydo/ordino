@@ -66,11 +66,14 @@ export function VisViewSidebar({ desc, data, dataDesc, selection, idFilter, para
             onIdFilterChanged([]);
         }
     };
+    console.log(cols, parameters);
     return React.createElement(VisSidebar, { width: '220px', columns: cols, filterCallback: visFilterChanged, externalConfig: parameters, setExternalConfig: onParametersChanged });
 }
-export const visConfiguration = {
-    view: VisVisynView,
-    tab: VisViewSidebar,
-    header: null
+export const visConfiguration = () => {
+    return {
+        view: VisVisynView,
+        tab: VisViewSidebar,
+        header: null
+    };
 };
 //# sourceMappingURL=VisVisynView.js.map

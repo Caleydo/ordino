@@ -1,6 +1,6 @@
 import React from 'react';
-import { EXTENSION_POINT_TDP_VIEW, PluginRegistry, useAsync, ResolveNow, IDType, ARankingView, IDTypeManager, FindViewUtils } from 'tdp_core';
 import { addTransitionOptions, useAppDispatch, useAppSelector } from '../..';
+import { ARankingView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IDTypeManager, PluginRegistry, ResolveNow, useAsync } from 'tdp_core';
 import { getAllFilters } from '../../store/storeUtils';
 export function useLoadViewPlugin(viewId, workbenchIndex) {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
@@ -15,8 +15,8 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
-            const inputSelection = { idtype: new IDType(idType, viewId, '', true), selectionIds: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selectionIds) };
-            const selection = { idtype: new IDType(idType, viewId, '', true), selectionIds: Array.from(ordino.workbenches[workbenchIndex].selectionIds) };
+            const inputSelection = { idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selectionIds) };
+            const selection = { idtype: new IDType(idType, viewId, '', true), ids: Array.from(ordino.workbenches[workbenchIndex].selectionIds) };
             FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
                 const idTargetSet = new Set();
                 availableViews.forEach((v) => {
@@ -47,7 +47,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
             const view = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
             console.log('setting shit in here', ordino.workbenches[workbenchIndex].selectionIds);
-            view.selectionHelper.setGeneralVisSelection({ idtype: id, selectionIds: ordino.workbenches[workbenchIndex].selectionIds });
+            view.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selectionIds });
         }
     }, [instance, ordino.workbenches[workbenchIndex].selectionIds]);
     React.useEffect(() => {

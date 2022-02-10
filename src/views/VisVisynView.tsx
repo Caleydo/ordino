@@ -9,6 +9,7 @@ export function VisVisynView({
     desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged
   }: IVisynViewProps<any, IVisConfig>) {
 
+
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
 
@@ -50,6 +51,7 @@ export function VisViewSidebar({
     desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged
   }: IVisynViewProps<any, IVisConfig>) {
 
+
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
 
@@ -89,11 +91,15 @@ export function VisViewSidebar({
         }
     };
 
+    console.log(cols, parameters);
+
     return <VisSidebar width={'220px'} columns={cols} filterCallback={visFilterChanged} externalConfig={parameters} setExternalConfig={onParametersChanged}/>;
 }
 
-export const visConfiguration: IVisynViewPluginFactory = {
-    view: VisVisynView,
-    tab: VisViewSidebar,
-    header: null
+export const visConfiguration: () => IVisynViewPluginFactory = () => {
+    return {
+        view: VisVisynView,
+        tab: VisViewSidebar,
+        header: null
+    };
 };

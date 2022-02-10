@@ -2,8 +2,7 @@
 import * as React from 'react';
 import {useEffect} from 'react';
 import Select from 'react-select';
-import {IVisynViewPluginFactory} from '../../../tdp_core/dist';
-import {IVisynViewProps} from '../../../tdp_core/dist/views/VisynView';
+import {IVisynViewPluginFactory, IVisynViewProps} from 'tdp_core';
 import {ICosmicViewPluginParams} from '../visyn/VisynView';
 
 export function CosmicView({

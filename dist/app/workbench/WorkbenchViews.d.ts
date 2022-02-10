@@ -3,3 +3,4 @@ export interface IWorkbenchViewsProps {
     onlyRanking?: boolean;
 }
 export declare function WorkbenchViews({ index, onlyRanking, }: IWorkbenchViewsProps): JSX.Element;
+//# sourceMappingURL=WorkbenchViews.d.ts.map

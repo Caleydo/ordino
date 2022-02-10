@@ -9,3 +9,4 @@ export declare const useAppDispatch: () => import("redux-thunk").ThunkDispatch<i
     menu: import("..").IMenuState;
     app: import("..").IAppState;
 }>, undefined, import("redux").AnyAction> & import("redux").Dispatch<import("redux").AnyAction>;
+//# sourceMappingURL=useAppDispatch.d.ts.map

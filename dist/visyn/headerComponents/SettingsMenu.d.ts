@@ -3,3 +3,4 @@ export interface ISettingsMenuProps {
     menuItems?: React.ReactElement | null;
 }
 export declare function SettingsMenu({ menuItems }: ISettingsMenuProps): JSX.Element;
+//# sourceMappingURL=SettingsMenu.d.ts.map

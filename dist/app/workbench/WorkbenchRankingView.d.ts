@@ -6,3 +6,4 @@ export interface IWorkbenchRankingViewProps {
     chooserOptions: IViewPluginDesc[];
 }
 export declare function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }: IWorkbenchRankingViewProps): JSX.Element;
+//# sourceMappingURL=WorkbenchRankingView.d.ts.map

@@ -3,3 +3,4 @@ export interface IChevronButtonsProps {
     color?: string;
 }
 export declare function ChevronButtons({ color }: IChevronBreadcrumbProps): JSX.Element;
+//# sourceMappingURL=ChevronButtons.d.ts.map

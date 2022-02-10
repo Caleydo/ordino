@@ -4,3 +4,4 @@ export declare function useInitVisynApp(): {
     value: void;
     error: Error;
 };
+//# sourceMappingURL=useInitVisynApp.d.ts.map

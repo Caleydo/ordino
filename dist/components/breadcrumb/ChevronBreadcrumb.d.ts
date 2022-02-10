@@ -7,3 +7,4 @@ export interface IChevronBreadcrumbProps {
     margin?: number;
 }
 export declare function ChevronBreadcrumb({ width, height, chevronIndent, first, margin, color }: IChevronBreadcrumbProps): JSX.Element;
+//# sourceMappingURL=ChevronBreadcrumb.d.ts.map

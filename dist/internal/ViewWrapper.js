@@ -255,12 +255,14 @@ export class ViewWrapper extends EventHandler {
      */
     chooseNextViews(idtype, range) {
         const that = this;
-        // show chooser if selection available
-        this.$chooser.classed('hidden', range.isNone);
-        if (range.isNone) {
-            this.$chooser.selectAll('button').classed('active', false);
-        }
         FindViewUtils.findViews(idtype, range).then((views) => {
+            // do not show chooser if there is only one view available
+            const hasSingleView = views.length === 1;
+            // show chooser if selection available
+            this.$chooser.classed('hidden', range.isNone || hasSingleView);
+            if (range.isNone) {
+                this.$chooser.selectAll('button').classed('active', false);
+            }
             const groups = FindViewUtils.groupByCategory(views);
             const $categories = this.$chooser.selectAll('div.category').data(groups);
             $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d.label);
@@ -277,6 +279,14 @@ export class ViewWrapper extends EventHandler {
                 d3.select(this).classed('active', true);
                 that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
             });
+            if (hasSingleView) {
+                const viewButton = $buttons.node();
+                if (!viewButton.classList.contains('active')) {
+                    this.$viewWrapper.node().classList.add('single-view');
+                    // open next view directly if it is the only one available
+                    viewButton.click();
+                }
+            }
             $buttons.exit().remove();
         });
     }

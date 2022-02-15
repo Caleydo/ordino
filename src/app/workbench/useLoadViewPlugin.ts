@@ -21,6 +21,9 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
     const setRef = React.useCallback(async (ref: HTMLElement | null) => {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
+            console.log(ref);
+
+            ref.innerHTML = '';
 
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
 

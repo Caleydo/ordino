@@ -15,6 +15,8 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
     const setRef = React.useCallback(async (ref) => {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
+            console.log(ref);
+            ref.innerHTML = '';
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
             const inputSelection = { idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selection) };
             const selection = { idtype: new IDType(idType, viewId, '', true), ids: Array.from(ordino.workbenches[workbenchIndex].selection) };

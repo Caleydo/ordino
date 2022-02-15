@@ -14,6 +14,8 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
         return view.load();
     }, []);
 
+    console.log(ordino.workbenches[workbenchIndex].selectedMappings);
+
     const {status, value: viewPlugin} = useAsync(loadView, []);
 
     const setRef = React.useCallback(async (ref: HTMLElement | null) => {
@@ -25,16 +27,6 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
             const inputSelection = {idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selection)};
 
             const selection = {idtype: new IDType(idType, viewId, '', true), ids: Array.from(ordino.workbenches[workbenchIndex].selection)};
-
-            FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
-                const idTargetSet = new Set<string>();
-
-                availableViews.forEach((v) => {
-                    idTargetSet.add(v.v.itemIDType);
-                });
-
-                dispatch(addTransitionOptions({transitionOptions: Array.from(idTargetSet.values()), workbenchIndex}));
-            });
 
             FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
                 const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
@@ -52,7 +44,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
                 setInstance(i);
             });
         }
-    }, [status]);
+    }, [status, ordino.workbenches[workbenchIndex].selectedMappings]);
 
     /**
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?

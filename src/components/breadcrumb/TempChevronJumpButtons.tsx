@@ -40,30 +40,30 @@ export function TempChevronJumpButtons({
         <>
             {possibleJumps.map((j: IViewPluginDesc) => {
                 return (
-                        <button key={`${j.id}Jump`} onClick={() => {
+                    <button key={`${j.id}Jump`} onClick={() => {
+                        dispatch(
+                            addWorkbench({
+                                selectedMappings: [],
+                                views: [{id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
+                                viewDirection: EWorkbenchDirection.VERTICAL,
+                                transitionOptions: [],
+                                columnDescs: [],
+                                data: {},
+                                entityId: j.id,
+                                name: j.name,
+                                index: ordino.focusViewIndex + 1,
+                                selection: [],
+                            })
+                        );
+                        setTimeout(() => {
                             dispatch(
-                                addWorkbench({
-                                    views: [{id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
-                                    viewDirection: EWorkbenchDirection.VERTICAL,
-                                    transitionOptions: [],
-                                    columnDescs: [],
-                                    data: {},
-                                    entityId: j.id,
-                                    name: j.name,
-                                    index: ordino.focusViewIndex + 1,
-                                    selection: [],
-                                })
+                                changeFocus({index: ordino.focusViewIndex + 1})
                             );
-                            setTimeout(() => {
-                                dispatch(
-                                    changeFocus({index: ordino.focusViewIndex + 1})
-                                );
-                            }, 0);
+                        }, 0);
 
-                        }}type="button" className="chevronButton btn btn-light btn-sm align-middle m-1" style={{color}}>Jump to {j.name}</button>
+                    }} type="button" className="chevronButton btn btn-light btn-sm align-middle m-1" style={{color}}>Jump to {j.name}</button>
                 );
             })}
-
         </>
     );
 }

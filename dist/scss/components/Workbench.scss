@@ -47,6 +47,10 @@
   flex: 1 1 auto;
 }
 
+.entityJumpBox {
+  background-color: lightgray;
+}
+
 .view-title {
   font-size: 16px;
 }
@@ -63,6 +67,7 @@
 
 .SplitPane {
   width: 100% !important;
+  position: relative !important;
 }
 
 .gutter {

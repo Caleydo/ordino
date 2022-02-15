@@ -23,6 +23,7 @@ export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
     return (React.createElement(React.Fragment, null, possibleJumps.map((j) => {
         return (React.createElement("button", { key: `${j.id}Jump`, onClick: () => {
                 dispatch(addWorkbench({
+                    selectedMappings: [],
                     views: [{ id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
                     viewDirection: EWorkbenchDirection.VERTICAL,
                     transitionOptions: [],

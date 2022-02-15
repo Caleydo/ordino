@@ -1,5 +1,5 @@
 import React from 'react';
-import { addTransitionOptions, useAppDispatch, useAppSelector } from '../..';
+import { useAppDispatch, useAppSelector } from '../..';
 import { ARankingView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IDTypeManager, PluginRegistry, ResolveNow, useAsync } from 'tdp_core';
 import { getAllFilters } from '../../store/storeUtils';
 export function useLoadViewPlugin(viewId, workbenchIndex) {
@@ -10,6 +10,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);
+    console.log(ordino.workbenches[workbenchIndex].selectedMappings);
     const { status, value: viewPlugin } = useAsync(loadView, []);
     const setRef = React.useCallback(async (ref) => {
         // Create a new one if there is a ref
@@ -17,13 +18,6 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
             const inputSelection = { idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selection) };
             const selection = { idtype: new IDType(idType, viewId, '', true), ids: Array.from(ordino.workbenches[workbenchIndex].selection) };
-            FindViewUtils.findAllViews(new IDType(viewId, '.*', '', true)).then((availableViews) => {
-                const idTargetSet = new Set();
-                availableViews.forEach((v) => {
-                    idTargetSet.add(v.v.itemIDType);
-                });
-                dispatch(addTransitionOptions({ transitionOptions: Array.from(idTargetSet.values()), workbenchIndex }));
-            });
             FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
                 const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
                 const context = { graph: null, ref: { value: { data: null } }, desc: workbenchIndex === 0 ? view : filteredViews[0].v };
@@ -37,7 +31,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
                 setInstance(i);
             });
         }
-    }, [status]);
+    }, [status, ordino.workbenches[workbenchIndex].selectedMappings]);
     /**
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?
      */

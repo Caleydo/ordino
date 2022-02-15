@@ -31,6 +31,7 @@ export interface IWorkbench {
      * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
      */
     views: IWorkbenchView[];
+    selectedMappings: string[];
     viewDirection: EWorkbenchDirection;
     name: string;
     entityId: string;
@@ -44,6 +45,8 @@ export interface IWorkbench {
      * List selected rows
      */
     selection: IRow['_visyn_id'][];
+    detailsOpen: boolean;
+    addWorkbenchOpen: boolean;
 }
 interface IBaseState {
     selection: string[];
@@ -54,6 +57,15 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
+}, string>, changeSelectedMappings: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    newMapping: string;
+}, string>, setDetailsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    open: boolean;
+}, string>, setAddWorkbenchOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    open: boolean;
 }, string>, setViewParameters: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;

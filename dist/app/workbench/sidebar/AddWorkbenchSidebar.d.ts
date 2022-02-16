@@ -3,7 +3,8 @@ export interface IAddWorkbenchSidebarProps {
     workbench: IWorkbench;
 }
 export interface IMappingDesc {
-    mappingName: string;
+    targetEntity: string;
+    mappingEntity: string;
     mappingSubtype: string;
 }
 export declare function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps): JSX.Element;

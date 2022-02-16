@@ -55,7 +55,7 @@ export function DetailsSidebar({
 
     return (
         <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-            {status === 'success' ?
+            {/* {status === 'success' ?
             <div className={'d-flex flex-column'}>
                 {Array.from(availableEntities).filter((d, i) => i === 0).map((e) => {
                     return (
@@ -81,7 +81,7 @@ export function DetailsSidebar({
                     </div>
                     );
                 })}
-            </div> : null}
+            </div> : null} */}
         </div>
     );
 }

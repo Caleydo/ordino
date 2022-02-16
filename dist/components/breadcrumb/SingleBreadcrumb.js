@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../..';
 import { ChevronButtons } from './ChevronButtons';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
 import { ShowDetailsSwitch } from './ShowDetailsSwitch';
-import { TempChevronJumpButtons } from './TempChevronJumpButtons';
 export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -26,10 +25,6 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
             React.createElement(React.Fragment, null,
                 React.createElement(ShowDetailsSwitch, null),
                 React.createElement(ChevronButtons, { color: color }))
-            : null),
-        React.createElement("div", { className: 'position-absolute chevronDiv top-50 translate-middle-y d-flex', style: { right: '20px' } }, workbench && workbench.index === ordino.focusViewIndex ?
-            React.createElement(React.Fragment, null,
-                React.createElement(TempChevronJumpButtons, { color: color }))
             : null),
         React.createElement(ChevronBreadcrumb, { color: color, width: width, first: first })));
 }

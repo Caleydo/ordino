@@ -4,13 +4,15 @@ import {addTransitionOptions, addWorkbench, changeFocus, EWorkbenchDirection, IW
 import {EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IViewPluginDesc, PluginRegistry, useAsync} from 'tdp_core';
 import {colorPalette} from '../../Breadcrumb';
 import {useState} from 'react';
+import {IReprovisynMapping} from 'reprovisyn';
 
 export interface IAddWorkbenchSidebarProps {
     workbench: IWorkbench;
 }
 
 export interface IMappingDesc {
-    mappingName: string;
+    targetEntity: string;
+    mappingEntity: string;
     mappingSubtype: string;
 }
 
@@ -23,7 +25,7 @@ export function AddWorkbenchSidebar({
     const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
 
     const relationListCallback = (s: IMappingDesc) => {
-        if(!relationList.some((r) => r.mappingName === s.mappingName && r.mappingSubtype === s.mappingSubtype)) {
+        if(!relationList.some((r) => r.mappingEntity === s.mappingEntity && r.mappingSubtype === s.mappingSubtype && s.targetEntity === r.targetEntity)) {
             setRelationList([...relationList, s]);
         } else {
             const arr = Array.from(relationList).filter((r) => r.mappingSubtype !== s.mappingSubtype);
@@ -51,8 +53,8 @@ export function AddWorkbenchSidebar({
         return entities;
     }, [status, availableViews]);
 
-    console.log(availableViews, availableEntities);
-    console.log(relationList);
+    // console.log(availableViews, availableEntities);
+    // console.log(relationList);
 
     return (
         <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -63,30 +65,46 @@ export function AddWorkbenchSidebar({
                     <div className={'entityJumpBox p-1 mb-2 rounded'}>
                         <span className={'fs-2'} style={{color: colorPalette[workbench.index]}}>{e}</span>
                         {availableViews.filter((v) => v.v.itemIDType === e).map((v) => {
+                            // console.log(v);
                             return (
                             <div>
                                 <span>{v.v.name}</span>
-                                {v.v.mapping.targetToSourceColumns.map((col) => {
+
+                                {v.v.relation.mapping.map((map: IReprovisynMapping) => {
+                                    const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                                     return (
-                                        <div className="form-check">
-                                            <input onChange={() => relationListCallback({mappingName: e, mappingSubtype: col.columnName})} className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                {col.label}
-                                            </label>
-                                        </div>
+                                        <>
+                                            <div>{map.name}</div>
+                                            {columns.map((col) => {
+                                                return (
+                                                    <div className="form-check">
+                                                        <input onChange={() => relationListCallback({targetEntity: e, mappingEntity: map.entity, mappingSubtype: col.columnName})} className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                            {col.label}
+                                                        </label>
+                                                    </div>
+                                                );
+                                            })}
+                                        </>
                                     );
+
                                 })}
                             </div>
                             );
                         })}
                         <button onClick={() => {
-                            const viewPlugin: IViewPluginDesc = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${relationList[0].mappingName}`) as IViewPluginDesc;
+                            const viewPlugin: IViewPluginDesc = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${relationList[0].targetEntity}`) as IViewPluginDesc;
 
                             dispatch(
                                 addWorkbench({
                                     detailsOpen: true,
                                     addWorkbenchOpen: false,
-                                    selectedMappings: relationList.map((r) => r.mappingSubtype),
+                                    selectedMappings: relationList.map((r) => {
+                                        return {
+                                            entityId: r.mappingEntity,
+                                            columnSelection: r.mappingSubtype
+                                        };
+                                    }),
                                     views: [{id: viewPlugin.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
                                     viewDirection: EWorkbenchDirection.VERTICAL,
                                     transitionOptions: [],

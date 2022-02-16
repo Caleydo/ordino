@@ -6,7 +6,6 @@ import {ChevronButtons} from './ChevronButtons';
 import {IWorkbench} from '../../store';
 import {ChevronBreadcrumb} from './ChevronBreadcrumb';
 import {ShowDetailsSwitch} from './ShowDetailsSwitch';
-import {TempChevronJumpButtons} from './TempChevronJumpButtons';
 
 export interface ISingleBreadcrumbProps {
     first?: boolean;
@@ -52,14 +51,6 @@ export function SingleBreadcrumb({
                     <>
                         <ShowDetailsSwitch/>
                         <ChevronButtons color={color}/>
-                    </>
-                    : null
-                }
-            </div>
-            <div className={'position-absolute chevronDiv top-50 translate-middle-y d-flex'} style={{right: '20px'}}>
-                {workbench && workbench.index === ordino.focusViewIndex ?
-                    <>
-                        <TempChevronJumpButtons color={color}/>
                     </>
                     : null
                 }

@@ -71,14 +71,7 @@ export function WorkbenchViews({
         );
     }
 
-    const wbWithSidebar = (
-        <div className={'d-flex flex-col w-100'}>
-            <div style={{flexGrow: 8.5}}>
-                {wb}
-            </div>
-            <div style={{flexGrow: 1.5}}>Hello</div>
-        </div>
-    );
+    console.log(ordino.workbenches[index].addWorkbenchOpen);
 
     return (
         <div className="position-relative workbenchWrapper d-flex flex-grow-1">

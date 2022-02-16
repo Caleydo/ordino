@@ -57,6 +57,20 @@ const ordinoSlice = createSlice({
         setViewParameters(state, action) {
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
         },
+        changeSelectedMappings(state, action) {
+            // if(!state.workbenches[action.payload.workbenchIndex].selectedMappings.includes(action.payload.newMapping)) {
+            state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+            // } else {
+            //   state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((s) => s !== action.payload.newMapping);
+            // }
+        },
+        setDetailsOpen(state, action) {
+            state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
+        },
+        setAddWorkbenchOpen(state, action) {
+            console.log('in the slice add open');
+            state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
+        },
         setView(state, action) {
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
         },
@@ -64,10 +78,10 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
         },
         addColumnDesc(state, action) {
-            state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
         },
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -91,7 +105,7 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            state.workbenches[state.focusViewIndex].selectionIds = action.payload.newSelection;
+            state.workbenches[state.focusViewIndex].selection = action.payload.newSelection;
         },
         addFilter(state, action) {
             state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
@@ -100,17 +114,24 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
+            console.log(action.payload.data, action.payload.entityId);
             for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
+                state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
             }
         },
         addScoreColumn(state, action) {
             for (const row of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
+                const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+                if (dataRow) {
+                    dataRow[action.payload.columnName] = row.score;
+                }
+                else {
+                    state.workbenches[state.focusViewIndex].data[row.id] = row;
+                }
             }
         },
     }
 });
-export const { addView, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

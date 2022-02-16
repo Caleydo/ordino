@@ -40,9 +40,7 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
                 React.createElement(WorkbenchSingleView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }),
                 React.createElement(WorkbenchSingleView, { key: `wbView${views[2].uniqueId}`, workbenchIndex: index, view: views[2] }))));
     }
-    const wbWithSidebar = (React.createElement("div", { className: 'd-flex flex-col w-100' },
-        React.createElement("div", { style: { flexGrow: 8.5 } }, wb),
-        React.createElement("div", { style: { flexGrow: 1.5 } }, "Hello")));
+    console.log(ordino.workbenches[index].addWorkbenchOpen);
     return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
             ordino.workbenches[index].detailsOpen ?

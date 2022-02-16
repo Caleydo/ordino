@@ -36,13 +36,18 @@ export enum EWorkbenchDirection {
   HORIZONTAL = 'horizontal'
 }
 
+export interface ISelectedMapping {
+  entityId: string;
+  columnSelection: string;
+}
+
 export interface IWorkbench {
   /**
    * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
    */
   views: IWorkbenchView[];
 
-  selectedMappings: string[];
+  selectedMappings: ISelectedMapping[];
 
   viewDirection: EWorkbenchDirection;
 
@@ -126,17 +131,18 @@ const ordinoSlice = createSlice({
     setViewParameters(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, parameters: any}>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
-    changeSelectedMappings(state, action: PayloadAction<{workbenchIndex: number, newMapping: string}>) {
-      if(!state.workbenches[action.payload.workbenchIndex].selectedMappings.includes(action.payload.newMapping)) {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
-      } else {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((s) => s !== action.payload.newMapping);
-      }
+    changeSelectedMappings(state, action: PayloadAction<{workbenchIndex: number, newMapping: ISelectedMapping}>) {
+      // if(!state.workbenches[action.payload.workbenchIndex].selectedMappings.includes(action.payload.newMapping)) {
+      state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+      // } else {
+      //   state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((s) => s !== action.payload.newMapping);
+      // }
     },
     setDetailsOpen(state, action: PayloadAction<{workbenchIndex: number, open: boolean}>) {
       state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
     },
     setAddWorkbenchOpen(state, action: PayloadAction<{workbenchIndex: number, open: boolean}>) {
+      console.log('in the slice add open');
       state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
     },
     setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string}>) {

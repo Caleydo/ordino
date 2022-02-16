@@ -63,12 +63,13 @@ const ordinoSlice = createSlice({
             state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
         },
         addColumnDesc(state, action) {
-            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
             const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
-            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
+                state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
             state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
         },
         setWorkbenchDirection(state, action) {
@@ -112,8 +113,8 @@ const ordinoSlice = createSlice({
                 }
             }
         },
-    }
+    },
 });
-export const { addView, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

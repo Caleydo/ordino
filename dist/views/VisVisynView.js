@@ -16,7 +16,7 @@ export function VisVisynView({ desc, data, dataDesc, selection, idFilter, parame
                 description: c.summary,
                 id: c.label + (c)._id
             },
-            values: filteredData.map((d, i) => {
+            values: () => filteredData.map((d, i) => {
                 return { id: d._visyn_id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--' };
             }),
             type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
@@ -46,7 +46,7 @@ export function VisViewSidebar({ desc, data, dataDesc, selection, idFilter, para
                     description: c.summary,
                     id: c.label + (c)._id
                 },
-                values: filteredData.map((d, i) => {
+                values: () => filteredData.map((d, i) => {
                     return { id: d._visyn_id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--' };
                 }),
                 type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL

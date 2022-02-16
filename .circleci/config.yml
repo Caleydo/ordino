@@ -4,7 +4,7 @@ executors:
   node-executor:
     working_directory: ~/phovea
     docker:
-      - image: circleci/node:12.13-buster-browsers
+      - image: circleci/node:14.17-buster
 
 jobs:
   build:
@@ -44,16 +44,16 @@ jobs:
           paths: .
 workflows:
   version: 2.1
-#  build-nightly:
-#    triggers:
-#      - schedule:
-#          cron: "15 1 * * 1-5" # "At 01:15 on every day-of-week from Monday through Friday.”, see: https://crontab.guru/#15_1_*_*_1-5
-#          filters:
-#            branches:
-#              only:
-#                - develop
-#    jobs:
-#      - build
+  #  build-nightly:
+  #    triggers:
+  #      - schedule:
+  #          cron: "15 1 * * 1-5" # "At 01:15 on every day-of-week from Monday through Friday.”, see: https://crontab.guru/#15_1_*_*_1-5
+  #          filters:
+  #            branches:
+  #              only:
+  #                - develop
+  #    jobs:
+  #      - build
   build-branches-and-tags:
     jobs:
-      - build     
+      - build

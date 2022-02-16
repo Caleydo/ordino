@@ -3,3 +3,4 @@ export interface IBurgerMenuProps {
     sidebar: React.ReactElement | null;
 }
 export declare function BurgerMenu({ sidebar }: IBurgerMenuProps): JSX.Element;
+//# sourceMappingURL=BurgerMenu.d.ts.map

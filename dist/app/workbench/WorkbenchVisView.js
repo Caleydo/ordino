@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { addFilter, addSelection, removeView } from '../../store';
-import { Vis } from 'tdp_core';
+import { Vis, EColumnTypes } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../..';
-import { EColumnTypes } from 'tdp_core';
-import { findViewIndex, getAllFilters } from '../../store/storeUtils';
+import { getAllFilters } from '../../store/storeUtils';
 import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { EDragTypes } from './utils';
@@ -24,12 +23,12 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
     }), [view.id]);
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
-        item: { type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]) },
-    }), [view.id, ordino.workbenches[ordino.focusViewIndex].views]);
+        item: { type: EDragTypes.MOVE, viewId: view.id, index: view.index },
+    }), [view.id, view.index]);
     const data = useMemo(() => {
         let data = Object.values(ordino.workbenches[workbenchIndex].data);
         const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
-        data = data.filter((d, i) => !filteredIds.includes(d._id));
+        data = data.filter((d, i) => !filteredIds.includes(d._visyn_id));
         return data;
     }, [ordino.workbenches[workbenchIndex].data, ordino.workbenches[workbenchIndex].views]);
     const colDescriptions = ordino.workbenches[workbenchIndex].columnDescs;
@@ -42,7 +41,7 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
                 id: c.label + (c)._id
             },
             values: data.map((d, i) => {
-                return { id: d._id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--' };
+                return { id: d._visyn_id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--' };
             }),
             type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
         });
@@ -50,36 +49,36 @@ export function WorkbenchVisView({ workbenchIndex, view }) {
     const filterCallback = useMemo(() => (s) => {
         if (s === 'Filter Out') {
             const viewCopy = [...view.filters];
-            viewCopy.push(...ordino.workbenches[workbenchIndex].selections);
+            viewCopy.push(...ordino.workbenches[workbenchIndex].selection);
             dispatch(addFilter({ viewId: view.id, filter: viewCopy }));
             dispatch(addSelection({ newSelection: [] }));
         }
         else if (s === 'Filter In') {
             const viewCopy = [...view.filters];
-            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selections.includes(d._id)).map((d) => d._id));
+            viewCopy.push(...data.filter((d) => !ordino.workbenches[workbenchIndex].selection.includes(d._visyn_id)).map((d) => d._visyn_id));
             dispatch(addFilter({ viewId: view.id, filter: viewCopy }));
             dispatch(addSelection({ newSelection: [] }));
         }
         else {
             dispatch(addFilter({ viewId: view.id, filter: [] }));
         }
-    }, [view.filters, ordino.workbenches[workbenchIndex].selections]);
+    }, [view.filters, ordino.workbenches[workbenchIndex].selection]);
     const selectedMap = {};
-    const selections = ordino.workbenches[workbenchIndex].selections;
+    const selections = ordino.workbenches[workbenchIndex].selection;
     if (selections && selections.length > 0) {
         const allData = ordino.workbenches[workbenchIndex].data;
         // tslint:disable-next-line:forin
         for (const i in allData) {
             selectedMap[i] = false;
         }
-        for (const i of ordino.workbenches[workbenchIndex].selections) {
+        for (const i of ordino.workbenches[workbenchIndex].selection) {
             selectedMap[i] = true;
         }
     }
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { ref: drop, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
             React.createElement("div", { className: "view-actions" },
-                React.createElement("button", { onClick: () => dispatch(removeView({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]) })), type: "button", className: "btn-close" })),
+                React.createElement("button", { onClick: () => dispatch(removeView({ workbenchIndex, viewIndex: view.index })), type: "button", className: "btn-close" })),
             React.createElement("div", { ref: drag, className: "view-parameters d-flex rounded" },
                 React.createElement("div", null,
                     React.createElement("button", { type: "button", className: "chevronButton btn btn-outline-primary btn-sm align-middle m-1", style: { color: colorPalette[workbenchIndex], borderColor: colorPalette[workbenchIndex] } },

@@ -1,0 +1,1 @@
+{"version":3,"file":"WorkbenchLeftIcon.d.ts","sourceRoot":"","sources":["../../../../src/app/workbench/icons/WorkbenchLeftIcon.tsx"],"names":[],"mappings":"AAEA,OAAO,EAA2B,cAAc,EAAiC,MAAM,UAAU,CAAC;AAGlG,MAAM,WAAW,mBAAmB;IAChC,IAAI,EAAE,cAAc,CAAC;CACxB;AAED,wBAAgB,iBAAiB,CAAC,EAC9B,IAAI,EACP,EAAE,mBAAmB,eAgCrB"}

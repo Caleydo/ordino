@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../..';
+import {setDetailsOpen} from '../../store';
 
 export interface IShowDetailsSwitchProps {
     height?: number;
@@ -16,7 +17,7 @@ export function ShowDetailsSwitch({
 
     return (
         <div className="form-check form-switch align-middle m-1">
-            <input className="form-check-input checked" type="checkbox" id="flexSwitchCheckChecked"/>
+            <input onChange={() => dispatch(setDetailsOpen({ workbenchIndex: ordino.focusViewIndex, open: !ordino.workbenches[ordino.focusViewIndex].detailsOpen }))} className="form-check-input checked" type="checkbox" id="flexSwitchCheckChecked"/>
             <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Show Details</label>
         </div>
     );

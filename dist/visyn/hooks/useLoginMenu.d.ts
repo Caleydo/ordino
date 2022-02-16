@@ -7,3 +7,4 @@ export declare function useLoginMenu(): {
     loggedIn: boolean;
     instance: LoginMenu | null;
 };
+//# sourceMappingURL=useLoginMenu.d.ts.map

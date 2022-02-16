@@ -14,3 +14,4 @@ export interface IViewChooserAccordionProps {
     selectedView?: IViewPluginDesc;
 }
 export declare function ViewChooserAccordion(props: IViewChooserAccordionProps): JSX.Element;
+//# sourceMappingURL=ViewChooserAccordion.d.ts.map

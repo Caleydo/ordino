@@ -1,0 +1,1 @@
+{"version":3,"file":"useLoginMenu.d.ts","sourceRoot":"","sources":["../../../src/visyn/hooks/useLoginMenu.ts"],"names":[],"mappings":"AACA,OAAO,EAAY,SAAS,EAAC,MAAM,UAAU,CAAC;AAI9C;;GAEG;AACH,wBAAgB,YAAY,IAAI;IAAC,GAAG,EAAE,CAAC,OAAO,EAAE,WAAW,GAAG,IAAI,KAAK,IAAI,CAAC;IAAC,QAAQ,EAAE,OAAO,CAAC;IAAC,QAAQ,EAAE,SAAS,GAAG,IAAI,CAAA;CAAC,CA2D1H"}

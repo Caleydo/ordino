@@ -1,0 +1,1 @@
+{"version":3,"file":"menuSlice.d.ts","sourceRoot":"","sources":["../../src/store/menuSlice.ts"],"names":[],"mappings":"AACA,OAAO,EAAC,cAAc,EAAC,MAAM,0CAA0C,CAAC;AAExE,MAAM,WAAW,UAAU;IACzB,SAAS,EAAE,MAAM,CAAC;IAClB,IAAI,EAAE,cAAc,CAAC;CAEtB;AAqBD,eAAO,MAAO,YAAY,+EAAE,OAAO,qFAAqB,CAAC;AAEzD,eAAO,MAAM,WAAW,gEAAoB,CAAC"}

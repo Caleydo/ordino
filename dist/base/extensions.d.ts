@@ -208,3 +208,4 @@ export interface IOrdinoLogoDesc extends IPluginDesc {
     readonly height?: number;
 }
 export {};
+//# sourceMappingURL=extensions.d.ts.map

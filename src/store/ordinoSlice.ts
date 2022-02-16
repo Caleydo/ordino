@@ -42,6 +42,8 @@ export interface IWorkbench {
    */
   views: IWorkbenchView[];
 
+  selectedMappings: string[];
+
   viewDirection: EWorkbenchDirection;
 
   name: string;
@@ -59,7 +61,9 @@ export interface IWorkbench {
   /**
    * List selected rows
    */
-  selectionIds: IRow['_visyn_id'][];
+  selection: IRow['_visyn_id'][];
+  detailsOpen: boolean;
+  addWorkbenchOpen: boolean;
 }
 
 interface IBaseState {
@@ -122,17 +126,30 @@ const ordinoSlice = createSlice({
     setViewParameters(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, parameters: any}>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
+    changeSelectedMappings(state, action: PayloadAction<{workbenchIndex: number, newMapping: string}>) {
+      if(!state.workbenches[action.payload.workbenchIndex].selectedMappings.includes(action.payload.newMapping)) {
+        state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+      } else {
+        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((s) => s !== action.payload.newMapping);
+      }
+    },
+    setDetailsOpen(state, action: PayloadAction<{workbenchIndex: number, open: boolean}>) {
+      state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
+    },
+    setAddWorkbenchOpen(state, action: PayloadAction<{workbenchIndex: number, open: boolean}>) {
+      state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
+    },
     setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string}>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
     },
     addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    createColumnDescs(state, action: PayloadAction<{descs: any[]}>) {
-      state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+    createColumnDescs(state, action: PayloadAction<{entityId: string, desc: any}>) {
+      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
-    addColumnDesc(state, action: PayloadAction<{desc: any}>) {
-      state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
+    addColumnDesc(state, action: PayloadAction<{entityId: string, desc: any}>) {
+      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
     switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
@@ -158,7 +175,7 @@ const ordinoSlice = createSlice({
       state.workbenches.push(action.payload.newWorkbench);
     },
     addSelection(state, action: PayloadAction<{newSelection: string[]}>) {
-      state.workbenches[state.focusViewIndex].selectionIds = action.payload.newSelection;
+      state.workbenches[state.focusViewIndex].selection = action.payload.newSelection;
     },
     addFilter(state, action: PayloadAction<{viewId: string, filter: string[]}>) {
       state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
@@ -166,14 +183,20 @@ const ordinoSlice = createSlice({
     changeFocus(state, action: PayloadAction<{index: number}>) {
       state.focusViewIndex = action.payload.index;
     },
-    setWorkbenchData(state, action: PayloadAction<{data: any[]}>) {
+    setWorkbenchData(state, action: PayloadAction<{entityId: string, data: any[]}>) {
+      console.log(action.payload.data, action.payload.entityId);
       for(const i of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
+        state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
       }
     },
     addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {
       for(const row of action.payload.data) {
-        state.workbenches[state.focusViewIndex].data[row.id][action.payload.columnName] = row.score;
+        const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+        if (dataRow) {
+          dataRow[action.payload.columnName] = row.score;
+        } else {
+          state.workbenches[state.focusViewIndex].data[row.id] = row;
+        }
       }
     },
   }
@@ -181,6 +204,9 @@ const ordinoSlice = createSlice({
 
 export const {
   addView,
+  changeSelectedMappings,
+  setDetailsOpen,
+  setAddWorkbenchOpen,
   setViewParameters,
   setSidebarOpen,
   createColumnDescs,

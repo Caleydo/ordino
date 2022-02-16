@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import Select from 'react-select';
-export function CosmicView({ desc, entityId, data, dataDesc, selection, filters, parameters, onSelectionChanged, onFiltersChanged, onParametersChanged }) {
+export function CosmicView({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged }) {
     useEffect(() => {
         if (!parameters) {
             onParametersChanged({ currentId: '' });
@@ -12,7 +12,7 @@ export function CosmicView({ desc, entityId, data, dataDesc, selection, filters,
     return React.createElement("iframe", { className: 'w-100 h-100', src: "https://cancer.sanger.ac.uk/cosmic" });
 }
 //Toolbar ?
-export function CosmicViewHeader({ desc, entityId, data, dataDesc, selection, filters, parameters, onSelectionChanged, onFiltersChanged, onParametersChanged }) {
+export function CosmicViewHeader({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged }) {
     const options = selection.map((s) => {
         return { value: s, label: s };
     });
@@ -21,4 +21,11 @@ export function CosmicViewHeader({ desc, entityId, data, dataDesc, selection, fi
                 onParametersChanged({ currentId: e.value });
             } }));
 }
+export const cosmicConfiguration = () => {
+    return {
+        view: CosmicView,
+        tab: null,
+        header: CosmicViewHeader
+    };
+};
 //# sourceMappingURL=CosmicProxyView.js.map

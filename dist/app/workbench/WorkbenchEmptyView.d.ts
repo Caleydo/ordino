@@ -6,3 +6,4 @@ export interface IWorkbenchGenericViewProps {
     chooserOptions: IViewPluginDesc[];
 }
 export declare function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWorkbenchGenericViewProps): JSX.Element;
+//# sourceMappingURL=WorkbenchEmptyView.d.ts.map

@@ -16,3 +16,4 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<import("red
 }>, import("redux").AnyAction, undefined>]>;
 export declare type RootState = ReturnType<typeof store.getState>;
 export declare type AppDispatch = typeof store.dispatch;
+//# sourceMappingURL=store.d.ts.map

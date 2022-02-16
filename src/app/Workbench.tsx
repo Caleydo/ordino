@@ -24,68 +24,12 @@ export function Workbench({workbench, type = EWorkbenchType.PREVIOUS}: IWorkbenc
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);
 
-
-    const showNextChooser = workbench.index === ordino.workbenches.length - 1;
-
-    const onAddView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
-        dispatch(
-            addWorkbench({
-                views: [{filters: [], id: view.id, uniqueId: (Math.random() + 1).toString(36).substring(7)}],
-                viewDirection: EWorkbenchDirection.HORIZONTAL,
-                transitionOptions: [],
-                columnDescs: [],
-                data: {},
-                entityId: view.id,
-                name: view.name,
-                index: viewIndex,
-                selectionIds: [],
-            })
-        );
-        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
-    }, []);
-
-
-    const onReplaceView = React.useCallback((view: IViewPluginDesc, viewIndex: number) => {
-        dispatch(
-            replaceWorkbench({workbenchIndex: viewIndex, newWorkbench: {
-                views: [{filters: [], id: view.id, uniqueId: (Math.random() + 1).toString(36).substring(7)}],
-                viewDirection: EWorkbenchDirection.HORIZONTAL,
-                transitionOptions: [],
-                columnDescs: [],
-                data: {},
-                entityId: view.id,
-                name: view.name,
-                index: viewIndex,
-                selectionIds: [],
-            }})
-        );
-        setTimeout(() => dispatch(changeFocus({index: viewIndex})), 0);
-    }, []);
-
     return (<>
         <div ref={ref} className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`} style={{borderTopColor: colorPalette[workbench.index]}} >
             <>
-                {/* {workbench.index !== 0 && (type === EWorkbenchType.FOCUS || type === EWorkbenchType.NEXT) ? (
-                    <ViewChooser
-                        views={views}
-                        selectedView={null}
-                        onSelectedView={(v) => onReplaceView(v, workbench.index)}
-                        mode={EViewChooserMode.OVERLAY}
-                        expand={EExpandMode.RIGHT}
-                    />
-                ) : null} */}
-
                 <WorkbenchViews index={workbench.index} onlyRanking={type === EWorkbenchType.CONTEXT}/>
             </>
         </div>
-        {/* {showNextChooser &&
-            <ViewChooser
-                views={views}
-                onSelectedView={(view) => onAddView(view, ordino.focusViewIndex + 1)}
-                mode={EViewChooserMode.OVERLAY}
-                expand={EExpandMode.LEFT}
-                showBurgerMenu={false}
-            />} */}
     </>
     );
 }

@@ -5,3 +5,4 @@ export interface ISelectionCountIndicatorProps {
     viewMode: EViewMode;
 }
 export declare function SelectionCountIndicator({ selectionCount, viewMode, idType }: ISelectionCountIndicatorProps): JSX.Element;
+//# sourceMappingURL=SelectionCountIndicator.d.ts.map

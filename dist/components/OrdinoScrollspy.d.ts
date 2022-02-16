@@ -88,3 +88,4 @@ interface IOrdinoScrollspyItemProps {
  */
 export declare function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
 export {};
+//# sourceMappingURL=OrdinoScrollspy.d.ts.map

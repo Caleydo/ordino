@@ -11,3 +11,4 @@ export interface IVisynHeaderComponents {
 }
 export declare const visynHeaderComponents: Partial<IVisynHeaderComponents>;
 export declare type visynHeaderExtensions = Partial<IVisynHeaderComponents>;
+//# sourceMappingURL=headerConfig.d.ts.map

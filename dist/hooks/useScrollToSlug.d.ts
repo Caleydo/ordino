@@ -5,3 +5,4 @@
  * @see https://github.com/rafgraph/react-router-hash-link/issues/13
  */
 export declare function useScrollToSlug(): void;
+//# sourceMappingURL=useScrollToSlug.d.ts.map

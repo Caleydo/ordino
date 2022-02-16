@@ -1,14 +1,12 @@
 // Gets into the phovea.ts
 import * as React from 'react';
 import {useEffect} from 'react';
-import {useMemo} from 'react';
 import Select from 'react-select';
-import {EColumnTypes, IDTypeManager, Vis} from 'tdp_core';
-import {IVisynViewProps} from '../../../tdp_core/dist/views/VisynView';
+import {IVisynViewPluginFactory, IVisynViewProps} from 'tdp_core';
 import {ICosmicViewPluginParams} from '../visyn/VisynView';
 
 export function CosmicView({
-    desc, entityId, data, dataDesc, selection, filters, parameters, onSelectionChanged, onFiltersChanged, onParametersChanged
+    desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged
   }: IVisynViewProps<any, ICosmicViewPluginParams>) {
 
     useEffect(() => {
@@ -24,7 +22,7 @@ export function CosmicView({
 
 //Toolbar ?
 export function CosmicViewHeader({
-    desc, entityId, data, dataDesc, selection, filters, parameters, onSelectionChanged, onFiltersChanged, onParametersChanged
+    desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged
   }: IVisynViewProps<any, ICosmicViewPluginParams>) {
 
     const options = selection.map((s) => {
@@ -37,3 +35,11 @@ export function CosmicViewHeader({
       }}/>
     </div>;
 }
+
+export const cosmicConfiguration: () => IVisynViewPluginFactory = () => {
+  return {
+      view: CosmicView,
+      tab: null,
+      header: CosmicViewHeader
+  };
+};

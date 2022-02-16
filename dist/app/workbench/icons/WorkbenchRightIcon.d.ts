@@ -3,3 +3,4 @@ export interface IWorkbenchIconProps {
     view: IWorkbenchView;
 }
 export declare function WorkbenchRightIcon({ view }: IWorkbenchIconProps): JSX.Element;
+//# sourceMappingURL=WorkbenchRightIcon.d.ts.map

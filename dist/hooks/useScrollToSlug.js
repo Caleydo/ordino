@@ -10,6 +10,7 @@ export function useScrollToSlug() {
     const { slug } = useParams();
     React.useEffect(() => {
         setTimeout(() => {
+            // time out necessary for some browsers (e.g., Safari)
             if (slug) {
                 const element = document.getElementById(slug);
                 if (element) {

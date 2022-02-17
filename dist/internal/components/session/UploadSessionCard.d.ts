@@ -1,3 +1,4 @@
 /// <reference types="react" />
-import { IStartMenuSessionSectionDesc } from '../../..';
-export default function UploadSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc): JSX.Element;
+import type { IStartMenuSessionSectionDesc } from '../../../base/extensions';
+export declare function UploadSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc): JSX.Element;
+//# sourceMappingURL=UploadSessionCard.d.ts.map

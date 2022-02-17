@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useAsync } from 'tdp_core';
+import { useAsync, PluginRegistry } from 'tdp_core';
 import { useMemo } from 'react';
-import { PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_LOGO } from '../base';
 export function OrdinoLogo() {
     const loadOrdinoLogo = useMemo(() => async () => {
@@ -17,10 +16,9 @@ export function OrdinoLogo() {
         };
     }, []);
     const { status, value } = useAsync(loadOrdinoLogo, []);
-    return (React.createElement(React.Fragment, null, status === 'success' &&
-        React.createElement("div", { className: "ordino-logo" },
-            React.createElement("img", { alt: "", src: value.icon, width: value.width, height: value.height }),
-            ' ',
-            value.text)));
+    return (status === 'success' && (React.createElement("div", { className: "ordino-logo" },
+        React.createElement("img", { alt: "", src: value.icon, width: value.width, height: value.height }),
+        " ",
+        value.text)));
 }
 //# sourceMappingURL=OrdinoLogo.js.map

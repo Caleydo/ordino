@@ -1,3 +1,4 @@
 /// <reference types="react" />
-import { IStartMenuSessionSectionDesc } from '../../..';
-export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc): JSX.Element;
+import type { IStartMenuSessionSectionDesc } from '../../../base/extensions';
+export declare function SavedSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc): JSX.Element;
+//# sourceMappingURL=SavedSessionCard.d.ts.map

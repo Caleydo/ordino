@@ -4,7 +4,6 @@ import {useDrag, useDrop} from 'react-dnd';
 import {EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser} from '../..';
 import {IWorkbenchView, removeView, setView} from '../../store';
 import {findViewIndex, getAllFilters} from '../../store/storeUtils';
-import {colorPalette} from '../Breadcrumb';
 import {DropOverlay} from './DropOverlay';
 import {EDragTypes} from './utils';
 import {useVisynViewPlugin} from './useLoadWorkbenchViewPlugin';

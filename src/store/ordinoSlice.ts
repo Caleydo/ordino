@@ -24,6 +24,8 @@ export interface IOrdinoAppState {
    */
   workbenches: IWorkbench[];
 
+  colorMap: {[key: string]: string};
+
   /**
    * Id of the current focus view
    */
@@ -109,6 +111,7 @@ const initialState: IOrdinoAppState = {
   workbenches: [],
   focusViewIndex: 0,
   sidebarOpen: false,
+  colorMap: {}
 };
 
 const ordinoSlice = createSlice({
@@ -118,6 +121,9 @@ const ordinoSlice = createSlice({
     addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
+    },
+    createColorMap(state, action: PayloadAction<{colorMap: {[key: string]: string}}>) {
+      state.colorMap = action.payload.colorMap;
     },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
@@ -210,6 +216,7 @@ const ordinoSlice = createSlice({
 
 export const {
   addView,
+  createColorMap,
   changeSelectedMappings,
   setDetailsOpen,
   setAddWorkbenchOpen,

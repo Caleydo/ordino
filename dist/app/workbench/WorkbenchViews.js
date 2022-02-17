@@ -44,11 +44,11 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
     return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
             ordino.workbenches[index].detailsOpen ?
-                React.createElement("div", { style: { flexGrow: 1 } },
+                React.createElement("div", null,
                     React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] })) : null,
-            React.createElement("div", { style: { flexGrow: 15 } }, wb),
+            React.createElement("div", { style: { flexGrow: 10 } }, wb),
             ordino.workbenches[index].addWorkbenchOpen ?
-                React.createElement("div", { style: { flexGrow: 1 } },
+                React.createElement("div", { className: 'd-flex', style: { width: '400px' } },
                     React.createElement(AddWorkbenchSidebar, { workbench: ordino.workbenches[index] })) : null)));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

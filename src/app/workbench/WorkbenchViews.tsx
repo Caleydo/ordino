@@ -77,14 +77,14 @@ export function WorkbenchViews({
         <div className="position-relative workbenchWrapper d-flex flex-grow-1">
             <div className="d-flex flex-col w-100">
                 {ordino.workbenches[index].detailsOpen ?
-                <div style={{flexGrow: 1}}>
+                <div>
                     <DetailsSidebar workbench={ordino.workbenches[index]}/>
                 </div> : null}
-                <div style={{flexGrow: 15}}>
+                <div style={{flexGrow: 10}}>
                     {wb}
                 </div>
                 {ordino.workbenches[index].addWorkbenchOpen ?
-                <div style={{flexGrow: 1}}>
+                <div className={'d-flex'} style={{width: '400px'}}>
                     <AddWorkbenchSidebar workbench={ordino.workbenches[index]}/>
                 </div> : null}
 

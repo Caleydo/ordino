@@ -47,10 +47,6 @@
   flex: 1 1 auto;
 }
 
-.entityJumpBox {
-  background-color: lightgray;
-}
-
 .view-title {
   font-size: 16px;
 }
@@ -128,4 +124,23 @@
 }
 .Resizer.disabled:hover {
   border-color: transparent;
+}
+
+.mappingText {
+  font-size: 12px;
+  font-weight: normal !important;
+}
+
+.mappingTypeText {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.entityText {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.entityJumpBox {
+  background-color: $gray-200;
 }

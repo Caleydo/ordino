@@ -5,7 +5,6 @@ import {useAppDispatch, useAppSelector} from '../..';
 import {IViewPluginDesc, useAsync} from 'tdp_core';
 import {IWorkbenchView, removeView, setView, setWorkbenchDirection} from '../../store';
 import {findViewIndex} from '../../store/storeUtils';
-import {colorPalette} from '../Breadcrumb';
 
 import {Lineup} from '../lite';
 import {EViewChooserMode, ViewChooser} from '../ViewChooser';

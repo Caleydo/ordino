@@ -2,9 +2,9 @@ import React from 'react';
 import {useMemo} from 'react';
 import {addTransitionOptions, addWorkbench, changeFocus, EWorkbenchDirection, IWorkbench, useAppDispatch, useAppSelector} from '../../..';
 import {EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IViewPluginDesc, PluginRegistry, useAsync} from 'tdp_core';
-import {colorPalette} from '../../Breadcrumb';
 import {useState} from 'react';
-import {IReprovisynMapping} from 'reprovisyn';
+import {IReprovisynEntity, IReprovisynMapping, ReprovisynRestUtils} from 'reprovisyn';
+import {useEffect} from 'react';
 
 export interface IAddWorkbenchSidebarProps {
     workbench: IWorkbench;
@@ -39,47 +39,49 @@ export function AddWorkbenchSidebar({
 
     const {status, value: availableViews} = useAsync(FindViewUtils.findAllViews, [idType]);
 
-    const availableEntities: Set<string> = useMemo(() => {
+    const availableEntities: {idType: string, label: string}[] = useMemo(() => {
         if(status !== 'success') {
             return null;
         }
 
-        const entities: Set<string> = new Set();
+        const entities: {idType: string, label: string}[] = [];
 
         availableViews.forEach((v) => {
-            entities.add(v.v.itemIDType);
+            console.log(v);
+            if(!entities.some((e) => e.idType === v.v.itemIDType && e.label === v.v.group.name)) {
+                entities.push({idType: v.v.itemIDType, label: v.v.group.name});
+            }
         });
 
         return entities;
     }, [status, availableViews]);
 
-    // console.log(availableViews, availableEntities);
-    // console.log(relationList);
+    console.log(availableEntities);
+
+    console.log(ordino.colorMap);
 
     return (
         <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
             {status === 'success' ?
             <div className={'d-flex flex-column'}>
-                {Array.from(availableEntities).filter((d, i) => i === 0).map((e) => {
+                {availableEntities.map((e) => {
                     return (
-                    <div className={'entityJumpBox p-1 mb-2 rounded'}>
-                        <span className={'fs-2'} style={{color: colorPalette[workbench.index]}}>{e}</span>
-                        {availableViews.filter((v) => v.v.itemIDType === e).map((v) => {
-                            // console.log(v);
+                    <div key={`${e.idType}Box`} className={'entityJumpBox p-1 mb-2 rounded'}>
+                        <span className={'entityText'} style={{color: ordino.colorMap[e.idType]}}>{e.label}</span>
+                        {availableViews.filter((v) => v.v.itemIDType === e.idType).map((v) => {
+                            console.log(v);
                             return (
                             <div>
-                                <span>{v.v.name}</span>
-
                                 {v.v.relation.mapping.map((map: IReprovisynMapping) => {
                                     const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                                     return (
                                         <>
-                                            <div>{map.name}</div>
+                                            <div className={'mt-2 mappingTypeText'}>{map.name}</div>
                                             {columns.map((col) => {
                                                 return (
                                                     <div className="form-check">
-                                                        <input onChange={() => relationListCallback({targetEntity: e, mappingEntity: map.entity, mappingSubtype: col.columnName})} className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                        <input onChange={() => relationListCallback({targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName})} className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                                                        <label className="mappingText form-check-label" htmlFor="flexCheckDefault">
                                                             {col.label}
                                                         </label>
                                                     </div>
@@ -110,7 +112,7 @@ export function AddWorkbenchSidebar({
                                     transitionOptions: [],
                                     columnDescs: [],
                                     data: {},
-                                    entityId: viewPlugin.id,
+                                    entityId: relationList[0].targetEntity,
                                     name: viewPlugin.name,
                                     index: ordino.focusViewIndex + 1,
                                     selection: [],
@@ -122,7 +124,7 @@ export function AddWorkbenchSidebar({
                                 );
                             }, 0);
 
-                        }} type="button" className="w-100 chevronButton btn btn-light btn-sm align-middle" >Create new {e} workbench</button>
+                        }} type="button" style={{color: 'white', backgroundColor: ordino.colorMap[e.idType]}} className="mt-1 w-100 chevronButton btn btn-sm align-middle" >Create {e.label} workbench</button>
                     </div>
                     );
                 })}

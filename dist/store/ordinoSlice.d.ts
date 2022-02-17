@@ -17,6 +17,9 @@ export interface IOrdinoAppState {
      * List of open views.
      */
     workbenches: IWorkbench[];
+    colorMap: {
+        [key: string]: string;
+    };
     /**
      * Id of the current focus view
      */
@@ -62,6 +65,10 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
+}, string>, createColorMap: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    colorMap: {
+        [key: string]: string;
+    };
 }, string>, changeSelectedMappings: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newMapping: ISelectedMapping;

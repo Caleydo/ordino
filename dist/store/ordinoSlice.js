@@ -36,6 +36,7 @@ const initialState = {
     workbenches: [],
     focusViewIndex: 0,
     sidebarOpen: false,
+    colorMap: {}
 };
 const ordinoSlice = createSlice({
     name: 'ordino',
@@ -44,6 +45,9 @@ const ordinoSlice = createSlice({
         addFirstWorkbench(state, action) {
             state.workbenches.splice(0, state.workbenches.length);
             state.workbenches.push(action.payload);
+        },
+        createColorMap(state, action) {
+            state.colorMap = action.payload.colorMap;
         },
         addWorkbench(state, action) {
             state.workbenches.push(action.payload);
@@ -132,6 +136,6 @@ const ordinoSlice = createSlice({
         },
     }
 });
-export const { addView, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, createColorMap, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

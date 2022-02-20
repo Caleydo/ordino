@@ -71,24 +71,23 @@ export function WorkbenchViews({
         );
     }
 
-    console.log(ordino.workbenches[index].addWorkbenchOpen);
-
     return (
         <div className="position-relative workbenchWrapper d-flex flex-grow-1">
-            <div className="d-flex flex-col w-100">
-                {ordino.workbenches[index].detailsOpen ?
-                <div>
-                    <DetailsSidebar workbench={ordino.workbenches[index]}/>
-                </div> : null}
-                <div style={{flexGrow: 10}}>
-                    {wb}
+            {onlyRanking ? wb :
+                <div className="d-flex flex-col w-100">
+                    {ordino.workbenches[index].detailsOpen ?
+                    <div className={'d-flex'} style={{width: '400px'}}>
+                        <DetailsSidebar workbench={ordino.workbenches[index]}/>
+                    </div> : null}
+                    <div style={{flexGrow: 10}}>
+                        {wb}
+                    </div>
+                    {ordino.workbenches[index].addWorkbenchOpen ?
+                    <div className={'d-flex'} style={{width: '400px'}}>
+                        <AddWorkbenchSidebar workbench={ordino.workbenches[index]}/>
+                    </div> : null}
                 </div>
-                {ordino.workbenches[index].addWorkbenchOpen ?
-                <div className={'d-flex'} style={{width: '400px'}}>
-                    <AddWorkbenchSidebar workbench={ordino.workbenches[index]}/>
-                </div> : null}
-
-            </div>
+            }
         </div>
     );
 }

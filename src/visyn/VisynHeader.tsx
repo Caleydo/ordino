@@ -34,7 +34,7 @@ export function VisynHeader({
               {CustomerLogo ? <CustomerLogo /> : null}
               {VisynLogo ? <VisynLogo /> : null}
             </ul>
-            <ul ref={ref} className="navbar-nav align-items-end">
+            <ul ref={ref} className="navbar-height navbar-nav align-items-end">
             </ul>
             <ul className="navbar-nav align-items-end">
               {SettingsMenu ? <SettingsMenu menuItems={ConfigMenuOptions ? <ConfigMenuOptions /> : null} /> : null}

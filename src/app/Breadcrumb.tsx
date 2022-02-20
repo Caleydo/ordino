@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {useMemo} from 'react';
+import {useEffect} from 'react';
+import {useMemo, useState} from 'react';
 import {ChevronBreadcrumb} from '../components/breadcrumb/ChevronBreadcrumb';
 import {CollapsedBreadcrumb} from '../components/breadcrumb/CollapsedBreadcrumb';
 import {SingleBreadcrumb} from '../components/breadcrumb/SingleBreadcrumb';
@@ -10,8 +11,16 @@ export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b46
 
 
 export function Breadcrumb() {
+    const [totalWidth, setTotalWidth] = useState<number>(0);
+
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        window.addEventListener('resize', () => {
+            setTotalWidth(window.innerWidth);
+        });
+    }, []);
 
     const startFlexNum = useMemo(() => {
         let counter = 0;
@@ -37,7 +46,6 @@ export function Breadcrumb() {
 
     //Obviously change this to the right way of importing these colors
     //always show first, last, context, +, otherwise show ...
-    console.log(ordino.colorMap, ordino.workbenches);
     return (
         <>
         {ordino.workbenches.length > 0 ?

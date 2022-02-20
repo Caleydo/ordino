@@ -33,12 +33,19 @@ export function AddWorkbenchSidebar({ workbench }) {
         });
         return entities;
     }, [status, availableViews]);
-    console.log(availableEntities);
-    console.log(ordino.colorMap);
-    return (React.createElement("div", { className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ?
+    const selectionString = useMemo(() => {
+        let currString = '';
+        workbench.selection.forEach((s) => {
+            currString += s + ', ';
+        });
+        return currString.slice(0, currString.length - 3);
+    }, [workbench.selection]);
+    return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ?
         React.createElement("div", { className: 'd-flex flex-column' }, availableEntities.map((e) => {
             return (React.createElement("div", { key: `${e.idType}Box`, className: 'entityJumpBox p-1 mb-2 rounded' },
-                React.createElement("span", { className: 'entityText', style: { color: ordino.colorMap[e.idType] } }, e.label),
+                React.createElement("div", { className: "d-flex", style: { justifyContent: 'space-between' } },
+                    React.createElement("p", { className: 'mb-0 entityText', style: { color: ordino.colorMap[e.idType] } }, e.label),
+                    React.createElement("p", { className: 'mb-0 mappingText', style: { color: ordino.colorMap[workbench.entityId] } }, selectionString)),
                 availableViews.filter((v) => v.v.itemIDType === e.idType).map((v) => {
                     console.log(v);
                     return (React.createElement("div", null, v.v.relation.mapping.map((map) => {

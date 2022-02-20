@@ -1,13 +1,20 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { CollapsedBreadcrumb } from '../components/breadcrumb/CollapsedBreadcrumb';
 import { SingleBreadcrumb } from '../components/breadcrumb/SingleBreadcrumb';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { changeFocus, setAddWorkbenchOpen } from '../store/ordinoSlice';
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 export function Breadcrumb() {
+    const [totalWidth, setTotalWidth] = useState(0);
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
+    useEffect(() => {
+        window.addEventListener('resize', () => {
+            setTotalWidth(window.innerWidth);
+        });
+    }, []);
     const startFlexNum = useMemo(() => {
         let counter = 0;
         if (ordino.focusViewIndex < 4) {
@@ -30,7 +37,6 @@ export function Breadcrumb() {
     }, [ordino.workbenches.length, ordino.focusViewIndex]);
     //Obviously change this to the right way of importing these colors
     //always show first, last, context, +, otherwise show ...
-    console.log(ordino.colorMap, ordino.workbenches);
     return (React.createElement(React.Fragment, null, ordino.workbenches.length > 0 ?
         React.createElement("div", { className: "d-flex breadcrumb overflow-hidden" },
             ordino.focusViewIndex > 1 ? React.createElement(SingleBreadcrumb, { workbench: ordino.workbenches[0], color: ordino.colorMap[ordino.workbenches[0].entityId], flexWidth: 15 / startFlexNum, first: true, onClick: () => dispatch(changeFocus({ index: 0 })) }) : null,

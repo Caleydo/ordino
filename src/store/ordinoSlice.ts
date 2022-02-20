@@ -196,7 +196,6 @@ const ordinoSlice = createSlice({
       state.focusViewIndex = action.payload.index;
     },
     setWorkbenchData(state, action: PayloadAction<{entityId: string, data: any[]}>) {
-      console.log(action.payload.data, action.payload.entityId);
       for(const i of action.payload.data) {
         state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
       }

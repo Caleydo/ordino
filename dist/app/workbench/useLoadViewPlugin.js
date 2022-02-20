@@ -10,12 +10,10 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
     const loadView = React.useMemo(() => () => {
         return view.load();
     }, []);
-    console.log(ordino.workbenches[workbenchIndex].selectedMappings);
     const { status, value: viewPlugin } = useAsync(loadView, []);
     const setRef = React.useCallback(async (ref) => {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
-            console.log(ref);
             ref.innerHTML = '';
             const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
             const inputSelection = { idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selection) };
@@ -38,7 +36,6 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?
      */
     React.useEffect(() => {
-        console.log(instance, workbenchIndex);
         if (instance && instance instanceof ARankingView) {
             const view = instance;
             const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);

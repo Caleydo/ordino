@@ -56,18 +56,27 @@ export function AddWorkbenchSidebar({
         return entities;
     }, [status, availableViews]);
 
-    console.log(availableEntities);
+    const selectionString = useMemo(() => {
+        let currString = '';
 
-    console.log(ordino.colorMap);
+        workbench.selection.forEach((s) => {
+            currString += s + ', ';
+        });
+
+        return currString.slice(0, currString.length - 3);
+    }, [workbench.selection]);
 
     return (
-        <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+        <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
             {status === 'success' ?
             <div className={'d-flex flex-column'}>
                 {availableEntities.map((e) => {
                     return (
                     <div key={`${e.idType}Box`} className={'entityJumpBox p-1 mb-2 rounded'}>
-                        <span className={'entityText'} style={{color: ordino.colorMap[e.idType]}}>{e.label}</span>
+                        <div className="d-flex" style={{justifyContent: 'space-between'}}>
+                            <p className={'mb-0 entityText'} style={{color: ordino.colorMap[e.idType]}}>{e.label}</p>
+                            <p className={'mb-0 mappingText'} style={{color: ordino.colorMap[workbench.entityId]}}>{selectionString}</p>
+                        </div>
                         {availableViews.filter((v) => v.v.itemIDType === e.idType).map((v) => {
                             console.log(v);
                             return (

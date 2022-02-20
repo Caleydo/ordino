@@ -1,11 +1,8 @@
 import React from 'react';
+import { changeSelectedMappings, IWorkbench, useAppDispatch, useAppSelector} from '../../..';
+import { FindViewUtils, IDType, useAsync } from 'tdp_core';
 import {useMemo} from 'react';
-import {addTransitionOptions, addWorkbench, changeFocus, EWorkbenchDirection, IWorkbench, useAppDispatch, useAppSelector} from '../../..';
-import {EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IViewPluginDesc, PluginRegistry, useAsync} from 'tdp_core';
-import {useState} from 'react';
-import {changeSelectedMappings} from '../../../store';
 import {IReprovisynMapping} from 'reprovisyn';
-import {current} from '@reduxjs/toolkit';
 
 export interface IDetailsSidebarProps {
     workbench: IWorkbench;
@@ -22,46 +19,35 @@ export function DetailsSidebar({
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
 
-    const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
-
-    const relationListCallback = (s: IMappingDesc) => {
-        if(!relationList.some((r) => r.mappingName === s.mappingName && r.mappingSubtype === s.mappingSubtype)) {
-            setRelationList([...relationList, s]);
-        } else {
-            const arr = Array.from(relationList).filter((r) => r.mappingSubtype !== s.mappingSubtype);
-            setRelationList(arr);
-        }
-    };
-
     const idType = useMemo(() => {
-        return new IDType(workbench.entityId, '.*', '', true);
+        return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
     }, []);
 
     const {status, value: availableViews} = useAsync(FindViewUtils.findAllViews, [idType]);
 
-    const currentEntity: {idType: string, label: string} = useMemo(() => {
-        if(!availableViews) {
-            return null;
-        }
+    const selectionString = useMemo(() => {
+        let currString = '';
 
-        const currEntity = availableViews.find((v) => {
-            return v.v.idtype === workbench.entityId;
+        ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
+            currString += s + ', ';
         });
 
-        return {idType: currEntity.v.idtype, label: currEntity.v.group.name};
-
-    }, [status, availableViews]);
-
-
-    console.log(availableViews, currentEntity);
+        return currString.slice(0, currString.length - 3);
+    }, [ordino.workbenches[workbench.index - 1].selection]);
 
     return (
-        <div className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+        <div className="me-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
             {status === 'success' ?
             <div className={'d-flex flex-column'}>
-                <div className={'entityJumpBox p-1 mb-2 rounded'}>
-                    <span className={'entityText'} style={{color: ordino.colorMap[currentEntity.idType]}}>{currentEntity.label}</span>
-                    {availableViews.filter((v) => v.v.itemIDType === currentEntity.idType).map((v) => {
+                <div className={'p-1 mb-2 rounded'}>
+                    <div className="d-flex" style={{justifyContent: 'space-between'}}>
+                        <p className={'mb-0 entityText'}>
+                            <span className={'entityText'}>Selected </span>
+                            <span className={'entityText'} style={{color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId]}}>{ordino.workbenches[workbench.index - 1].name}s</span>
+                        </p>
+                        <p className={'mb-0 mappingText'} style={{color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId]}}>{selectionString}</p>
+                    </div>
+                    {availableViews.filter((v) => v.v.itemIDType === workbench.entityId).map((v) => {
                         return (
                         <div>
                             {v.v.relation.mapping.map((map: IReprovisynMapping) => {
@@ -73,7 +59,7 @@ export function DetailsSidebar({
                                             return (
                                                 <div className="form-check">
                                                     <input checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity)} onChange={() => dispatch(changeSelectedMappings({workbenchIndex: ordino.focusViewIndex, newMapping: {columnSelection: col.columnName, entityId: map.entity}}))} className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                                    <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                    <label className="mappingText form-check-label" htmlFor="flexCheckDefault">
                                                         {col.label}
                                                     </label>
                                                 </div>
@@ -87,34 +73,8 @@ export function DetailsSidebar({
                         );
                     })}
                 </div>
-            </div> : null}
-            {/* {status === 'success' ?
-            <div className={'d-flex flex-column'}>
-                {Array.from(availableEntities).filter((d, i) => i === 0).map((e) => {
-                    return (
-                    <div className={'entityJumpBox p-1 mb-2 rounded'}>
-                        <span className={'fs-2'} style={{color: colorPalette[workbench.index]}}>{e}</span>
-                        {availableViews.filter((v) => v.v.itemIDType === e).map((v) => {
-                            return (
-                            <div>
-                                <span>{v.v.name}</span>
-                                {v.v.mapping.targetToSourceColumns.map((col) => {
-                                    return (
-                                        <div className="form-check">
-                                            <input checked={workbench.selectedMappings.includes(col.columnName)} onChange={() => dispatch(changeSelectedMappings({workbenchIndex: ordino.focusViewIndex, newMapping: col.columnName}))} className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                {col.label}
-                                            </label>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            );
-                        })}
-                    </div>
-                    );
-                })}
-            </div> : null} */}
+            </div>
+            : null }
         </div>
     );
 }

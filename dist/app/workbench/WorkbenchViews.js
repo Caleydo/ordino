@@ -40,11 +40,10 @@ export function WorkbenchViews({ index, onlyRanking = false, }) {
                 React.createElement(WorkbenchSingleView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }),
                 React.createElement(WorkbenchSingleView, { key: `wbView${views[2].uniqueId}`, workbenchIndex: index, view: views[2] }))));
     }
-    console.log(ordino.workbenches[index].addWorkbenchOpen);
-    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
+    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, onlyRanking ? wb :
         React.createElement("div", { className: "d-flex flex-col w-100" },
             ordino.workbenches[index].detailsOpen ?
-                React.createElement("div", null,
+                React.createElement("div", { className: 'd-flex', style: { width: '400px' } },
                     React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] })) : null,
             React.createElement("div", { style: { flexGrow: 10 } }, wb),
             ordino.workbenches[index].addWorkbenchOpen ?

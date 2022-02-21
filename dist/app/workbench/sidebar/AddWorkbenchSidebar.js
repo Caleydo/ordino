@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { addWorkbench, changeFocus, EWorkbenchDirection, useAppDispatch, useAppSelector } from '../../..';
 import { EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, PluginRegistry, useAsync } from 'tdp_core';
 import { useState } from 'react';
+import { setAddWorkbenchOpen } from '../../../store';
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -61,7 +62,10 @@ export function AddWorkbenchSidebar({ workbench }) {
                 }),
                 React.createElement("button", { onClick: () => {
                         const viewPlugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${relationList[0].targetEntity}`);
-                        dispatch(addWorkbench({
+                        dispatch(setAddWorkbenchOpen({ workbenchIndex: workbench.index, open: false }));
+                        dispatch(
+                        //load the data
+                        addWorkbench({
                             detailsOpen: true,
                             addWorkbenchOpen: false,
                             selectedMappings: relationList.map((r) => {
@@ -83,7 +87,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         setTimeout(() => {
                             dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
                         }, 0);
-                    }, type: "button", style: { color: 'white', backgroundColor: ordino.colorMap[e.idType] }, className: "mt-1 w-100 chevronButton btn btn-sm align-middle" },
+                    }, type: "button", style: { color: 'white', backgroundColor: ordino.colorMap[e.idType] }, className: `mt-1 w-100 chevronButton btn btn-sm align-middle ${relationList.length === 0 ? 'disabled' : ''}` },
                     "Create ",
                     e.label,
                     " workbench")));

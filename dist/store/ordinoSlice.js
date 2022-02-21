@@ -109,10 +109,11 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            state.workbenches[state.focusViewIndex].selection = action.payload.newSelection;
+            console.log('in the add selection callback', action.payload.entityId, action.payload.newSelection);
+            state.workbenches.find((w) => w.entityId.endsWith(action.payload.entityId)).selection = action.payload.newSelection;
         },
         addFilter(state, action) {
-            state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
+            state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;

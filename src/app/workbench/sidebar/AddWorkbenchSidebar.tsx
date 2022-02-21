@@ -5,6 +5,7 @@ import {EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IViewPluginDesc, Plugin
 import {useState} from 'react';
 import {IReprovisynEntity, IReprovisynMapping, ReprovisynRestUtils} from 'reprovisyn';
 import {useEffect} from 'react';
+import {setAddWorkbenchOpen} from '../../../store';
 
 export interface IAddWorkbenchSidebarProps {
     workbench: IWorkbench;
@@ -105,8 +106,9 @@ export function AddWorkbenchSidebar({
                         })}
                         <button onClick={() => {
                             const viewPlugin: IViewPluginDesc = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${relationList[0].targetEntity}`) as IViewPluginDesc;
-
+                            dispatch(setAddWorkbenchOpen({workbenchIndex: workbench.index, open: false}));
                             dispatch(
+                                //load the data
                                 addWorkbench({
                                     detailsOpen: true,
                                     addWorkbenchOpen: false,
@@ -133,7 +135,7 @@ export function AddWorkbenchSidebar({
                                 );
                             }, 0);
 
-                        }} type="button" style={{color: 'white', backgroundColor: ordino.colorMap[e.idType]}} className="mt-1 w-100 chevronButton btn btn-sm align-middle" >Create {e.label} workbench</button>
+                        }} type="button" style={{color: 'white', backgroundColor: ordino.colorMap[e.idType]}} className={`mt-1 w-100 chevronButton btn btn-sm align-middle ${relationList.length === 0 ? 'disabled' : ''}`} >Create {e.label} workbench</button>
                     </div>
                     );
                 })}

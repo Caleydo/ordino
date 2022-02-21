@@ -3,6 +3,8 @@ import React from 'react';
 import {addTransitionOptions, useAppDispatch, useAppSelector} from '../..';
 import {ARankingView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IDTypeManager, IView, PluginRegistry, ResolveNow, useAsync} from 'tdp_core';
 import {getAllFilters} from '../../store/storeUtils';
+import {useMemo} from 'react';
+import {IWorkbench} from '../../store';
 
 export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
@@ -16,14 +18,24 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
     const {status, value: viewPlugin} = useAsync(loadView, []);
 
+    const prevWorkbench: IWorkbench | null = useMemo(() => {
+        if(workbenchIndex > 0) {
+            return ordino.workbenches[workbenchIndex - 1];
+        }
+
+        return null;
+    }, [ordino.workbenches]);
+
+    console.log(ordino, workbenchIndex);
+
     const setRef = React.useCallback(async (ref: HTMLElement | null) => {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
             ref.innerHTML = '';
 
-            const idType = workbenchIndex === 0 ? 'Start' : ordino.workbenches[workbenchIndex - 1].entityId;
+            const idType = !prevWorkbench ? 'Start' : prevWorkbench.entityId;
 
-            const inputSelection = {idtype: new IDType(idType, viewId, '', true), ids: workbenchIndex === 0 ? [] : Array.from(ordino.workbenches[workbenchIndex - 1].selection)};
+            const inputSelection = {idtype: new IDType(idType, viewId, '', true), ids: !prevWorkbench ? [] : Array.from(prevWorkbench.selection)};
 
             const selection = {idtype: new IDType(idType, viewId, '', true), ids: Array.from(ordino.workbenches[workbenchIndex].selection)};
 
@@ -43,7 +55,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
                 setInstance(i);
             });
         }
-    }, [status, ordino.workbenches[workbenchIndex].selectedMappings]);
+    }, [status, ordino.workbenches[workbenchIndex].selectedMappings, prevWorkbench]);
 
     /**
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?

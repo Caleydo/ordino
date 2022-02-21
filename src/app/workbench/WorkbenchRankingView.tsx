@@ -42,6 +42,7 @@ export function WorkbenchRankingView({
         }),
     }), [view.id]);
 
+
     const viewIndex = useMemo(() => {
         return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
     }, [ordino.workbenches[workbenchIndex].views]);
@@ -50,7 +51,6 @@ export function WorkbenchRankingView({
         type: EDragTypes.MOVE,
         item: {type: EDragTypes.MOVE, viewId: view.id, index: viewIndex},
     }), [view.id, viewIndex]);
-
 
     return (
         <>

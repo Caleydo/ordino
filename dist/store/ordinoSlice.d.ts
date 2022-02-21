@@ -107,8 +107,10 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     columnName: string;
     data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

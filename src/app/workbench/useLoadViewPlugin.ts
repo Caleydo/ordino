@@ -44,7 +44,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
 
                 const context = {graph: null, ref: {value: {data: null}} as any, desc: workbenchIndex === 0 ? view : filteredViews[0].v};
 
-                const i = viewPlugin.factory(context, inputSelection, ref, {});
+                const i = viewPlugin.factory(context, inputSelection, ref, {enableVisPanel: false});
                 context.ref[`v`] = i;
 
                 ResolveNow.resolveImmediately(i.init(null, () => null)).then(() => {

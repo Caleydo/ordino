@@ -29,7 +29,7 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
             FindViewUtils.findAllViews(selection.idtype).then((availableViews) => {
                 const filteredViews = availableViews.filter((v) => viewId.endsWith(v.v.itemIDType));
                 const context = { graph: null, ref: { value: { data: null } }, desc: workbenchIndex === 0 ? view : filteredViews[0].v };
-                const i = viewPlugin.factory(context, inputSelection, ref, {});
+                const i = viewPlugin.factory(context, inputSelection, ref, { enableVisPanel: false });
                 context.ref[`v`] = i;
                 ResolveNow.resolveImmediately(i.init(null, () => null)).then(() => {
                     // i.setInputSelection(inputSelection);

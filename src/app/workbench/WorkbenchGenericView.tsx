@@ -68,7 +68,7 @@ export function WorkbenchGenericView({
                             <div>
                                 <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
                             </div>
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.name}</strong></span>
                             {viewPluginComponents?.header ?
                             <Suspense fallback={'Loading..'}>
                                 <viewPluginComponents.header
@@ -78,16 +78,16 @@ export function WorkbenchGenericView({
                                 selection={ordino.workbenches[workbenchIndex].selection}
                                 idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                                 parameters={view.parameters}
-                                onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
+                                onSelectionChanged={(sel: string[]) => dispatch(addSelection({entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel}))}
                                 onParametersChanged={(p) => dispatch(setViewParameters({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p}))}
-                                onIdFilterChanged={(filt: string[]) => dispatch(addFilter({viewId: view.id, filter: filt}))}
+                                onIdFilterChanged={(filt: string[]) => dispatch(addFilter({entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt}))}
                                 />
                             </Suspense> : null}
                         </div>
                     </> :
                     <>
                         <div ref={drag} className="view-parameters d-flex">
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.name}</strong></span>
                         </div>
                     </>
                 }
@@ -111,7 +111,8 @@ export function WorkbenchGenericView({
                                     dispatch(setView({
                                         workbenchIndex,
                                         viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
-                                        viewId: newView.id
+                                        viewId: newView.id,
+                                        viewName: newView.name
                                     }));
                                 }} isEmbedded={false}/>
                             </div>
@@ -125,9 +126,9 @@ export function WorkbenchGenericView({
                                     selection={ordino.workbenches[workbenchIndex].selection}
                                     idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                                     parameters={view.parameters}
-                                    onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
+                                    onSelectionChanged={(sel: string[]) => dispatch(addSelection({entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel}))}
                                     onParametersChanged={(p) => dispatch(setViewParameters({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p}))}
-                                    onIdFilterChanged={(filt: string[]) => dispatch(addFilter({viewId: view.id, filter: filt}))}
+                                    onIdFilterChanged={(filt: string[]) => dispatch(addFilter({entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt}))}
                                     />
                                 </Suspense>
                             </div>
@@ -146,9 +147,9 @@ export function WorkbenchGenericView({
                         selection={ordino.workbenches[workbenchIndex].selection}
                         idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                         parameters={view.parameters}
-                        onSelectionChanged={(sel: string[]) => dispatch(addSelection({newSelection: sel}))}
+                        onSelectionChanged={(sel: string[]) => dispatch(addSelection({entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel}))}
                         onParametersChanged={(p) => dispatch(setViewParameters({workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p}))}
-                        onIdFilterChanged={(filt: string[]) => dispatch(addFilter({viewId: view.id, filter: filt}))}
+                        onIdFilterChanged={(filt: string[]) => dispatch(addFilter({entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt}))}
                         /></Suspense> : null}
                 </div>
 

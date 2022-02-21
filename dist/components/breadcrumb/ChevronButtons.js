@@ -16,6 +16,7 @@ export function ChevronButtons({ color = 'cornflowerblue' }) {
                     dispatch(addView({
                         workbenchIndex: ordino.focusViewIndex,
                         view: {
+                            name: '',
                             id: '',
                             uniqueId: (Math.random() + 1).toString(36).substring(7),
                             filters: []

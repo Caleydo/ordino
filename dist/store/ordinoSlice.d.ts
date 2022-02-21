@@ -9,6 +9,7 @@ export declare enum EViewDirections {
 export interface IWorkbenchView {
     id: string;
     uniqueId: string;
+    name: string;
     filters: string[];
     parameters?: any;
 }
@@ -91,6 +92,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     workbenchIndex: number;
     viewIndex: number;
     viewId: string;
+    viewName: string;
 }, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     entityId: string;
     desc: any;

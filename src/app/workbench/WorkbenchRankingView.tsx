@@ -65,12 +65,12 @@ export function WorkbenchRankingView({
                             <div>
                                 <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
                             </div>
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.name}</strong></span>
                         </div>
                     </> :
                     <>
                         <div ref={drag} className="view-parameters d-flex">
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.name}</strong></span>
                         </div>
                     </>
                 }

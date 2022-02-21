@@ -118,7 +118,7 @@ export function AddWorkbenchSidebar({
                                             columnSelection: r.mappingSubtype
                                         };
                                     }),
-                                    views: [{id: viewPlugin.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
+                                    views: [{name: viewPlugin.name, id: viewPlugin.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: []}],
                                     viewDirection: EWorkbenchDirection.VERTICAL,
                                     transitionOptions: [],
                                     columnDescs: [],

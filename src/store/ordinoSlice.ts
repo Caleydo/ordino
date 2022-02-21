@@ -14,6 +14,7 @@ export interface IWorkbenchView {
   id: string;
   // this id is generated on creation and is simply a unique value used to differentiate views that may have the same id.
   uniqueId: string;
+  name: string;
   filters: string[];
   parameters?: any;
 }
@@ -153,8 +154,9 @@ const ordinoSlice = createSlice({
       console.log('in the slice add open');
       state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
     },
-    setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string}>) {
+    setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string, viewName: string}>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
     },
     addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;

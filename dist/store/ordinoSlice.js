@@ -80,6 +80,7 @@ const ordinoSlice = createSlice({
         },
         setView(state, action) {
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
         },
         addTransitionOptions(state, action) {
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;

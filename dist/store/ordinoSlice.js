@@ -62,11 +62,14 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
         },
         changeSelectedMappings(state, action) {
-            // if(!state.workbenches[action.payload.workbenchIndex].selectedMappings.includes(action.payload.newMapping)) {
-            state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
-            // } else {
-            //   state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((s) => s !== action.payload.newMapping);
-            // }
+            if (!state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
+                return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
+            })) {
+                state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+            }
+            else {
+                state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection));
+            }
         },
         setDetailsOpen(state, action) {
             state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;

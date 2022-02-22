@@ -42,7 +42,7 @@ export function useLoginMenu() {
                 clearTimeout(forceShowLoginDialogTimeout);
             });
             if (!user.loggedIn) {
-                //wait .5sec before showing the login dialog to give the auto login mechanism a chance
+                // wait .5sec before showing the login dialog to give the auto login mechanism a chance
                 forceShowLoginDialogTimeout = setTimeout(() => instance.forceShowDialog(), 500);
             }
             return () => {

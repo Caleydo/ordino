@@ -27,26 +27,22 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }) {
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
     }), [view.id, viewIndex]);
-    return (React.createElement(React.Fragment, null,
-        React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
-            workbenchIndex === ordino.focusViewIndex ?
-                React.createElement(React.Fragment, null,
-                    React.createElement("div", { className: "view-actions" },
-                        React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn-close" })),
-                    React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
-                        React.createElement("div", null))) :
-                React.createElement(React.Fragment, null,
-                    React.createElement("div", { ref: drag, className: "view-parameters d-flex" })),
-            React.createElement("div", { className: "inner d-flex" },
-                React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
-                        dispatch(setView({
-                            workbenchIndex,
-                            viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
-                            viewId: newView.id
-                        }));
-                    }, isEmbedded: false }),
-                React.createElement("div", { className: "w-100 d-flex justify-content-center align-items-center" },
-                    React.createElement("p", { className: "emptyViewText" }, "Select A View"))),
-            isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null)));
+    return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
+        workbenchIndex === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "view-actions" },
+                React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn-close" })),
+            React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+                React.createElement("div", null)))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" })),
+        React.createElement("div", { className: "inner d-flex" },
+            React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
+                    dispatch(setView({
+                        workbenchIndex,
+                        viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
+                        viewId: newView.id,
+                    }));
+                }, isEmbedded: false }),
+            React.createElement("div", { className: "w-100 d-flex justify-content-center align-items-center" },
+                React.createElement("p", { className: "emptyViewText" }, "Select A View"))),
+        isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchEmptyView.js.map

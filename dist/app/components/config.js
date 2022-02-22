@@ -1,4 +1,4 @@
-import { ViewChooserHeader, BurgerButton, ViewChooserAccordion, ViewChooserFilter, SelectedViewIndicator, SelectionCountIndicator, ViewChooserFooter } from '.';
+import { ViewChooserHeader, BurgerButton, ViewChooserAccordion, ViewChooserFilter, SelectedViewIndicator, SelectionCountIndicator, ViewChooserFooter, } from '.';
 export const chooserComponents = {
     ViewChooserHeader,
     BurgerButton,
@@ -6,6 +6,6 @@ export const chooserComponents = {
     ViewChooserAccordion,
     SelectedViewIndicator,
     SelectionCountIndicator,
-    ViewChooserFooter
+    ViewChooserFooter,
 };
 //# sourceMappingURL=config.js.map

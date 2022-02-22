@@ -1,6 +1,6 @@
 import React from 'react';
-import { EDragTypes } from './utils';
 import { useDrag } from 'react-dnd';
+import { EDragTypes } from './utils';
 import { useAppDispatch, useAppSelector } from '../..';
 import { findViewIndex } from '../../store/storeUtils';
 export function MoveButton({ view }) {

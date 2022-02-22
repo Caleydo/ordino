@@ -1,5 +1,5 @@
-import { IWorkbenchView } from '../../store';
 import { IViewPluginDesc } from 'tdp_core';
+import { IWorkbenchView } from '../../store';
 export interface IWorkbenchGenericViewProps {
     workbenchIndex: number;
     view: IWorkbenchView;

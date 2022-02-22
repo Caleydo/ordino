@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeaderTabs, } from '.';
+import { HeaderTabs } from '.';
 import { useAppDispatch, useAppSelector } from '..';
 import { setActiveTab, setMode } from '../store';
 import { VisynHeader } from '../visyn';
@@ -24,10 +24,8 @@ export function OrdinoHeader(props) {
     return (React.createElement(React.Fragment, null,
         React.createElement(VisynHeader, { extensions: {
                 LeftExtensions: () => React.createElement(HeaderTabs, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }),
-                ...props.extensions
+                ...props.extensions,
             } }),
-        app.ready ? React.createElement(React.Fragment, null,
-            React.createElement(StartMenuTabWrapper, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }))
-            : null));
+        app.ready ? React.createElement(StartMenuTabWrapper, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }) : null));
 }
 //# sourceMappingURL=OrdinoHeader.js.map

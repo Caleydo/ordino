@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { EColumnTypes, VisSidebar, Vis } from 'tdp_core';
-export function VisVisynView({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged }) {
+export function VisVisynView({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged, }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d, i) => !idFilter.includes(d._visyn_id));
@@ -14,12 +14,12 @@ export function VisVisynView({ desc, data, dataDesc, selection, idFilter, parame
             info: {
                 name: c.label,
                 description: c.summary,
-                id: c.label + (c)._id
+                id: c.label + c._id,
             },
             values: () => filteredData.map((d, i) => {
-                return { id: d._visyn_id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--' };
+                return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
             }),
-            type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
+            type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
         });
     }
     const selectedMap = {};
@@ -31,7 +31,7 @@ export function VisVisynView({ desc, data, dataDesc, selection, idFilter, parame
     }
     return React.createElement(Vis, { columns: cols, selected: selectedMap, selectionCallback: onSelectionChanged, externalConfig: parameters, hideSidebar: true });
 }
-export function VisViewSidebar({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged }) {
+export function VisViewSidebar({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged, }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d, i) => !idFilter.includes(d._visyn_id));
@@ -44,12 +44,12 @@ export function VisViewSidebar({ desc, data, dataDesc, selection, idFilter, para
                 info: {
                     name: c.label,
                     description: c.summary,
-                    id: c.label + (c)._id
+                    id: c.label + c._id,
                 },
                 values: () => filteredData.map((d, i) => {
-                    return { id: d._visyn_id, val: d[(c).column] ? d[(c).column] : c.type === 'number' ? null : '--' };
+                    return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
                 }),
-                type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL
+                type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
             });
         }
         return cols;
@@ -68,13 +68,13 @@ export function VisViewSidebar({ desc, data, dataDesc, selection, idFilter, para
         }
     };
     console.log(cols, parameters);
-    return React.createElement(VisSidebar, { width: '220px', columns: cols, filterCallback: visFilterChanged, externalConfig: parameters, setExternalConfig: onParametersChanged });
+    return React.createElement(VisSidebar, { width: "220px", columns: cols, filterCallback: visFilterChanged, externalConfig: parameters, setExternalConfig: onParametersChanged });
 }
 export const visConfiguration = () => {
     return {
         view: VisVisynView,
         tab: VisViewSidebar,
-        header: null
+        header: null,
     };
 };
 //# sourceMappingURL=VisVisynView.js.map

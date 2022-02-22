@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { EStartMenuMode } from '../components/header/StartMenuTabWrapper';
 const initialState = {
     activeTab: null,
-    mode: EStartMenuMode.START
+    mode: EStartMenuMode.START,
 };
 const menuSlice = createSlice({
     name: 'menu',
@@ -13,8 +13,8 @@ const menuSlice = createSlice({
         },
         setMode(state, action) {
             state.mode = action.payload;
-        }
-    }
+        },
+    },
 });
 export const { setActiveTab, setMode } = menuSlice.actions;
 export const menuReducer = menuSlice.reducer;

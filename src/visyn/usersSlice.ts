@@ -1,11 +1,11 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface IUserState {
   loggedIn?: boolean;
 }
 
 const initialState: IUserState = {
-  loggedIn: false
+  loggedIn: false,
 };
 
 const userSlice = createSlice({
@@ -18,10 +18,10 @@ const userSlice = createSlice({
     logout(state) {
       state.loggedIn = false;
     },
-  }
+  },
 });
 
-//should this be active or passive voice? random thing but active seems better, but docs are passive
-export const {login, logout} = userSlice.actions;
+// should this be active or passive voice? random thing but active seems better, but docs are passive
+export const { login, logout } = userSlice.actions;
 
 export const userReducer = userSlice.reducer;

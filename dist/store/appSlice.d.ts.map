@@ -1,1 +1,1 @@
-{"version":3,"file":"appSlice.d.ts","sourceRoot":"","sources":["../../src/store/appSlice.ts"],"names":[],"mappings":"AAGA,MAAM,WAAW,SAAS;IACxB,KAAK,EAAE,OAAO,CAAC;CAEhB;AAkBD,eAAO,MAAO,QAAQ,8EAAoB,CAAC;AAE3C,eAAO,MAAM,UAAU,+DAAmB,CAAC"}
+{"version":3,"file":"appSlice.d.ts","sourceRoot":"","sources":["../../src/store/appSlice.ts"],"names":[],"mappings":"AAGA,MAAM,WAAW,SAAS;IACxB,KAAK,EAAE,OAAO,CAAC;CAChB;AAgBD,eAAO,MAAQ,QAAQ,8EAAqB,CAAC;AAE7C,eAAO,MAAM,UAAU,+DAAmB,CAAC"}

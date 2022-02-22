@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { visynHeaderComponents } from './headerConfig';
 import { useLoginMenu } from './hooks/useLoginMenu';
-export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false, }) {
+export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }) {
     const { ref, loggedIn } = useLoginMenu();
     const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
     return (React.createElement(React.Fragment, null,

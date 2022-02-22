@@ -29,24 +29,20 @@ export function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }) {
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
     }), [view.id, viewIndex]);
-    return (React.createElement(React.Fragment, null,
-        React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
-            workbenchIndex === ordino.focusViewIndex ?
-                React.createElement(React.Fragment, null,
-                    React.createElement("div", { className: "view-actions" },
-                        React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn-close" })),
-                    React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
-                        React.createElement("div", null,
-                            React.createElement("button", { type: "button", onClick: () => setEditOpen(!editOpen), className: "chevronButton btn btn-icon-primary align-middle m-1" },
-                                " ",
-                                React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))),
-                        React.createElement("span", { className: 'view-title row align-items-center m-1' },
-                            React.createElement("strong", null, view.name)))) :
-                React.createElement(React.Fragment, null,
-                    React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
-                        React.createElement("span", { className: 'view-title row align-items-center m-1' },
-                            React.createElement("strong", null, view.name)))),
-            React.createElement("div", { ref: ref, className: "inner" }),
-            isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null)));
+    return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
+        workbenchIndex === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "view-actions" },
+                React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn-close" })),
+            React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+                React.createElement("div", null,
+                    React.createElement("button", { type: "button", onClick: () => setEditOpen(!editOpen), className: "chevronButton btn btn-icon-primary align-middle m-1" },
+                        ' ',
+                        React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))),
+                React.createElement("span", { className: "view-title row align-items-center m-1" },
+                    React.createElement("strong", null, view.name))))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+            React.createElement("span", { className: "view-title row align-items-center m-1" },
+                React.createElement("strong", null, view.name)))),
+        React.createElement("div", { ref: ref, className: "inner" }),
+        isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchRankingView.js.map

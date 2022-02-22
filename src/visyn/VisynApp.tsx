@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {useAppSelector} from '..';
-import {useInitVisynApp} from './hooks/useInitVisynApp';
-import {VisynHeader} from './VisynHeader';
+import { useAppSelector } from '..';
+import { useInitVisynApp } from './hooks/useInitVisynApp';
+import { VisynHeader } from './VisynHeader';
 
 interface IVisynAppProps {
   extensions?: {
@@ -10,20 +10,19 @@ interface IVisynAppProps {
   children?: React.ReactNode;
 }
 
-export function VisynApp({extensions: {header = <VisynHeader />} = {}, children = null}: IVisynAppProps) {
+export function VisynApp({ extensions: { header = <VisynHeader /> } = {}, children = null }: IVisynAppProps) {
   const user = useAppSelector((state) => state.user);
-  const {status} = useInitVisynApp();
+  const { status } = useInitVisynApp();
   return (
-    <>{status === 'success' ?
-      <>
-        {header}
-        {user.loggedIn ?
+    <>
+      {
+        status === 'success' ? (
           <>
-            {children}
+            {header}
+            {user.loggedIn ? <>{children}</> : null}
           </>
-          : null}
-      </> : null // TODO:show loading overlay while initializing?
-    }
+        ) : null // TODO:show loading overlay while initializing?
+      }
     </>
   );
 }

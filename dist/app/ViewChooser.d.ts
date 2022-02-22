@@ -68,5 +68,5 @@ export interface IViewChooserProps {
      */
     extensions?: ViewChooserExtensions;
 }
-export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, mode, expand, classNames, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter } }: IViewChooserProps): JSX.Element;
+export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, mode, expand, classNames, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter, }, }: IViewChooserProps): JSX.Element;
 //# sourceMappingURL=ViewChooser.d.ts.map

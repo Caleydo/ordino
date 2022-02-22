@@ -50,8 +50,8 @@ import { InView } from 'react-intersection-observer';
 export function OrdinoScrollspy(props) {
     var _a, _b;
     // render only the scrollspy container to maintain positions
-    if (typeof (props.children) !== 'function' || !props.items || props.items.length === 0) {
-        return (React.createElement("div", { className: "ordino-scrollspy-container" }, props.children));
+    if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
+        return React.createElement("div", { className: "ordino-scrollspy-container" }, props.children);
     }
     // state with all active items
     const [activeItems, setActiveItems] = React.useState({});
@@ -65,10 +65,12 @@ export function OrdinoScrollspy(props) {
         activeItemsRef.current = {
             ...activeItemsRef.current,
             // add new item per id if in view
-            [id]: (inView) ? {
-                ratio: entry.intersectionRatio,
-                index
-            } : null
+            [id]: inView
+                ? {
+                    ratio: entry.intersectionRatio,
+                    index,
+                }
+                : null,
         };
     };
     React.useEffect(() => {
@@ -77,13 +79,14 @@ export function OrdinoScrollspy(props) {
             setActiveItems(activeItemsRef.current);
         }, 100);
         return () => {
+            // cleanup
             clearInterval(intervalId);
         };
     }, []);
     const activeId = (_b = (_a = Object.entries(activeItems)
         .filter(([_id, item]) => item === null || item === void 0 ? void 0 : item.ratio)
         // get items with maximum ratio and on tie use the one with the lowest index
-        .sort((a, b) => (b[1].ratio - a[1].ratio) || (a[1].index - b[1].index))) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[0]; // get the item's `id` (from Object.entries())
+        .sort((a, b) => b[1].ratio - a[1].ratio || a[1].index - b[1].index)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[0]; // pick the first item of the sorted array // get the item's `id` (from Object.entries())
     /**
      * Get the href attribute and find the corresponding element with the id.
      * If found scroll the element into the viewport.

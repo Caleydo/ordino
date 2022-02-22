@@ -1,12 +1,12 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {IRow, IViewPluginDesc} from 'tdp_core';
-import type {IReprovisynServerColumn} from 'reprovisyn';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IRow, IViewPluginDesc } from 'tdp_core';
+import type { IReprovisynServerColumn } from 'reprovisyn';
 
 export enum EViewDirections {
   N = 'n',
   S = 's',
   W = 'w',
-  E = 'e'
+  E = 'e',
 }
 
 export interface IWorkbenchView {
@@ -25,7 +25,7 @@ export interface IOrdinoAppState {
    */
   workbenches: IWorkbench[];
 
-  colorMap: {[key: string]: string};
+  colorMap: { [key: string]: string };
 
   /**
    * Id of the current focus view
@@ -36,7 +36,7 @@ export interface IOrdinoAppState {
 
 export enum EWorkbenchDirection {
   VERTICAL = 'vertical',
-  HORIZONTAL = 'horizontal'
+  HORIZONTAL = 'horizontal',
 }
 
 export interface ISelectedMapping {
@@ -60,7 +60,7 @@ export interface IWorkbench {
 
   index: number;
 
-  data: {[key: string]: IRow};
+  data: { [key: string]: IRow };
   columnDescs: IReprovisynServerColumn[];
   // TODO: how do we store the lineup-specific column descriptions?
 
@@ -81,7 +81,6 @@ interface IBaseState {
 export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc {
   state: S;
 }
-
 
 // const test = ({
 //   headerOverride = Header,
@@ -112,7 +111,7 @@ const initialState: IOrdinoAppState = {
   workbenches: [],
   focusViewIndex: 0,
   sidebarOpen: false,
-  colorMap: {}
+  colorMap: {},
 };
 
 const ordinoSlice = createSlice({
@@ -123,91 +122,96 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
-    createColorMap(state, action: PayloadAction<{colorMap: {[key: string]: string}}>) {
+    createColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
       state.colorMap = action.payload.colorMap;
     },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
-    addView(state, action: PayloadAction<{workbenchIndex: number, view: IWorkbenchView}>) {
+    addView(state, action: PayloadAction<{ workbenchIndex: number; view: IWorkbenchView }>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
-    setSidebarOpen(state, action: PayloadAction<{open: boolean}>) {
+    setSidebarOpen(state, action: PayloadAction<{ open: boolean }>) {
       state.sidebarOpen = action.payload.open;
     },
-    setViewParameters(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, parameters: any}>) {
+    setViewParameters(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; parameters: any }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
-    changeSelectedMappings(state, action: PayloadAction<{workbenchIndex: number, newMapping: ISelectedMapping}>) {
-      if(!state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
-        return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
-      })) {
+    changeSelectedMappings(state, action: PayloadAction<{ workbenchIndex: number; newMapping: ISelectedMapping }>) {
+      if (
+        !state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
+          return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
+        })
+      ) {
         state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
       } else {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection));
+        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter(
+          (m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection),
+        );
       }
     },
-    setDetailsOpen(state, action: PayloadAction<{workbenchIndex: number, open: boolean}>) {
+    setDetailsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
       state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
     },
-    setAddWorkbenchOpen(state, action: PayloadAction<{workbenchIndex: number, open: boolean}>) {
+    setAddWorkbenchOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
       console.log('in the slice add open');
       state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
     },
-    setView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number, viewId: string, viewName: string}>) {
+    setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string; viewName: string }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
     },
-    addTransitionOptions(state, action: PayloadAction<{workbenchIndex: number, transitionOptions: string[]}>) {
+    addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    createColumnDescs(state, action: PayloadAction<{entityId: string, desc: any}>) {
+    createColumnDescs(state, action: PayloadAction<{ entityId: string; desc: any }>) {
       state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
-    addColumnDesc(state, action: PayloadAction<{entityId: string, desc: any}>) {
+    addColumnDesc(state, action: PayloadAction<{ entityId: string; desc: any }>) {
       state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
-    switchViews(state, action: PayloadAction<{workbenchIndex: number, firstViewIndex: number, secondViewIndex: number}>) {
+    switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
-      state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
+        state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
     },
-    setWorkbenchDirection(state, action: PayloadAction<{workbenchIndex: number, direction: EWorkbenchDirection}>) {
+    setWorkbenchDirection(state, action: PayloadAction<{ workbenchIndex: number; direction: EWorkbenchDirection }>) {
       state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
     },
-    removeWorkbench(state, action: PayloadAction<{index: number}>) {
+    removeWorkbench(state, action: PayloadAction<{ index: number }>) {
       state.workbenches.slice(action.payload.index);
     },
-    //TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
-    removeView(state, action: PayloadAction<{workbenchIndex: number, viewIndex: number}>) {
+    // TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
+    removeView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number }>) {
       const workbench = state.workbenches[action.payload.workbenchIndex];
       workbench.views.splice(action.payload.viewIndex, 1);
     },
-    replaceWorkbench(state, action: PayloadAction<{workbenchIndex: number, newWorkbench: IWorkbench}>) {
+    replaceWorkbench(state, action: PayloadAction<{ workbenchIndex: number; newWorkbench: IWorkbench }>) {
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
-    addSelection(state, action: PayloadAction<{entityId: string, newSelection: string[]}>) {
+    addSelection(state, action: PayloadAction<{ entityId: string; newSelection: string[] }>) {
       console.log('in the add selection callback', action.payload.entityId, action.payload.newSelection);
 
       state.workbenches.find((w) => w.entityId.endsWith(action.payload.entityId)).selection = action.payload.newSelection;
     },
-    addFilter(state, action: PayloadAction<{entityId: string, viewId: string, filter: string[]}>) {
+    addFilter(state, action: PayloadAction<{ entityId: string; viewId: string; filter: string[] }>) {
       state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
     },
-    changeFocus(state, action: PayloadAction<{index: number}>) {
+    changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusViewIndex = action.payload.index;
     },
-    setWorkbenchData(state, action: PayloadAction<{entityId: string, data: any[]}>) {
-      for(const i of action.payload.data) {
+    setWorkbenchData(state, action: PayloadAction<{ entityId: string; data: any[] }>) {
+      for (const i of action.payload.data) {
         state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
       }
     },
-    addScoreColumn(state, action: PayloadAction<{columnName: string, data: any}>) {
-      for(const row of action.payload.data) {
+    addScoreColumn(state, action: PayloadAction<{ columnName: string; data: any }>) {
+      for (const row of action.payload.data) {
         const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
         if (dataRow) {
           dataRow[action.payload.columnName] = row.score;
@@ -216,7 +220,7 @@ const ordinoSlice = createSlice({
         }
       }
     },
-  }
+  },
 });
 
 export const {
@@ -241,7 +245,7 @@ export const {
   addFirstWorkbench,
   addWorkbench,
   switchViews,
-  setWorkbenchDirection
+  setWorkbenchDirection,
 } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

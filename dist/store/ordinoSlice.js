@@ -36,7 +36,7 @@ const initialState = {
     workbenches: [],
     focusViewIndex: 0,
     sidebarOpen: false,
-    colorMap: {}
+    colorMap: {},
 };
 const ordinoSlice = createSlice({
     name: 'ordino',
@@ -94,7 +94,8 @@ const ordinoSlice = createSlice({
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
             const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
-            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
+                state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
             state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
         },
         setWorkbenchDirection(state, action) {
@@ -103,7 +104,7 @@ const ordinoSlice = createSlice({
         removeWorkbench(state, action) {
             state.workbenches.slice(action.payload.index);
         },
-        //TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
+        // TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
         removeView(state, action) {
             const workbench = state.workbenches[action.payload.workbenchIndex];
             workbench.views.splice(action.payload.viewIndex, 1);
@@ -138,8 +139,8 @@ const ordinoSlice = createSlice({
                 }
             }
         },
-    }
+    },
 });
-export const { addView, createColorMap, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, createColorMap, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

@@ -17,7 +17,9 @@ export default function SessionsTab(_props) {
         return Promise.all(sectionEntries.map((section) => section.load()));
     }, []);
     const { status, value: items } = useAsync(loadSections, []);
-    return status === 'success' ? (React.createElement(OrdinoScrollspy, { items: items.map((item) => ({ id: `${item.desc.id}_${suffix}`, name: item.desc.name })) }, (handleOnChange) => (React.createElement(React.Fragment, null,
+    return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    React.createElement(React.Fragment, null, status === 'success' ? (React.createElement(OrdinoScrollspy, { items: items.map((item) => ({ id: `${item.desc.id}_${suffix}`, name: item.desc.name })) }, (handleOnChange) => (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "container pb-10 pt-5" },
             React.createElement("div", { className: "row justify-content-center" },
                 React.createElement("div", { className: "col-11 position-relative" }, items === null || items === void 0 ? void 0 : items.map((item, index) => {
@@ -27,6 +29,6 @@ export default function SessionsTab(_props) {
                         React.createElement(item.factory, Object.assign({}, item.desc))));
                 })))),
         React.createElement(BrowserRouter, { basename: "/#" },
-            React.createElement(OrdinoFooter, { openInNewWindow: true })))))) : null;
+            React.createElement(OrdinoFooter, { openInNewWindow: true })))))) : null));
 }
 //# sourceMappingURL=SessionsTab.js.map

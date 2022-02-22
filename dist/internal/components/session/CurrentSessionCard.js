@@ -4,7 +4,7 @@ import { GraphContext, HighlightSessionCardContext } from '../../constants';
 import { ListItemDropdown } from '../../../components';
 import { CommonSessionCard } from './CommonSessionCard';
 import { SessionListItem } from './SessionListItem';
-export function CurrentSessionCard({ name, faIcon }) {
+export default function CurrentSessionCard({ name, faIcon }) {
     const { manager, graph } = React.useContext(GraphContext);
     const { highlight, setHighlight } = React.useContext(HighlightSessionCardContext);
     const [desc, setDesc] = React.useState(graph.desc);
@@ -32,8 +32,8 @@ export function CurrentSessionCard({ name, faIcon }) {
                     hash.set('clue_state', `clue_state=${g.act.id}`);
                     const url = `${window.location.href.replace(window.location.hash, '')}#${Array.from(hash.values()).join('&')}`;
                     NotificationHandler.pushNotification('success', `${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successNotification', { name: g.desc.name })}
-              <br>${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.urlToShare')} <br>
-              <a href="${url}" title="${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.currentLink')}">${url}</a>`, -1);
+            <br>${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.urlToShare')} <br>
+            <a href="${url}" title="${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.currentLink')}">${url}</a>`, -1);
                     GlobalEventHandler.getInstance().fire(ProvenanceGraphMenuUtils.GLOBAL_EVENT_MANIPULATED);
                 });
             }

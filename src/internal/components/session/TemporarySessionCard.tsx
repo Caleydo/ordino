@@ -9,7 +9,7 @@ import { byDateDesc } from './utils';
 
 import type { IStartMenuSessionSectionDesc } from '../../../base/extensions';
 
-export function TemporarySessionCard({ name, faIcon }: IStartMenuSessionSectionDesc) {
+export default function TemporarySessionCard({ name, faIcon }: IStartMenuSessionSectionDesc) {
   const { manager } = React.useContext(GraphContext);
   const [sessions, setSessions] = React.useState<IProvenanceGraphDataDescription[]>(null);
 

@@ -23,36 +23,41 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
 
   const { status, value: items } = useAsync(loadCards, []);
 
-  return status === 'success' ? (
-    <OrdinoScrollspy items={items.map((card) => ({ id: `${card.desc.id}_${suffix}`, name: card.desc.name }))}>
-      {(handleOnChange) => (
-        <>
-          <div className="container pb-10 pt-5">
-            <div className="row justify-content-center">
-              <div className="col-11 position-relative">
-                <p className="lead text-gray-600 mb-0">Start a new analysis session by loading a dataset</p>
-                {items.map((item, index) => {
-                  return (
-                    // `id` attribute must match the one in the scrollspy
-                    <OrdinoScrollspyItem
-                      className="pt-3 pb-5"
-                      id={`${item.desc.id}_${suffix}`}
-                      key={item.desc.id}
-                      index={index}
-                      handleOnChange={handleOnChange}
-                    >
-                      <item.factory {...item.desc} />
-                    </OrdinoScrollspyItem>
-                  );
-                })}
+  return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {status === 'success' ? (
+        <OrdinoScrollspy items={items.map((card) => ({ id: `${card.desc.id}_${suffix}`, name: card.desc.name }))}>
+          {(handleOnChange) => (
+            <>
+              <div className="container pb-10 pt-5">
+                <div className="row justify-content-center">
+                  <div className="col-11 position-relative">
+                    <p className="lead text-gray-600 mb-0">Start a new analysis session by loading a dataset</p>
+                    {items.map((item, index) => {
+                      return (
+                        // `id` attribute must match the one in the scrollspy
+                        <OrdinoScrollspyItem
+                          className="pt-3 pb-5"
+                          id={`${item.desc.id}_${suffix}`}
+                          key={item.desc.id}
+                          index={index}
+                          handleOnChange={handleOnChange}
+                        >
+                          <item.factory {...item.desc} />
+                        </OrdinoScrollspyItem>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <BrowserRouter basename="/#">
-            <OrdinoFooter openInNewWindow />
-          </BrowserRouter>
-        </>
-      )}
-    </OrdinoScrollspy>
-  ) : null;
+              <BrowserRouter basename="/#">
+                <OrdinoFooter openInNewWindow />
+              </BrowserRouter>
+            </>
+          )}
+        </OrdinoScrollspy>
+      ) : null}
+    </>
+  );
 }

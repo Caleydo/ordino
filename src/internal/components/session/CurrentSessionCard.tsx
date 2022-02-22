@@ -16,7 +16,7 @@ import { SessionListItem } from './SessionListItem';
 
 import type { IStartMenuSessionSectionDesc } from '../../../base/extensions';
 
-export function CurrentSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc) {
+export default function CurrentSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc) {
   const { manager, graph } = React.useContext(GraphContext);
   const { highlight, setHighlight } = React.useContext(HighlightSessionCardContext);
   const [desc, setDesc] = React.useState(graph.desc);
@@ -48,8 +48,8 @@ export function CurrentSessionCard({ name, faIcon }: IStartMenuSessionSectionDes
             NotificationHandler.pushNotification(
               'success',
               `${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successNotification', { name: g.desc.name })}
-              <br>${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.urlToShare')} <br>
-              <a href="${url}" title="${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.currentLink')}">${url}</a>`,
+            <br>${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.urlToShare')} <br>
+            <a href="${url}" title="${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.currentLink')}">${url}</a>`,
               -1,
             );
             GlobalEventHandler.getInstance().fire(ProvenanceGraphMenuUtils.GLOBAL_EVENT_MANIPULATED);

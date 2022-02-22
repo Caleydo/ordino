@@ -6,7 +6,7 @@ import { SessionDropzone } from './SessionDropzone';
 
 import type { IStartMenuSessionSectionDesc } from '../../../base/extensions';
 
-export function UploadSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc) {
+export default function UploadSessionCard({ name, faIcon }: IStartMenuSessionSectionDesc) {
   return (
     <CommonSessionCard cardName={name} faIcon={faIcon} cardInfo={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.uploadCardInfo')}>
       {() => <SessionDropzone />}

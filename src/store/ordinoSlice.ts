@@ -168,7 +168,7 @@ const ordinoSlice = createSlice({
       state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
     },
     addColumnDesc(state, action: PayloadAction<{ entityId: string; desc: any }>) {
-      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
       console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);

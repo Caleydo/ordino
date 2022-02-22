@@ -4,8 +4,8 @@ export function SettingsMenu({ menuItems = null }) {
         React.createElement("a", { href: "#", className: "nav-link", "data-bs-toggle": "dropdown", role: "button", "aria-haspopup": "true", id: "userMenuDropdown", "aria-expanded": "false" },
             React.createElement("i", { className: "fas fa-ellipsis-v text-light" })),
         React.createElement("ul", { className: "dropdown-menu dropdown-menu-end", "aria-labelledby": "userMenuDropdown" },
-            React.createElement("button", { className: "dropdown-item" }, "About"),
-            React.createElement("button", { className: "dropdown-item" }, "Contact"),
-            React.createElement("button", { className: "dropdown-item" }, "More"))));
+            React.createElement("button", { type: "button", className: "dropdown-item" }, "About"),
+            React.createElement("button", { type: "button", className: "dropdown-item" }, "Contact"),
+            React.createElement("button", { type: "button", className: "dropdown-item" }, "More"))));
 }
 //# sourceMappingURL=SettingsMenu.js.map

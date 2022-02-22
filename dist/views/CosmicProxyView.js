@@ -7,7 +7,7 @@ export function CosmicView({ desc, data, dataDesc, selection, idFilter, paramete
         if (!parameters) {
             onParametersChanged({ currentId: '' });
         }
-    }, []);
+    });
     console.log(parameters);
     return React.createElement("iframe", { className: "w-100 h-100", src: "https://cancer.sanger.ac.uk/cosmic" });
 }

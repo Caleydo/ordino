@@ -4,12 +4,6 @@ import { PluginRegistry } from 'tdp_core';
 import { OrdinoLogo } from './OrdinoLogo';
 import { EP_ORDINO_HEADER_MENU, IOrdinoHeaderMenuDesc, IOrdinoHeaderMenuLink } from '../base';
 
-interface IHeaderNavigationLink {
-  text: string;
-  page: string;
-  faIcon?: string;
-}
-
 interface IHeaderNavigationProps {
   /**
    * Defines if the header is sticky and visible when scrolling the page down
@@ -57,6 +51,7 @@ export function HeaderNavigation({ fixed, bg = 'dark' }: IHeaderNavigationProps)
           {links && (
             <ul className="navbar-nav">
               {links.map(({ text, page, faIcon }, i) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <li className="px-3 nav-item" key={i}>
                   <NavLink to={page} className="nav-link" activeClassName="active">
                     {faIcon && <i className={`${faIcon} me-2`} />}

@@ -24,6 +24,7 @@ export function OrdinoLogo() {
 
   const { status, value } = useAsync(loadOrdinoLogo, []);
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {status === 'success' && (
         <div className="ordino-logo">

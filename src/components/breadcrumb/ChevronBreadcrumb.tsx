@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useSpring, useSprings, animated } from 'react-spring';
-import { useAppDispatch, useAppSelector } from '../..';
+import { animated } from 'react-spring';
 
 export interface IChevronBreadcrumbProps {
   width?: number;
@@ -19,11 +18,6 @@ export function ChevronBreadcrumb({
   margin = 4,
   color = 'cornflowerblue',
 }: IChevronBreadcrumbProps) {
-  const ordino = useAppSelector((state) => state.ordino);
-  const dispatch = useAppDispatch();
-
-  // const spring = useSpring({width: width - chevronIndent - margin});
-
   return (
     <svg className="position-absolute chevronSvg" style={{ height: `${height}px` }}>
       {first ? (

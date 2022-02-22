@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useAppDispatch, useAppSelector } from '../..';
-import { setDetailsOpen } from '../../store';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { setDetailsOpen } from '../../store/ordinoSlice';
 export function ShowDetailsSwitch({ height = 30 }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();

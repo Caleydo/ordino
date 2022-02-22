@@ -1,21 +1,24 @@
 import React, { useMemo } from 'react';
 import { ARankingView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IDTypeManager, PluginRegistry, ResolveNow, useAsync } from 'tdp_core';
-import { useAppDispatch, useAppSelector } from '../..';
+import { useAppSelector } from '../../hooks/useAppSelector';
 import { getAllFilters } from '../../store/storeUtils';
 export function useLoadViewPlugin(viewId, workbenchIndex) {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
-    const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const [instance, setInstance] = React.useState(null);
     const loadView = React.useMemo(() => () => {
         return view.load();
-    }, []);
+    }, 
+    // Disabling since this file is nonsense anyways, will be removed when a react Ranking view is ready
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []);
     const { status, value: viewPlugin } = useAsync(loadView, []);
     const prevWorkbench = useMemo(() => {
         if (workbenchIndex > 0) {
             return ordino.workbenches[workbenchIndex - 1];
         }
         return null;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ordino.workbenches]);
     const setRef = React.useCallback(async (ref) => {
         // Create a new one if there is a ref
@@ -37,25 +40,31 @@ export function useLoadViewPlugin(viewId, workbenchIndex) {
                 setInstance(i);
             });
         }
-    }, [status, ordino.workbenches[workbenchIndex].selectedMappings, prevWorkbench === null || prevWorkbench === void 0 ? void 0 : prevWorkbench.selection]);
+    }, 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [status, ordino.workbenches[workbenchIndex].selectedMappings, prevWorkbench === null || prevWorkbench === void 0 ? void 0 : prevWorkbench.selection]);
     /**
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?
      */
     React.useEffect(() => {
         if (instance && instance instanceof ARankingView) {
-            const view = instance;
-            const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
-            view.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selection });
+            const rankingView = instance;
+            const id = IDTypeManager.getInstance().resolveIdType(rankingView.itemIDType.id);
+            rankingView.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selection });
         }
+        // Disabling since this file is nonsense anyways, will be removed when a react Ranking view is ready
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [instance, ordino.workbenches[workbenchIndex].selection]);
     React.useEffect(() => {
         if (instance && instance instanceof ARankingView) {
-            const view = instance;
+            const rankingView = instance;
             const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
-            view.provider.setFilter((row) => {
+            rankingView.provider.setFilter((row) => {
                 return !filteredIds.includes(row.v._visyn_id);
             });
         }
+        // Disabling since this file is nonsense anyways, will be removed when a react Ranking view is ready
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [instance, ordino.workbenches[workbenchIndex].views]);
     return [setRef, instance];
 }

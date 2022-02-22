@@ -1,1 +1,1 @@
-{"version":3,"file":"DropOverlay.d.ts","sourceRoot":"","sources":["../../../src/app/workbench/DropOverlay.tsx"],"names":[],"mappings":"AAIA,OAAO,EAAE,cAAc,EAAE,MAAM,aAAa,CAAC;AAS7C,MAAM,WAAW,iBAAiB;IAChC,IAAI,EAAE,cAAc,CAAC;CACtB;AAED,wBAAgB,WAAW,CAAC,EAAE,IAAI,EAAE,EAAE,iBAAiB,eAiBtD"}
+{"version":3,"file":"DropOverlay.d.ts","sourceRoot":"","sources":["../../../src/app/workbench/DropOverlay.tsx"],"names":[],"mappings":"AACA,OAAO,EAAE,cAAc,EAAE,MAAM,aAAa,CAAC;AAG7C,MAAM,WAAW,iBAAiB;IAChC,IAAI,EAAE,cAAc,CAAC;CACtB;AAED,wBAAgB,WAAW,CAAC,EAAE,IAAI,EAAE,EAAE,iBAAiB,eAiBtD"}

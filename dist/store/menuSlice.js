@@ -1,5 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { EStartMenuMode } from '../components/header/StartMenuTabWrapper';
+export var EStartMenuMode;
+(function (EStartMenuMode) {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    EStartMenuMode["START"] = "start";
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    EStartMenuMode["OVERLAY"] = "overlay";
+})(EStartMenuMode || (EStartMenuMode = {}));
+export var EStartMenuOpen;
+(function (EStartMenuOpen) {
+    /**
+     * no analysis in the background, the start menu cannot be closed
+     */
+    EStartMenuOpen["OPEN"] = "open";
+    /**
+     * an analysis in the background, the start menu can be closed
+     */
+    EStartMenuOpen["CLOSED"] = "closed";
+})(EStartMenuOpen || (EStartMenuOpen = {}));
 const initialState = {
     activeTab: null,
     mode: EStartMenuMode.START,

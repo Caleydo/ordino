@@ -1,9 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { EStartMenuMode } from '../components/header/StartMenuTabWrapper';
 
 export interface IMenuState {
   activeTab: string;
   mode: EStartMenuMode;
+}
+
+export enum EStartMenuMode {
+  /**
+   * no analysis in the background, the start menu cannot be closed
+   */
+  START = 'start',
+
+  /**
+   * an analysis in the background, the start menu can be closed
+   */
+  OVERLAY = 'overlay',
+}
+
+export enum EStartMenuOpen {
+  /**
+   * no analysis in the background, the start menu cannot be closed
+   */
+  OPEN = 'open',
+
+  /**
+   * an analysis in the background, the start menu can be closed
+   */
+  CLOSED = 'closed',
 }
 
 const initialState: IMenuState = {

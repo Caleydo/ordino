@@ -42,7 +42,8 @@ export function OrdinoFooter(props) {
         {lists &&
           lists.map((list, index) => {
             return (
-              <div className="list-group col-sm-auto" key={index}>
+              // eslint-disable-next-line react/no-array-index-key
+              <div className="list-group col-sm-auto" key={`listsKey${index}`}>
                 {list &&
                   list.map((link) => {
                     return (

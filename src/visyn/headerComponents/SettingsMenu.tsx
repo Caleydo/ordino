@@ -11,9 +11,15 @@ export function SettingsMenu({ menuItems = null }: ISettingsMenuProps) {
         <i className="fas fa-ellipsis-v text-light" />
       </a>
       <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
-        <button className="dropdown-item">About</button>
-        <button className="dropdown-item">Contact</button>
-        <button className="dropdown-item">More</button>
+        <button type="button" className="dropdown-item">
+          About
+        </button>
+        <button type="button" className="dropdown-item">
+          Contact
+        </button>
+        <button type="button" className="dropdown-item">
+          More
+        </button>
       </ul>
     </li>
   );

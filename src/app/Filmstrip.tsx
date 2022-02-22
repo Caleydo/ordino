@@ -1,15 +1,7 @@
-import { debounce } from 'lodash';
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Workbench } from './Workbench';
+import { EWorkbenchType, Workbench } from './Workbench';
 import { useAppSelector } from '../hooks';
-
-export enum EWorkbenchType {
-  PREVIOUS = 't-previous',
-  FOCUS = 't-focus',
-  CONTEXT = 't-context',
-  NEXT = 't-next',
-}
 
 export const focusViewWidth = 85; // viewport width (vw)
 export const contextViewWidth = 15; // viewport width (vw)
@@ -39,6 +31,7 @@ export function Filmstrip() {
                 : EWorkbenchType.PREVIOUS
             }
             workbench={v}
+            // eslint-disable-next-line react/no-array-index-key
             key={index}
           />
         );

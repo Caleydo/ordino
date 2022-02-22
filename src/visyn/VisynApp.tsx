@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAppSelector } from '..';
+import { useAppSelector } from '../hooks/useAppSelector';
 import { useInitVisynApp } from './hooks/useInitVisynApp';
 import { VisynHeader } from './VisynHeader';
 
@@ -14,12 +14,13 @@ export function VisynApp({ extensions: { header = <VisynHeader /> } = {}, childr
   const user = useAppSelector((state) => state.user);
   const { status } = useInitVisynApp();
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {
         status === 'success' ? (
           <>
             {header}
-            {user.loggedIn ? <>{children}</> : null}
+            {user.loggedIn ? children : null}
           </>
         ) : null // TODO:show loading overlay while initializing?
       }

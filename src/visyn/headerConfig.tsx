@@ -1,5 +1,9 @@
-import React, { ComponentType } from 'react';
-import { ISettingsMenuProps, IBurgerMenuProps, DatavisynLogo, BurgerMenu, CustomerDefaultLogo, SettingsMenu, AppDefaultLogo } from '.';
+import { ComponentType } from 'react';
+import { AppDefaultLogo } from './headerComponents/AppDefaultLogo';
+import { BurgerMenu, IBurgerMenuProps } from './headerComponents/BurgerMenu';
+import { CustomerDefaultLogo } from './headerComponents/CustomerDefaultLogo';
+import { DatavisynLogo } from './headerComponents/DatavisynLogo';
+import { ISettingsMenuProps, SettingsMenu } from './headerComponents/SettingsMenu';
 
 export interface IVisynHeaderComponents {
   BurgerButton?: ComponentType<IBurgerMenuProps>;
@@ -21,4 +25,4 @@ export const visynHeaderComponents: Partial<IVisynHeaderComponents> = {
   SettingsMenu,
 };
 
-export type visynHeaderExtensions = Partial<IVisynHeaderComponents>;
+export type VisynHeaderExtensions = Partial<IVisynHeaderComponents>;

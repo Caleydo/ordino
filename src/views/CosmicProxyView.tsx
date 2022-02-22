@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import Select from 'react-select';
-import { IDType, IVisynViewPluginFactory, IVisynViewProps } from 'tdp_core';
+import { IVisynViewPluginFactory, IVisynViewProps } from 'tdp_core';
 import { ICosmicViewPluginParams } from '../visyn/VisynView';
 
 export function CosmicView({
@@ -20,7 +20,7 @@ export function CosmicView({
     if (!parameters) {
       onParametersChanged({ currentId: '' });
     }
-  }, []);
+  });
 
   console.log(parameters);
 

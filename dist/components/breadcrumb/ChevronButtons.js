@@ -1,15 +1,11 @@
 import React from 'react';
-import { useDrag } from 'react-dnd';
-import { EDragTypes } from '../../app/workbench/utils';
-import { addView, useAppDispatch, useAppSelector } from '../..';
 import { getAllFilters } from '../../store/storeUtils';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { addView } from '../../store/ordinoSlice';
 export function ChevronButtons({ color = 'cornflowerblue' }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-    const [{}, drag] = useDrag(() => ({
-        type: EDragTypes.ADD,
-        item: { type: EDragTypes.ADD },
-    }));
     return (React.createElement(React.Fragment, null,
         React.createElement("div", null,
             React.createElement("button", { onClick: () => {

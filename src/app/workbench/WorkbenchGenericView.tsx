@@ -2,12 +2,14 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { IViewPluginDesc } from 'tdp_core';
-import { EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser } from '../..';
 import { addFilter, addSelection, IWorkbenchView, removeView, setView, setViewParameters } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
 import { useVisynViewPlugin } from './useLoadWorkbenchViewPlugin';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -21,9 +23,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
 
   const viewPluginComponents = useMemo(() => {
     return viewPluginFactFunc();
-  }, [viewPlugin]);
-
-  console.log(viewPluginComponents);
+  }, [viewPluginFactFunc]);
 
   const [settingsTabSelected, setSettingsTabSelected] = useState<boolean>(false);
 
@@ -44,9 +44,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   );
 
   const viewIndex = useMemo(() => {
+    console.log('in here');
     return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-  }, [ordino.workbenches[workbenchIndex].views]);
+  }, [view.uniqueId, ordino.workbenches, workbenchIndex]);
 
+  // eslint-disable-next-line no-empty-pattern
   const [{}, drag] = useDrag(
     () => ({
       type: EDragTypes.MOVE,
@@ -54,8 +56,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     }),
     [view.id, viewIndex],
   );
-
-  console.log(ordino.workbenches);
 
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">

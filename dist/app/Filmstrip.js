@@ -1,14 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Workbench } from './Workbench';
+import { EWorkbenchType, Workbench } from './Workbench';
 import { useAppSelector } from '../hooks';
-export var EWorkbenchType;
-(function (EWorkbenchType) {
-    EWorkbenchType["PREVIOUS"] = "t-previous";
-    EWorkbenchType["FOCUS"] = "t-focus";
-    EWorkbenchType["CONTEXT"] = "t-context";
-    EWorkbenchType["NEXT"] = "t-next";
-})(EWorkbenchType || (EWorkbenchType = {}));
 export const focusViewWidth = 85; // viewport width (vw)
 export const contextViewWidth = 15; // viewport width (vw)
 export function Filmstrip() {
@@ -27,7 +20,9 @@ export function Filmstrip() {
                     ? EWorkbenchType.FOCUS
                     : v.index > focused
                         ? EWorkbenchType.NEXT
-                        : EWorkbenchType.PREVIOUS, workbench: v, key: index }));
+                        : EWorkbenchType.PREVIOUS, workbench: v, 
+            // eslint-disable-next-line react/no-array-index-key
+            key: index }));
     })));
 }
 //# sourceMappingURL=Filmstrip.js.map

@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
-import { FindViewUtils, IDType, IViewPluginDesc, useAsync } from 'tdp_core';
-import { ViewChooser } from '..';
-import { useAppDispatch, useAppSelector } from '../..';
-import { IWorkbenchView, setView } from '../../store';
-import { findViewIndex } from '../../store/storeUtils';
+import { FindViewUtils, IDType, useAsync } from 'tdp_core';
+import { useMemo } from 'react';
+import { IWorkbenchView } from '../../store';
 import { WorkbenchRankingView } from './WorkbenchRankingView';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
-import { EViewChooserMode } from '../ViewChooser';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
+import { useAppSelector } from '../../hooks/useAppSelector';
 
 export interface IWorkbenchSingleViewProps {
   workbenchIndex: number;
@@ -20,17 +17,16 @@ export function getVisynView(entityId: string) {
 }
 
 export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleViewProps) {
-  const dispatch = useAppDispatch();
-
   const ordino = useAppSelector((state) => state.ordino);
 
-  const { value, status, error } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
+  const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
   const chooserOptions = useMemo(() => {
     return value ? value.map((v) => v.v) : [];
   }, [value]);
 
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {view.id === '' ? (
         <WorkbenchEmptyView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view} />

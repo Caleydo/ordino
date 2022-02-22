@@ -1,11 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
-import { useDrag } from 'react-dnd';
-import { EXTENSION_POINT_TDP_VIEW, IViewPluginDesc, PluginRegistry } from 'tdp_core';
-import { EDragTypes } from '../../app/workbench/utils';
-import { addView, EViewDirections, useAppDispatch, useAppSelector } from '../..';
-import { addWorkbench, changeFocus, EWorkbenchDirection, setWorkbenchDirection } from '../../store';
+import React from 'react';
 import { IChevronBreadcrumbProps } from './ChevronBreadcrumb';
 import { getAllFilters } from '../../store/storeUtils';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { addView } from '../../store/ordinoSlice';
 
 export interface IChevronButtonsProps {
   color?: string;
@@ -14,11 +12,6 @@ export interface IChevronButtonsProps {
 export function ChevronButtons({ color = 'cornflowerblue' }: IChevronBreadcrumbProps) {
   const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
-
-  const [{}, drag] = useDrag(() => ({
-    type: EDragTypes.ADD,
-    item: { type: EDragTypes.ADD },
-  }));
 
   return (
     <>

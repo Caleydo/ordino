@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser } from '../..';
 import { addFilter, addSelection, removeView, setView, setViewParameters } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
 import { useVisynViewPlugin } from './useLoadWorkbenchViewPlugin';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     const [editOpen, setEditOpen] = useState(true);
     const [viewPlugin, viewPluginFactFunc] = useVisynViewPlugin(view.id);
     const viewPluginComponents = useMemo(() => {
         return viewPluginFactFunc();
-    }, [viewPlugin]);
-    console.log(viewPluginComponents);
+    }, [viewPluginFactFunc]);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
@@ -28,13 +29,14 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
         }),
     }), [view.id]);
     const viewIndex = useMemo(() => {
+        console.log('in here');
         return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-    }, [ordino.workbenches[workbenchIndex].views]);
+    }, [view.uniqueId, ordino.workbenches, workbenchIndex]);
+    // eslint-disable-next-line no-empty-pattern
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
     }), [view.id, viewIndex]);
-    console.log(ordino.workbenches);
     return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
         workbenchIndex === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,
             React.createElement("div", { className: "view-actions" },

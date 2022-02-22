@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../..';
-import { setDetailsOpen } from '../../store';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { setDetailsOpen } from '../../store/ordinoSlice';
 
 export interface IShowDetailsSwitchProps {
   height?: number;

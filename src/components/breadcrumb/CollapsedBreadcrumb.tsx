@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '../..';
 import { IWorkbench } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
 
@@ -11,9 +10,6 @@ export interface ICollapsedBreadcrumbProps {
 }
 
 export function CollapsedBreadcrumb({ flexWidth = 1, color = 'cornflowerblue', workbenches = null }: ICollapsedBreadcrumbProps) {
-  const ordino = useAppSelector((state) => state.ordino);
-  const dispatch = useAppDispatch();
-
   const [width, setWidth] = useState<number>();
 
   const ref = useRef(null);
@@ -22,7 +18,7 @@ export function CollapsedBreadcrumb({ flexWidth = 1, color = 'cornflowerblue', w
     if (ref.current) {
       setWidth(ref.current.offsetWidth);
     }
-  });
+  }, []);
 
   return (
     <div className="position-relative" ref={ref} style={{ flexGrow: flexWidth }}>

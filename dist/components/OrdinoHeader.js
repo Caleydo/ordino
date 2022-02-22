@@ -1,9 +1,10 @@
 import React from 'react';
-import { HeaderTabs } from '.';
-import { useAppDispatch, useAppSelector } from '..';
-import { setActiveTab, setMode } from '../store';
+import { useAppDispatch } from '../hooks/useAppDispatch';
+import { useAppSelector } from '../hooks/useAppSelector';
+import { EStartMenuMode, setActiveTab, setMode } from '../store';
 import { VisynHeader } from '../visyn';
-import { EStartMenuMode, StartMenuTabWrapper } from './header/StartMenuTabWrapper';
+import { HeaderTabs } from './header/HeaderTabs';
+import { StartMenuTabWrapper } from './header/StartMenuTabWrapper';
 export function OrdinoHeader(props) {
     const app = useAppSelector((state) => state.app);
     const ordino = useAppSelector((state) => state.ordino);
@@ -15,14 +16,15 @@ export function OrdinoHeader(props) {
             dispatch(setMode(EStartMenuMode.OVERLAY));
             dispatch(setActiveTab(null));
         }
-    }, [ordino.workbenches]);
+    }, [ordino.workbenches, dispatch]);
     React.useEffect(() => {
         if (ordino.workbenches.length === 0) {
             dispatch(setActiveTab(props.tabs[0].id));
         }
-    }, [ordino.workbenches.length]);
+    }, [ordino.workbenches.length, dispatch, props.tabs]);
     return (React.createElement(React.Fragment, null,
         React.createElement(VisynHeader, { extensions: {
+                // eslint-disable-next-line react/no-unstable-nested-components
                 LeftExtensions: () => React.createElement(HeaderTabs, { tabs: props.tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }),
                 ...props.extensions,
             } }),

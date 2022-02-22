@@ -70,11 +70,6 @@ interface IOrdinoScrollspyProps {
  * @param props IOrdinoScrollspy properties
  */
 export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
-  // render only the scrollspy container to maintain positions
-  if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
-    return <div className="ordino-scrollspy-container">{props.children}</div>;
-  }
-
   // state with all active items
   const [activeItems, setActiveItems] = React.useState<{ [key: string]: { ratio: number; index: number } | null }>({});
 
@@ -131,6 +126,11 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
     document.querySelector(event.currentTarget.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
     return false;
   }, []);
+
+  // render only the scrollspy container to maintain positions
+  if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
+    return <div className="ordino-scrollspy-container">{props.children}</div>;
+  }
 
   return (
     <>

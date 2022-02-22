@@ -1,24 +1,16 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { ChevronBreadcrumb } from '../components/breadcrumb/ChevronBreadcrumb';
+import { useMemo } from 'react';
 import { CollapsedBreadcrumb } from '../components/breadcrumb/CollapsedBreadcrumb';
 import { SingleBreadcrumb } from '../components/breadcrumb/SingleBreadcrumb';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { changeFocus, setAddWorkbenchOpen, setSidebarOpen } from '../store/ordinoSlice';
+import { useAppDispatch } from '../hooks/useAppDispatch';
+import { useAppSelector } from '../hooks/useAppSelector';
+import { changeFocus, setAddWorkbenchOpen } from '../store/ordinoSlice';
 
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 
 export function Breadcrumb() {
-  const [totalWidth, setTotalWidth] = useState<number>(0);
-
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    window.addEventListener('resize', () => {
-      setTotalWidth(window.innerWidth);
-    });
-  }, []);
 
   const startFlexNum = useMemo(() => {
     let counter = 0;
@@ -29,7 +21,7 @@ export function Breadcrumb() {
     }
 
     return counter;
-  }, [ordino.workbenches.length, ordino.focusViewIndex]);
+  }, [ordino.focusViewIndex]);
 
   const endFlexNum = useMemo(() => {
     let counter = 0;
@@ -45,6 +37,7 @@ export function Breadcrumb() {
   // Obviously change this to the right way of importing these colors
   // always show first, last, context, +, otherwise show ...
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {ordino.workbenches.length > 0 ? (
         <div className="d-flex breadcrumb overflow-hidden">

@@ -1,18 +1,14 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { IViewPluginDesc, useAsync } from 'tdp_core';
-import { useAppDispatch, useAppSelector } from '../..';
-import { IWorkbenchView, removeView, setView, setWorkbenchDirection } from '../../store';
+import { IViewPluginDesc } from 'tdp_core';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { IWorkbenchView, removeView } from '../../store';
 import { findViewIndex } from '../../store/storeUtils';
-
-import { Lineup } from '../lite';
-import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { DropOverlay } from './DropOverlay';
-import { MoveButton } from './MoveButton';
 import { useLoadViewPlugin } from './useLoadViewPlugin';
 import { EDragTypes } from './utils';
-import { useLoadAvailableViews } from './useLoadAvailableViews';
 
 export interface IWorkbenchRankingViewProps {
   workbenchIndex: number;
@@ -43,8 +39,9 @@ export function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }: I
 
   const viewIndex = useMemo(() => {
     return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-  }, [ordino.workbenches[workbenchIndex].views]);
+  }, [view.uniqueId, workbenchIndex, ordino.workbenches]);
 
+  // eslint-disable-next-line no-empty-pattern
   const [{}, drag] = useDrag(
     () => ({
       type: EDragTypes.MOVE,

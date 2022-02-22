@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { useAppDispatch, useAppSelector } from '../..';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
 import { removeView } from '../../store';
 import { findViewIndex } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
@@ -24,7 +25,8 @@ export function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }) {
     }), [view.id]);
     const viewIndex = useMemo(() => {
         return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-    }, [ordino.workbenches[workbenchIndex].views]);
+    }, [view.uniqueId, workbenchIndex, ordino.workbenches]);
+    // eslint-disable-next-line no-empty-pattern
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },

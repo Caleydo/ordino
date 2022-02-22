@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useAppDispatch } from '../../hooks';
-import { setActiveTab } from '../../store';
-import { EStartMenuMode } from './StartMenuTabWrapper';
+import { EStartMenuMode, setActiveTab } from '../../store';
 
 export function HeaderTabs(props) {
   const dispatch = useAppDispatch();

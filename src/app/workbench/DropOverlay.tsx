@@ -1,15 +1,6 @@
-import { auto } from '@popperjs/core';
 import * as React from 'react';
-import { useDrop } from 'react-dnd';
-import { addView, useAppDispatch, useAppSelector } from '../..';
 import { IWorkbenchView } from '../../store';
-import { WorkbenchBottomIcon } from './icons/WorkbenchBottomIcon';
-import { WorkbenchLeftIcon } from './icons/WorkbenchLeftIcon';
-import { WorkbenchRightIcon } from './icons/WorkbenchRightIcon';
 import { WorkbenchSwitchIcon } from './icons/WorkbenchSwitchIcon';
-import { WorkbenchTopIcon } from './icons/WorkbenchTopIcon';
-
-import { EDragTypes } from './utils';
 
 export interface IDropOverlayProps {
   view: IWorkbenchView;

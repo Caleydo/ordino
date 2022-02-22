@@ -5,7 +5,8 @@ interface IListItemDropdownProps {
 }
 
 // tslint:disable-next-line: variable-name
-export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps, ref) => {
+// eslint-disable-next-line react/display-name
+export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps) => {
   return (
     <div className="dropdown btn-group-vertical list-item-dropdown">
       <button

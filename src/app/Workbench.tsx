@@ -1,8 +1,14 @@
 import React from 'react';
+import { useAppSelector } from '../hooks';
 import { IWorkbench } from '../store/ordinoSlice';
-import { EWorkbenchType } from './Filmstrip';
-import { useAppDispatch, useAppSelector } from '../hooks';
 import { WorkbenchViews } from './workbench/WorkbenchViews';
+
+export enum EWorkbenchType {
+  PREVIOUS = 't-previous',
+  FOCUS = 't-focus',
+  CONTEXT = 't-context',
+  NEXT = 't-next',
+}
 
 interface IWorkbenchProps {
   workbench: IWorkbench;
@@ -10,7 +16,6 @@ interface IWorkbenchProps {
 }
 
 export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbenchProps) {
-  const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
   const ref = React.useRef(null);
 

@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { IViewPluginDesc } from 'tdp_core';
-import { EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser } from '../..';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
 import { IWorkbenchView, removeView, setView } from '../../store';
-import { findViewIndex, getAllFilters } from '../../store/storeUtils';
+import { findViewIndex } from '../../store/storeUtils';
+import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
-import { useVisynViewPlugin } from './useLoadWorkbenchViewPlugin';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -16,8 +17,6 @@ export interface IWorkbenchGenericViewProps {
 }
 
 export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWorkbenchGenericViewProps) {
-  const [editOpen, setEditOpen] = useState<boolean>(false);
-
   const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
   const [{ isOver, canDrop }, drop] = useDrop(
@@ -36,8 +35,9 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
 
   const viewIndex = useMemo(() => {
     return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-  }, [ordino.workbenches[workbenchIndex].views]);
+  }, [ordino.workbenches, view.uniqueId, workbenchIndex]);
 
+  // eslint-disable-next-line no-empty-pattern
   const [{}, drag] = useDrag(
     () => ({
       type: EDragTypes.MOVE,
@@ -74,6 +74,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
                 workbenchIndex,
                 viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
                 viewId: newView.id,
+                viewName: newView.name,
               }),
             );
           }}

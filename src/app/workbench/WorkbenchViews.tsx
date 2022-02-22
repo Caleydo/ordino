@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import SplitPane from 'react-split-pane';
-import { useAppDispatch, useAppSelector } from '../..';
-import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
-import { DetailsSidebar } from './sidebar/DetailsSidebar';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import {AddWorkbenchSidebar} from './sidebar/AddWorkbenchSidebar';
+import {DetailsSidebar} from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 
 export interface IWorkbenchViewsProps {
@@ -13,7 +12,6 @@ export interface IWorkbenchViewsProps {
 
 export function WorkbenchViews({ index, onlyRanking = false }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
-  const dispatch = useAppDispatch();
 
   const { views } = ordino.workbenches[index];
 

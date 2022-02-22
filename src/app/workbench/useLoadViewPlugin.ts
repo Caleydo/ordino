@@ -1,20 +1,20 @@
-import { values } from 'lodash';
 import React, { useMemo } from 'react';
 import { ARankingView, EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IDTypeManager, IView, PluginRegistry, ResolveNow, useAsync } from 'tdp_core';
-import { addTransitionOptions, useAppDispatch, useAppSelector } from '../..';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { IWorkbench } from '../../store/ordinoSlice';
 import { getAllFilters } from '../../store/storeUtils';
-import { IWorkbench } from '../../store';
 
 export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(element: HTMLElement | null) => void, IView | null] {
   const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
 
-  const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
   const [instance, setInstance] = React.useState<IView | null>(null);
   const loadView = React.useMemo(
     () => () => {
       return view.load();
     },
+    // Disabling since this file is nonsense anyways, will be removed when a react Ranking view is ready
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -26,6 +26,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
     }
 
     return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ordino.workbenches]);
 
   const setRef = React.useCallback(
@@ -57,6 +58,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [status, ordino.workbenches[workbenchIndex].selectedMappings, prevWorkbench?.selection],
   );
 
@@ -65,22 +67,26 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
    */
   React.useEffect(() => {
     if (instance && instance instanceof ARankingView) {
-      const view: ARankingView = instance;
-      const id = IDTypeManager.getInstance().resolveIdType(view.itemIDType.id);
+      const rankingView: ARankingView = instance;
+      const id = IDTypeManager.getInstance().resolveIdType(rankingView.itemIDType.id);
 
-      view.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selection });
+      rankingView.selectionHelper.setGeneralVisSelection({ idtype: id, ids: ordino.workbenches[workbenchIndex].selection });
     }
+    // Disabling since this file is nonsense anyways, will be removed when a react Ranking view is ready
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instance, ordino.workbenches[workbenchIndex].selection]);
 
   React.useEffect(() => {
     if (instance && instance instanceof ARankingView) {
-      const view: ARankingView = instance;
+      const rankingView: ARankingView = instance;
       const filteredIds = getAllFilters(ordino.workbenches[workbenchIndex]);
 
-      view.provider.setFilter((row) => {
+      rankingView.provider.setFilter((row) => {
         return !filteredIds.includes(row.v._visyn_id);
       });
     }
+    // Disabling since this file is nonsense anyways, will be removed when a react Ranking view is ready
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instance, ordino.workbenches[workbenchIndex].views]);
 
   return [setRef, instance];

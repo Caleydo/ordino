@@ -1,6 +1,8 @@
 import React from 'react';
 import { AppHeader, LoginMenu } from 'tdp_core';
-import { login, logout, useAppDispatch, useAppSelector } from '../..';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { login, logout } from '../usersSlice';
 
 /**
  * Instantiates the login menu and appends the user dropdown to the header
@@ -58,7 +60,9 @@ export function useLoginMenu(): { ref: (element: HTMLElement | null) => void; lo
         instance.off(LoginMenu.EVENT_LOGGED_IN);
       };
     }
-  }, [instance]);
+
+    return () => {};
+  }, [instance, user.loggedIn, dispatch]);
 
   return { ref: setRef, loggedIn: user.loggedIn, instance };
 }

@@ -49,10 +49,6 @@ import { InView } from 'react-intersection-observer';
  */
 export function OrdinoScrollspy(props) {
     var _a, _b;
-    // render only the scrollspy container to maintain positions
-    if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
-        return React.createElement("div", { className: "ordino-scrollspy-container" }, props.children);
-    }
     // state with all active items
     const [activeItems, setActiveItems] = React.useState({});
     // create ref to avoid rapid state updates and instead updating the state using state using debounce
@@ -102,6 +98,10 @@ export function OrdinoScrollspy(props) {
         (_a = document.querySelector(event.currentTarget.getAttribute('href'))) === null || _a === void 0 ? void 0 : _a.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
         return false;
     }, []);
+    // render only the scrollspy container to maintain positions
+    if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
+        return React.createElement("div", { className: "ordino-scrollspy-container" }, props.children);
+    }
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "ordino-scrollspy-container" }, props.children(handleOnChange)),
         React.createElement("ul", { className: "list-group d-none d-xxxl-block list-group-flush ordino-scrollspy-nav flex-column ms-4" }, props.items.map((item) => {

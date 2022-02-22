@@ -14,6 +14,8 @@ export function ViewChooserFilter(props: IViewChooserFilterProps) {
       // have to cast v to any here to account for view being either an IViewPluginDesc[] or an []
       props.views.filter((v: any) => !filter || v.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
     );
+    // WARNING: Setting this deps to include props produces an infinite loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   return (

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useAppDispatch } from '../../hooks';
-import { setActiveTab } from '../../store';
-import { EStartMenuMode } from './StartMenuTabWrapper';
+import { EStartMenuMode, setActiveTab } from '../../store';
 export function HeaderTabs(props) {
     const dispatch = useAppDispatch();
     return (React.createElement("ul", { className: "navbar-nav me-auto align-items-center" }, props.tabs.map((tab) => (React.createElement("li", { className: `nav-item ${props.activeTab === tab.id ? 'active' : ''}`, key: tab.id },

@@ -1,12 +1,11 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
-import { useAppDispatch, useAppSelector } from '../..';
+import { useAppSelector } from '../../hooks/useAppSelector';
 import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 export function WorkbenchViews({ index, onlyRanking = false }) {
     const ordino = useAppSelector((state) => state.ordino);
-    const dispatch = useAppDispatch();
     const { views } = ordino.workbenches[index];
     let wb = null;
     // TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.

@@ -1,35 +1,11 @@
 import React, { ComponentType } from 'react';
-import { useAppDispatch, useAppSelector } from '../..';
-import { setActiveTab } from '../../store';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { EStartMenuMode, setActiveTab } from '../../store/menuSlice';
 
 export interface ITab {
   id: string;
   Tab: ComponentType;
   name: string;
-}
-
-export enum EStartMenuMode {
-  /**
-   * no analysis in the background, the start menu cannot be closed
-   */
-  START = 'start',
-
-  /**
-   * an analysis in the background, the start menu can be closed
-   */
-  OVERLAY = 'overlay',
-}
-
-export enum EStartMenuOpen {
-  /**
-   * no analysis in the background, the start menu cannot be closed
-   */
-  OPEN = 'open',
-
-  /**
-   * an analysis in the background, the start menu can be closed
-   */
-  CLOSED = 'closed',
 }
 
 export interface IStartMenuTabWrapperProps {
@@ -51,8 +27,6 @@ export interface IStartMenuTabWrapperProps {
 }
 
 export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
-  const ordinoState = useAppSelector((state) => state.ordino);
-  const menu: any = useAppSelector<any>((state) => state.menu) as any;
   const dispatch = useAppDispatch();
 
   return (
@@ -75,6 +49,7 @@ export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
               <div className="row">
                 <div className="col position-relative d-flex justify-content-end">
                   <button
+                    type="button"
                     className="btn-close"
                     onClick={() => {
                       dispatch(setActiveTab(null));

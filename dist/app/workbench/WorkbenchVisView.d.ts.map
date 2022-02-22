@@ -1,1 +1,0 @@
-{"version":3,"file":"WorkbenchVisView.d.ts","sourceRoot":"","sources":["../../../src/app/workbench/WorkbenchVisView.tsx"],"names":[],"mappings":"AACA,OAAO,EAA0B,cAAc,EAAoC,MAAM,aAAa,CAAC;AAUvG,MAAM,WAAW,sBAAsB;IACnC,cAAc,EAAE,MAAM,CAAC;IACvB,IAAI,EAAE,cAAc,CAAC;CACxB;AAED,wBAAgB,gBAAgB,CAAC,EAC7B,cAAc,EACd,IAAI,EACP,EAAE,sBAAsB,eAwGxB"}

@@ -9,6 +9,7 @@ export declare enum EViewDirections {
 export interface IWorkbenchView {
     id: string;
     uniqueId: string;
+    name: string;
     filters: string[];
     parameters?: any;
 }
@@ -17,20 +18,29 @@ export interface IOrdinoAppState {
      * List of open views.
      */
     workbenches: IWorkbench[];
+    colorMap: {
+        [key: string]: string;
+    };
     /**
      * Id of the current focus view
      */
     focusViewIndex: number;
+    sidebarOpen: boolean;
 }
 export declare enum EWorkbenchDirection {
     VERTICAL = "vertical",
     HORIZONTAL = "horizontal"
+}
+export interface ISelectedMapping {
+    entityId: string;
+    columnSelection: string;
 }
 export interface IWorkbench {
     /**
      * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
      */
     views: IWorkbenchView[];
+    selectedMappings: ISelectedMapping[];
     viewDirection: EWorkbenchDirection;
     name: string;
     entityId: string;
@@ -44,6 +54,8 @@ export interface IWorkbench {
      * List selected rows
      */
     selection: IRow['_visyn_id'][];
+    detailsOpen: boolean;
+    addWorkbenchOpen: boolean;
 }
 interface IBaseState {
     selection: string[];
@@ -54,10 +66,25 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
+}, string>, createColorMap: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    colorMap: {
+        [key: string]: string;
+    };
+}, string>, changeSelectedMappings: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    newMapping: ISelectedMapping;
+}, string>, setDetailsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    open: boolean;
+}, string>, setAddWorkbenchOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    open: boolean;
 }, string>, setViewParameters: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
     parameters: any;
+}, string>, setSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    open: boolean;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     entityId: string;
     desc: any;
@@ -65,6 +92,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     workbenchIndex: number;
     viewIndex: number;
     viewId: string;
+    viewName: string;
 }, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     entityId: string;
     desc: any;
@@ -81,8 +109,10 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     columnName: string;
     data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

@@ -15,7 +15,7 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
                     React.createElement("ul", { className: "navbar-nav ms-auto align-items-end" },
                         CustomerLogo ? React.createElement(CustomerLogo, null) : null,
                         VisynLogo ? React.createElement(VisynLogo, null) : null),
-                    React.createElement("ul", { ref: ref, className: "navbar-nav align-items-end" }),
+                    React.createElement("ul", { ref: ref, className: "navbar-height navbar-nav align-items-end" }),
                     React.createElement("ul", { className: "navbar-nav align-items-end" }, SettingsMenu ? React.createElement(SettingsMenu, { menuItems: ConfigMenuOptions ? React.createElement(ConfigMenuOptions, null) : null }) : null),
                     RightExtensions ? React.createElement(RightExtensions, null) : null))),
         loggedIn ? null : React.createElement("div", { id: "headerWaitingOverlay", className: "phovea-busy" })));

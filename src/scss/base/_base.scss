@@ -31,10 +31,6 @@
   width: $workbench-width;
   position: relative;
   transition: width .7s ease;
-  border-top: 5px solid $gray-400;
-  border-left: 2px solid $gray-700;
-  border-right: 2px solid $gray-400;
-
   overflow: hidden;
 
   &.start.t-focus {
@@ -46,13 +42,12 @@
   }
 
   &.t-context {
-    border-top-color: $success;
+    border-right: 2px solid $gray-700;
     width: $workbench-context-width;
   }
 
   &.t-focus {
     width: $workbench-focus-width;
-    border-top-color: $primary;
   }
 
   &.t-next {

@@ -5,7 +5,6 @@ import {useAppDispatch, useAppSelector} from '../..';
 import {IViewPluginDesc, useAsync} from 'tdp_core';
 import {IWorkbenchView, removeView, setView, setWorkbenchDirection} from '../../store';
 import {findViewIndex} from '../../store/storeUtils';
-import {colorPalette} from '../Breadcrumb';
 
 import {Lineup} from '../lite';
 import {EViewChooserMode, ViewChooser} from '../ViewChooser';
@@ -43,6 +42,7 @@ export function WorkbenchRankingView({
         }),
     }), [view.id]);
 
+
     const viewIndex = useMemo(() => {
         return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
     }, [ordino.workbenches[workbenchIndex].views]);
@@ -51,7 +51,6 @@ export function WorkbenchRankingView({
         type: EDragTypes.MOVE,
         item: {type: EDragTypes.MOVE, viewId: view.id, index: viewIndex},
     }), [view.id, viewIndex]);
-
 
     return (
         <>
@@ -66,12 +65,12 @@ export function WorkbenchRankingView({
                             <div>
                                 <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1"> <i className="flex-grow-1 fas fa-bars m-1"/></button>
                             </div>
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.name}</strong></span>
                         </div>
                     </> :
                     <>
                         <div ref={drag} className="view-parameters d-flex">
-                            <span className={'view-title row align-items-center m-1'}><strong>{view.id}</strong></span>
+                            <span className={'view-title row align-items-center m-1'}><strong>{view.name}</strong></span>
                         </div>
                     </>
                 }

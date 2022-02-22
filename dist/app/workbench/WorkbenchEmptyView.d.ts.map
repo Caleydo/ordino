@@ -1,1 +1,1 @@
-{"version":3,"file":"WorkbenchEmptyView.d.ts","sourceRoot":"","sources":["../../../src/app/workbench/WorkbenchEmptyView.tsx"],"names":[],"mappings":"AAUA,OAAO,EAAE,0BAA0B,EAAE,MAAM,GAAG,CAAC;AAG/C,wBAAgB,kBAAkB,CAAC,EAC/B,cAAc,EACd,IAAI,EACJ,cAAc,EACjB,EAAE,0BAA0B,eAgE5B"}
+{"version":3,"file":"WorkbenchEmptyView.d.ts","sourceRoot":"","sources":["../../../src/app/workbench/WorkbenchEmptyView.tsx"],"names":[],"mappings":"AASA,OAAO,EAAE,0BAA0B,EAAE,MAAM,GAAG,CAAC;AAG/C,wBAAgB,kBAAkB,CAAC,EAC/B,cAAc,EACd,IAAI,EACJ,cAAc,EACjB,EAAE,0BAA0B,eAgE5B"}

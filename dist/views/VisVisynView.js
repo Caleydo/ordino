@@ -1,3 +1,4 @@
+// Gets into the phovea.ts
 import * as React from 'react';
 import { useMemo } from 'react';
 import { EColumnTypes, VisSidebar, Vis } from 'tdp_core';

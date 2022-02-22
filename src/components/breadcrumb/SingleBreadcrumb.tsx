@@ -25,7 +25,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     if (ref.current) {
       setWidth(ref.current.offsetWidth);
     }
-  }, []);
+  }, [ref?.current?.offsetWidth]);
 
   return (
     <div className="position-relative" ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>

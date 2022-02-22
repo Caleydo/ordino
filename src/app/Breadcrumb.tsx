@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CollapsedBreadcrumb } from '../components/breadcrumb/CollapsedBreadcrumb';
 import { SingleBreadcrumb } from '../components/breadcrumb/SingleBreadcrumb';
 import { useAppDispatch } from '../hooks/useAppDispatch';
@@ -11,6 +11,13 @@ export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b46
 export function Breadcrumb() {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
+  const [totalWidth, setTotalWidth] = useState<number>(0);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setTotalWidth(window.innerWidth);
+    });
+  }, []);
 
   const startFlexNum = useMemo(() => {
     let counter = 0;

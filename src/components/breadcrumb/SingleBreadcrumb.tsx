@@ -55,6 +55,13 @@ export function SingleBreadcrumb({
                     : null
                 }
             </div>
+            <div className={'position-absolute chevronDiv top-50 end-0 translate-middle d-flex'} style={{right: first? '8px' : '16px'}}>
+                {workbench && workbench.index === ordino.focusViewIndex ?
+                    <button className="btn btn-icon-light btn-sm align-middle m-1">
+                        <i className="flex-grow-1 fas fa-close"></i>
+                    </button>
+                : null }
+            </div>
             <ChevronBreadcrumb color={color} width={width} first={first}/>
         </div>
     );

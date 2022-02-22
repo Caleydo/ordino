@@ -1,7 +1,2 @@
-export declare function useInitVisynApp(): {
-    execute: () => Promise<void>;
-    status: import("tdp_core").useAsyncStatus;
-    value: void;
-    error: Error;
-};
+export declare function useInitVisynApp(): any;
 //# sourceMappingURL=useInitVisynApp.d.ts.map

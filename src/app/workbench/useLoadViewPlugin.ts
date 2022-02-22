@@ -26,8 +26,6 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
         return null;
     }, [ordino.workbenches]);
 
-    console.log(ordino, workbenchIndex);
-
     const setRef = React.useCallback(async (ref: HTMLElement | null) => {
         // Create a new one if there is a ref
         if (ref && status === 'success') {
@@ -55,7 +53,7 @@ export function useLoadViewPlugin(viewId: string, workbenchIndex: number): [(ele
                 setInstance(i);
             });
         }
-    }, [status, ordino.workbenches[workbenchIndex].selectedMappings, prevWorkbench]);
+    }, [status, ordino.workbenches[workbenchIndex].selectedMappings, prevWorkbench?.selection]);
 
     /**
      * These next 2 use effects are strictly for Ranking Views. TODO:: Where to add this type of view-specific code? OR should every view have a simple way to pass selections/filters?

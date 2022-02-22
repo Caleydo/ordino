@@ -26,6 +26,10 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
                 React.createElement(ShowDetailsSwitch, null),
                 React.createElement(ChevronButtons, { color: color }))
             : null),
+        React.createElement("div", { className: 'position-absolute chevronDiv top-50 end-0 translate-middle d-flex', style: { right: first ? '8px' : '16px' } }, workbench && workbench.index === ordino.focusViewIndex ?
+            React.createElement("button", { className: "btn btn-icon-light btn-sm align-middle m-1" },
+                React.createElement("i", { className: "flex-grow-1 fas fa-close" }))
+            : null),
         React.createElement(ChevronBreadcrumb, { color: color, width: width, first: first })));
 }
 //# sourceMappingURL=SingleBreadcrumb.js.map

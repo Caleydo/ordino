@@ -5,6 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ********************************************************************/
+import { ComponentType, LazyExoticComponent } from 'react';
 import { IPluginDesc } from 'tdp_core';
 import { INamedSet } from 'tdp_core';
 import { CLUEGraphManager } from 'tdp_core';
@@ -206,6 +207,21 @@ export interface IOrdinoLogoDesc extends IPluginDesc {
      * @default 30
      */
     readonly height?: number;
+}
+export declare const EP_ORDINO_WORKBENCH = "epOrdinoWorkbench";
+export interface IOrdinoWorkbenchPlugin {
+    desc: IOrdinoWorkbenchPluginDesc;
+    factory: LazyExoticComponent<ComponentType<any>>;
+}
+export interface IOrdinoWorkbenchPluginDesc {
+    idtype: string;
+    itemIDType: string;
+    selection: any;
+    load(): Promise<IOrdinoWorkbenchPlugin>;
+    /**
+     * any other custom props
+     */
+    readonly [key: string]: any;
 }
 export {};
 //# sourceMappingURL=extensions.d.ts.map

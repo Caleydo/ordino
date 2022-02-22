@@ -2,19 +2,14 @@ import * as React from 'react';
 import {useMemo, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {EViewChooserMode, useAppDispatch, useAppSelector, ViewChooser} from '../..';
-import {IWorkbenchView, removeView, setView} from '../../store';
+import {removeView, setView} from '../../store';
 import {findViewIndex, getAllFilters} from '../../store/storeUtils';
 import {colorPalette} from '../Breadcrumb';
 import {DropOverlay} from './DropOverlay';
 import {EDragTypes} from './utils';
-import {useVisynViewPlugin} from './useLoadWorkbenchViewPlugin';
 import {IViewPluginDesc} from 'tdp_core';
+import { IWorkbenchGenericViewProps } from '.';
 
-export interface IWorkbenchGenericViewProps {
-    workbenchIndex: number;
-    view: IWorkbenchView;
-    chooserOptions: IViewPluginDesc[];
-}
 
 export function WorkbenchEmptyView({
     workbenchIndex,

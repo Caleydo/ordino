@@ -14,12 +14,14 @@ export interface IWorkbenchGenericViewProps {
     workbenchIndex: number;
     view: IWorkbenchView;
     chooserOptions: IViewPluginDesc[];
+    showChooser?: boolean;
 }
 
 export function WorkbenchGenericView({
     workbenchIndex,
     view,
-    chooserOptions
+    chooserOptions,
+    showChooser = true
 }: IWorkbenchGenericViewProps) {
     const [editOpen, setEditOpen] = useState<boolean>(true);
     const [viewPlugin, viewPluginFactFunc] = useVisynViewPlugin(view.id);
@@ -55,7 +57,7 @@ export function WorkbenchGenericView({
     }), [view.id, viewIndex]);
 
     console.log(ordino.workbenches);
-
+    console.log(viewPlugin)
     return (
         <>
             <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -94,7 +96,7 @@ export function WorkbenchGenericView({
                 }
                 <div className="inner d-flex">
                     {editOpen ? <>
-                    <div className={'d-flex flex-column'}>
+                        {!viewPlugin?.desc.isStartView && <div className={'d-flex flex-column'}>
                         <ul className="nav nav-tabs" id="myTab" role="tablist">
                             <li className="nav-item" role="presentation">
                                 <button className={`nav-link ${settingsTabSelected || !viewPlugin || !viewPluginComponents?.tab ? 'active' : ''}`} onClick={() => setSettingsTabSelected(true)} data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Settings</button>
@@ -108,7 +110,7 @@ export function WorkbenchGenericView({
 
                         <div className="h-100 tab-content" style={{width: '220px'}}>
                             <div className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPluginComponents?.tab ? 'active' : ''}`} role="tabpanel" aria-labelledby="settings-tab">
-                                <ViewChooser views={chooserOptions} showBurgerMenu={false} mode={EViewChooserMode.EMBEDDED} onSelectedView={(newView:IViewPluginDesc) => {
+                            <ViewChooser views={chooserOptions} showBurgerMenu={false} mode={EViewChooserMode.EMBEDDED} onSelectedView={(newView:IViewPluginDesc) => {
                                     dispatch(setView({
                                         workbenchIndex,
                                         viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
@@ -134,7 +136,7 @@ export function WorkbenchGenericView({
                             </div>
                             : null}
                         </div>
-                    </div>
+                    </div>}
                     </>
                     : null}
                     {viewPlugin ?

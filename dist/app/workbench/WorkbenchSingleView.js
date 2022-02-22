@@ -1,25 +1,19 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import * as React from 'react';
 import { useMemo } from 'react';
-import { useAppDispatch, useAppSelector } from '../..';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
-import { WorkbenchRankingView } from './WorkbenchRankingView';
+import { useAppSelector } from '../..';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
 export function getVisynView(entityId) {
     return FindViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
 export function WorkbenchSingleView({ workbenchIndex, view }) {
-    const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-    const { value, status, error } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
-    const chooserOptions = useMemo(() => {
+    const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
+    const availableViews = useMemo(() => {
         return value ? value.map((v) => v.v) : [];
     }, [value]);
-    return (React.createElement(React.Fragment, null, view.id === '' ?
-        React.createElement(WorkbenchEmptyView, { chooserOptions: chooserOptions, workbenchIndex: workbenchIndex, view: view })
-        : view.id.startsWith('reprovisyn_ranking') ?
-            React.createElement(WorkbenchRankingView, { chooserOptions: chooserOptions, workbenchIndex: workbenchIndex, view: view })
-            :
-                React.createElement(WorkbenchGenericView, { chooserOptions: chooserOptions, workbenchIndex: workbenchIndex, view: view })));
+    return (React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view })) : (React.createElement(WorkbenchGenericView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view }))));
 }
 //# sourceMappingURL=WorkbenchSingleView.js.map

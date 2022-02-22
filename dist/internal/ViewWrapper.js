@@ -239,6 +239,8 @@ export class ViewWrapper extends EventHandler {
      * @param range
      */
     chooseNextViews(idtype, range) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that = this;
         // show chooser if selection available
         this.$chooser.classed('hidden', range.isNone);
         if (range.isNone) {
@@ -265,7 +267,7 @@ export class ViewWrapper extends EventHandler {
                 .on('click', function (d) {
                 $buttons.classed('active', false);
                 d3.select(this).classed('active', true);
-                this.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
+                that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
             });
             $buttons.exit().remove();
         });

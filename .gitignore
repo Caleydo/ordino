@@ -1,5 +1,6 @@
 # general things to ignore
 /.tscache
+/.eslintcache
 /.idea
 /lib/
 /build/

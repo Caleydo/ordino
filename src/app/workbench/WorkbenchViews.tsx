@@ -1,8 +1,8 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import {AddWorkbenchSidebar} from './sidebar/AddWorkbenchSidebar';
-import {DetailsSidebar} from './sidebar/DetailsSidebar';
+import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
+import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 
 export interface IWorkbenchViewsProps {

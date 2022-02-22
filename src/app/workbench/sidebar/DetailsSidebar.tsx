@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
-import { changeSelectedMappings, IWorkbench, useAppDispatch, useAppSelector } from '../../..';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;
@@ -18,7 +20,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
 
   const idType = useMemo(() => {
     return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-  }, []);
+  }, [ordino.workbenches, workbench.index]);
 
   const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
 
@@ -30,7 +32,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
     });
 
     return currString.slice(0, currString.length - 3);
-  }, [ordino.workbenches[workbench.index - 1].selection]);
+  }, [ordino.workbenches, workbench.index]);
 
   return (
     <div className="me-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -52,7 +54,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
               .filter((v) => v.v.itemIDType === workbench.entityId)
               .map((v) => {
                 return (
-                  <div>
+                  <div key={`${v.v.name}mapping`}>
                     {v.v.relation.mapping.map((map: IReprovisynMapping) => {
                       const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                       return (
@@ -60,7 +62,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
                           <div className="mt-2 mappingTypeText">{map.name}</div>
                           {columns.map((col) => {
                             return (
-                              <div className="form-check">
+                              <div key={`${col.label}Column`} className="form-check">
                                 <input
                                   checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity)}
                                   onChange={() =>

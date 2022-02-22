@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, PluginRegistry, useAsync } from 'tdp_core';
-import { addWorkbench, changeFocus, EWorkbenchDirection, useAppDispatch, useAppSelector } from '../../..';
-import { setAddWorkbenchOpen } from '../../../store';
+import { changeFocus, EWorkbenchDirection, setAddWorkbenchOpen, addWorkbench } from '../../../store';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -17,7 +18,7 @@ export function AddWorkbenchSidebar({ workbench }) {
     };
     const idType = useMemo(() => {
         return new IDType(workbench.entityId, '.*', '', true);
-    }, []);
+    }, [workbench.entityId]);
     const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
     const availableEntities = useMemo(() => {
         if (status !== 'success') {
@@ -25,7 +26,6 @@ export function AddWorkbenchSidebar({ workbench }) {
         }
         const entities = [];
         availableViews.forEach((v) => {
-            console.log(v);
             if (!entities.some((e) => e.idType === v.v.itemIDType && e.label === v.v.group.name)) {
                 entities.push({ idType: v.v.itemIDType, label: v.v.group.name });
             }
@@ -47,13 +47,12 @@ export function AddWorkbenchSidebar({ workbench }) {
             availableViews
                 .filter((v) => v.v.itemIDType === e.idType)
                 .map((v) => {
-                console.log(v);
-                return (React.createElement("div", null, v.v.relation.mapping.map((map) => {
+                return (React.createElement("div", { key: `${v.v.name}mapping` }, v.v.relation.mapping.map((map) => {
                     const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                     return (React.createElement(React.Fragment, null,
                         React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                         columns.map((col) => {
-                            return (React.createElement("div", { className: "form-check" },
+                            return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
                                 React.createElement("input", { onChange: () => relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName }), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
                                 React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));
                         })));

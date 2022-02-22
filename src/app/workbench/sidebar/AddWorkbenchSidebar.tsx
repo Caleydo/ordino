@@ -1,8 +1,9 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
-import { IReprovisynEntity, IReprovisynMapping, ReprovisynRestUtils } from 'reprovisyn';
-import { addTransitionOptions, addWorkbench, changeFocus, EWorkbenchDirection, IWorkbench, useAppDispatch, useAppSelector } from '../../..';
-import { setAddWorkbenchOpen } from '../../../store';
+import { IReprovisynMapping } from 'reprovisyn';
+import { changeFocus, EWorkbenchDirection, IWorkbench, setAddWorkbenchOpen, addWorkbench } from '../../../store';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
 
 export interface IAddWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -31,7 +32,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
 
   const idType = useMemo(() => {
     return new IDType(workbench.entityId, '.*', '', true);
-  }, []);
+  }, [workbench.entityId]);
 
   const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
 
@@ -43,7 +44,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      console.log(v);
       if (!entities.some((e) => e.idType === v.v.itemIDType && e.label === v.v.group.name)) {
         entities.push({ idType: v.v.itemIDType, label: v.v.group.name });
       }
@@ -80,9 +80,8 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                 {availableViews
                   .filter((v) => v.v.itemIDType === e.idType)
                   .map((v) => {
-                    console.log(v);
                     return (
-                      <div>
+                      <div key={`${v.v.name}mapping`}>
                         {v.v.relation.mapping.map((map: IReprovisynMapping) => {
                           const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                           return (
@@ -90,7 +89,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                               <div className="mt-2 mappingTypeText">{map.name}</div>
                               {columns.map((col) => {
                                 return (
-                                  <div className="form-check">
+                                  <div key={`${col.label}Column`} className="form-check">
                                     <input
                                       onChange={() =>
                                         relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName })

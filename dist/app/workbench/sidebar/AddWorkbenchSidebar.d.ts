@@ -1,4 +1,4 @@
-import { IWorkbench } from '../../..';
+import { IWorkbench } from '../../../store';
 export interface IAddWorkbenchSidebarProps {
     workbench: IWorkbench;
 }

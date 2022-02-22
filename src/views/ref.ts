@@ -3,15 +3,14 @@
  */
 
 // import {ResolveUtils} from 'tdp_core';
-import {IDTypeManager, ProxyView} from 'tdp_core';
-import {IFormSelectOption} from 'tdp_core';
+import { IDTypeManager, ProxyView } from 'tdp_core';
+import { IFormSelectOption } from 'tdp_core';
 
 /**
  * Proxy view for the idType Cosmic which fetches the original cell line data based on the mapping from Cell line to
  * Cosmic.
  */
 export class CosmicProxyView extends ProxyView {
-
   // protected async getSelectionSelectData(names: string[]): Promise<IFormSelectOption[]> {
   //   const cosmics = await IDTypeManager.getInstance().mapNameToFirstName()
   //   console.log(this.selection.idtype, this.selection.range, cosmics);

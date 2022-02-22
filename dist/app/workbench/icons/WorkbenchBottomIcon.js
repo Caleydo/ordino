@@ -13,8 +13,8 @@ export function WorkbenchBottomIcon({ view }) {
                 view: {
                     id: '',
                     uniqueId: (Math.random() + 1).toString(36).substring(7),
-                    filters: []
-                }
+                    filters: [],
+                },
             }));
         },
         collect: (monitor) => ({

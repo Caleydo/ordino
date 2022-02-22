@@ -11,7 +11,7 @@ export function Lineup(props) {
             name2: 'Panchito Green',
             age2: 10,
             shirtSize2: 'S',
-            birthday2: new Date(2011, 1, 1)
+            birthday2: new Date(2011, 1, 1),
         },
         {
             name: 'Rubia Robker',
@@ -21,7 +21,7 @@ export function Lineup(props) {
             name2: 'Rubia Robker',
             age2: 25,
             shirtSize2: 'M',
-            birthday2: new Date(1996, 4, 13)
+            birthday2: new Date(1996, 4, 13),
         },
         {
             name: 'Micheil Sappell',
@@ -31,7 +31,7 @@ export function Lineup(props) {
             name2: 'Micheil Sappell',
             age2: 50,
             shirtSize2: 'L',
-            birthday2: new Date(1971, 8, 23)
+            birthday2: new Date(1971, 8, 23),
         },
         {
             name: 'Geoffrey Sprason',
@@ -41,7 +41,7 @@ export function Lineup(props) {
             name2: 'Geoffrey Sprason',
             age2: 30,
             shirtSize2: 'M',
-            birthday2: new Date(1991, 11, 5)
+            birthday2: new Date(1991, 11, 5),
         },
         {
             name: 'Grissel Rounsefull',
@@ -51,8 +51,8 @@ export function Lineup(props) {
             name2: 'Grissel Rounsefull',
             age2: 21,
             shirtSize2: 'S',
-            birthday2: new Date(2000, 6, 30)
-        }
+            birthday2: new Date(2000, 6, 30),
+        },
     ], []);
     const repeatedData = React.useMemo(() => Array(100)
         .fill(0)
@@ -65,9 +65,9 @@ export function Lineup(props) {
         asTextColumn('name2'),
         asNumberColumn('age2'),
         asCategoricalColumn('shirtSize2'),
-        asDateColumn('birthday2')
+        asDateColumn('birthday2'),
     ], []);
     const features = React.useMemo(() => featureDefault(), []);
-    return (React.createElement(LineUpLite, { data: repeatedData, columns: columns, features: features, onStateChange: props.onSelectionChanged }));
+    return React.createElement(LineUpLite, { data: repeatedData, columns: columns, features: features, onStateChange: props.onSelectionChanged });
 }
 //# sourceMappingURL=lite.js.map

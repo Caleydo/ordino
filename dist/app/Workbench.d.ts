@@ -1,5 +1,10 @@
 import { IWorkbench } from '../store/ordinoSlice';
-import { EWorkbenchType } from './Filmstrip';
+export declare enum EWorkbenchType {
+    PREVIOUS = "t-previous",
+    FOCUS = "t-focus",
+    CONTEXT = "t-context",
+    NEXT = "t-next"
+}
 interface IWorkbenchProps {
     workbench: IWorkbench;
     type?: EWorkbenchType;

@@ -1,28 +1,9 @@
 import { ComponentType } from 'react';
+import { EStartMenuMode } from '../../store/menuSlice';
 export interface ITab {
     id: string;
     Tab: ComponentType;
     name: string;
-}
-export declare enum EStartMenuMode {
-    /**
-     * no analysis in the background, the start menu cannot be closed
-     */
-    START = "start",
-    /**
-     * an analysis in the background, the start menu can be closed
-     */
-    OVERLAY = "overlay"
-}
-export declare enum EStartMenuOpen {
-    /**
-     * no analysis in the background, the start menu cannot be closed
-     */
-    OPEN = "open",
-    /**
-     * an analysis in the background, the start menu can be closed
-     */
-    CLOSED = "closed"
 }
 export interface IStartMenuTabWrapperProps {
     /**

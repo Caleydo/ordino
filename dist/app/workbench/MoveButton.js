@@ -1,11 +1,11 @@
 import React from 'react';
-import { EDragTypes } from './utils';
 import { useDrag } from 'react-dnd';
-import { useAppDispatch, useAppSelector } from '../..';
+import { EDragTypes } from './utils';
 import { findViewIndex } from '../../store/storeUtils';
+import { useAppSelector } from '../../hooks/useAppSelector';
 export function MoveButton({ view }) {
-    const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
+    // eslint-disable-next-line no-empty-pattern
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]) },

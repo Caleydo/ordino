@@ -1,16 +1,15 @@
 import * as React from 'react';
-import {EViewMode, IViewPluginDesc} from 'tdp_core';
-import {chooserComponents, ViewChooserExtensions} from './components';
-
+import { EViewMode, IViewPluginDesc } from 'tdp_core';
+import { chooserComponents, ViewChooserExtensions } from './components';
 
 export enum EViewChooserMode {
   EMBEDDED,
-  OVERLAY
+  OVERLAY,
 }
 
 export enum EExpandMode {
   LEFT,
-  RIGHT
+  RIGHT,
 }
 
 export interface IViewGroupDesc {
@@ -104,15 +103,12 @@ export function ViewChooser({
     SelectionCountIndicator = chooserComponents.SelectionCountIndicator,
     ViewChooserAccordion = chooserComponents.ViewChooserAccordion,
     ViewChooserFilter = chooserComponents.ViewChooserFilter,
-    ViewChooserFooter = chooserComponents.ViewChooserFooter
-  } = {}
-
+    ViewChooserFooter = chooserComponents.ViewChooserFooter,
+  } = {},
 }: IViewChooserProps) {
   const [collapsed, setCollapsed] = React.useState<boolean>(mode !== EViewChooserMode.EMBEDDED);
   const [embedded, setEmbedded] = React.useState<boolean>(mode === EViewChooserMode.EMBEDDED);
   const [filteredViews, setFilteredViews] = React.useState<IViewPluginDesc[] | []>(views);
-
-  console.log(views);
 
   React.useEffect(() => {
     setFilteredViews(views);
@@ -122,39 +118,43 @@ export function ViewChooser({
     setCollapsed(!embedded);
   }, [embedded]);
 
-
-  const collapsedProps = embedded ? {} : {
-    onMouseEnter: () => setCollapsed(false),
-    onMouseLeave: () => setCollapsed(true),
-  };
-
+  const collapsedProps = embedded
+    ? {}
+    : {
+        onMouseEnter: () => setCollapsed(false),
+        onMouseLeave: () => setCollapsed(true),
+      };
 
   return (
-    <> <div
-      className={`view-chooser  d-flex flex-shrink-0 align-items-stretch
+    <>
+      {' '}
+      <div
+        className={`view-chooser  d-flex flex-shrink-0 align-items-stretch
        ${classNames}
        ${collapsed ? 'collapsed' : ''}
        ${embedded ? 'embedded' : ''}
-       ${!embedded && !collapsed ? expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left' : ''}`}
-      {...collapsedProps}>
-      <div className={`view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}`} >
+       ${!embedded && !collapsed ? (expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left') : ''}`}
+        {...collapsedProps}
+      >
+        <div className={`view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}`}>
+          {showHeader && (
+            <ViewChooserHeader>
+              {showBurgerMenu ? <BurgerButton onClick={() => setEmbedded(!embedded)} /> : null}
+              {!collapsed && showFilter ? <ViewChooserFilter views={views} setFilteredViews={setFilteredViews} /> : null}
+            </ViewChooserHeader>
+          )}
 
-        {showHeader && <ViewChooserHeader>
-          {showBurgerMenu ? <BurgerButton onClick={() => setEmbedded(!embedded)} /> : null}
-          {(!collapsed && showFilter) ? <ViewChooserFilter views={views} setFilteredViews={setFilteredViews} /> : null}
-        </ViewChooserHeader>}
-
-        {collapsed ?
-          <div className="selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center">
-            <SelectionCountIndicator selectionCount={5} viewMode={EViewMode.FOCUS} idType="Cellines" />
-            <SelectedViewIndicator selectedView={selectedView?.name} availableViews={views.length} />
-          </div> :
-
-          <ViewChooserAccordion views={filteredViews} selectedView={selectedView} onSelectedView={onSelectedView} />
-        }
-        {showFooter ? <ViewChooserFooter /> : null}
+          {collapsed ? (
+            <div className="selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center">
+              <SelectionCountIndicator selectionCount={5} viewMode={EViewMode.FOCUS} idType="Cellines" />
+              <SelectedViewIndicator selectedView={selectedView?.name} availableViews={views.length} />
+            </div>
+          ) : (
+            <ViewChooserAccordion views={filteredViews} selectedView={selectedView} onSelectedView={onSelectedView} />
+          )}
+          {showFooter ? <ViewChooserFooter /> : null}
+        </div>
       </div>
-    </div>
     </>
   );
 }

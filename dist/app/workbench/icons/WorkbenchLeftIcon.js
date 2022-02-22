@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import { addView, useAppDispatch, useAppSelector } from '../../..';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { addView } from '../../../store/ordinoSlice';
 import { EDragTypes } from '../utils';
 export function WorkbenchLeftIcon({ view }) {
     const dispatch = useAppDispatch();
@@ -13,8 +15,8 @@ export function WorkbenchLeftIcon({ view }) {
                 view: {
                     id: '',
                     uniqueId: (Math.random() + 1).toString(36).substring(7),
-                    filters: []
-                }
+                    filters: [],
+                },
             }));
         },
         collect: (monitor) => ({

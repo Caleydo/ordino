@@ -5,6 +5,8 @@ export function ViewChooserFilter(props) {
         props.setFilteredViews(
         // have to cast v to any here to account for view being either an IViewPluginDesc[] or an []
         props.views.filter((v) => !filter || v.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())));
+        // WARNING: Setting this deps to include props produces an infinite loop.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter]);
     return (React.createElement("div", { className: "view-filter input-group flex-nowrap" },
         React.createElement("input", { className: "form-control border-end-0", type: "search", placeholder: "Search", value: filter, onChange: (evt) => setFilter(evt.target.value) }),

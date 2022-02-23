@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, PluginRegistry, useAsync } from 'tdp_core';
+import { EXTENSION_POINT_VISYN_VIEW, FindViewUtils, IDType, PluginRegistry, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, setAddWorkbenchOpen, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
@@ -19,7 +19,8 @@ export function AddWorkbenchSidebar({ workbench }) {
     const idType = useMemo(() => {
         return new IDType(workbench.entityId, '.*', '', true);
     }, [workbench.entityId]);
-    const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
+    const findDependentViews = React.useMemo(() => () => FindViewUtils.findVisynViews(idType).then((views) => views.filter((v) => v.v.defaultView)), [idType]);
+    const { status, value: availableViews } = useAsync(findDependentViews, []);
     const availableEntities = useMemo(() => {
         if (status !== 'success') {
             return null;
@@ -59,7 +60,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                 })));
             }),
             React.createElement("button", { onClick: () => {
-                    const viewPlugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${relationList[0].targetEntity}`);
+                    const viewPlugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_VISYN_VIEW, `reprovisyn_ranking_${relationList[0].targetEntity}`);
                     dispatch(setAddWorkbenchOpen({ workbenchIndex: workbench.index, open: false }));
                     dispatch(
                     // load the data

@@ -185,7 +185,7 @@ const ordinoSlice = createSlice({
     removeWorkbench(state, action: PayloadAction<{ index: number }>) {
       state.workbenches.slice(action.payload.index);
     },
-    //  TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
+    // TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
     removeView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number }>) {
       const workbench = state.workbenches[action.payload.workbenchIndex];
       workbench.views.splice(action.payload.viewIndex, 1);

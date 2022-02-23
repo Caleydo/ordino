@@ -1,15 +1,12 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // dummy reducer
 export interface IAppState {
   ready: boolean;
-
 }
 
-
 const initialState: IAppState = {
-  ready: false
-
+  ready: false,
 };
 
 const appSlice = createSlice({
@@ -18,10 +15,10 @@ const appSlice = createSlice({
   reducers: {
     setReady(state, action: PayloadAction<boolean>) {
       state.ready = action.payload;
-    }
-  }
+    },
+  },
 });
 
-export const {setReady} = appSlice.actions;
+export const { setReady } = appSlice.actions;
 
 export const appReducer = appSlice.reducer;

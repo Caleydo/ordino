@@ -6,5 +6,5 @@ export interface ISingleBreadcrumbProps {
     color?: string;
     workbench?: IWorkbench;
 }
-export declare function SingleBreadcrumb({ first, flexWidth, onClick, color, workbench, }: ISingleBreadcrumbProps): JSX.Element;
+export declare function SingleBreadcrumb({ first, flexWidth, onClick, color, workbench }: ISingleBreadcrumbProps): JSX.Element;
 //# sourceMappingURL=SingleBreadcrumb.d.ts.map

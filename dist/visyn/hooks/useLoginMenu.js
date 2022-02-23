@@ -1,6 +1,8 @@
 import React from 'react';
 import { AppHeader, LoginMenu } from 'tdp_core';
-import { login, logout, useAppDispatch, useAppSelector } from '../..';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { login, logout } from '../usersSlice';
 /**
  * Instantiates the login menu and appends the user dropdown to the header
  */
@@ -42,7 +44,7 @@ export function useLoginMenu() {
                 clearTimeout(forceShowLoginDialogTimeout);
             });
             if (!user.loggedIn) {
-                //wait .5sec before showing the login dialog to give the auto login mechanism a chance
+                // wait .5sec before showing the login dialog to give the auto login mechanism a chance
                 forceShowLoginDialogTimeout = setTimeout(() => instance.forceShowDialog(), 500);
             }
             return () => {
@@ -50,7 +52,8 @@ export function useLoginMenu() {
                 instance.off(LoginMenu.EVENT_LOGGED_IN);
             };
         }
-    }, [instance]);
+        return () => { };
+    }, [instance, user.loggedIn, dispatch]);
     return { ref: setRef, loggedIn: user.loggedIn, instance };
 }
 //# sourceMappingURL=useLoginMenu.js.map

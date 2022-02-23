@@ -1,5 +1,10 @@
 import { ComponentType } from 'react';
-import { IViewChooserHeaderProps, IBurgerButtonProps, IViewChooserFilterProps, IViewChooserAccordionProps, ISelectedViewIndicatorProps, ISelectionCountIndicatorProps } from '.';
+import { IBurgerButtonProps } from './BurgerButton';
+import { ISelectedViewIndicatorProps } from './SelectedViewIndicator';
+import { ISelectionCountIndicatorProps } from './SelectionCountIndicator';
+import { IViewChooserAccordionProps } from './ViewChooserAccordion';
+import { IViewChooserFilterProps } from './ViewChooserFilter';
+import { IViewChooserHeaderProps } from './ViewChooserHeader';
 export interface IChooserComponents {
     ViewChooserHeader: ComponentType<IViewChooserHeaderProps>;
     BurgerButton: ComponentType<IBurgerButtonProps>;

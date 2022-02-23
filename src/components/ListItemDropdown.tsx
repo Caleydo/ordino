@@ -5,11 +5,19 @@ interface IListItemDropdownProps {
 }
 
 // tslint:disable-next-line: variable-name
-export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps, ref) => {
+// eslint-disable-next-line react/display-name
+export const ListItemDropdown = React.forwardRef((props: IListItemDropdownProps) => {
   return (
     <div className="dropdown btn-group-vertical list-item-dropdown">
-      <button className="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i className="fas fa-ellipsis-v"></i>
+      <button
+        className="btn btn-link dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-bs-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <i className="fas fa-ellipsis-v" />
       </button>
       <div className="dropdown-menu" data-bs-popper="static" aria-labelledby="dropdownMenuButton">
         {props.children}

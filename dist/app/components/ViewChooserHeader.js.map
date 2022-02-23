@@ -1,1 +1,1 @@
-{"version":3,"file":"ViewChooserHeader.js","sourceRoot":"","sources":["../../../src/app/components/ViewChooserHeader.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAM1B,MAAM,UAAU,iBAAiB,CAAC,EAAC,QAAQ,EAA0B;IACjE,OAAO,gCAAQ,SAAS,EAAC,wEAAwE,IAC5F,QAAQ,CACJ,CAAC;AACd,CAAC"}
+{"version":3,"file":"ViewChooserHeader.js","sourceRoot":"","sources":["../../../src/app/components/ViewChooserHeader.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAM1B,MAAM,UAAU,iBAAiB,CAAC,EAAE,QAAQ,EAA2B;IACrE,OAAO,gCAAQ,SAAS,EAAC,wEAAwE,IAAE,QAAQ,CAAU,CAAC;AACxH,CAAC"}

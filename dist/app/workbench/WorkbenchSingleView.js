@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import * as React from 'react';
-import { useMemo } from 'react';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
-import { useAppSelector } from '../..';
+import { useMemo } from 'react';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
+import { useAppSelector } from '../../hooks/useAppSelector';
 export function getVisynView(entityId) {
     return FindViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
@@ -14,6 +14,8 @@ export function WorkbenchSingleView({ workbenchIndex, view }) {
     const availableViews = useMemo(() => {
         return value ? value.map((v) => v.v) : [];
     }, [value]);
-    return (React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view })) : (React.createElement(WorkbenchGenericView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view }))));
+    return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view })) : (React.createElement(WorkbenchGenericView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view }))));
 }
 //# sourceMappingURL=WorkbenchSingleView.js.map

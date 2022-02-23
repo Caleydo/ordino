@@ -1,5 +1,6 @@
 import { ComponentType } from 'react';
-import { ISettingsMenuProps, IBurgerMenuProps } from '.';
+import { IBurgerMenuProps } from './headerComponents/BurgerMenu';
+import { ISettingsMenuProps } from './headerComponents/SettingsMenu';
 export interface IVisynHeaderComponents {
     BurgerButton?: ComponentType<IBurgerMenuProps>;
     AppLogo?: ComponentType;
@@ -10,5 +11,5 @@ export interface IVisynHeaderComponents {
     SettingsMenu?: ComponentType<ISettingsMenuProps>;
 }
 export declare const visynHeaderComponents: Partial<IVisynHeaderComponents>;
-export declare type visynHeaderExtensions = Partial<IVisynHeaderComponents>;
+export declare type VisynHeaderExtensions = Partial<IVisynHeaderComponents>;
 //# sourceMappingURL=headerConfig.d.ts.map

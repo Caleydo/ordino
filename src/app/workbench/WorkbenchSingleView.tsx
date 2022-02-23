@@ -1,11 +1,12 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import * as React from 'react';
-import { useMemo } from 'react';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
-import {useAppSelector } from '../..';
-import { IWorkbenchView, setView } from '../../store';
+import { useMemo } from 'react';
+import { IWorkbenchView } from '../../store';
+import { WorkbenchRankingView } from './WorkbenchRankingView';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
+import { useAppSelector } from '../../hooks/useAppSelector';
 
 export interface IWorkbenchSingleViewProps {
   workbenchIndex: number;
@@ -20,10 +21,13 @@ export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleVi
   const ordino = useAppSelector((state) => state.ordino);
 
   const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
+
   const availableViews = useMemo(() => {
     return value ? value.map((v) => v.v) : [];
   }, [value]);
+
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {view.id === '' ? (
         <WorkbenchEmptyView chooserOptions={availableViews} workbenchIndex={workbenchIndex} view={view} />

@@ -1,14 +1,12 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
+ ******************************************************************* */
 
-import {IPluginDesc} from 'tdp_core';
-import {INamedSet} from 'tdp_core';
-import {CLUEGraphManager} from 'tdp_core';
+import { IPluginDesc, INamedSet, CLUEGraphManager } from 'tdp_core';
 
 export const EP_ORDINO_START_MENU_TAB = 'epOrdinoStartMenuTab';
 
@@ -56,7 +54,6 @@ export interface IStartMenuTab {
   update?(): void;
 }
 
-
 export const EP_ORDINO_START_MENU_TAB_SHORTCUT = 'epOrdinoStartMenuTabShortcut';
 
 /**
@@ -87,7 +84,7 @@ export interface IStartMenuSessionSectionDesc extends IPluginDesc {
 }
 
 export interface IStartMenuSessionSectionOptions {
-  session?(viewId: string, options: {namedSet?: INamedSet, [key: string]: any}, defaultSessionValues: any): void;
+  session?(viewId: string, options: { namedSet?: INamedSet; [key: string]: any }, defaultSessionValues: any): void;
   graphManager: CLUEGraphManager;
 }
 
@@ -161,14 +158,13 @@ export interface IStartMenuDatasetSection {
   update(): void;
 }
 
-
 export const EP_ORDINO_HEADER_MENU = 'epOrdinoHeaderMenu';
 
 /**
  * Register links to the header menu
  * Only a single header menu is considered
  */
- export interface IOrdinoHeaderMenuDesc extends IPluginDesc {
+export interface IOrdinoHeaderMenuDesc extends IPluginDesc {
   /**
    * List of links
    */
@@ -193,7 +189,6 @@ export interface IOrdinoHeaderMenuLink {
   faIcon?: string;
 }
 
-
 export const EP_ORDINO_FOOTER_MENU = 'epOrdinoFooterMenu';
 
 /**
@@ -213,18 +208,18 @@ export interface IOrdinoFooterMenuLink {
   /**
    * URL to the page
    */
-   page: string;
+  page: string;
 
-   /**
-    * Link text
-    */
-   text: string;
+  /**
+   * Link text
+   */
+  text: string;
 
-   /**
-    * FontAwesome icon
-    * @example `fas fa-question`
-    */
-   faIcon?: string;
+  /**
+   * FontAwesome icon
+   * @example `fas fa-question`
+   */
+  faIcon?: string;
 }
 
 export const EP_ORDINO_LOGO = 'epOrdinoLogo';
@@ -234,7 +229,6 @@ export const EP_ORDINO_LOGO = 'epOrdinoLogo';
  * Only the last registration is considered
  */
 export interface IOrdinoLogoDesc extends IPluginDesc {
-
   /**
    * Name of the app
    */

@@ -104,7 +104,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
         </div>
       )}
       <div className="inner d-flex">
-        {editOpen ? (
+        {editOpen && !viewPlugin?.desc.isStartView ? ( // do not show chooser for ranking views
           <div className="d-flex flex-column">
             <ul className="nav nav-tabs" id="myTab" role="tablist">
               <li className="nav-item" role="presentation">

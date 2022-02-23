@@ -53,7 +53,8 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
             React.createElement("span", { className: "view-title row align-items-center m-1" },
                 React.createElement("strong", null, view.name)))),
         React.createElement("div", { className: "inner d-flex" },
-            editOpen ? (React.createElement("div", { className: "d-flex flex-column" },
+            editOpen && !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc.isStartView) ? ( // do not show chooser for ranking views
+            React.createElement("div", { className: "d-flex flex-column" },
                 React.createElement("ul", { className: "nav nav-tabs", id: "myTab", role: "tablist" },
                     React.createElement("li", { className: "nav-item", role: "presentation" },
                         React.createElement("button", { className: `nav-link ${settingsTabSelected || !viewPlugin || !(viewPluginComponents === null || viewPluginComponents === void 0 ? void 0 : viewPluginComponents.tab) ? 'active' : ''}`, onClick: () => setSettingsTabSelected(true), "data-bs-toggle": "tab", "data-bs-target": "#home", type: "button", role: "tab", "aria-controls": "home", "aria-selected": "true" }, "Settings")),

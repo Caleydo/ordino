@@ -8,8 +8,10 @@ export function DetailsSidebar({ workbench }) {
     const dispatch = useAppDispatch();
     const idType = useMemo(() => {
         return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-    }, [ordino.workbenches, workbench.index]);
-    const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    const findDependentViews = React.useMemo(() => () => FindViewUtils.findVisynViews(idType).then((views) => views.filter((v) => v.v.defaultView)), [idType]);
+    const { status, value: availableViews } = useAsync(findDependentViews, []);
     const selectionString = useMemo(() => {
         let currString = '';
         ordino.workbenches[workbench.index - 1].selection.forEach((s) => {

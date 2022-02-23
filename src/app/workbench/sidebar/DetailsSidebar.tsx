@@ -20,9 +20,11 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
 
   const idType = useMemo(() => {
     return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-  }, [ordino.workbenches, workbench.index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
+  const findDependentViews = React.useMemo(() => () => FindViewUtils.findVisynViews(idType).then((views) => views.filter((v) => v.v.defaultView)), [idType]);
+  const { status, value: availableViews } = useAsync(findDependentViews, []);
 
   const selectionString = useMemo(() => {
     let currString = '';

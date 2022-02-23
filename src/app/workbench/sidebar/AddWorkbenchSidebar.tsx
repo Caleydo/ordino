@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { EXTENSION_POINT_VISYN_VIEW, FindViewUtils, IDType, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, setAddWorkbenchOpen, addWorkbench } from '../../../store';
@@ -87,7 +87,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                         {v.v.relation.mapping.map((map: IReprovisynMapping) => {
                           const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                           return (
-                            <>
+                            <Fragment key={`${map.name}-group`}>
                               <div className="mt-2 mappingTypeText">{map.name}</div>
                               {columns.map((col) => {
                                 return (
@@ -107,7 +107,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                                   </div>
                                 );
                               })}
-                            </>
+                            </Fragment>
                           );
                         })}
                       </div>

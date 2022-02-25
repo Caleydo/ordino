@@ -70,11 +70,14 @@ export declare class CmdUtils {
      * @returns {IAction}
      */
     static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: string[], options?: any, itemSelection?: ISelection): IAction;
-    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: any): Promise<{
+    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: {
+        idtype?: string;
+        ids?: string[];
+    }): Promise<{
         inverse: IAction;
     }>;
-    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, selection: string[]): IAction;
-    static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, selection: string[]): IAction;
+    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): IAction;
+    static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): IAction;
     /**
      * Factory function that compresses a series of action to fewer one.
      * Note: This function is referenced as `actionCompressor` in the package.json

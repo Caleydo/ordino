@@ -241,7 +241,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
       const right = this.state.views[i + 1];
 
       // update selection with the last open (= right) view
-      if (right === this.lastView && right.matchSelectionLength(newSelection.ids.length)) {
+      if (right === this.lastView && right.matchSelectionLength(newSelection.ids?.length || 0)) {
         right.setParameterSelection(newSelection);
         this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.ids), {inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.ids)});
 

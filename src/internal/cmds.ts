@@ -148,7 +148,7 @@ export class CmdUtils {
     return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, CmdUtils.createViewImpl, [app], {
       viewId,
       idtype: idtype ? idtype.id : null,
-      selection,
+      selection: selection || [],
       itemSelection: CmdUtils.serializeSelection(itemSelection),
       options
     });
@@ -185,18 +185,18 @@ export class CmdUtils {
     return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
       viewId,
       idtype: idtype ? idtype.id : null,
-      selection,
+      selection: selection || [],
       itemSelection: CmdUtils.serializeSelection(itemSelection),
       options
     });
   }
 
-  static async setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
+  static async setSelectionImpl(inputs: IObjectRef<any>[], parameter: { idtype?: string; ids?: string[]; }) {
     const views: ViewWrapper[] = await Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]);
     const view = views[0];
     const target = views[1];
     const idtype = parameter.idtype ? IDTypeManager.getInstance().resolveIdType(parameter.idtype) : null;
-    const ids = parameter.selection;
+    const ids = parameter.ids || [];
 
     const bak = view.getItemSelection();
     await Promise.resolve(view.setItemSelection({idtype, ids}));
@@ -208,19 +208,19 @@ export class CmdUtils {
     };
   }
 
-  static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, selection: string[]) {
+  static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]) {
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view], {
       idtype: idtype ? idtype.id : null,
-      selection
+      ids
     });
   }
 
-  static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, selection: string[]) {
+  static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]) {
     // assert view
     return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view, target], {
       idtype: idtype ? idtype.id : null,
-      selection
+      ids
     });
   }
 
@@ -279,6 +279,12 @@ export class CmdUtils {
   }
 
   static compressSetSelection(path: ActionNode[]) {
-    return Compression.lastConsecutive(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
+    // The compression of selection is incorrect, as the graph relies on a valid "undo" action to be passed.
+    // This undo-action gets the selection from the currently active view, which DOES NOT always have to be the previous node,
+    // but could be a few nodes before that. Imagine 3 selections, you are in state 1 and jump to state 3. The previous will
+    // be the selection from state 1, which IS NOT the previous of state 3, as that would be state 2. When you now jump to state 2,
+    // it undos the action, such that the selection is restored from state 1, but you are now in state 2.
+    // return Compression.lastConsecutive(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
+    return path;
   }
 }

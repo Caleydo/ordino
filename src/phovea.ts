@@ -42,8 +42,7 @@ export default function (registry: IRegistry) {
     analytics: {
       category: 'view',
       action: 'setSelection',
-      // TODO: Changed
-      value: (node: ActionNode) => node.parameter.selection.length
+      value: (node: ActionNode) => node.parameter.selection?.length || 0
     }
   });
 

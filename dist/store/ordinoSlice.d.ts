@@ -43,6 +43,10 @@ export interface IWorkbench {
     selectedMappings: ISelectedMapping[];
     viewDirection: EWorkbenchDirection;
     name: string;
+    /**
+     * itemIDType of the views in a workbench, should match the itemIDType of the default ranking
+     */
+    itemIDType: string;
     entityId: string;
     index: number;
     data: {
@@ -109,7 +113,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     columnName: string;
     data: any;
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     entityId: string;

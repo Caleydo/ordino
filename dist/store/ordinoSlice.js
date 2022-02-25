@@ -114,8 +114,8 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            console.log('in the add selection callback', action.payload.entityId, action.payload.newSelection);
-            state.workbenches.find((w) => w.entityId.endsWith(action.payload.entityId)).selection = action.payload.newSelection;
+            const { workbenchIndex, newSelection } = action.payload;
+            state.workbenches[workbenchIndex].selection = newSelection;
         },
         addFilter(state, action) {
             state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;

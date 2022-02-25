@@ -1,23 +1,26 @@
+/* eslint-disable no-param-reassign */
 import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { EXTENSION_POINT_VISYN_VIEW, PluginRegistry, useAsync } from 'tdp_core';
 import { addFilter, addSelection, removeView, setView, setViewParameters } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
-import { useVisynViewPlugin } from './useLoadWorkbenchViewPlugin';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     const [editOpen, setEditOpen] = useState(true);
-    const [viewPlugin, viewPluginFactFunc] = useVisynViewPlugin(view.id);
-    const viewPluginComponents = useMemo(() => {
-        return viewPluginFactFunc();
-    }, [viewPluginFactFunc]);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
+    const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
+    const { value: viewPlugin } = useAsync(React.useMemo(() => () => plugin.load().then((p) => {
+        p.desc.workbenchIndex = workbenchIndex; // inject workbench index to view to uniquely identify it
+        return p;
+    }), [plugin, workbenchIndex]), []);
+    const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
         canDrop: (d) => {
@@ -29,7 +32,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
         }),
     }), [view.id]);
     const viewIndex = useMemo(() => {
-        console.log('in here');
         return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
     }, [view.uniqueId, ordino.workbenches, workbenchIndex]);
     // eslint-disable-next-line no-empty-pattern
@@ -49,7 +51,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                 React.createElement("span", { className: "view-title row align-items-center m-1" },
                     React.createElement("strong", null, view.name)),
                 (viewPluginComponents === null || viewPluginComponents === void 0 ? void 0 : viewPluginComponents.header) ? (React.createElement(Suspense, { fallback: "Loading.." },
-                    React.createElement(viewPluginComponents.header, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: (sel) => dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel })), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onIdFilterChanged: (filt) => dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt })) }))) : null))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+                    React.createElement(viewPluginComponents.header, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters }))) : null))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
             React.createElement("span", { className: "view-title row align-items-center m-1" },
                 React.createElement("strong", null, view.name)))),
         React.createElement("div", { className: "inner d-flex" },
@@ -72,9 +74,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                             }, isEmbedded: false })),
                     viewPlugin && viewPluginComponents.tab ? (React.createElement("div", { className: `tab-pane ${!settingsTabSelected ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "view-tab" },
                         React.createElement(Suspense, { fallback: "Loading.." },
-                            React.createElement(viewPluginComponents.tab, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: (sel) => dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel })), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onIdFilterChanged: (filt) => dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt })) })))) : null))) : null,
+                            React.createElement(viewPluginComponents.tab, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters })))) : null))) : null,
             viewPlugin ? (React.createElement(Suspense, { fallback: "Loading.." },
-                React.createElement(viewPluginComponents.view, { desc: viewPlugin, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: (sel) => dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel })), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onIdFilterChanged: (filt) => dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt })) }))) : null),
+                React.createElement(viewPluginComponents.view, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: view.parameters, onSelectionChanged: (sel) => dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel })), onParametersChanged: (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), onIdFilterChanged: (filt) => dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt })) }))) : null),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

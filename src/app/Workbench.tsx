@@ -25,7 +25,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
-      <WorkbenchViews index={workbench.index} onlyRanking={type === EWorkbenchType.CONTEXT} />
+      <WorkbenchViews index={workbench.index} type={type} />
     </div>
   );
 }

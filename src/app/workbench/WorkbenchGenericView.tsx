@@ -90,13 +90,13 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   selection={ordino.workbenches[workbenchIndex].selection}
                   idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                   parameters={view.parameters}
-                  // onSelectionChanged={(sel: string[]) => dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel }))}
-                  // onParametersChanged={(p) =>
-                  //   dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }))
-                  // }
-                  // onIdFilterChanged={(filt: string[]) =>
-                  //   dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
-                  // }
+                  onSelectionChanged={(sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel }))}
+                  onParametersChanged={(p) =>
+                    dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }))
+                  }
+                  onIdFilterChanged={(filt: string[]) =>
+                    dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
+                  }
                 />
               </Suspense>
             ) : null}
@@ -178,17 +178,15 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                       selection={ordino.workbenches[workbenchIndex].selection}
                       idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
                       parameters={view.parameters}
-                      // onSelectionChanged={(sel: string[]) =>
-                      //   dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel }))
-                      // }
-                      // onParametersChanged={(p) =>
-                      //   dispatch(
-                      //     setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }),
-                      //   )
-                      // }
-                      // onIdFilterChanged={(filt: string[]) =>
-                      //   dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
-                      // }
+                      onSelectionChanged={(sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel }))}
+                      onParametersChanged={(p) =>
+                        dispatch(
+                          setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }),
+                        )
+                      }
+                      onIdFilterChanged={(filt: string[]) =>
+                        dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
+                      }
                     />
                   </Suspense>
                 </div>
@@ -205,7 +203,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               selection={ordino.workbenches[workbenchIndex].selection}
               idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
               parameters={view.parameters}
-              onSelectionChanged={(sel: string[]) => dispatch(addSelection({ entityId: ordino.workbenches[workbenchIndex].entityId, newSelection: sel }))}
+              onSelectionChanged={(sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel }))}
               onParametersChanged={(p) =>
                 dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }))
               }

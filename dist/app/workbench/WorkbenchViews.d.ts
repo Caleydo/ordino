@@ -1,6 +1,7 @@
+import { EWorkbenchType } from '../Workbench';
 export interface IWorkbenchViewsProps {
     index: number;
-    onlyRanking?: boolean;
+    type: EWorkbenchType;
 }
-export declare function WorkbenchViews({ index, onlyRanking }: IWorkbenchViewsProps): JSX.Element;
+export declare function WorkbenchViews({ index, type }: IWorkbenchViewsProps): JSX.Element;
 //# sourceMappingURL=WorkbenchViews.d.ts.map

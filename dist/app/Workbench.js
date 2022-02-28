@@ -12,6 +12,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);
     return (React.createElement("div", { ref: ref, className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
-        React.createElement(WorkbenchViews, { index: workbench.index, onlyRanking: type === EWorkbenchType.CONTEXT })));
+        React.createElement(WorkbenchViews, { index: workbench.index, type: type })));
 }
 //# sourceMappingURL=Workbench.js.map

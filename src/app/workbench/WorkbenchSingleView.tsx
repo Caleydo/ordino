@@ -3,7 +3,6 @@ import * as React from 'react';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
 import { useMemo } from 'react';
 import { IWorkbenchView } from '../../store';
-import { WorkbenchRankingView } from './WorkbenchRankingView';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
 import { useAppSelector } from '../../hooks/useAppSelector';
@@ -19,7 +18,6 @@ export function getVisynView(entityId: string) {
 
 export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleViewProps) {
   const ordino = useAppSelector((state) => state.ordino);
-
   const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
   const availableViews = useMemo(() => {

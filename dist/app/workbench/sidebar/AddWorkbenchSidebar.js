@@ -56,19 +56,28 @@ export function AddWorkbenchSidebar({ workbench }) {
             React.createElement("form", { onSubmit: (event) => {
                     event.preventDefault();
                     const baseView = getBaseView(availableViews);
+                    const selectedMappings = relationList.map((r) => {
+                        return {
+                            entityId: r.mappingEntity,
+                            columnSelection: r.mappingSubtype,
+                        };
+                    });
                     dispatch(
                     // load the data
                     addWorkbench({
                         itemIDType: baseView.itemIDType,
                         detailsOpen: true,
                         addWorkbenchOpen: false,
-                        selectedMappings: relationList.map((r) => {
-                            return {
-                                entityId: r.mappingEntity,
-                                columnSelection: r.mappingSubtype,
-                            };
-                        }),
-                        views: [{ name: baseView.name, id: baseView.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
+                        selectedMappings,
+                        views: [
+                            {
+                                name: baseView.name,
+                                id: baseView.id,
+                                parameters: { prevSelection: workbench.selection, selectedMappings },
+                                uniqueId: (Math.random() + 1).toString(36).substring(7),
+                                filters: [],
+                            },
+                        ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
                         transitionOptions: [],
                         columnDescs: [],

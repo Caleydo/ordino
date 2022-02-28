@@ -62,6 +62,19 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     }),
     [view.id, viewIndex],
   );
+  const onSelectionChanged = useMemo(() => (sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [workbenchIndex]);
+  const onParametersChanged = useMemo(
+    () => (p: any) =>
+      dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })),
+    [workbenchIndex, view.uniqueId, ordino.workbenches],
+  );
+
+  const parameters = useMemo(() => {
+    const previousWorkbench = ordino.workbenches?.[workbenchIndex - 1];
+    const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
+    const { selectedMappings } = ordino.workbenches[workbenchIndex];
+    return { prevSelection, selectedMappings };
+  }, [workbenchIndex, ordino.workbenches]);
 
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -89,11 +102,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                   selection={ordino.workbenches[workbenchIndex].selection}
                   idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
-                  parameters={view.parameters}
-                  onSelectionChanged={(sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel }))}
-                  onParametersChanged={(p) =>
-                    dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }))
-                  }
+                  parameters={{ ...view.parameters, ...parameters }}
+                  onSelectionChanged={onSelectionChanged}
+                  onParametersChanged={onParametersChanged}
                   onIdFilterChanged={(filt: string[]) =>
                     dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
                   }
@@ -177,13 +188,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                       dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                       selection={ordino.workbenches[workbenchIndex].selection}
                       idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
-                      parameters={view.parameters}
-                      onSelectionChanged={(sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel }))}
-                      onParametersChanged={(p) =>
-                        dispatch(
-                          setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }),
-                        )
-                      }
+                      parameters={{ ...view.parameters, ...parameters }}
+                      onSelectionChanged={onSelectionChanged}
+                      onParametersChanged={onParametersChanged}
                       onIdFilterChanged={(filt: string[]) =>
                         dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
                       }
@@ -202,11 +209,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
               selection={ordino.workbenches[workbenchIndex].selection}
               idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
-              parameters={view.parameters}
-              onSelectionChanged={(sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel }))}
-              onParametersChanged={(p) =>
-                dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p }))
-              }
+              parameters={{ ...view.parameters, ...parameters }}
+              onSelectionChanged={onSelectionChanged}
+              onParametersChanged={onParametersChanged}
               onIdFilterChanged={(filt: string[]) =>
                 dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
               }

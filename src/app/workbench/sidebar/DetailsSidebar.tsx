@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
@@ -60,7 +60,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
                     {v.v.relation.mapping.map((map: IReprovisynMapping) => {
                       const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                       return (
-                        <>
+                        <Fragment key={`${map.entity}-${map.name}`}>
                           <div className="mt-2 mappingTypeText">{map.name}</div>
                           {columns.map((col) => {
                             return (
@@ -86,7 +86,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
                               </div>
                             );
                           })}
-                        </>
+                        </Fragment>
                       );
                     })}
                   </div>

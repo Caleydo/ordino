@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { FindViewUtils, IDType, useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
@@ -33,7 +33,7 @@ export function DetailsSidebar({ workbench }) {
                 .map((v) => {
                 return (React.createElement("div", { key: `${v.v.name}mapping` }, v.v.relation.mapping.map((map) => {
                     const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
-                    return (React.createElement(React.Fragment, null,
+                    return (React.createElement(Fragment, { key: `${map.entity}-${map.name}` },
                         React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                         columns.map((col) => {
                             return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },

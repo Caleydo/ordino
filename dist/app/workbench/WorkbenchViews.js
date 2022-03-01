@@ -1,10 +1,16 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { EWorkbenchType } from '../Workbench';
 import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
+export var EWorkbenchType;
+(function (EWorkbenchType) {
+    EWorkbenchType["PREVIOUS"] = "t-previous";
+    EWorkbenchType["FOCUS"] = "t-focus";
+    EWorkbenchType["CONTEXT"] = "t-context";
+    EWorkbenchType["NEXT"] = "t-next";
+})(EWorkbenchType || (EWorkbenchType = {}));
 export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
     const { views } = ordino.workbenches[index];

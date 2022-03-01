@@ -1,14 +1,7 @@
 import React from 'react';
 import { useAppSelector } from '../hooks';
 import { IWorkbench } from '../store/ordinoSlice';
-import { WorkbenchViews } from './workbench/WorkbenchViews';
-
-export enum EWorkbenchType {
-  PREVIOUS = 't-previous',
-  FOCUS = 't-focus',
-  CONTEXT = 't-context',
-  NEXT = 't-next',
-}
+import { EWorkbenchType, WorkbenchViews } from './workbench/WorkbenchViews';
 
 interface IWorkbenchProps {
   workbench: IWorkbench;

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { EWorkbenchType, Workbench } from './Workbench';
+import { Workbench } from './Workbench';
 import { useAppSelector } from '../hooks';
+import { EWorkbenchType } from './workbench/WorkbenchViews';
 export const focusViewWidth = 85; // viewport width (vw)
 export const contextViewWidth = 15; // viewport width (vw)
 export function Filmstrip() {
@@ -12,7 +13,7 @@ export function Filmstrip() {
         }
         return `translateX(0vw)`;
     }, [focusViewIndex]);
-    return (React.createElement("div", { className: "ordino-filmstrip flex-grow-1 align-content-stretch", style: { transform: translateDistance } }, workbenches.map((v, index) => {
+    return (React.createElement("div", { className: "ordino-filmstrip flex-grow-1 align-content-stretch", style: { transform: translateDistance } }, workbenches.map((v) => {
         const focused = focusViewIndex;
         return (React.createElement(Workbench, { type: v.index === focused - 1
                 ? EWorkbenchType.CONTEXT
@@ -20,9 +21,7 @@ export function Filmstrip() {
                     ? EWorkbenchType.FOCUS
                     : v.index > focused
                         ? EWorkbenchType.NEXT
-                        : EWorkbenchType.PREVIOUS, workbench: v, 
-            // eslint-disable-next-line react/no-array-index-key
-            key: index }));
+                        : EWorkbenchType.PREVIOUS, workbench: v, key: `${v.name}-${v.index}` }));
     })));
 }
 //# sourceMappingURL=Filmstrip.js.map

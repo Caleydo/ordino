@@ -3,17 +3,10 @@ import { FindViewUtils, IDTypeManager, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-/**
- * TODO: Do different views always have the same base ranking and just different columns?
- * Get the base view of the ranking
- * @param availableViews
- */
-function getBaseView(availableViews) {
-    return availableViews[0].v; // take the first view for now
-}
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
+    const [selectedView, setSelectedView] = useState(null);
     const [relationList, setRelationList] = useState([]);
     const relationListCallback = (s) => {
         if (!relationList.some((r) => r.mappingEntity === s.mappingEntity && r.mappingSubtype === s.mappingSubtype && s.targetEntity === r.targetEntity)) {
@@ -55,7 +48,6 @@ export function AddWorkbenchSidebar({ workbench }) {
                 React.createElement("p", { className: "mb-0 mappingText", style: { color: ordino.colorMap[workbench.entityId] } }, selectionString)),
             React.createElement("form", { onSubmit: (event) => {
                     event.preventDefault();
-                    const baseView = getBaseView(availableViews);
                     const selectedMappings = relationList.map((r) => {
                         return {
                             entityId: r.mappingEntity,
@@ -65,14 +57,14 @@ export function AddWorkbenchSidebar({ workbench }) {
                     dispatch(
                     // load the data
                     addWorkbench({
-                        itemIDType: baseView.itemIDType,
+                        itemIDType: selectedView.itemIDType,
                         detailsOpen: true,
                         addWorkbenchOpen: false,
                         selectedMappings,
                         views: [
                             {
-                                name: baseView.itemName,
-                                id: baseView.id,
+                                name: selectedView.itemName,
+                                id: selectedView.id,
                                 parameters: { prevSelection: workbench.selection, selectedMappings },
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
                                 filters: [],
@@ -83,7 +75,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        name: baseView.itemName,
+                        name: selectedView.itemName,
                         index: ordino.focusViewIndex + 1,
                         selection: workbench.selection,
                     }));
@@ -94,13 +86,16 @@ export function AddWorkbenchSidebar({ workbench }) {
                 availableViews
                     .filter((v) => v.v.itemIDType === e.idType)
                     .map((v) => {
-                    return (React.createElement("div", { key: `${v.v.name}mapping` }, v.v.relation.mapping.map((map) => {
+                    return (React.createElement("div", { key: `${v.v.name}-mapping` }, v.v.relation.mapping.map((map) => {
                         const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                         return (React.createElement(Fragment, { key: `${map.name}-group` },
                             React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                             columns.map((col) => {
                                 return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
-                                    React.createElement("input", { onChange: () => relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName }), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
+                                    React.createElement("input", { onChange: () => {
+                                            relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                            setSelectedView(v.v);
+                                        }, className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
                                     React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));
                             })));
                     })));

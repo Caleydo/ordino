@@ -71,7 +71,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         selectedMappings,
                         views: [
                             {
-                                name: baseView.name,
+                                name: baseView.itemName,
                                 id: baseView.id,
                                 parameters: { prevSelection: workbench.selection, selectedMappings },
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
@@ -83,7 +83,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        name: baseView.name,
+                        name: baseView.itemName,
                         index: ordino.focusViewIndex + 1,
                         selection: workbench.selection,
                     }));

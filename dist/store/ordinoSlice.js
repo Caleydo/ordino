@@ -32,12 +32,14 @@ export var EWorkbenchDirection;
 //   state: {
 //   }
 // }
+const containsView = (workbench, viewId) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
 const initialState = {
     workbenches: [],
     focusViewIndex: 0,
     sidebarOpen: false,
     colorMap: {},
 };
+// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
     name: 'ordino',
     initialState,
@@ -86,9 +88,10 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+            state.workbenches.find((w) => containsView(w, action.payload.viewId)).columnDescs = action.payload.desc;
         },
         addColumnDesc(state, action) {
+            console.log(action.payload.entityId);
             state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
@@ -125,7 +128,7 @@ const ordinoSlice = createSlice({
         },
         setWorkbenchData(state, action) {
             for (const i of action.payload.data) {
-                state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
+                state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i._visyn_id] = i;
             }
         },
         addScoreColumn(state, action) {

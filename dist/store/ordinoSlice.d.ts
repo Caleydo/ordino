@@ -90,7 +90,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, setSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     open: boolean;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    viewId: string;
     desc: any;
 }, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
@@ -120,7 +120,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    viewId: string;
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;

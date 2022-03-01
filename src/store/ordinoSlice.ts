@@ -126,6 +126,7 @@ const ordinoSlice = createSlice({
   initialState,
   reducers: {
     addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
+      state.focusViewIndex = 0;
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },

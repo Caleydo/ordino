@@ -134,6 +134,9 @@ const ordinoSlice = createSlice({
       state.colorMap = action.payload.colorMap;
     },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
+      if (state.workbenches.length > action.payload.index) {
+        state.workbenches.splice(action.payload.index);
+      }
       state.workbenches.push(action.payload);
     },
     addView(state, action: PayloadAction<{ workbenchIndex: number; view: IWorkbenchView }>) {

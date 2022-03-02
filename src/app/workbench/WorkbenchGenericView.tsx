@@ -77,7 +77,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     const { selectedMappings } = ordino.workbenches[workbenchIndex];
     return { prevSelection, selectedMappings };
   }, [workbenchIndex, ordino.workbenches]);
-  console.log('workbench ', ordino.workbenches[workbenchIndex].columnDescs, ordino);
+
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {workbenchIndex === ordino.focusViewIndex ? (

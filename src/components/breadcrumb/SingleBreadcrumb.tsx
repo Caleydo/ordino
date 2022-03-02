@@ -23,10 +23,14 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
   const ref = useRef(null);
 
   useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.offsetWidth);
-    }
-  }, [ref?.current?.offsetWidth]);
+    const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+      entries.forEach((e) => {
+        setWidth(e.contentRect.width);
+      });
+    });
+
+    ro.observe(ref.current);
+  }, []);
 
   return (
     <div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>

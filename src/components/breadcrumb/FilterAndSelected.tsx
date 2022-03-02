@@ -13,11 +13,15 @@ export function FilterAndSelected() {
     return getAllFilters(ordino.workbenches[ordino.focusViewIndex]).length;
   }, [ordino.focusViewIndex, ordino.workbenches]);
 
+  const selectedLength = useMemo(() => {
+    return ordino.workbenches[ordino.focusViewIndex].selection.length;
+  }, [ordino.focusViewIndex, ordino.workbenches]);
+
   return (
     <div className="align-middle m-1 d-flex align-items-center">
       <span className="m-1">
-        {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusViewIndex].name}s /{' '}
-        {ordino.workbenches[ordino.focusViewIndex].selection.length} {ordino.workbenches[ordino.focusViewIndex].name}s selected
+        {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusViewIndex].name}s / {selectedLength}{' '}
+        {ordino.workbenches[ordino.focusViewIndex].name}s selected
       </span>
     </div>
   );

@@ -158,7 +158,6 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
     },
     setAddWorkbenchOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      console.log('in the slice add open');
       state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
     },
     setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string; viewName: string }>) {
@@ -175,7 +174,6 @@ const ordinoSlice = createSlice({
       state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
-      console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =

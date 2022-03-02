@@ -12,17 +12,14 @@ export function ShowDetailsSwitch({ height = 30 }: IShowDetailsSwitchProps) {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="form-check form-switch align-middle m-1">
-      <input
-        checked={ordino.workbenches[ordino.focusViewIndex].detailsOpen}
-        onChange={() => dispatch(setDetailsOpen({ workbenchIndex: ordino.focusViewIndex, open: !ordino.workbenches[ordino.focusViewIndex].detailsOpen }))}
-        className="form-check-input checked"
-        type="checkbox"
-        id="flexSwitchCheckChecked"
-      />
-      <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-        Show Details
-      </label>
+    <div>
+      <button
+        type="button"
+        onClick={() => dispatch(setDetailsOpen({ workbenchIndex: ordino.focusViewIndex, open: !ordino.workbenches[ordino.focusViewIndex].detailsOpen }))}
+        className="btn btn-icon-light align-middle"
+      >
+        <i className="flex-grow-1 fas fa-bars m-1" />
+      </button>
     </div>
   );
 }

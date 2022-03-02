@@ -75,7 +75,6 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
         },
         setAddWorkbenchOpen(state, action) {
-            console.log('in the slice add open');
             state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
         },
         setView(state, action) {
@@ -92,7 +91,6 @@ const ordinoSlice = createSlice({
             state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
-            console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
             const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
             state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
                 state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];

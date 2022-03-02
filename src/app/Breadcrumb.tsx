@@ -82,7 +82,7 @@ export function Breadcrumb() {
             color={ordino.colorMap[ordino.workbenches[ordino.focusViewIndex].entityId]}
             flexWidth={70 + 5 * (2 - endFlexNum)}
             first={ordino.focusViewIndex === 0}
-            onClick={() => dispatch(changeFocus({ index: ordino.focusViewIndex }))}
+            onClick={null}
           />
 
           <SingleBreadcrumb

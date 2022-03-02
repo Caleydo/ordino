@@ -46,13 +46,14 @@ export function AddWorkbenchSidebar({ workbench }) {
         workbench.selection.forEach((s) => {
             currString += `${s}, `;
         });
-        return currString.slice(0, currString.length - 3);
+        return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
     }, [workbench.selection]);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
-            React.createElement("div", { className: "d-flex", style: { justifyContent: 'space-between' } },
-                React.createElement("p", { className: "mb-0 entityText", style: { color: ordino.colorMap[e.idType] } }, e.label),
-                React.createElement("p", { className: "mb-0 mappingText", style: { color: ordino.colorMap[workbench.entityId] } }, selectionString)),
+            React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
+                React.createElement("p", { className: "mt-1 mb-1" },
+                    React.createElement("span", { className: "p-1 entityText", style: { color: '#e9ecef', backgroundColor: ordino.colorMap[e.idType] } }, e.label)),
+                React.createElement("p", { className: "mb-2 selectedPrevText", style: { color: ordino.colorMap[workbench.entityId] } }, selectionString)),
             React.createElement("form", { onSubmit: (event) => {
                     event.preventDefault();
                     const baseView = getBaseView(availableViews);
@@ -100,8 +101,8 @@ export function AddWorkbenchSidebar({ workbench }) {
                             React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                             columns.map((col) => {
                                 return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
-                                    React.createElement("input", { onChange: () => relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName }), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
-                                    React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));
+                                    React.createElement("input", { onChange: () => relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName }), className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.v.name}Check` }),
+                                    React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.v.name}Check` }, col.label)));
                             })));
                     })));
                 }),

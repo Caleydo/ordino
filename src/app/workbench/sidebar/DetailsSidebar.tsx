@@ -33,7 +33,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
       currString += `${s}, `;
     });
 
-    return currString.slice(0, currString.length - 3);
+    return currString.length < 153 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 150)}...`;
   }, [ordino.workbenches, workbench.index]);
 
   return (
@@ -41,16 +41,17 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
       {status === 'success' ? (
         <div className="d-flex flex-column">
           <div className="p-1 mb-2 rounded">
-            <div className="d-flex" style={{ justifyContent: 'space-between' }}>
-              <p className="mb-0 entityText">
+            <div className="d-flex flex-column" style={{ justifyContent: 'space-between' }}>
+              <p className="mb-1">
                 <span className="entityText">Selected </span>
-                <span className="entityText" style={{ color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}>
+                <span
+                  className="p-1 entityText"
+                  style={{ color: '#e9ecef', backgroundColor: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}
+                >
                   {ordino.workbenches[workbench.index - 1].name}s
                 </span>
               </p>
-              <p className="mb-0 mappingText" style={{ color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}>
-                {selectionString}
-              </p>
+              <p className="mb-2 selectedPrevText">{selectionString}</p>
             </div>
             {availableViews
               .filter((v) => v.v.itemIDType === workbench.entityId)

@@ -81,13 +81,19 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       {workbenchIndex === ordino.focusViewIndex ? (
         <>
           <div className="view-actions">
-            <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn-close" />
+            <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">
+              <i className="flex-grow-1 fas fa-times m-1" />
+            </button>
           </div>
 
-          <div ref={drag} className="view-parameters d-flex">
+          <div ref={drag} className="view-parameters d-flex cursor-pointer">
             <div>
-              <button type="button" onClick={() => setEditOpen(!editOpen)} className="chevronButton btn btn-icon-primary align-middle m-1">
-                {' '}
+              <button
+                type="button"
+                onClick={() => setEditOpen(!editOpen)}
+                style={{ color: ordino.colorMap[ordino.workbenches[workbenchIndex].entityId] }}
+                className="btn btn-icon-primary align-middle m-1"
+              >
                 <i className="flex-grow-1 fas fa-bars m-1" />
               </button>
             </div>
@@ -156,7 +162,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               ) : null}
             </ul>
 
-            <div className="h-100 tab-content" style={{ width: '220px' }}>
+            <div className="h-100 tab-content viewTabPanel" style={{ width: '220px' }}>
               <div
                 className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPluginComponents?.tab ? 'active' : ''}`}
                 role="tabpanel"

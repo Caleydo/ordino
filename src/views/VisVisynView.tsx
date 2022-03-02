@@ -12,6 +12,8 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
     return filterData;
   }, [data, idFilter]);
 
+  console.log(data, selection, parameters);
+
   const cols = [];
 
   for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
@@ -39,7 +41,7 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
     selectedMap[i] = true;
   }
 
-  return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters} hideSidebar />;
+  return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters.type ? parameters : null} hideSidebar />;
 }
 
 export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }: IVisynViewProps<any, IVisConfig>) {
@@ -83,7 +85,15 @@ export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters
     }
   };
 
-  return <VisSidebar width="220px" columns={finalCols} filterCallback={visFilterChanged} externalConfig={parameters} setExternalConfig={onParametersChanged} />;
+  return (
+    <VisSidebar
+      width="220px"
+      columns={finalCols}
+      filterCallback={visFilterChanged}
+      externalConfig={parameters.type ? parameters : null}
+      setExternalConfig={onParametersChanged}
+    />
+  );
 }
 
 export const visConfiguration: () => IVisynViewPluginFactory = () => {

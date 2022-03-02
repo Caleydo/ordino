@@ -1,6 +1,5 @@
-import { IChevronBreadcrumbProps } from './ChevronBreadcrumb';
-export interface IChevronButtonsProps {
+export interface IAddViewButton {
     color?: string;
 }
-export declare function ChevronButtons({ color }: IChevronBreadcrumbProps): JSX.Element;
+export declare function AddViewButton({ color }: IAddViewButton): JSX.Element;
 //# sourceMappingURL=ChevronButtons.d.ts.map

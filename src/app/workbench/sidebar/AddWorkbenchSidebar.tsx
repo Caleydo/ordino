@@ -76,7 +76,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
       currString += `${s}, `;
     });
 
-    return currString.slice(0, currString.length - 3);
+    return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
   }, [workbench.selection]);
 
   return (
@@ -86,11 +86,13 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
           {availableEntities.map((e) => {
             return (
               <div key={`${e.idType}Box`} className="entityJumpBox p-1 mb-2 rounded">
-                <div className="d-flex" style={{ justifyContent: 'space-between' }}>
-                  <p className="mb-0 entityText" style={{ color: ordino.colorMap[e.idType] }}>
-                    {e.label}
+                <div className="d-flex flex-column" style={{ justifyContent: 'space-between' }}>
+                  <p className="mt-1 mb-1">
+                    <span className="p-1 entityText" style={{ color: '#e9ecef', backgroundColor: ordino.colorMap[e.idType] }}>
+                      {e.label}
+                    </span>
                   </p>
-                  <p className="mb-0 mappingText" style={{ color: ordino.colorMap[workbench.entityId] }}>
+                  <p className="mb-2 selectedPrevText" style={{ color: ordino.colorMap[workbench.entityId] }}>
                     {selectionString}
                   </p>
                 </div>
@@ -155,9 +157,9 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                                         className="form-check-input"
                                         type="checkbox"
                                         value=""
-                                        id="flexCheckDefault"
+                                        id={`${col.label}${v.v.name}Check`}
                                       />
-                                      <label className="mappingText form-check-label" htmlFor="flexCheckDefault">
+                                      <label className="mappingText form-check-label" htmlFor={`${col.label}${v.v.name}Check`}>
                                         {col.label}
                                       </label>
                                     </div>

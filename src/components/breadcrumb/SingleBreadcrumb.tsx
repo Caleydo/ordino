@@ -46,10 +46,10 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         )}
       </div>
 
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: first ? '0px' : '4px' }}>
+      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: first ? (workbench.index > 0 ? '0px' : '20px') : '4px' }}>
         {workbench && workbench.index === ordino.focusViewIndex ? (
           <>
-            <ShowDetailsSwitch />
+            {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
             <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
           </>
         ) : null}

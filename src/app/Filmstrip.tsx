@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { EWorkbenchType, Workbench } from './Workbench';
+import { Workbench } from './Workbench';
 import { useAppSelector } from '../hooks';
+import { EWorkbenchType } from './workbench/WorkbenchViews';
 
 export const focusViewWidth = 85; // viewport width (vw)
 export const contextViewWidth = 15; // viewport width (vw)
@@ -18,7 +19,7 @@ export function Filmstrip() {
 
   return (
     <div className="ordino-filmstrip flex-grow-1 align-content-stretch" style={{ transform: translateDistance }}>
-      {workbenches.map((v, index) => {
+      {workbenches.map((v) => {
         const focused = focusViewIndex;
         return (
           <Workbench
@@ -32,8 +33,7 @@ export function Filmstrip() {
                 : EWorkbenchType.PREVIOUS
             }
             workbench={v}
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
+            key={`${v.name}-${v.index}`}
           />
         );
       })}

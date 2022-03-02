@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { EXTENSION_POINT_VISYN_VIEW, IViewPluginDesc, IVisynViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
+import { EXTENSION_POINT_VISYN_VIEW, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import { addFilter, addSelection, IWorkbenchView, removeView, setView, setViewParameters } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
@@ -23,14 +23,15 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
   const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
+
   const { value: viewPlugin } = useAsync(
     React.useMemo(
       () => () =>
         plugin.load().then((p) => {
-          p.desc.workbenchIndex = workbenchIndex; // inject workbench index to view to uniquely identify it
+          p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
           return p;
         }),
-      [plugin, workbenchIndex],
+      [plugin, view.uniqueId],
     ),
     [],
   );
@@ -98,7 +99,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               </button>
             </div>
             <span className="view-title row align-items-center m-1">
-              <strong>{view.name}</strong>
+              <strong>{viewPluginDesc?.itemName}</strong>
             </span>
             {viewPluginComponents?.header ? (
               <Suspense fallback="Loading..">
@@ -122,12 +123,12 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       ) : (
         <div ref={drag} className="view-parameters d-flex">
           <span className="view-title row align-items-center m-1">
-            <strong>{view.name}</strong>
+            <strong>{viewPluginDesc?.itemName}</strong>
           </span>
         </div>
       )}
       <div className="inner d-flex">
-        {editOpen && !viewPlugin?.desc.isStartView ? ( // do not show chooser for ranking views
+        {editOpen && !viewPlugin?.desc.defaultView ? ( // do not show chooser for ranking views
           <div className="d-flex flex-column">
             <ul className="nav nav-tabs" id="myTab" role="tablist">
               <li className="nav-item" role="presentation">

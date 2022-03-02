@@ -1,11 +1,16 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { EWorkbenchType } from '../Workbench';
 import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 
+export enum EWorkbenchType {
+  PREVIOUS = 't-previous',
+  FOCUS = 't-focus',
+  CONTEXT = 't-context',
+  NEXT = 't-next',
+}
 export interface IWorkbenchViewsProps {
   index: number;
   type: EWorkbenchType;

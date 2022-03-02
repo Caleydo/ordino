@@ -1,7 +1,7 @@
-import React, { FormEvent, FormEventHandler, Fragment, useMemo, useState } from 'react';
-import { EXTENSION_POINT_VISYN_VIEW, FindViewUtils, IDiscoveredView, IDType, IDTypeManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
+import React, { FormEvent, Fragment, useMemo, useState } from 'react';
+import { FindViewUtils, IDTypeManager, IViewPluginDesc, useAsync } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
-import { changeFocus, EWorkbenchDirection, IWorkbench, setAddWorkbenchOpen, addWorkbench } from '../../../store';
+import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 
@@ -15,19 +15,11 @@ export interface IMappingDesc {
   mappingSubtype: string;
 }
 
-/**
- * TODO: Do different views always have the same base ranking and just different columns?
- * Get the base view of the ranking
- * @param availableViews
- */
-function getBaseView(availableViews: IDiscoveredView[]) {
-  return availableViews[0].v; // take the first view for now
-}
-
 export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
+  const [selectedView, setSelectedView] = useState<IViewPluginDesc>(null);
   const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
 
   const relationListCallback = (s: IMappingDesc) => {
@@ -99,7 +91,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                 <form
                   onSubmit={(event: FormEvent<HTMLFormElement>) => {
                     event.preventDefault();
-                    const baseView = getBaseView(availableViews);
                     const selectedMappings = relationList.map((r) => {
                       return {
                         entityId: r.mappingEntity,
@@ -109,14 +100,14 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                     dispatch(
                       // load the data
                       addWorkbench({
-                        itemIDType: baseView.itemIDType,
+                        itemIDType: selectedView.itemIDType,
                         detailsOpen: true,
                         addWorkbenchOpen: false,
                         selectedMappings,
                         views: [
                           {
-                            name: baseView.name,
-                            id: baseView.id,
+                            name: selectedView.itemName,
+                            id: selectedView.id,
                             parameters: { prevSelection: workbench.selection, selectedMappings },
                             uniqueId: (Math.random() + 1).toString(36).substring(7),
                             filters: [],
@@ -127,7 +118,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        name: baseView.name,
+                        name: selectedView.itemName,
                         index: ordino.focusViewIndex + 1,
                         selection: workbench.selection,
                       }),
@@ -141,7 +132,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                     .filter((v) => v.v.itemIDType === e.idType)
                     .map((v) => {
                       return (
-                        <div key={`${v.v.name}mapping`}>
+                        <div key={`${v.v.name}-mapping`}>
                           {v.v.relation.mapping.map((map: IReprovisynMapping) => {
                             const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                             return (
@@ -151,9 +142,10 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                                   return (
                                     <div key={`${col.label}Column`} className="form-check">
                                       <input
-                                        onChange={() =>
-                                          relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName })
-                                        }
+                                        onChange={() => {
+                                          relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                          setSelectedView(v.v);
+                                        }}
                                         className="form-check-input"
                                         type="checkbox"
                                         value=""

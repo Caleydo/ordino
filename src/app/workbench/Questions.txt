@@ -1,0 +1,2 @@
+Questions:
+How do you pass the mode of the view?

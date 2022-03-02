@@ -111,6 +111,8 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 //   }
 // }
 
+const containsView = (workbench: IWorkbench, viewId: string) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
+
 const initialState: IOrdinoAppState = {
   workbenches: [],
   focusViewIndex: 0,
@@ -118,11 +120,13 @@ const initialState: IOrdinoAppState = {
   colorMap: {},
 };
 
+// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
     addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
+      state.focusViewIndex = 0;
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
@@ -167,10 +171,13 @@ const ordinoSlice = createSlice({
     addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    createColumnDescs(state, action: PayloadAction<{ entityId: string; desc: any }>) {
-      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+
+    createColumnDescs(state, action: PayloadAction<{ viewId: string; desc: any }>) {
+      state.workbenches.find((w) => containsView(w, action.payload.viewId)).columnDescs = action.payload.desc;
     },
+
     addColumnDesc(state, action: PayloadAction<{ entityId: string; desc: any }>) {
+      console.log(action.payload.entityId);
       state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
@@ -206,11 +213,13 @@ const ordinoSlice = createSlice({
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusViewIndex = action.payload.index;
     },
-    setWorkbenchData(state, action: PayloadAction<{ entityId: string; data: any[] }>) {
+
+    setWorkbenchData(state, action: PayloadAction<{ viewId: string; data: any[] }>) {
       for (const i of action.payload.data) {
-        state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
+        state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i._visyn_id] = i;
       }
     },
+
     addScoreColumn(state, action: PayloadAction<{ columnName: string; data: any }>) {
       for (const row of action.payload.data) {
         const dataRow = state.workbenches[state.focusViewIndex].data[row.id];

@@ -1,13 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../hooks';
-import { WorkbenchViews } from './workbench/WorkbenchViews';
-export var EWorkbenchType;
-(function (EWorkbenchType) {
-    EWorkbenchType["PREVIOUS"] = "t-previous";
-    EWorkbenchType["FOCUS"] = "t-focus";
-    EWorkbenchType["CONTEXT"] = "t-context";
-    EWorkbenchType["NEXT"] = "t-next";
-})(EWorkbenchType || (EWorkbenchType = {}));
+import { EWorkbenchType, WorkbenchViews } from './workbench/WorkbenchViews';
 export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const ordino = useAppSelector((state) => state.ordino);
     const ref = React.useRef(null);

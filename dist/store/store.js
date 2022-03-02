@@ -10,5 +10,10 @@ const allReducers = combineReducers({
     app: appReducer,
     ...allVisynReducers(),
 });
-export const store = configureStore({ reducer: allReducers });
+export const store = configureStore({
+    reducer: allReducers,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false,
+    }),
+});
 //# sourceMappingURL=store.js.map

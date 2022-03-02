@@ -9,6 +9,9 @@ export function FilterAndSelected() {
     const filterLength = useMemo(() => {
         return getAllFilters(ordino.workbenches[ordino.focusViewIndex]).length;
     }, [ordino.focusViewIndex, ordino.workbenches]);
+    const selectedLength = useMemo(() => {
+        return ordino.workbenches[ordino.focusViewIndex].selection.length;
+    }, [ordino.focusViewIndex, ordino.workbenches]);
     return (React.createElement("div", { className: "align-middle m-1 d-flex align-items-center" },
         React.createElement("span", { className: "m-1" },
             dataLength - filterLength,
@@ -16,10 +19,9 @@ export function FilterAndSelected() {
             dataLength,
             " ",
             ordino.workbenches[ordino.focusViewIndex].name,
-            "s /",
+            "s / ",
+            selectedLength,
             ' ',
-            ordino.workbenches[ordino.focusViewIndex].selection.length,
-            " ",
             ordino.workbenches[ordino.focusViewIndex].name,
             "s selected")));
 }

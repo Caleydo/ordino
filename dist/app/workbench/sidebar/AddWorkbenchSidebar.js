@@ -41,7 +41,6 @@ export function AddWorkbenchSidebar({ workbench }) {
         });
         return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
     }, [workbench.selection]);
-    console.log(availableViews);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
@@ -79,7 +78,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         entityId: relationList[0].targetEntity,
                         name: selectedView.itemName,
                         index: workbench.index + 1,
-                        selection: workbench.selection,
+                        selection: [],
                     }));
                     setTimeout(() => {
                         dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));

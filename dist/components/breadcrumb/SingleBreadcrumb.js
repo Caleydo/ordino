@@ -6,15 +6,17 @@ import { ShowDetailsSwitch } from './ShowDetailsSwitch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null }) {
-    var _a;
     const ordino = useAppSelector((state) => state.ordino);
     const [width, setWidth] = useState();
     const ref = useRef(null);
     useEffect(() => {
-        if (ref.current) {
-            setWidth(ref.current.offsetWidth);
-        }
-    }, [(_a = ref === null || ref === void 0 ? void 0 : ref.current) === null || _a === void 0 ? void 0 : _a.offsetWidth]);
+        const ro = new ResizeObserver((entries) => {
+            entries.forEach((e) => {
+                setWidth(e.contentRect.width);
+            });
+        });
+        ro.observe(ref.current);
+    }, []);
     return (React.createElement("div", { className: `position-relative ${onClick ? 'cursor-pointer' : ''}`, ref: ref, style: { flexGrow: flexWidth }, onClick: onClick },
         React.createElement("div", { className: "position-absolute chevronDiv top-50 start-50 translate-middle d-flex" }, workbench ? (workbench.index === ordino.focusViewIndex ? (React.createElement(FilterAndSelected, null)) : (React.createElement("p", { className: "chevronText flex-grow-1" }, workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`))) : (React.createElement("i", { className: "flex-grow-1 fas fa-plus" }))),
         React.createElement("div", { className: "position-absolute chevronDiv top-50 translate-middle-y d-flex", style: { left: first ? '0px' : '4px' } }, workbench && workbench.index === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,

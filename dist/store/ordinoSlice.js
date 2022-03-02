@@ -32,17 +32,20 @@ export var EWorkbenchDirection;
 //   state: {
 //   }
 // }
+const containsView = (workbench, viewId) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
 const initialState = {
     workbenches: [],
     focusViewIndex: 0,
     sidebarOpen: false,
     colorMap: {},
 };
+// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
     name: 'ordino',
     initialState,
     reducers: {
         addFirstWorkbench(state, action) {
+            state.focusViewIndex = 0;
             state.workbenches.splice(0, state.workbenches.length);
             state.workbenches.push(action.payload);
         },
@@ -85,9 +88,10 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+            state.workbenches.find((w) => containsView(w, action.payload.viewId)).columnDescs = action.payload.desc;
         },
         addColumnDesc(state, action) {
+            console.log(action.payload.entityId);
             state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
@@ -116,14 +120,14 @@ const ordinoSlice = createSlice({
             state.workbenches[workbenchIndex].selection = newSelection;
         },
         addFilter(state, action) {
-            state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
+            state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
             for (const i of action.payload.data) {
-                state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
+                state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i.id] = i;
             }
         },
         addScoreColumn(state, action) {
@@ -131,10 +135,9 @@ const ordinoSlice = createSlice({
                 const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
                 if (dataRow) {
                     dataRow[action.payload.columnName] = row.score;
-                }
-                else {
-                    state.workbenches[state.focusViewIndex].data[row.id] = row;
-                }
+                } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+                //   state.workbenches[state.focusViewIndex].data[row.id] = row;
+                // }
             }
         },
     },

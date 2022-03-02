@@ -12,8 +12,6 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
     return filterData;
   }, [data, idFilter]);
 
-  console.log(data, selection, parameters);
-
   const cols = [];
 
   for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {

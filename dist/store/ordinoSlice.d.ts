@@ -111,12 +111,12 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     newWorkbench: IWorkbench;
 }, string>, addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     columnName: string;
-    data: any;
+    data: any[];
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

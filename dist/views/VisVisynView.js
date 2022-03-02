@@ -8,7 +8,6 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
         filterData = filterData.filter((d) => !idFilter.includes(d._visyn_id));
         return filterData;
     }, [data, idFilter]);
-    console.log(data, selection, parameters);
     const cols = [];
     for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
         cols.push({

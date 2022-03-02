@@ -29,6 +29,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       () => () =>
         plugin.load().then((p) => {
           p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
+          console.log('uniqueid', view.uniqueId);
           return p;
         }),
       [plugin, view.uniqueId],
@@ -69,14 +70,14 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })),
     [workbenchIndex, view.uniqueId, ordino.workbenches],
   );
-
+  const onIdFilterChanged = useMemo(() => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [workbenchIndex]);
   const parameters = useMemo(() => {
     const previousWorkbench = ordino.workbenches?.[workbenchIndex - 1];
     const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
     const { selectedMappings } = ordino.workbenches[workbenchIndex];
     return { prevSelection, selectedMappings };
   }, [workbenchIndex, ordino.workbenches]);
-
+  console.log('workbench ', ordino.workbenches[workbenchIndex].columnDescs, ordino);
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {workbenchIndex === ordino.focusViewIndex ? (
@@ -112,9 +113,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   parameters={{ ...view.parameters, ...parameters }}
                   onSelectionChanged={onSelectionChanged}
                   onParametersChanged={onParametersChanged}
-                  onIdFilterChanged={(filt: string[]) =>
-                    dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
-                  }
+                  onIdFilterChanged={onIdFilterChanged}
                 />
               </Suspense>
             ) : null}
@@ -198,9 +197,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                       parameters={{ ...view.parameters, ...parameters }}
                       onSelectionChanged={onSelectionChanged}
                       onParametersChanged={onParametersChanged}
-                      onIdFilterChanged={(filt: string[]) =>
-                        dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
-                      }
+                      onIdFilterChanged={onIdFilterChanged}
                     />
                   </Suspense>
                 </div>
@@ -219,9 +216,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               parameters={{ ...view.parameters, ...parameters }}
               onSelectionChanged={onSelectionChanged}
               onParametersChanged={onParametersChanged}
-              onIdFilterChanged={(filt: string[]) =>
-                dispatch(addFilter({ entityId: ordino.workbenches[workbenchIndex].entityId, viewId: view.id, filter: filt }))
-              }
+              onIdFilterChanged={onIdFilterChanged}
             />
           </Suspense>
         ) : null}

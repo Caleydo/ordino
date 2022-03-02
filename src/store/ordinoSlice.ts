@@ -207,8 +207,8 @@ const ordinoSlice = createSlice({
       const { workbenchIndex, newSelection } = action.payload;
       state.workbenches[workbenchIndex].selection = newSelection;
     },
-    addFilter(state, action: PayloadAction<{ entityId: string; viewId: string; filter: string[] }>) {
-      state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
+    addFilter(state, action: PayloadAction<{ workbenchIndex: number; viewId: string; filter: string[] }>) {
+      state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusViewIndex = action.payload.index;
@@ -216,18 +216,18 @@ const ordinoSlice = createSlice({
 
     setWorkbenchData(state, action: PayloadAction<{ viewId: string; data: any[] }>) {
       for (const i of action.payload.data) {
-        state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i._visyn_id] = i;
+        state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i.id] = i;
       }
     },
 
-    addScoreColumn(state, action: PayloadAction<{ columnName: string; data: any }>) {
+    addScoreColumn(state, action: PayloadAction<{ columnName: string; data: any[] }>) {
       for (const row of action.payload.data) {
         const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
         if (dataRow) {
           dataRow[action.payload.columnName] = row.score;
-        } else {
-          state.workbenches[state.focusViewIndex].data[row.id] = row;
-        }
+        } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+        //   state.workbenches[state.focusViewIndex].data[row.id] = row;
+        // }
       }
     },
   },

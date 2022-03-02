@@ -39,7 +39,7 @@ export function AddWorkbenchSidebar({ workbench }) {
         workbench.selection.forEach((s) => {
             currString += `${s}, `;
         });
-        return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
+        return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
     }, [workbench.selection]);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },

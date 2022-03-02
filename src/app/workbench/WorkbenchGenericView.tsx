@@ -82,9 +82,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       {workbenchIndex === ordino.focusViewIndex ? (
         <>
           <div className="view-actions">
-            <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">
-              <i className="flex-grow-1 fas fa-times m-1" />
-            </button>
+            {!viewPlugin?.desc.defaultView ? (
+              <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">
+                <i className="flex-grow-1 fas fa-times m-1" />
+              </button>
+            ) : null}
           </div>
 
           <div ref={drag} className="view-parameters d-flex cursor-pointer">
@@ -101,7 +103,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               ) : null}
             </div>
             <span className="view-title row align-items-center m-1">
-              <strong>{viewPluginDesc?.itemName}</strong>
+              <strong>{view.name}</strong>
             </span>
             {viewPluginComponents?.header ? (
               <Suspense fallback="Loading..">

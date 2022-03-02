@@ -33,7 +33,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
       currString += `${s}, `;
     });
 
-    return currString.length < 153 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 150)}...`;
+    return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
   }, [ordino.workbenches, workbench.index]);
 
   return (

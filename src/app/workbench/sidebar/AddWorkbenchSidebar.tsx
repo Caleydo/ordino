@@ -68,7 +68,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
       currString += `${s}, `;
     });
 
-    return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
+    return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
   }, [workbench.selection]);
 
   return (

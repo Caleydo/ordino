@@ -3,17 +3,10 @@ import { FindViewUtils, IDTypeManager, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-/**
- * TODO: Do different views always have the same base ranking and just different columns?
- * Get the base view of the ranking
- * @param availableViews
- */
-function getBaseView(availableViews) {
-    return availableViews[0].v; // take the first view for now
-}
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
+    const [selectedView, setSelectedView] = useState(null);
     const [relationList, setRelationList] = useState([]);
     const relationListCallback = (s) => {
         if (!relationList.some((r) => r.mappingEntity === s.mappingEntity && r.mappingSubtype === s.mappingSubtype && s.targetEntity === r.targetEntity)) {
@@ -48,6 +41,7 @@ export function AddWorkbenchSidebar({ workbench }) {
         });
         return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
     }, [workbench.selection]);
+    console.log(availableViews);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
@@ -56,7 +50,6 @@ export function AddWorkbenchSidebar({ workbench }) {
                 React.createElement("p", { className: "mb-2 selectedPrevText", style: { color: ordino.colorMap[workbench.entityId] } }, selectionString)),
             React.createElement("form", { onSubmit: (event) => {
                     event.preventDefault();
-                    const baseView = getBaseView(availableViews);
                     const selectedMappings = relationList.map((r) => {
                         return {
                             entityId: r.mappingEntity,
@@ -66,14 +59,14 @@ export function AddWorkbenchSidebar({ workbench }) {
                     dispatch(
                     // load the data
                     addWorkbench({
-                        itemIDType: baseView.itemIDType,
+                        itemIDType: selectedView.itemIDType,
                         detailsOpen: true,
                         addWorkbenchOpen: false,
                         selectedMappings,
                         views: [
                             {
-                                name: baseView.name,
-                                id: baseView.id,
+                                name: selectedView.itemName,
+                                id: selectedView.id,
                                 parameters: { prevSelection: workbench.selection, selectedMappings },
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
                                 filters: [],
@@ -84,8 +77,8 @@ export function AddWorkbenchSidebar({ workbench }) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        name: baseView.name,
-                        index: ordino.focusViewIndex + 1,
+                        name: selectedView.itemName,
+                        index: workbench.index + 1,
                         selection: workbench.selection,
                     }));
                     setTimeout(() => {
@@ -95,13 +88,16 @@ export function AddWorkbenchSidebar({ workbench }) {
                 availableViews
                     .filter((v) => v.v.itemIDType === e.idType)
                     .map((v) => {
-                    return (React.createElement("div", { key: `${v.v.name}mapping` }, v.v.relation.mapping.map((map) => {
+                    return (React.createElement("div", { key: `${v.v.name}-mapping` }, v.v.relation.mapping.map((map) => {
                         const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                         return (React.createElement(Fragment, { key: `${map.name}-group` },
                             React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                             columns.map((col) => {
                                 return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
-                                    React.createElement("input", { onChange: () => relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName }), className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.v.name}Check` }),
+                                    React.createElement("input", { onChange: () => {
+                                            relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                            setSelectedView(v.v);
+                                        }, className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.v.name}Check` }),
                                     React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.v.name}Check` }, col.label)));
                             })));
                     })));

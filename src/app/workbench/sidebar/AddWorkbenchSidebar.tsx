@@ -70,7 +70,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
 
     return currString.length < 203 ? currString.slice(0, currString.length - 3) : `${currString.slice(0, 200)}...`;
   }, [workbench.selection]);
-
+  console.log(availableViews);
   return (
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {status === 'success' ? (
@@ -119,7 +119,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                         data: {},
                         entityId: relationList[0].targetEntity,
                         name: selectedView.itemName,
-                        index: ordino.focusViewIndex + 1,
+                        index: workbench.index + 1,
                         selection: workbench.selection,
                       }),
                     );

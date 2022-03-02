@@ -89,14 +89,16 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
 
           <div ref={drag} className="view-parameters d-flex cursor-pointer">
             <div>
-              <button
-                type="button"
-                onClick={() => setEditOpen(!editOpen)}
-                style={{ color: ordino.colorMap[ordino.workbenches[workbenchIndex].entityId] }}
-                className="btn btn-icon-primary align-middle m-1"
-              >
-                <i className="flex-grow-1 fas fa-bars m-1" />
-              </button>
+              {!viewPlugin?.desc.defaultView ? ( // do not show chooser for ranking views
+                <button
+                  type="button"
+                  onClick={() => setEditOpen(!editOpen)}
+                  style={{ color: ordino.colorMap[ordino.workbenches[workbenchIndex].entityId] }}
+                  className="btn btn-icon-primary align-middle m-1"
+                >
+                  <i className="flex-grow-1 fas fa-bars m-1" />
+                </button>
+              ) : null}
             </div>
             <span className="view-title row align-items-center m-1">
               <strong>{viewPluginDesc?.itemName}</strong>
@@ -140,7 +142,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   aria-controls="home"
                   aria-selected="true"
                 >
-                  Settings
+                  Views
                 </button>
               </li>
               {viewPlugin && viewPluginComponents.tab ? (
@@ -155,7 +157,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                     aria-controls="profile"
                     aria-selected="false"
                   >
-                    View
+                    Settings
                   </button>
                 </li>
               ) : null}

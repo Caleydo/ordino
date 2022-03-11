@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { EXTENSION_POINT_VISYN_VIEW, PluginRegistry, useAsync } from 'tdp_core';
-import { addFilter, addSelection, removeView, setView, setViewParameters } from '../../store';
+import { addFilter, addScoreColumn, addSelection, createColumnDescs, removeView, setView, setViewParameters, setWorkbenchData, } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
@@ -16,11 +16,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
-    const { value: viewPlugin } = useAsync(React.useMemo(() => () => plugin.load().then((p) => {
-        p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
-        console.log('uniqueid', view.uniqueId);
-        return p;
-    }), [plugin, view.uniqueId]), []);
+    const { value: viewPlugin } = useAsync(React.useCallback(() => plugin.load(), [plugin]), []);
     const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
@@ -40,9 +36,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
         type: EDragTypes.MOVE,
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
     }), [view.id, viewIndex]);
-    const onSelectionChanged = useMemo(() => (sel) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [workbenchIndex]);
-    const onParametersChanged = useMemo(() => (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), [workbenchIndex, view.uniqueId, ordino.workbenches]);
-    const onIdFilterChanged = useMemo(() => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [workbenchIndex]);
+    const onSelectionChanged = useMemo(() => (sel) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
+    const onParametersChanged = useMemo(() => (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })), [dispatch, workbenchIndex, view.uniqueId, ordino.workbenches]);
+    const onIdFilterChanged = useMemo(() => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [dispatch, view.uniqueId, workbenchIndex]);
     const parameters = useMemo(() => {
         var _a;
         const previousWorkbench = (_a = ordino.workbenches) === null || _a === void 0 ? void 0 : _a[workbenchIndex - 1];
@@ -50,6 +46,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
         const { selectedMappings } = ordino.workbenches[workbenchIndex];
         return { prevSelection, selectedMappings };
     }, [workbenchIndex, ordino.workbenches]);
+    const onDataChanged = useMemo(() => (data) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
+    const onColumnDescChanged = useMemo(() => (desc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
+    const onAddScoreColumn = useMemo(() => (desc, data) => dispatch(addScoreColumn({ workbenchIndex, desc, data })), [dispatch, workbenchIndex]);
+    // TODO: Eextend visyn view interface
+    // TODO: Add proper interfaces to the dispatch callbacks
     return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
         workbenchIndex === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,
             React.createElement("div", { className: "view-actions" }, !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc.defaultView) ? (React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn btn-icon-dark align-middle m-1" },
@@ -86,7 +87,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                         React.createElement(Suspense, { fallback: "Loading.." },
                             React.createElement(viewPluginComponents.tab, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged })))) : null))) : null,
             viewPlugin ? (React.createElement(Suspense, { fallback: "Loading.." },
-                React.createElement(viewPluginComponents.view, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged }))) : null),
+                React.createElement(viewPluginComponents.view, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged, onDataChanged: onDataChanged, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

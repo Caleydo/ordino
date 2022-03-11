@@ -2,8 +2,19 @@
 import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { IColumnDesc } from 'lineupjs';
 import { EXTENSION_POINT_VISYN_VIEW, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
-import { addFilter, addSelection, IWorkbenchView, removeView, setView, setViewParameters } from '../../store';
+import {
+  addFilter,
+  addScoreColumn,
+  addSelection,
+  createColumnDescs,
+  IWorkbenchView,
+  removeView,
+  setView,
+  setViewParameters,
+  setWorkbenchData,
+} from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
@@ -25,15 +36,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
 
   const { value: viewPlugin } = useAsync(
-    React.useMemo(
-      () => () =>
-        plugin.load().then((p) => {
-          p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
-          console.log('uniqueid', view.uniqueId);
-          return p;
-        }),
-      [plugin, view.uniqueId],
-    ),
+    React.useCallback(() => plugin.load(), [plugin]),
     [],
   );
   const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];
@@ -64,19 +67,32 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     }),
     [view.id, viewIndex],
   );
-  const onSelectionChanged = useMemo(() => (sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [workbenchIndex]);
+  const onSelectionChanged = useMemo(() => (sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
   const onParametersChanged = useMemo(
     () => (p: any) =>
       dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]), parameters: p })),
-    [workbenchIndex, view.uniqueId, ordino.workbenches],
+    [dispatch, workbenchIndex, view.uniqueId, ordino.workbenches],
   );
-  const onIdFilterChanged = useMemo(() => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [workbenchIndex]);
+  const onIdFilterChanged = useMemo(
+    () => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })),
+    [dispatch, view.uniqueId, workbenchIndex],
+  );
   const parameters = useMemo(() => {
     const previousWorkbench = ordino.workbenches?.[workbenchIndex - 1];
     const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
     const { selectedMappings } = ordino.workbenches[workbenchIndex];
     return { prevSelection, selectedMappings };
   }, [workbenchIndex, ordino.workbenches]);
+
+  const onDataChanged = useMemo(() => (data: any[]) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
+  const onColumnDescChanged = useMemo(() => (desc: IColumnDesc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
+  const onAddScoreColumn = useMemo(
+    () => (desc: IColumnDesc, data: any[]) => dispatch(addScoreColumn({ workbenchIndex, desc, data })),
+    [dispatch, workbenchIndex],
+  );
+
+  // TODO: Eextend visyn view interface
+  // TODO: Add proper interfaces to the dispatch callbacks
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {workbenchIndex === ordino.focusViewIndex ? (
@@ -220,6 +236,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               onSelectionChanged={onSelectionChanged}
               onParametersChanged={onParametersChanged}
               onIdFilterChanged={onIdFilterChanged}
+              onDataChanged={onDataChanged}
+              onColumnDescChanged={onColumnDescChanged}
+              onAddScoreColumn={onAddScoreColumn}
             />
           </Suspense>
         ) : null}

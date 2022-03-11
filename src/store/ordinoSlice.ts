@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRow, IViewPluginDesc } from 'tdp_core';
-import type { IReprovisynServerColumn } from 'reprovisyn';
+import { IColumnDesc } from 'lineupjs';
 
 export enum EViewDirections {
   N = 'n',
@@ -64,7 +64,7 @@ export interface IWorkbench {
   index: number;
 
   data: { [key: string]: IRow };
-  columnDescs: IReprovisynServerColumn[];
+  columnDescs: IColumnDesc & { [key: string]: any };
   // TODO: how do we store the lineup-specific column descriptions?
 
   transitionOptions: IRow['_visyn_id'][];
@@ -175,13 +175,14 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
 
-    createColumnDescs(state, action: PayloadAction<{ viewId: string; desc: any }>) {
-      state.workbenches.find((w) => containsView(w, action.payload.viewId)).columnDescs = action.payload.desc;
+    createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
+      const { workbenchIndex, desc } = action.payload;
+      state.workbenches[workbenchIndex].columnDescs = desc;
     },
 
-    addColumnDesc(state, action: PayloadAction<{ entityId: string; desc: any }>) {
-      console.log(action.payload.entityId);
-      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
+    addColumnDesc(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
+      const { workbenchIndex, desc } = action.payload;
+      state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
@@ -217,17 +218,20 @@ const ordinoSlice = createSlice({
       state.focusViewIndex = action.payload.index;
     },
 
-    setWorkbenchData(state, action: PayloadAction<{ viewId: string; data: any[] }>) {
-      for (const i of action.payload.data) {
-        state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i.id] = i;
+    setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: any[] }>) {
+      const { workbenchIndex, data } = action.payload;
+      for (const i of data) {
+        state.workbenches[workbenchIndex].data[i.id] = i;
       }
     },
 
-    addScoreColumn(state, action: PayloadAction<{ columnName: string; data: any[] }>) {
-      for (const row of action.payload.data) {
-        const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+    addScoreColumn(state, action: PayloadAction<{ workbenchIndex: number; desc: IColumnDesc & { [key: string]: any }; data: any[] }>) {
+      const { workbenchIndex, desc, data } = action.payload;
+      state.workbenches[workbenchIndex].columnDescs.push(desc);
+      for (const row of data) {
+        const dataRow = state.workbenches[workbenchIndex].data[row.id];
         if (dataRow) {
-          dataRow[action.payload.columnName] = row.score;
+          dataRow[desc.scoreID] = row.score;
         } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
         //   state.workbenches[state.focusViewIndex].data[row.id] = row;
         // }

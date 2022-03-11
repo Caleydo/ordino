@@ -91,11 +91,12 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches.find((w) => containsView(w, action.payload.viewId)).columnDescs = action.payload.desc;
+            const { workbenchIndex, desc } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs = desc;
         },
         addColumnDesc(state, action) {
-            console.log(action.payload.entityId);
-            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
+            const { workbenchIndex, desc } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
             const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
@@ -129,15 +130,18 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
-            for (const i of action.payload.data) {
-                state.workbenches.find((w) => containsView(w, action.payload.viewId)).data[i.id] = i;
+            const { workbenchIndex, data } = action.payload;
+            for (const i of data) {
+                state.workbenches[workbenchIndex].data[i.id] = i;
             }
         },
         addScoreColumn(state, action) {
-            for (const row of action.payload.data) {
-                const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+            const { workbenchIndex, desc, data } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs.push(desc);
+            for (const row of data) {
+                const dataRow = state.workbenches[workbenchIndex].data[row.id];
                 if (dataRow) {
-                    dataRow[action.payload.columnName] = row.score;
+                    dataRow[desc.scoreID] = row.score;
                 } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
                 //   state.workbenches[state.focusViewIndex].data[row.id] = row;
                 // }

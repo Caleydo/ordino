@@ -25,7 +25,6 @@ import {
   IViewContext
 } from 'tdp_core';
 import {ResolveNow} from 'tdp_core';
-import {FindViewUtils} from 'tdp_core';
 import {MODE_ANIMATION_TIME} from './constants';
 
 
@@ -342,8 +341,8 @@ export class ViewWrapper extends EventHandler {
       this.$chooser.selectAll('button').classed('active', false);
     }
 
-    FindViewUtils.findViews(idtype, selection).then((views) => {
-      const groups = FindViewUtils.groupByCategory(views);
+    ViewUtils.findViews(idtype, selection).then((views) => {
+      const groups = ViewUtils.groupByCategory(views);
 
       const $categories = this.$chooser.selectAll('div.category').data(groups);
 
@@ -356,14 +355,14 @@ export class ViewWrapper extends EventHandler {
       $buttons.enter().append('button')
         .classed('btn', true);
 
-      $buttons.attr('data-viewid', (d) => d.v.id);
-      $buttons.text((d) => d.v.name)
-        .attr('disabled', (d) => d.v.mockup || !d.enabled ? 'disabled' : null)
+      $buttons.attr('data-viewid', (d) => d.id);
+      $buttons.text((d) => d.name)
+        .attr('disabled', (d) => d.mockup || !d.enabled ? 'disabled' : null)
         .on('click', function (d) {
           $buttons.classed('active', false);
           d3.select(this).classed('active', true);
 
-          that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, selection);
+          that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.id, idtype, selection);
         });
 
       $buttons.exit().remove();

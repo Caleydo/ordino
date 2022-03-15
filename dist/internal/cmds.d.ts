@@ -1,15 +1,12 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
-import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph } from 'tdp_core';
-import { Range } from 'tdp_core';
-import { IDType } from 'tdp_core';
+ ******************************************************************* */
+import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph, Range, IDType, ISelection } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
-import { ISelection } from 'tdp_core';
 import { IOrdinoApp } from './IOrdinoApp';
 export declare class CmdUtils {
     static asSelection(data: {
@@ -74,10 +71,8 @@ export declare class CmdUtils {
      * @returns {IAction}
      */
     static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?: any, itemSelection?: ISelection): IAction;
-    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: any): Promise<{
-        inverse: IAction;
-    }>;
-    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): IAction;
+    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: any): any;
+    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): any;
     static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): IAction;
     /**
      * Factory function that compresses a series of action to fewer one.
@@ -89,3 +84,4 @@ export declare class CmdUtils {
     static compressCreateRemove(path: ActionNode[]): ActionNode[];
     static compressSetSelection(path: ActionNode[]): ActionNode[];
 }
+//# sourceMappingURL=cmds.d.ts.map

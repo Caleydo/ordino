@@ -1,6 +1,6 @@
 import React from 'react';
-import { IStartMenuTabShortcutDesc } from '../..';
-import { IStartMenuTabWrapperProps } from './StartMenuTabWrapper';
+import type { IStartMenuTabShortcutDesc } from '../../base/extensions';
+import type { IStartMenuTabWrapperProps } from '../interfaces';
 interface IStartMenuTabShortcutsProps extends Omit<IStartMenuTabWrapperProps, 'mode' | 'activeTab'> {
     /**
      * List of shortcut desc
@@ -13,3 +13,4 @@ interface IStartMenuTabShortcutsProps extends Omit<IStartMenuTabWrapperProps, 'm
 }
 export declare function StartMenuTabShortcuts({ tabs, shortcuts, setActiveTab, setHighlight, status }: IStartMenuTabShortcutsProps): JSX.Element;
 export {};
+//# sourceMappingURL=StartMenuTabShortcuts.d.ts.map

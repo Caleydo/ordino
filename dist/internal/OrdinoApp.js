@@ -1,26 +1,18 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
+ ******************************************************************* */
 import * as React from 'react';
-import { BaseUtils, NodeUtils, AppContext } from 'tdp_core';
-import { ObjectRefUtils } from 'tdp_core';
-import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
-import { EViewMode } from 'tdp_core';
+import { BaseUtils, NodeUtils, AppContext, ObjectRefUtils, AView, TDPApplicationUtils, TourUtils, EViewMode, UserSession, } from 'tdp_core';
+// eslint-disable-next-line import/no-cycle
+import { StartMenuComponent } from './menu/StartMenu';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
-import { UserSession } from 'tdp_core';
-import { EStartMenuMode, EStartMenuOpen, StartMenuComponent } from './menu/StartMenu';
+import { EStartMenuMode, EStartMenuOpen, GraphContext, OrdinoContext } from './constants';
 import { OrdinoBreadcrumbs } from './components/navigation';
-// tslint:disable-next-line: variable-name
-export const OrdinoContext = React.createContext({ app: null });
-// tslint:disable-next-line: variable-name
-export const GraphContext = React.createContext({ graph: null, manager: null });
-// tslint:disable-next-line: variable-name
-export const HighlightSessionCardContext = React.createContext({ highlight: false, setHighlight: () => { } });
 /**
  * The main class for the Ordino app
  * This class ...
@@ -28,6 +20,15 @@ export const HighlightSessionCardContext = React.createContext({ highlight: fals
  * - provides a reference to open views
  * - provides a reference to the provenance graph
  */
+/**
+ * Helper function to filter views that were created: should be moved to NodeUtils
+ * @param stateNode
+ * @returns {boolean}
+ */
+function isCreateView(stateNode) {
+    const { creator } = stateNode;
+    return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
+}
 export class OrdinoApp extends React.Component {
     constructor(props) {
         super(props);
@@ -42,35 +43,8 @@ export class OrdinoApp extends React.Component {
         this.state = {
             mode: EStartMenuMode.START,
             open: EStartMenuOpen.CLOSED,
-            views: []
+            views: [],
         };
-    }
-    /**
-     * This function can be used to load some initial content async
-     */
-    async initApp() {
-        return null;
-    }
-    /**
-     * Set the mode and open/close state of the start menu.
-     * Set both options at once to avoid multiple rerender.
-     * @param open Open/close state
-     * @param mode Overlay/start mode
-     */
-    setStartMenuState(open, mode) {
-        this.setState({
-            open,
-            mode
-        });
-    }
-    /**
-     * List of open views (e.g., to show in the history)
-     */
-    get views() {
-        return this.state.views;
-    }
-    get node() {
-        return this.nodeRef.current;
     }
     /**
      * Decide if a new view should be opened or an existing (right) detail view should be closed.
@@ -93,6 +67,39 @@ export class OrdinoApp extends React.Component {
         else {
             this.openOrReplaceNextView(viewWrapper, viewId, idtype, selection, options);
         }
+    }
+    /**
+     * List of open views (e.g., to show in the history)
+     */
+    get views() {
+        return this.state.views;
+    }
+    get node() {
+        return this.nodeRef.current;
+    }
+    /**
+     * The last view of the list of open views
+     */
+    get lastView() {
+        return this.state.views[this.state.views.length - 1];
+    }
+    /**
+     * Set the mode and open/close state of the start menu.
+     * Set both options at once to avoid multiple rerender.
+     * @param open Open/close state
+     * @param mode Overlay/start mode
+     */
+    setStartMenuState(open, mode) {
+        this.setState({
+            open,
+            mode,
+        });
+    }
+    /**
+     * This function can be used to load some initial content async
+     */
+    async initApp() {
+        return null;
     }
     /**
      * Opens a new view using the viewId, idtype, selection and options.
@@ -146,11 +153,13 @@ export class OrdinoApp extends React.Component {
                     break;
                 }
                 // find the next view
+                // eslint-disable-next-line no-case-declarations
                 const index = this.state.views.lastIndexOf(viewWrapper);
                 if (index === -1) {
                     console.error('Current view not found:', viewWrapper.desc.name, `(${viewWrapper.desc.id})`);
                     return;
                 }
+                // eslint-disable-next-line no-case-declarations
                 const nextView = this.state.views[index + 1];
                 // if there are more views open, then close them first, before replacing the next view
                 if (nextView !== this.lastView) {
@@ -173,7 +182,9 @@ export class OrdinoApp extends React.Component {
     updateItemSelection(viewWrapper, oldSelection, newSelection, options) {
         // just update the selection for the last open view
         if (this.lastView === viewWrapper) {
-            this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range) });
+            this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {
+                inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range),
+            });
             // check last view and if it will stay open for the new given selection
         }
         else {
@@ -182,7 +193,9 @@ export class OrdinoApp extends React.Component {
             // update selection with the last open (= right) view
             if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
                 right.setParameterSelection(newSelection);
-                this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), { inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range) });
+                this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {
+                    inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range),
+                });
                 // the selection does not match with the last open (= right) view --> close view
             }
             else {
@@ -190,20 +203,12 @@ export class OrdinoApp extends React.Component {
             }
         }
     }
-    /**
-     * The last view of the list of open views
-     */
-    get lastView() {
-        return this.state.views[this.state.views.length - 1];
-    }
     push(viewId, idtype, selection, options) {
         // create the first view without changing the focus for the (non existing) previous view
         if (this.state.views.length === 0) {
             return this.pushView(viewId, idtype, selection, options);
         }
-        else {
-            return this.focus(this.state.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
-        }
+        return this.focus(this.state.views[0]).then(() => this.pushView(viewId, idtype, selection, options));
     }
     /**
      * Starts a new analysis session with a given view and additional options.
@@ -228,7 +233,7 @@ export class OrdinoApp extends React.Component {
         UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
             startViewId,
             startViewOptions,
-            defaultSessionValues
+            defaultSessionValues,
         });
         // create new graph and apply new view after window.reload
         // TODO: The page reload is necessary to update all CLUE user interface.
@@ -292,11 +297,11 @@ export class OrdinoApp extends React.Component {
             .slice(index, this.state.views.length) // retrieve all following views
             .reverse() // remove them in reverse order
             .forEach((view) => {
-            //this.remove(d);
+            // this.remove(d);
             const viewRef = this.props.graph.findObject(view);
             if (viewRef === null) {
-                console.warn('remove view:', 'view not found in graph', (view ? `'${view.desc.id}'` : view));
-                return;
+                console.warn('remove view:', 'view not found in graph', view ? `'${view.desc.id}'` : view);
+                return undefined;
             }
             return this.props.graph.push(CmdUtils.removeView(this.ref, viewRef));
         });
@@ -312,9 +317,7 @@ export class OrdinoApp extends React.Component {
         view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
         // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
-        this.setState({
-            views: [...this.state.views, view]
-        });
+        this.setState((prevState) => ({ ...prevState, views: [...prevState.views, view] }));
         return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
     }
     /**
@@ -330,12 +333,10 @@ export class OrdinoApp extends React.Component {
         view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-        this.setState({
-            views: this.state.views.filter((v) => v !== view)
-        });
+        this.setState((prevState) => ({ ...prevState, views: prevState.views.filter((v) => v !== view) }));
         view.destroy();
-        //remove with focus change if not already hidden
-        if (!isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
+        // remove with focus change if not already hidden
+        if (!Number.isNaN(focus) && view.mode !== EViewMode.HIDDEN) {
             if (focus < 0) {
                 focus = i - 1;
             }
@@ -355,24 +356,22 @@ export class OrdinoApp extends React.Component {
         const creators = this.props.graph.act.path.filter(isCreateView).map((d) => d.creator);
         const createdBy = NodeUtils.createdBy(this.props.graph.findOrAddJustObject(view.ref));
         const i = creators.indexOf(createdBy);
-        if (i === (creators.length - 1)) {
-            //we are in focus - or should be
+        if (i === creators.length - 1) {
+            // we are in focus - or should be
             return Promise.resolve(null);
         }
-        else {
-            //jump to the last state this view was in focus
-            return this.props.graph.jumpTo(NodeUtils.previous(creators[i + 1]));
-        }
+        // jump to the last state this view was in focus
+        return this.props.graph.jumpTo(NodeUtils.previous(creators[i + 1]));
     }
     /**
      * Jumps back to the root of the provenance graph and consequentially removes all open views (undo)
      */
-    /*focusOnStart() {
+    /* focusOnStart() {
       const creators = this.props.graph.act.path.filter((d) => d.creator === null); // null => start StateNode
       if(creators.length > 0) {
         this.props.graph.jumpTo(creators[0]);
       }
-    }*/
+    } */
     removeLastImpl() {
         return this.removeImpl(this.state.views[this.state.views.length - 1]);
     }
@@ -389,7 +388,7 @@ export class OrdinoApp extends React.Component {
             if (i === index) {
                 target = EViewMode.FOCUS;
             }
-            else if (i === (index - 1)) {
+            else if (i === index - 1) {
                 target = EViewMode.CONTEXT;
             }
             v.mode = target;
@@ -421,13 +420,14 @@ export class OrdinoApp extends React.Component {
      */
     render() {
         this.updateDetailViewChoosers();
-        return (React.createElement(React.Fragment, null,
-            React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
-                React.createElement(OrdinoContext.Provider, { value: { app: this } },
-                    React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
-                    React.createElement(OrdinoBreadcrumbs, { views: this.state.views, onClick: (view) => this.showInFocus(view) }),
-                    React.createElement("div", { className: "wrapper" },
-                        React.createElement("div", { className: "filmstrip", ref: this.nodeRef }))))));
+        return (
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
+        React.createElement(GraphContext.Provider, { value: { manager: this.props.graphManager, graph: this.props.graph } },
+            React.createElement(OrdinoContext.Provider, { value: { app: this } },
+                React.createElement(StartMenuComponent, { header: this.props.header, mode: this.state.mode, open: this.state.open }),
+                React.createElement(OrdinoBreadcrumbs, { views: this.state.views, onClick: (view) => this.showInFocus(view) }),
+                React.createElement("div", { className: "wrapper" },
+                    React.createElement("div", { className: "filmstrip", ref: this.nodeRef })))));
     }
 }
 /**
@@ -438,13 +438,4 @@ OrdinoApp.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
  * Key of the URL hash property that starts a new tour with the given ID (if the tour is registered in a phovea.ts)
  */
 OrdinoApp.HASH_PROPERTY_START_NEW_TOUR = 'tour';
-/**
- * Helper function to filter views that were created: should be moved to NodeUtils
- * @param stateNode
- * @returns {boolean}
- */
-function isCreateView(stateNode) {
-    const creator = stateNode.creator;
-    return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
-}
 //# sourceMappingURL=OrdinoApp.js.map

@@ -1,17 +1,12 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
-import { ActionUtils, ActionMetaData, ObjectRefUtils } from 'tdp_core';
-import { PluginRegistry } from 'tdp_core';
-import { Range, ParseRangeUtils } from 'tdp_core';
-import { IDTypeManager } from 'tdp_core';
+ ******************************************************************* */
+import { ActionUtils, ActionMetaData, ObjectRefUtils, PluginRegistry, Range, ParseRangeUtils, IDTypeManager, EXTENSION_POINT_TDP_VIEW, Compression, } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
-import { EXTENSION_POINT_TDP_VIEW } from 'tdp_core';
-import { Compression } from 'tdp_core';
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';
 const CMD_REPLACE_VIEW = 'targidReplaceView';
@@ -20,7 +15,7 @@ export class CmdUtils {
     static asSelection(data) {
         return {
             range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
-            idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null
+            idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null,
         };
     }
     static serializeSelection(selection) {
@@ -38,7 +33,7 @@ export class CmdUtils {
      */
     static async createViewImpl(inputs, parameter, graph) {
         const app = inputs[0].value;
-        const viewId = parameter.viewId;
+        const { viewId } = parameter;
         const selection = CmdUtils.asSelection(parameter);
         const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
         const options = { ...parameter.options, app }; // pass the app in options (e.g., to access the list of open views)
@@ -50,7 +45,7 @@ export class CmdUtils {
         const oldFocus = await app.pushImpl(viewWrapperInstance);
         return {
             created: [viewWrapperInstance.ref],
-            inverse: (inputs, created, removed) => CmdUtils.removeView(inputs[0], created[0], oldFocus)
+            inverse: (i, created, removed) => CmdUtils.removeView(i[0], created[0], oldFocus),
         };
     }
     /**
@@ -68,7 +63,7 @@ export class CmdUtils {
         app.removeImpl(existingView, oldFocus);
         return {
             removed: [inputs[1]],
-            inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection())
+            inverse: CmdUtils.createView(inputs[0], existingView.desc.id, existingView.selection.idtype, existingView.selection.range, existingViewOptions, existingView.getItemSelection()),
         };
     }
     /**
@@ -90,9 +85,9 @@ export class CmdUtils {
             idtype: existingView.selection.idtype,
             selection: existingView.selection.range,
             itemSelection: existingView.getItemSelection(),
-            options: existingViewOptions
+            options: existingViewOptions,
         };
-        const viewId = parameter.viewId;
+        const { viewId } = parameter;
         const selection = CmdUtils.asSelection(parameter);
         const itemSelection = parameter.itemSelection ? CmdUtils.asSelection(parameter.itemSelection) : null;
         const options = { ...parameter.options, app }; // pass the app in options (e.g., to access the list of open views)
@@ -100,7 +95,7 @@ export class CmdUtils {
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
         await ViewWrapper.replaceViewWrapper(existingView, selection, itemSelection, view, !this.onceExecuted, options);
         return {
-            inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection)
+            inverse: CmdUtils.replaceView(inputs[0], inputs[1], oldParams.viewId, oldParams.idtype, oldParams.selection, oldParams.options, oldParams.itemSelection),
         };
     }
     /**
@@ -115,12 +110,12 @@ export class CmdUtils {
     static createView(app, viewId, idtype, selection, options, itemSelection) {
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
         // assert view
-        return ActionUtils.action(ActionMetaData.actionMeta('Add ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, CmdUtils.createViewImpl, [app], {
+        return ActionUtils.action(ActionMetaData.actionMeta(`Add ${view.name}`, ObjectRefUtils.category.visual, ObjectRefUtils.operation.create), CMD_CREATE_VIEW, CmdUtils.createViewImpl, [app], {
             viewId,
             idtype: idtype ? idtype.id : null,
             selection: selection ? selection.toString() : Range.none().toString(),
             itemSelection: CmdUtils.serializeSelection(itemSelection),
-            options
+            options,
         });
     }
     /**
@@ -132,9 +127,9 @@ export class CmdUtils {
      */
     static removeView(app, view, oldFocus = -1) {
         // assert view
-        return ActionUtils.action(ActionMetaData.actionMeta('Remove ' + view.toString(), ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, CmdUtils.removeViewImpl, [app, view], {
+        return ActionUtils.action(ActionMetaData.actionMeta(`Remove ${view.toString()}`, ObjectRefUtils.category.visual, ObjectRefUtils.operation.remove), CMD_REMOVE_VIEW, CmdUtils.removeViewImpl, [app, view], {
             viewId: view.value.desc.id,
-            focus: oldFocus
+            focus: oldFocus,
         });
     }
     /**
@@ -150,12 +145,12 @@ export class CmdUtils {
     static replaceView(app, existingView, viewId, idtype, selection, options, itemSelection) {
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
         // assert view
-        return ActionUtils.action(ActionMetaData.actionMeta('Replace ' + existingView.name + ' with ' + view.name, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
+        return ActionUtils.action(ActionMetaData.actionMeta(`Replace ${existingView.name} with ${view.name}`, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
             viewId,
             idtype: idtype ? idtype.id : null,
             selection: selection ? selection.toString() : Range.none().toString(),
             itemSelection: CmdUtils.serializeSelection(itemSelection),
-            options
+            options,
         });
     }
     static async setSelectionImpl(inputs, parameter) {
@@ -170,21 +165,23 @@ export class CmdUtils {
             await Promise.resolve(target.setParameterSelection({ idtype, range }));
         }
         return {
-            inverse: inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.range)
+            inverse: inputs.length > 1
+                ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range)
+                : CmdUtils.setSelection(inputs[0], bak.idtype, bak.range),
         };
     }
     static setSelection(view, idtype, range) {
         // assert view
-        return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view], {
+        return ActionUtils.action(ActionMetaData.actionMeta(`Select ${idtype ? idtype.name : 'None'}`, ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view], {
             idtype: idtype ? idtype.id : null,
-            range: range.toString()
+            range: range.toString(),
         });
     }
     static setAndUpdateSelection(view, target, idtype, range) {
         // assert view
-        return ActionUtils.action(ActionMetaData.actionMeta('Select ' + (idtype ? idtype.name : 'None'), ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view, target], {
+        return ActionUtils.action(ActionMetaData.actionMeta(`Select ${idtype ? idtype.name : 'None'}`, ObjectRefUtils.category.selection, ObjectRefUtils.operation.update), CMD_SET_SELECTION, CmdUtils.setSelectionImpl, [view, target], {
             idtype: idtype ? idtype.id : null,
-            range: range.toString()
+            range: range.toString(),
         });
     }
     /**
@@ -197,39 +194,43 @@ export class CmdUtils {
     static compressCreateRemove(path) {
         const r = [];
         function compatibilityReplaceView(previous) {
-            //old replace view creates a new ref for each new view instead of reusing the old one
+            // old replace view creates a new ref for each new view instead of reusing the old one
             if (previous.f_id !== CMD_REPLACE_VIEW) {
                 return false;
             }
             // in case of the view created an ref (=old behavior) -> keep it
             return previous.creates.length > 0;
         }
+        // eslint-disable-next-line no-labels
         outer: for (const act of path) {
             if (act.f_id === CMD_REMOVE_VIEW) {
                 const removed = act.removes[0];
-                //removed view delete intermediate change and optional creation
-                for (let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+                // removed view delete intermediate change and optional creation
+                for (let j = r.length - 1; j >= 0; --j) {
+                    // back to forth for better removal
                     const previous = r[j];
-                    const requires = previous.requires;
+                    const { requires } = previous;
                     const usesView = requires.indexOf(removed) >= 0;
                     if (usesView && !compatibilityReplaceView(previous)) {
                         r.splice(j, 1);
                     }
                     else if (previous.f_id === CMD_CREATE_VIEW && previous.creates[0] === removed) {
-                        //found adding remove both
+                        // found adding remove both
                         r.splice(j, 1);
+                        // eslint-disable-next-line no-labels
                         continue outer;
                     }
                 }
             }
             if (act.f_id === CMD_REPLACE_VIEW) {
                 const view = act.requires[1];
-                //changed the view in place can remove all previous set parameter/selection calls till the creation
-                for (let j = r.length - 1; j >= 0; --j) { //back to forth for better removal
+                // changed the view in place can remove all previous set parameter/selection calls till the creation
+                for (let j = r.length - 1; j >= 0; --j) {
+                    // back to forth for better removal
                     const previous = r[j];
-                    const requires = previous.requires;
+                    const { requires } = previous;
                     const usesView = requires.indexOf(view) >= 0;
-                    //uses view (setParameter, replace, ...) but not its creation
+                    // uses view (setParameter, replace, ...) but not its creation
                     if (usesView && previous.f_id !== CMD_CREATE_VIEW) {
                         r.splice(j, 1);
                     }

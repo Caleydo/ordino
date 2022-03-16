@@ -16,7 +16,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
-    const { value: viewPlugin } = useAsync(React.useCallback(() => plugin.load(), [plugin]), []);
+    const { value: viewPlugin } = useAsync(React.useCallback(() => plugin.load().then((p) => {
+        p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
+        return p;
+    }), [plugin, view.uniqueId]), []);
     const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],

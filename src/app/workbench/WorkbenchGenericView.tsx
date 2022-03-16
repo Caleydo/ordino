@@ -36,7 +36,14 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
 
   const { value: viewPlugin } = useAsync(
-    React.useCallback(() => plugin.load(), [plugin]),
+    React.useCallback(
+      () =>
+        plugin.load().then((p) => {
+          p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
+          return p;
+        }),
+      [plugin, view.uniqueId],
+    ),
     [],
   );
   const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];

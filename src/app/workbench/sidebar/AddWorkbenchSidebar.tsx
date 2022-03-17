@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView } from '../interfaces';
+import { isVisynRankingView, isVisynRankingViewDesc } from '../interfaces';
 
 export interface IAddWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -38,8 +38,8 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     () => () =>
       ViewUtils.findVisynViews(idType).then((views) => {
         console.log(views);
-        console.log(views.filter((v) => isVisynRankingView(v)));
-        return views.filter((v) => isVisynRankingView(v));
+        console.log(views.filter((v) => isVisynRankingViewDesc(v)));
+        return views.filter((v) => isVisynRankingViewDesc(v));
       }),
     [idType],
   );
@@ -56,8 +56,9 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      if (!entities.some((e) => e.idType === v.v.itemIDType && e.label === v.v.group.name)) {
-        entities.push({ idType: v.v.itemIDType, label: v.v.group.name });
+      console.log(v)
+      if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
+        entities.push({ idType: v.itemIDType, label: v.group.name });
       }
     });
 
@@ -132,12 +133,12 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                   }}
                 >
                   {availableViews
-                    .filter((v) => v.v.itemIDType === e.idType)
+                    .filter((v) => v.itemIDType === e.idType)
                     .map((v) => {
                       return (
-                        <div key={`${v.v.name}-mapping`}>
-                          {v.v.relation.mapping.map((map: IReprovisynMapping) => {
-                            const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                        <div key={`${v.name}-mapping`}>
+                          {v.relation.mapping.map((map: IReprovisynMapping) => {
+                            const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                             return (
                               <Fragment key={`${map.name}-group`}>
                                 <div className="mt-2 mappingTypeText">{map.name}</div>
@@ -147,14 +148,14 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                                       <input
                                         onChange={() => {
                                           relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
-                                          setSelectedView(v.v);
+                                          setSelectedView(v);
                                         }}
                                         className="form-check-input"
                                         type="checkbox"
                                         value=""
-                                        id={`${col.label}${v.v.name}Check`}
+                                        id={`${col.label}${v.name}Check`}
                                       />
-                                      <label className="mappingText form-check-label" htmlFor={`${col.label}${v.v.name}Check`}>
+                                      <label className="mappingText form-check-label" htmlFor={`${col.label}${v.name}Check`}>
                                         {col.label}
                                       </label>
                                     </div>

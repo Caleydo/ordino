@@ -3,7 +3,7 @@ import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView } from '../interfaces';
+import { isVisynRankingViewDesc } from '../interfaces';
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -21,8 +21,8 @@ export function AddWorkbenchSidebar({ workbench }) {
     const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
     const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => {
         console.log(views);
-        console.log(views.filter((v) => isVisynRankingView(v)));
-        return views.filter((v) => isVisynRankingView(v));
+        console.log(views.filter((v) => isVisynRankingViewDesc(v)));
+        return views.filter((v) => isVisynRankingViewDesc(v));
     }), [idType]);
     const { status, value: availableViews } = useAsync(findDependentViews, []);
     console.log(availableViews);
@@ -32,8 +32,9 @@ export function AddWorkbenchSidebar({ workbench }) {
         }
         const entities = [];
         availableViews.forEach((v) => {
-            if (!entities.some((e) => e.idType === v.v.itemIDType && e.label === v.v.group.name)) {
-                entities.push({ idType: v.v.itemIDType, label: v.v.group.name });
+            console.log(v);
+            if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
+                entities.push({ idType: v.itemIDType, label: v.group.name });
             }
         });
         return entities;
@@ -89,19 +90,19 @@ export function AddWorkbenchSidebar({ workbench }) {
                     }, 0);
                 } },
                 availableViews
-                    .filter((v) => v.v.itemIDType === e.idType)
+                    .filter((v) => v.itemIDType === e.idType)
                     .map((v) => {
-                    return (React.createElement("div", { key: `${v.v.name}-mapping` }, v.v.relation.mapping.map((map) => {
-                        const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                    return (React.createElement("div", { key: `${v.name}-mapping` }, v.relation.mapping.map((map) => {
+                        const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                         return (React.createElement(Fragment, { key: `${map.name}-group` },
                             React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                             columns.map((col) => {
                                 return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
                                     React.createElement("input", { onChange: () => {
                                             relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
-                                            setSelectedView(v.v);
-                                        }, className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.v.name}Check` }),
-                                    React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.v.name}Check` }, col.label)));
+                                            setSelectedView(v);
+                                        }, className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.name}Check` }),
+                                    React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.name}Check` }, col.label)));
                             })));
                     })));
                 }),

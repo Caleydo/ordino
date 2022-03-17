@@ -3,7 +3,7 @@ import { IDType, useAsync, ViewUtils } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings } from '../../../store/ordinoSlice';
-import { isVisynRankingView } from '../interfaces';
+import { isVisynRankingViewDesc } from '../interfaces';
 export function DetailsSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -11,7 +11,7 @@ export function DetailsSidebar({ workbench }) {
         return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingView(v.v))), [idType]);
+    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))), [idType]);
     const { status, value: availableViews } = useAsync(findDependentViews, []);
     const selectionString = useMemo(() => {
         let currString = '';
@@ -30,10 +30,10 @@ export function DetailsSidebar({ workbench }) {
                         "s")),
                 React.createElement("p", { className: "mb-2 selectedPrevText" }, selectionString)),
             availableViews
-                .filter((v) => v.v.itemIDType === workbench.entityId)
+                .filter((v) => v.itemIDType === workbench.entityId)
                 .map((v) => {
-                return (React.createElement("div", { key: `${v.v.name}mapping` }, v.v.relation.mapping.map((map) => {
-                    const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                return (React.createElement("div", { key: `${v.name}mapping` }, v.relation.mapping.map((map) => {
+                    const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                     return (React.createElement(Fragment, { key: `${map.entity}-${map.name}` },
                         React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
                         columns.map((col) => {

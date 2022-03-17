@@ -64,7 +64,7 @@ export interface IWorkbench {
   index: number;
 
   data: { [key: string]: IRow };
-  columnDescs: IColumnDesc & { [key: string]: any };
+  columnDescs: (IColumnDesc & { [key: string]: any })[];
   // TODO: how do we store the lineup-specific column descriptions?
 
   transitionOptions: IRow['_visyn_id'][];

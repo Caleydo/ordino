@@ -27,3 +27,5 @@ export function isVisynRankingViewDesc(desc: unknown): desc is VisynDataViewPlug
 export function isVisynRankingView(plugin: unknown): plugin is VisynDataViewPluginType['plugin'] {
   return isVisynViewPluginDesc((<any>plugin)?.desc) && (<any>plugin)?.viewType === 'ranking';
 }
+
+// TODO:: Create interfaces for Ranking, Visyn and Cosmic views

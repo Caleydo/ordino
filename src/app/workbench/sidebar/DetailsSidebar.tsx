@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { isVisynRankingView } from '../interfaces';
+import { isVisynRankingView, isVisynRankingViewDesc } from '../interfaces';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;
@@ -25,7 +25,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
   }, []);
 
   const findDependentViews = React.useMemo(
-    () => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingView(v.v))),
+    () => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))),
     [idType],
   );
   const { status, value: availableViews } = useAsync(findDependentViews, []);
@@ -58,12 +58,12 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
               <p className="mb-2 selectedPrevText">{selectionString}</p>
             </div>
             {availableViews
-              .filter((v) => v.v.itemIDType === workbench.entityId)
+              .filter((v) => v.itemIDType === workbench.entityId)
               .map((v) => {
                 return (
-                  <div key={`${v.v.name}mapping`}>
-                    {v.v.relation.mapping.map((map: IReprovisynMapping) => {
-                      const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                  <div key={`${v.name}mapping`}>
+                    {v.relation.mapping.map((map: IReprovisynMapping) => {
+                      const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                       return (
                         <Fragment key={`${map.entity}-${map.name}`}>
                           <div className="mt-2 mappingTypeText">{map.name}</div>

@@ -23,6 +23,7 @@ export function CosmicViewHeader({ selection, onParametersChanged }) {
 }
 export const cosmicConfiguration = () => {
     return {
+        viewType: 'simple',
         view: CosmicView,
         tab: null,
         header: CosmicViewHeader,

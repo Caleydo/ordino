@@ -10,6 +10,7 @@ import { EDragTypes } from './utils';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
+import { isVisynRankingViewDesc } from './interfaces';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     var _a;
     const [editOpen, setEditOpen] = useState(true);
@@ -56,10 +57,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     // TODO: Add proper interfaces to the dispatch callbacks
     return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
         workbenchIndex === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,
-            React.createElement("div", { className: "view-actions" }, !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc.defaultView) ? (React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn btn-icon-dark align-middle m-1" },
+            React.createElement("div", { className: "view-actions" }, !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? (React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn btn-icon-dark align-middle m-1" },
                 React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))) : null),
             React.createElement("div", { ref: drag, className: "view-parameters d-flex cursor-pointer" },
-                React.createElement("div", null, !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc.defaultView) ? ( // do not show chooser for ranking views
+                React.createElement("div", null, !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? ( // do not show chooser for ranking views
                 React.createElement("button", { type: "button", onClick: () => setEditOpen(!editOpen), style: { color: ordino.colorMap[ordino.workbenches[workbenchIndex].entityId] }, className: "btn btn-icon-primary align-middle m-1" },
                     React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))) : null),
                 React.createElement("span", { className: "view-title row align-items-center m-1" },
@@ -69,7 +70,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
             React.createElement("span", { className: "view-title row align-items-center m-1" },
                 React.createElement("strong", null, (_a = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _a === void 0 ? void 0 : _a.itemName)))),
         React.createElement("div", { className: "inner d-flex" },
-            editOpen && !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc.defaultView) ? ( // do not show chooser for ranking views
+            editOpen && !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? ( // do not show chooser for ranking views
             React.createElement("div", { className: "d-flex flex-column" },
                 React.createElement("ul", { className: "nav nav-tabs", id: "myTab", role: "tablist" },
                     React.createElement("li", { className: "nav-item", role: "presentation" },

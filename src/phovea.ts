@@ -22,8 +22,6 @@ export default function (registry: IRegistry) {
 
   registry.pushVisynView('cosmic', () => import('./views/CosmicProxyView').then((m) => m.cosmicConfiguration), {
     visynViewType: 'simple',
-    viewType: 'simple',
-
     factory: 'cosmicConfiguration',
     name: 'COSMIC',
     site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
@@ -43,8 +41,6 @@ export default function (registry: IRegistry) {
 
   registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
     visynViewType: 'data',
-    viewType: 'data',
-
     name: 'Vis',
     factory: 'visConfiguration',
     idtype: 'ordino_public.cellline.tdp_cellline',
@@ -59,7 +55,6 @@ export default function (registry: IRegistry) {
 
   registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
     visynViewType: 'data',
-    viewType: 'data',
     name: 'Vis',
     factory: 'visConfiguration',
     idtype: 'ordino_public.tissue.tdp_tissue',
@@ -74,8 +69,6 @@ export default function (registry: IRegistry) {
 
   registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
     visynViewType: 'data',
-    viewType: 'data',
-
     name: 'Vis',
     factory: 'visConfiguration',
     idtype: 'ordino_public.public.tdp_gene',

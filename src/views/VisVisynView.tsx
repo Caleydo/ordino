@@ -1,11 +1,11 @@
 // Gets into the phovea.ts
 import * as React from 'react';
 import { useMemo } from 'react';
-import { IVisynViewPluginFactory, EColumnTypes, IVisConfig, IVisynViewProps, VisSidebar, Vis } from 'tdp_core';
+import { EColumnTypes, IVisConfig, VisSidebar, Vis } from 'tdp_core';
 
-export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, onSelectionChanged }: IVisynViewProps<any, IVisConfig>) {
+export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, onSelectionChanged }: any) {
   const filteredData = useMemo(() => {
-    let filterData = Object.values(data);
+    let filterData = Object.values(data) as any[];
 
     filterData = filterData.filter((d) => !idFilter.includes(d._visyn_id));
 
@@ -42,9 +42,9 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
   return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters.type ? parameters : null} hideSidebar />;
 }
 
-export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }: IVisynViewProps<any, IVisConfig>) {
+export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }: any) {
   const filteredData = useMemo(() => {
-    let filterData = Object.values(data);
+    let filterData = Object.values(data) as any[];
 
     filterData = filterData.filter((d) => !idFilter.includes(d._visyn_id));
 
@@ -75,7 +75,7 @@ export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters
     if (filterSet === 'Filter Out') {
       onIdFilterChanged(selection);
     } else if (filterSet === 'Filter In') {
-      const allData = Object.values(data);
+      const allData = Object.values(data) as any;
       const nonSelectedData = allData.filter((d) => !selection.includes(d._visyn_id)).map((d) => d._visyn_id);
       onIdFilterChanged(nonSelectedData);
     } else {
@@ -85,17 +85,18 @@ export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters
 
   return (
     <VisSidebar
-      width="220px"
       columns={finalCols}
       filterCallback={visFilterChanged}
       externalConfig={parameters.type ? parameters : null}
       setExternalConfig={onParametersChanged}
+      style={{ width: '220px' }}
     />
   );
 }
 
-export const visConfiguration: () => IVisynViewPluginFactory = () => {
+export const visConfiguration: () => any = () => {
   return {
+    viewType: 'data',
     view: VisVisynView,
     tab: VisViewSidebar,
     header: null,

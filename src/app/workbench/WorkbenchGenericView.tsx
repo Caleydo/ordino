@@ -21,6 +21,7 @@ import { EDragTypes } from './utils';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
+import {isVisynRankingViewDesc} from './interfaces';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -104,7 +105,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       {workbenchIndex === ordino.focusViewIndex ? (
         <>
           <div className="view-actions">
-            {!viewPlugin?.desc.defaultView ? (
+            {!isVisynRankingViewDesc(viewPlugin?.desc) ? (
               <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">
                 <i className="flex-grow-1 fas fa-times m-1" />
               </button>
@@ -113,7 +114,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
 
           <div ref={drag} className="view-parameters d-flex cursor-pointer">
             <div>
-              {!viewPlugin?.desc.defaultView ? ( // do not show chooser for ranking views
+              {!isVisynRankingViewDesc(viewPlugin?.desc) ? ( // do not show chooser for ranking views
                 <button
                   type="button"
                   onClick={() => setEditOpen(!editOpen)}
@@ -152,7 +153,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
         </div>
       )}
       <div className="inner d-flex">
-        {editOpen && !viewPlugin?.desc.defaultView ? ( // do not show chooser for ranking views
+        {editOpen && !isVisynRankingViewDesc(viewPlugin?.desc) ? ( // do not show chooser for ranking views
           <div className="d-flex flex-column">
             <ul className="nav nav-tabs" id="myTab" role="tablist">
               <li className="nav-item" role="presentation">

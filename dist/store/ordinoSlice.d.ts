@@ -52,9 +52,9 @@ export interface IWorkbench {
     data: {
         [key: string]: IRow;
     };
-    columnDescs: IColumnDesc & {
+    columnDescs: (IColumnDesc & {
         [key: string]: any;
-    };
+    })[];
     transitionOptions: IRow['_visyn_id'][];
     /**
      * List selected rows

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IDType, isVisynDataView, isVisynSimpleView, useAsync, ViewUtils } from 'tdp_core';
+import { IDType, isVisynDataViewDesc, isVisynSimpleViewDesc, useAsync, ViewUtils } from 'tdp_core';
 import { useMemo } from 'react';
 import { IWorkbenchView } from '../../store';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
@@ -21,7 +21,7 @@ export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleVi
   const { value } = useAsync(views, []);
 
   const availableViews = useMemo(() => {
-    return value ? value.map((v) => v.v).filter((v) => isVisynSimpleView(v) || isVisynDataView(v)) : []; // TODO: maybe remove this when we have view subtypes in visyn views
+    return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : []; // TODO: maybe remove this when we have view subtypes in visyn views
   }, [value]);
 
   return (

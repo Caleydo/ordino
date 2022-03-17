@@ -1,30 +1,25 @@
 import React, { useMemo } from 'react';
-import { EDragTypes } from '../../app/workbench/utils';
-import { useDrag } from 'react-dnd';
-import { useAppDispatch, useAppSelector } from '../..';
-import { addWorkbench, changeFocus, EWorkbenchDirection } from '../../store';
 import { EXTENSION_POINT_TDP_VIEW, PluginRegistry } from 'tdp_core';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { addWorkbench, changeFocus, EWorkbenchDirection } from '../../store';
 export function TempChevronJumpButtons({ color = 'cornflowerblue' }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-    const [{}, drag] = useDrag(() => ({
-        type: EDragTypes.ADD,
-        item: { type: EDragTypes.ADD },
-    }));
     const possibleJumps = useMemo(() => {
         if (ordino.workbenches.length > 0) {
-            const possibleJumps = ordino.workbenches[ordino.focusViewIndex].transitionOptions.map((o) => {
+            const jumps = ordino.workbenches[ordino.focusViewIndex].transitionOptions.map((o) => {
                 return PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, `reprovisyn_ranking_${o}`);
             });
-            return possibleJumps;
+            return jumps.filter((o) => o !== undefined);
         }
         return [];
     }, [ordino.workbenches, ordino.focusViewIndex]);
     return (React.createElement(React.Fragment, null, possibleJumps.map((j) => {
-        return (React.createElement("button", { onClick: () => {
+        return (React.createElement("button", { key: `${j.id}Jump`, onClick: () => {
                 dispatch(addWorkbench({
-                    viewDirection: EWorkbenchDirection.HORIZONTAL,
-                    views: [{ id: j.id, name: j.name, viewType: 'Ranking', filters: [], index: 0 }],
+                    views: [{ id: j.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
+                    viewDirection: EWorkbenchDirection.VERTICAL,
                     transitionOptions: [],
                     columnDescs: [],
                     data: {},

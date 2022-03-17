@@ -4,5 +4,5 @@ export interface ICollapsedBreadcrumbProps {
     color?: string;
     workbenches?: IWorkbench[];
 }
-export declare function CollapsedBreadcrumb({ flexWidth, color, workbenches, }: ICollapsedBreadcrumbProps): JSX.Element;
+export declare function CollapsedBreadcrumb({ flexWidth, color, workbenches }: ICollapsedBreadcrumbProps): JSX.Element;
 //# sourceMappingURL=CollapsedBreadcrumb.d.ts.map

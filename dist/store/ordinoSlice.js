@@ -50,21 +50,26 @@ const ordinoSlice = createSlice({
         addView(state, action) {
             state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
         },
+        setViewParameters(state, action) {
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
+        },
+        setView(state, action) {
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
+        },
         addTransitionOptions(state, action) {
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches[state.focusViewIndex].columnDescs = action.payload.descs;
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
         },
         addColumnDesc(state, action) {
-            state.workbenches[state.focusViewIndex].columnDescs.push(action.payload.desc);
+            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
             console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
             const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
-            temp.index = action.payload.secondViewIndex;
-            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] = state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
-            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex].index = action.payload.firstViewIndex;
+            state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
+                state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
             state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex] = temp;
         },
         setWorkbenchDirection(state, action) {
@@ -73,13 +78,10 @@ const ordinoSlice = createSlice({
         removeWorkbench(state, action) {
             state.workbenches.slice(action.payload.index);
         },
-        //TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
+        // TODO:: When we remove the views jump too much. We need to do something smarter based on what the direction is to figure out where to move the still existing views.
         removeView(state, action) {
             const workbench = state.workbenches[action.payload.workbenchIndex];
             workbench.views.splice(action.payload.viewIndex, 1);
-            for (let j = 0; j < workbench.views.length; j++) {
-                workbench.views[j].index = j;
-            }
         },
         replaceWorkbench(state, action) {
             state.workbenches.splice(action.payload.workbenchIndex);
@@ -95,8 +97,9 @@ const ordinoSlice = createSlice({
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
+            console.log(action.payload.data, action.payload.entityId);
             for (const i of action.payload.data) {
-                state.workbenches[state.focusViewIndex].data[i._visyn_id] = i;
+                state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
             }
         },
         addScoreColumn(state, action) {
@@ -110,8 +113,8 @@ const ordinoSlice = createSlice({
                 }
             }
         },
-    }
+    },
 });
-export const { addView, createColumnDescs, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection } = ordinoSlice.actions;
+export const { addView, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

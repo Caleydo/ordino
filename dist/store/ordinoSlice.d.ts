@@ -6,13 +6,15 @@ export declare enum EViewDirections {
     W = "w",
     E = "e"
 }
-export interface IWorkbenchView extends Omit<IViewPluginDesc, 'load' | 'preview'> {
-    viewType: 'Ranking' | 'Vis';
+export interface IWorkbenchView {
+    id: string;
+    uniqueId: string;
     filters: string[];
+    parameters?: any;
 }
 export interface IOrdinoAppState {
     /**
-     * List of open views. TODO: This should be changed to "workbenches" probably
+     * List of open views.
      */
     workbenches: IWorkbench[];
     /**
@@ -26,7 +28,7 @@ export declare enum EWorkbenchDirection {
 }
 export interface IWorkbench {
     /**
-     * List of open views.
+     * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
      */
     views: IWorkbenchView[];
     viewDirection: EWorkbenchDirection;
@@ -52,9 +54,19 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
+}, string>, setViewParameters: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    viewIndex: number;
+    parameters: any;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    descs: any[];
+    entityId: string;
+    desc: any;
+}, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    viewIndex: number;
+    viewId: string;
 }, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     desc: any;
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
@@ -74,6 +86,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    entityId: string;
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;

@@ -1,13 +1,11 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
-import { IPluginDesc } from 'tdp_core';
-import { INamedSet } from 'tdp_core';
-import { CLUEGraphManager } from 'tdp_core';
+ ******************************************************************* */
+import { IPluginDesc, INamedSet, CLUEGraphManager } from 'tdp_core';
 export declare const EP_ORDINO_START_MENU_TAB = "epOrdinoStartMenuTab";
 /**
  * Register a new tab in the ordino start menu

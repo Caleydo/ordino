@@ -1,1 +1,1 @@
-{"version":3,"file":"phovea.d.ts","sourceRoot":"","sources":["../src/phovea.ts"],"names":[],"mappings":"AAKA,OAAO,EAAC,SAAS,EAAiB,MAAM,UAAU,CAAC;AAGnD,MAAM,CAAC,OAAO,WAAW,QAAQ,EAAE,SAAS,QAU3C"}
+{"version":3,"file":"phovea.d.ts","sourceRoot":"","sources":["../src/phovea.ts"],"names":[],"mappings":"AAKA,OAAO,EAAwD,SAAS,EAAuB,MAAM,UAAU,CAAC;AAIhH,MAAM,CAAC,OAAO,WAAW,QAAQ,EAAE,SAAS,QAgG3C"}

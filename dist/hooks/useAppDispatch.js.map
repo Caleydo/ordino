@@ -1,1 +1,1 @@
-{"version":3,"file":"useAppDispatch.js","sourceRoot":"","sources":["../../src/hooks/useAppDispatch.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,WAAW,EAAC,MAAM,aAAa,CAAC;AAGxC,MAAM,CAAC,MAAM,cAAc,GAAG,GAAG,EAAE,CAAC,WAAW,EAAe,CAAC"}
+{"version":3,"file":"useAppDispatch.js","sourceRoot":"","sources":["../../src/hooks/useAppDispatch.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAM,aAAa,CAAC;AAG1C,MAAM,CAAC,MAAM,cAAc,GAAG,GAAG,EAAE,CAAC,WAAW,EAAe,CAAC"}

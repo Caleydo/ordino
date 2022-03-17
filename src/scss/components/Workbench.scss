@@ -38,6 +38,10 @@
   }
   @import '~tdp_core/dist/scss/components/view';
 }
+.emptyViewText {
+  font-size: 24px;
+  color: gray;
+}
 
 .workbenchWrapper {
   flex: 1 1 auto;

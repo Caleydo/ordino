@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import { switchViews, useAppDispatch, useAppSelector } from '../../..';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { switchViews } from '../../../store/ordinoSlice';
+import { findViewIndex } from '../../../store/storeUtils';
 import { EDragTypes } from '../utils';
 export function WorkbenchSwitchIcon({ view }) {
     const dispatch = useAppDispatch();
@@ -8,14 +11,17 @@ export function WorkbenchSwitchIcon({ view }) {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
         drop: (d) => {
-            console.log(d);
-            dispatch(switchViews({ workbenchIndex: ordino.focusViewIndex, firstViewIndex: d.index, secondViewIndex: view.index }));
+            dispatch(switchViews({
+                workbenchIndex: ordino.focusViewIndex,
+                firstViewIndex: d.index,
+                secondViewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]),
+            }));
         },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
-    }), [view.index]);
-    return (React.createElement("div", { ref: drop, className: `position-absolute d-flex align-items-center justify-content-center`, style: {
+    }), [ordino.workbenches[ordino.focusViewIndex].views]);
+    return (React.createElement("div", { ref: drop, className: "position-absolute d-flex align-items-center justify-content-center", style: {
             height: '100%',
             width: '100%',
             zIndex: 10,

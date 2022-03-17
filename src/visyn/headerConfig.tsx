@@ -1,23 +1,28 @@
-import React, {ComponentType} from 'react';
-import {ISettingsMenuProps, IBurgerMenuProps, DatavisynLogo, BurgerMenu, CustomerDefaultLogo, SettingsMenu, AppDefaultLogo} from '.';
+import { ComponentType } from 'react';
+import { AppDefaultLogo } from './headerComponents/AppDefaultLogo';
+import { BurgerMenu, IBurgerMenuProps } from './headerComponents/BurgerMenu';
+import { CustomerDefaultLogo } from './headerComponents/CustomerDefaultLogo';
+import { DatavisynLogo } from './headerComponents/DatavisynLogo';
+import { ISettingsMenuProps, SettingsMenu } from './headerComponents/SettingsMenu';
+
 export interface IVisynHeaderComponents {
-    BurgerButton?: ComponentType<IBurgerMenuProps>;
-    AppLogo?: ComponentType;
-    VisynLogo?: ComponentType;
-    LeftExtensions?: ComponentType;
-    RightExtensions?: ComponentType;
-    CustomerLogo?: ComponentType;
-    SettingsMenu?: ComponentType<ISettingsMenuProps>;
+  BurgerButton?: ComponentType<IBurgerMenuProps>;
+  AppLogo?: ComponentType;
+  VisynLogo?: ComponentType;
+  LeftExtensions?: ComponentType;
+  RightExtensions?: ComponentType;
+  CustomerLogo?: ComponentType;
+  SettingsMenu?: ComponentType<ISettingsMenuProps>;
 }
 
 export const visynHeaderComponents: Partial<IVisynHeaderComponents> = {
-    VisynLogo: DatavisynLogo,
-    CustomerLogo: CustomerDefaultLogo,
-    BurgerButton: BurgerMenu,
-    AppLogo: AppDefaultLogo,
-    LeftExtensions: null,
-    RightExtensions: null,
-    SettingsMenu
+  VisynLogo: DatavisynLogo,
+  CustomerLogo: CustomerDefaultLogo,
+  BurgerButton: BurgerMenu,
+  AppLogo: AppDefaultLogo,
+  LeftExtensions: null,
+  RightExtensions: null,
+  SettingsMenu,
 };
 
-export type visynHeaderExtensions = Partial<IVisynHeaderComponents>;
+export type VisynHeaderExtensions = Partial<IVisynHeaderComponents>;

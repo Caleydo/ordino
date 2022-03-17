@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react';
-import { EXTENSION_POINT_TDP_VIEW, FindViewUtils, IDType, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
+import React, { FormEvent, Fragment, useMemo, useState } from 'react';
+import { IDTypeManager, IViewPluginDesc, useAsync, ViewUtils } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
-import { changeFocus, EWorkbenchDirection, IWorkbench, setAddWorkbenchOpen, addWorkbench } from '../../../store';
+import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { isVisynRankingView, isVisynRankingViewDesc } from '../interfaces';
 
 export interface IAddWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -19,6 +20,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
+  const [selectedView, setSelectedView] = useState<IViewPluginDesc>(null);
   const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
 
   const relationListCallback = (s: IMappingDesc) => {
@@ -30,11 +32,21 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     }
   };
 
-  const idType = useMemo(() => {
-    return new IDType(workbench.entityId, '.*', '', true);
-  }, [workbench.entityId]);
+  const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
 
-  const { status, value: availableViews } = useAsync(FindViewUtils.findAllViews, [idType]);
+  const findDependentViews = React.useMemo(
+    () => () =>
+      ViewUtils.findVisynViews(idType).then((views) => {
+        console.log(views);
+        console.log(views.filter((v) => isVisynRankingViewDesc(v)));
+        return views.filter((v) => isVisynRankingViewDesc(v));
+      }),
+    [idType],
+  );
+
+  const { status, value: availableViews } = useAsync(findDependentViews, []);
+
+  console.log(availableViews);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {
@@ -44,8 +56,9 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      if (!entities.some((e) => e.idType === v.v.itemIDType && e.label === v.v.group.name)) {
-        entities.push({ idType: v.v.itemIDType, label: v.v.group.name });
+      console.log(v);
+      if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
+        entities.push({ idType: v.itemIDType, label: v.group.name });
       }
     });
 
@@ -59,7 +72,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
       currString += `${s}, `;
     });
 
-    return currString.slice(0, currString.length - 3);
+    return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
   }, [workbench.selection]);
 
   return (
@@ -69,74 +82,48 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
           {availableEntities.map((e) => {
             return (
               <div key={`${e.idType}Box`} className="entityJumpBox p-1 mb-2 rounded">
-                <div className="d-flex" style={{ justifyContent: 'space-between' }}>
-                  <p className="mb-0 entityText" style={{ color: ordino.colorMap[e.idType] }}>
-                    {e.label}
+                <div className="d-flex flex-column" style={{ justifyContent: 'space-between' }}>
+                  <p className="mt-1 mb-1">
+                    <span className="p-1 entityText" style={{ color: '#e9ecef', backgroundColor: ordino.colorMap[e.idType] }}>
+                      {e.label}
+                    </span>
                   </p>
-                  <p className="mb-0 mappingText" style={{ color: ordino.colorMap[workbench.entityId] }}>
+                  <p className="mb-2 selectedPrevText" style={{ color: ordino.colorMap[workbench.entityId] }}>
                     {selectionString}
                   </p>
                 </div>
-                {availableViews
-                  .filter((v) => v.v.itemIDType === e.idType)
-                  .map((v) => {
-                    return (
-                      <div key={`${v.v.name}mapping`}>
-                        {v.v.relation.mapping.map((map: IReprovisynMapping) => {
-                          const columns = v.v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
-                          return (
-                            <>
-                              <div className="mt-2 mappingTypeText">{map.name}</div>
-                              {columns.map((col) => {
-                                return (
-                                  <div key={`${col.label}Column`} className="form-check">
-                                    <input
-                                      onChange={() =>
-                                        relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName })
-                                      }
-                                      className="form-check-input"
-                                      type="checkbox"
-                                      value=""
-                                      id="flexCheckDefault"
-                                    />
-                                    <label className="mappingText form-check-label" htmlFor="flexCheckDefault">
-                                      {col.label}
-                                    </label>
-                                  </div>
-                                );
-                              })}
-                            </>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                <button
-                  onClick={() => {
-                    const viewPlugin: IViewPluginDesc = PluginRegistry.getInstance().getPlugin(
-                      EXTENSION_POINT_TDP_VIEW,
-                      `reprovisyn_ranking_${relationList[0].targetEntity}`,
-                    ) as IViewPluginDesc;
-                    dispatch(setAddWorkbenchOpen({ workbenchIndex: workbench.index, open: false }));
+                <form
+                  onSubmit={(event: FormEvent<HTMLFormElement>) => {
+                    event.preventDefault();
+                    const selectedMappings = relationList.map((r) => {
+                      return {
+                        entityId: r.mappingEntity,
+                        columnSelection: r.mappingSubtype,
+                      };
+                    });
                     dispatch(
                       // load the data
                       addWorkbench({
+                        itemIDType: selectedView.itemIDType,
                         detailsOpen: true,
                         addWorkbenchOpen: false,
-                        selectedMappings: relationList.map((r) => {
-                          return {
-                            entityId: r.mappingEntity,
-                            columnSelection: r.mappingSubtype,
-                          };
-                        }),
-                        views: [{ name: viewPlugin.name, id: viewPlugin.id, uniqueId: (Math.random() + 1).toString(36).substring(7), filters: [] }],
+                        selectedMappings,
+                        views: [
+                          {
+                            name: selectedView.itemName,
+                            id: selectedView.id,
+                            parameters: { prevSelection: workbench.selection, selectedMappings },
+                            uniqueId: (Math.random() + 1).toString(36).substring(7),
+                            filters: [],
+                          },
+                        ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
                         transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        name: viewPlugin.name,
-                        index: ordino.focusViewIndex + 1,
+                        name: selectedView.itemName,
+                        index: workbench.index + 1,
                         selection: [],
                       }),
                     );
@@ -144,12 +131,50 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                       dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
                     }, 0);
                   }}
-                  type="button"
-                  style={{ color: 'white', backgroundColor: ordino.colorMap[e.idType] }}
-                  className={`mt-1 w-100 chevronButton btn btn-sm align-middle ${relationList.length === 0 ? 'disabled' : ''}`}
                 >
-                  Create {e.label} workbench
-                </button>
+                  {availableViews
+                    .filter((v) => v.itemIDType === e.idType)
+                    .map((v) => {
+                      return (
+                        <div key={`${v.name}-mapping`}>
+                          {v.relation.mapping.map((map: IReprovisynMapping) => {
+                            const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                            return (
+                              <Fragment key={`${map.name}-group`}>
+                                <div className="mt-2 mappingTypeText">{map.name}</div>
+                                {columns.map((col) => {
+                                  return (
+                                    <div key={`${col.label}Column`} className="form-check">
+                                      <input
+                                        onChange={() => {
+                                          relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                          setSelectedView(v);
+                                        }}
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        value=""
+                                        id={`${col.label}${v.name}Check`}
+                                      />
+                                      <label className="mappingText form-check-label" htmlFor={`${col.label}${v.name}Check`}>
+                                        {col.label}
+                                      </label>
+                                    </div>
+                                  );
+                                })}
+                              </Fragment>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  <button
+                    type="submit"
+                    style={{ color: 'white', backgroundColor: ordino.colorMap[e.idType] }}
+                    className={`mt-1 w-100 chevronButton btn btn-sm align-middle ${relationList.length === 0 ? 'disabled' : ''}`}
+                  >
+                    Create {e.label} workbench
+                  </button>
+                </form>
               </div>
             );
           })}

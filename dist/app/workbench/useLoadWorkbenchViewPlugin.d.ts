@@ -1,3 +1,3 @@
-import { IVisynViewPlugin, IVisynViewPluginFactory } from 'tdp_core';
-export declare function useVisynViewPlugin(viewId: string): [IVisynViewPlugin, () => IVisynViewPluginFactory];
+import { IVisynViewPlugin } from 'tdp_core';
+export declare function useVisynViewPlugin(index: any, viewId: string): IVisynViewPlugin;
 //# sourceMappingURL=useLoadWorkbenchViewPlugin.d.ts.map

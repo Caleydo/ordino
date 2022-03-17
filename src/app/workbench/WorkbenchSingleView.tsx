@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { FindViewUtils, IDType, useAsync } from 'tdp_core';
+import { IDType, isVisynDataViewDesc, isVisynSimpleViewDesc, useAsync, ViewUtils } from 'tdp_core';
 import { useMemo } from 'react';
 import { IWorkbenchView } from '../../store';
-import { WorkbenchRankingView } from './WorkbenchRankingView';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
 import { useAppSelector } from '../../hooks/useAppSelector';
@@ -13,27 +12,26 @@ export interface IWorkbenchSingleViewProps {
 }
 
 export function getVisynView(entityId: string) {
-  return FindViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
+  return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
 
 export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleViewProps) {
   const ordino = useAppSelector((state) => state.ordino);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
+  const { value } = useAsync(views, []);
 
-  const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
-
-  const chooserOptions = useMemo(() => {
-    return value ? value.map((v) => v.v) : [];
+  const availableViews = useMemo(() => {
+    return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : []; // TODO: maybe remove this when we have view subtypes in visyn views
   }, [value]);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {view.id === '' ? (
-        <WorkbenchEmptyView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view} />
-      ) : view.id.startsWith('reprovisyn_ranking') ? (
-        <WorkbenchRankingView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view} />
+        <WorkbenchEmptyView chooserOptions={availableViews} workbenchIndex={workbenchIndex} view={view} />
       ) : (
-        <WorkbenchGenericView chooserOptions={chooserOptions} workbenchIndex={workbenchIndex} view={view} />
+        <WorkbenchGenericView chooserOptions={availableViews} workbenchIndex={workbenchIndex} view={view} />
       )}
     </>
   );

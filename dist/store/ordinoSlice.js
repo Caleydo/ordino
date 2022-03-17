@@ -32,17 +32,20 @@ export var EWorkbenchDirection;
 //   state: {
 //   }
 // }
+const containsView = (workbench, viewId) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
 const initialState = {
     workbenches: [],
     focusViewIndex: 0,
     sidebarOpen: false,
     colorMap: {},
 };
+// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
     name: 'ordino',
     initialState,
     reducers: {
         addFirstWorkbench(state, action) {
+            state.focusViewIndex = 0;
             state.workbenches.splice(0, state.workbenches.length);
             state.workbenches.push(action.payload);
         },
@@ -50,6 +53,9 @@ const ordinoSlice = createSlice({
             state.colorMap = action.payload.colorMap;
         },
         addWorkbench(state, action) {
+            if (state.workbenches.length > action.payload.index) {
+                state.workbenches.splice(action.payload.index);
+            }
             state.workbenches.push(action.payload);
         },
         addView(state, action) {
@@ -75,7 +81,6 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
         },
         setAddWorkbenchOpen(state, action) {
-            console.log('in the slice add open');
             state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
         },
         setView(state, action) {
@@ -86,13 +91,14 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
         },
         createColumnDescs(state, action) {
-            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+            const { workbenchIndex, desc } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs = desc;
         },
         addColumnDesc(state, action) {
-            state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
+            const { workbenchIndex, desc } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
-            console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
             const temp = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
             state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
                 state.workbenches[action.payload.workbenchIndex].views[action.payload.secondViewIndex];
@@ -114,29 +120,31 @@ const ordinoSlice = createSlice({
             state.workbenches.push(action.payload.newWorkbench);
         },
         addSelection(state, action) {
-            console.log('in the add selection callback', action.payload.entityId, action.payload.newSelection);
-            state.workbenches.find((w) => w.entityId.endsWith(action.payload.entityId)).selection = action.payload.newSelection;
+            const { workbenchIndex, newSelection } = action.payload;
+            state.workbenches[workbenchIndex].selection = newSelection;
         },
         addFilter(state, action) {
-            state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
+            state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
         },
         changeFocus(state, action) {
             state.focusViewIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
-            for (const i of action.payload.data) {
-                state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
+            const { workbenchIndex, data } = action.payload;
+            for (const i of data) {
+                state.workbenches[workbenchIndex].data[i.id] = i;
             }
         },
         addScoreColumn(state, action) {
-            for (const row of action.payload.data) {
-                const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+            const { workbenchIndex, desc, data } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs.push(desc);
+            for (const row of data) {
+                const dataRow = state.workbenches[workbenchIndex].data[row.id];
                 if (dataRow) {
-                    dataRow[action.payload.columnName] = row.score;
-                }
-                else {
-                    state.workbenches[state.focusViewIndex].data[row.id] = row;
-                }
+                    dataRow[desc.scoreID] = row.score;
+                } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+                //   state.workbenches[state.focusViewIndex].data[row.id] = row;
+                // }
             }
         },
     },

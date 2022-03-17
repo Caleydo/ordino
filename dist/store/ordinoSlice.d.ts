@@ -1,5 +1,5 @@
 import { IRow, IViewPluginDesc } from 'tdp_core';
-import type { IReprovisynServerColumn } from 'reprovisyn';
+import { IColumnDesc } from 'lineupjs';
 export declare enum EViewDirections {
     N = "n",
     S = "s",
@@ -43,12 +43,18 @@ export interface IWorkbench {
     selectedMappings: ISelectedMapping[];
     viewDirection: EWorkbenchDirection;
     name: string;
+    /**
+     * itemIDType of the views in a workbench, should match the itemIDType of the default ranking
+     */
+    itemIDType: string;
     entityId: string;
     index: number;
     data: {
         [key: string]: IRow;
     };
-    columnDescs: IReprovisynServerColumn[];
+    columnDescs: (IColumnDesc & {
+        [key: string]: any;
+    })[];
     transitionOptions: IRow['_visyn_id'][];
     /**
      * List selected rows
@@ -86,7 +92,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, setSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     open: boolean;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     desc: any;
 }, string>, setView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
@@ -94,7 +100,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     viewId: string;
     viewName: string;
 }, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     desc: any;
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
@@ -106,17 +112,20 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     workbenchIndex: number;
     newWorkbench: IWorkbench;
 }, string>, addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    columnName: string;
-    data: any;
+    workbenchIndex: number;
+    desc: IColumnDesc & {
+        [key: string]: any;
+    };
+    data: any[];
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     newSelection: string[];
 }, string>, addFilter: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     viewId: string;
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    entityId: string;
+    workbenchIndex: number;
     data: any[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;

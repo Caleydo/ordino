@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { CollapsedBreadcrumb } from '../components/breadcrumb/CollapsedBreadcrumb';
 import { SingleBreadcrumb } from '../components/breadcrumb/SingleBreadcrumb';
 import { useAppDispatch } from '../hooks/useAppDispatch';
@@ -9,12 +9,6 @@ export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b46
 export function Breadcrumb() {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
-    const [totalWidth, setTotalWidth] = useState(0);
-    useEffect(() => {
-        window.addEventListener('resize', () => {
-            setTotalWidth(window.innerWidth);
-        });
-    }, []);
     const startFlexNum = useMemo(() => {
         let counter = 0;
         if (ordino.focusViewIndex < 4) {
@@ -44,7 +38,7 @@ export function Breadcrumb() {
         ordino.focusViewIndex === 3 ? (React.createElement(SingleBreadcrumb, { workbench: ordino.workbenches[1], color: ordino.colorMap[ordino.workbenches[1].entityId], flexWidth: 15 / startFlexNum, first: false, onClick: () => dispatch(changeFocus({ index: 1 })) })) : null,
         ordino.focusViewIndex > 3 ? React.createElement(CollapsedBreadcrumb, { color: "gray", flexWidth: 15 / startFlexNum }) : null,
         ordino.focusViewIndex > 0 ? (React.createElement(SingleBreadcrumb, { workbench: ordino.workbenches[ordino.focusViewIndex - 1], color: ordino.colorMap[ordino.workbenches[ordino.focusViewIndex - 1].entityId], flexWidth: 15 / startFlexNum, first: ordino.focusViewIndex - 1 === 0, onClick: () => dispatch(changeFocus({ index: ordino.focusViewIndex - 1 })) })) : null,
-        React.createElement(SingleBreadcrumb, { workbench: ordino.workbenches[ordino.focusViewIndex], color: ordino.colorMap[ordino.workbenches[ordino.focusViewIndex].entityId], flexWidth: 70 + 5 * (2 - endFlexNum), first: ordino.focusViewIndex === 0, onClick: () => dispatch(changeFocus({ index: ordino.focusViewIndex })) }),
+        React.createElement(SingleBreadcrumb, { workbench: ordino.workbenches[ordino.focusViewIndex], color: ordino.colorMap[ordino.workbenches[ordino.focusViewIndex].entityId], flexWidth: 70 + 5 * (2 - endFlexNum), first: ordino.focusViewIndex === 0, onClick: null }),
         React.createElement(SingleBreadcrumb, { color: "gray", flexWidth: 3, onClick: () => dispatch(setAddWorkbenchOpen({ workbenchIndex: ordino.focusViewIndex, open: !ordino.workbenches[ordino.focusViewIndex].addWorkbenchOpen })), first: false }),
         ordino.focusViewIndex + 1 < ordino.workbenches.length ? (React.createElement(SingleBreadcrumb, { workbench: ordino.workbenches[ordino.focusViewIndex + 1], color: ordino.colorMap[ordino.workbenches[ordino.focusViewIndex + 1].entityId], flexWidth: 5, first: false, onClick: () => dispatch(changeFocus({ index: ordino.focusViewIndex + 1 })) })) : null,
         ordino.focusViewIndex + 3 < ordino.workbenches.length ? React.createElement(CollapsedBreadcrumb, { color: "gray", flexWidth: 5 }) : null,

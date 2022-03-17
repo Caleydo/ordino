@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
-import { ChevronButtons } from './ChevronButtons';
+import { AddViewButton } from './AddViewButton';
 import { IWorkbench } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
 import { ShowDetailsSwitch } from './ShowDetailsSwitch';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { FilterAndSelected } from './FilterAndSelected';
 
 export interface ISingleBreadcrumbProps {
   first?: boolean;
@@ -22,34 +23,45 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
   const ref = useRef(null);
 
   useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.offsetWidth);
-    }
-  }, [ref?.current?.offsetWidth]);
+    const ro = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+      entries.forEach((e) => {
+        setWidth(e.contentRect.width);
+      });
+    });
+
+    ro.observe(ref.current);
+  }, []);
 
   return (
-    <div className="position-relative" ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
+    <div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
       <div className="position-absolute chevronDiv top-50 start-50 translate-middle d-flex">
         {workbench ? (
-          <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+          workbench.index === ordino.focusViewIndex ? (
+            <FilterAndSelected />
+          ) : (
+            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+          )
         ) : (
           <i className="flex-grow-1 fas fa-plus" />
         )}
       </div>
 
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: first ? '8px' : '16px' }}>
+      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: first ? (workbench.index > 0 ? '0px' : '20px') : '4px' }}>
         {workbench && workbench.index === ordino.focusViewIndex ? (
           <>
-            <ShowDetailsSwitch />
-            <ChevronButtons color={color} />
+            {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
+            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
           </>
         ) : null}
       </div>
-      <div className="position-absolute chevronDiv top-50 end-0 translate-middle d-flex" style={{ right: first ? '8px' : '16px' }}>
+      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ right: '8px' }}>
         {workbench && workbench.index === ordino.focusViewIndex ? (
-          <button type="button" className="btn btn-icon-light btn-sm align-middle m-1">
-            <i className="flex-grow-1 fas fa-close" />
-          </button>
+          <>
+            <AddViewButton color="white" />
+            {/* <button type="button" className="btn btn-icon-light btn-sm align-middle m-1">
+              <i className="flex-grow-1 fas fa-close" />
+            </button> */}
+          </>
         ) : null}
       </div>
       <ChevronBreadcrumb color={color} width={width} first={first} />

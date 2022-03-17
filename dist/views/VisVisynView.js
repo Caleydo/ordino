@@ -29,7 +29,7 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
     for (const i of selection) {
         selectedMap[i] = true;
     }
-    return React.createElement(Vis, { columns: cols, selected: selectedMap, selectionCallback: onSelectionChanged, externalConfig: parameters, hideSidebar: true });
+    return React.createElement(Vis, { columns: cols, selected: selectedMap, selectionCallback: onSelectionChanged, externalConfig: parameters.type ? parameters : null, hideSidebar: true });
 }
 export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }) {
     const filteredData = useMemo(() => {
@@ -67,10 +67,11 @@ export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters
             onIdFilterChanged([]);
         }
     };
-    return React.createElement(VisSidebar, { width: "220px", columns: finalCols, filterCallback: visFilterChanged, externalConfig: parameters, setExternalConfig: onParametersChanged });
+    return (React.createElement(VisSidebar, { columns: finalCols, filterCallback: visFilterChanged, externalConfig: parameters.type ? parameters : null, setExternalConfig: onParametersChanged, style: { width: '220px' } }));
 }
 export const visConfiguration = () => {
     return {
+        viewType: 'data',
         view: VisVisynView,
         tab: VisViewSidebar,
         header: null,

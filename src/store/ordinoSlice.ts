@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRow, IViewPluginDesc } from 'tdp_core';
-import type { IReprovisynServerColumn } from 'reprovisyn';
+import { IColumnDesc } from 'lineupjs';
 
 export enum EViewDirections {
   N = 'n',
@@ -55,13 +55,16 @@ export interface IWorkbench {
   viewDirection: EWorkbenchDirection;
 
   name: string;
-
+  /**
+   * itemIDType of the views in a workbench, should match the itemIDType of the default ranking
+   */
+  itemIDType: string;
   entityId: string;
 
   index: number;
 
   data: { [key: string]: IRow };
-  columnDescs: IReprovisynServerColumn[];
+  columnDescs: (IColumnDesc & { [key: string]: any })[];
   // TODO: how do we store the lineup-specific column descriptions?
 
   transitionOptions: IRow['_visyn_id'][];
@@ -70,6 +73,7 @@ export interface IWorkbench {
    * List selected rows
    */
   selection: IRow['_visyn_id'][];
+
   detailsOpen: boolean;
   addWorkbenchOpen: boolean;
 }
@@ -107,6 +111,8 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 //   }
 // }
 
+const containsView = (workbench: IWorkbench, viewId: string) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
+
 const initialState: IOrdinoAppState = {
   workbenches: [],
   focusViewIndex: 0,
@@ -114,11 +120,13 @@ const initialState: IOrdinoAppState = {
   colorMap: {},
 };
 
+// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
     addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
+      state.focusViewIndex = 0;
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
@@ -126,6 +134,9 @@ const ordinoSlice = createSlice({
       state.colorMap = action.payload.colorMap;
     },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
+      if (state.workbenches.length > action.payload.index) {
+        state.workbenches.splice(action.payload.index);
+      }
       state.workbenches.push(action.payload);
     },
     addView(state, action: PayloadAction<{ workbenchIndex: number; view: IWorkbenchView }>) {
@@ -154,7 +165,6 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
     },
     setAddWorkbenchOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      console.log('in the slice add open');
       state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
     },
     setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string; viewName: string }>) {
@@ -164,14 +174,17 @@ const ordinoSlice = createSlice({
     addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
     },
-    createColumnDescs(state, action: PayloadAction<{ entityId: string; desc: any }>) {
-      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs = action.payload.desc;
+
+    createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
+      const { workbenchIndex, desc } = action.payload;
+      state.workbenches[workbenchIndex].columnDescs = desc;
     },
-    addColumnDesc(state, action: PayloadAction<{ entityId: string; desc: any }>) {
-      state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).columnDescs.push(action.payload.desc);
+
+    addColumnDesc(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
+      const { workbenchIndex, desc } = action.payload;
+      state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
-      console.log(action.payload.firstViewIndex, action.payload.secondViewIndex);
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
       state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex] =
@@ -194,30 +207,34 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
-    addSelection(state, action: PayloadAction<{ entityId: string; newSelection: string[] }>) {
-      console.log('in the add selection callback', action.payload.entityId, action.payload.newSelection);
-
-      state.workbenches.find((w) => w.entityId.endsWith(action.payload.entityId)).selection = action.payload.newSelection;
+    addSelection(state, action: PayloadAction<{ workbenchIndex: number; newSelection: string[] }>) {
+      const { workbenchIndex, newSelection } = action.payload;
+      state.workbenches[workbenchIndex].selection = newSelection;
     },
-    addFilter(state, action: PayloadAction<{ entityId: string; viewId: string; filter: string[] }>) {
-      state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
+    addFilter(state, action: PayloadAction<{ workbenchIndex: number; viewId: string; filter: string[] }>) {
+      state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusViewIndex = action.payload.index;
     },
-    setWorkbenchData(state, action: PayloadAction<{ entityId: string; data: any[] }>) {
-      for (const i of action.payload.data) {
-        state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
+
+    setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: any[] }>) {
+      const { workbenchIndex, data } = action.payload;
+      for (const i of data) {
+        state.workbenches[workbenchIndex].data[i.id] = i;
       }
     },
-    addScoreColumn(state, action: PayloadAction<{ columnName: string; data: any }>) {
-      for (const row of action.payload.data) {
-        const dataRow = state.workbenches[state.focusViewIndex].data[row.id];
+
+    addScoreColumn(state, action: PayloadAction<{ workbenchIndex: number; desc: IColumnDesc & { [key: string]: any }; data: any[] }>) {
+      const { workbenchIndex, desc, data } = action.payload;
+      state.workbenches[workbenchIndex].columnDescs.push(desc);
+      for (const row of data) {
+        const dataRow = state.workbenches[workbenchIndex].data[row.id];
         if (dataRow) {
-          dataRow[action.payload.columnName] = row.score;
-        } else {
-          state.workbenches[state.focusViewIndex].data[row.id] = row;
-        }
+          dataRow[desc.scoreID] = row.score;
+        } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+        //   state.workbenches[state.focusViewIndex].data[row.id] = row;
+        // }
       }
     },
   },

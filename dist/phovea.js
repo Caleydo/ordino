@@ -13,9 +13,8 @@ export default function (registry) {
         width: 24,
         height: 24,
     });
-    registry.pushVisynView('cosmic', function () {
-        return import('./views/CosmicProxyView');
-    }, {
+    registry.pushVisynView('cosmic', () => import('./views/CosmicProxyView').then((m) => m.cosmicConfiguration), {
+        visynViewType: 'simple',
         factory: 'cosmicConfiguration',
         name: 'COSMIC',
         site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
@@ -32,9 +31,8 @@ export default function (registry) {
         description: 'Show information on your search from COSMIC',
         topics: ['cellline', 'external'],
     });
-    registry.pushVisynView('vis', function () {
-        return import('./views/VisVisynView');
-    }, {
+    registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
+        visynViewType: 'data',
         name: 'Vis',
         factory: 'visConfiguration',
         idtype: 'ordino_public.cellline.tdp_cellline',
@@ -46,9 +44,8 @@ export default function (registry) {
         description: 'Shows all information from the database for the searched genes',
         topics: ['tcga', 'information'],
     });
-    registry.pushVisynView('vis', function () {
-        return import('./views/VisVisynView');
-    }, {
+    registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
+        visynViewType: 'data',
         name: 'Vis',
         factory: 'visConfiguration',
         idtype: 'ordino_public.tissue.tdp_tissue',
@@ -60,9 +57,8 @@ export default function (registry) {
         description: 'Shows all information from the database for the searched genes',
         topics: ['tcga', 'information'],
     });
-    registry.pushVisynView('vis', function () {
-        return import('./views/VisVisynView');
-    }, {
+    registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
+        visynViewType: 'data',
         name: 'Vis',
         factory: 'visConfiguration',
         idtype: 'ordino_public.public.tdp_gene',

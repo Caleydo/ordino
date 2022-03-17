@@ -21,10 +21,6 @@
     "incremental": true,
     "tsBuildInfoFile": "dist/tsBuildInfoFile"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "tsd.d.ts"
-, "../ordino_reprovisyn/src/dataSlice.ts"  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tsd.d.ts"],
   "exclude": ["src/stories/*"]
 }

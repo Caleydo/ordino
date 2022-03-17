@@ -1,6 +1,4 @@
-import { IVisynViewPluginFactory, IVisynViewProps } from 'tdp_core';
-import { ICosmicViewPluginParams } from '../visyn/VisynView';
-export declare function CosmicView({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged, }: IVisynViewProps<any, ICosmicViewPluginParams>): JSX.Element;
-export declare function CosmicViewHeader({ desc, data, dataDesc, selection, idFilter, parameters, onSelectionChanged, onIdFilterChanged, onParametersChanged, }: IVisynViewProps<any, ICosmicViewPluginParams>): JSX.Element;
-export declare const cosmicConfiguration: () => IVisynViewPluginFactory;
+export declare function CosmicView({ parameters, onParametersChanged }: any): JSX.Element;
+export declare function CosmicViewHeader({ selection, onParametersChanged }: any): JSX.Element;
+export declare const cosmicConfiguration: () => any;
 //# sourceMappingURL=CosmicProxyView.d.ts.map

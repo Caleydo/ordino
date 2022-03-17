@@ -1,14 +1,7 @@
 import React from 'react';
 import { useAppSelector } from '../hooks';
 import { IWorkbench } from '../store/ordinoSlice';
-import { WorkbenchViews } from './workbench/WorkbenchViews';
-
-export enum EWorkbenchType {
-  PREVIOUS = 't-previous',
-  FOCUS = 't-focus',
-  CONTEXT = 't-context',
-  NEXT = 't-next',
-}
+import { EWorkbenchType, WorkbenchViews } from './workbench/WorkbenchViews';
 
 interface IWorkbenchProps {
   workbench: IWorkbench;
@@ -25,7 +18,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
-      <WorkbenchViews index={workbench.index} onlyRanking={type === EWorkbenchType.CONTEXT} />
+      <WorkbenchViews index={workbench.index} type={type} />
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import React, { Fragment, useMemo } from 'react';
-import { FindViewUtils, IDType, useAsync } from 'tdp_core';
+import { IDType, useAsync, ViewUtils } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
+import { isVisynRankingView } from '../interfaces';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;
@@ -23,7 +24,10 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const findDependentViews = React.useMemo(() => () => FindViewUtils.findVisynViews(idType).then((views) => views.filter((v) => v.v.defaultView)), [idType]);
+  const findDependentViews = React.useMemo(
+    () => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingView(v.v))),
+    [idType],
+  );
   const { status, value: availableViews } = useAsync(findDependentViews, []);
 
   const selectionString = useMemo(() => {

@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { FindViewUtils, IDType, useAsync } from 'tdp_core';
+import { IDType, isVisynDataView, isVisynSimpleView, useAsync, ViewUtils } from 'tdp_core';
 import { useMemo } from 'react';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
 import { useAppSelector } from '../../hooks/useAppSelector';
 export function getVisynView(entityId) {
-    return FindViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
+    return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
 export function WorkbenchSingleView({ workbenchIndex, view }) {
     const ordino = useAppSelector((state) => state.ordino);
     const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
     const { value } = useAsync(views, []);
     const availableViews = useMemo(() => {
-        return value ? value.map((v) => v.v).filter((v) => !v.defaultView) : []; // TODO: maybe remove this when we have view subtypes in visyn views
+        return value ? value.map((v) => v.v).filter((v) => isVisynSimpleView(v) || isVisynDataView(v)) : []; // TODO: maybe remove this when we have view subtypes in visyn views
     }, [value]);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

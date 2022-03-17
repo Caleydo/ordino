@@ -1,8 +1,9 @@
 import React, { Fragment, useMemo, useState } from 'react';
-import { FindViewUtils, IDTypeManager, useAsync } from 'tdp_core';
+import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { isVisynRankingView } from '../interfaces';
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -18,10 +19,13 @@ export function AddWorkbenchSidebar({ workbench }) {
         }
     };
     const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
-    const findDependentViews = React.useMemo(() => () => FindViewUtils.findVisynViews(idType).then((views) => views.filter((v) => {
-        return v.v.defaultView;
-    })), [idType]);
+    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => {
+        console.log(views);
+        console.log(views.filter((v) => isVisynRankingView(v)));
+        return views.filter((v) => isVisynRankingView(v));
+    }), [idType]);
     const { status, value: availableViews } = useAsync(findDependentViews, []);
+    console.log(availableViews);
     const availableEntities = useMemo(() => {
         if (status !== 'success') {
             return null;

@@ -33,7 +33,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   const [settingsTabSelected, setSettingsTabSelected] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
-  const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
+  const plugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
 
   const { value: viewPlugin } = useAsync(
     React.useCallback(
@@ -46,7 +46,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     ),
     [],
   );
-  const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];
 
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
@@ -128,10 +127,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
             <span className="view-title row align-items-center m-1">
               <strong>{view.name}</strong>
             </span>
-            {viewPluginComponents?.header ? (
+            {viewPlugin?.header ? (
               <Suspense fallback="Loading..">
-                <viewPluginComponents.header
-                  desc={viewPluginDesc}
+                <viewPlugin.header
+                  desc={viewPlugin.desc}
                   data={ordino.workbenches[workbenchIndex].data}
                   dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                   selection={ordino.workbenches[workbenchIndex].selection}
@@ -148,7 +147,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
       ) : (
         <div ref={drag} className="view-parameters d-flex">
           <span className="view-title row align-items-center m-1">
-            <strong>{viewPluginDesc?.itemName}</strong>
+            <strong>{viewPlugin?.desc?.itemName}</strong>
           </span>
         </div>
       )}
@@ -158,7 +157,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
             <ul className="nav nav-tabs" id="myTab" role="tablist">
               <li className="nav-item" role="presentation">
                 <button
-                  className={`nav-link ${settingsTabSelected || !viewPlugin || !viewPluginComponents?.tab ? 'active' : ''}`}
+                  className={`nav-link ${settingsTabSelected || !viewPlugin || !viewPlugin?.tab ? 'active' : ''}`}
                   onClick={() => setSettingsTabSelected(true)}
                   data-bs-toggle="tab"
                   data-bs-target="#home"
@@ -170,7 +169,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   Views
                 </button>
               </li>
-              {viewPlugin && viewPluginComponents.tab ? (
+              {viewPlugin && viewPlugin?.tab ? (
                 <li className="nav-item" role="presentation">
                   <button
                     className={`nav-link ${!settingsTabSelected ? 'active' : ''}`}
@@ -190,7 +189,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
 
             <div className="h-100 tab-content viewTabPanel" style={{ width: '220px' }}>
               <div
-                className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPluginComponents?.tab ? 'active' : ''}`}
+                className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPlugin?.tab ? 'active' : ''}`}
                 role="tabpanel"
                 aria-labelledby="settings-tab"
               >
@@ -211,11 +210,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   isEmbedded={false}
                 />
               </div>
-              {viewPlugin && viewPluginComponents.tab ? (
+              {viewPlugin && viewPlugin?.tab ? (
                 <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
                   <Suspense fallback="Loading..">
-                    <viewPluginComponents.tab
-                      desc={viewPluginDesc}
+                    <viewPlugin.tab
+                      desc={viewPlugin.desc}
                       data={ordino.workbenches[workbenchIndex].data}
                       dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                       selection={ordino.workbenches[workbenchIndex].selection}
@@ -231,10 +230,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
             </div>
           </div>
         ) : null}
-        {viewPlugin ? (
+        {viewPlugin?.view ? (
           <Suspense fallback="Loading..">
-            <viewPluginComponents.view
-              desc={viewPluginDesc}
+            <viewPlugin.view
+              desc={viewPlugin.desc}
               data={ordino.workbenches[workbenchIndex].data}
               dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
               selection={ordino.workbenches[workbenchIndex].selection}

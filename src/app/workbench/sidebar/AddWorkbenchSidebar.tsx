@@ -1,9 +1,10 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
-import { FindViewUtils, IDTypeManager, IViewPluginDesc, useAsync } from 'tdp_core';
+import { IDTypeManager, IViewPluginDesc, useAsync, ViewUtils } from 'tdp_core';
 import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { isVisynRankingView } from '../interfaces';
 
 export interface IAddWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -35,15 +36,17 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
 
   const findDependentViews = React.useMemo(
     () => () =>
-      FindViewUtils.findVisynViews(idType).then((views) =>
-        views.filter((v) => {
-          return v.v.defaultView;
-        }),
-      ),
+      ViewUtils.findVisynViews(idType).then((views) => {
+        console.log(views);
+        console.log(views.filter((v) => isVisynRankingView(v)));
+        return views.filter((v) => isVisynRankingView(v));
+      }),
     [idType],
   );
 
   const { status, value: availableViews } = useAsync(findDependentViews, []);
+
+  console.log(availableViews);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {

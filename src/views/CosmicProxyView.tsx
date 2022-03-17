@@ -2,20 +2,8 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import Select from 'react-select';
-import { IVisynViewPluginFactory, IVisynViewProps } from 'tdp_core';
-import { ICosmicViewPluginParams } from '../visyn/VisynView';
 
-export function CosmicView({
-  desc,
-  data,
-  dataDesc,
-  selection,
-  idFilter,
-  parameters,
-  onSelectionChanged,
-  onIdFilterChanged,
-  onParametersChanged,
-}: IVisynViewProps<any, ICosmicViewPluginParams>) {
+export function CosmicView({ parameters, onParametersChanged }: any) {
   useEffect(() => {
     if (!parameters) {
       onParametersChanged({ currentId: '' });
@@ -28,17 +16,7 @@ export function CosmicView({
 }
 
 // Toolbar ?
-export function CosmicViewHeader({
-  desc,
-  data,
-  dataDesc,
-  selection,
-  idFilter,
-  parameters,
-  onSelectionChanged,
-  onIdFilterChanged,
-  onParametersChanged,
-}: IVisynViewProps<any, ICosmicViewPluginParams>) {
+export function CosmicViewHeader({ selection, onParametersChanged }: any) {
   const options = selection.map((s) => {
     return { value: s, label: s };
   });
@@ -55,7 +33,7 @@ export function CosmicViewHeader({
   );
 }
 
-export const cosmicConfiguration: () => IVisynViewPluginFactory = () => {
+export const cosmicConfiguration: () => any = () => {
   return {
     view: CosmicView,
     tab: null,

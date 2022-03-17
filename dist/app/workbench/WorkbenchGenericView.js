@@ -11,16 +11,16 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
+    var _a;
     const [editOpen, setEditOpen] = useState(true);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
-    const plugin = PluginRegistry.getInstance().getVisynPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
+    const plugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
     const { value: viewPlugin } = useAsync(React.useCallback(() => plugin.load().then((p) => {
         p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
         return p;
     }), [plugin, view.uniqueId]), []);
-    const [viewPluginDesc, viewPluginComponents] = viewPlugin ? [viewPlugin.desc, viewPlugin.factory()] : [null, null];
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [EDragTypes.MOVE],
         canDrop: (d) => {
@@ -64,20 +64,20 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                     React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))) : null),
                 React.createElement("span", { className: "view-title row align-items-center m-1" },
                     React.createElement("strong", null, view.name)),
-                (viewPluginComponents === null || viewPluginComponents === void 0 ? void 0 : viewPluginComponents.header) ? (React.createElement(Suspense, { fallback: "Loading.." },
-                    React.createElement(viewPluginComponents.header, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged }))) : null))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+                (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.header) ? (React.createElement(Suspense, { fallback: "Loading.." },
+                    React.createElement(viewPlugin.header, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged }))) : null))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
             React.createElement("span", { className: "view-title row align-items-center m-1" },
-                React.createElement("strong", null, viewPluginDesc === null || viewPluginDesc === void 0 ? void 0 : viewPluginDesc.itemName)))),
+                React.createElement("strong", null, (_a = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _a === void 0 ? void 0 : _a.itemName)))),
         React.createElement("div", { className: "inner d-flex" },
             editOpen && !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc.defaultView) ? ( // do not show chooser for ranking views
             React.createElement("div", { className: "d-flex flex-column" },
                 React.createElement("ul", { className: "nav nav-tabs", id: "myTab", role: "tablist" },
                     React.createElement("li", { className: "nav-item", role: "presentation" },
-                        React.createElement("button", { className: `nav-link ${settingsTabSelected || !viewPlugin || !(viewPluginComponents === null || viewPluginComponents === void 0 ? void 0 : viewPluginComponents.tab) ? 'active' : ''}`, onClick: () => setSettingsTabSelected(true), "data-bs-toggle": "tab", "data-bs-target": "#home", type: "button", role: "tab", "aria-controls": "home", "aria-selected": "true" }, "Views")),
-                    viewPlugin && viewPluginComponents.tab ? (React.createElement("li", { className: "nav-item", role: "presentation" },
+                        React.createElement("button", { className: `nav-link ${settingsTabSelected || !viewPlugin || !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? 'active' : ''}`, onClick: () => setSettingsTabSelected(true), "data-bs-toggle": "tab", "data-bs-target": "#home", type: "button", role: "tab", "aria-controls": "home", "aria-selected": "true" }, "Views")),
+                    viewPlugin && (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? (React.createElement("li", { className: "nav-item", role: "presentation" },
                         React.createElement("button", { className: `nav-link ${!settingsTabSelected ? 'active' : ''}`, onClick: () => setSettingsTabSelected(false), "data-bs-toggle": "tab", "data-bs-target": "#profile", type: "button", role: "tab", "aria-controls": "profile", "aria-selected": "false" }, "Settings"))) : null),
                 React.createElement("div", { className: "h-100 tab-content viewTabPanel", style: { width: '220px' } },
-                    React.createElement("div", { className: `h-100 tab-pane ${settingsTabSelected || !viewPlugin || !(viewPluginComponents === null || viewPluginComponents === void 0 ? void 0 : viewPluginComponents.tab) ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "settings-tab" },
+                    React.createElement("div", { className: `h-100 tab-pane ${settingsTabSelected || !viewPlugin || !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "settings-tab" },
                         React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
                                 dispatch(setView({
                                     workbenchIndex,
@@ -86,11 +86,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                                     viewName: newView.name,
                                 }));
                             }, isEmbedded: false })),
-                    viewPlugin && viewPluginComponents.tab ? (React.createElement("div", { className: `tab-pane ${!settingsTabSelected ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "view-tab" },
+                    viewPlugin && (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? (React.createElement("div", { className: `tab-pane ${!settingsTabSelected ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "view-tab" },
                         React.createElement(Suspense, { fallback: "Loading.." },
-                            React.createElement(viewPluginComponents.tab, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged })))) : null))) : null,
-            viewPlugin ? (React.createElement(Suspense, { fallback: "Loading.." },
-                React.createElement(viewPluginComponents.view, { desc: viewPluginDesc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged, onDataChanged: onDataChanged, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
+                            React.createElement(viewPlugin.tab, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged })))) : null))) : null,
+            (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.view) ? (React.createElement(Suspense, { fallback: "Loading.." },
+                React.createElement(viewPlugin.view, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged, onDataChanged: onDataChanged, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

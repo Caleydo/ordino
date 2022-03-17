@@ -5,14 +5,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, ResolveNow, FindViewUtils, } from 'tdp_core';
+import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, ResolveNow, } from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 // eslint-disable-next-line import/extensions
 import 'jquery.scrollto/jquery.scrollTo.js';
 import { MODE_ANIMATION_TIME } from './constants';
 function generateHash(desc, selection) {
-    const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.range.toString()}`;
+    const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
     return `${desc.id}_${s}`;
 }
 export class ViewWrapper extends EventHandler {
@@ -42,7 +42,7 @@ export class ViewWrapper extends EventHandler {
          * @param newSelection
          */
         this.listenerItemSelect = (event, oldSelection, newSelection) => {
-            this.chooseNextViews(newSelection.idtype, newSelection.range);
+            this.chooseNextViews(newSelection.idtype, newSelection.ids);
             this.fire(AView.EVENT_ITEM_SELECT, oldSelection, newSelection);
         };
         /**
@@ -183,7 +183,7 @@ export class ViewWrapper extends EventHandler {
         // turn listener off, to prevent an infinite event loop
         this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
         return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
-            this.chooseNextViews(sel.idtype, sel.range);
+            this.chooseNextViews(sel.idtype, sel.ids);
             // turn listener on again
             this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
         });
@@ -236,18 +236,19 @@ export class ViewWrapper extends EventHandler {
     /**
      * Decide if a chooser for the next view should be shown and if so, which next views are available
      * @param idtype
-     * @param range
+     * @param selection
      */
-    chooseNextViews(idtype, range) {
+    chooseNextViews(idtype, selection) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
+        const isSelNone = (selection === null || selection === void 0 ? void 0 : selection.length) === 0;
         // show chooser if selection available
-        this.$chooser.classed('hidden', range.isNone);
-        if (range.isNone) {
+        this.$chooser.classed('hidden', isSelNone);
+        if (isSelNone) {
             this.$chooser.selectAll('button').classed('active', false);
         }
-        FindViewUtils.findViews(idtype, range).then((views) => {
-            const groups = FindViewUtils.groupByCategory(views);
+        ViewUtils.findViews(idtype, selection).then((views) => {
+            const groups = ViewUtils.groupByCategory(views);
             const $categories = this.$chooser.selectAll('div.category').data(groups);
             $categories
                 .enter()
@@ -260,14 +261,14 @@ export class ViewWrapper extends EventHandler {
             // sort data that buttons inside groups are sorted
             const $buttons = $categories.selectAll('button').data((d) => d.views);
             $buttons.enter().append('button').classed('btn', true);
-            $buttons.attr('data-viewid', (d) => d.v.id);
+            $buttons.attr('data-viewid', (d) => d.id);
             $buttons
-                .text((d) => d.v.name)
-                .attr('disabled', (d) => (d.v.mockup || !d.enabled ? 'disabled' : null))
+                .text((d) => d.name)
+                .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))
                 .on('click', function (d) {
                 $buttons.classed('active', false);
                 d3.select(this).classed('active', true);
-                that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.v.id, idtype, range);
+                that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.id, idtype, selection);
             });
             $buttons.exit().remove();
         });

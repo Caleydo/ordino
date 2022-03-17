@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { PluginRegistry, ParseRangeUtils, EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
+import { PluginRegistry, EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from './base/extensions';
 import { EP_ORDINO_LOGO } from './base';
 export default function (registry) {
@@ -35,7 +35,7 @@ export default function (registry) {
         analytics: {
             category: 'view',
             action: 'setSelection',
-            value: (node) => ParseRangeUtils.parseRangeLike(node.parameter.range).dim(0).length,
+            value: (node) => { var _a; return ((_a = node.parameter.selection) === null || _a === void 0 ? void 0 : _a.length) || 0; },
         },
     });
     registry.push('actionCompressor', 'targidCreateRemoveCompressor', () => import('./internal/cmds').then((c) => c.CmdUtils), {

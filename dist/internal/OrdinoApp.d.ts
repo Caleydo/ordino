@@ -6,10 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import { ICmdResult, IObjectRef, ProvenanceGraph, IDType, CLUEGraphManager, Range, AppHeader } from 'tdp_core';
+import { ICmdResult } from 'tdp_core';
+import { IObjectRef, ProvenanceGraph, IDType } from 'tdp_core';
+import { CLUEGraphManager } from 'tdp_core';
+import { AppHeader } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
+import { IOrdinoApp } from './IOrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from './constants';
-import type { IOrdinoApp } from './IOrdinoApp';
 interface IOrdinoAppProps {
     graph: ProvenanceGraph;
     graphManager: CLUEGraphManager;
@@ -92,7 +95,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @param options
      */
     private updateItemSelection;
-    push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
+    push(viewId: string, idtype: IDType, selection: string[], options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
     /**
      * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.

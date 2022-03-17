@@ -5,17 +5,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph, Range, IDType, ISelection } from 'tdp_core';
+import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph, IDType, ISelection } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { IOrdinoApp } from './IOrdinoApp';
 export declare class CmdUtils {
-    static asSelection(data: {
-        idtype: string;
-        selection: string;
-    }): ISelection;
+    static asSelection(data: ReturnType<typeof CmdUtils['serializeSelection']>): ISelection;
     static serializeSelection(selection?: ISelection): {
         idtype: string;
-        selection: string;
+        selection: string[];
     };
     /**
      * Creates a view instance and wraps the instance with the inverse action in a CLUE command
@@ -51,7 +48,7 @@ export declare class CmdUtils {
      * @param options
      * @returns {IAction}
      */
-    static createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: Range, options?: any, itemSelection?: ISelection): IAction;
+    static createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: string[], options?: any, itemSelection?: ISelection): IAction;
     /**
      * Removes a view and adds a CLUE command view to the provenance graph
      * @param app
@@ -70,10 +67,15 @@ export declare class CmdUtils {
      * @param options
      * @returns {IAction}
      */
-    static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: Range, options?: any, itemSelection?: ISelection): IAction;
-    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: any): any;
-    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): any;
-    static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range): IAction;
+    static replaceView<T extends IOrdinoApp>(app: IObjectRef<T>, existingView: IObjectRef<ViewWrapper>, viewId: string, idtype: IDType, selection: string[], options?: any, itemSelection?: ISelection): IAction;
+    static setSelectionImpl(inputs: IObjectRef<any>[], parameter: {
+        idtype?: string;
+        ids?: string[];
+    }): Promise<{
+        inverse: IAction;
+    }>;
+    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): IAction;
+    static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): IAction;
     /**
      * Factory function that compresses a series of action to fewer one.
      * Note: This function is referenced as `actionCompressor` in the package.json

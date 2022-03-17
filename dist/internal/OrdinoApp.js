@@ -6,11 +6,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import { BaseUtils, NodeUtils, AppContext, ObjectRefUtils, AView, TDPApplicationUtils, TourUtils, EViewMode, UserSession, } from 'tdp_core';
-// eslint-disable-next-line import/no-cycle
-import { StartMenuComponent } from './menu/StartMenu';
+import { BaseUtils, NodeUtils, AppContext } from 'tdp_core';
+import { ObjectRefUtils } from 'tdp_core';
+import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
+import { EViewMode } from 'tdp_core';
+import { UserSession } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
+// eslint-disable-next-line import/no-cycle
+import { StartMenuComponent } from './menu/StartMenu';
 import { EStartMenuMode, EStartMenuOpen, GraphContext, OrdinoContext } from './constants';
 import { OrdinoBreadcrumbs } from './components/navigation';
 /**
@@ -180,10 +184,11 @@ export class OrdinoApp extends React.Component {
      * @param options
      */
     updateItemSelection(viewWrapper, oldSelection, newSelection, options) {
+        var _a;
         // just update the selection for the last open view
         if (this.lastView === viewWrapper) {
-            this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.range), {
-                inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.range),
+            this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.ids), {
+                inverse: CmdUtils.setSelection(viewWrapper.ref, oldSelection.idtype, oldSelection.ids),
             });
             // check last view and if it will stay open for the new given selection
         }
@@ -191,10 +196,10 @@ export class OrdinoApp extends React.Component {
             const i = this.state.views.indexOf(viewWrapper);
             const right = this.state.views[i + 1];
             // update selection with the last open (= right) view
-            if (right === this.lastView && right.matchSelectionLength(newSelection.range.dim(0).length)) {
+            if (right === this.lastView && right.matchSelectionLength(((_a = newSelection.ids) === null || _a === void 0 ? void 0 : _a.length) || 0)) {
                 right.setParameterSelection(newSelection);
-                this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.range), {
-                    inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.range),
+                this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.ids), {
+                    inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.ids),
                 });
                 // the selection does not match with the last open (= right) view --> close view
             }

@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { IRegistry, PluginRegistry, ParseRangeUtils, ActionNode, ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
+import { IRegistry, PluginRegistry, ActionNode, ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
 
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from './base/extensions';
 import { EP_ORDINO_LOGO, IOrdinoLogoDesc } from './base';
@@ -41,7 +41,7 @@ export default function (registry: IRegistry) {
     analytics: {
       category: 'view',
       action: 'setSelection',
-      value: (node: ActionNode) => ParseRangeUtils.parseRangeLike(node.parameter.range).dim(0).length, // retrieve the number of selected items
+      value: (node: ActionNode) => node.parameter.selection?.length || 0,
     },
   });
 

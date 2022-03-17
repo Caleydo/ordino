@@ -16,13 +16,10 @@ import {
   IObjectRef,
   ProvenanceGraph,
   PluginRegistry,
-  Range,
-  ParseRangeUtils,
   IDTypeManager,
   IDType,
   EXTENSION_POINT_TDP_VIEW,
   ISelection,
-  Compression,
 } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { IOrdinoApp } from './IOrdinoApp';
@@ -33,18 +30,18 @@ const CMD_REPLACE_VIEW = 'targidReplaceView';
 const CMD_SET_SELECTION = 'targidSetSelection';
 
 export class CmdUtils {
-  static asSelection(data: { idtype: string; selection: string }): ISelection {
+  static asSelection(data: ReturnType<typeof CmdUtils['serializeSelection']>): ISelection {
     return {
-      range: data.selection ? ParseRangeUtils.parseRangeLike(data.selection) : Range.none(),
+      ids: data.selection || [],
       idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null,
     };
   }
 
   static serializeSelection(selection?: ISelection) {
-    if (!selection || !selection.idtype || !selection.range || selection.range.isNone) {
+    if (!selection || !selection.idtype || !selection.ids || selection.ids.length === 0) {
       return null;
     }
-    return { idtype: selection.idtype.id, selection: selection.range.toString() };
+    return { idtype: selection.idtype.id, selection: selection.ids };
   }
 
   /**
@@ -95,7 +92,7 @@ export class CmdUtils {
         inputs[0],
         existingView.desc.id,
         existingView.selection.idtype,
-        existingView.selection.range,
+        existingView.selection.ids,
         existingViewOptions,
         existingView.getItemSelection(),
       ),
@@ -121,7 +118,7 @@ export class CmdUtils {
     const oldParams = {
       viewId: existingView.desc.id,
       idtype: existingView.selection.idtype,
-      selection: existingView.selection.range,
+      selection: existingView.selection.ids,
       itemSelection: existingView.getItemSelection(),
       options: existingViewOptions,
     };
@@ -150,7 +147,14 @@ export class CmdUtils {
    * @param options
    * @returns {IAction}
    */
-  static createView<T extends IOrdinoApp>(app: IObjectRef<T>, viewId: string, idtype: IDType, selection: Range, options?, itemSelection?: ISelection): IAction {
+  static createView<T extends IOrdinoApp>(
+    app: IObjectRef<T>,
+    viewId: string,
+    idtype: IDType,
+    selection: string[],
+    options?,
+    itemSelection?: ISelection,
+  ): IAction {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
     // assert view
     return ActionUtils.action(
@@ -161,7 +165,7 @@ export class CmdUtils {
       {
         viewId,
         idtype: idtype ? idtype.id : null,
-        selection: selection ? selection.toString() : Range.none().toString(),
+        selection: selection || [],
         itemSelection: CmdUtils.serializeSelection(itemSelection),
         options,
       },
@@ -204,7 +208,7 @@ export class CmdUtils {
     existingView: IObjectRef<ViewWrapper>,
     viewId: string,
     idtype: IDType,
-    selection: Range,
+    selection: string[],
     options?,
     itemSelection?: ISelection,
   ): IAction {
@@ -218,34 +222,32 @@ export class CmdUtils {
       {
         viewId,
         idtype: idtype ? idtype.id : null,
-        selection: selection ? selection.toString() : Range.none().toString(),
+        selection: selection || [],
         itemSelection: CmdUtils.serializeSelection(itemSelection),
         options,
       },
     );
   }
 
-  static async setSelectionImpl(inputs: IObjectRef<any>[], parameter) {
+  static async setSelectionImpl(inputs: IObjectRef<any>[], parameter: { idtype?: string; ids?: string[] }) {
     const views: ViewWrapper[] = await Promise.all([inputs[0].v, inputs.length > 1 ? inputs[1].v : null]);
     const view = views[0];
     const target = views[1];
     const idtype = parameter.idtype ? IDTypeManager.getInstance().resolveIdType(parameter.idtype) : null;
-    const range = ParseRangeUtils.parseRangeLike(parameter.range);
+    const ids = parameter.ids || [];
 
     const bak = view.getItemSelection();
-    await Promise.resolve(view.setItemSelection({ idtype, range }));
+    await Promise.resolve(view.setItemSelection({ idtype, ids }));
     if (target) {
-      await Promise.resolve(target.setParameterSelection({ idtype, range }));
+      await Promise.resolve(target.setParameterSelection({ idtype, ids }));
     }
     return {
       inverse:
-        inputs.length > 1
-          ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.range)
-          : CmdUtils.setSelection(inputs[0], bak.idtype, bak.range),
+        inputs.length > 1 ? CmdUtils.setAndUpdateSelection(inputs[0], inputs[1], bak.idtype, bak.ids) : CmdUtils.setSelection(inputs[0], bak.idtype, bak.ids),
     };
   }
 
-  static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+  static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]) {
     // assert view
     return ActionUtils.action(
       ActionMetaData.actionMeta(`Select ${idtype ? idtype.name : 'None'}`, ObjectRefUtils.category.selection, ObjectRefUtils.operation.update),
@@ -254,12 +256,12 @@ export class CmdUtils {
       [view],
       {
         idtype: idtype ? idtype.id : null,
-        range: range.toString(),
+        ids,
       },
     );
   }
 
-  static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, range: Range) {
+  static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]) {
     // assert view
     return ActionUtils.action(
       ActionMetaData.actionMeta(`Select ${idtype ? idtype.name : 'None'}`, ObjectRefUtils.category.selection, ObjectRefUtils.operation.update),
@@ -268,7 +270,7 @@ export class CmdUtils {
       [view, target],
       {
         idtype: idtype ? idtype.id : null,
-        range: range.toString(),
+        ids,
       },
     );
   }
@@ -332,6 +334,12 @@ export class CmdUtils {
   }
 
   static compressSetSelection(path: ActionNode[]) {
-    return Compression.lastConsecutive(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
+    // The compression of selection is incorrect, as the graph relies on a valid "undo" action to be passed.
+    // This undo-action gets the selection from the currently active view, which DOES NOT always have to be the previous node,
+    // but could be a few nodes before that. Imagine 3 selections, you are in state 1 and jump to state 3. The previous will
+    // be the selection from state 1, which IS NOT the previous of state 3, as that would be state 2. When you now jump to state 2,
+    // it undos the action, such that the selection is restored from state 1, but you are now in state 2.
+    // return Compression.lastConsecutive(path, CMD_SET_SELECTION, (p: ActionNode) => `${p.parameter.idtype}@${p.requires[0].id}`);
+    return path;
   }
 }

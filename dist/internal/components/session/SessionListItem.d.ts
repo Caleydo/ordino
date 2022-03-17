@@ -11,3 +11,4 @@ interface ISessionListItemProps {
 }
 export declare function SessionListItem({ desc, selectSession, children }: ISessionListItemProps): JSX.Element;
 export {};
+//# sourceMappingURL=SessionListItem.d.ts.map

@@ -1,6 +1,6 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import { GraphContext } from '../../OrdinoApp';
+import { GraphContext } from '../../constants';
 export function SessionDropzone() {
     const { manager } = React.useContext(GraphContext);
     const onDrop = (acceptedFile) => {
@@ -12,7 +12,7 @@ export function SessionDropzone() {
         };
         reader.readAsText(acceptedFile[0]);
     };
-    return (React.createElement(Dropzone, { multiple: false, maxFiles: 1, accept: '.json', onDrop: onDrop }, ({ getRootProps, getInputProps }) => (React.createElement("section", null,
+    return (React.createElement(Dropzone, { multiple: false, maxFiles: 1, accept: ".json", onDrop: onDrop }, ({ getRootProps, getInputProps }) => (React.createElement("section", null,
         React.createElement("div", Object.assign({}, getRootProps()),
             React.createElement("input", Object.assign({}, getInputProps())),
             React.createElement("div", { className: "session-dropzone" },

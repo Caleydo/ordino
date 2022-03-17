@@ -1,23 +1,19 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
-import { ObjectRefUtils } from 'tdp_core';
+ ******************************************************************* */
+import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, ResolveNow, } from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+// eslint-disable-next-line import/extensions
 import 'jquery.scrollto/jquery.scrollTo.js';
-import { EventHandler } from 'tdp_core';
-import { TDPApplicationUtils } from 'tdp_core';
-import { AView } from 'tdp_core';
-import { EViewMode, ViewUtils } from 'tdp_core';
-import { ResolveNow } from 'tdp_core';
 import { MODE_ANIMATION_TIME } from './constants';
-function generate_hash(desc, selection) {
-    const s = (selection.idtype ? selection.idtype.id : '') + 'r' + (selection.ids);
-    return desc.id + '_' + s;
+function generateHash(desc, selection) {
+    const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
+    return `${desc.id}_${s}`;
 }
 export class ViewWrapper extends EventHandler {
     /**
@@ -65,7 +61,7 @@ export class ViewWrapper extends EventHandler {
             this.scrollIntoView();
         };
         // create provenance reference
-        this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generate_hash(plugin.desc, selection));
+        this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection));
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
         this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
@@ -79,7 +75,7 @@ export class ViewWrapper extends EventHandler {
      * @param options
      */
     init(graph, selection, plugin, options) {
-        //console.log(graph, generate_hash(plugin.desc, selection, options));
+        // console.log(graph, generate_hash(plugin.desc, selection, options));
         // create (inner) view context
         this.context = ViewUtils.createContext(graph, plugin.desc, this.ref);
     }
@@ -90,33 +86,32 @@ export class ViewWrapper extends EventHandler {
      * @param options
      */
     createView(selection, itemSelection, plugin, options) {
-        this.$node = this.$viewWrapper.append('div')
-            .classed('view', true)
-            .datum(this);
-        this.$chooser = this.$viewWrapper.append('div')
+        this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
+        this.$chooser = this.$viewWrapper
+            .append('div')
             .classed('chooser', true)
             .classed('hidden', true) // closed by default --> opened on selection (@see this.chooseNextViews())
             .datum(this);
-        const $viewActions = this.$node.append('div')
-            .attr('class', 'view-actions');
-        $viewActions.append('button')
+        const $viewActions = this.$node.append('div').attr('class', 'view-actions');
+        $viewActions
+            .append('button')
             .attr('type', 'button')
             .attr('class', 'btn-close')
             .attr('aria-label', 'Close')
             .on('click', (d) => {
             this.remove();
         });
-        const $params = this.$node.append('div')
-            .attr('class', 'parameters container-fluid ps-0 pe-0')
-            .datum(this);
-        const $inner = this.$node.append('div')
-            .classed('inner', true);
+        const $params = this.$node.append('div').attr('class', 'parameters container-fluid ps-0 pe-0').datum(this);
+        const $inner = this.$node.append('div').classed('inner', true);
         this.instance = plugin.factory(this.context, selection, $inner.node(), options, plugin.desc);
-        return ResolveNow.resolveImmediately(this.instance.init($params.node(), this.onParameterChange.bind(this))).then(() => {
+        return ResolveNow.resolveImmediately(this.instance.init($params.node(), this.onParameterChange.bind(this)))
+            .then(() => {
             if (itemSelection) {
                 return this.instance.setItemSelection(itemSelection);
             }
-        }).then(() => {
+            return undefined;
+        })
+            .then(() => {
             this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
             this.instance.on(AView.EVENT_UPDATE_ENTRY_POINT, this.listenerUpdateEntryPoint);
             this.instance.on(AView.EVENT_LOADING_FINISHED, this.scrollIntoViewListener);
@@ -168,10 +163,10 @@ export class ViewWrapper extends EventHandler {
         if (isInitializion) {
             if (this.firstTime) {
                 return this.context.graph.pushWithResult(TDPApplicationUtils.setParameter(this.ref, name, value, previousValue), {
-                    inverse: TDPApplicationUtils.setParameter(this.ref, name, previousValue, value)
+                    inverse: TDPApplicationUtils.setParameter(this.ref, name, previousValue, value),
                 });
             }
-            return; // dummy;
+            return undefined; // dummy;
         }
         return this.context.graph.push(TDPApplicationUtils.setParameter(this.ref, name, value, previousValue));
     }
@@ -195,7 +190,7 @@ export class ViewWrapper extends EventHandler {
     }
     setParameterSelection(selection) {
         if (ViewUtils.isSameSelection(this.selection, selection)) {
-            return;
+            return undefined;
         }
         this.selection = selection;
         return ResolveNow.resolveImmediately(this.instance.setInputSelection(selection));
@@ -206,14 +201,6 @@ export class ViewWrapper extends EventHandler {
     matchSelectionLength(length) {
         return ViewUtils.matchLength(this.desc.selection, length) || (ViewUtils.showAsSmallMultiple(this.desc) && length > 1);
     }
-    set mode(mode) {
-        if (this._mode === mode) {
-            return;
-        }
-        const b = this._mode;
-        this.modeChanged(mode);
-        this.fire(ViewWrapper.EVENT_MODE_CHANGED, this._mode = mode, b);
-    }
     modeChanged(mode) {
         // update css classes
         this.$viewWrapper
@@ -221,8 +208,7 @@ export class ViewWrapper extends EventHandler {
             .classed('t-focus', mode === EViewMode.FOCUS)
             .classed('t-context', mode === EViewMode.CONTEXT)
             .classed('t-active', mode === EViewMode.CONTEXT || mode === EViewMode.FOCUS);
-        this.$chooser
-            .classed('t-hide', mode === EViewMode.HIDDEN);
+        this.$chooser.classed('t-hide', mode === EViewMode.HIDDEN);
         // trigger modeChanged
         this.instance.modeChanged(mode);
         this.updateAfterAnimation();
@@ -253,6 +239,7 @@ export class ViewWrapper extends EventHandler {
      * @param selection
      */
     chooseNextViews(idtype, selection) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
         const isSelNone = (selection === null || selection === void 0 ? void 0 : selection.length) === 0;
         // show chooser if selection available
@@ -263,15 +250,21 @@ export class ViewWrapper extends EventHandler {
         ViewUtils.findViews(idtype, selection).then((views) => {
             const groups = ViewUtils.groupByCategory(views);
             const $categories = this.$chooser.selectAll('div.category').data(groups);
-            $categories.enter().append('div').classed('category', true).append('header').append('h1').text((d) => d.label);
+            $categories
+                .enter()
+                .append('div')
+                .classed('category', true)
+                .append('header')
+                .append('h1')
+                .text((d) => d.label);
             $categories.exit().remove();
             // sort data that buttons inside groups are sorted
             const $buttons = $categories.selectAll('button').data((d) => d.views);
-            $buttons.enter().append('button')
-                .classed('btn', true);
+            $buttons.enter().append('button').classed('btn', true);
             $buttons.attr('data-viewid', (d) => d.id);
-            $buttons.text((d) => d.name)
-                .attr('disabled', (d) => d.mockup || !d.enabled ? 'disabled' : null)
+            $buttons
+                .text((d) => d.name)
+                .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))
                 .on('click', function (d) {
                 $buttons.classed('active', false);
                 d3.select(this).classed('active', true);
@@ -282,7 +275,7 @@ export class ViewWrapper extends EventHandler {
     }
     setActiveNextView(viewId) {
         const chooser = this.$chooser.node();
-        //disable old don't use d3 to don't screw up the data binding
+        // disable old don't use d3 to don't screw up the data binding
         Array.from(chooser.querySelectorAll('button.active')).forEach((d) => d.classList.remove('active'));
         if (viewId) {
             const button = chooser.querySelector(`button[data-viewid="${viewId}"]`);
@@ -296,6 +289,14 @@ export class ViewWrapper extends EventHandler {
     }
     get mode() {
         return this._mode;
+    }
+    set mode(mode) {
+        if (this._mode === mode) {
+            return;
+        }
+        const b = this._mode;
+        this.modeChanged(mode);
+        this.fire(ViewWrapper.EVENT_MODE_CHANGED, (this._mode = mode), b);
     }
     get node() {
         return this.$node.node();

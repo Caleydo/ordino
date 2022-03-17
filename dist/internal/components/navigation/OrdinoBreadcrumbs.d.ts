@@ -18,3 +18,4 @@ interface IOrdinoBreadcrumbsProps {
  */
 export declare function OrdinoBreadcrumbs(props: IOrdinoBreadcrumbsProps): JSX.Element;
 export {};
+//# sourceMappingURL=OrdinoBreadcrumbs.d.ts.map

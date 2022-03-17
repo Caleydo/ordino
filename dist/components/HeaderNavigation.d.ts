@@ -12,3 +12,4 @@ interface IHeaderNavigationProps {
 }
 export declare function HeaderNavigation({ fixed, bg }: IHeaderNavigationProps): JSX.Element;
 export {};
+//# sourceMappingURL=HeaderNavigation.d.ts.map

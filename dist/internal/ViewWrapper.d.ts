@@ -1,15 +1,12 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
-import { IObjectRef, ProvenanceGraph } from 'tdp_core';
+ ******************************************************************* */
+import { IObjectRef, ProvenanceGraph, EventHandler, IPlugin, IPluginDesc, EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
 import 'jquery.scrollto/jquery.scrollTo.js';
-import { EventHandler } from 'tdp_core';
-import { IPlugin, IPluginDesc } from 'tdp_core';
-import { EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;
     selection: ISelection;
@@ -104,7 +101,6 @@ export declare class ViewWrapper extends EventHandler {
     setParameterSelection(selection: ISelection): PromiseLike<void>;
     getParameterSelection(): ISelection;
     matchSelectionLength(length: number): boolean;
-    set mode(mode: EViewMode);
     protected modeChanged(mode: EViewMode): void;
     private updateAfterAnimation;
     private scrollIntoView;
@@ -117,9 +113,11 @@ export declare class ViewWrapper extends EventHandler {
     setActiveNextView(viewId?: string): void;
     get desc(): import("tdp_core").IViewPluginDesc;
     get mode(): EViewMode;
+    set mode(mode: EViewMode);
     get node(): Element;
     remove(): void;
     focus(): void;
     static createViewWrapper(graph: ProvenanceGraph, selection: ISelection, itemSelection: ISelection | null, parent: Element, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<ViewWrapper>;
     static replaceViewWrapper(existingView: ViewWrapper, selection: ISelection, itemSelection: ISelection | null, plugin: IPluginDesc, firstTime: boolean, options?: any): Promise<any>;
 }
+//# sourceMappingURL=ViewWrapper.d.ts.map

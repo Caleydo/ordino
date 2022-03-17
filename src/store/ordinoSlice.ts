@@ -14,6 +14,7 @@ export interface IWorkbenchView {
   id: string;
   // this id is generated on creation and is simply a unique value used to differentiate views that may have the same id.
   uniqueId: string;
+  name: string;
   filters: string[];
   parameters?: any;
 }
@@ -24,10 +25,13 @@ export interface IOrdinoAppState {
    */
   workbenches: IWorkbench[];
 
+  colorMap: { [key: string]: string };
+
   /**
    * Id of the current focus view
    */
   focusViewIndex: number;
+  sidebarOpen: boolean;
 }
 
 export enum EWorkbenchDirection {
@@ -35,11 +39,18 @@ export enum EWorkbenchDirection {
   HORIZONTAL = 'horizontal',
 }
 
+export interface ISelectedMapping {
+  entityId: string;
+  columnSelection: string;
+}
+
 export interface IWorkbench {
   /**
    * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
    */
   views: IWorkbenchView[];
+
+  selectedMappings: ISelectedMapping[];
 
   viewDirection: EWorkbenchDirection;
 
@@ -59,6 +70,8 @@ export interface IWorkbench {
    * List selected rows
    */
   selection: IRow['_visyn_id'][];
+  detailsOpen: boolean;
+  addWorkbenchOpen: boolean;
 }
 
 interface IBaseState {
@@ -97,6 +110,8 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 const initialState: IOrdinoAppState = {
   workbenches: [],
   focusViewIndex: 0,
+  sidebarOpen: false,
+  colorMap: {},
 };
 
 const ordinoSlice = createSlice({
@@ -107,17 +122,44 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
+    createColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
+      state.colorMap = action.payload.colorMap;
+    },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
       state.workbenches.push(action.payload);
     },
     addView(state, action: PayloadAction<{ workbenchIndex: number; view: IWorkbenchView }>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
+    setSidebarOpen(state, action: PayloadAction<{ open: boolean }>) {
+      state.sidebarOpen = action.payload.open;
+    },
     setViewParameters(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; parameters: any }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
-    setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string }>) {
+    changeSelectedMappings(state, action: PayloadAction<{ workbenchIndex: number; newMapping: ISelectedMapping }>) {
+      if (
+        !state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
+          return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
+        })
+      ) {
+        state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+      } else {
+        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter(
+          (m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection),
+        );
+      }
+    },
+    setDetailsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
+    },
+    setAddWorkbenchOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      console.log('in the slice add open');
+      state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
+    },
+    setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string; viewName: string }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
+      state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
     },
     addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
       state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
@@ -152,17 +194,18 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(action.payload.workbenchIndex);
       state.workbenches.push(action.payload.newWorkbench);
     },
-    addSelection(state, action: PayloadAction<{ newSelection: string[] }>) {
-      state.workbenches[state.focusViewIndex].selection = action.payload.newSelection;
+    addSelection(state, action: PayloadAction<{ entityId: string; newSelection: string[] }>) {
+      console.log('in the add selection callback', action.payload.entityId, action.payload.newSelection);
+
+      state.workbenches.find((w) => w.entityId.endsWith(action.payload.entityId)).selection = action.payload.newSelection;
     },
-    addFilter(state, action: PayloadAction<{ viewId: string; filter: string[] }>) {
-      state.workbenches[state.focusViewIndex].views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
+    addFilter(state, action: PayloadAction<{ entityId: string; viewId: string; filter: string[] }>) {
+      state.workbenches.find((w) => w.entityId === action.payload.entityId).views.find((v) => v.id === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusViewIndex = action.payload.index;
     },
     setWorkbenchData(state, action: PayloadAction<{ entityId: string; data: any[] }>) {
-      console.log(action.payload.data, action.payload.entityId);
       for (const i of action.payload.data) {
         state.workbenches.find((f) => f.entityId.endsWith(action.payload.entityId)).data[i._visyn_id] = i;
       }
@@ -182,7 +225,12 @@ const ordinoSlice = createSlice({
 
 export const {
   addView,
+  createColorMap,
+  changeSelectedMappings,
+  setDetailsOpen,
+  setAddWorkbenchOpen,
   setViewParameters,
+  setSidebarOpen,
   createColumnDescs,
   setView,
   addColumnDesc,

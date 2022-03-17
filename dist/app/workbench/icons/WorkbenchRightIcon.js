@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
+import { addView, useAppDispatch, useAppSelector } from '../../..';
 import { EDragTypes } from '../utils';
 export function WorkbenchRightIcon({ view }) {
     const dispatch = useAppDispatch();

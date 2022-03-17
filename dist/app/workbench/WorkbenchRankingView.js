@@ -41,9 +41,9 @@ export function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }) {
                         ' ',
                         React.createElement("i", { className: "flex-grow-1 fas fa-bars m-1" }))),
                 React.createElement("span", { className: "view-title row align-items-center m-1" },
-                    React.createElement("strong", null, view.id))))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+                    React.createElement("strong", null, view.name))))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
             React.createElement("span", { className: "view-title row align-items-center m-1" },
-                React.createElement("strong", null, view.id)))),
+                React.createElement("strong", null, view.name)))),
         React.createElement("div", { ref: ref, className: "inner" }),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }

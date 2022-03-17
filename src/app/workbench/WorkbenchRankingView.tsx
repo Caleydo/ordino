@@ -66,14 +66,14 @@ export function WorkbenchRankingView({ workbenchIndex, view, chooserOptions }: I
               </button>
             </div>
             <span className="view-title row align-items-center m-1">
-              <strong>{view.id}</strong>
+              <strong>{view.name}</strong>
             </span>
           </div>
         </>
       ) : (
         <div ref={drag} className="view-parameters d-flex">
           <span className="view-title row align-items-center m-1">
-            <strong>{view.id}</strong>
+            <strong>{view.name}</strong>
           </span>
         </div>
       )}

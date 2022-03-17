@@ -41,6 +41,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }) {
                         workbenchIndex,
                         viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
                         viewId: newView.id,
+                        viewName: newView.name,
                     }));
                 }, isEmbedded: false }),
             React.createElement("div", { className: "w-100 d-flex justify-content-center align-items-center" },

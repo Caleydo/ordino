@@ -4,7 +4,6 @@ import { ChevronButtons } from './ChevronButtons';
 import { IWorkbench } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
 import { ShowDetailsSwitch } from './ShowDetailsSwitch';
-import { TempChevronJumpButtons } from './TempChevronJumpButtons';
 import { useAppSelector } from '../../hooks/useAppSelector';
 
 export interface ISingleBreadcrumbProps {
@@ -26,7 +25,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     if (ref.current) {
       setWidth(ref.current.offsetWidth);
     }
-  }, []);
+  }, [ref?.current?.offsetWidth]);
 
   return (
     <div className="position-relative" ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
@@ -46,8 +45,12 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
           </>
         ) : null}
       </div>
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ right: '20px' }}>
-        {workbench && workbench.index === ordino.focusViewIndex ? <TempChevronJumpButtons color={color} /> : null}
+      <div className="position-absolute chevronDiv top-50 end-0 translate-middle d-flex" style={{ right: first ? '8px' : '16px' }}>
+        {workbench && workbench.index === ordino.focusViewIndex ? (
+          <button type="button" className="btn btn-icon-light btn-sm align-middle m-1">
+            <i className="flex-grow-1 fas fa-close" />
+          </button>
+        ) : null}
       </div>
       <ChevronBreadcrumb color={color} width={width} first={first} />
     </div>

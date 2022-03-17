@@ -1,4 +1,4 @@
-import { IWorkbenchView } from '../../../store/ordinoSlice';
+import { IWorkbenchView } from '../../..';
 export interface IWorkbenchIconProps {
     view: IWorkbenchView;
 }

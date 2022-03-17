@@ -1,6 +1,8 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
+import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 
 export interface IWorkbenchViewsProps {
@@ -135,5 +137,25 @@ export function WorkbenchViews({ index, onlyRanking = false }: IWorkbenchViewsPr
     );
   }
 
-  return <div className="position-relative workbenchWrapper d-flex flex-grow-1">{wb}</div>;
+  return (
+    <div className="position-relative workbenchWrapper d-flex flex-grow-1">
+      {onlyRanking ? (
+        wb
+      ) : (
+        <div className="d-flex flex-col w-100">
+          {ordino.workbenches[index].detailsOpen ? (
+            <div className="d-flex" style={{ width: '400px' }}>
+              <DetailsSidebar workbench={ordino.workbenches[index]} />
+            </div>
+          ) : null}
+          <div style={{ flexGrow: 10 }}>{wb}</div>
+          {ordino.workbenches[index].addWorkbenchOpen ? (
+            <div className="d-flex" style={{ width: '400px' }}>
+              <AddWorkbenchSidebar workbench={ordino.workbenches[index]} />
+            </div>
+          ) : null}
+        </div>
+      )}
+    </div>
+  );
 }

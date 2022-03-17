@@ -1,6 +1,8 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
+import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 export function WorkbenchViews({ index, onlyRanking = false }) {
     const ordino = useAppSelector((state) => state.ordino);
@@ -37,6 +39,11 @@ export function WorkbenchViews({ index, onlyRanking = false }) {
                 React.createElement(WorkbenchSingleView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }),
                 React.createElement(WorkbenchSingleView, { key: `wbView${views[2].uniqueId}`, workbenchIndex: index, view: views[2] }))));
     }
-    return React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, wb);
+    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" }, onlyRanking ? (wb) : (React.createElement("div", { className: "d-flex flex-col w-100" },
+        ordino.workbenches[index].detailsOpen ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
+            React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] }))) : null,
+        React.createElement("div", { style: { flexGrow: 10 } }, wb),
+        ordino.workbenches[index].addWorkbenchOpen ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
+            React.createElement(AddWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null))));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

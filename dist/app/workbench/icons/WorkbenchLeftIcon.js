@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useDrop } from 'react-dnd';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { useAppSelector } from '../../../hooks/useAppSelector';
-import { addView } from '../../../store/ordinoSlice';
+import { addView, useAppDispatch, useAppSelector } from '../../..';
 import { EDragTypes } from '../utils';
 export function WorkbenchLeftIcon({ view }) {
     const dispatch = useAppDispatch();

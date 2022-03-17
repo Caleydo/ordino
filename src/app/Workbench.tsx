@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../hooks';
 import { IWorkbench } from '../store/ordinoSlice';
-import { colorPalette } from './Breadcrumb';
 import { WorkbenchViews } from './workbench/WorkbenchViews';
 
 export enum EWorkbenchType {
@@ -24,7 +23,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
     <div
       ref={ref}
       className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`}
-      style={{ borderTopColor: colorPalette[workbench.index] }}
+      style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
       <WorkbenchViews index={workbench.index} onlyRanking={type === EWorkbenchType.CONTEXT} />
     </div>

@@ -22,7 +22,7 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
         id: c.label + c._id,
       },
       values: () =>
-        filteredData.map((d, i) => {
+        filteredData.map((d) => {
           return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
         }),
       type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,

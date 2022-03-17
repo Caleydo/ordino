@@ -74,6 +74,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
                 workbenchIndex,
                 viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
                 viewId: newView.id,
+                viewName: newView.name,
               }),
             );
           }}

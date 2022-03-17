@@ -8,7 +8,6 @@ export interface IVisynHeaderProps {
   BurgerSidebar?: ComponentType;
   extensions?: IVisynHeaderComponents;
   burgerMenuEnabled?: boolean;
-  configMenuEnabled?: boolean;
 }
 
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }: IVisynHeaderProps) {

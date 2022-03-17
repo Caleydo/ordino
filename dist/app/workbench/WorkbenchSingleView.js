@@ -9,6 +9,7 @@ export function getVisynView(entityId) {
 }
 export function WorkbenchSingleView({ workbenchIndex, view }) {
     const ordino = useAppSelector((state) => state.ordino);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
     const { value } = useAsync(views, []);
     const availableViews = useMemo(() => {

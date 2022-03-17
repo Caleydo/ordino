@@ -21,7 +21,7 @@ import { EDragTypes } from './utils';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
-import {isVisynRankingViewDesc} from './interfaces';
+import { isVisynRankingViewDesc } from './interfaces';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;

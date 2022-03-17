@@ -56,7 +56,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      console.log(v)
+      console.log(v);
       if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
         entities.push({ idType: v.itemIDType, label: v.group.name });
       }

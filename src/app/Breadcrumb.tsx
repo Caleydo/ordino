@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { CollapsedBreadcrumb } from '../components/breadcrumb/CollapsedBreadcrumb';
 import { SingleBreadcrumb } from '../components/breadcrumb/SingleBreadcrumb';
 import { useAppDispatch } from '../hooks/useAppDispatch';
@@ -82,7 +82,9 @@ export function Breadcrumb() {
             color="gray"
             flexWidth={3}
             onClick={() =>
-              dispatch(setAddWorkbenchOpen({ workbenchIndex: ordino.focusWorkbenchIndex, open: !ordino.workbenches[ordino.focusWorkbenchIndex].addWorkbenchOpen }))
+              dispatch(
+                setAddWorkbenchOpen({ workbenchIndex: ordino.focusWorkbenchIndex, open: !ordino.workbenches[ordino.focusWorkbenchIndex].addWorkbenchOpen }),
+              )
             }
             first={false}
           />

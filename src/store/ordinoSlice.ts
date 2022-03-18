@@ -133,7 +133,6 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 // }
 
 // TODO remove?
-const containsView = (workbench: IWorkbench, viewId: string) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
 
 const initialState: IOrdinoAppState = {
   workbenches: [],
@@ -154,7 +153,7 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
-    // TODO probably `setColorMap` is better, since this function does not actually create the color map, right? 
+    // TODO probably `setColorMap` is better, since this function does not actually create the color map, right?
     createColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
       state.colorMap = action.payload.colorMap;
     },
@@ -174,7 +173,7 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
     changeSelectedMappings(state, action: PayloadAction<{ workbenchIndex: number; newMapping: ISelectedMapping }>) {
-      // TODO consider using intermediate variables to avoid long repetitive chains and 'document' the piece of code with a variable name 
+      // TODO consider using intermediate variables to avoid long repetitive chains and 'document' the piece of code with a variable name
       const currentWorkbench = state.workbenches[action.payload.workbenchIndex];
       if (
         !currentWorkbench.selectedMappings.find((m) => {
@@ -247,6 +246,7 @@ const ordinoSlice = createSlice({
       state.focusWorkbenchIndex = action.payload.index;
     },
 
+    // TODO should the type for `data` not match the one above and be `data: { [key: string]: IRow }` ?
     setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: any[] }>) {
       const { workbenchIndex, data } = action.payload;
       for (const row of data) {
@@ -255,7 +255,7 @@ const ordinoSlice = createSlice({
     },
 
     addScoreColumn(state, action: PayloadAction<{ workbenchIndex: number; desc: IColumnDesc & { [key: string]: any }; data: any[] }>) {
-      const { workbenchIndex, desc, data } = action.payload; // FIXME `desc` overrides the `desc` from the function parameter -> rename one of them 
+      const { workbenchIndex, desc, data } = action.payload; // FIXME `desc` overrides the `desc` from the function parameter -> rename one of them
       state.workbenches[workbenchIndex].columnDescs.push(desc);
       for (const row of data) {
         const dataRow = state.workbenches[workbenchIndex].data[row.id];

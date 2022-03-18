@@ -15,7 +15,7 @@ export function ShowDetailsSwitch({ height = 30 }: IShowDetailsSwitchProps) {
     <div>
       <button
         type="button"
-        onClick={() => dispatch(setDetailsOpen({ workbenchIndex: ordino.focusViewIndex, open: !ordino.workbenches[ordino.focusViewIndex].detailsOpen }))}
+        onClick={() => dispatch(setDetailsOpen({ workbenchIndex: ordino.focusWorkbenchIndex, open: !ordino.workbenches[ordino.focusWorkbenchIndex].detailsOpen }))}
         className="btn btn-icon-light align-middle"
       >
         <i className="flex-grow-1 fas fa-bars m-1" />

@@ -48,7 +48,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
 
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-      {workbenchIndex === ordino.focusViewIndex ? (
+      {workbenchIndex === ordino.focusWorkbenchIndex ? (
         <>
           <div className="view-actions">
             <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">

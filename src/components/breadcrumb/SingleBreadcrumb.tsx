@@ -36,10 +36,10 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     <div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
       <div className="position-absolute chevronDiv top-50 start-50 translate-middle d-flex">
         {workbench ? (
-          workbench.index === ordino.focusViewIndex ? (
+          workbench.index === ordino.focusWorkbenchIndex ? (
             <FilterAndSelected />
           ) : (
-            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusWorkbenchIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
           )
         ) : (
           <i className="flex-grow-1 fas fa-plus" />
@@ -47,15 +47,15 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
       </div>
 
       <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: first ? (workbench.index > 0 ? '0px' : '20px') : '4px' }}>
-        {workbench && workbench.index === ordino.focusViewIndex ? (
+        {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
           <>
             {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
-            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusWorkbenchIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
           </>
         ) : null}
       </div>
       <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ right: '8px' }}>
-        {workbench && workbench.index === ordino.focusViewIndex ? (
+        {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
           <>
             <AddViewButton color="white" />
             {/* <button type="button" className="btn btn-icon-light btn-sm align-middle m-1">

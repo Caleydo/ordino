@@ -75,7 +75,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusViewIndex,
+                                        workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: map.entity },
                                       }),
                                     )

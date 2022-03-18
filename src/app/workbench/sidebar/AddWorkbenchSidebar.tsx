@@ -128,7 +128,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                       }),
                     );
                     setTimeout(() => {
-                      dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                      dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
                     }, 0);
                   }}
                 >

@@ -25,12 +25,19 @@ export interface IOrdinoAppState {
    */
   workbenches: IWorkbench[];
 
+  /**
+   * TODO describe what is the key and what the value
+   */
   colorMap: { [key: string]: string };
 
   /**
    * Id of the current focus view
    */
-  focusViewIndex: number;
+  focusWorkbenchIndex: number;
+
+  /**
+   * TODO what exactly is the sidebar? can sidebars be open simultaniously in multiple workbenches or views
+   */
   sidebarOpen: boolean;
 }
 
@@ -50,6 +57,9 @@ export interface IWorkbench {
    */
   views: IWorkbenchView[];
 
+  /**
+   * TODO what is a selected mapping?
+   */
   selectedMappings: ISelectedMapping[];
 
   viewDirection: EWorkbenchDirection;
@@ -65,8 +75,11 @@ export interface IWorkbench {
 
   data: { [key: string]: IRow };
   columnDescs: (IColumnDesc & { [key: string]: any })[];
-  // TODO: how do we store the lineup-specific column descriptions?
+  // TODO: how do we store the lineup-specific column descriptions? give an example?
 
+  /**
+   * TODO what are transition options? are these the entities to other workbenches?
+   */
   transitionOptions: IRow['_visyn_id'][];
 
   /**
@@ -74,7 +87,14 @@ export interface IWorkbench {
    */
   selection: IRow['_visyn_id'][];
 
+  /**
+   * TODO what is details?
+   */
   detailsOpen: boolean;
+
+  /**
+   * TODO how can the workbench itself have an "add workbench open" flag when workbenches are not nested?
+   */
   addWorkbenchOpen: boolean;
 }
 
@@ -86,6 +106,7 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
   state: S;
 }
 
+// TODO remove the following code below?
 // const test = ({
 //   headerOverride = Header,
 // }: {
@@ -111,11 +132,12 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 //   }
 // }
 
+// TODO remove?
 const containsView = (workbench: IWorkbench, viewId: string) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
 
 const initialState: IOrdinoAppState = {
   workbenches: [],
-  focusViewIndex: 0,
+  focusWorkbenchIndex: 0,
   sidebarOpen: false,
   colorMap: {},
 };
@@ -125,11 +147,14 @@ const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
+    // TODO in general: does it make sense to group the reducer functions (e.g., by workbench, views, ...)? or even create multiple variables that are spread-in here.
+
     addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
-      state.focusViewIndex = 0;
+      state.focusWorkbenchIndex = 0;
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
+    // TODO probably `setColorMap` is better, since this function does not actually create the color map, right? 
     createColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
       state.colorMap = action.payload.colorMap;
     },
@@ -149,16 +174,20 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
     changeSelectedMappings(state, action: PayloadAction<{ workbenchIndex: number; newMapping: ISelectedMapping }>) {
+      // TODO consider using intermediate variables to avoid long repetitive chains and 'document' the piece of code with a variable name 
+      const currentWorkbench = state.workbenches[action.payload.workbenchIndex];
       if (
-        !state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
-          return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
+        !currentWorkbench.selectedMappings.find((m) => {
+          const { entityId, columnSelection } = action.payload.newMapping;
+          return m.entityId === entityId && m.columnSelection === columnSelection;
         })
       ) {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+        currentWorkbench.selectedMappings.push(action.payload.newMapping);
       } else {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter(
-          (m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection),
-        );
+        currentWorkbench.selectedMappings = currentWorkbench.selectedMappings.filter((m) => {
+          const { entityId, columnSelection } = action.payload.newMapping;
+          return !(m.entityId === entityId && m.columnSelection === columnSelection);
+        });
       }
     },
     setDetailsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
@@ -181,7 +210,7 @@ const ordinoSlice = createSlice({
     },
 
     addColumnDesc(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
-      const { workbenchIndex, desc } = action.payload;
+      const { workbenchIndex } = action.payload;
       state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
@@ -215,24 +244,24 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{ index: number }>) {
-      state.focusViewIndex = action.payload.index;
+      state.focusWorkbenchIndex = action.payload.index;
     },
 
     setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: any[] }>) {
       const { workbenchIndex, data } = action.payload;
-      for (const i of data) {
-        state.workbenches[workbenchIndex].data[i.id] = i;
+      for (const row of data) {
+        state.workbenches[workbenchIndex].data[row.id] = row;
       }
     },
 
     addScoreColumn(state, action: PayloadAction<{ workbenchIndex: number; desc: IColumnDesc & { [key: string]: any }; data: any[] }>) {
-      const { workbenchIndex, desc, data } = action.payload;
+      const { workbenchIndex, desc, data } = action.payload; // FIXME `desc` overrides the `desc` from the function parameter -> rename one of them 
       state.workbenches[workbenchIndex].columnDescs.push(desc);
       for (const row of data) {
         const dataRow = state.workbenches[workbenchIndex].data[row.id];
         if (dataRow) {
           dataRow[desc.scoreID] = row.score;
-        } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+        } // TODO: BUG the score should not add a new row when the id does not exist in my current data else {
         //   state.workbenches[state.focusViewIndex].data[row.id] = row;
         // }
       }

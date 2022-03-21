@@ -15,18 +15,7 @@ export declare function getVisynView(entityId: string): Promise<({
         defaultParameters: Record<string, any>;
         factory: never;
     } & {
-        view: React.ComponentClass<Record<string, any> & {
-            desc: any & import("tdp_core").IBaseViewPluginDesc & {
-                readonly [key: string]: any;
-                visynViewType: string;
-                defaultParameters?: Record<string, any>;
-            } & Record<string, any> & import("tdp_core").IPluginDesc;
-        } & {
-            selection: string[];
-            parameters: Record<string, any>;
-            onSelectionChanged(selection: React.SetStateAction<string[]>): void;
-            onParametersChanged(parameters: React.SetStateAction<Record<string, any>>): void;
-        }, any> | React.FunctionComponent<Record<string, any> & {
+        view: React.ComponentType<Record<string, any> & {
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: string;
@@ -49,18 +38,7 @@ export declare function getVisynView(entityId: string): Promise<({
             onSelectionChanged(selection: React.SetStateAction<string[]>): void;
             onParametersChanged(parameters: React.SetStateAction<Record<string, any>>): void;
         }>>;
-        header?: React.ComponentClass<Record<string, any> & {
-            desc: any & import("tdp_core").IBaseViewPluginDesc & {
-                readonly [key: string]: any;
-                visynViewType: string;
-                defaultParameters?: Record<string, any>;
-            } & Record<string, any> & import("tdp_core").IPluginDesc;
-        } & {
-            selection: string[];
-            parameters: Record<string, any>;
-            onSelectionChanged(selection: React.SetStateAction<string[]>): void;
-            onParametersChanged(parameters: React.SetStateAction<Record<string, any>>): void;
-        }, any> | React.FunctionComponent<Record<string, any> & {
+        header?: React.ComponentType<Record<string, any> & {
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: string;
@@ -83,18 +61,7 @@ export declare function getVisynView(entityId: string): Promise<({
             onSelectionChanged(selection: React.SetStateAction<string[]>): void;
             onParametersChanged(parameters: React.SetStateAction<Record<string, any>>): void;
         }>>;
-        tab?: React.ComponentClass<Record<string, any> & {
-            desc: any & import("tdp_core").IBaseViewPluginDesc & {
-                readonly [key: string]: any;
-                visynViewType: string;
-                defaultParameters?: Record<string, any>;
-            } & Record<string, any> & import("tdp_core").IPluginDesc;
-        } & {
-            selection: string[];
-            parameters: Record<string, any>;
-            onSelectionChanged(selection: React.SetStateAction<string[]>): void;
-            onParametersChanged(parameters: React.SetStateAction<Record<string, any>>): void;
-        }, any> | React.FunctionComponent<Record<string, any> & {
+        tab?: React.ComponentType<Record<string, any> & {
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: string;

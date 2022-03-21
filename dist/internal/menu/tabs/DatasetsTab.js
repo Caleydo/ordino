@@ -24,7 +24,7 @@ export default function DatasetsTab(_props) {
                         return (
                         // `id` attribute must match the one in the scrollspy
                         React.createElement(OrdinoScrollspyItem, { className: "pt-3 pb-5", id: `${item.desc.id}_${suffix}`, key: item.desc.id, index: index, handleOnChange: handleOnChange },
-                            React.createElement(item.factory, Object.assign({}, item.desc))));
+                            React.createElement(item.factory, { ...item.desc })));
                     })))),
         React.createElement(BrowserRouter, { basename: "/#" },
             React.createElement(OrdinoFooter, { openInNewWindow: true })))))) : null));

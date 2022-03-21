@@ -95,7 +95,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @param options
      */
     private updateItemSelection;
-    push(viewId: string, idtype: IDType, selection: string[], options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
+    push(viewId: string, idtype: IDType, selection: string[], options?: any): PromiseLike<ICmdResult>;
     /**
      * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.

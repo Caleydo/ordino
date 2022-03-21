@@ -22,7 +22,6 @@ import {
   ViewUtils,
   IView,
   IViewContext,
-  ResolveNow,
 } from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
@@ -125,7 +124,7 @@ export class ViewWrapper extends EventHandler {
     // create ViewWrapper root node
     this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
 
-    this.built = ResolveNow.resolveImmediately(this.createView(selection, itemSelection, plugin, options));
+    this.built = Promise.resolve(this.createView(selection, itemSelection, plugin, options));
   }
 
   /**
@@ -173,7 +172,7 @@ export class ViewWrapper extends EventHandler {
     const $inner = this.$node.append('div').classed('inner', true);
 
     this.instance = plugin.factory(this.context, selection, <Element>$inner.node(), options, plugin.desc);
-    return ResolveNow.resolveImmediately(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this)))
+    return Promise.resolve(this.instance.init(<HTMLElement>$params.node(), this.onParameterChange.bind(this)))
       .then(() => {
         if (itemSelection) {
           return this.instance.setItemSelection(itemSelection);
@@ -265,7 +264,7 @@ export class ViewWrapper extends EventHandler {
     // turn listener off, to prevent an infinite event loop
     this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
 
-    return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
+    return Promise.resolve(this.instance.setItemSelection(sel)).then(() => {
       this.chooseNextViews(sel.idtype, sel.ids);
 
       // turn listener on again
@@ -278,7 +277,7 @@ export class ViewWrapper extends EventHandler {
       return undefined;
     }
     this.selection = selection;
-    return ResolveNow.resolveImmediately(this.instance.setInputSelection(selection));
+    return Promise.resolve(this.instance.setInputSelection(selection));
   }
 
   getParameterSelection() {

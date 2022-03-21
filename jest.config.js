@@ -12,10 +12,10 @@ if (pluginsToTransform.length > 0) {
 }
 
 /**
- * TODO check if we can process inline webpack loaders (e.g. as found in https://github.com/datavisyn/tdp_core/blob/develop/src/webpack/_bootstrap.ts)
  * see also https://jestjs.io/docs/en/webpack#mocking-css-modules
  */
 module.exports = {
+  testEnvironment: 'jsdom',
   transform: {
     "^.+\\.(js|ts|tsx)$": "ts-jest",
     "\\.xml$": "jest-raw-loader"

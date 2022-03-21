@@ -1,1 +1,0 @@
-{"version":3,"file":"WorkbenchRightIcon.d.ts","sourceRoot":"","sources":["../../../../src/app/workbench/icons/WorkbenchRightIcon.tsx"],"names":[],"mappings":"AAGA,OAAO,EAAmB,cAAc,EAAE,MAAM,gBAAgB,CAAC;AAGjE,MAAM,WAAW,mBAAmB;IAClC,IAAI,EAAE,cAAc,CAAC;CACtB;AAED,wBAAgB,kBAAkB,CAAC,EAAE,IAAI,EAAE,EAAE,mBAAmB,eA0C/D"}

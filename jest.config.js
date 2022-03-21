@@ -12,7 +12,6 @@ if (pluginsToTransform.length > 0) {
 }
 
 /**
- * TODO check if we can process inline webpack loaders (e.g. as found in https://github.com/phovea/phovea_ui/blob/master/src/_bootstrap.ts)
  * see also https://jestjs.io/docs/en/webpack#mocking-css-modules
  */
 module.exports = {

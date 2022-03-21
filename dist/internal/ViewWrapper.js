@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, ResolveNow, } from 'tdp_core';
+import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
 // eslint-disable-next-line import/extensions
@@ -65,7 +65,7 @@ export class ViewWrapper extends EventHandler {
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
         this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
-        this.built = ResolveNow.resolveImmediately(this.createView(selection, itemSelection, plugin, options));
+        this.built = Promise.resolve(this.createView(selection, itemSelection, plugin, options));
     }
     /**
      * Create provenance reference object (`this.ref`) and the context (`this.context`)
@@ -104,7 +104,7 @@ export class ViewWrapper extends EventHandler {
         const $params = this.$node.append('div').attr('class', 'parameters container-fluid ps-0 pe-0').datum(this);
         const $inner = this.$node.append('div').classed('inner', true);
         this.instance = plugin.factory(this.context, selection, $inner.node(), options, plugin.desc);
-        return ResolveNow.resolveImmediately(this.instance.init($params.node(), this.onParameterChange.bind(this)))
+        return Promise.resolve(this.instance.init($params.node(), this.onParameterChange.bind(this)))
             .then(() => {
             if (itemSelection) {
                 return this.instance.setItemSelection(itemSelection);
@@ -182,7 +182,7 @@ export class ViewWrapper extends EventHandler {
     setItemSelection(sel) {
         // turn listener off, to prevent an infinite event loop
         this.instance.off(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
-        return ResolveNow.resolveImmediately(this.instance.setItemSelection(sel)).then(() => {
+        return Promise.resolve(this.instance.setItemSelection(sel)).then(() => {
             this.chooseNextViews(sel.idtype, sel.ids);
             // turn listener on again
             this.instance.on(AView.EVENT_ITEM_SELECT, this.listenerItemSelect);
@@ -193,7 +193,7 @@ export class ViewWrapper extends EventHandler {
             return undefined;
         }
         this.selection = selection;
-        return ResolveNow.resolveImmediately(this.instance.setInputSelection(selection));
+        return Promise.resolve(this.instance.setInputSelection(selection));
     }
     getParameterSelection() {
         return this.selection;

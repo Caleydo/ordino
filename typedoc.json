@@ -1,14 +1,6 @@
 {
-  "mode": "modules",
   "out": "./build/docs",
-  "theme": "minimal",
-  "ignoreCompilerErrors": true,
-  "experimentalDecorators": true,
-  "emitDecoratorMetadata": true,
-  "preserveConstEnums": true,
-  "stripInternal": true,
-  "suppressExcessPropertyErrors": true,
-  "suppressImplicitAnyIndexErrors": true,
+  "theme": "default",
   "exclude": "tests/**/*.ts",
   "excludePrivate": true,
   "excludeExternals": true

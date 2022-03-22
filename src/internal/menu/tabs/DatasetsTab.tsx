@@ -52,7 +52,7 @@ export default function DatasetsTab(_props: IStartMenuTabProps) {
                 </div>
               </div>
               <BrowserRouter basename="/#">
-                <OrdinoFooter openInNewWindow testId="datasets-tab"/>
+                <OrdinoFooter openInNewWindow testId="datasets-tab" />
               </BrowserRouter>
             </>
           )}

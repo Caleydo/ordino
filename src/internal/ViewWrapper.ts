@@ -39,6 +39,7 @@ const previousSiblings = (elem) => {
   // create an empty array
   const siblings = [];
 
+  // eslint-disable-next-line no-cond-assign
   while ((elem = elem.previousElementSibling)) {
     siblings.push(elem);
   }

@@ -1,12 +1,10 @@
-import { GlobalEventHandler, I18nextManager, UserSession } from 'tdp_core';
-import { PHOVEA_UI_FormDialog } from 'tdp_core';
+import { GlobalEventHandler, I18nextManager, UserSession, PHOVEA_UI_FormDialog, ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler, } from 'tdp_core';
 import React, { useRef } from 'react';
-import { ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
-import { GraphContext } from '../../OrdinoApp';
+import { GraphContext } from '../../constants';
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd }) {
+export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd, }) {
     const parent = useRef(null);
     const { manager, graph } = React.useContext(GraphContext);
     const selectSession = (event, desc) => {
@@ -40,11 +38,11 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
         ProvenanceGraphMenuUtils.editProvenanceGraphMetaData(desc, { permission: ProvenanceGraphMenuUtils.isPersistent(desc) }).then((extras) => {
             if (extras !== null) {
                 Promise.resolve(manager.editGraphMetaData(desc, extras))
-                    .then((desc) => {
+                    .then((d) => {
                     callback((sessions) => {
                         const copy = [...sessions];
-                        const i = copy.findIndex((s) => s.id === desc.id);
-                        copy[i] = desc;
+                        const i = copy.findIndex((s) => s.id === d.id);
+                        copy[i] = d;
                         return copy;
                     });
                     GlobalEventHandler.getInstance().fire(ProvenanceGraphMenuUtils.GLOBAL_EVENT_MANIPULATED);
@@ -71,11 +69,11 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
         const r = graph.persist();
         // console.log(r);
         const str = JSON.stringify(r, null, '\t');
-        //create blob and save it
+        // create blob and save it
         const blob = new Blob([str], { type: 'application/json;charset=utf-8' });
         const a = new FileReader();
         a.onload = (e) => {
-            const url = (e.target).result;
+            const url = e.target.result;
             const helper = parent.current.ownerDocument.createElement('a');
             helper.setAttribute('href', url);
             helper.setAttribute('target', '_blank');
@@ -93,7 +91,8 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
         event.stopPropagation();
         const deleteIt = await PHOVEA_UI_FormDialog.areyousure(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.deleteIt', { name: desc.name }));
         if (deleteIt) {
-            await Promise.resolve(manager.delete(desc)).then((r) => {
+            await Promise.resolve(manager.delete(desc))
+                .then((r) => {
                 if (callback && desc.id !== graph.desc.id) {
                     NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.SessionList.session'), desc.name);
                     callback((sessions) => sessions === null || sessions === void 0 ? void 0 : sessions.filter((t) => t.id !== desc.id));
@@ -101,7 +100,8 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
                 else {
                     manager.startFromScratch();
                 }
-            }).catch(ErrorAlertHandler.getInstance().errorAlert);
+            })
+                .catch(ErrorAlertHandler.getInstance().errorAlert);
         }
         return false;
     };
@@ -119,15 +119,17 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
                 return exportSession(event, desc);
             case "delete" /* DELETE */:
                 return deleteSession(event, desc, updateSessions);
+            default:
+                return undefined;
         }
     };
-    return React.createElement(React.Fragment, null,
+    return (React.createElement(React.Fragment, null,
         React.createElement("h4", { className: "text-start d-flex align-items-center mb-3" },
             React.createElement("i", { className: `me-2 ordino-icon-2 fas ${faIcon}` }),
             cardName),
-        React.createElement("div", { ref: parent, className: `card card-shadow ${highlight ? 'highlight-card' : ''}`, "data-testid": `${cardName.replace(/\s+/g, '-').toLowerCase()}-sessionscard`, onAnimationStart: onHighlightAnimationStart, onAnimationEnd: onHighlightAnimationEnd },
+        React.createElement("div", { ref: parent, className: `card card-shadow ${highlight ? 'highlight-card' : ''}`, onAnimationStart: onHighlightAnimationStart, "data-testid": `${cardName.replace(/\s+/g, '-').toLowerCase()}-sessionscard`, onAnimationEnd: onHighlightAnimationEnd },
             React.createElement("div", { className: "card-body p-3" },
                 cardInfo && React.createElement("p", { className: "card-text mb-4" }, cardInfo),
-                children(sessionAction))));
+                children(sessionAction)))));
 }
 //# sourceMappingURL=CommonSessionCard.js.map

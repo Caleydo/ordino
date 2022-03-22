@@ -1,64 +1,52 @@
 import React from 'react';
-import {EStartMenuMode} from '.';
-import {IStartMenuTabPlugin} from '../..';
 
-export interface IStartMenuTabWrapperProps {
-    /**
-     * List of tabs
-     */
-    tabs: IStartMenuTabPlugin[];
+import { EStartMenuMode } from '../constants';
 
-    /**
-     * The currently active (i.e., visible tab)
-     * `null` = all tabs are closed
-     */
-    activeTab: IStartMenuTabPlugin;
-
-    /**
-     * Set the active tab
-     * `null` closes all tabs
-     */
-    setActiveTab: React.Dispatch<React.SetStateAction<IStartMenuTabPlugin>>;
-
-    /**
-     * Define the mode of the start menu
-     */
-    mode: EStartMenuMode;
-
-    /**
-     * Status of the async loading of the registered plugins
-     */
-    status: 'idle' | 'pending' | 'success' | 'error';
-}
-
+import type { IStartMenuTabWrapperProps } from '../interfaces';
 
 export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
-    return (
-        <>
-            {props.status === 'success' &&
-                <div id="ordino-start-menu" className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''}`}>
-                    {props.tabs.map((tab) => (
-                        <div className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
-                            key={tab.desc.id}
-                            id={tab.desc.id}
-                            role="tabpanel"
-                            aria-labelledby={`${tab.desc.id}-tab`}
-                            data-testid={tab.desc.id}
-                        >
-                            {props.mode === EStartMenuMode.OVERLAY &&
-                                <div className="container-fluid">
-                                    <div className="row">
-                                        <div className="col position-relative d-flex justify-content-end">
-                                            <button className="btn-close" data-testid="close-button" onClick={() => {props.setActiveTab(null);}}>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                            <tab.factory isActive={props.activeTab === tab} />
-                        </div>
-                    ))}
+  return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {props.status === 'success' && (
+        <div
+          id="ordino-start-menu"
+          className={`ordino-start-menu tab-content ${props.activeTab ? 'ordino-start-menu-open' : 'd-none'} ${
+            props.mode === EStartMenuMode.OVERLAY ? 'ordino-start-menu-overlay' : ''
+          }`}
+        >
+          {props.tabs.map((tab) => (
+            <div
+              className={`tab-pane fade ${props.activeTab === tab ? `active show` : ''} ${props.mode === EStartMenuMode.START ? `pt-5` : ''}`}
+              key={tab.desc.id}
+              id={tab.desc.id}
+              role="tabpanel"
+              aria-labelledby={`${tab.desc.id}-tab`}
+              data-testid={tab.desc.id}
+            >
+              {props.mode === EStartMenuMode.OVERLAY && (
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col position-relative d-flex justify-content-end">
+                      {
+                        // eslint-disable-next-line react/self-closing-comp, prettier/prettier
+                      }<button
+                        type="button"
+                        className="btn-close"
+                        data-testid="close-button"
+                        onClick={() => {
+                          props.setActiveTab(null);
+                        }}
+                      ></button>
+                    </div>
+                  </div>
                 </div>
-            }</>
-    );
+              )}
+              <tab.factory isActive={props.activeTab === tab} />
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
 }

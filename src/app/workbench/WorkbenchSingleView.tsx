@@ -15,6 +15,7 @@ export function getVisynView(entityId: string) {
   return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
 
+// TODO what is a workbench SINGLE view? are there also multiple views? currently multiple views can be added to the single view. maybe rename component.
 export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleViewProps) {
   const ordino = useAppSelector((state) => state.ordino);
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -83,7 +83,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
           isEmbedded={false}
         />
         <div className="w-100 d-flex justify-content-center align-items-center">
-          <p className="emptyViewText">Select A View</p>
+          <p className="emptyViewText">Select A View</p> {/* TODO extract language string */}
         </div>
       </div>
 

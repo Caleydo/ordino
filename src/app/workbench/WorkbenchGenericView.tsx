@@ -129,6 +129,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               <strong>{view.name}</strong>
             </span>
             {viewPlugin?.header ? (
+              // TODO extract language string using i18n
               <Suspense fallback="Loading..">
                 <viewPlugin.header
                   desc={viewPlugin.desc}
@@ -194,6 +195,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                 role="tabpanel"
                 aria-labelledby="settings-tab"
               >
+                {/* TODO refactor view header such that the logic (using hooks) and the visual representation are separated */}
                 <ViewChooser
                   views={chooserOptions}
                   showBurgerMenu={false}
@@ -213,6 +215,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               </div>
               {viewPlugin && viewPlugin?.tab ? (
                 <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
+                  {/* TODO extract language string using i18n */}
                   <Suspense fallback="Loading..">
                     <viewPlugin.tab
                       desc={viewPlugin.desc}
@@ -232,6 +235,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
           </div>
         ) : null}
         {viewPlugin?.view ? (
+          // TODO extract language string using i18n
           <Suspense fallback="Loading..">
             <viewPlugin.view
               desc={viewPlugin.desc}

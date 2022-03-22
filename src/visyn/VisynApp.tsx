@@ -5,7 +5,7 @@ import { VisynHeader } from './VisynHeader';
 
 interface IVisynAppProps {
   extensions?: {
-    header?: React.ReactElement;
+    header?: React.ReactElement; // TODO In some other places you started using the capital names for components (e.g., )
   };
   children?: React.ReactNode;
 }

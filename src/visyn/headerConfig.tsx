@@ -4,6 +4,8 @@ import { BurgerMenu, IBurgerMenuProps } from './headerComponents/BurgerMenu';
 import { CustomerDefaultLogo } from './headerComponents/CustomerDefaultLogo';
 import { DatavisynLogo } from './headerComponents/DatavisynLogo';
 import { ISettingsMenuProps, SettingsMenu } from './headerComponents/SettingsMenu';
+// eslint-disable-next-line import/no-cycle
+import { LoginLink } from './LoginMenu';
 
 export interface IVisynHeaderComponents {
   BurgerButton?: ComponentType<IBurgerMenuProps>;
@@ -23,6 +25,7 @@ export const visynHeaderComponents: Partial<IVisynHeaderComponents> = {
   LeftExtensions: null,
   RightExtensions: null,
   SettingsMenu,
+  LoginLink,
 };
 
 export type VisynHeaderExtensions = Partial<IVisynHeaderComponents>;

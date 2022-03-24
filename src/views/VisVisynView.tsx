@@ -1,9 +1,11 @@
 // Gets into the phovea.ts
 import * as React from 'react';
 import { useMemo } from 'react';
-import { EColumnTypes, IVisConfig, VisSidebar, Vis } from 'tdp_core';
+import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis } from 'tdp_core';
 
-export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, onSelectionChanged }: any) {
+type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
+
+export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, onSelectionChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
@@ -39,10 +41,10 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
     selectedMap[i] = true;
   }
 
-  return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters.type ? parameters : null} hideSidebar />;
+  return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters.visConfig} hideSidebar />;
 }
 
-export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }: any) {
+export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
@@ -87,16 +89,19 @@ export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters
     <VisSidebar
       columns={finalCols}
       filterCallback={visFilterChanged}
-      externalConfig={parameters.type ? parameters : null}
-      setExternalConfig={onParametersChanged}
+      externalConfig={parameters.visConfig}
+      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
       style={{ width: '220px' }}
     />
   );
 }
 
-export const visConfiguration: () => any = () => {
+export const visConfiguration: () => VisViewPluginType['definition'] = () => {
   return {
     viewType: 'data',
+    defaultParameters: {
+      visConfig: null,
+    },
     view: VisVisynView,
     tab: VisViewSidebar,
     header: null,

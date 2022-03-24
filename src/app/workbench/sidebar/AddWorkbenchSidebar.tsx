@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../interfaces';
+import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface IAddWorkbenchSidebarProps {
   workbench: IWorkbench;

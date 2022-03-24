@@ -3,7 +3,7 @@ import { IDType, useAsync, ViewUtils } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings } from '../../../store/ordinoSlice';
-import { isVisynRankingViewDesc } from '../interfaces';
+import { isVisynRankingViewDesc } from '../../../views/interfaces';
 export function DetailsSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();

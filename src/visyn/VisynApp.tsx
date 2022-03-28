@@ -1,29 +1,36 @@
+/* eslint-disable import/no-cycle */
 import * as React from 'react';
-import { useAppSelector } from '../hooks/useAppSelector';
+import { BusyOverlay } from './BusyOverlay';
+import { ILoginFormProps, LoginForm as DefaultLoginForm } from './headerComponents';
 import { useInitVisynApp } from './hooks/useInitVisynApp';
-import { VisynHeader } from './VisynHeader';
+import { VisynLoginMenu } from './LoginMenu';
+import { IVisynHeaderProps, VisynHeader } from './VisynHeader';
 
+export interface IVisynAppComponents {
+  Header: React.ComponentType<IVisynHeaderProps>;
+  LoginForm: React.ComponentType<ILoginFormProps>;
+}
+
+const visynAppComponents: Partial<IVisynAppComponents> = {
+  Header: VisynHeader,
+  LoginForm: DefaultLoginForm,
+};
 interface IVisynAppProps {
-  extensions?: {
-    header?: React.ReactElement;
-  };
+  extensions?: Partial<IVisynAppComponents>;
+  watch?: boolean;
   children?: React.ReactNode;
 }
 
-export function VisynApp({ extensions: { header = <VisynHeader /> } = {}, children = null }: IVisynAppProps) {
-  const user = useAppSelector((state) => state.user);
+export function VisynApp({ extensions, children = null, watch = false }: IVisynAppProps) {
+  const { Header, LoginForm } = { ...visynAppComponents, ...extensions };
   const { status } = useInitVisynApp();
-  return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
+  return status === 'success' ? (
     <>
-      {
-        status === 'success' ? (
-          <>
-            {header}
-            {user.loggedIn ? children : null}
-          </>
-        ) : null // TODO:show loading overlay while initializing?
-      }
+      <Header />
+      <VisynLoginMenu watch={watch} extensions={{ LoginForm }} />
+      <div className="content">{children}</div>
     </>
+  ) : (
+    <BusyOverlay />
   );
 }

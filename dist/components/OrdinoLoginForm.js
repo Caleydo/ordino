@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppContext, BaseUtils, useAsync } from 'tdp_core';
+import { BusyOverlay } from '../visyn';
 export function useGenerateRandomUser() {
     // generate random username
     const cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)randomCredentials\s*=\s*([^;]*).*$)|^.*$/, '$1');
@@ -25,7 +26,7 @@ export function useGenerateRandomUser() {
             const maxAge = 2 * 7 * 24 * 60 * 60; // 2 weeks in seconds
             document.cookie = `randomCredentials=${user.username}@${user.password};max-age=${maxAge};SameSite=Strict`;
         }
-    }, [status, user.password, user.username]);
+    }, [status, user]);
     return { status, user };
 }
 /**
@@ -35,9 +36,7 @@ export function useGenerateRandomUser() {
  */
 export function OrdinoLoginForm({ onLogin }) {
     const { status, user } = useGenerateRandomUser();
-    return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    React.createElement(React.Fragment, null, status === 'success' ? (React.createElement("form", { className: "form-signin", onSubmit: (evt) => {
+    return status === 'success' ? (React.createElement("form", { className: "form-signin", onSubmit: (evt) => {
             evt.preventDefault();
             evt.stopPropagation();
             const target = evt.target;
@@ -57,6 +56,6 @@ export function OrdinoLoginForm({ onLogin }) {
             React.createElement("label", { className: "form-check-label", htmlFor: "login_remember" }, "Remember me")),
         React.createElement("span", { className: "form-text text-muted" }, "A random username and password is generated for you. However, you can use the same username and password next time to continue your work. Your previous username and password are stored as a cookie for your convenience."),
         React.createElement("div", { className: "d-grid gap-2" },
-            React.createElement("button", { className: "btn btn-primary mt-2", type: "submit" }, "Login")))) : null));
+            React.createElement("button", { className: "btn btn-primary mt-2", "data-bs-dismiss": "modal", type: "submit" }, "Login")))) : (React.createElement(BusyOverlay, null));
 }
 //# sourceMappingURL=OrdinoLoginForm.js.map

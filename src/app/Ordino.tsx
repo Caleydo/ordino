@@ -6,13 +6,11 @@ import { Filmstrip } from './Filmstrip';
 
 export function Ordino() {
   return (
-    <div id="content">
-      <main data-anchor="main" className="targid">
-        <DndProvider backend={HTML5Backend}>
-          <Breadcrumb />
-          <Filmstrip />
-        </DndProvider>
-      </main>
-    </div>
+    <main data-anchor="main" className="targid">
+      <DndProvider backend={HTML5Backend}>
+        <Breadcrumb />
+        <Filmstrip />
+      </DndProvider>
+    </main>
   );
 }

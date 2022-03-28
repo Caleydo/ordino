@@ -1,15 +1,20 @@
+/* eslint-disable import/no-cycle */
 import * as React from 'react';
-import { useAppSelector } from '../hooks/useAppSelector';
+import { BusyOverlay } from './BusyOverlay';
+import { LoginForm as DefaultLoginForm } from './headerComponents';
 import { useInitVisynApp } from './hooks/useInitVisynApp';
+import { VisynLoginMenu } from './LoginMenu';
 import { VisynHeader } from './VisynHeader';
-export function VisynApp({ extensions: { header = React.createElement(VisynHeader, null) } = {}, children = null }) {
-    const user = useAppSelector((state) => state.user);
+const visynAppComponents = {
+    Header: VisynHeader,
+    LoginForm: DefaultLoginForm,
+};
+export function VisynApp({ extensions, children = null, watch = false }) {
+    const { Header, LoginForm } = { ...visynAppComponents, ...extensions };
     const { status } = useInitVisynApp();
-    return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    React.createElement(React.Fragment, null, status === 'success' ? (React.createElement(React.Fragment, null,
-        header,
-        user.loggedIn ? children : null)) : null // TODO:show loading overlay while initializing?
-    ));
+    return status === 'success' ? (React.createElement(React.Fragment, null,
+        React.createElement(Header, null),
+        React.createElement(VisynLoginMenu, { watch: watch, extensions: { LoginForm } }),
+        React.createElement("div", { className: "content" }, children))) : (React.createElement(BusyOverlay, null));
 }
 //# sourceMappingURL=VisynApp.js.map

@@ -1,5 +1,5 @@
 import React from 'react';
-export function LoginForm({ onLogin }) {
+export function VisynLoginForm({ onLogin }) {
     const onSubmit = (evt) => {
         evt.preventDefault();
         evt.stopPropagation();

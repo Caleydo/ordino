@@ -1,1 +1,0 @@
-{"version":3,"file":"useAutoLogin.d.ts","sourceRoot":"","sources":["../../../src/visyn/hooks/useAutoLogin.ts"],"names":[],"mappings":"AACA,OAAO,EAAoC,cAAc,EAAe,MAAM,UAAU,CAAC;AAKzF;;GAEG;AACH,wBAAgB,YAAY,IAAI;IAAE,QAAQ,EAAE,OAAO,CAAC;IAAC,QAAQ,EAAE,MAAM,CAAC;IAAC,MAAM,EAAE,cAAc,CAAA;CAAE,CAiC9F"}

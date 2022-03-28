@@ -1,14 +1,15 @@
-import React, { ComponentType } from 'react';
-import { LoginUtils, SessionWatcher } from 'tdp_core';
-import { ILoginFormProps, LoginDialog, LoginForm as DefaultLoginForm } from './headerComponents';
-import { useAutoLogin } from './hooks/useAutoLogin';
+import React, { ComponentType, useState } from 'react';
+import { AppContext, GlobalEventHandler, LoginUtils, SessionWatcher, useAsync, UserSession } from 'tdp_core';
+import { useAppDispatch } from '../hooks';
+import { IVisynLoginFormProps, LoginDialog, VisynLoginForm } from './headerComponents';
+import { login, logout } from './usersSlice';
 
 export interface ILoginLinkProps {
   userName?: string;
   onLogout: () => Promise<void>;
 }
 
-export function LoginLink({ userName, onLogout }: ILoginLinkProps) {
+export function VisynLoginLink({ userName, onLogout }: ILoginLinkProps) {
   return (
     <li className="nav-item dropdown">
       <a href="#" className="nav-link" data-bs-toggle="dropdown" role="button" aria-haspopup="true" id="userMenuDropdown" aria-expanded="false">
@@ -24,33 +25,95 @@ export function LoginLink({ userName, onLogout }: ILoginLinkProps) {
 }
 
 export interface ILoginMenuProps {
-  onLogout: () => Promise<any>;
   watch?: boolean;
   extensions?: {
-    LoginForm?: ComponentType<ILoginFormProps>;
+    LoginForm?: ComponentType<IVisynLoginFormProps>;
   };
 }
 
 const loginMenuComponents = {
-  LoginForm: DefaultLoginForm,
+  LoginForm: VisynLoginForm,
 };
 
-export function LoginMenu({ onLogout, watch, extensions = {} }: ILoginMenuProps) {
+// TODO: Show dialog wanring / errors when there is an error(when we have a proper react dialog implementation)
+export function VisynLoginMenu({ watch = false, extensions = {} }: ILoginMenuProps) {
   const { LoginForm } = { ...loginMenuComponents, ...extensions };
-  const { loggedIn, status } = useAutoLogin();
+  const dispatch = useAppDispatch();
+  const [loggedInAs, setLoggedInAs] = React.useState<string>(null);
+  const [show, setShow] = useState(false);
+
+  /**
+   * auto login if (rememberMe=true)
+   */
+  const autoLogin = React.useMemo(
+    () => async () => {
+      return new Promise((resolve) => {
+        if (!AppContext.getInstance().offline && !loggedInAs) {
+          LoginUtils.loggedInAs()
+            .then((user) => {
+              UserSession.getInstance().login(user);
+              resolve(null);
+            })
+            .catch(() => {
+              // ignore not yet logged in
+            });
+        }
+        resolve(null);
+      });
+    },
+    [loggedInAs],
+  );
 
   React.useEffect(() => {
     if (watch) {
-      SessionWatcher.startWatching(onLogout);
+      SessionWatcher.startWatching(LoginUtils.logout);
     }
-  }, [onLogout, watch]);
+  }, [watch]);
+
+  React.useEffect(() => {
+    let forceShowLoginDialogTimeout: any = -1;
+    const loginListener = (_, user) => {
+      setLoggedInAs(user.name);
+      dispatch(login(user.name));
+      setShow(false);
+      clearTimeout(forceShowLoginDialogTimeout);
+    };
+
+    const logoutListener = () => {
+      setLoggedInAs(null);
+      dispatch(logout());
+      setShow(true);
+    };
+
+    GlobalEventHandler.getInstance().on(UserSession.GLOBAL_EVENT_USER_LOGGED_IN, loginListener);
+    GlobalEventHandler.getInstance().on(UserSession.GLOBAL_EVENT_USER_LOGGED_OUT, logoutListener);
+
+    if (!loggedInAs) {
+      // wait .5sec before showing the login dialog to give the auto login mechanism a chance
+      forceShowLoginDialogTimeout = setTimeout(() => setShow(true), 500);
+    }
+
+    return () => {
+      GlobalEventHandler.getInstance().off(UserSession.GLOBAL_EVENT_USER_LOGGED_IN, loginListener);
+      GlobalEventHandler.getInstance().off(UserSession.GLOBAL_EVENT_USER_LOGGED_OUT, logoutListener);
+    };
+  }, [dispatch, loggedInAs]);
+
+  useAsync(autoLogin, []);
 
   return (
     <ul className="navbar-nav align-items-end">
-      <LoginDialog show={!loggedIn && status === 'success'}>
-        {(onHide) => (
-          <LoginForm onLogin={(username: string, password: string, rememberMe: boolean) => LoginUtils.login(username, password, rememberMe).then(onHide)} />
-        )}
+      <LoginDialog show={show}>
+        {(onHide) => {
+          return (
+            <LoginForm
+              onLogin={async (username: string, password: string, rememberMe: boolean) => {
+                await LoginUtils.login(username, password, rememberMe);
+                onHide();
+              }}
+            />
+          );
+        }}
       </LoginDialog>
     </ul>
   );

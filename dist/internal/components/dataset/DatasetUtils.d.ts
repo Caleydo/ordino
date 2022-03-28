@@ -6,3 +6,4 @@ export declare class DatasetUtils {
      */
     static toNamedSetTitle(namedSet: INamedSet): string;
 }
+//# sourceMappingURL=DatasetUtils.d.ts.map

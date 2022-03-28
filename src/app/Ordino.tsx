@@ -1,23 +1,22 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
+ ******************************************************************* */
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {ProvenanceGraph, I18nextManager} from 'tdp_core';
-import {CLUEGraphManager} from 'tdp_core';
-import {OrdinoApp} from '../internal/OrdinoApp';
-import {ATDPApplication, ITDPOptions} from 'tdp_core';
-import {EStartMenuMode, EStartMenuOpen} from '../internal/menu/StartMenu';
+import { ProvenanceGraph, I18nextManager, CLUEGraphManager, ATDPApplication, ITDPOptions } from 'tdp_core';
+
+// eslint-disable-next-line import/no-cycle
+import { OrdinoApp } from '../internal/OrdinoApp';
+import { EStartMenuMode, EStartMenuOpen } from '../internal/constants';
 
 export class Ordino extends ATDPApplication<OrdinoApp> {
-
   constructor(options: Partial<ITDPOptions> = {}) {
-    super(Object.assign({
+    super({
       prefix: 'ordino',
       name: 'Ordino',
       /**
@@ -39,15 +38,13 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
       /**
        * Functionality is included in the sessions tab
        */
-      showProvenanceMenu: false
-    }, options));
+      showProvenanceMenu: false,
+      ...options,
+    });
   }
 
-  protected createApp(
-    graph: ProvenanceGraph,
-    manager: CLUEGraphManager,
-    main: HTMLElement
-  ) {
+  protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement) {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<OrdinoApp>(async (resolve) => {
       main.classList.add('targid');
 
@@ -68,7 +65,7 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
             resolve(instance); // Promise is resolved when the component is intialized
           }}
         />,
-        main
+        main,
       );
     });
   }
@@ -78,11 +75,10 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
       if (app.props.graph.isEmpty) {
         app.initNewSessionAfterPageReload();
       } else {
-        //just if no other option applies jump to the stored state
+        // just if no other option applies jump to the stored state
         app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         this.jumpToStoredOrLastState();
       }
     });
   }
-
 }

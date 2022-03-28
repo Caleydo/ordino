@@ -4,7 +4,7 @@ executors:
   node-executor:
     working_directory: ~/phovea
     docker:
-      - image: circleci/node:12.13-buster-browsers
+      - image: circleci/node:14.17-buster
 
 jobs:
   build:
@@ -56,4 +56,4 @@ workflows:
 #      - build
   build-branches-and-tags:
     jobs:
-      - build     
+      - build

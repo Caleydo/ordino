@@ -97,8 +97,8 @@ export declare class ViewWrapper extends EventHandler {
     getParameter(name: string): any;
     setParameterImpl(name: string, value: any): void;
     getItemSelection(): ISelection;
-    setItemSelection(sel: ISelection): PromiseLike<void>;
-    setParameterSelection(selection: ISelection): PromiseLike<void>;
+    setItemSelection(sel: ISelection): Promise<void>;
+    setParameterSelection(selection: ISelection): Promise<void>;
     getParameterSelection(): ISelection;
     matchSelectionLength(length: number): boolean;
     protected modeChanged(mode: EViewMode): void;

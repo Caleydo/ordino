@@ -120,11 +120,11 @@ const threshold = [0, 1];
 export function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }) {
     return (
     // @ts-expect-error TS2322 Error in `PlainChildrenProps` typings from react-intersection-observer
-    React.createElement(InView, Object.assign({ threshold: threshold, id: id }, innerProps, { onChange: (inView, entry) => {
+    React.createElement(InView, { threshold: threshold, id: id, ...innerProps, onChange: (inView, entry) => {
             if (innerProps.onChange) {
                 innerProps.onChange(inView, entry);
             }
             handleOnChange(id, index, inView, entry);
-        } })));
+        } }));
 }
 //# sourceMappingURL=OrdinoScrollspy.js.map

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-cycle */
 import * as React from 'react';
 import { BusyOverlay } from './BusyOverlay';
-import { LoginForm as DefaultLoginForm } from './headerComponents';
+import { VisynLoginForm as DefaultLoginForm } from './headerComponents';
 import { useInitVisynApp } from './hooks/useInitVisynApp';
 import { VisynLoginMenu } from './LoginMenu';
 import { VisynHeader } from './VisynHeader';

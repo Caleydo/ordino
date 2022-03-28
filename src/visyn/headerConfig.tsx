@@ -22,7 +22,7 @@ export const visynHeaderComponents: Partial<IVisynHeaderComponents> = {
   AppLogo: AppDefaultLogo,
   LeftExtensions: null,
   RightExtensions: null,
-  SettingsMenu,// comment
+  SettingsMenu,
 };
 
 export type VisynHeaderExtensions = Partial<IVisynHeaderComponents>;

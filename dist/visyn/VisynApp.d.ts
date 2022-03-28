@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ILoginFormProps } from './headerComponents';
+import { IVisynLoginFormProps } from './headerComponents';
 import { IVisynHeaderProps } from './VisynHeader';
 export interface IVisynAppComponents {
     Header: React.ComponentType<IVisynHeaderProps>;
-    LoginForm: React.ComponentType<ILoginFormProps>;
+    LoginForm: React.ComponentType<IVisynLoginFormProps>;
 }
 interface IVisynAppProps {
     extensions?: Partial<IVisynAppComponents>;

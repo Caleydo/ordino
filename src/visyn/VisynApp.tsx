@@ -1,14 +1,14 @@
 /* eslint-disable import/no-cycle */
 import * as React from 'react';
 import { BusyOverlay } from './BusyOverlay';
-import { ILoginFormProps, LoginForm as DefaultLoginForm } from './headerComponents';
+import { IVisynLoginFormProps, VisynLoginForm as DefaultLoginForm } from './headerComponents';
 import { useInitVisynApp } from './hooks/useInitVisynApp';
 import { VisynLoginMenu } from './LoginMenu';
 import { IVisynHeaderProps, VisynHeader } from './VisynHeader';
 
 export interface IVisynAppComponents {
   Header: React.ComponentType<IVisynHeaderProps>;
-  LoginForm: React.ComponentType<ILoginFormProps>;
+  LoginForm: React.ComponentType<IVisynLoginFormProps>;
 }
 
 const visynAppComponents: Partial<IVisynAppComponents> = {

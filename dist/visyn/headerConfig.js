@@ -10,6 +10,6 @@ export const visynHeaderComponents = {
     AppLogo: AppDefaultLogo,
     LeftExtensions: null,
     RightExtensions: null,
-    SettingsMenu, // comment
+    SettingsMenu,
 };
 //# sourceMappingURL=headerConfig.js.map

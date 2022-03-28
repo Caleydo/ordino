@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { visynHeaderComponents } from './headerConfig';
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }) {
     const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };

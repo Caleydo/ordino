@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { ComponentType } from 'react';
+import React, { ComponentType } from 'react';
 import { IVisynHeaderComponents, visynHeaderComponents } from './headerConfig';
 
 export interface IVisynHeaderProps {

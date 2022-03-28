@@ -2,7 +2,7 @@ import React from 'react';
 import { I18nextManager } from 'tdp_core';
 
 export interface IVisynLoginFormProps {
-  onLogin: (username: string, password: string, rememberMe) => Promise<void>;
+  onLogin: (username: string, password: string, rememberMe: boolean) => Promise<void>;
 }
 export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
   const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {

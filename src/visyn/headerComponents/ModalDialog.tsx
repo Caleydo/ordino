@@ -6,8 +6,10 @@ interface IModalDialogProps {
   children: React.ReactNode;
 }
 
-// eslint-disable-next-line react/display-name
-export const ModalDialog = React.forwardRef<HTMLDivElement, IModalDialogProps>(({ children, title = '', enableCloseButton = true }, ref) => {
+export const ModalDialog = React.forwardRef<HTMLDivElement, IModalDialogProps>(function ModalDialogRef(
+  { children, title = '', enableCloseButton = true },
+  ref,
+) {
   return (
     <div
       ref={ref}

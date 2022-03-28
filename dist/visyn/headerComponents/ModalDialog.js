@@ -1,6 +1,5 @@
 import React from 'react';
-// eslint-disable-next-line react/display-name
-export const ModalDialog = React.forwardRef(({ children, title = '', enableCloseButton = true }, ref) => {
+export const ModalDialog = React.forwardRef(function ModalDialogRef({ children, title = '', enableCloseButton = true }, ref) {
     return (React.createElement("div", { ref: ref, className: "modal fade", id: "loginDialog", tabIndex: -1, role: "dialog", "aria-labelledby": "loginDialog", "data-keyboard": "false", "data-bs-backdrop": "static" },
         React.createElement("div", { className: "modal-dialog modal-sm" },
             React.createElement("div", { className: "modal-content" },

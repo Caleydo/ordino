@@ -135,11 +135,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                   data={ordino.workbenches[workbenchIndex].data}
                   dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                   selection={ordino.workbenches[workbenchIndex].selection}
-                  idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
+                  filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
                   parameters={{ ...view.parameters, ...parameters }}
                   onSelectionChanged={onSelectionChanged}
                   onParametersChanged={onParametersChanged}
-                  onIdFilterChanged={onIdFilterChanged}
+                  onFilteredOutIdsChanged={onIdFilterChanged}
                 />
               </Suspense>
             ) : null}
@@ -219,11 +219,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                       data={ordino.workbenches[workbenchIndex].data}
                       dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
                       selection={ordino.workbenches[workbenchIndex].selection}
-                      idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
+                      filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
                       parameters={{ ...view.parameters, ...parameters }}
                       onSelectionChanged={onSelectionChanged}
                       onParametersChanged={onParametersChanged}
-                      onIdFilterChanged={onIdFilterChanged}
+                      onFilteredOutIdsChanged={onIdFilterChanged}
                     />
                   </Suspense>
                 </div>
@@ -238,11 +238,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               data={ordino.workbenches[workbenchIndex].data}
               dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
               selection={ordino.workbenches[workbenchIndex].selection}
-              idFilter={getAllFilters(ordino.workbenches[workbenchIndex])}
+              filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
               parameters={{ ...view.parameters, ...parameters }}
               onSelectionChanged={onSelectionChanged}
               onParametersChanged={onParametersChanged}
-              onIdFilterChanged={onIdFilterChanged}
+              onFilteredOutIdsChanged={onIdFilterChanged}
               onDataChanged={onDataChanged}
               onColumnDescChanged={onColumnDescChanged}
               onAddScoreColumn={onAddScoreColumn}

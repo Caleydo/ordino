@@ -1,9 +1,9 @@
 import React from 'react';
-import { CommentPanel, defaultUploadComment } from 'tdp_comments';
+import { CommentPanel, defaultUploadComment, IMatchingCommentTemplate } from 'tdp_comments';
 
-export function useCommentPanel(commentsOpen: boolean): [(element: HTMLElement | null) => void, CommentPanel | null] {
+export function useCommentPanel(selection: string[], itemIDType: string, commentsOpen: boolean): [(element: HTMLElement | null) => void, CommentPanel | null] {
   const [instance, setInstance] = React.useState<CommentPanel | null>(null);
-  const parentRef = React.useRef<HTMLElement>(null);
+
   const setRef = React.useCallback(async (ref: HTMLElement | null) => {
     setInstance((currentInstance) => {
       // If the element ref did not change, do nothing.
@@ -13,7 +13,6 @@ export function useCommentPanel(commentsOpen: boolean): [(element: HTMLElement |
 
       // Create a new one if there is a ref
       if (ref) {
-        parentRef.current = ref;
         const panel = new CommentPanel({
           appKey: 'reprovisyn',
           commentTemplate: defaultUploadComment({ app_key: 'reprovisyn' }),
@@ -48,6 +47,21 @@ export function useCommentPanel(commentsOpen: boolean): [(element: HTMLElement |
   React.useEffect(() => {
     instance?.toggle(commentsOpen);
   }, [instance, commentsOpen]);
+
+  React.useEffect(() => {
+    if (!instance) {
+      return;
+    }
+    const template = {
+      ...defaultUploadComment({ app_key: 'reprovisyn' }),
+      ...{ entities: selection.map((s: string) => ({ id_type: itemIDType, entity_id: s })) },
+    };
+    const matching: IMatchingCommentTemplate = {
+      entities: selection.length > 0 ? [{ id_types: [itemIDType], entity_ids: selection }] : [],
+    };
+    instance.showMatchingComments(matching.entities.length > 0 ? matching : undefined);
+    instance.adaptNewCommentForm(template);
+  }, [instance, itemIDType, selection]);
 
   return [setRef, instance];
 }

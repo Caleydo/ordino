@@ -3,6 +3,7 @@ import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
+import { useCommentPanel } from './useCommentPanel';
 import { WorkbenchSingleView } from './WorkbenchSingleView';
 
 export enum EWorkbenchType {
@@ -18,8 +19,8 @@ export interface IWorkbenchViewsProps {
 
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
-
-  const { views } = ordino.workbenches[index];
+  const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
+  const [setRef] = useCommentPanel(selection, itemIDType, commentsOpen);
 
   let wb = null;
 
@@ -153,7 +154,9 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             <DetailsSidebar workbench={ordino.workbenches[index]} />
           </div>
         ) : null}
-        <div style={{ flexGrow: 10 }}>{wb}</div>
+        <div ref={setRef} className="d-flex flex-grow-1">
+          {wb}
+        </div>
         {showRightSidebar ? (
           <div className="d-flex" style={{ width: '400px' }}>
             <AddWorkbenchSidebar workbench={ordino.workbenches[index]} />

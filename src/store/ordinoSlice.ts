@@ -77,7 +77,7 @@ export interface IWorkbench {
   detailsOpen: boolean;
   addWorkbenchOpen: boolean;
 
-  commentsOpen: boolean;
+  commentsOpen?: boolean;
 }
 
 interface IBaseState {

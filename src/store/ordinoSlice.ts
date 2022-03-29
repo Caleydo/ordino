@@ -26,7 +26,9 @@ export interface IOrdinoAppState {
   workbenches: IWorkbench[];
 
   /**
-   * TODO describe what is the key and what the value
+   * Map for the colors which are assigned to each entity. Derived from the config file.
+   * Keys are the entity id matching IWorkbench.entityId.
+   * Values are any typical string representation of a color.
    */
   colorMap: { [key: string]: string };
 
@@ -34,11 +36,6 @@ export interface IOrdinoAppState {
    * Id of the current focus view
    */
   focusWorkbenchIndex: number;
-
-  /**
-   * TODO what exactly is the sidebar? can sidebars be open simultaniously in multiple workbenches or views
-   */
-  sidebarOpen: boolean;
 }
 
 export enum EWorkbenchDirection {
@@ -46,6 +43,10 @@ export enum EWorkbenchDirection {
   HORIZONTAL = 'horizontal',
 }
 
+/**
+ * entityId is equivalent to IWorkbench.entityId
+ * columnSelection is a mapping subtype, such as "relativecopynumber"
+ */
 export interface ISelectedMapping {
   entityId: string;
   columnSelection: string;
@@ -58,7 +59,7 @@ export interface IWorkbench {
   views: IWorkbenchView[];
 
   /**
-   * TODO what is a selected mapping?
+   * List of selected mappings which are passed to the next workbench when created. Description of ISelectedMapping interface above.
    */
   selectedMappings: ISelectedMapping[];
 
@@ -76,11 +77,6 @@ export interface IWorkbench {
   data: { [key: string]: IRow };
   columnDescs: (IColumnDesc & { [key: string]: any })[];
   // TODO: how do we store the lineup-specific column descriptions? give an example?
-
-  /**
-   * TODO what are transition options? are these the entities to other workbenches?
-   */
-  transitionOptions: IRow['_visyn_id'][];
 
   /**
    * List selected rows
@@ -106,42 +102,12 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
   state: S;
 }
 
-// TODO remove the following code below?
-// const test = ({
-//   headerOverride = Header,
-// }: {
-//   headerOverride?: (props: {view: IView[]}) => JSX.Component;
-//   overrides: {
-//     header: JSX.Component;
-//     itemGroup: JSX.Component;
-//     header: JSX.Component;
-//   }
-// }) => <>
-//   <headerOverride views={views}></headerOverride>
-//   Map( <ListItemGroup>
-//     <ListItem>
-//     ...)
-
-// </>;
-
-// export interface IOrdinoScatterplotViewPlugin<{
-//   color: string;
-// }> {
-//   state: {
-
-//   }
-// }
-
-// TODO remove?
-
 const initialState: IOrdinoAppState = {
   workbenches: [],
   focusWorkbenchIndex: 0,
-  sidebarOpen: false,
   colorMap: {},
 };
 
-// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
@@ -153,8 +119,7 @@ const ordinoSlice = createSlice({
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
-    // TODO probably `setColorMap` is better, since this function does not actually create the color map, right?
-    createColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
+    setColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
       state.colorMap = action.payload.colorMap;
     },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
@@ -166,25 +131,23 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{ workbenchIndex: number; view: IWorkbenchView }>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
-    setSidebarOpen(state, action: PayloadAction<{ open: boolean }>) {
-      state.sidebarOpen = action.payload.open;
-    },
     setViewParameters(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; parameters: any }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
     changeSelectedMappings(state, action: PayloadAction<{ workbenchIndex: number; newMapping: ISelectedMapping }>) {
-      // TODO consider using intermediate variables to avoid long repetitive chains and 'document' the piece of code with a variable name
       const currentWorkbench = state.workbenches[action.payload.workbenchIndex];
+
+      const { newMapping } = action.payload;
       if (
         !currentWorkbench.selectedMappings.find((m) => {
-          const { entityId, columnSelection } = action.payload.newMapping;
+          const { entityId, columnSelection } = newMapping;
           return m.entityId === entityId && m.columnSelection === columnSelection;
         })
       ) {
-        currentWorkbench.selectedMappings.push(action.payload.newMapping);
+        currentWorkbench.selectedMappings.push(newMapping);
       } else {
         currentWorkbench.selectedMappings = currentWorkbench.selectedMappings.filter((m) => {
-          const { entityId, columnSelection } = action.payload.newMapping;
+          const { entityId, columnSelection } = newMapping;
           return !(m.entityId === entityId && m.columnSelection === columnSelection);
         });
       }
@@ -199,10 +162,6 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
     },
-    addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
-      state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
-    },
-
     createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
       const { workbenchIndex, desc } = action.payload;
       state.workbenches[workbenchIndex].columnDescs = desc;
@@ -246,8 +205,7 @@ const ordinoSlice = createSlice({
       state.focusWorkbenchIndex = action.payload.index;
     },
 
-    // TODO should the type for `data` not match the one above and be `data: { [key: string]: IRow }` ?
-    setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: any[] }>) {
+    setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: IRow[] }>) {
       const { workbenchIndex, data } = action.payload;
       for (const row of data) {
         state.workbenches[workbenchIndex].data[row.id] = row;
@@ -255,7 +213,7 @@ const ordinoSlice = createSlice({
     },
 
     addScoreColumn(state, action: PayloadAction<{ workbenchIndex: number; desc: IColumnDesc & { [key: string]: any }; data: any[] }>) {
-      const { workbenchIndex, desc, data } = action.payload; // FIXME `desc` overrides the `desc` from the function parameter -> rename one of them
+      const { workbenchIndex, desc, data } = action.payload;
       state.workbenches[workbenchIndex].columnDescs.push(desc);
       for (const row of data) {
         const dataRow = state.workbenches[workbenchIndex].data[row.id];
@@ -271,17 +229,15 @@ const ordinoSlice = createSlice({
 
 export const {
   addView,
-  createColorMap,
+  setColorMap,
   changeSelectedMappings,
   setDetailsOpen,
   setAddWorkbenchOpen,
   setViewParameters,
-  setSidebarOpen,
   createColumnDescs,
   setView,
   addColumnDesc,
   removeView,
-  addTransitionOptions,
   replaceWorkbench,
   addScoreColumn,
   addSelection,

@@ -118,7 +118,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                           },
                         ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
-                        transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,

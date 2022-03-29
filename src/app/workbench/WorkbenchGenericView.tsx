@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { IColumnDesc } from 'lineupjs';
-import { EXTENSION_POINT_VISYN_VIEW, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
+import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import {
   addFilter,
   addScoreColumn,
@@ -98,7 +98,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     [dispatch, workbenchIndex],
   );
 
-  // TODO: Eextend visyn view interface
   // TODO: Add proper interfaces to the dispatch callbacks
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -129,8 +128,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               <strong>{view.name}</strong>
             </span>
             {viewPlugin?.header ? (
-              // TODO extract language string using i18n
-              <Suspense fallback="Loading..">
+              <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
                 <viewPlugin.header
                   desc={viewPlugin.desc}
                   data={ordino.workbenches[workbenchIndex].data}
@@ -215,8 +213,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               </div>
               {viewPlugin && viewPlugin?.tab ? (
                 <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
-                  {/* TODO extract language string using i18n */}
-                  <Suspense fallback="Loading..">
+                  <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
                     <viewPlugin.tab
                       desc={viewPlugin.desc}
                       data={ordino.workbenches[workbenchIndex].data}
@@ -235,8 +232,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
           </div>
         ) : null}
         {viewPlugin?.view ? (
-          // TODO extract language string using i18n
-          <Suspense fallback="Loading..">
+          <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
             <viewPlugin.view
               desc={viewPlugin.desc}
               data={ordino.workbenches[workbenchIndex].data}

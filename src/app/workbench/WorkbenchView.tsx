@@ -6,7 +6,7 @@ import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
 import { useAppSelector } from '../../hooks/useAppSelector';
 
-export interface IWorkbenchSingleViewProps {
+export interface IWorkbenchViewProps {
   workbenchIndex: number;
   view: IWorkbenchView;
 }
@@ -15,15 +15,14 @@ export function getVisynView(entityId: string) {
   return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
 
-// TODO what is a workbench SINGLE view? are there also multiple views? currently multiple views can be added to the single view. maybe rename component.
-export function WorkbenchSingleView({ workbenchIndex, view }: IWorkbenchSingleViewProps) {
+export function WorkbenchView({ workbenchIndex, view }: IWorkbenchViewProps) {
   const ordino = useAppSelector((state) => state.ordino);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
   const { value } = useAsync(views, []);
 
   const availableViews = useMemo(() => {
-    return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : []; // TODO: maybe remove this when we have view subtypes in visyn views
+    return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : [];
   }, [value]);
 
   return (

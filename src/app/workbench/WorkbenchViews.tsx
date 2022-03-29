@@ -3,7 +3,7 @@ import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
-import { WorkbenchSingleView } from './WorkbenchSingleView';
+import { WorkbenchView } from './WorkbenchView';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -40,7 +40,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
         </SplitPane>
         <SplitPane
           split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
@@ -67,7 +67,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
         </SplitPane>
         <SplitPane
           split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
@@ -76,7 +76,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
+          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
         </SplitPane>
       </SplitPane>
     );
@@ -96,7 +96,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
         </SplitPane>
         <SplitPane
           split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
@@ -105,8 +105,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="50%"
         >
-          <WorkbenchSingleView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-          <WorkbenchSingleView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
+          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
+          <WorkbenchView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
         </SplitPane>
       </SplitPane>
     );
@@ -126,8 +126,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="50%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
-          <WorkbenchSingleView key={`wbView${views[3].uniqueId}`} workbenchIndex={index} view={views[3]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[3].uniqueId}`} workbenchIndex={index} view={views[3]} />
         </SplitPane>
         <SplitPane
           split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
@@ -136,8 +136,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           minSize={300}
           size="50%"
         >
-          <WorkbenchSingleView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-          <WorkbenchSingleView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
+          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
+          <WorkbenchView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
         </SplitPane>
       </SplitPane>
     );

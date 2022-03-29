@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { IViewPluginDesc } from 'tdp_core';
+import { I18nextManager, IViewPluginDesc } from 'tdp_core';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { IWorkbenchView, removeView, setView } from '../../store';
@@ -83,7 +83,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
           isEmbedded={false}
         />
         <div className="w-100 d-flex justify-content-center align-items-center">
-          <p className="emptyViewText">Select A View</p> {/* TODO extract language string */}
+          <p className="emptyViewText">{I18nextManager.getInstance().i18n.t('tdp:ordino.views.selectView')}</p>
         </div>
       </div>
 

@@ -42,6 +42,10 @@
       "startTour": "Start Tour",
       "tourLevelBeginner": "General introduction",
       "tourLevelAdvanced": "Advanced tours"
+    },
+    "views": {
+      "loading": "Loading...",
+      "selectView": "Select A View"
     }
   }
 }

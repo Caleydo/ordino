@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../interfaces';
+import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;

@@ -39,7 +39,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
           workbench.index === ordino.focusViewIndex ? (
             <FilterAndSelected />
           ) : (
-            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+            <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
           )
         ) : (
           <i className="flex-grow-1 fas fa-plus" />
@@ -50,7 +50,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         {workbench && workbench.index === ordino.focusViewIndex ? (
           <>
             {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
-            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+            <p className="chevronText flex-grow-1">{`${workbench.name} Workbench`}</p>
           </>
         ) : null}
       </div>

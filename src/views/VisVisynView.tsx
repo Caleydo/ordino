@@ -5,14 +5,14 @@ import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis } fr
 
 type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
 
-export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, onSelectionChanged }: VisViewPluginType['props']) {
+export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !idFilter.includes(d._visyn_id));
+    filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
 
     return filterData;
-  }, [data, idFilter]);
+  }, [data, filteredOutIds]);
 
   const cols = [];
 
@@ -44,14 +44,22 @@ export function VisVisynView({ data, dataDesc, selection, idFilter, parameters, 
   return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters.visConfig} hideSidebar />;
 }
 
-export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters, onIdFilterChanged, onParametersChanged }: VisViewPluginType['props']) {
+export function VisViewSidebar({
+  data,
+  dataDesc,
+  selection,
+  filteredOutIds,
+  parameters,
+  onFilteredOutIdsChanged,
+  onParametersChanged,
+}: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !idFilter.includes(d._visyn_id));
+    filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
 
     return filterData;
-  }, [data, idFilter]);
+  }, [data, filteredOutIds]);
 
   const finalCols = useMemo(() => {
     const cols = [];
@@ -75,13 +83,13 @@ export function VisViewSidebar({ data, dataDesc, selection, idFilter, parameters
 
   const visFilterChanged = (filterSet: string) => {
     if (filterSet === 'Filter Out') {
-      onIdFilterChanged(selection);
+      onFilteredOutIdsChanged(selection);
     } else if (filterSet === 'Filter In') {
       const allData = Object.values(data) as any;
       const nonSelectedData = allData.filter((d) => !selection.includes(d._visyn_id)).map((d) => d._visyn_id);
-      onIdFilterChanged(nonSelectedData);
+      onFilteredOutIdsChanged(nonSelectedData);
     } else {
-      onIdFilterChanged([]);
+      onFilteredOutIdsChanged([]);
     }
   };
 

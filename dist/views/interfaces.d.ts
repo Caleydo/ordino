@@ -11,10 +11,30 @@ export declare type OrdinoVisynViewPluginType<Param extends Record<string, unkno
      * TODO:: Type to IReprovisynServerColumn when we merge that into tdp_core
      */
     dataDesc: IServerColumn[] | any[];
-    idFilter: string[];
-    onIdFilterChanged(idFilter: React.SetStateAction<string[]>): void;
+    /**
+     * List of items which are filtered out of the view. Ids match the idtype from 'desc.idtype'
+     */
+    filteredOutIds: string[];
+    /**
+     * Callback when the Filter changed.
+     * @param filteredOutIds New Filter.
+     */
+    onFilteredOutIdsChanged(filteredOutIds: React.SetStateAction<string[]>): void;
+    /**
+     * Callback when the Column Description changed.
+     * @param desc New Column Description.
+     */
     onColumnDescChanged(desc: IColumnDesc): void;
+    /**
+     * Callback when the Data changed.
+     * @param data New Data.
+     */
     onDataChanged(data: any[]): void;
+    /**
+     * Callback when a score column is added.
+     * @param desc desc of new column.
+     * @param data data of new column.
+     */
     onAddScoreColumn(desc: IColumnDesc & {
         [key: string]: any;
     }, data: IScoreRow<any>[]): void;

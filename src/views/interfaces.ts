@@ -1,5 +1,5 @@
 import { IColumnDesc } from 'lineupjs';
-import { DefineVisynViewPlugin, IScoreResult, IScoreRow, IServerColumn, isVisynViewPluginDesc, VisynDataViewPluginType } from 'tdp_core';
+import { DefineVisynViewPlugin, IScoreRow, IServerColumn, isVisynViewPluginDesc, VisynDataViewPluginType } from 'tdp_core';
 
 export type OrdinoVisynViewPluginType<
   Param extends Record<string, unknown> = Record<string, unknown>,
@@ -18,12 +18,32 @@ export type OrdinoVisynViewPluginType<
      */
     dataDesc: IServerColumn[] | any[];
 
-    idFilter: string[];
+    /**
+     * List of items which are filtered out of the view. Ids match the idtype from 'desc.idtype'
+     */
+    filteredOutIds: string[];
 
-    onIdFilterChanged(idFilter: React.SetStateAction<string[]>): void;
+    /**
+     * Callback when the Filter changed.
+     * @param filteredOutIds New Filter.
+     */
+    onFilteredOutIdsChanged(filteredOutIds: React.SetStateAction<string[]>): void;
 
+    /**
+     * Callback when the Column Description changed.
+     * @param desc New Column Description.
+     */
     onColumnDescChanged(desc: IColumnDesc): void;
+    /**
+     * Callback when the Data changed.
+     * @param data New Data.
+     */
     onDataChanged(data: any[]): void;
+    /**
+     * Callback when a score column is added.
+     * @param desc desc of new column.
+     * @param data data of new column.
+     */
     onAddScoreColumn(
       desc: IColumnDesc & {
         [key: string]: any;

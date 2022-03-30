@@ -2,14 +2,14 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { EColumnTypes, VisSidebar, Vis } from 'tdp_core';
-export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }) {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onSelectionChanged }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
         return filterData;
     }, [data, filteredOutIds]);
     const cols = [];
-    for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+    for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
         cols.push({
             info: {
                 name: c.label,
@@ -31,7 +31,7 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
     }
     return React.createElement(Vis, { columns: cols, selected: selectedMap, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, hideSidebar: true });
 }
-export function VisViewSidebar({ data, dataDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
+export function VisViewSidebar({ data, columnDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
@@ -39,7 +39,7 @@ export function VisViewSidebar({ data, dataDesc, selection, filteredOutIds, para
     }, [data, filteredOutIds]);
     const finalCols = useMemo(() => {
         const cols = [];
-        for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+        for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
             cols.push({
                 info: {
                     name: c.label,
@@ -53,7 +53,7 @@ export function VisViewSidebar({ data, dataDesc, selection, filteredOutIds, para
             });
         }
         return cols;
-    }, [dataDesc, filteredData]);
+    }, [columnDesc, filteredData]);
     const visFilterChanged = (filterSet) => {
         if (filterSet === 'Filter Out') {
             onFilteredOutIdsChanged(selection);

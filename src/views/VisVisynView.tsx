@@ -5,7 +5,7 @@ import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis } fr
 
 type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
 
-export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
@@ -16,7 +16,7 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
 
   const cols = [];
 
-  for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+  for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
     cols.push({
       info: {
         name: c.label,
@@ -46,7 +46,7 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
 
 export function VisViewSidebar({
   data,
-  dataDesc,
+  columnDesc,
   selection,
   filteredOutIds,
   parameters,
@@ -64,7 +64,7 @@ export function VisViewSidebar({
   const finalCols = useMemo(() => {
     const cols = [];
 
-    for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+    for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
       cols.push({
         info: {
           name: c.label,
@@ -79,7 +79,7 @@ export function VisViewSidebar({
       });
     }
     return cols;
-  }, [dataDesc, filteredData]);
+  }, [columnDesc, filteredData]);
 
   const visFilterChanged = (filterSet: string) => {
     if (filterSet === 'Filter Out') {

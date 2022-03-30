@@ -133,7 +133,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                 <viewPlugin.header
                   desc={viewPlugin.desc}
                   data={ordino.workbenches[workbenchIndex].data}
-                  dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+                  columnDesc={ordino.workbenches[workbenchIndex].columnDescs}
                   selection={ordino.workbenches[workbenchIndex].selection}
                   filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
                   parameters={{ ...view.parameters, ...parameters }}
@@ -217,7 +217,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                     <viewPlugin.tab
                       desc={viewPlugin.desc}
                       data={ordino.workbenches[workbenchIndex].data}
-                      dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+                      columnDesc={ordino.workbenches[workbenchIndex].columnDescs}
                       selection={ordino.workbenches[workbenchIndex].selection}
                       filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
                       parameters={{ ...view.parameters, ...parameters }}
@@ -236,7 +236,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
             <viewPlugin.view
               desc={viewPlugin.desc}
               data={ordino.workbenches[workbenchIndex].data}
-              dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+              columnDesc={ordino.workbenches[workbenchIndex].columnDescs}
               selection={ordino.workbenches[workbenchIndex].selection}
               filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
               parameters={{ ...view.parameters, ...parameters }}

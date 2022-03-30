@@ -1,4 +1,9 @@
 .ordino-header-navigation {
+  // set fixed height to the header to avoid flickering when switching tabs
+  @media (min-width: 992px) { // burger menu appears
+    height: $header-navigation-height;
+  }
+
   .navbar-brand {
     font-size: 2.2rem;
     font-weight: 500;
@@ -25,5 +30,4 @@
     text-transform: uppercase;
     font-weight: 500;
   }
-
 }

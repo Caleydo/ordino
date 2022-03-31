@@ -1,6 +1,7 @@
 import React from 'react';
 import { CommentPanel, defaultUploadComment } from 'tdp_comments';
-export function useCommentPanel(selection, itemIDType, commentsOpen) {
+export const ORDINO_APP_KEY = 'reprovisyn';
+export function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused, }) {
     const [instance, setInstance] = React.useState(null);
     const setRef = React.useCallback(async (ref) => {
         setInstance((currentInstance) => {
@@ -9,10 +10,10 @@ export function useCommentPanel(selection, itemIDType, commentsOpen) {
                 return currentInstance;
             }
             // Create a new one if there is a ref
-            if (ref) {
+            if (ref && isFocused) {
                 const panel = new CommentPanel({
-                    appKey: 'reprovisyn',
-                    commentTemplate: defaultUploadComment({ app_key: 'reprovisyn' }),
+                    appKey: ORDINO_APP_KEY,
+                    commentTemplate: defaultUploadComment({ app_key: ORDINO_APP_KEY }),
                     enableClosePanel: true,
                     commentFormOptions: {
                         customizations: [],
@@ -39,7 +40,7 @@ export function useCommentPanel(selection, itemIDType, commentsOpen) {
             // Set instance to null if no ref is passed
             return null;
         });
-    }, []);
+    }, [isFocused]);
     React.useEffect(() => {
         instance === null || instance === void 0 ? void 0 : instance.toggle(commentsOpen);
     }, [instance, commentsOpen]);
@@ -48,7 +49,7 @@ export function useCommentPanel(selection, itemIDType, commentsOpen) {
             return;
         }
         const template = {
-            ...defaultUploadComment({ app_key: 'reprovisyn' }),
+            ...defaultUploadComment({ app_key: ORDINO_APP_KEY }),
             ...{ entities: selection.map((s) => ({ id_type: itemIDType, entity_id: s })) },
         };
         const matching = {
@@ -57,6 +58,15 @@ export function useCommentPanel(selection, itemIDType, commentsOpen) {
         instance.showMatchingComments(matching.entities.length > 0 ? matching : undefined);
         instance.adaptNewCommentForm(template);
     }, [instance, itemIDType, selection]);
+    React.useEffect(() => {
+        if (!instance) {
+            return;
+        }
+        // destroy CommentsPanel when the workbench is not focused to avoid global events affecting all instances
+        if (!isFocused) {
+            instance.destroy();
+        }
+    }, [instance, isFocused]);
     return [setRef, instance];
 }
 //# sourceMappingURL=useCommentPanel.js.map

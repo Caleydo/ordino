@@ -20,7 +20,7 @@ export interface IWorkbenchViewsProps {
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
-  const [setRef] = useCommentPanel(selection, itemIDType, commentsOpen);
+  const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
 
   let wb = null;
 

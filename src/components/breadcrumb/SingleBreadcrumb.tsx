@@ -7,6 +7,7 @@ import { ShowDetailsSwitch } from './ShowDetailsSwitch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { OpenCommentsButton } from './OpenCommentsButton';
 
 export interface ISingleBreadcrumbProps {
   first?: boolean;
@@ -33,6 +34,11 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     ro.observe(ref.current);
   }, []);
 
+  const onCommentPanelVisibilityChanged = React.useCallback(
+    (open: boolean) => dispatch(setCommentsOpen({ workbenchIndex: workbench?.index, open })),
+    [workbench?.index, dispatch],
+  );
+
   return (
     <div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
       <div className="position-absolute chevronDiv top-50 start-50 translate-middle d-flex">
@@ -40,13 +46,12 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
           workbench.index === ordino.focusViewIndex ? (
             <>
               <FilterAndSelected />
-              <button
-                type="button"
-                className="btn btn-icon-light btn-sm align-middle m-1"
-                onClick={() => dispatch(setCommentsOpen({ workbenchIndex: workbench.index, open: !workbench.commentsOpen }))}
-              >
-                <i className="flex-grow-1 fas fa-comments" />
-              </button>
+              <OpenCommentsButton
+                idType={workbench.itemIDType}
+                selection={workbench.selection}
+                commentPanelVisible={workbench.commentsOpen}
+                onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
+              />
             </>
           ) : (
             <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>

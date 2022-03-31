@@ -15,7 +15,7 @@ export var EWorkbenchType;
 export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
-    const [setRef] = useCommentPanel(selection, itemIDType, commentsOpen);
+    const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
     let wb = null;
     // TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
     if (views.length === 1 || type !== EWorkbenchType.FOCUS) {

@@ -11,45 +11,22 @@ export var EWorkbenchDirection;
     EWorkbenchDirection["VERTICAL"] = "vertical";
     EWorkbenchDirection["HORIZONTAL"] = "horizontal";
 })(EWorkbenchDirection || (EWorkbenchDirection = {}));
-// const test = ({
-//   headerOverride = Header,
-// }: {
-//   headerOverride?: (props: {view: IView[]}) => JSX.Component;
-//   overrides: {
-//     header: JSX.Component;
-//     itemGroup: JSX.Component;
-//     header: JSX.Component;
-//   }
-// }) => <>
-//   <headerOverride views={views}></headerOverride>
-//   Map( <ListItemGroup>
-//     <ListItem>
-//     ...)
-// </>;
-// export interface IOrdinoScatterplotViewPlugin<{
-//   color: string;
-// }> {
-//   state: {
-//   }
-// }
-const containsView = (workbench, viewId) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
 const initialState = {
     workbenches: [],
-    focusViewIndex: 0,
-    sidebarOpen: false,
+    focusWorkbenchIndex: 0,
     colorMap: {},
 };
-// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
     name: 'ordino',
     initialState,
     reducers: {
+        // TODO in general: does it make sense to group the reducer functions (e.g., by workbench, views, ...)? or even create multiple variables that are spread-in here.
         addFirstWorkbench(state, action) {
-            state.focusViewIndex = 0;
+            state.focusWorkbenchIndex = 0;
             state.workbenches.splice(0, state.workbenches.length);
             state.workbenches.push(action.payload);
         },
-        createColorMap(state, action) {
+        setColorMap(state, action) {
             state.colorMap = action.payload.colorMap;
         },
         addWorkbench(state, action) {
@@ -61,20 +38,23 @@ const ordinoSlice = createSlice({
         addView(state, action) {
             state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
         },
-        setSidebarOpen(state, action) {
-            state.sidebarOpen = action.payload.open;
-        },
         setViewParameters(state, action) {
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
         },
         changeSelectedMappings(state, action) {
-            if (!state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
-                return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
+            const currentWorkbench = state.workbenches[action.payload.workbenchIndex];
+            const { newMapping } = action.payload;
+            if (!currentWorkbench.selectedMappings.find((m) => {
+                const { entityId, columnSelection } = newMapping;
+                return m.entityId === entityId && m.columnSelection === columnSelection;
             })) {
-                state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+                currentWorkbench.selectedMappings.push(newMapping);
             }
             else {
-                state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter((m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection));
+                currentWorkbench.selectedMappings = currentWorkbench.selectedMappings.filter((m) => {
+                    const { entityId, columnSelection } = newMapping;
+                    return !(m.entityId === entityId && m.columnSelection === columnSelection);
+                });
             }
         },
         setDetailsOpen(state, action) {
@@ -87,15 +67,12 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
         },
-        addTransitionOptions(state, action) {
-            state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
-        },
         createColumnDescs(state, action) {
             const { workbenchIndex, desc } = action.payload;
             state.workbenches[workbenchIndex].columnDescs = desc;
         },
         addColumnDesc(state, action) {
-            const { workbenchIndex, desc } = action.payload;
+            const { workbenchIndex } = action.payload;
             state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
         },
         switchViews(state, action) {
@@ -127,12 +104,12 @@ const ordinoSlice = createSlice({
             state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
         },
         changeFocus(state, action) {
-            state.focusViewIndex = action.payload.index;
+            state.focusWorkbenchIndex = action.payload.index;
         },
         setWorkbenchData(state, action) {
             const { workbenchIndex, data } = action.payload;
-            for (const i of data) {
-                state.workbenches[workbenchIndex].data[i.id] = i;
+            for (const row of data) {
+                state.workbenches[workbenchIndex].data[row.id] = row;
             }
         },
         addScoreColumn(state, action) {
@@ -142,13 +119,13 @@ const ordinoSlice = createSlice({
                 const dataRow = state.workbenches[workbenchIndex].data[row.id];
                 if (dataRow) {
                     dataRow[desc.scoreID] = row.score;
-                } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+                } // TODO: BUG the score should not add a new row when the id does not exist in my current data else {
                 //   state.workbenches[state.focusViewIndex].data[row.id] = row;
                 // }
             }
         },
     },
 });
-export const { addView, createColorMap, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, setSidebarOpen, createColumnDescs, setView, addColumnDesc, removeView, addTransitionOptions, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
+export const { addView, setColorMap, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

@@ -84,7 +84,9 @@ export interface IWorkbench {
   selection: IRow['_visyn_id'][];
 
   /**
-   * TODO what is details?
+   * "Details" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
+   * Since the first workbench does not have an incoming selection, this is always false for the first workbench
+   * detailsOpen keeps track of whether or not the details tab is switched open.
    */
   detailsOpen: boolean;
 

@@ -77,7 +77,6 @@ export function AddWorkbenchSidebar({ workbench }) {
                             },
                         ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
-                        transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
@@ -86,7 +85,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         selection: [],
                     }));
                     setTimeout(() => {
-                        dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                        dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
                     }, 0);
                 } },
                 availableViews

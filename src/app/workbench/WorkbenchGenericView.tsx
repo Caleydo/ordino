@@ -98,7 +98,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     [dispatch, workbenchIndex],
   );
 
-  // TODO: Add proper interfaces to the dispatch callbacks
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {workbenchIndex === ordino.focusWorkbenchIndex ? (

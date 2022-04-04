@@ -46,7 +46,8 @@
         "breadcrumb": {
             "hideComments": "Hide comments panel",
             "showComments": "Show comments panel",
-            "availableComments": "{{comments}} comment(s) are available for your selection"
+            "availableComments": "{{count}} comment is available for your selection",
+            "availableComments_plural": "{{count}} comments are available for your selection"
         }
     }
 }

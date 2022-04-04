@@ -1,5 +1,6 @@
 import React from 'react';
 import { CommentActions, IComment } from 'tdp_comments';
+import { I18nextManager } from 'tdp_core';
 
 export interface IOpenCommentsButtonProps {
   /**
@@ -48,12 +49,11 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
     }
     onCommentPanelVisibilityChanged(false);
   }, [onCommentPanelVisibilityChanged, selection]);
-
   const title = commentPanelVisible
-    ? 'Hide comments panel'
+    ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
     : commentCount
-    ? `${commentCount} new comments are available for your selection`
-    : 'Show comments panel';
+    ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.availableComments', { comments: commentCount })
+    : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
 
   return selection.length > 0 ? (
     <button type="button" title={title} className="btn btn-icon-light position-relative" onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}>

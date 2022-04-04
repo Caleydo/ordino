@@ -1,5 +1,6 @@
 import React from 'react';
 import { CommentActions } from 'tdp_comments';
+import { I18nextManager } from 'tdp_core';
 export function OpenCommentsButton({ idType, selection, commentPanelVisible, onCommentPanelVisibilityChanged }) {
     const [commentCount, setCommentCount] = React.useState(0);
     React.useEffect(() => {
@@ -24,10 +25,10 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
         onCommentPanelVisibilityChanged(false);
     }, [onCommentPanelVisibilityChanged, selection]);
     const title = commentPanelVisible
-        ? 'Hide comments panel'
+        ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
         : commentCount
-            ? `${commentCount} new comments are available for your selection`
-            : 'Show comments panel';
+            ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.availableComments', { comments: commentCount })
+            : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
     return selection.length > 0 ? (React.createElement("button", { type: "button", title: title, className: "btn btn-icon-light position-relative", onClick: () => onCommentPanelVisibilityChanged(!commentPanelVisible) },
         React.createElement("span", null,
             React.createElement("i", { className: "flex-grow-1 fas fa-comments" }),

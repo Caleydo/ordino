@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { PluginRegistry } from 'tdp_core';
+import { EP_PHOVEA_CORE_LOCALE, PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_LOGO } from './base';
 export default function (registry) {
     // registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});
@@ -69,6 +69,12 @@ export default function (registry) {
         },
         description: 'Shows all information from the database for the searched genes',
         topics: ['tcga', 'information'],
+    });
+    registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
+        return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+    }, {
+        order: 1,
+        ns: 'tdp',
     });
     // generator-phovea:end
 }

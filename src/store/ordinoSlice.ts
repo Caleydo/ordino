@@ -91,7 +91,7 @@ export interface IWorkbench {
   detailsSidebarOpen: boolean;
 
   /**
-   * "createNextWorkbenchSidebar" is the sidebar that appears to the right of a workbench when you want to add a new workbench. 
+   * "createNextWorkbenchSidebar" is the sidebar that appears to the right of a workbench when you want to add a new workbench.
    * It contains options for which mapping types you want in the next workbench.
    * createNextWorkbenchSidebarOpen keeps track of whether or not the details tab is switched open
    */

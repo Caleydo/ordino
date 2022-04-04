@@ -3,7 +3,7 @@ import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingViewDesc } from '../interfaces';
+import { isVisynRankingViewDesc } from '../../../views/interfaces';
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();

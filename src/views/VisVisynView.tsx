@@ -1,9 +1,28 @@
 // Gets into the phovea.ts
 import * as React from 'react';
 import { useMemo } from 'react';
-import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis } from 'tdp_core';
+import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis, VisynViewPluginType } from 'tdp_core';
 
 type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
+
+function getFilteredDescColumns(dataDesc: any[] | VisynViewPluginType['desc'], filteredData: any[]): any[] {
+  const cols = [];
+  for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+    cols.push({
+      info: {
+        name: c.summary ? `${c.summary}: ${c.label}` : c.label,
+        description: c.summary,
+        id: c.column,
+      },
+      values: () =>
+        filteredData.map((d) => {
+          return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
+        }),
+      type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
+    });
+  }
+  return cols;
+}
 
 export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
@@ -14,34 +33,15 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
     return filterData;
   }, [data, filteredOutIds]);
 
-  const cols = [];
-
-  for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
-    cols.push({
-      info: {
-        name: c.label,
-        description: c.summary,
-        id: c.label + c._id,
-      },
-      values: () =>
-        filteredData.map((d) => {
-          return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
-        }),
-      type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
-    });
-  }
-
-  const selectedMap: { [key: number]: boolean } = {};
-
-  for (const i of filteredData) {
-    selectedMap[i._id] = false;
-  }
-
-  for (const i of selection) {
-    selectedMap[i] = true;
-  }
-
-  return <Vis columns={cols} selected={selectedMap} selectionCallback={onSelectionChanged} externalConfig={parameters.visConfig} hideSidebar />;
+  return (
+    <Vis
+      columns={getFilteredDescColumns(dataDesc, filteredData)}
+      selected={selection}
+      selectionCallback={onSelectionChanged}
+      externalConfig={parameters.visConfig}
+      hideSidebar
+    />
+  );
 }
 
 export function VisViewSidebar({
@@ -62,23 +62,7 @@ export function VisViewSidebar({
   }, [data, filteredOutIds]);
 
   const finalCols = useMemo(() => {
-    const cols = [];
-
-    for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
-      cols.push({
-        info: {
-          name: c.label,
-          description: c.summary,
-          id: c.label + c._id,
-        },
-        values: () =>
-          filteredData.map((d) => {
-            return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
-          }),
-        type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
-      });
-    }
-    return cols;
+    return getFilteredDescColumns(dataDesc, filteredData);
   }, [dataDesc, filteredData]);
 
   const visFilterChanged = (filterSet: string) => {

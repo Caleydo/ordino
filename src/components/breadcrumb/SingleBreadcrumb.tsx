@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
+import { I18nextManager } from 'tdp_core';
 import { AddViewButton } from './AddViewButton';
 import { IWorkbench, setCommentsOpen } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
@@ -54,7 +55,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
               />
             </>
           ) : (
-            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+            <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
           )
         ) : (
           <i className="flex-grow-1 fas fa-plus" />
@@ -65,7 +66,9 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         {workbench && workbench.index === ordino.focusViewIndex ? (
           <>
             {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
-            <p className="chevronText flex-grow-1">{workbench.index === ordino.focusViewIndex ? workbench.name : `${workbench.name.slice(0, 5)}..`}</p>
+            <p className="chevronText flex-grow-1">
+              {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
+            </p>
           </>
         ) : null}
       </div>

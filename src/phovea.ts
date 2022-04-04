@@ -20,6 +20,17 @@ export default function (registry: IRegistry) {
     },
   );
 
+  registry.push(
+    EP_PHOVEA_CORE_LOCALE,
+    'tdpLocaleEN',
+    function () {
+      return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+    },
+    <ILocaleEPDesc>{
+      ns: 'tdp',
+    },
+  );
+
   registry.pushVisynView('cosmic', () => import('./views/CosmicProxyView').then((m) => m.cosmicConfiguration), {
     visynViewType: 'simple',
     factory: 'cosmicConfiguration',

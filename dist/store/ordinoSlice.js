@@ -57,11 +57,11 @@ const ordinoSlice = createSlice({
                 });
             }
         },
-        setDetailsOpen(state, action) {
-            state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
+        setDetailsSidebarOpen(state, action) {
+            state.workbenches[action.payload.workbenchIndex].detailsSidebarOpen = action.payload.open;
         },
-        setAddWorkbenchOpen(state, action) {
-            state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
+        setCreateNextWorkbenchSidebarOpen(state, action) {
+            state.workbenches[action.payload.workbenchIndex].createNextWorkbenchSidebarOpen = action.payload.open;
         },
         setView(state, action) {
             state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
@@ -126,6 +126,6 @@ const ordinoSlice = createSlice({
         },
     },
 });
-export const { addView, setColorMap, changeSelectedMappings, setDetailsOpen, setAddWorkbenchOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
+export const { addView, setColorMap, changeSelectedMappings, setDetailsSidebarOpen, setCreateNextWorkbenchSidebarOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

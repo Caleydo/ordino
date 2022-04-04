@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
+import { AddWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
 export var EWorkbenchType;
@@ -46,8 +46,8 @@ export function WorkbenchViews({ index, type }) {
                 React.createElement(WorkbenchView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }),
                 React.createElement(WorkbenchView, { key: `wbView${views[2].uniqueId}`, workbenchIndex: index, view: views[2] }))));
     }
-    const showLeftSidebar = ordino.workbenches[index].detailsOpen && index > 0 && type === EWorkbenchType.FOCUS;
-    const showRightSidebar = ordino.workbenches[index].addWorkbenchOpen && type === EWorkbenchType.FOCUS;
+    const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
+    const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
     return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
             showLeftSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },

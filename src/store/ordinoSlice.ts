@@ -84,16 +84,16 @@ export interface IWorkbench {
   selection: IRow['_visyn_id'][];
 
   /**
-   * "Details" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
+   * "detailsSidebar" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
    * Since the first workbench does not have an incoming selection, this is always false for the first workbench
-   * detailsOpen keeps track of whether or not the details tab is switched open.
+   * detailsSidebarOpen keeps track of whether or not the details tab is switched open.
    */
-  detailsOpen: boolean;
+  detailsSidebarOpen: boolean;
 
   /**
    * TODO how can the workbench itself have an "add workbench open" flag when workbenches are not nested?
    */
-  addWorkbenchOpen: boolean;
+  createNextWorkbenchSidebarOpen: boolean;
 }
 
 interface IBaseState {
@@ -154,11 +154,11 @@ const ordinoSlice = createSlice({
         });
       }
     },
-    setDetailsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
+    setDetailsSidebarOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      state.workbenches[action.payload.workbenchIndex].detailsSidebarOpen = action.payload.open;
     },
-    setAddWorkbenchOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
+    setCreateNextWorkbenchSidebarOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      state.workbenches[action.payload.workbenchIndex].createNextWorkbenchSidebarOpen = action.payload.open;
     },
     setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string; viewName: string }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
@@ -233,8 +233,8 @@ export const {
   addView,
   setColorMap,
   changeSelectedMappings,
-  setDetailsOpen,
-  setAddWorkbenchOpen,
+  setDetailsSidebarOpen,
+  setCreateNextWorkbenchSidebarOpen,
   setViewParameters,
   createColumnDescs,
   setView,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { setDetailsOpen } from '../../store/ordinoSlice';
+import { setDetailsSidebarOpen } from '../../store/ordinoSlice';
 
 export interface IShowDetailsSwitchProps {
   height?: number;
@@ -16,7 +16,9 @@ export function ShowDetailsSwitch({ height = 30 }: IShowDetailsSwitchProps) {
       <button
         type="button"
         onClick={() =>
-          dispatch(setDetailsOpen({ workbenchIndex: ordino.focusWorkbenchIndex, open: !ordino.workbenches[ordino.focusWorkbenchIndex].detailsOpen }))
+          dispatch(
+            setDetailsSidebarOpen({ workbenchIndex: ordino.focusWorkbenchIndex, open: !ordino.workbenches[ordino.focusWorkbenchIndex].detailsSidebarOpen }),
+          )
         }
         className="btn btn-icon-light align-middle"
       >

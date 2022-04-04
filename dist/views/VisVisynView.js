@@ -25,14 +25,7 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
         return filterData;
     }, [data, filteredOutIds]);
-    const selectedMap = {};
-    for (const i of filteredData) {
-        selectedMap[i._id] = false;
-    }
-    for (const i of selection) {
-        selectedMap[i] = true;
-    }
-    return (React.createElement(Vis, { columns: getFilteredDescColumns(dataDesc, filteredData), selected: selectedMap, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, hideSidebar: true }));
+    return (React.createElement(Vis, { columns: getFilteredDescColumns(dataDesc, filteredData), selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, hideSidebar: true }));
 }
 export function VisViewSidebar({ data, dataDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
     const filteredData = useMemo(() => {

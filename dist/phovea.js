@@ -75,6 +75,12 @@ export default function (registry) {
         description: 'Shows all information from the database for the searched genes',
         topics: ['tcga', 'information'],
     });
+    registry.push(EP_PHOVEA_CORE_LOCALE, 'ordinoLocaleEN', function () {
+        return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+    }, {
+        order: 1,
+        ns: 'tdp',
+    });
     // generator-phovea:end
 }
 //# sourceMappingURL=phovea.js.map

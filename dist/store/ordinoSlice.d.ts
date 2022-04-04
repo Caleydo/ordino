@@ -62,6 +62,7 @@ export interface IWorkbench {
     selection: IRow['_visyn_id'][];
     detailsOpen: boolean;
     addWorkbenchOpen: boolean;
+    commentsOpen?: boolean;
 }
 interface IBaseState {
     selection: string[];
@@ -136,6 +137,9 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, setWorkbenchDirection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     direction: EWorkbenchDirection;
+}, string>, setCommentsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    open: boolean;
 }, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 export {};

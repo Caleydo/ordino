@@ -42,6 +42,9 @@
       "startTour": "Start Tour",
       "tourLevelBeginner": "General introduction",
       "tourLevelAdvanced": "Advanced tours"
+    },
+    "breadcrumb": {
+      "workbenchName": "{{workbenchName}} Workbench"
     }
   }
 }

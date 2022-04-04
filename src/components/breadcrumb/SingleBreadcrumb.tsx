@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
+import { I18nextManager } from 'tdp_core';
 import { AddViewButton } from './AddViewButton';
 import { IWorkbench } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
@@ -50,7 +51,9 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         {workbench && workbench.index === ordino.focusViewIndex ? (
           <>
             {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
-            <p className="chevronText flex-grow-1">{`${workbench.name} Workbench`}</p>
+            <p className="chevronText flex-grow-1">
+              {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
+            </p>
           </>
         ) : null}
       </div>

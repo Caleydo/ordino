@@ -33,20 +33,10 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
     return filterData;
   }, [data, filteredOutIds]);
 
-  const selectedMap: { [key: number]: boolean } = {};
-
-  for (const i of filteredData) {
-    selectedMap[i._id] = false;
-  }
-
-  for (const i of selection) {
-    selectedMap[i] = true;
-  }
-
   return (
     <Vis
       columns={getFilteredDescColumns(dataDesc, filteredData)}
-      selected={selectedMap}
+      selected={selection}
       selectionCallback={onSelectionChanged}
       externalConfig={parameters.visConfig}
       hideSidebar

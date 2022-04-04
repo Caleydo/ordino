@@ -35,7 +35,7 @@ export function HeaderNavigation({ fixed, bg = 'dark' }: IHeaderNavigationProps)
         <a href="#/" className="navbar-brand">
           <OrdinoLogo />
         </a>
-        <a href="/app/" className="order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light">
+        <a href="/app/" className="order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light" data-testid="start-analysis-button">
           Start Analysis
         </a>
         <button

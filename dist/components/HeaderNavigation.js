@@ -13,7 +13,7 @@ export function HeaderNavigation({ fixed, bg = 'dark' }) {
         React.createElement("div", { className: "container-fluid" },
             React.createElement("a", { href: "#/", className: "navbar-brand" },
                 React.createElement(OrdinoLogo, null)),
-            React.createElement("a", { href: "/app/", className: "order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light" }, "Start Analysis"),
+            React.createElement("a", { href: "/app/", className: "order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light", "data-testid": "start-analysis-button" }, "Start Analysis"),
             React.createElement("button", { className: "navbar-toggler", type: "button", "data-bs-toggle": "collapse", "data-bs-target": "#ordino-header-navbar-nav", "aria-controls": "ordino-header-navbar-nav", "aria-expanded": "false", "aria-label": "Toggle navigation" },
                 React.createElement("span", { className: "navbar-toggler-icon" })),
             React.createElement("div", { className: "order-1 navbar-collapse collapse", id: "ordino-header-navbar-nav" }, links && (React.createElement("ul", { className: "navbar-nav" }, links.map(({ text, page, faIcon }, i) => (

@@ -10,11 +10,9 @@ interface IWorkbenchProps {
 
 export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbenchProps) {
   const ordino = useAppSelector((state) => state.ordino);
-  const ref = React.useRef(null);
 
   return (
     <div
-      ref={ref}
       className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >

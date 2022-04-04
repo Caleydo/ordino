@@ -29,11 +29,11 @@ export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMen
         };
     return (React.createElement(React.Fragment, null,
         ' ',
-        React.createElement("div", Object.assign({ className: `view-chooser  d-flex flex-shrink-0 align-items-stretch
+        React.createElement("div", { className: `view-chooser  d-flex flex-shrink-0 align-items-stretch
        ${classNames}
        ${collapsed ? 'collapsed' : ''}
        ${embedded ? 'embedded' : ''}
-       ${!embedded && !collapsed ? (expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left') : ''}` }, collapsedProps),
+       ${!embedded && !collapsed ? (expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left') : ''}`, ...collapsedProps },
             React.createElement("div", { className: `view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}` },
                 showHeader && (React.createElement(ViewChooserHeader, null,
                     showBurgerMenu ? React.createElement(BurgerButton, { onClick: () => setEmbedded(!embedded) }) : null,

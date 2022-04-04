@@ -10,7 +10,7 @@ import { EDragTypes } from './utils';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
-import { isVisynRankingViewDesc } from './interfaces';
+import { isVisynRankingViewDesc } from '../../views/interfaces';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
     var _a;
     const [editOpen, setEditOpen] = useState(true);
@@ -64,7 +64,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                 React.createElement("span", { className: "view-title row align-items-center m-1" },
                     React.createElement("strong", null, view.name)),
                 (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.header) ? (React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
-                    React.createElement(viewPlugin.header, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged }))) : null))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
+                    React.createElement(viewPlugin.header, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged }))) : null))) : (React.createElement("div", { ref: drag, className: "view-parameters d-flex" },
             React.createElement("span", { className: "view-title row align-items-center m-1" },
                 React.createElement("strong", null, (_a = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _a === void 0 ? void 0 : _a.itemName)))),
         React.createElement("div", { className: "inner d-flex" },
@@ -87,9 +87,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                             }, isEmbedded: false })),
                     viewPlugin && (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? (React.createElement("div", { className: `tab-pane ${!settingsTabSelected ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "view-tab" },
                         React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
-                            React.createElement(viewPlugin.tab, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged })))) : null))) : null,
+                            React.createElement(viewPlugin.tab, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged })))) : null))) : null,
             (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.view) ? (React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
-                React.createElement(viewPlugin.view, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, idFilter: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onIdFilterChanged: onIdFilterChanged, onDataChanged: onDataChanged, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
+                React.createElement(viewPlugin.view, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged, onDataChanged: onDataChanged, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

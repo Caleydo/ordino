@@ -18,7 +18,9 @@ export interface IWorkbenchGenericViewProps {
 
 export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWorkbenchGenericViewProps) {
   const dispatch = useAppDispatch();
+
   const ordino = useAppSelector((state) => state.ordino);
+
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: [EDragTypes.MOVE],

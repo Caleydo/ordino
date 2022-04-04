@@ -4,9 +4,9 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../interfaces';
+import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
 
-export interface IAddWorkbenchSidebarProps {
+export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
 }
 
@@ -16,7 +16,7 @@ export interface IMappingDesc {
   mappingSubtype: string;
 }
 
-export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
+export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 

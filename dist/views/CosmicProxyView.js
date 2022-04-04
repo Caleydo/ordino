@@ -8,7 +8,6 @@ export function CosmicView({ parameters, onParametersChanged }) {
             onParametersChanged({ currentId: '' });
         }
     });
-    console.log(parameters);
     return React.createElement("iframe", { className: "w-100 h-100", src: "https://cancer.sanger.ac.uk/cosmic" });
 }
 // Toolbar ?
@@ -24,6 +23,9 @@ export function CosmicViewHeader({ selection, onParametersChanged }) {
 export const cosmicConfiguration = () => {
     return {
         viewType: 'simple',
+        defaultParameters: {
+            currentId: '',
+        },
         view: CosmicView,
         tab: null,
         header: CosmicViewHeader,

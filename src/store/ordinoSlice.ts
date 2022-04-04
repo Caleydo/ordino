@@ -94,6 +94,8 @@ export interface IWorkbench {
    * TODO how can the workbench itself have an "add workbench open" flag when workbenches are not nested?
    */
   createNextWorkbenchSidebarOpen: boolean;
+
+  commentsOpen?: boolean;
 }
 
 interface IBaseState {
@@ -226,6 +228,10 @@ const ordinoSlice = createSlice({
         // }
       }
     },
+    setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      const { workbenchIndex, open } = action.payload;
+      state.workbenches[workbenchIndex].commentsOpen = open;
+    },
   },
 });
 
@@ -250,6 +256,7 @@ export const {
   addWorkbench,
   switchViews,
   setWorkbenchDirection,
+  setCommentsOpen,
 } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { AddWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
+import { useCommentPanel } from './useCommentPanel';
+import { CreateNextWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
 export var EWorkbenchType;
 (function (EWorkbenchType) {
     EWorkbenchType["PREVIOUS"] = "t-previous";
@@ -13,7 +14,8 @@ export var EWorkbenchType;
 })(EWorkbenchType || (EWorkbenchType = {}));
 export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
-    const { views } = ordino.workbenches[index];
+    const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
+    const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
     let wb = null;
     // TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
     if (views.length === 1 || type !== EWorkbenchType.FOCUS) {
@@ -52,8 +54,8 @@ export function WorkbenchViews({ index, type }) {
         React.createElement("div", { className: "d-flex flex-col w-100" },
             showLeftSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] }))) : null,
-            React.createElement("div", { style: { flexGrow: 10 } }, wb),
+            React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" }, wb),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
-                React.createElement(AddWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
+                React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

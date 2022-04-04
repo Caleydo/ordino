@@ -1,5 +1,5 @@
 import { IWorkbench } from '../../../store';
-export interface IAddWorkbenchSidebarProps {
+export interface ICreateNextWorkbenchSidebarProps {
     workbench: IWorkbench;
 }
 export interface IMappingDesc {
@@ -7,5 +7,5 @@ export interface IMappingDesc {
     mappingEntity: string;
     mappingSubtype: string;
 }
-export declare function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps): JSX.Element;
+export declare function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSidebarProps): JSX.Element;
 //# sourceMappingURL=CreateNextWorkbenchSidebar.d.ts.map

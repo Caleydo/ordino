@@ -3,12 +3,12 @@
   grid-template-columns: auto min-content;
   grid-template-rows: minmax(41px, min-content) auto;
   grid-template-areas:
-    "parameters view-actions"
-    "inner inner";
+    'parameters view-actions'
+    'inner inner';
   overflow: hidden;
   position: relative;
   gap: 5px;
-  margin: .5rem;
+  margin: 0.5rem;
   padding: 5px;
   border: 1px solid lightgray;
 
@@ -42,11 +42,6 @@
 .emptyViewText {
   font-size: 24px;
   color: gray;
-}
-
-.workbenchWrapper {
-  width: inherit;
-  flex: 1 1 auto;
 }
 
 .view-title {

@@ -52,21 +52,21 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
               .map((v) => {
                 return (
                   <div key={`${v.name}mapping`}>
-                    {v.transition?.mapping.map((map) => {
-                      const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                    {v.transition?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                      const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                       return (
-                        <Fragment key={`${map.entity}-${map.name}`}>
-                          <div className="mt-2 mappingTypeText">{map.name}</div>
+                        <Fragment key={`${entity}-${name}`}>
+                          <div className="mt-2 mappingTypeText">{name}</div>
                           {columns.map((col) => {
                             return (
                               <div key={`${col.label}Column`} className="form-check">
                                 <input
-                                  checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity)}
+                                  checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity)}
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
                                         workbenchIndex: ordino.focusViewIndex,
-                                        newMapping: { columnSelection: col.columnName, entityId: map.entity },
+                                        newMapping: { columnSelection: col.columnName, entityId: entity },
                                       }),
                                     )
                                   }

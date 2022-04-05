@@ -28,15 +28,15 @@ export function DetailsSidebar({ workbench }) {
                 .filter((v) => v.itemIDType === workbench.entityId)
                 .map((v) => {
                 var _a;
-                return (React.createElement("div", { key: `${v.name}mapping` }, (_a = v.transition) === null || _a === void 0 ? void 0 : _a.mapping.map((map) => {
-                    const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
-                    return (React.createElement(Fragment, { key: `${map.entity}-${map.name}` },
-                        React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
+                return (React.createElement("div", { key: `${v.name}mapping` }, (_a = v.transition) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                    const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
+                    return (React.createElement(Fragment, { key: `${entity}-${name}` },
+                        React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
                         columns.map((col) => {
                             return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
-                                React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity), onChange: () => dispatch(changeSelectedMappings({
+                                React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity), onChange: () => dispatch(changeSelectedMappings({
                                         workbenchIndex: ordino.focusViewIndex,
-                                        newMapping: { columnSelection: col.columnName, entityId: map.entity },
+                                        newMapping: { columnSelection: col.columnName, entityId: entity },
                                     })), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
                                 React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));
                         })));

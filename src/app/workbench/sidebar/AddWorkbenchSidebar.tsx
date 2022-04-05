@@ -1,10 +1,9 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
-import { IDTypeManager, IViewPluginDesc, useAsync, ViewUtils } from 'tdp_core';
-import { IReprovisynMapping } from 'reprovisyn';
+import { IViewPluginDesc, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions } from '../../../views';
 
 export interface IAddWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -32,21 +31,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     }
   };
 
-  const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
-
-  const findDependentViews = React.useMemo(
-    () => () =>
-      ViewUtils.findVisynViews(idType).then((views) => {
-        console.log(views);
-        console.log(views.filter((v) => isVisynRankingViewDesc(v)));
-        return views.filter((v) => isVisynRankingViewDesc(v));
-      }),
-    [idType],
-  );
-
-  const { status, value: availableViews } = useAsync(findDependentViews, []);
-
-  console.log(availableViews);
+  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {
@@ -56,7 +41,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      console.log(v);
       if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
         entities.push({ idType: v.itemIDType, label: v.group.name });
       }
@@ -137,17 +121,17 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                     .map((v) => {
                       return (
                         <div key={`${v.name}-mapping`}>
-                          {v.relation.mapping.map((map: IReprovisynMapping) => {
-                            const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                          {v.transition?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                            const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                             return (
-                              <Fragment key={`${map.name}-group`}>
-                                <div className="mt-2 mappingTypeText">{map.name}</div>
+                              <Fragment key={`${name}-group`}>
+                                <div className="mt-2 mappingTypeText">{name}</div>
                                 {columns.map((col) => {
                                   return (
                                     <div key={`${col.label}Column`} className="form-check">
                                       <input
                                         onChange={() => {
-                                          relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                          relationListCallback({ targetEntity: e.idType, mappingEntity: entity, mappingSubtype: col.columnName });
                                           setSelectedView(v);
                                         }}
                                         className="form-check-input"

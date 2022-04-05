@@ -1,7 +1,76 @@
 /// <reference types="react" />
 import { IColumnDesc } from 'lineupjs';
-import { DefineVisynViewPlugin, IScoreRow, IServerColumn, VisynDataViewPluginType } from 'tdp_core';
-export declare type OrdinoVisynViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param, {
+import { DefineVisynViewPlugin, IScoreRow, IServerColumn } from 'tdp_core';
+/**
+ * relation list types?
+ */
+export declare enum EReprovisynRelationList {
+    filter = 0,
+    all = 1
+}
+/**
+ * redacted reprovisyn entity type
+ */
+export interface ITransitionEntity {
+    id: string;
+    key: string;
+    columns: string[];
+}
+export declare enum EReprovisynScoreType {
+    GenericDBScore = 0,
+    CustomScoreImplementation = 1
+}
+export declare enum EReprovisynColumnType {
+    categorical = "categorical",
+    number = "number",
+    string = "string"
+}
+export interface IReprovisynColumnReference {
+    columnName: string;
+    show: boolean;
+    label: string;
+    type?: EReprovisynColumnType;
+}
+export interface ITransitionMapping {
+    name: string;
+    entity: string;
+    sourceKey: string;
+    targetKey: string;
+    sourceToTargetColumns?: IReprovisynColumnReference[];
+    targetToSourceColumns?: IReprovisynColumnReference[];
+}
+/**
+ * reprovisyn relation type
+ */
+export declare enum ETransitionType {
+    OneToN = "1-n",
+    MToN = "m-n",
+    OrdinoDrilldown = "ordino-drilldown"
+}
+export interface IReprovisynRelation {
+    type: ETransitionType;
+    source: ITransitionEntity;
+    sourceToTargetLabel: string;
+    target: ITransitionEntity;
+    targetToSourceLabel: string;
+    mapping?: ITransitionMapping[];
+}
+export interface IWorkbenchTransition {
+    type: ETransitionType;
+    source: ITransitionEntity;
+    sourceToTargetLabel: string;
+    target: ITransitionEntity;
+    targetToSourceLabel: string;
+    mapping?: ITransitionMapping[];
+}
+export interface IOrdinoVisynViewDesc {
+    transition: IWorkbenchTransition;
+}
+export interface IOrdinoVisynViewParam {
+    prevSelection: string[];
+    selectedMappings: ITransitionMapping[];
+}
+export type OrdinoVisynViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param & IOrdinoVisynViewParam, {
     /**
      * Data array matching the columns defined in the `dataDesc`.
      */
@@ -38,7 +107,8 @@ export declare type OrdinoVisynViewPluginType<Param extends Record<string, unkno
     onAddScoreColumn(desc: IColumnDesc & {
         [key: string]: any;
     }, data: IScoreRow<any>[]): void;
-}, Desc>;
-export declare function isVisynRankingViewDesc(desc: unknown): desc is VisynDataViewPluginType['desc'];
-export declare function isVisynRankingView(plugin: unknown): plugin is VisynDataViewPluginType['plugin'];
+}, Desc & IOrdinoVisynViewDesc>;
+export declare type OrdinoVisynViewPluginTyp = OrdinoVisynViewPluginType;
+export declare function isVisynRankingViewDesc(desc: unknown): desc is OrdinoVisynViewPluginType['desc'];
+export declare function isVisynRankingView(plugin: unknown): plugin is OrdinoVisynViewPluginType['plugin'];
 //# sourceMappingURL=interfaces.d.ts.map

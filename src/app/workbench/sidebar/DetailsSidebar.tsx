@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions, isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;
@@ -18,17 +18,7 @@ export interface IMappingDesc {
 export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
-
-  const idType = useMemo(() => {
-    return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const findDependentViews = React.useMemo(
-    () => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))),
-    [idType],
-  );
-  const { status, value: availableViews } = useAsync(findDependentViews, []);
+  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
 
   const selectionString = useMemo(() => {
     let currString = '';
@@ -62,7 +52,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
               .map((v) => {
                 return (
                   <div key={`${v.name}mapping`}>
-                    {v.relation.mapping.map((map: IReprovisynMapping) => {
+                    {v.transition?.mapping.map((map) => {
                       const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                       return (
                         <Fragment key={`${map.entity}-${map.name}`}>

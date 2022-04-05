@@ -1,18 +1,13 @@
 import React, { Fragment, useMemo } from 'react';
-import { IDType, useAsync, ViewUtils } from 'tdp_core';
+import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings } from '../../../store/ordinoSlice';
-import { isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions } from '../../../views/interfaces';
 export function DetailsSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
-    const idType = useMemo(() => {
-        return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))), [idType]);
-    const { status, value: availableViews } = useAsync(findDependentViews, []);
+    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
     const selectionString = useMemo(() => {
         let currString = '';
         ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
@@ -32,7 +27,8 @@ export function DetailsSidebar({ workbench }) {
             availableViews
                 .filter((v) => v.itemIDType === workbench.entityId)
                 .map((v) => {
-                return (React.createElement("div", { key: `${v.name}mapping` }, v.relation.mapping.map((map) => {
+                var _a;
+                return (React.createElement("div", { key: `${v.name}mapping` }, (_a = v.transition) === null || _a === void 0 ? void 0 : _a.mapping.map((map) => {
                     const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
                     return (React.createElement(Fragment, { key: `${map.entity}-${map.name}` },
                         React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),

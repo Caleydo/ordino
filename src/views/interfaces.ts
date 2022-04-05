@@ -1,12 +1,90 @@
 import { IColumnDesc } from 'lineupjs';
-import { DefineVisynViewPlugin, IScoreRow, IServerColumn, isVisynViewPluginDesc, VisynDataViewPluginType } from 'tdp_core';
+import { DefineVisynViewPlugin, IDTypeManager, IScoreRow, IServerColumn, isVisynViewPluginDesc, ViewUtils } from 'tdp_core';
+
+/**
+ * relation list types?
+ */
+export enum EReprovisynRelationList {
+  filter,
+  all,
+}
+
+/**
+ * redacted reprovisyn entity type
+ */
+export interface ITransitionEntity {
+  id: string;
+  key: string;
+  columns: string[];
+}
+
+export enum EReprovisynScoreType {
+  GenericDBScore,
+  CustomScoreImplementation, // TODO add more score types?
+}
+
+export enum EReprovisynColumnType {
+  categorical = 'categorical',
+  number = 'number',
+  string = 'string',
+}
+
+export interface IReprovisynColumnReference {
+  columnName: string;
+  show: boolean;
+  label: string;
+  type?: EReprovisynColumnType;
+}
+
+export interface ITransitionMapping {
+  name: string;
+  entity: string;
+  sourceKey: string;
+  targetKey: string;
+  sourceToTargetColumns?: IReprovisynColumnReference[];
+  targetToSourceColumns?: IReprovisynColumnReference[];
+}
+
+/**
+ * reprovisyn relation type
+ */
+export enum ETransitionType {
+  OneToN = '1-n',
+  MToN = 'm-n',
+  OrdinoDrilldown = 'ordino-drilldown',
+}
+export interface IReprovisynRelation {
+  type: ETransitionType;
+  source: ITransitionEntity;
+  sourceToTargetLabel: string;
+  target: ITransitionEntity;
+  targetToSourceLabel: string;
+  mapping?: ITransitionMapping[];
+}
+
+export interface IWorkbenchTransition {
+  type: ETransitionType;
+  source: ITransitionEntity;
+  sourceToTargetLabel: string;
+  target: ITransitionEntity;
+  targetToSourceLabel: string;
+  mapping?: ITransitionMapping[];
+}
+export interface IOrdinoVisynViewDesc {
+  transition: IWorkbenchTransition;
+}
+
+export interface IOrdinoVisynViewParam {
+  prevSelection: string[];
+  selectedMappings: ITransitionMapping[];
+}
 
 export type OrdinoVisynViewPluginType<
   Param extends Record<string, unknown> = Record<string, unknown>,
   Desc extends Record<string, unknown> = Record<string, unknown>,
 > = DefineVisynViewPlugin<
   'ranking',
-  Param,
+  Param & IOrdinoVisynViewParam,
   {
     /**
      * Data array matching the columns defined in the `dataDesc`.
@@ -51,13 +129,25 @@ export type OrdinoVisynViewPluginType<
       data: IScoreRow<any>[],
     ): void;
   },
-  Desc
+  Desc & IOrdinoVisynViewDesc
 >;
 
-export function isVisynRankingViewDesc(desc: unknown): desc is VisynDataViewPluginType['desc'] {
+export type OrdinoVisynViewPluginTyp = OrdinoVisynViewPluginType;
+
+export function isVisynRankingViewDesc(desc: unknown): desc is OrdinoVisynViewPluginType['desc'] {
   return isVisynViewPluginDesc(desc) && (<any>desc)?.visynViewType === 'ranking';
 }
 
-export function isVisynRankingView(plugin: unknown): plugin is VisynDataViewPluginType['plugin'] {
+export function isVisynRankingView(plugin: unknown): plugin is OrdinoVisynViewPluginType['plugin'] {
   return isVisynViewPluginDesc((<any>plugin)?.desc) && (<any>plugin)?.viewType === 'ranking';
 }
+
+/**
+ * Find all available workbenches to transition to for my workbench
+ * @param idType
+ * @returns available transitions
+ */
+export const findWorkbenchTransitions = async (idType: string) => {
+  const views = await ViewUtils.findVisynViews(IDTypeManager.getInstance().resolveIdType(idType));
+  return views.filter((v) => isVisynRankingViewDesc(v)) as OrdinoVisynViewPluginType['desc'][];
+};

@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { IRegistry, PluginRegistry } from 'tdp_core';
+import { EP_PHOVEA_CORE_LOCALE, ILocaleEPDesc, IRegistry, PluginRegistry } from 'tdp_core';
 import { EP_ORDINO_LOGO, IOrdinoLogoDesc } from './base';
 
 export default function (registry: IRegistry) {
@@ -17,6 +17,17 @@ export default function (registry: IRegistry) {
       text: 'Ordino',
       width: 24,
       height: 24,
+    },
+  );
+
+  registry.push(
+    EP_PHOVEA_CORE_LOCALE,
+    'tdpLocaleEN',
+    function () {
+      return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+    },
+    <ILocaleEPDesc>{
+      ns: 'tdp',
     },
   );
 
@@ -80,6 +91,18 @@ export default function (registry: IRegistry) {
     description: 'Shows all information from the database for the searched genes',
     topics: ['tcga', 'information'],
   });
+
+  registry.push(
+    EP_PHOVEA_CORE_LOCALE,
+    'ordinoLocaleEN',
+    function () {
+      return import('./locales/en/tdp.json').then(PluginRegistry.getInstance().asResource);
+    },
+    <ILocaleEPDesc>{
+      order: 1,
+      ns: 'tdp',
+    },
+  );
 
   // generator-phovea:end
 }

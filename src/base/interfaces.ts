@@ -4,11 +4,6 @@ export interface IRelationEntityReference {
   columns: string[];
 }
 
-export enum EOrdinoScoreType {
-  GenericDBScore,
-  CustomScoreImplementation, // TODO add more score types?
-}
-
 // TODO: Refactor
 export enum EColumnType {
   categorical = 'categorical',

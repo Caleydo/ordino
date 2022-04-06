@@ -1,8 +1,3 @@
-export var EOrdinoScoreType;
-(function (EOrdinoScoreType) {
-    EOrdinoScoreType[EOrdinoScoreType["GenericDBScore"] = 0] = "GenericDBScore";
-    EOrdinoScoreType[EOrdinoScoreType["CustomScoreImplementation"] = 1] = "CustomScoreImplementation";
-})(EOrdinoScoreType || (EOrdinoScoreType = {}));
 // TODO: Refactor
 export var EColumnType;
 (function (EColumnType) {

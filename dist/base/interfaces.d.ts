@@ -3,10 +3,6 @@ export interface IRelationEntityReference {
     key: string;
     columns: string[];
 }
-export declare enum EOrdinoScoreType {
-    GenericDBScore = 0,
-    CustomScoreImplementation = 1
-}
 export declare enum EColumnType {
     categorical = "categorical",
     number = "number",

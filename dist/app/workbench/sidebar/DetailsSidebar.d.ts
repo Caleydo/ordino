@@ -1,10 +1,3 @@
-import { IWorkbench } from '../../../store/ordinoSlice';
-export interface IDetailsSidebarProps {
-    workbench: IWorkbench;
-}
-export interface IMappingDesc {
-    mappingName: string;
-    mappingSubtype: string;
-}
-export declare function DetailsSidebar({ workbench }: IDetailsSidebarProps): JSX.Element;
+import { IWorkbenchSidebarProps } from './AddWorkbenchSidebar';
+export declare function DetailsSidebar({ workbench }: IWorkbenchSidebarProps): JSX.Element;
 //# sourceMappingURL=DetailsSidebar.d.ts.map

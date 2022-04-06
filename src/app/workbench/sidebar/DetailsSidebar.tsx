@@ -1,21 +1,12 @@
 import React, { Fragment, useMemo } from 'react';
-import { IDType, useAsync, ViewUtils } from 'tdp_core';
-import { IReprovisynMapping } from 'reprovisyn';
+import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { findWorkbenchTransitions, isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { changeSelectedMappings } from '../../../store/ordinoSlice';
+import { findWorkbenchTransitions } from '../../../views/interfaces';
+import { IWorkbenchSidebarProps } from './AddWorkbenchSidebar';
 
-export interface IDetailsSidebarProps {
-  workbench: IWorkbench;
-}
-
-export interface IMappingDesc {
-  mappingName: string;
-  mappingSubtype: string;
-}
-
-export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
+export function DetailsSidebar({ workbench }: IWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
@@ -52,7 +43,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
               .map((v) => {
                 return (
                   <div key={`${v.name}mapping`}>
-                    {v.transition?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                    {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
                       const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                       return (
                         <Fragment key={`${entity}-${name}`}>

@@ -1,11 +1,11 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
-import { IViewPluginDesc, useAsync } from 'tdp_core';
+import { useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { findWorkbenchTransitions } from '../../../views';
+import { findWorkbenchTransitions, OrdinoVisynViewPluginType } from '../../../views';
 
-export interface IAddWorkbenchSidebarProps {
+export interface IWorkbenchSidebarProps {
   workbench: IWorkbench;
 }
 
@@ -15,11 +15,11 @@ export interface IMappingDesc {
   mappingSubtype: string;
 }
 
-export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
+export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
-  const [selectedView, setSelectedView] = useState<IViewPluginDesc>(null);
+  const [selectedView, setSelectedView] = useState<OrdinoVisynViewPluginType['desc']>(null);
   const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
 
   const relationListCallback = (s: IMappingDesc) => {
@@ -121,7 +121,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                     .map((v) => {
                       return (
                         <div key={`${v.name}-mapping`}>
-                          {v.transition?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                          {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
                             const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                             return (
                               <Fragment key={`${name}-group`}>

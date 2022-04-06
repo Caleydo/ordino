@@ -171,10 +171,6 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
     },
-    addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
-      state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
-    },
-
     createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
       const { workbenchIndex, desc } = action.payload;
       state.workbenches[workbenchIndex].columnDescs = desc;
@@ -252,7 +248,6 @@ export const {
   setView,
   addColumnDesc,
   removeView,
-  addTransitionOptions,
   replaceWorkbench,
   addScoreColumn,
   addSelection,

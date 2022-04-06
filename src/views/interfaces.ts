@@ -1,82 +1,15 @@
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IDTypeManager, IScoreRow, IServerColumn, isVisynViewPluginDesc, ViewUtils } from 'tdp_core';
+import { IOrdinoRelation } from '../base';
+import { ISelectedMapping } from '../store/ordinoSlice';
 
-/**
- * relation list types?
- */
-export enum EReprovisynRelationList {
-  filter,
-  all,
-}
-
-/**
- * redacted reprovisyn entity type
- */
-export interface ITransitionEntity {
-  id: string;
-  key: string;
-  columns: string[];
-}
-
-export enum EReprovisynScoreType {
-  GenericDBScore,
-  CustomScoreImplementation, // TODO add more score types?
-}
-
-export enum EReprovisynColumnType {
-  categorical = 'categorical',
-  number = 'number',
-  string = 'string',
-}
-
-export interface IReprovisynColumnReference {
-  columnName: string;
-  show: boolean;
-  label: string;
-  type?: EReprovisynColumnType;
-}
-
-export interface ITransitionMapping {
-  name: string;
-  entity: string;
-  sourceKey: string;
-  targetKey: string;
-  sourceToTargetColumns?: IReprovisynColumnReference[];
-  targetToSourceColumns?: IReprovisynColumnReference[];
-}
-
-/**
- * reprovisyn relation type
- */
-export enum ETransitionType {
-  OneToN = '1-n',
-  MToN = 'm-n',
-  OrdinoDrilldown = 'ordino-drilldown',
-}
-export interface IReprovisynRelation {
-  type: ETransitionType;
-  source: ITransitionEntity;
-  sourceToTargetLabel: string;
-  target: ITransitionEntity;
-  targetToSourceLabel: string;
-  mapping?: ITransitionMapping[];
-}
-
-export interface IWorkbenchTransition {
-  type: ETransitionType;
-  source: ITransitionEntity;
-  sourceToTargetLabel: string;
-  target: ITransitionEntity;
-  targetToSourceLabel: string;
-  mapping?: ITransitionMapping[];
-}
 export interface IOrdinoVisynViewDesc {
-  transition: IWorkbenchTransition;
+  relation: IOrdinoRelation;
 }
 
 export interface IOrdinoVisynViewParam {
   prevSelection: string[];
-  selectedMappings: ITransitionMapping[];
+  selectedMappings: ISelectedMapping[];
 }
 
 export type OrdinoVisynViewPluginType<
@@ -132,7 +65,8 @@ export type OrdinoVisynViewPluginType<
   Desc & IOrdinoVisynViewDesc
 >;
 
-export type OrdinoVisynViewPluginTyp = OrdinoVisynViewPluginType;
+export type OrdinoVisynViewPluginDesc = OrdinoVisynViewPluginType['desc'];
+export type OrdinoVisynViewPlugin = OrdinoVisynViewPluginType['plugin'];
 
 export function isVisynRankingViewDesc(desc: unknown): desc is OrdinoVisynViewPluginType['desc'] {
   return isVisynViewPluginDesc(desc) && (<any>desc)?.visynViewType === 'ranking';

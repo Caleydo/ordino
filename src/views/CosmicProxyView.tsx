@@ -2,21 +2,22 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import Select from 'react-select';
+import { VisynSimpleViewPluginType } from 'tdp_core';
 
-export function CosmicView({ parameters, onParametersChanged }: any) {
+type CosmicViewPluginType = VisynSimpleViewPluginType<{ currentId: string }>;
+
+export function CosmicView({ parameters, onParametersChanged }: CosmicViewPluginType['props']) {
   useEffect(() => {
     if (!parameters) {
       onParametersChanged({ currentId: '' });
     }
   });
 
-  console.log(parameters);
-
   return <iframe className="w-100 h-100" src="https://cancer.sanger.ac.uk/cosmic" />;
 }
 
 // Toolbar ?
-export function CosmicViewHeader({ selection, onParametersChanged }: any) {
+export function CosmicViewHeader({ selection, onParametersChanged }: CosmicViewPluginType['props']) {
   const options = selection.map((s) => {
     return { value: s, label: s };
   });
@@ -33,9 +34,12 @@ export function CosmicViewHeader({ selection, onParametersChanged }: any) {
   );
 }
 
-export const cosmicConfiguration: () => any = () => {
+export const cosmicConfiguration: () => CosmicViewPluginType['definition'] = () => {
   return {
     viewType: 'simple',
+    defaultParameters: {
+      currentId: '',
+    },
     view: CosmicView,
     tab: null,
     header: CosmicViewHeader,

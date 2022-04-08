@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { I18nextManager } from 'tdp_core';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { removeView, setView } from '../../store';
@@ -30,7 +31,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }) {
         item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
     }), [view.id, viewIndex]);
     return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
-        workbenchIndex === ordino.focusViewIndex ? (React.createElement(React.Fragment, null,
+        workbenchIndex === ordino.focusWorkbenchIndex ? (React.createElement(React.Fragment, null,
             React.createElement("div", { className: "view-actions" },
                 React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn btn-icon-dark align-middle m-1" },
                     React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))),
@@ -46,7 +47,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }) {
                     }));
                 }, isEmbedded: false }),
             React.createElement("div", { className: "w-100 d-flex justify-content-center align-items-center" },
-                React.createElement("p", { className: "emptyViewText" }, "Select A View"))),
+                React.createElement("p", { className: "emptyViewText" }, I18nextManager.getInstance().i18n.t('tdp:ordino.views.selectView')))),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchEmptyView.js.map

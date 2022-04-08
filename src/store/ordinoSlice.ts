@@ -25,13 +25,17 @@ export interface IOrdinoAppState {
    */
   workbenches: IWorkbench[];
 
+  /**
+   * Map for the colors which are assigned to each entity. Derived from the config file.
+   * Keys are the entity id matching IWorkbench.entityId.
+   * Values are any typical string representation of a color.
+   */
   colorMap: { [key: string]: string };
 
   /**
    * Id of the current focus view
    */
-  focusViewIndex: number;
-  sidebarOpen: boolean;
+  focusWorkbenchIndex: number;
 }
 
 export enum EWorkbenchDirection {
@@ -39,6 +43,10 @@ export enum EWorkbenchDirection {
   HORIZONTAL = 'horizontal',
 }
 
+/**
+ * entityId is equivalent to IWorkbench.entityId
+ * columnSelection is a mapping subtype, such as "relativecopynumber"
+ */
 export interface ISelectedMapping {
   entityId: string;
   columnSelection: string;
@@ -50,6 +58,9 @@ export interface IWorkbench {
    */
   views: IWorkbenchView[];
 
+  /**
+   * List of selected mappings which are passed to the next workbench when created. Description of ISelectedMapping interface above.
+   */
   selectedMappings: ISelectedMapping[];
 
   viewDirection: EWorkbenchDirection;
@@ -65,17 +76,26 @@ export interface IWorkbench {
 
   data: { [key: string]: IRow };
   columnDescs: (IColumnDesc & { [key: string]: any })[];
-  // TODO: how do we store the lineup-specific column descriptions?
-
-  transitionOptions: IRow['_visyn_id'][];
+  // TODO: how do we store the lineup-specific column descriptions? give an example?
 
   /**
    * List selected rows
    */
   selection: IRow['_visyn_id'][];
 
-  detailsOpen: boolean;
-  addWorkbenchOpen: boolean;
+  /**
+   * "detailsSidebar" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
+   * Since the first workbench does not have an incoming selection, this is always false for the first workbench
+   * detailsSidebarOpen keeps track of whether or not the details tab is switched open.
+   */
+  detailsSidebarOpen: boolean;
+
+  /**
+   * "createNextWorkbenchSidebar" is the sidebar that appears to the right of a workbench when you want to add a new workbench.
+   * It contains options for which mapping types you want in the next workbench.
+   * createNextWorkbenchSidebarOpen keeps track of whether or not the details tab is switched open
+   */
+  createNextWorkbenchSidebarOpen: boolean;
 
   commentsOpen?: boolean;
 }
@@ -88,51 +108,24 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
   state: S;
 }
 
-// const test = ({
-//   headerOverride = Header,
-// }: {
-//   headerOverride?: (props: {view: IView[]}) => JSX.Component;
-//   overrides: {
-//     header: JSX.Component;
-//     itemGroup: JSX.Component;
-//     header: JSX.Component;
-//   }
-// }) => <>
-//   <headerOverride views={views}></headerOverride>
-//   Map( <ListItemGroup>
-//     <ListItem>
-//     ...)
-
-// </>;
-
-// export interface IOrdinoScatterplotViewPlugin<{
-//   color: string;
-// }> {
-//   state: {
-
-//   }
-// }
-
-const containsView = (workbench: IWorkbench, viewId: string) => workbench.views.some(({ uniqueId }) => uniqueId === viewId);
-
 const initialState: IOrdinoAppState = {
   workbenches: [],
-  focusViewIndex: 0,
-  sidebarOpen: false,
+  focusWorkbenchIndex: 0,
   colorMap: {},
 };
 
-// TODO: Change rest of methods to use viewId instead of entity id
 const ordinoSlice = createSlice({
   name: 'ordino',
   initialState,
   reducers: {
+    // TODO in general: does it make sense to group the reducer functions (e.g., by workbench, views, ...)? or even create multiple variables that are spread-in here.
+
     addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
-      state.focusViewIndex = 0;
+      state.focusWorkbenchIndex = 0;
       state.workbenches.splice(0, state.workbenches.length);
       state.workbenches.push(action.payload);
     },
-    createColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
+    setColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
       state.colorMap = action.payload.colorMap;
     },
     addWorkbench(state, action: PayloadAction<IWorkbench>) {
@@ -144,46 +137,44 @@ const ordinoSlice = createSlice({
     addView(state, action: PayloadAction<{ workbenchIndex: number; view: IWorkbenchView }>) {
       state.workbenches[action.payload.workbenchIndex].views.push(action.payload.view);
     },
-    setSidebarOpen(state, action: PayloadAction<{ open: boolean }>) {
-      state.sidebarOpen = action.payload.open;
-    },
     setViewParameters(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; parameters: any }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].parameters = action.payload.parameters;
     },
     changeSelectedMappings(state, action: PayloadAction<{ workbenchIndex: number; newMapping: ISelectedMapping }>) {
+      const currentWorkbench = state.workbenches[action.payload.workbenchIndex];
+
+      const { newMapping } = action.payload;
       if (
-        !state.workbenches[action.payload.workbenchIndex].selectedMappings.find((m) => {
-          return m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection;
+        !currentWorkbench.selectedMappings.find((m) => {
+          const { entityId, columnSelection } = newMapping;
+          return m.entityId === entityId && m.columnSelection === columnSelection;
         })
       ) {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings.push(action.payload.newMapping);
+        currentWorkbench.selectedMappings.push(newMapping);
       } else {
-        state.workbenches[action.payload.workbenchIndex].selectedMappings = state.workbenches[action.payload.workbenchIndex].selectedMappings.filter(
-          (m) => !(m.entityId === action.payload.newMapping.entityId && m.columnSelection === action.payload.newMapping.columnSelection),
-        );
+        currentWorkbench.selectedMappings = currentWorkbench.selectedMappings.filter((m) => {
+          const { entityId, columnSelection } = newMapping;
+          return !(m.entityId === entityId && m.columnSelection === columnSelection);
+        });
       }
     },
-    setDetailsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      state.workbenches[action.payload.workbenchIndex].detailsOpen = action.payload.open;
+    setDetailsSidebarOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      state.workbenches[action.payload.workbenchIndex].detailsSidebarOpen = action.payload.open;
     },
-    setAddWorkbenchOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      state.workbenches[action.payload.workbenchIndex].addWorkbenchOpen = action.payload.open;
+    setCreateNextWorkbenchSidebarOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
+      state.workbenches[action.payload.workbenchIndex].createNextWorkbenchSidebarOpen = action.payload.open;
     },
     setView(state, action: PayloadAction<{ workbenchIndex: number; viewIndex: number; viewId: string; viewName: string }>) {
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].id = action.payload.viewId;
       state.workbenches[action.payload.workbenchIndex].views[action.payload.viewIndex].name = action.payload.viewName;
     },
-    addTransitionOptions(state, action: PayloadAction<{ workbenchIndex: number; transitionOptions: string[] }>) {
-      state.workbenches[action.payload.workbenchIndex].transitionOptions = action.payload.transitionOptions;
-    },
-
     createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
       const { workbenchIndex, desc } = action.payload;
       state.workbenches[workbenchIndex].columnDescs = desc;
     },
 
     addColumnDesc(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
-      const { workbenchIndex, desc } = action.payload;
+      const { workbenchIndex } = action.payload;
       state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
     },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
@@ -217,13 +208,13 @@ const ordinoSlice = createSlice({
       state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
     },
     changeFocus(state, action: PayloadAction<{ index: number }>) {
-      state.focusViewIndex = action.payload.index;
+      state.focusWorkbenchIndex = action.payload.index;
     },
 
-    setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: any[] }>) {
+    setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: IRow[] }>) {
       const { workbenchIndex, data } = action.payload;
-      for (const i of data) {
-        state.workbenches[workbenchIndex].data[i.id] = i;
+      for (const row of data) {
+        state.workbenches[workbenchIndex].data[row.id] = row;
       }
     },
 
@@ -234,7 +225,7 @@ const ordinoSlice = createSlice({
         const dataRow = state.workbenches[workbenchIndex].data[row.id];
         if (dataRow) {
           dataRow[desc.scoreID] = row.score;
-        } // TODO: BUG the score should not add a new row when the id id does not exist in my current data else {
+        } // TODO: BUG the score should not add a new row when the id does not exist in my current data else {
         //   state.workbenches[state.focusViewIndex].data[row.id] = row;
         // }
       }
@@ -248,17 +239,15 @@ const ordinoSlice = createSlice({
 
 export const {
   addView,
-  createColorMap,
+  setColorMap,
   changeSelectedMappings,
-  setDetailsOpen,
-  setAddWorkbenchOpen,
+  setDetailsSidebarOpen,
+  setCreateNextWorkbenchSidebarOpen,
   setViewParameters,
-  setSidebarOpen,
   createColumnDescs,
   setView,
   addColumnDesc,
   removeView,
-  addTransitionOptions,
   replaceWorkbench,
   addScoreColumn,
   addSelection,

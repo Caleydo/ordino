@@ -6,7 +6,7 @@ import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
 
-export interface IAddWorkbenchSidebarProps {
+export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
 }
 
@@ -16,7 +16,7 @@ export interface IMappingDesc {
   mappingSubtype: string;
 }
 
-export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
+export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
@@ -37,16 +37,12 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
   const findDependentViews = React.useMemo(
     () => () =>
       ViewUtils.findVisynViews(idType).then((views) => {
-        console.log(views);
-        console.log(views.filter((v) => isVisynRankingViewDesc(v)));
         return views.filter((v) => isVisynRankingViewDesc(v));
       }),
     [idType],
   );
 
   const { status, value: availableViews } = useAsync(findDependentViews, []);
-
-  console.log(availableViews);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {
@@ -56,7 +52,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      console.log(v);
       if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
         entities.push({ idType: v.itemIDType, label: v.group.name });
       }
@@ -105,8 +100,8 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                       // load the data
                       addWorkbench({
                         itemIDType: selectedView.itemIDType,
-                        detailsOpen: true,
-                        addWorkbenchOpen: false,
+                        detailsSidebarOpen: true,
+                        createNextWorkbenchSidebarOpen: false,
                         selectedMappings,
                         views: [
                           {
@@ -118,7 +113,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                           },
                         ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
-                        transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
@@ -128,7 +122,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                       }),
                     );
                     setTimeout(() => {
-                      dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                      dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
                     }, 0);
                   }}
                 >

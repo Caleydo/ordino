@@ -8,7 +8,7 @@ export function AddViewButton({ color = 'cornflowerblue' }) {
     return (React.createElement("div", null,
         React.createElement("button", { onClick: () => {
                 dispatch(addView({
-                    workbenchIndex: ordino.focusViewIndex,
+                    workbenchIndex: ordino.focusWorkbenchIndex,
                     view: {
                         name: '',
                         id: '',

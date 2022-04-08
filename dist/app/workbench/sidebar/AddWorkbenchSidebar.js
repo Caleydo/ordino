@@ -3,7 +3,7 @@ import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingViewDesc } from '../../../views/interfaces';
+import { isVisynRankingViewDesc } from '../interfaces';
 export function AddWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -77,7 +77,6 @@ export function AddWorkbenchSidebar({ workbench }) {
                             },
                         ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
-                        transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
@@ -86,7 +85,7 @@ export function AddWorkbenchSidebar({ workbench }) {
                         selection: [],
                     }));
                     setTimeout(() => {
-                        dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                        dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
                     }, 0);
                 } },
                 availableViews

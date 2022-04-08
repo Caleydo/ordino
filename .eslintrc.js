@@ -37,7 +37,6 @@ module.exports = {
     "no-continue": "off",
     "no-multi-assign": "warn",
     "no-nested-ternary": "off",
-    "no-param-reassign": ["error", { "props": false }],
     "no-return-assign": "warn", 
     "no-restricted-syntax": "off",
     "no-plusplus": "off",
@@ -45,7 +44,7 @@ module.exports = {
     "no-minusminus": "off",
     "no-underscore-dangle": "off",
     "max-classes-per-file": "off",
-    "no-param-reassign": "warn",
+    "no-param-reassign": ["warn", { props: true, ignorePropertyModificationsFor: ['state'] }],
     "import/no-extraneous-dependencies": "off",
     // Disable the following 2 lines because to allow webpack file-loaders syntax
     "import/no-webpack-loader-syntax": "off",

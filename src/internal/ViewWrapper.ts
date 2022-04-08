@@ -378,11 +378,11 @@ export class ViewWrapper extends EventHandler {
 
       $buttons.enter().append('button').classed('btn', true);
 
-      $buttons.attr('data-viewid', (d) => d.v.id);
-      $buttons.attr('data-testid', (d) => d.v.id);
+      $buttons.attr('data-viewid', (d) => d.id);
+      $buttons.attr('data-testid', (d) => d.id);
       $buttons
-        .text((d) => d.v.name)
-        .attr('disabled', (d) => (d.v.mockup || !d.enabled ? 'disabled' : null))
+        .text((d) => d.name)
+        .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))
         .on('click', function (d) {
           $buttons.classed('active', false);
           d3.select(this).classed('active', true);

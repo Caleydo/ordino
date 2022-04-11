@@ -47,7 +47,7 @@ export function WorkbenchViews({ index, type }) {
                     second: 2,
                 },
                 splitPercentage: 50,
-            } }));
+            }, blueprintNamespace: "bp4" }));
     }
     else if (views.length === 4) {
         wb = (React.createElement(Mosaic, { renderTile: (id, path) => (React.createElement(MosaicWindow, { path: path, createNode: () => 0, title: id.toString() }, ELEMENT_MAP[id])), initialValue: {
@@ -63,7 +63,7 @@ export function WorkbenchViews({ index, type }) {
                     second: 2,
                 },
                 splitPercentage: 50,
-            } }));
+            }, blueprintNamespace: "bp4" }));
     }
     // TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
     // if (views.length === 1 || type !== EWorkbenchType.FOCUS) {

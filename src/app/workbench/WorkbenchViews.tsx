@@ -81,6 +81,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           },
           splitPercentage: 50,
         }}
+        blueprintNamespace="bp4"
       />
     );
   } else if (views.length === 4) {
@@ -105,6 +106,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           },
           splitPercentage: 50,
         }}
+        blueprintNamespace="bp4"
       />
     );
   }

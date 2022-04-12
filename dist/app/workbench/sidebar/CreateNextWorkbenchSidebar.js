@@ -40,7 +40,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
         workbench.selection.forEach((s) => {
             const concatStr = ', ';
             if (workbench.formatting) {
-                const selectionDataRow = workbench.data[s][workbench.formatting.title || workbench.formatting.id];
+                const selectionDataRow = workbench.data[s][workbench.formatting.titleColumn || workbench.formatting.idColumn];
                 // if the column data is empty, use id string
                 if (selectionDataRow) {
                     currString += selectionDataRow + concatStr;
@@ -90,7 +90,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        formatting: { id: 'id' },
+                        formatting: { idColumn: 'id' },
                         name: selectedView.itemName,
                         index: workbench.index + 1,
                         selection: [],

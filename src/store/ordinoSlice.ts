@@ -84,8 +84,8 @@ export interface IWorkbench {
   selection: IRow['_visyn_id'][];
 
   formatting?: {
-    title?: string;
-    id: string;
+    titleColumn?: string;
+    idColumn: string;
     formatResult?: string;
     tokenSeparatorsRegex?: string;
     defaultTokenSeparator?: string;

@@ -37,7 +37,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
       const concatStr = ', ';
       const prevFormatting = ordino.workbenches[workbench.index - 1].formatting;
       if (prevFormatting) {
-        const selectionDataRow = ordino.workbenches[workbench.index - 1].data[s][prevFormatting.title || prevFormatting.id];
+        const selectionDataRow = ordino.workbenches[workbench.index - 1].data[s][prevFormatting.titleColumn || prevFormatting.idColumn];
         currString += selectionDataRow + concatStr;
       } else {
         currString += s + concatStr;

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import SplitPane from 'react-split-pane';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { AddWorkbenchSidebar } from './sidebar/AddWorkbenchSidebar';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
+import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
-import { WorkbenchSingleView } from './WorkbenchSingleView';
+import { CreateNextWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -28,23 +28,23 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   if (views.length === 1 || type !== EWorkbenchType.FOCUS) {
     wb = (
       <SplitPane
-        split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
+        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
         primary="second"
         className=""
         minSize={300}
         size="0%"
       >
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
         </SplitPane>
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
@@ -55,97 +55,97 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   } else if (views.length === 2) {
     wb = (
       <SplitPane
-        split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
+        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
         primary="second"
         className=""
         minSize={300}
         size="50%"
       >
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
         </SplitPane>
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
+          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
         </SplitPane>
       </SplitPane>
     );
   } else if (views.length === 3) {
     wb = (
       <SplitPane
-        split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
+        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
         primary="second"
         className=""
         minSize={300}
         size="50%"
       >
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="0%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
         </SplitPane>
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="50%"
         >
-          <WorkbenchSingleView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-          <WorkbenchSingleView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
+          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
+          <WorkbenchView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
         </SplitPane>
       </SplitPane>
     );
   } else {
     wb = (
       <SplitPane
-        split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
+        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
         primary="second"
         className=""
         minSize={300}
         size="50%"
       >
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="50%"
         >
-          <WorkbenchSingleView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
-          <WorkbenchSingleView key={`wbView${views[3].uniqueId}`} workbenchIndex={index} view={views[3]} />
+          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
+          <WorkbenchView key={`wbView${views[3].uniqueId}`} workbenchIndex={index} view={views[3]} />
         </SplitPane>
         <SplitPane
-          split={ordino.workbenches[ordino.focusViewIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
+          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
           primary="second"
           className=""
           minSize={300}
           size="50%"
         >
-          <WorkbenchSingleView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-          <WorkbenchSingleView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
+          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
+          <WorkbenchView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
         </SplitPane>
       </SplitPane>
     );
   }
 
-  const showLeftSidebar = ordino.workbenches[index].detailsOpen && index > 0 && type === EWorkbenchType.FOCUS;
-  const showRightSidebar = ordino.workbenches[index].addWorkbenchOpen && type === EWorkbenchType.FOCUS;
+  const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
+  const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
   return (
     <div className="position-relative workbenchWrapper d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
@@ -159,7 +159,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
         </div>
         {showRightSidebar ? (
           <div className="d-flex" style={{ width: '400px' }}>
-            <AddWorkbenchSidebar workbench={ordino.workbenches[index]} />
+            <CreateNextWorkbenchSidebar workbench={ordino.workbenches[index]} />
           </div>
         ) : null}
       </div>

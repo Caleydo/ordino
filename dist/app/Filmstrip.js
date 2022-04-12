@@ -6,7 +6,7 @@ import { EWorkbenchType } from './workbench/WorkbenchViews';
 export const focusViewWidth = 85; // viewport width (vw)
 export const contextViewWidth = 15; // viewport width (vw)
 export function Filmstrip() {
-    const { focusViewIndex, workbenches } = useAppSelector((state) => state.ordino);
+    const { focusWorkbenchIndex: focusViewIndex, workbenches } = useAppSelector((state) => state.ordino);
     const translateDistance = useMemo(() => {
         if (focusViewIndex > 1) {
             return `translateX(${(focusViewIndex - 1) * -contextViewWidth}vw)`;

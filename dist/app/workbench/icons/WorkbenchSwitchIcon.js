@@ -12,15 +12,15 @@ export function WorkbenchSwitchIcon({ view }) {
         accept: [EDragTypes.MOVE],
         drop: (d) => {
             dispatch(switchViews({
-                workbenchIndex: ordino.focusViewIndex,
+                workbenchIndex: ordino.focusWorkbenchIndex,
                 firstViewIndex: d.index,
-                secondViewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]),
+                secondViewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusWorkbenchIndex]),
             }));
         },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
-    }), [ordino.workbenches[ordino.focusViewIndex].views]);
+    }), [ordino.workbenches[ordino.focusWorkbenchIndex].views]);
     return (React.createElement("div", { ref: drop, className: "position-absolute d-flex align-items-center justify-content-center", style: {
             height: '100%',
             width: '100%',

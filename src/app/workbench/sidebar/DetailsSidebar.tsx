@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;
@@ -75,7 +75,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusViewIndex,
+                                        workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: map.entity },
                                       }),
                                     )

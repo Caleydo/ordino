@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { IColumnDesc } from 'lineupjs';
-import { EXTENSION_POINT_VISYN_VIEW, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
+import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import {
   addFilter,
   addScoreColumn,
@@ -98,11 +98,9 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     [dispatch, workbenchIndex],
   );
 
-  // TODO: Eextend visyn view interface
-  // TODO: Add proper interfaces to the dispatch callbacks
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-      {workbenchIndex === ordino.focusViewIndex ? (
+      {workbenchIndex === ordino.focusWorkbenchIndex ? (
         <>
           <div className="view-actions">
             {!isVisynRankingViewDesc(viewPlugin?.desc) ? (
@@ -129,7 +127,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               <strong>{view.name}</strong>
             </span>
             {viewPlugin?.header ? (
-              <Suspense fallback="Loading..">
+              <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
                 <viewPlugin.header
                   desc={viewPlugin.desc}
                   data={ordino.workbenches[workbenchIndex].data}
@@ -194,6 +192,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                 role="tabpanel"
                 aria-labelledby="settings-tab"
               >
+                {/* TODO refactor view header such that the logic (using hooks) and the visual representation are separated */}
                 <ViewChooser
                   views={chooserOptions}
                   showBurgerMenu={false}
@@ -213,7 +212,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               </div>
               {viewPlugin && viewPlugin?.tab ? (
                 <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
-                  <Suspense fallback="Loading..">
+                  <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
                     <viewPlugin.tab
                       desc={viewPlugin.desc}
                       data={ordino.workbenches[workbenchIndex].data}
@@ -232,7 +231,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
           </div>
         ) : null}
         {viewPlugin?.view ? (
-          <Suspense fallback="Loading..">
+          <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
             <viewPlugin.view
               desc={viewPlugin.desc}
               data={ordino.workbenches[workbenchIndex].data}

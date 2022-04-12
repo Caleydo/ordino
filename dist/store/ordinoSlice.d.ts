@@ -18,19 +18,27 @@ export interface IOrdinoAppState {
      * List of open views.
      */
     workbenches: IWorkbench[];
+    /**
+     * Map for the colors which are assigned to each entity. Derived from the config file.
+     * Keys are the entity id matching IWorkbench.entityId.
+     * Values are any typical string representation of a color.
+     */
     colorMap: {
         [key: string]: string;
     };
     /**
      * Id of the current focus view
      */
-    focusViewIndex: number;
-    sidebarOpen: boolean;
+    focusWorkbenchIndex: number;
 }
 export declare enum EWorkbenchDirection {
     VERTICAL = "vertical",
     HORIZONTAL = "horizontal"
 }
+/**
+ * entityId is equivalent to IWorkbench.entityId
+ * columnSelection is a mapping subtype, such as "relativecopynumber"
+ */
 export interface ISelectedMapping {
     entityId: string;
     columnSelection: string;
@@ -40,6 +48,9 @@ export interface IWorkbench {
      * List of open views. The order of the views in this list determines the order they are displayed in the workbench.
      */
     views: IWorkbenchView[];
+    /**
+     * List of selected mappings which are passed to the next workbench when created. Description of ISelectedMapping interface above.
+     */
     selectedMappings: ISelectedMapping[];
     viewDirection: EWorkbenchDirection;
     name: string;
@@ -55,13 +66,22 @@ export interface IWorkbench {
     columnDescs: (IColumnDesc & {
         [key: string]: any;
     })[];
-    transitionOptions: IRow['_visyn_id'][];
     /**
      * List selected rows
      */
     selection: IRow['_visyn_id'][];
-    detailsOpen: boolean;
-    addWorkbenchOpen: boolean;
+    /**
+     * "detailsSidebar" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
+     * Since the first workbench does not have an incoming selection, this is always false for the first workbench
+     * detailsSidebarOpen keeps track of whether or not the details tab is switched open.
+     */
+    detailsSidebarOpen: boolean;
+    /**
+     * "createNextWorkbenchSidebar" is the sidebar that appears to the right of a workbench when you want to add a new workbench.
+     * It contains options for which mapping types you want in the next workbench.
+     * createNextWorkbenchSidebarOpen keeps track of whether or not the details tab is switched open
+     */
+    createNextWorkbenchSidebarOpen: boolean;
     commentsOpen?: boolean;
 }
 interface IBaseState {
@@ -73,25 +93,23 @@ export interface IOrdinoViewPlugin<S extends IBaseState> extends IViewPluginDesc
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: IWorkbenchView;
-}, string>, createColorMap: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     colorMap: {
         [key: string]: string;
     };
 }, string>, changeSelectedMappings: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newMapping: ISelectedMapping;
-}, string>, setDetailsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, setDetailsSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     open: boolean;
-}, string>, setAddWorkbenchOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, setCreateNextWorkbenchSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     open: boolean;
 }, string>, setViewParameters: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
     parameters: any;
-}, string>, setSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    open: boolean;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     desc: any;
@@ -106,9 +124,6 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, removeView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     viewIndex: number;
-}, string>, addTransitionOptions: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    transitionOptions: string[];
 }, string>, replaceWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newWorkbench: IWorkbench;
@@ -127,7 +142,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
-    data: any[];
+    data: IRow[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

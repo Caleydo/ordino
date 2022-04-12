@@ -20,9 +20,9 @@ export function WorkbenchSwitchIcon({ view }: IWorkbenchIconProps) {
       drop: (d: { type: EDragTypes; viewId: number; index: number }) => {
         dispatch(
           switchViews({
-            workbenchIndex: ordino.focusViewIndex,
+            workbenchIndex: ordino.focusWorkbenchIndex,
             firstViewIndex: d.index,
-            secondViewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]),
+            secondViewIndex: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusWorkbenchIndex]),
           }),
         );
       },
@@ -30,7 +30,7 @@ export function WorkbenchSwitchIcon({ view }: IWorkbenchIconProps) {
         isOver: !!monitor.isOver(),
       }),
     }),
-    [ordino.workbenches[ordino.focusViewIndex].views],
+    [ordino.workbenches[ordino.focusWorkbenchIndex].views],
   );
 
   return (

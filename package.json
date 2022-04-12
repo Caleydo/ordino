@@ -114,5 +114,8 @@
     "react-virtualized": "^9.22.3",
     "tdp_core": "github:datavisyn/tdp_core#ordino-2.0",
     "tdp_comments": "github:datavisyn/tdp_comments#develop"
+  },
+  "resolutions": {
+    "@types/react": "17.0.44"
   }
 }

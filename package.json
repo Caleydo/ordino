@@ -78,7 +78,6 @@
     "identity-obj-proxy": "~3.0.0",
     "jest": "~27.5.1",
     "jest-raw-loader": "~1.0.1",
-    "npm-force-resolutions": "0.0.10",
     "prettier": "^2.5.1",
     "rimraf": "~3.0.2",
     "shx": "~0.3.3",

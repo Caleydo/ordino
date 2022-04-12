@@ -50,8 +50,7 @@
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "predist": "npm run build && npm run docs",
-    "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *",
-    "preinstall": "npm-force-resolutions"
+    "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *"
   },
   "devDependencies": {
     "@types/bootstrap": "~5.0.15",

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, PluginRegistry, useAsync } from 'tdp_core';
-import { addFilter, addScoreColumn, addSelection, createColumnDescs, removeView, setView, setViewParameters, setWorkbenchData, } from '../../store';
+import { addFilter, addEntityFormatting, addScoreColumn, addSelection, createColumnDescs, removeView, setView, setViewParameters, setWorkbenchData, } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
 import { EDragTypes } from './utils';
@@ -51,6 +51,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
         return { prevSelection, selectedMappings };
     }, [workbenchIndex, ordino.workbenches]);
     const onDataChanged = useMemo(() => (data) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
+    const onAddFormatting = useMemo(() => (formatting) => dispatch(addEntityFormatting({ workbenchIndex, formatting })), [dispatch, workbenchIndex]);
     const onColumnDescChanged = useMemo(() => (desc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
     const onAddScoreColumn = useMemo(() => (desc, data) => dispatch(addScoreColumn({ workbenchIndex, desc, data })), [dispatch, workbenchIndex]);
     return (React.createElement("div", { ref: drop, id: view.id, className: "position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" },
@@ -89,7 +90,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }) {
                         React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
                             React.createElement(viewPlugin.tab, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged })))) : null))) : null,
             (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.view) ? (React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
-                React.createElement(viewPlugin.view, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged, onDataChanged: onDataChanged, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
+                React.createElement(viewPlugin.view, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, dataDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged, onDataChanged: onDataChanged, onAddFormatting: onAddFormatting, onColumnDescChanged: onColumnDescChanged, onAddScoreColumn: onAddScoreColumn }))) : null),
         isOver && canDrop ? React.createElement(DropOverlay, { view: view }) : null));
 }
 //# sourceMappingURL=WorkbenchGenericView.js.map

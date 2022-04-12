@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo } from 'react';
 import { IDType, useAsync, ViewUtils } from 'tdp_core';
-import { IReprovisynMapping } from 'reprovisyn';
+import { IReprovisynMapping, ReprovisynRestUtils } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
@@ -34,7 +34,15 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
     let currString = '';
 
     ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
-      currString += `${s}, `;
+      const concatStr = ', ';
+      const prevFormatting = ordino.workbenches[workbench.index - 1].formatting;
+      if (prevFormatting) {
+        const selectionDataRow = ordino.workbenches[workbench.index - 1].data[s][prevFormatting.title || prevFormatting.id];
+        currString += selectionDataRow + concatStr;
+      } else {
+        currString += s + concatStr;
+      }
+      console.log(currString);
     });
 
     return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;

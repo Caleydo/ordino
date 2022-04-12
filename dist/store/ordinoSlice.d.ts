@@ -70,6 +70,13 @@ export interface IWorkbench {
      * List selected rows
      */
     selection: IRow['_visyn_id'][];
+    formatting?: {
+        title?: string;
+        id: string;
+        formatResult?: string;
+        tokenSeparatorsRegex?: string;
+        defaultTokenSeparator?: string;
+    };
     /**
      * "detailsSidebar" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
      * Since the first workbench does not have an incoming selection, this is always false for the first workbench
@@ -127,6 +134,9 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, replaceWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newWorkbench: IWorkbench;
+}, string>, addEntityFormatting: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    formatting: IWorkbench['formatting'];
 }, string>, addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     desc: IColumnDesc & {

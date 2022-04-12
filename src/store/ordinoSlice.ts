@@ -83,6 +83,14 @@ export interface IWorkbench {
    */
   selection: IRow['_visyn_id'][];
 
+  formatting?: {
+    title?: string;
+    id: string;
+    formatResult?: string;
+    tokenSeparatorsRegex?: string;
+    defaultTokenSeparator?: string;
+  };
+
   /**
    * "detailsSidebar" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
    * Since the first workbench does not have an incoming selection, this is always false for the first workbench
@@ -177,6 +185,11 @@ const ordinoSlice = createSlice({
       const { workbenchIndex } = action.payload;
       state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
     },
+
+    addEntityFormatting(state, action: PayloadAction<{ workbenchIndex: number; formatting: IWorkbench['formatting'] }>) {
+      const { workbenchIndex, formatting } = action.payload;
+      state.workbenches[workbenchIndex].formatting = formatting;
+    },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
@@ -249,6 +262,7 @@ export const {
   addColumnDesc,
   removeView,
   replaceWorkbench,
+  addEntityFormatting,
   addScoreColumn,
   addSelection,
   addFilter,

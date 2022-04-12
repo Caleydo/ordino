@@ -1,5 +1,6 @@
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IScoreRow, IServerColumn, isVisynViewPluginDesc, VisynDataViewPluginType } from 'tdp_core';
+import { IWorkbench } from '../store';
 
 export type OrdinoVisynViewPluginType<
   Param extends Record<string, unknown> = Record<string, unknown>,
@@ -50,6 +51,11 @@ export type OrdinoVisynViewPluginType<
       },
       data: IScoreRow<any>[],
     ): void;
+    /**
+     *
+     * @param formatting TODO add typings once Ollie's interface refactoring is finished
+     */
+    onAddFormatting(formatting: IWorkbench['formatting']): void;
   },
   Desc
 >;

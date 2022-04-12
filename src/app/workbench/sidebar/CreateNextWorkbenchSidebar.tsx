@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -64,11 +64,23 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
     let currString = '';
 
     workbench.selection.forEach((s) => {
-      currString += `${s}, `;
+      const concatStr = ', ';
+      if (workbench.formatting) {
+        const selectionDataRow = workbench.data[s][workbench.formatting.title || workbench.formatting.id];
+        // if the column data is empty, use id string
+        if (selectionDataRow) {
+          currString += selectionDataRow + concatStr;
+        } else {
+          currString += s + concatStr;
+        }
+      } else {
+        // by default, use the selection string
+        currString += s + concatStr;
+      }
     });
 
     return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-  }, [workbench.selection]);
+  }, [workbench.data, workbench.selection, workbench.formatting]);
 
   return (
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -116,6 +128,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
+                        formatting: { id: 'id' },
                         name: selectedView.itemName,
                         index: workbench.index + 1,
                         selection: [],

@@ -6,6 +6,7 @@ import { IColumnDesc } from 'lineupjs';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import {
   addFilter,
+  addEntityFormatting,
   addScoreColumn,
   addSelection,
   createColumnDescs,
@@ -14,6 +15,7 @@ import {
   setView,
   setViewParameters,
   setWorkbenchData,
+  IWorkbench,
 } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
@@ -92,6 +94,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   }, [workbenchIndex, ordino.workbenches]);
 
   const onDataChanged = useMemo(() => (data: any[]) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
+  const onAddFormatting = useMemo(
+    () => (formatting: IWorkbench['formatting']) => dispatch(addEntityFormatting({ workbenchIndex, formatting })),
+    [dispatch, workbenchIndex],
+  );
   const onColumnDescChanged = useMemo(() => (desc: IColumnDesc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
   const onAddScoreColumn = useMemo(
     () => (desc: IColumnDesc, data: any[]) => dispatch(addScoreColumn({ workbenchIndex, desc, data })),
@@ -243,6 +249,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               onParametersChanged={onParametersChanged}
               onFilteredOutIdsChanged={onIdFilterChanged}
               onDataChanged={onDataChanged}
+              onAddFormatting={onAddFormatting}
               onColumnDescChanged={onColumnDescChanged}
               onAddScoreColumn={onAddScoreColumn}
             />

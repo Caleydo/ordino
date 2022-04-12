@@ -38,10 +38,24 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
     const selectionString = useMemo(() => {
         let currString = '';
         workbench.selection.forEach((s) => {
-            currString += `${s}, `;
+            const concatStr = ', ';
+            if (workbench.formatting) {
+                const selectionDataRow = workbench.data[s][workbench.formatting.title || workbench.formatting.id];
+                // if the column data is empty, use id string
+                if (selectionDataRow) {
+                    currString += selectionDataRow + concatStr;
+                }
+                else {
+                    currString += s + concatStr;
+                }
+            }
+            else {
+                // by default, use the selection string
+                currString += s + concatStr;
+            }
         });
         return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-    }, [workbench.selection]);
+    }, [workbench.data, workbench.selection, workbench.formatting]);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
@@ -76,6 +90,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
+                        formatting: { id: 'id' },
                         name: selectedView.itemName,
                         index: workbench.index + 1,
                         selection: [],

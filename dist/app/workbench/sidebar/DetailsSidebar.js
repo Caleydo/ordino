@@ -16,7 +16,16 @@ export function DetailsSidebar({ workbench }) {
     const selectionString = useMemo(() => {
         let currString = '';
         ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
-            currString += `${s}, `;
+            const concatStr = ', ';
+            const prevFormatting = ordino.workbenches[workbench.index - 1].formatting;
+            if (prevFormatting) {
+                const selectionDataRow = ordino.workbenches[workbench.index - 1].data[s][prevFormatting.title || prevFormatting.id];
+                currString += selectionDataRow + concatStr;
+            }
+            else {
+                currString += s + concatStr;
+            }
+            console.log(currString);
         });
         return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
     }, [ordino.workbenches, workbench.index]);

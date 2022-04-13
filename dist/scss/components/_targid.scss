@@ -237,6 +237,7 @@ div.filmstrip {
 
     // add border between viewWrappers when chooser is hidden
     &.single-view + .viewWrapper {
+      // use bootstrap class
       @extend .border-start;
     }
 

@@ -1,0 +1,17 @@
+{
+    "assigner": {
+      "hostname": "db_redis",
+      "port": 6379,
+      "db": 3,
+      "extras": {
+  
+      },
+      "cache": 262144
+    },
+    "mongo": {
+      "host": "db_mongo",
+      "port": 27017,
+      "db_graph": "graph",
+      "db_namedsets": "targid"
+    }
+}

@@ -16,6 +16,7 @@ if (pluginsToTransform.length > 0) {
  * see also https://jestjs.io/docs/en/webpack#mocking-css-modules
  */
 module.exports = {
+  testEnvironment: 'jsdom',
   transform: {
     "^.+\\.(js|ts|tsx)$": "ts-jest",
     "\\.xml$": "jest-raw-loader"

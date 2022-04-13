@@ -61,26 +61,17 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
   }, [status, availableViews]);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevFormatting = workbench.formatting;
 
-    workbench.selection.forEach((s) => {
-      const concatStr = ', ';
-      if (workbench.formatting) {
-        const selectionDataRow = workbench.data[s][workbench.formatting.titleColumn || workbench.formatting.idColumn];
-        // if the column data is empty, use id string
-        if (selectionDataRow) {
-          currString += selectionDataRow + concatStr;
-        } else {
-          currString += s + concatStr;
-        }
-      } else {
-        // by default, use the selection string
-        currString += s + concatStr;
-      }
-    });
+    const currString = workbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
     return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-  }, [workbench.data, workbench.selection, workbench.formatting]);
+  }, [workbench.data, workbench.formatting, workbench.selection]);
 
   return (
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -128,7 +119,6 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        formatting: { idColumn: 'id' },
                         name: selectedView.itemName,
                         index: workbench.index + 1,
                         selection: [],

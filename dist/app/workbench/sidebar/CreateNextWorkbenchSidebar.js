@@ -36,26 +36,15 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
         return entities;
     }, [status, availableViews]);
     const selectionString = useMemo(() => {
-        let currString = '';
-        workbench.selection.forEach((s) => {
-            const concatStr = ', ';
-            if (workbench.formatting) {
-                const selectionDataRow = workbench.data[s][workbench.formatting.titleColumn || workbench.formatting.idColumn];
-                // if the column data is empty, use id string
-                if (selectionDataRow) {
-                    currString += selectionDataRow + concatStr;
-                }
-                else {
-                    currString += s + concatStr;
-                }
-            }
-            else {
-                // by default, use the selection string
-                currString += s + concatStr;
-            }
-        });
+        const prevFormatting = workbench.formatting;
+        const currString = workbench.selection
+            .map((selectedId) => {
+            // the column value might be empty, so we also default to selectedId if this is the case
+            return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+        })
+            .join(', ');
         return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-    }, [workbench.data, workbench.selection, workbench.formatting]);
+    }, [workbench.data, workbench.formatting, workbench.selection]);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
@@ -90,7 +79,6 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        formatting: { idColumn: 'id' },
                         name: selectedView.itemName,
                         index: workbench.index + 1,
                         selection: [],

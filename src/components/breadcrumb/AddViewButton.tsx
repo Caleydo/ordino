@@ -17,7 +17,7 @@ export function AddViewButton({ color = 'cornflowerblue' }: IAddViewButton) {
         onClick={() => {
           dispatch(
             addView({
-              workbenchIndex: ordino.focusViewIndex,
+              workbenchIndex: ordino.focusWorkbenchIndex,
               view: {
                 name: '',
                 id: '',

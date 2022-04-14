@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface IDetailsSidebarProps {
   workbench: IWorkbench;
@@ -31,11 +31,18 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
   const { status, value: availableViews } = useAsync(findDependentViews, []);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevWorkbench = ordino.workbenches[workbench.index - 1];
+    if (!prevWorkbench) {
+      return '';
+    }
+    const prevFormatting = prevWorkbench.formatting;
 
-    ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
-      currString += `${s}, `;
-    });
+    const currString = prevWorkbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? prevWorkbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
     return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
   }, [ordino.workbenches, workbench.index]);
@@ -75,7 +82,7 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusViewIndex,
+                                        workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: map.entity },
                                       }),
                                     )

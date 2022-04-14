@@ -8,8 +8,8 @@ export function MoveButton({ view }) {
     // eslint-disable-next-line no-empty-pattern
     const [{}, drag] = useDrag(() => ({
         type: EDragTypes.MOVE,
-        item: { type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]) },
-    }), [view.id, ordino.workbenches[ordino.focusViewIndex].views]);
+        item: { type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusWorkbenchIndex]) },
+    }), [view.id, ordino.workbenches[ordino.focusWorkbenchIndex].views]);
     return (React.createElement("button", { ref: drag, type: "button", className: "position-absolute btn btn-primary" }, "Move View"));
 }
 //# sourceMappingURL=MoveButton.js.map

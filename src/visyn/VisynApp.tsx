@@ -5,12 +5,12 @@ import { VisynHeader } from './VisynHeader';
 
 interface IVisynAppProps {
   extensions?: {
-    header?: React.ReactElement;
+    Header?: React.ReactElement;
   };
   children?: React.ReactNode;
 }
 
-export function VisynApp({ extensions: { header = <VisynHeader /> } = {}, children = null }: IVisynAppProps) {
+export function VisynApp({ extensions: { Header = <VisynHeader /> } = {}, children = null }: IVisynAppProps) {
   const user = useAppSelector((state) => state.user);
   const { status } = useInitVisynApp();
   return (
@@ -19,7 +19,7 @@ export function VisynApp({ extensions: { header = <VisynHeader /> } = {}, childr
       {
         status === 'success' ? (
           <>
-            {header}
+            {Header}
             {user.loggedIn ? children : null}
           </>
         ) : null // TODO:show loading overlay while initializing?

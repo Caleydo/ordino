@@ -14,10 +14,17 @@ export function DetailsSidebar({ workbench }) {
     const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))), [idType]);
     const { status, value: availableViews } = useAsync(findDependentViews, []);
     const selectionString = useMemo(() => {
-        let currString = '';
-        ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
-            currString += `${s}, `;
-        });
+        const prevWorkbench = ordino.workbenches[workbench.index - 1];
+        if (!prevWorkbench) {
+            return '';
+        }
+        const prevFormatting = prevWorkbench.formatting;
+        const currString = prevWorkbench.selection
+            .map((selectedId) => {
+            // the column value might be empty, so we also default to selectedId if this is the case
+            return prevFormatting ? prevWorkbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+        })
+            .join(', ');
         return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
     }, [ordino.workbenches, workbench.index]);
     return (React.createElement("div", { className: "me-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" },
@@ -39,7 +46,7 @@ export function DetailsSidebar({ workbench }) {
                         columns.map((col) => {
                             return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
                                 React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity), onChange: () => dispatch(changeSelectedMappings({
-                                        workbenchIndex: ordino.focusViewIndex,
+                                        workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: map.entity },
                                     })), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
                                 React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));

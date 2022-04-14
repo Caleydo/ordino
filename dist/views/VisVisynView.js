@@ -19,13 +19,13 @@ function getFilteredDescColumns(dataDesc, filteredData) {
     }
     return cols;
 }
-export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }) {
+export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
         return filterData;
     }, [data, filteredOutIds]);
-    return (React.createElement(Vis, { columns: getFilteredDescColumns(dataDesc, filteredData), selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, hideSidebar: true }));
+    return (React.createElement(Vis, { columns: getFilteredDescColumns(dataDesc, filteredData), selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), hideSidebar: true }));
 }
 export function VisViewSidebar({ data, dataDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
     const filteredData = useMemo(() => {

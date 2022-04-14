@@ -70,10 +70,19 @@ export interface IWorkbench {
      * List selected rows
      */
     selection: IRow['_visyn_id'][];
+    /**
+     * Formatting properties of an entity. This includes an id column used for automatically parsing ids in form dialogs
+     * (e.g., select3). Also, formatting serves as a central place where the default format of an entity is defined.
+     * TODO: will be replaced by a general interface after Ollie's refactoring PR (https://github.com/Caleydo/ordino/pull/368)
+     * See field descriptions in https://github.com/datavisyn/reprovisyn/blob/58bc3f2fecf1632571cea7f6606412f7b11b4fd3/src/base/types.ts#L81
+     */
     formatting?: {
-        title?: string;
-        id: string;
-        formatResult?: string;
+        titleColumn?: string;
+        idColumn: string;
+        template?: string;
+        /**
+         * For select3 forms, this token separator is used for parsing multiple id's pasted into the form dialog
+         */
         tokenSeparatorsRegex?: string;
         defaultTokenSeparator?: string;
     };

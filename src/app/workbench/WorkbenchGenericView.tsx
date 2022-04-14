@@ -10,11 +10,11 @@ import {
   addScoreColumn,
   addSelection,
   createColumnDescs,
-  IWorkbenchView,
   removeView,
   setView,
   setViewParameters,
   setWorkbenchData,
+  IWorkbenchView,
   IWorkbench,
 } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';

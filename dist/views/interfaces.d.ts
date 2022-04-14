@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IScoreRow, IServerColumn, VisynDataViewPluginType } from 'tdp_core';
+import { IWorkbench } from '../store';
 export declare type OrdinoVisynViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param, {
     /**
      * Data array matching the columns defined in the `dataDesc`.
@@ -39,10 +40,11 @@ export declare type OrdinoVisynViewPluginType<Param extends Record<string, unkno
         [key: string]: any;
     }, data: IScoreRow<any>[]): void;
     /**
-     *
-     * @param formatting TODO add typings
+     * add formatting information to the workbench: when showing an entity's selected item we might want to display
+     * a string from a column other than the selection id.
+     * @param formatting TODO add typings once Ollie's interface refactoring is finished
      */
-    onAddFormatting(formatting: any): void;
+    onAddFormatting(formatting: IWorkbench['formatting']): void;
 }, Desc>;
 export declare function isVisynRankingViewDesc(desc: unknown): desc is VisynDataViewPluginType['desc'];
 export declare function isVisynRankingView(plugin: unknown): plugin is VisynDataViewPluginType['plugin'];

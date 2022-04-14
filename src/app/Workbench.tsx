@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../hooks';
-import { IWorkbench } from '../store/ordinoSlice';
+import { IWorkbench } from '../store';
 import { EWorkbenchType, WorkbenchViews } from './workbench/WorkbenchViews';
 
 interface IWorkbenchProps {

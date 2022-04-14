@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { addView } from '../../store/ordinoSlice';
+import { addView } from '../../store';
 export function AddViewButton({ color = 'cornflowerblue' }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);

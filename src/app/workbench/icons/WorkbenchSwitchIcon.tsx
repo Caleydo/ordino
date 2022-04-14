@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useDrop } from 'react-dnd';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { useAppSelector } from '../../../hooks/useAppSelector';
-import { IWorkbenchView, switchViews } from '../../../store/ordinoSlice';
+import { IWorkbenchView, switchViews } from '../../../store';
 import { findViewIndex } from '../../../store/storeUtils';
 import { EDragTypes } from '../utils';
 

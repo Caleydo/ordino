@@ -84,6 +84,23 @@ export interface IWorkbench {
   selection: IRow['_visyn_id'][];
 
   /**
+   * Formatting properties of an entity. This includes an id column used for automatically parsing ids in form dialogs
+   * (e.g., select3). Also, formatting serves as a central place where the default format of an entity is defined.
+   * TODO: will be replaced by a general interface after Ollie's refactoring PR (https://github.com/Caleydo/ordino/pull/368)
+   * See field descriptions in https://github.com/datavisyn/reprovisyn/blob/58bc3f2fecf1632571cea7f6606412f7b11b4fd3/src/base/types.ts#L81
+   */
+  formatting?: {
+    titleColumn?: string;
+    idColumn: string;
+    template?: string;
+    /**
+     * For select3 forms, this token separator is used for parsing multiple id's pasted into the form dialog
+     */
+    tokenSeparatorsRegex?: string;
+    defaultTokenSeparator?: string;
+  };
+
+  /**
    * "detailsSidebar" is the information about the incoming selection of a workbench. It is a panel on the left side of a workbench, openable via burger menu.
    * Since the first workbench does not have an incoming selection, this is always false for the first workbench
    * detailsSidebarOpen keeps track of whether or not the details tab is switched open.
@@ -177,6 +194,11 @@ const ordinoSlice = createSlice({
       const { workbenchIndex } = action.payload;
       state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
     },
+
+    addEntityFormatting(state, action: PayloadAction<{ workbenchIndex: number; formatting: IWorkbench['formatting'] }>) {
+      const { workbenchIndex, formatting } = action.payload;
+      state.workbenches[workbenchIndex].formatting = formatting;
+    },
     switchViews(state, action: PayloadAction<{ workbenchIndex: number; firstViewIndex: number; secondViewIndex: number }>) {
       const temp: IWorkbenchView = state.workbenches[action.payload.workbenchIndex].views[action.payload.firstViewIndex];
 
@@ -249,6 +271,7 @@ export const {
   addColumnDesc,
   removeView,
   replaceWorkbench,
+  addEntityFormatting,
   addScoreColumn,
   addSelection,
   addFilter,

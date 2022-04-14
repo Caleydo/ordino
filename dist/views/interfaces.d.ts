@@ -38,6 +38,11 @@ export declare type OrdinoVisynViewPluginType<Param extends Record<string, unkno
     onAddScoreColumn(desc: IColumnDesc & {
         [key: string]: any;
     }, data: IScoreRow<any>[]): void;
+    /**
+     *
+     * @param formatting TODO add typings
+     */
+    onAddFormatting(formatting: any): void;
 }, Desc>;
 export declare function isVisynRankingViewDesc(desc: unknown): desc is VisynDataViewPluginType['desc'];
 export declare function isVisynRankingView(plugin: unknown): plugin is VisynDataViewPluginType['plugin'];

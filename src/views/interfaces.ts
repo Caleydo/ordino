@@ -1,5 +1,6 @@
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IScoreRow, IServerColumn, isVisynViewPluginDesc, VisynDataViewPluginType } from 'tdp_core';
+import { IWorkbench } from '../store';
 
 export type OrdinoVisynViewPluginType<
   Param extends Record<string, unknown> = Record<string, unknown>,
@@ -50,6 +51,12 @@ export type OrdinoVisynViewPluginType<
       },
       data: IScoreRow<any>[],
     ): void;
+    /**
+     * add formatting information to the workbench: when showing an entity's selected item we might want to display
+     * a string from a column other than the selection id.
+     * @param formatting TODO add typings once Ollie's interface refactoring is finished
+     */
+    onAddFormatting(formatting: IWorkbench['formatting']): void;
   },
   Desc
 >;

@@ -36,12 +36,15 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
         return entities;
     }, [status, availableViews]);
     const selectionString = useMemo(() => {
-        let currString = '';
-        workbench.selection.forEach((s) => {
-            currString += `${s}, `;
-        });
+        const prevFormatting = workbench.formatting;
+        const currString = workbench.selection
+            .map((selectedId) => {
+            // the column value might be empty, so we also default to selectedId if this is the case
+            return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+        })
+            .join(', ');
         return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-    }, [workbench.selection]);
+    }, [workbench.data, workbench.formatting, workbench.selection]);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },

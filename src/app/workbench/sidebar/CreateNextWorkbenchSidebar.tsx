@@ -4,7 +4,7 @@ import { IReprovisynMapping } from 'reprovisyn';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { isVisynRankingViewDesc } from '../../../views/interfaces';
 
 export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -61,14 +61,17 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
   }, [status, availableViews]);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevFormatting = workbench.formatting;
 
-    workbench.selection.forEach((s) => {
-      currString += `${s}, `;
-    });
+    const currString = workbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
     return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-  }, [workbench.selection]);
+  }, [workbench.data, workbench.formatting, workbench.selection]);
 
   return (
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">

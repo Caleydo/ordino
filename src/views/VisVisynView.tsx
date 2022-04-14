@@ -10,7 +10,7 @@ function getFilteredDescColumns(dataDesc: any[] | VisynViewPluginType['desc'], f
   for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
     cols.push({
       info: {
-        name: c.summary ? `${c.summary}: ${c.label}` : c.label,
+        name: c.label,
         description: c.summary,
         id: c.column,
       },

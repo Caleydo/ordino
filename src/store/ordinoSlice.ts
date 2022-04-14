@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IRow } from 'tdp_core';
-import { IColumnDesc } from 'lineupjs';
 import { IOrdinoAppState, IWorkbench } from './interfaces';
 import { viewsReducers } from './viewsReducer';
 import { workbenchReducers } from './workbenchReducer';

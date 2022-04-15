@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { setDetailsSidebarOpen } from '../../store/ordinoSlice';
+import { setDetailsSidebarOpen } from '../../store';
 export function ShowDetailsSwitch({ height = 30 }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();

@@ -5,9 +5,9 @@ import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis, Vis
 
 type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
 
-function getFilteredDescColumns(dataDesc: any[] | VisynViewPluginType['desc'], filteredData: any[]): any[] {
+function getFilteredDescColumns(columnDesc: any[] | VisynViewPluginType['desc'], filteredData: any[]): any[] {
   const cols = [];
-  for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+  for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
     cols.push({
       info: {
         name: c.label,
@@ -24,7 +24,7 @@ function getFilteredDescColumns(dataDesc: any[] | VisynViewPluginType['desc'], f
   return cols;
 }
 
-export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
@@ -35,7 +35,7 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
 
   return (
     <Vis
-      columns={getFilteredDescColumns(dataDesc, filteredData)}
+      columns={getFilteredDescColumns(columnDesc, filteredData)}
       selected={selection}
       selectionCallback={onSelectionChanged}
       externalConfig={parameters.visConfig}
@@ -46,7 +46,7 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
 
 export function VisViewSidebar({
   data,
-  dataDesc,
+  columnDesc,
   selection,
   filteredOutIds,
   parameters,
@@ -62,8 +62,8 @@ export function VisViewSidebar({
   }, [data, filteredOutIds]);
 
   const finalCols = useMemo(() => {
-    return getFilteredDescColumns(dataDesc, filteredData);
-  }, [dataDesc, filteredData]);
+    return getFilteredDescColumns(columnDesc, filteredData);
+  }, [columnDesc, filteredData]);
 
   const visFilterChanged = (filterSet: string) => {
     if (filterSet === 'Filter Out') {

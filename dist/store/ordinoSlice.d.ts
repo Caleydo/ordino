@@ -1,5 +1,3 @@
-import { IRow } from 'tdp_core';
-import { IColumnDesc } from 'lineupjs';
 import { IOrdinoAppState, IWorkbench } from './interfaces';
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
@@ -43,7 +41,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     formatting: IWorkbench['formatting'];
 }, string>, addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
-    desc: IColumnDesc & {
+    desc: import("lineupjs").IColumnDesc & {
         [key: string]: any;
     };
     data: any[];
@@ -56,7 +54,7 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     filter: string[];
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
-    data: IRow[];
+    data: import("tdp_core").IRow[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{

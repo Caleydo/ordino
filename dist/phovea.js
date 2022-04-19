@@ -78,11 +78,8 @@ export default function (registry) {
         ns: 'tdp',
     });
     // customized login dialog
-    if (process.env.ENABLE_COOKIE_STORE) {
-        registry.push(EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM, 'api_cookie_store_login', () => import('./app/SecurityCookieStoreLoginDialog'), {});
-    }
-    else {
-        registry.push(EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM, 'tdpBioinfoLoginForm', () => import('./app/LoginDialog'), {});
+    if (process.env.ENABLE_COOKIE_STORE != null && JSON.parse(process.env.ENABLE_COOKIE_STORE) === true) {
+        registry.push(EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM, 'ordino_api_cookie_store_login', () => import('./internal/components/login/SecurityCookieStoreLoginDialog'), {});
     }
     // generator-phovea:end
 }

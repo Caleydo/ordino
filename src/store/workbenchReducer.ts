@@ -51,7 +51,7 @@ export const workbenchReducers = {
     state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
   },
   removeWorkbench(state, action: PayloadAction<{ index: number }>) {
-    state.workbenches.slice(action.payload.index);
+    state.workbenches.splice(action.payload.index, state.workbenches.length);
   },
   replaceWorkbench(state, action: PayloadAction<{ workbenchIndex: number; newWorkbench: IWorkbench }>) {
     state.workbenches.splice(action.payload.workbenchIndex);

@@ -2,9 +2,9 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { EColumnTypes, VisSidebar, Vis } from 'tdp_core';
-function getFilteredDescColumns(dataDesc, filteredData) {
+function getFilteredDescColumns(columnDesc, filteredData) {
     const cols = [];
-    for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+    for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
         cols.push({
             info: {
                 name: c.label,
@@ -19,23 +19,23 @@ function getFilteredDescColumns(dataDesc, filteredData) {
     }
     return cols;
 }
-export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }) {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
         return filterData;
     }, [data, filteredOutIds]);
-    return (React.createElement(Vis, { columns: getFilteredDescColumns(dataDesc, filteredData), selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), hideSidebar: true }));
+    return (React.createElement(Vis, { columns: getFilteredDescColumns(columnDesc, filteredData), selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), hideSidebar: true }));
 }
-export function VisViewSidebar({ data, dataDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
+export function VisViewSidebar({ data, columnDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
     const filteredData = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
         return filterData;
     }, [data, filteredOutIds]);
     const finalCols = useMemo(() => {
-        return getFilteredDescColumns(dataDesc, filteredData);
-    }, [dataDesc, filteredData]);
+        return getFilteredDescColumns(columnDesc, filteredData);
+    }, [columnDesc, filteredData]);
     const visFilterChanged = (filterSet) => {
         if (filterSet === 'Filter Out') {
             onFilteredOutIdsChanged(selection);

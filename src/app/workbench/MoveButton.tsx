@@ -2,7 +2,7 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 import { EDragTypes } from './utils';
 import { findViewIndex } from '../../store/storeUtils';
-import { IWorkbenchView } from '../../store/ordinoSlice';
+import { IWorkbenchView } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 
 export interface IWorkbenchSingleViewProps {

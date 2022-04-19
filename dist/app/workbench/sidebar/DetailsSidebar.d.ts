@@ -1,4 +1,4 @@
-import { IWorkbench } from '../../../store/ordinoSlice';
+import { IWorkbench } from '../../../store';
 export interface IDetailsSidebarProps {
     workbench: IWorkbench;
 }

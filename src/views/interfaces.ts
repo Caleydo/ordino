@@ -10,14 +10,14 @@ export type OrdinoVisynViewPluginType<
   Param,
   {
     /**
-     * Data array matching the columns defined in the `dataDesc`.
+     * Data array matching the columns defined in the `columnDesc`.
      */
     data: Record<string, unknown>[];
     /**
      * Data column description describing the given `data`.
      * TODO:: Type to IReprovisynServerColumn when we merge that into tdp_core
      */
-    dataDesc: IServerColumn[] | any[];
+    columnDesc: IServerColumn[] | any[];
 
     /**
      * List of items which are filtered out of the view. Ids match the idtype from 'desc.idtype'

@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { PluginRegistry, EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
+import { PluginRegistry, EP_PHOVEA_CORE_LOCALE, EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM } from 'tdp_core';
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from './base/extensions';
 import { EP_ORDINO_LOGO } from './base';
 export default function (registry) {
@@ -77,6 +77,13 @@ export default function (registry) {
         order: 1,
         ns: 'tdp',
     });
+    // customized login dialog
+    if (process.env.ENABLE_COOKIE_STORE) {
+        registry.push(EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM, 'api_cookie_store_login', () => import('./app/SecurityCookieStoreLoginDialog'), {});
+    }
+    else {
+        registry.push(EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM, 'tdpBioinfoLoginForm', () => import('./app/LoginDialog'), {});
+    }
     // generator-phovea:end
 }
 //# sourceMappingURL=phovea.js.map

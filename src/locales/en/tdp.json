@@ -46,8 +46,7 @@
     "loginMenu": {
       "automaticLoginDisclaimer": "You will be automatically logged into Ordino as soon as you visit the site. If your access is expired, please refresh the page to log in again.",
       "modalTitle": "Login to Ordino",
-      "acceptGenieTerms": "Accept GENIE terms checkbox in login dialog is missing!",
-      "refreshPage": "Refresh Page"
+      "refreshPage": "Refresh page"
     }
   }
 }

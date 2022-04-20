@@ -241,15 +241,13 @@ export class ViewWrapper extends EventHandler {
     chooseNextViews(idtype, selection) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
+        const isSelNone = (selection === null || selection === void 0 ? void 0 : selection.length) === 0;
+        // show chooser if selection available
+        this.$chooser.classed('hidden', isSelNone);
+        if (isSelNone) {
+            this.$chooser.selectAll('button').classed('active', false);
+        }
         ViewUtils.findViews(idtype, selection).then((views) => {
-            const isSelNone = (selection === null || selection === void 0 ? void 0 : selection.length) === 0;
-            // do not show chooser if there is only one view available
-            const hasSingleView = views.length === 1;
-            // show chooser if selection available
-            this.$chooser.classed('hidden', isSelNone || hasSingleView);
-            if (isSelNone) {
-                this.$chooser.selectAll('button').classed('active', false);
-            }
             const groups = ViewUtils.groupByCategory(views);
             const $categories = this.$chooser.selectAll('div.category').data(groups);
             $categories
@@ -272,14 +270,6 @@ export class ViewWrapper extends EventHandler {
                 d3.select(this).classed('active', true);
                 that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.id, idtype, selection);
             });
-            if (hasSingleView) {
-                const viewButton = $buttons.node();
-                if (!viewButton.classList.contains('active')) {
-                    this.$viewWrapper.node().classList.add('single-view');
-                    // open next view directly if it is the only one available
-                    viewButton.click();
-                }
-            }
             $buttons.exit().remove();
         });
     }

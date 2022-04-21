@@ -3,7 +3,7 @@
  * Copyright (c) The Caleydo Team. All rights reserved.
  * Licensed under the new BSD license, available at http://caleydo.org/license
  **************************************************************************** */
-import { IRegistry, PluginRegistry, ActionNode, ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE } from 'tdp_core';
+import { IRegistry, PluginRegistry, ActionNode, ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE, EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM } from 'tdp_core';
 
 import { EP_ORDINO_STARTMENU_SESSION_SECTION } from './base/extensions';
 import { EP_ORDINO_LOGO, IOrdinoLogoDesc } from './base';
@@ -98,5 +98,15 @@ export default function (registry: IRegistry) {
       ns: 'tdp',
     },
   );
+
+  // customized login dialog
+  if (process.env.ENABLE_COOKIE_STORE != null && JSON.parse(process.env.ENABLE_COOKIE_STORE) === true) {
+    registry.push(
+      EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM,
+      'ordino_api_cookie_store_login',
+      () => import('./internal/components/login/SecurityCookieStoreLoginDialog'),
+      {},
+    );
+  }
   // generator-phovea:end
 }

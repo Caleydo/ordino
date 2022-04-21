@@ -235,12 +235,6 @@ div.filmstrip {
     overflow: hidden;
     transition: width $mode-animation-time ease;
 
-    // add border between viewWrappers when chooser is hidden
-    &.single-view + .viewWrapper {
-      // use bootstrap class
-      @extend .border-start;
-    }
-
     // first view should have width:100%
     &:nth-child(1):last-child {
       width: 100%;

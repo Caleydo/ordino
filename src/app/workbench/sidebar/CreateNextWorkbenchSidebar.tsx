@@ -70,7 +70,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
       })
       .join(', ');
 
-    return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
+    return currString.length < 202 ? currString : `${currString.slice(0, 200)}...`;
   }, [workbench.data, workbench.formatting, workbench.selection]);
 
   return (

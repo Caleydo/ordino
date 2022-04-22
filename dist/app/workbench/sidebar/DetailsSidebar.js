@@ -25,7 +25,7 @@ export function DetailsSidebar({ workbench }) {
             return prevFormatting ? prevWorkbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
         })
             .join(', ');
-        return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
+        return currString.length < 152 ? currString : `${currString.slice(0, 150)}...`;
     }, [ordino.workbenches, workbench.index]);
     return (React.createElement("div", { className: "me-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" },
         React.createElement("div", { className: "p-1 mb-2 rounded" },

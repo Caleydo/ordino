@@ -43,7 +43,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
             return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
         })
             .join(', ');
-        return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
+        return currString.length < 202 ? currString : `${currString.slice(0, 200)}...`;
     }, [workbench.data, workbench.formatting, workbench.selection]);
     return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },

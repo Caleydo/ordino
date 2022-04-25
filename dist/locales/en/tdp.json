@@ -42,6 +42,11 @@
             "startTour": "Start Tour",
             "tourLevelBeginner": "General introduction",
             "tourLevelAdvanced": "Advanced tours"
+        },
+        "loginMenu": {
+            "automaticLoginDisclaimer": "You will be automatically logged into Ordino as soon as you visit the site. If your access is expired, please refresh the page to log in again.",
+            "modalTitle": "Login to Ordino",
+            "refreshPage": "Refresh page"
         }
     }
 }

@@ -1,0 +1,1 @@
+export * from './ordino-video-test.spec';

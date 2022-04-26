@@ -1,4 +1,4 @@
-import { IWorkbench } from '.';
+import { IWorkbench } from './interfaces';
 
 export function getAllFilters(workbench: IWorkbench) {
   const allFilteredIds: Set<string> = new Set<string>();

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { IViewPluginDesc } from 'tdp_core';
+import { I18nextManager, IViewPluginDesc } from 'tdp_core';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { IWorkbenchView, removeView, setView } from '../../store';
@@ -50,7 +50,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
 
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-      {workbenchIndex === ordino.focusViewIndex ? (
+      {workbenchIndex === ordino.focusWorkbenchIndex ? (
         <>
           <div className="view-actions">
             <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">
@@ -85,7 +85,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWo
           isEmbedded={false}
         />
         <div className="w-100 d-flex justify-content-center align-items-center">
-          <p className="emptyViewText">Select A View</p>
+          <p className="emptyViewText">{I18nextManager.getInstance().i18n.t('tdp:ordino.views.selectView')}</p>
         </div>
       </div>
 

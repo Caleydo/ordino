@@ -1,3 +1,3 @@
-import { IWorkbenchSidebarProps } from './AddWorkbenchSidebar';
-export declare function DetailsSidebar({ workbench }: IWorkbenchSidebarProps): JSX.Element;
+import { ICreateNextWorkbenchSidebarProps } from './CreateNextWorkbenchSidebar';
+export declare function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps): JSX.Element;
 //# sourceMappingURL=DetailsSidebar.d.ts.map

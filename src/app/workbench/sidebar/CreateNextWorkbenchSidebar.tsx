@@ -1,11 +1,11 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
-import { useAsync } from 'tdp_core';
+import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { findWorkbenchTransitions, OrdinoVisynViewPluginType } from '../../../views';
+import { isVisynRankingViewDesc, OrdinoVisynViewPluginDesc } from '../../../views/interfaces';
 
-export interface IWorkbenchSidebarProps {
+export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
 }
 
@@ -15,11 +15,11 @@ export interface IMappingDesc {
   mappingSubtype: string;
 }
 
-export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
+export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
-  const [selectedView, setSelectedView] = useState<OrdinoVisynViewPluginType['desc']>(null);
+  const [selectedView, setSelectedView] = useState<OrdinoVisynViewPluginDesc>(null);
   const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
 
   const relationListCallback = (s: IMappingDesc) => {
@@ -31,7 +31,17 @@ export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
     }
   };
 
-  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
+  const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
+
+  const findDependentViews = React.useMemo(
+    () => () =>
+      ViewUtils.findVisynViews(idType).then((views) => {
+        return views.filter((v) => isVisynRankingViewDesc(v));
+      }),
+    [idType],
+  );
+
+  const { status, value: availableViews } = useAsync(findDependentViews, []);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {
@@ -50,14 +60,17 @@ export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
   }, [status, availableViews]);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevFormatting = workbench.formatting;
 
-    workbench.selection.forEach((s) => {
-      currString += `${s}, `;
-    });
+    const currString = workbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
-    return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-  }, [workbench.selection]);
+    return currString.length < 202 ? currString : `${currString.slice(0, 200)}...`;
+  }, [workbench.data, workbench.formatting, workbench.selection]);
 
   return (
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -89,8 +102,8 @@ export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
                       // load the data
                       addWorkbench({
                         itemIDType: selectedView.itemIDType,
-                        detailsOpen: true,
-                        addWorkbenchOpen: false,
+                        detailsSidebarOpen: true,
+                        createNextWorkbenchSidebarOpen: false,
                         selectedMappings,
                         views: [
                           {
@@ -102,7 +115,6 @@ export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
                           },
                         ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
-                        transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
@@ -112,7 +124,7 @@ export function AddWorkbenchSidebar({ workbench }: IWorkbenchSidebarProps) {
                       }),
                     );
                     setTimeout(() => {
-                      dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                      dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
                     }, 0);
                   }}
                 >

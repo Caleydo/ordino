@@ -2,7 +2,7 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 import { EDragTypes } from './utils';
 import { findViewIndex } from '../../store/storeUtils';
-import { IWorkbenchView } from '../../store/ordinoSlice';
+import { IWorkbenchView } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 
 export interface IWorkbenchSingleViewProps {
@@ -16,9 +16,9 @@ export function MoveButton({ view }: IWorkbenchSingleViewProps) {
   const [{}, drag] = useDrag(
     () => ({
       type: EDragTypes.MOVE,
-      item: { type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusViewIndex]) },
+      item: { type: EDragTypes.MOVE, viewId: view.id, index: findViewIndex(view.uniqueId, ordino.workbenches[ordino.focusWorkbenchIndex]) },
     }),
-    [view.id, ordino.workbenches[ordino.focusViewIndex].views],
+    [view.id, ordino.workbenches[ordino.focusWorkbenchIndex].views],
   );
 
   return (

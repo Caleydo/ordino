@@ -1,4 +1,4 @@
-import { IWorkbench } from '../store/ordinoSlice';
+import { IWorkbench } from '../store';
 import { EWorkbenchType } from './workbench/WorkbenchViews';
 interface IWorkbenchProps {
     workbench: IWorkbench;

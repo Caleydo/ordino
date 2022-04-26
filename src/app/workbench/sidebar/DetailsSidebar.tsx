@@ -2,23 +2,30 @@ import React, { Fragment, useMemo } from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings } from '../../../store/ordinoSlice';
-import { findWorkbenchTransitions } from '../../../views/interfaces';
-import { IWorkbenchSidebarProps } from './AddWorkbenchSidebar';
+import { changeSelectedMappings } from '../../../store';
+import { findWorkbenchTransitions } from '../../../views';
+import { ICreateNextWorkbenchSidebarProps } from './CreateNextWorkbenchSidebar';
 
-export function DetailsSidebar({ workbench }: IWorkbenchSidebarProps) {
+export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevWorkbench = ordino.workbenches[workbench.index - 1];
+    if (!prevWorkbench) {
+      return '';
+    }
+    const prevFormatting = prevWorkbench.formatting;
 
-    ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
-      currString += `${s}, `;
-    });
+    const currString = prevWorkbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? prevWorkbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
-    return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
+    return currString.length < 152 ? currString : `${currString.slice(0, 150)}...`;
   }, [ordino.workbenches, workbench.index]);
 
   return (
@@ -56,7 +63,7 @@ export function DetailsSidebar({ workbench }: IWorkbenchSidebarProps) {
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusViewIndex,
+                                        workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
                                       }),
                                     )

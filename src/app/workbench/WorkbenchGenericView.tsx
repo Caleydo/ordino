@@ -3,17 +3,19 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { IColumnDesc } from 'lineupjs';
-import { EXTENSION_POINT_VISYN_VIEW, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
+import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import {
   addFilter,
+  addEntityFormatting,
   addScoreColumn,
   addSelection,
   createColumnDescs,
-  IWorkbenchView,
   removeView,
   setView,
   setViewParameters,
   setWorkbenchData,
+  IWorkbenchView,
+  IWorkbench,
 } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { DropOverlay } from './DropOverlay';
@@ -92,6 +94,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   }, [workbenchIndex, ordino.workbenches]);
 
   const onDataChanged = useMemo(() => (data: any[]) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
+  const onAddFormatting = useMemo(
+    () => (formatting: IWorkbench['formatting']) => dispatch(addEntityFormatting({ workbenchIndex, formatting })),
+    [dispatch, workbenchIndex],
+  );
   const onColumnDescChanged = useMemo(() => (desc: IColumnDesc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
   const onAddScoreColumn = useMemo(
     () => (desc: IColumnDesc, data: any[]) => dispatch(addScoreColumn({ workbenchIndex, desc, data })),
@@ -100,7 +106,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
 
   return (
     <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
-      {workbenchIndex === ordino.focusViewIndex ? (
+      {workbenchIndex === ordino.focusWorkbenchIndex ? (
         <>
           <div className="view-actions">
             {!isVisynRankingViewDesc(viewPlugin?.desc) ? (
@@ -127,11 +133,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               <strong>{view.name}</strong>
             </span>
             {viewPlugin?.header ? (
-              <Suspense fallback="Loading..">
+              <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
                 <viewPlugin.header
                   desc={viewPlugin.desc}
                   data={ordino.workbenches[workbenchIndex].data}
-                  dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+                  columnDesc={ordino.workbenches[workbenchIndex].columnDescs}
                   selection={ordino.workbenches[workbenchIndex].selection}
                   filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
                   parameters={{ ...view.parameters, ...parameters }}
@@ -192,6 +198,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
                 role="tabpanel"
                 aria-labelledby="settings-tab"
               >
+                {/* TODO refactor view header such that the logic (using hooks) and the visual representation are separated */}
                 <ViewChooser
                   views={chooserOptions}
                   showBurgerMenu={false}
@@ -211,11 +218,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               </div>
               {viewPlugin && viewPlugin?.tab ? (
                 <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
-                  <Suspense fallback="Loading..">
+                  <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
                     <viewPlugin.tab
                       desc={viewPlugin.desc}
                       data={ordino.workbenches[workbenchIndex].data}
-                      dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+                      columnDesc={ordino.workbenches[workbenchIndex].columnDescs}
                       selection={ordino.workbenches[workbenchIndex].selection}
                       filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
                       parameters={{ ...view.parameters, ...parameters }}
@@ -230,11 +237,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
           </div>
         ) : null}
         {viewPlugin?.view ? (
-          <Suspense fallback="Loading..">
+          <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>
             <viewPlugin.view
               desc={viewPlugin.desc}
               data={ordino.workbenches[workbenchIndex].data}
-              dataDesc={ordino.workbenches[workbenchIndex].columnDescs}
+              columnDesc={ordino.workbenches[workbenchIndex].columnDescs}
               selection={ordino.workbenches[workbenchIndex].selection}
               filteredOutIds={getAllFilters(ordino.workbenches[workbenchIndex])}
               parameters={{ ...view.parameters, ...parameters }}
@@ -242,6 +249,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
               onParametersChanged={onParametersChanged}
               onFilteredOutIdsChanged={onIdFilterChanged}
               onDataChanged={onDataChanged}
+              onAddFormatting={onAddFormatting}
               onColumnDescChanged={onColumnDescChanged}
               onAddScoreColumn={onAddScoreColumn}
             />

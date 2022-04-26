@@ -1,9 +1,9 @@
 import React, { Fragment, useMemo, useState } from 'react';
-import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
+import { IDTypeManager, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions } from '../../../views';
 export function CreateNextWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -19,10 +19,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
         }
     };
     const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
-    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => {
-        return views.filter((v) => isVisynRankingViewDesc(v));
-    }), [idType]);
-    const { status, value: availableViews } = useAsync(findDependentViews, []);
+    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
     const availableEntities = useMemo(() => {
         if (status !== 'success') {
             return null;

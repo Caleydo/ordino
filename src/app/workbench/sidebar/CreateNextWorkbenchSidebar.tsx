@@ -3,7 +3,7 @@ import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingViewDesc, OrdinoVisynViewPluginDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions, OrdinoVisynViewPluginDesc } from '../../../views';
 
 export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -33,15 +33,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
 
   const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
 
-  const findDependentViews = React.useMemo(
-    () => () =>
-      ViewUtils.findVisynViews(idType).then((views) => {
-        return views.filter((v) => isVisynRankingViewDesc(v));
-      }),
-    [idType],
-  );
-
-  const { status, value: availableViews } = useAsync(findDependentViews, []);
+  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {

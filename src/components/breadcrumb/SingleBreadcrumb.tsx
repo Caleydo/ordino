@@ -79,7 +79,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
             <button
               type="button"
               className="btn-close btn-close-white me-2"
-              aria-label="Close"
+              aria-label={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close')}
               onClick={() => {
                 dispatch(changeFocus({ index: workbench.index - 1 }));
                 dispatch(removeWorkbench({ index: workbench.index }));

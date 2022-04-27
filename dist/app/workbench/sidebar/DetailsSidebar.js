@@ -1,18 +1,13 @@
 import React, { Fragment, useMemo } from 'react';
-import { IDType, useAsync, ViewUtils } from 'tdp_core';
+import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { changeSelectedMappings } from '../../../store';
-import { isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions } from '../../../views';
 export function DetailsSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
-    const idType = useMemo(() => {
-        return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))), [idType]);
-    const { status, value: availableViews } = useAsync(findDependentViews, []);
+    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
     const selectionString = useMemo(() => {
         const prevWorkbench = ordino.workbenches[workbench.index - 1];
         if (!prevWorkbench) {
@@ -39,15 +34,16 @@ export function DetailsSidebar({ workbench }) {
             availableViews
                 .filter((v) => v.itemIDType === workbench.entityId)
                 .map((v) => {
-                return (React.createElement("div", { key: `${v.name}mapping` }, v.relation.mapping.map((map) => {
-                    const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
-                    return (React.createElement(Fragment, { key: `${map.entity}-${map.name}` },
-                        React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
+                var _a;
+                return (React.createElement("div", { key: `${v.name}mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                    const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
+                    return (React.createElement(Fragment, { key: `${entity}-${name}` },
+                        React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
                         columns.map((col) => {
                             return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
-                                React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity), onChange: () => dispatch(changeSelectedMappings({
+                                React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity), onChange: () => dispatch(changeSelectedMappings({
                                         workbenchIndex: ordino.focusWorkbenchIndex,
-                                        newMapping: { columnSelection: col.columnName, entityId: map.entity },
+                                        newMapping: { columnSelection: col.columnName, entityId: entity },
                                     })), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
                                 React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));
                         })));

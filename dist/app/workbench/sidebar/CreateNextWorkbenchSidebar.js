@@ -1,9 +1,9 @@
 import React, { Fragment, useMemo, useState } from 'react';
-import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
+import { IDTypeManager, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions } from '../../../views';
 export function CreateNextWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -19,10 +19,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
         }
     };
     const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
-    const findDependentViews = React.useMemo(() => () => ViewUtils.findVisynViews(idType).then((views) => {
-        return views.filter((v) => isVisynRankingViewDesc(v));
-    }), [idType]);
-    const { status, value: availableViews } = useAsync(findDependentViews, []);
+    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
     const availableEntities = useMemo(() => {
         if (status !== 'success') {
             return null;
@@ -90,14 +87,15 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                 availableViews
                     .filter((v) => v.itemIDType === e.idType)
                     .map((v) => {
-                    return (React.createElement("div", { key: `${v.name}-mapping` }, v.relation.mapping.map((map) => {
-                        const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
-                        return (React.createElement(Fragment, { key: `${map.name}-group` },
-                            React.createElement("div", { className: "mt-2 mappingTypeText" }, map.name),
+                    var _a;
+                    return (React.createElement("div", { key: `${v.name}-mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                        const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
+                        return (React.createElement(Fragment, { key: `${name}-group` },
+                            React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
                             columns.map((col) => {
                                 return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
                                     React.createElement("input", { onChange: () => {
-                                            relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                            relationListCallback({ targetEntity: e.idType, mappingEntity: entity, mappingSubtype: col.columnName });
                                             setSelectedView(v);
                                         }, className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.name}Check` }),
                                     React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.name}Check` }, col.label)));

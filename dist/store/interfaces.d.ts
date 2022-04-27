@@ -69,7 +69,7 @@ export interface IWorkbench {
     /**
      * List selected rows
      */
-    selection: IRow['_visyn_id'][];
+    selection: IRow['id'][];
     /**
      * Formatting properties of an entity. This includes an id column used for automatically parsing ids in form dialogs
      * (e.g., select3). Also, formatting serves as a central place where the default format of an entity is defined.

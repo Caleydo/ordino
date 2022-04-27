@@ -6,7 +6,7 @@ interface ITourCardProps {
     text: string;
     href?: string;
     onClickHandler?: (evt: React.MouseEvent<HTMLAnchorElement>) => void;
-    children?: React.ReactNode;
 }
 export declare function TourCard({ id, image, title, text, onClickHandler, href }: ITourCardProps): JSX.Element;
 export {};
+//# sourceMappingURL=TourCard.d.ts.map

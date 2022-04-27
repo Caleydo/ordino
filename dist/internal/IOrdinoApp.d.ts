@@ -1,4 +1,4 @@
-import { ViewWrapper } from './ViewWrapper';
+import type { ViewWrapper } from './ViewWrapper';
 export interface IOrdinoApp {
     /**
      * Root HTML node of the Ordino App
@@ -41,3 +41,4 @@ export interface IOrdinoApp {
      */
     startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any): any;
 }
+//# sourceMappingURL=IOrdinoApp.d.ts.map

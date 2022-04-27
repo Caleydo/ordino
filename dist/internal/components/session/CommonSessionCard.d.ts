@@ -1,4 +1,4 @@
-import { IProvenanceGraphDataDescription } from 'phovea_core';
+import { IProvenanceGraphDataDescription } from 'tdp_core';
 import React, { AnimationEventHandler } from 'react';
 interface ICommonSessionCardProps {
     cardName: string;
@@ -36,5 +36,6 @@ export declare type SessionAction = (event: React.MouseEvent<HTMLElement>, desc:
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd }: ICommonSessionCardProps): JSX.Element;
+export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd, }: ICommonSessionCardProps): JSX.Element;
 export {};
+//# sourceMappingURL=CommonSessionCard.d.ts.map

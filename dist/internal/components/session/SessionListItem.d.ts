@@ -1,4 +1,4 @@
-import { IProvenanceGraphDataDescription } from 'phovea_core';
+import { IProvenanceGraphDataDescription } from 'tdp_core';
 import React from 'react';
 import { SessionAction } from './CommonSessionCard';
 interface ISessionListItemProps {
@@ -11,3 +11,4 @@ interface ISessionListItemProps {
 }
 export declare function SessionListItem({ desc, selectSession, children }: ISessionListItemProps): JSX.Element;
 export {};
+//# sourceMappingURL=SessionListItem.d.ts.map

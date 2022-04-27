@@ -1,19 +1,19 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
+ ******************************************************************* */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I18nextManager } from 'phovea_core';
+import { I18nextManager, ATDPApplication } from 'tdp_core';
+// eslint-disable-next-line import/no-cycle
 import { OrdinoApp } from '../internal/OrdinoApp';
-import { ATDPApplication } from 'tdp_core';
-import { EStartMenuMode, EStartMenuOpen } from '../internal/menu/StartMenu';
+import { EStartMenuMode, EStartMenuOpen } from '../internal/constants';
 export class Ordino extends ATDPApplication {
     constructor(options = {}) {
-        super(Object.assign({
+        super({
             prefix: 'ordino',
             name: 'Ordino',
             /**
@@ -35,10 +35,12 @@ export class Ordino extends ATDPApplication {
             /**
              * Functionality is included in the sessions tab
              */
-            showProvenanceMenu: false
-        }, options));
+            showProvenanceMenu: false,
+            ...options,
+        });
     }
     createApp(graph, manager, main) {
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve) => {
             main.classList.add('targid');
             // reconfigure app link to open the homepage in a new tab
@@ -59,7 +61,7 @@ export class Ordino extends ATDPApplication {
                 app.initNewSessionAfterPageReload();
             }
             else {
-                //just if no other option applies jump to the stored state
+                // just if no other option applies jump to the stored state
                 app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
                 this.jumpToStoredOrLastState();
             }

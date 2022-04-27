@@ -1,4 +1,3 @@
-/// <reference types="react" />
 interface IHeaderNavigationProps {
     /**
      * Defines if the header is sticky and visible when scrolling the page down
@@ -12,3 +11,4 @@ interface IHeaderNavigationProps {
 }
 export declare function HeaderNavigation({ fixed, bg }: IHeaderNavigationProps): JSX.Element;
 export {};
+//# sourceMappingURL=HeaderNavigation.d.ts.map

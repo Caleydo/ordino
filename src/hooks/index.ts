@@ -1,2 +1,2 @@
-export * from './useAsync';
 export * from './useScrollToSlug';
+export * from './useOrdinoLogo';

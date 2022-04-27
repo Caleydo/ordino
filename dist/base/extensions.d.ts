@@ -1,15 +1,13 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
-/// <reference types="react" />
-import { IPluginDesc } from 'phovea_core';
-import { INamedSet } from 'tdp_core';
-import { CLUEGraphManager } from 'phovea_clue';
-import { EStartMenuSection, IStartMenuTabProps } from '../internal';
+ ******************************************************************* */
+import { IPluginDesc, INamedSet, CLUEGraphManager } from 'tdp_core';
+import { EStartMenuSection } from '../internal/constants';
+import type { IStartMenuTabProps } from '../internal/interfaces';
 export declare const EP_ORDINO_START_MENU_TAB = "epOrdinoStartMenuTab";
 /**
  * Register a new tab in the ordino start menu
@@ -210,3 +208,4 @@ export interface IOrdinoLogoDesc extends IPluginDesc {
     readonly height?: number;
 }
 export {};
+//# sourceMappingURL=extensions.d.ts.map

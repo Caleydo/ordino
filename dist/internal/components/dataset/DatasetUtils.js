@@ -1,5 +1,4 @@
-import { EPermission, Permission } from 'phovea_core';
-import { ENamedSetType } from 'tdp_core';
+import { EPermission, Permission, ENamedSetType } from 'tdp_core';
 export class DatasetUtils {
     /**
      * Creates the text for the `title` attribute of a NamedSet

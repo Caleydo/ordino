@@ -1,30 +1,18 @@
-/********************************************************************
+/** ******************************************************************
  * Copyright (c) The Caleydo Team, http://caleydo.org
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- ********************************************************************/
+ ******************************************************************* */
 import * as React from 'react';
-import { ICmdResult } from 'phovea_core';
-import { IObjectRef, ProvenanceGraph, IDType } from 'phovea_core';
+import { ICmdResult } from 'tdp_core';
+import { IObjectRef, ProvenanceGraph, IDType } from 'tdp_core';
+import { CLUEGraphManager } from 'tdp_core';
+import { AppHeader } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
-import { CLUEGraphManager } from 'phovea_clue';
-import { Range } from 'phovea_core';
 import { IOrdinoApp } from './IOrdinoApp';
-import { EStartMenuMode, EStartMenuOpen } from './menu/StartMenu';
-import { AppHeader } from 'phovea_ui';
-export declare const OrdinoContext: React.Context<{
-    app: IOrdinoApp;
-}>;
-export declare const GraphContext: React.Context<{
-    graph: ProvenanceGraph;
-    manager: CLUEGraphManager;
-}>;
-export declare const HighlightSessionCardContext: React.Context<{
-    highlight: boolean;
-    setHighlight: React.Dispatch<React.SetStateAction<boolean>>;
-}>;
+import { EStartMenuMode, EStartMenuOpen } from './constants';
 interface IOrdinoAppProps {
     graph: ProvenanceGraph;
     graphManager: CLUEGraphManager;
@@ -35,13 +23,6 @@ interface IOrdinoAppState {
     open: EStartMenuOpen;
     views: ViewWrapper[];
 }
-/**
- * The main class for the Ordino app
- * This class ...
- * - handles the creation, removal, and focus of views
- * - provides a reference to open views
- * - provides a reference to the provenance graph
- */
 export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState> implements IOrdinoApp {
     /**
      * Key for the session storage that is temporarily used when starting a new analysis session
@@ -60,27 +41,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * React DOM node reference
      */
     private readonly nodeRef;
-    private readonly removeWrapper;
-    private readonly chooseNextView;
-    private readonly replaceViewInViewWrapper;
-    private readonly updateSelection;
     constructor(props: any);
-    /**
-     * This function can be used to load some initial content async
-     */
-    initApp(): Promise<any>;
-    /**
-     * Set the mode and open/close state of the start menu.
-     * Set both options at once to avoid multiple rerender.
-     * @param open Open/close state
-     * @param mode Overlay/start mode
-     */
-    setStartMenuState(open: EStartMenuOpen, mode: EStartMenuMode): void;
-    /**
-     * List of open views (e.g., to show in the history)
-     */
-    get views(): ViewWrapper[];
-    get node(): HTMLDivElement;
     /**
      * Decide if a new view should be opened or an existing (right) detail view should be closed.
      * Closed: When the view to the right is equal to the new one
@@ -92,6 +53,30 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @param options
      */
     private handleNextView;
+    /**
+     * List of open views (e.g., to show in the history)
+     */
+    get views(): ViewWrapper[];
+    get node(): HTMLDivElement;
+    /**
+     * The last view of the list of open views
+     */
+    get lastView(): ViewWrapper;
+    /**
+     * Set the mode and open/close state of the start menu.
+     * Set both options at once to avoid multiple rerender.
+     * @param open Open/close state
+     * @param mode Overlay/start mode
+     */
+    setStartMenuState(open: EStartMenuOpen, mode: EStartMenuMode): void;
+    private readonly removeWrapper;
+    private readonly chooseNextView;
+    private readonly replaceViewInViewWrapper;
+    private readonly updateSelection;
+    /**
+     * This function can be used to load some initial content async
+     */
+    initApp(): Promise<any>;
     /**
      * Opens a new view using the viewId, idtype, selection and options.
      *
@@ -110,11 +95,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @param options
      */
     private updateItemSelection;
-    /**
-     * The last view of the list of open views
-     */
-    get lastView(): ViewWrapper;
-    push(viewId: string, idtype: IDType, selection: Range, options?: any): Promise<ICmdResult> | PromiseLike<Promise<ICmdResult>>;
+    push(viewId: string, idtype: IDType, selection: string[], options?: any): PromiseLike<ICmdResult>;
     /**
      * Starts a new analysis session with a given view and additional options.
      * The default session values are permanently stored in the provenance graph and the session storage.
@@ -194,3 +175,4 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     render(): JSX.Element;
 }
 export {};
+//# sourceMappingURL=OrdinoApp.d.ts.map

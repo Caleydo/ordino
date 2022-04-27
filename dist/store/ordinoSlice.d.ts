@@ -36,6 +36,8 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, replaceWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newWorkbench: IWorkbench;
+}, string>, removeWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    index: number;
 }, string>, addEntityFormatting: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     formatting: IWorkbench['formatting'];

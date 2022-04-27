@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { AddViewButton } from './AddViewButton';
-import { IWorkbench, setCommentsOpen } from '../../store';
+import { changeFocus, IWorkbench, removeWorkbench, setCommentsOpen } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
 import { ShowDetailsSwitch } from './ShowDetailsSwitch';
 import { useAppSelector } from '../../hooks/useAppSelector';
@@ -76,9 +76,15 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
           <>
             <AddViewButton color="white" />
-            {/* <button type="button" className="btn btn-icon-light btn-sm align-middle m-1">
-              <i className="flex-grow-1 fas fa-close" />
-            </button> */}
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2"
+              aria-label={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close')}
+              onClick={() => {
+                dispatch(changeFocus({ index: workbench.index - 1 }));
+                dispatch(removeWorkbench({ index: workbench.index }));
+              }}
+            />
           </>
         ) : null}
       </div>

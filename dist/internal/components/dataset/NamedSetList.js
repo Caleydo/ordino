@@ -13,7 +13,11 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             const params = { name, description, ...sec };
             const editedSet = await RestStorageUtils.editNamedSet(namedSet.id, params);
             NotificationHandler.successfullySaved(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.namedSet'), name);
-            setNamedSets((sets) => sets.splice(sets.indexOf(namedSet), 1, editedSet));
+            setNamedSets((sets) => {
+                const copy = sets.slice();
+                copy.splice(sets.indexOf(namedSet), 1, editedSet);
+                return copy;
+            });
         });
     };
     const deleteNamedSet = async (event, namedSet) => {
@@ -24,7 +28,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
         if (deleteIt) {
             await RestStorageUtils.deleteNamedSet(namedSet.id);
             NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dashboard'), namedSet.name);
-            setNamedSets((sets) => sets.splice(sets.indexOf(namedSet), 1));
+            setNamedSets((sets) => sets.filter((set) => set !== namedSet));
         }
     };
     return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4 position-relative" },

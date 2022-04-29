@@ -22,10 +22,27 @@ interface INamedSetListProps {
   status: 'idle' | 'pending' | 'success' | 'error';
 }
 
+/**
+ * Sort the list of named sets alphabetically using [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator).
+ * The items are sorted in natural order, i.e., `1, 2, 10, A, Ä, a, Z`.
+ * The given array is sorted in-place, no copy is created.
+ *
+ * @param sets List of named sets
+ * @returns The sorted array
+ */
+function sortNamedSetsAlphabetically(sets: INamedSet[] | null): INamedSet[] | null {
+  if (!sets) {
+    return sets;
+  }
+
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  return sets.sort((a, b) => collator.compare(a.name, b.name));
+}
+
 export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: INamedSetListProps) {
   const [namedSets, setNamedSets] = React.useState<INamedSet[]>([]);
   React.useEffect(() => {
-    setNamedSets(value);
+    setNamedSets(sortNamedSetsAlphabetically(value));
   }, [value]);
 
   const editNamedSet = (event: React.MouseEvent, namedSet: IStoredNamedSet) => {
@@ -33,13 +50,13 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: 
     StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {
       const params = { name, description, ...sec };
 
-      const editedSet = await RestStorageUtils.editNamedSet(namedSet.id, params);
+      const editedSet: INamedSet = await RestStorageUtils.editNamedSet(namedSet.id, params);
 
       NotificationHandler.successfullySaved(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.namedSet'), name);
+
       setNamedSets((sets) => {
-        const copy = sets.slice(); // create a copy first, because `splice()` mutates the original array
-        copy.splice(sets.indexOf(namedSet), 1, editedSet); // `splice()` returns the *deleted* items which we don't want
-        return copy;
+        const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
+        return sortNamedSetsAlphabetically(updatedSets);
       });
     });
   };

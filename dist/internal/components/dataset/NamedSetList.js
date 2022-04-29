@@ -2,10 +2,25 @@ import { I18nextManager, UserSession, ENamedSetType, FormDialog, NotificationHan
 import React from 'react';
 import { ListItemDropdown } from '../../../components';
 import { DatasetUtils } from './DatasetUtils';
+/**
+ * Sort the list of named sets alphabetically using [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator).
+ * The items are sorted in natural order, i.e., `1, 2, 10, A, Ä, a, Z`.
+ * The given array is sorted in-place, no copy is created.
+ *
+ * @param sets List of named sets
+ * @returns The sorted array
+ */
+function sortNamedSetsAlphabetically(sets) {
+    if (!sets) {
+        return sets;
+    }
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    return sets.sort((a, b) => collator.compare(a.name, b.name));
+}
 export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) {
     const [namedSets, setNamedSets] = React.useState([]);
     React.useEffect(() => {
-        setNamedSets(value);
+        setNamedSets(sortNamedSetsAlphabetically(value));
     }, [value]);
     const editNamedSet = (event, namedSet) => {
         event.preventDefault();
@@ -14,9 +29,8 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             const editedSet = await RestStorageUtils.editNamedSet(namedSet.id, params);
             NotificationHandler.successfullySaved(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.namedSet'), name);
             setNamedSets((sets) => {
-                const copy = sets.slice();
-                copy.splice(sets.indexOf(namedSet), 1, editedSet);
-                return copy;
+                const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
+                return sortNamedSetsAlphabetically(updatedSets);
             });
         });
     };

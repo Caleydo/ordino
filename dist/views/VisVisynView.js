@@ -20,22 +20,19 @@ function getFilteredDescColumns(columnDesc, filteredData) {
     return cols;
 }
 export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }) {
-    const filteredData = useMemo(() => {
+    const columns = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
-        return filterData;
-    }, [data, filteredOutIds]);
-    return (React.createElement(Vis, { columns: getFilteredDescColumns(columnDesc, filteredData), selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), hideSidebar: true }));
+        return getFilteredDescColumns(columnDesc, filterData);
+    }, [data, filteredOutIds, columnDesc]);
+    return (React.createElement(Vis, { columns: columns, selected: selection, selectionCallback: onSelectionChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), hideSidebar: true }));
 }
 export function VisViewSidebar({ data, columnDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
-    const filteredData = useMemo(() => {
+    const columns = useMemo(() => {
         let filterData = Object.values(data);
         filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
-        return filterData;
-    }, [data, filteredOutIds]);
-    const finalCols = useMemo(() => {
-        return getFilteredDescColumns(columnDesc, filteredData);
-    }, [columnDesc, filteredData]);
+        return getFilteredDescColumns(columnDesc, filterData);
+    }, [data, filteredOutIds, columnDesc]);
     const visFilterChanged = (filterSet) => {
         if (filterSet === 'Filter Out') {
             onFilteredOutIdsChanged(selection);
@@ -49,7 +46,7 @@ export function VisViewSidebar({ data, columnDesc, selection, filteredOutIds, pa
             onFilteredOutIdsChanged([]);
         }
     };
-    return (React.createElement(VisSidebar, { columns: finalCols, filterCallback: visFilterChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), style: { width: '220px' } }));
+    return (React.createElement(VisSidebar, { columns: columns, filterCallback: visFilterChanged, externalConfig: parameters.visConfig, setExternalConfig: (visConfig) => onParametersChanged({ visConfig }), style: { width: '220px' } }));
 }
 export const visConfiguration = () => {
     return {

@@ -79,8 +79,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   );
   const onSelectionChanged = useMemo(() => (sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
   const onParametersChanged = useMemo(
-    () => (p: any) =>
-      dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p })),
+    () => (p: any) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p })),
     [dispatch, workbenchIndex, view.uniqueId, currentWorkbench],
   );
   const onIdFilterChanged = useMemo(

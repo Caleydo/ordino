@@ -46,6 +46,7 @@ export const {
   addColumnDesc,
   removeView,
   replaceWorkbench,
+  removeWorkbench,
   addEntityFormatting,
   addScoreColumn,
   addSelection,

@@ -16,7 +16,7 @@ function getFilteredDescColumns(columnDesc: any[] | VisynViewPluginType['desc'],
       },
       values: () =>
         filteredData.map((d) => {
-          return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
+          return { id: d.id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
         }),
       type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
     });
@@ -28,7 +28,7 @@ export function VisVisynView({ data, columnDesc, selection, filteredOutIds, para
   const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
+    filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
 
     return getFilteredDescColumns(columnDesc, filterData);
   }, [data, filteredOutIds, columnDesc]);
@@ -57,7 +57,7 @@ export function VisViewSidebar({
   const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
+    filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
 
     return getFilteredDescColumns(columnDesc, filterData);
   }, [data, filteredOutIds, columnDesc]);
@@ -67,7 +67,7 @@ export function VisViewSidebar({
       onFilteredOutIdsChanged(selection);
     } else if (filterSet === 'Filter In') {
       const allData = Object.values(data) as any;
-      const nonSelectedData = allData.filter((d) => !selection.includes(d._visyn_id)).map((d) => d._visyn_id);
+      const nonSelectedData = allData.filter((d) => !selection.includes(d.id)).map((d) => d.id);
       onFilteredOutIdsChanged(nonSelectedData);
     } else {
       onFilteredOutIdsChanged([]);

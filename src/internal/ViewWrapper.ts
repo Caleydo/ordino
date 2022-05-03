@@ -23,7 +23,7 @@ import {
   IView,
   IViewContext,
 } from 'tdp_core';
-import * as d3 from 'd3';
+import * as d3 from 'd3v3';
 import * as $ from 'jquery';
 // eslint-disable-next-line import/extensions
 import 'jquery.scrollto/jquery.scrollTo.js';

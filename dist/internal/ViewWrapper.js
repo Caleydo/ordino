@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
-import * as d3 from 'd3';
+import * as d3 from 'd3v3';
 import * as $ from 'jquery';
 // eslint-disable-next-line import/extensions
 import 'jquery.scrollto/jquery.scrollTo.js';

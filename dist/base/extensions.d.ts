@@ -5,6 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
+/// <reference types="react" />
 import { IPluginDesc, INamedSet, CLUEGraphManager } from 'tdp_core';
 import { EStartMenuSection } from '../internal/constants';
 import type { IStartMenuTabProps } from '../internal/interfaces';

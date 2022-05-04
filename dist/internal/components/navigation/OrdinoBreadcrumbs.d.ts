@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { ViewWrapper } from '../../ViewWrapper';
 interface IOrdinoBreadcrumbsProps {
     /**

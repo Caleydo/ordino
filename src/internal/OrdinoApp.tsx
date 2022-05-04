@@ -7,7 +7,7 @@
  ******************************************************************* */
 
 import * as React from 'react';
-import { BaseUtils, NodeUtils, ICmdResult, AppContext } from 'tdp_core';
+import { BaseUtils, NodeUtils, ICmdResult, AppContext, GlobalEventHandler } from 'tdp_core';
 import { IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent } from 'tdp_core';
 import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
 import { EViewMode, ISelection } from 'tdp_core';
@@ -400,7 +400,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
+    view.on(AView.EVENT_UPDATE_ENTRY_POINT, (namedSet) => {
+      GlobalEventHandler.getInstance().fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
+    });
 
     this.setState((prevState) => ({ ...prevState, views: [...prevState.views, view] }));
 
@@ -420,7 +422,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-
+    view.off(AView.EVENT_UPDATE_ENTRY_POINT, (namedSet) => {
+      GlobalEventHandler.getInstance().fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
+    });
     this.setState((prevState) => ({ ...prevState, views: prevState.views.filter((v) => v !== view) }));
 
     view.destroy();

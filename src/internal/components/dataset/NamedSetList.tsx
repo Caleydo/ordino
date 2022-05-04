@@ -20,6 +20,8 @@ interface INamedSetListProps {
   value: INamedSet[] | null;
   onOpen: (event: React.MouseEvent<HTMLElement>, namedSet: INamedSet) => void;
   status: 'idle' | 'pending' | 'success' | 'error';
+  onDeleteNamedSet?: (namedSet: IStoredNamedSet) => void;
+  onEditNamedSet?: (namedSet: IStoredNamedSet) => void;
 }
 
 /**
@@ -39,7 +41,7 @@ function sortNamedSetsAlphabetically(sets: INamedSet[] | null): INamedSet[] | nu
   return sets.sort((a, b) => collator.compare(a.name, b.name));
 }
 
-export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: INamedSetListProps) {
+export function NamedSetList({ headerIcon, headerText, value, status, onOpen, onEditNamedSet, onDeleteNamedSet }: INamedSetListProps) {
   const [namedSets, setNamedSets] = React.useState<INamedSet[]>([]);
   React.useEffect(() => {
     setNamedSets(sortNamedSetsAlphabetically(value));
@@ -57,6 +59,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: 
       setNamedSets((sets) => {
         const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
         return sortNamedSetsAlphabetically(updatedSets);
+        onEditNamedSet?.(namedSet);
       });
     });
   };
@@ -70,6 +73,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: 
       await RestStorageUtils.deleteNamedSet(namedSet.id);
       NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dashboard'), namedSet.name);
       setNamedSets((sets) => sets.filter((set) => set !== namedSet));
+      onDeleteNamedSet?.(namedSet);
     }
   };
 

@@ -17,7 +17,7 @@ function sortNamedSetsAlphabetically(sets) {
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
     return sets.sort((a, b) => collator.compare(a.name, b.name));
 }
-export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) {
+export function NamedSetList({ headerIcon, headerText, value, status, onOpen, onEditNamedSet, onDeleteNamedSet }) {
     const [namedSets, setNamedSets] = React.useState([]);
     React.useEffect(() => {
         setNamedSets(sortNamedSetsAlphabetically(value));
@@ -31,6 +31,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             setNamedSets((sets) => {
                 const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
                 return sortNamedSetsAlphabetically(updatedSets);
+                onEditNamedSet === null || onEditNamedSet === void 0 ? void 0 : onEditNamedSet(namedSet);
             });
         });
     };
@@ -43,6 +44,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }) 
             await RestStorageUtils.deleteNamedSet(namedSet.id);
             NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dashboard'), namedSet.name);
             setNamedSets((sets) => sets.filter((set) => set !== namedSet));
+            onDeleteNamedSet === null || onDeleteNamedSet === void 0 ? void 0 : onDeleteNamedSet(namedSet);
         }
     };
     return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4 position-relative" },

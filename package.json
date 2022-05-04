@@ -112,7 +112,7 @@
     "react-spring": "^9.3.2",
     "react-virtualized": "^9.22.3",
     "tdp_comments": "github:datavisyn/tdp_comments#develop",
-    "tdp_core": "github:datavisyn/tdp_core#ordino-2.0"
+    "tdp_core": "github:datavisyn/tdp_core#develop"
   },
   "resolutions": {
     "@types/react": "17.0.44"

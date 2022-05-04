@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
 import { IColumnDesc } from 'lineupjs';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import {
@@ -18,8 +17,7 @@ import {
   IWorkbench,
 } from '../../store';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
-import { DropOverlay } from './DropOverlay';
-import { EDragTypes } from './utils';
+
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
@@ -50,32 +48,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
     [],
   );
 
-  const [{ isOver, canDrop }, drop] = useDrop(
-    () => ({
-      accept: [EDragTypes.MOVE],
-      canDrop: (d: { type: EDragTypes; viewId: string }) => {
-        return d.viewId !== view.id;
-      },
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-        canDrop: !!monitor.canDrop(),
-      }),
-    }),
-    [view.id],
-  );
-
   const viewIndex = useMemo(() => {
     return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
   }, [view.uniqueId, ordino.workbenches, workbenchIndex]);
 
-  // eslint-disable-next-line no-empty-pattern
-  const [{}, drag] = useDrag(
-    () => ({
-      type: EDragTypes.MOVE,
-      item: { type: EDragTypes.MOVE, viewId: view.id, index: viewIndex },
-    }),
-    [view.id, viewIndex],
-  );
   const onSelectionChanged = useMemo(() => (sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
   const onParametersChanged = useMemo(
     () => (p: any) =>
@@ -105,7 +81,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
   );
 
   return (
-    <div ref={drop} id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+    <div id={view.id} className="position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {workbenchIndex === ordino.focusWorkbenchIndex ? (
         <>
           <div className="view-actions">
@@ -116,7 +92,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
             ) : null}
           </div>
 
-          <div ref={drag} className="view-parameters d-flex cursor-pointer">
+          <div className="view-parameters d-flex cursor-pointer">
             <div>
               {!isVisynRankingViewDesc(viewPlugin?.desc) ? ( // do not show chooser for ranking views
                 <button
@@ -150,7 +126,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
           </div>
         </>
       ) : (
-        <div ref={drag} className="view-parameters d-flex">
+        <div className="view-parameters d-flex">
           <span className="view-title row align-items-center m-1">
             <strong>{viewPlugin?.desc?.itemName}</strong>
           </span>
@@ -256,8 +232,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions }: I
           </Suspense>
         ) : null}
       </div>
-
-      {isOver && canDrop ? <DropOverlay view={view} /> : null}
     </div>
   );
 }

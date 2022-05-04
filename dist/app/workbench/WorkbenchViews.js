@@ -1,5 +1,10 @@
 import * as React from 'react';
-import SplitPane from 'react-split-pane';
+import { Corner, getNodeAtPath, getOtherDirection, getPathToCorner, Mosaic, MosaicWindow, updateTree, } from 'react-mosaic-component';
+import 'react-mosaic-component/react-mosaic-component.css';
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import { useCallback, useState } from 'react';
+import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
@@ -16,45 +21,56 @@ export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
     const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
-    let wb = null;
-    // TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
-    if (views.length === 1 || type !== EWorkbenchType.FOCUS) {
-        wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: "0%" },
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "0%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[0].uniqueId}`, workbenchIndex: index, view: views[0] })),
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "0%" })));
-    }
-    else if (views.length === 2) {
-        wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: "50%" },
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "0%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[0].uniqueId}`, workbenchIndex: index, view: views[0] })),
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "0%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }))));
-    }
-    else if (views.length === 3) {
-        wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: "50%" },
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "0%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[0].uniqueId}`, workbenchIndex: index, view: views[0] })),
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "50%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }),
-                React.createElement(WorkbenchView, { key: `wbView${views[2].uniqueId}`, workbenchIndex: index, view: views[2] }))));
-    }
-    else {
-        wb = (React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal', primary: "second", className: "", minSize: 300, size: "50%" },
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "50%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[0].uniqueId}`, workbenchIndex: index, view: views[0] }),
-                React.createElement(WorkbenchView, { key: `wbView${views[3].uniqueId}`, workbenchIndex: index, view: views[3] })),
-            React.createElement(SplitPane, { split: ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical', primary: "second", className: "", minSize: 300, size: "50%" },
-                React.createElement(WorkbenchView, { key: `wbView${views[1].uniqueId}`, workbenchIndex: index, view: views[1] }),
-                React.createElement(WorkbenchView, { key: `wbView${views[2].uniqueId}`, workbenchIndex: index, view: views[2] }))));
-    }
+    const [mosaicState, setMosaicState] = useState(0);
+    const [mosaicViewCount, setMosaicViewCount] = useState(1);
+    React.useEffect(() => {
+        if (views.length > mosaicViewCount) {
+            const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
+            const parent = getNodeAtPath(mosaicState, dropRight(path));
+            const destination = getNodeAtPath(mosaicState, path);
+            const direction = parent ? getOtherDirection(parent.direction) : 'row';
+            let first;
+            let second;
+            if (direction === 'row') {
+                first = destination;
+                second = views.length - 1;
+            }
+            else {
+                first = views.length - 1;
+                second = destination;
+            }
+            const newNode = updateTree(mosaicState, [
+                {
+                    path,
+                    spec: {
+                        $set: {
+                            direction,
+                            first,
+                            second,
+                        },
+                    },
+                },
+            ]);
+            setMosaicState(newNode);
+            setMosaicViewCount(views.length);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [views.length]);
+    const ELEMENT_MAP = {};
+    views.forEach((v, i) => {
+        ELEMENT_MAP[i] = React.createElement(WorkbenchView, { key: `wbView${views[i].uniqueId}`, workbenchIndex: index, view: views[i] });
+    });
+    const onChangeCallback = useCallback((currentNode) => {
+        setMosaicState(currentNode);
+    }, []);
     const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
     const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
     return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
             showLeftSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] }))) : null,
-            React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" }, wb),
+            React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" },
+                React.createElement(Mosaic, { renderTile: (id, path) => (React.createElement(MosaicWindow, { path: path, title: views[id].name }, ELEMENT_MAP[id])), onChange: onChangeCallback, value: mosaicState })),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
 }

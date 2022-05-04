@@ -1,5 +1,22 @@
 import * as React from 'react';
-import SplitPane from 'react-split-pane';
+import {
+  Corner,
+  getNodeAtPath,
+  getOtherDirection,
+  getPathToCorner,
+  Mosaic,
+  MosaicDirection,
+  MosaicNode,
+  MosaicParent,
+  MosaicWindow,
+  updateTree,
+} from 'react-mosaic-component';
+import 'react-mosaic-component/react-mosaic-component.css';
+
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import { useCallback, useState } from 'react';
+import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
@@ -22,127 +39,54 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
   const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
 
-  let wb = null;
+  const [mosaicState, setMosaicState] = useState<any>(0);
+  const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);
 
-  // TODO:: Figure out better way to not force a remount of the individual views because of reparenting here. Currently the empty split panes are doing that.
-  if (views.length === 1 || type !== EWorkbenchType.FOCUS) {
-    wb = (
-      <SplitPane
-        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
-        primary="second"
-        className=""
-        minSize={300}
-        size="0%"
-      >
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="0%"
-        >
-          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
-        </SplitPane>
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="0%"
-        />
-      </SplitPane>
-    );
-  } else if (views.length === 2) {
-    wb = (
-      <SplitPane
-        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
-        primary="second"
-        className=""
-        minSize={300}
-        size="50%"
-      >
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="0%"
-        >
-          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
-        </SplitPane>
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="0%"
-        >
-          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-        </SplitPane>
-      </SplitPane>
-    );
-  } else if (views.length === 3) {
-    wb = (
-      <SplitPane
-        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
-        primary="second"
-        className=""
-        minSize={300}
-        size="50%"
-      >
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="0%"
-        >
-          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
-        </SplitPane>
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="50%"
-        >
-          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-          <WorkbenchView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
-        </SplitPane>
-      </SplitPane>
-    );
-  } else {
-    wb = (
-      <SplitPane
-        split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'vertical' : 'horizontal'}
-        primary="second"
-        className=""
-        minSize={300}
-        size="50%"
-      >
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="50%"
-        >
-          <WorkbenchView key={`wbView${views[0].uniqueId}`} workbenchIndex={index} view={views[0]} />
-          <WorkbenchView key={`wbView${views[3].uniqueId}`} workbenchIndex={index} view={views[3]} />
-        </SplitPane>
-        <SplitPane
-          split={ordino.workbenches[ordino.focusWorkbenchIndex].viewDirection === 'vertical' ? 'horizontal' : 'vertical'}
-          primary="second"
-          className=""
-          minSize={300}
-          size="50%"
-        >
-          <WorkbenchView key={`wbView${views[1].uniqueId}`} workbenchIndex={index} view={views[1]} />
-          <WorkbenchView key={`wbView${views[2].uniqueId}`} workbenchIndex={index} view={views[2]} />
-        </SplitPane>
-      </SplitPane>
-    );
-  }
+  React.useEffect(() => {
+    if (views.length > mosaicViewCount) {
+      const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
+      const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<number>;
+      const destination = getNodeAtPath(mosaicState, path) as MosaicNode<number>;
+      const direction: MosaicDirection = parent ? getOtherDirection(parent.direction) : 'row';
+
+      let first: MosaicNode<number>;
+      let second: MosaicNode<number>;
+      if (direction === 'row') {
+        first = destination;
+        second = views.length - 1;
+      } else {
+        first = views.length - 1;
+        second = destination;
+      }
+
+      const newNode = updateTree(mosaicState, [
+        {
+          path,
+          spec: {
+            $set: {
+              direction,
+              first,
+              second,
+            },
+          },
+        },
+      ]);
+
+      setMosaicState(newNode);
+      setMosaicViewCount(views.length);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [views.length]);
+
+  const ELEMENT_MAP: Record<number, JSX.Element> = {};
+
+  views.forEach((v, i) => {
+    ELEMENT_MAP[i] = <WorkbenchView key={`wbView${views[i].uniqueId}`} workbenchIndex={index} view={views[i]} />;
+  });
+
+  const onChangeCallback = useCallback((currentNode: any) => {
+    setMosaicState(currentNode);
+  }, []);
 
   const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
   const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
@@ -155,7 +99,15 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           </div>
         ) : null}
         <div ref={setRef} className="d-flex flex-grow-1">
-          {wb}
+          <Mosaic<number>
+            renderTile={(id, path) => (
+              <MosaicWindow<number> path={path} title={views[id].name}>
+                {ELEMENT_MAP[id]}
+              </MosaicWindow>
+            )}
+            onChange={onChangeCallback}
+            value={mosaicState}
+          />
         </div>
         {showRightSidebar ? (
           <div className="d-flex" style={{ width: '400px' }}>

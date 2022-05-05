@@ -8,7 +8,6 @@ import {
   MosaicDirection,
   MosaicNode,
   MosaicParent,
-  MosaicWindow,
   updateTree,
 } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
@@ -41,6 +40,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
 
   const [mosaicState, setMosaicState] = useState<any>(0);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);
+
+  const [mosaicDrag, setMosaicDrag] = useState<boolean>(false);
 
   React.useEffect(() => {
     if (views.length > mosaicViewCount) {
@@ -78,14 +79,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [views.length]);
 
-  const ELEMENT_MAP: Record<number, JSX.Element> = {};
-
-  views.forEach((v, i) => {
-    ELEMENT_MAP[i] = <WorkbenchView key={`wbView${views[i].uniqueId}`} workbenchIndex={index} view={views[i]} />;
-  });
-
-  const onChangeCallback = useCallback((currentNode: any) => {
-    setMosaicState(currentNode);
+  const onChangeCallback = useCallback((rootNode: any) => {
+    setMosaicState(rootNode);
   }, []);
 
   const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
@@ -100,11 +95,9 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
         ) : null}
         <div ref={setRef} className="d-flex flex-grow-1">
           <Mosaic<number>
-            renderTile={(id, path) => (
-              <MosaicWindow<number> path={path} title={views[id].name}>
-                {ELEMENT_MAP[id]}
-              </MosaicWindow>
-            )}
+            renderTile={(id, path) => {
+              return <WorkbenchView dragMode={mosaicDrag} workbenchIndex={index} path={path} view={views[id]} setMosaicDrag={setMosaicDrag} />;
+            }}
             onChange={onChangeCallback}
             value={mosaicState}
           />

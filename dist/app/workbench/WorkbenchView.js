@@ -7,7 +7,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 export function getVisynView(entityId) {
     return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
-export function WorkbenchView({ workbenchIndex, view }) {
+export function WorkbenchView({ workbenchIndex, view, dragMode, path, setMosaicDrag, }) {
     const ordino = useAppSelector((state) => state.ordino);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
@@ -17,6 +17,6 @@ export function WorkbenchView({ workbenchIndex, view }) {
     }, [value]);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view })) : (React.createElement(WorkbenchGenericView, { chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view }))));
+    React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { setMosaicDrag: setMosaicDrag, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, dragMode: dragMode })) : (React.createElement(WorkbenchGenericView, { setMosaicDrag: setMosaicDrag, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, dragMode: dragMode }))));
 }
 //# sourceMappingURL=WorkbenchView.js.map

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Corner, getNodeAtPath, getOtherDirection, getPathToCorner, Mosaic, MosaicWindow, updateTree, } from 'react-mosaic-component';
+import { Corner, getNodeAtPath, getOtherDirection, getPathToCorner, Mosaic, updateTree, } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
@@ -23,6 +23,7 @@ export function WorkbenchViews({ index, type }) {
     const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
     const [mosaicState, setMosaicState] = useState(0);
     const [mosaicViewCount, setMosaicViewCount] = useState(1);
+    const [mosaicDrag, setMosaicDrag] = useState(false);
     React.useEffect(() => {
         if (views.length > mosaicViewCount) {
             const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
@@ -56,12 +57,8 @@ export function WorkbenchViews({ index, type }) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [views.length]);
-    const ELEMENT_MAP = {};
-    views.forEach((v, i) => {
-        ELEMENT_MAP[i] = React.createElement(WorkbenchView, { key: `wbView${views[i].uniqueId}`, workbenchIndex: index, view: views[i] });
-    });
-    const onChangeCallback = useCallback((currentNode) => {
-        setMosaicState(currentNode);
+    const onChangeCallback = useCallback((rootNode) => {
+        setMosaicState(rootNode);
     }, []);
     const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
     const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
@@ -70,7 +67,9 @@ export function WorkbenchViews({ index, type }) {
             showLeftSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] }))) : null,
             React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" },
-                React.createElement(Mosaic, { renderTile: (id, path) => (React.createElement(MosaicWindow, { path: path, title: views[id].name }, ELEMENT_MAP[id])), onChange: onChangeCallback, value: mosaicState })),
+                React.createElement(Mosaic, { renderTile: (id, path) => {
+                        return React.createElement(WorkbenchView, { dragMode: mosaicDrag, workbenchIndex: index, path: path, view: views[id], setMosaicDrag: setMosaicDrag });
+                    }, onChange: onChangeCallback, value: mosaicState })),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
 }

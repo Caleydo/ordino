@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IDType, isVisynDataViewDesc, isVisynSimpleViewDesc, useAsync, ViewUtils } from 'tdp_core';
-import { MosaicBranch } from 'react-mosaic-component';
+import { MosaicBranch, MosaicPath } from 'react-mosaic-component';
 import { useMemo } from 'react';
 import { IWorkbenchView } from '../../store';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
@@ -17,12 +17,14 @@ export function WorkbenchView({
   dragMode,
   path,
   setMosaicDrag,
+  removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   dragMode: boolean;
   path: MosaicBranch[];
   setMosaicDrag: (b: boolean) => void;
+  removeCallback: (path: MosaicPath) => void;
 }) {
   const ordino = useAppSelector((state) => state.ordino);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,6 +40,7 @@ export function WorkbenchView({
     <>
       {view.id === '' ? (
         <WorkbenchEmptyView
+          removeCallback={removeCallback}
           setMosaicDrag={setMosaicDrag}
           path={path}
           chooserOptions={availableViews}
@@ -47,6 +50,7 @@ export function WorkbenchView({
         />
       ) : (
         <WorkbenchGenericView
+          removeCallback={removeCallback}
           setMosaicDrag={setMosaicDrag}
           path={path}
           chooserOptions={availableViews}

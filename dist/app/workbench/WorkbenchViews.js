@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Corner, getNodeAtPath, getOtherDirection, getPathToCorner, Mosaic, updateTree, } from 'react-mosaic-component';
+import { Corner, createRemoveUpdate, getNodeAtPath, getOtherDirection, getPathToCorner, Mosaic, updateTree, } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
@@ -21,10 +21,14 @@ export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
     const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
-    const [mosaicState, setMosaicState] = useState(0);
+    const [mosaicState, setMosaicState] = useState(null);
     const [mosaicViewCount, setMosaicViewCount] = useState(1);
     const [mosaicDrag, setMosaicDrag] = useState(false);
     React.useEffect(() => {
+        if (mosaicState === null) {
+            setMosaicState(views[0].uniqueId);
+            return;
+        }
         if (views.length > mosaicViewCount) {
             const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
             const parent = getNodeAtPath(mosaicState, dropRight(path));
@@ -34,10 +38,10 @@ export function WorkbenchViews({ index, type }) {
             let second;
             if (direction === 'row') {
                 first = destination;
-                second = views.length - 1;
+                second = views[views.length - 1].uniqueId;
             }
             else {
-                first = views.length - 1;
+                first = views[views.length - 1].uniqueId;
                 second = destination;
             }
             const newNode = updateTree(mosaicState, [
@@ -57,6 +61,12 @@ export function WorkbenchViews({ index, type }) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [views.length]);
+    const removeCallback = useCallback((path) => {
+        const removeUpdate = createRemoveUpdate(mosaicState, path);
+        const newNode = updateTree(mosaicState, [removeUpdate]);
+        setMosaicState(newNode);
+        setMosaicViewCount(views.length - 1);
+    }, [mosaicState, views.length]);
     const onChangeCallback = useCallback((rootNode) => {
         setMosaicState(rootNode);
     }, []);
@@ -68,7 +78,11 @@ export function WorkbenchViews({ index, type }) {
                 React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] }))) : null,
             React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" },
                 React.createElement(Mosaic, { renderTile: (id, path) => {
-                        return React.createElement(WorkbenchView, { dragMode: mosaicDrag, workbenchIndex: index, path: path, view: views[id], setMosaicDrag: setMosaicDrag });
+                        const currView = views.find((v) => v.uniqueId === id);
+                        if (currView) {
+                            return (React.createElement(WorkbenchView, { removeCallback: removeCallback, dragMode: mosaicDrag, workbenchIndex: index, path: path, view: currView, setMosaicDrag: setMosaicDrag }));
+                        }
+                        return null;
                     }, onChange: onChangeCallback, value: mosaicState })),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));

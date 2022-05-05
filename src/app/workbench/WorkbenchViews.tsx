@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {
   Corner,
+  createRemoveUpdate,
+  getLeaves,
   getNodeAtPath,
   getOtherDirection,
   getPathToCorner,
@@ -8,6 +10,7 @@ import {
   MosaicDirection,
   MosaicNode,
   MosaicParent,
+  MosaicPath,
   updateTree,
 } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
@@ -38,25 +41,29 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
   const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
 
-  const [mosaicState, setMosaicState] = useState<any>(0);
+  const [mosaicState, setMosaicState] = useState<any>(null);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);
 
   const [mosaicDrag, setMosaicDrag] = useState<boolean>(false);
 
   React.useEffect(() => {
+    if (mosaicState === null) {
+      setMosaicState(views[0].uniqueId);
+      return;
+    }
     if (views.length > mosaicViewCount) {
       const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
-      const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<number>;
-      const destination = getNodeAtPath(mosaicState, path) as MosaicNode<number>;
+      const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<string>;
+      const destination = getNodeAtPath(mosaicState, path) as MosaicNode<string>;
       const direction: MosaicDirection = parent ? getOtherDirection(parent.direction) : 'row';
 
-      let first: MosaicNode<number>;
-      let second: MosaicNode<number>;
+      let first: MosaicNode<string>;
+      let second: MosaicNode<string>;
       if (direction === 'row') {
         first = destination;
-        second = views.length - 1;
+        second = views[views.length - 1].uniqueId;
       } else {
-        first = views.length - 1;
+        first = views[views.length - 1].uniqueId;
         second = destination;
       }
 
@@ -79,6 +86,18 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [views.length]);
 
+  const removeCallback = useCallback(
+    (path: MosaicPath) => {
+      const removeUpdate = createRemoveUpdate(mosaicState, path);
+
+      const newNode = updateTree(mosaicState, [removeUpdate]);
+
+      setMosaicState(newNode);
+      setMosaicViewCount(views.length - 1);
+    },
+    [mosaicState, views.length],
+  );
+
   const onChangeCallback = useCallback((rootNode: any) => {
     setMosaicState(rootNode);
   }, []);
@@ -94,9 +113,22 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           </div>
         ) : null}
         <div ref={setRef} className="d-flex flex-grow-1">
-          <Mosaic<number>
+          <Mosaic<string>
             renderTile={(id, path) => {
-              return <WorkbenchView dragMode={mosaicDrag} workbenchIndex={index} path={path} view={views[id]} setMosaicDrag={setMosaicDrag} />;
+              const currView = views.find((v) => v.uniqueId === id);
+              if (currView) {
+                return (
+                  <WorkbenchView
+                    removeCallback={removeCallback}
+                    dragMode={mosaicDrag}
+                    workbenchIndex={index}
+                    path={path}
+                    view={currView}
+                    setMosaicDrag={setMosaicDrag}
+                  />
+                );
+              }
+              return null;
             }}
             onChange={onChangeCallback}
             value={mosaicState}

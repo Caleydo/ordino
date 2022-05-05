@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Suspense, useMemo, useState } from 'react';
 import { IColumnDesc } from 'lineupjs';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
-import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
+import { MosaicBranch, MosaicPath, MosaicWindow } from 'react-mosaic-component';
 
 import {
   addFilter,
@@ -39,6 +39,7 @@ export function WorkbenchGenericView({
   dragMode,
   path,
   setMosaicDrag,
+  removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
@@ -46,6 +47,7 @@ export function WorkbenchGenericView({
   dragMode: boolean;
   path: MosaicBranch[];
   setMosaicDrag: (b: boolean) => void;
+  removeCallback: (path: MosaicPath) => void;
 }) {
   const [editOpen, setEditOpen] = useState<boolean>(true);
   const [settingsTabSelected, setSettingsTabSelected] = useState<boolean>(false);
@@ -134,12 +136,18 @@ export function WorkbenchGenericView({
         </div>
         <div className="view-actions d-flex justify-content-end flex-grow-1">
           {!isVisynRankingViewDesc(viewPlugin?.desc) ? (
-            <button type="button" onClick={() => dispatch(removeView({ workbenchIndex, viewIndex }))} className="btn btn-icon-dark align-middle m-1">
+            <button
+              type="button"
+              onClick={() => {
+                removeCallback(path);
+                dispatch(removeView({ workbenchIndex, viewIndex }));
+              }}
+              className="btn btn-icon-dark align-middle m-1"
+            >
               <i className="flex-grow-1 fas fa-times m-1" />
             </button>
           ) : null}
         </div>
-
       </div>
     ) : (
       <div className="view-parameters d-flex">

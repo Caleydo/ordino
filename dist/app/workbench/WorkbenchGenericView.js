@@ -9,7 +9,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
-export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dragMode, path, setMosaicDrag, }) {
+export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dragMode, path, setMosaicDrag, removeCallback, }) {
     var _a;
     const [editOpen, setEditOpen] = useState(true);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
@@ -46,7 +46,10 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dra
                 React.createElement("strong", null, view.name)),
             (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.header) ? (React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
                 React.createElement(viewPlugin.header, { desc: viewPlugin.desc, data: ordino.workbenches[workbenchIndex].data, columnDesc: ordino.workbenches[workbenchIndex].columnDescs, selection: ordino.workbenches[workbenchIndex].selection, filteredOutIds: getAllFilters(ordino.workbenches[workbenchIndex]), parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged }))) : null),
-        React.createElement("div", { className: "view-actions d-flex justify-content-end flex-grow-1" }, !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? (React.createElement("button", { type: "button", onClick: () => dispatch(removeView({ workbenchIndex, viewIndex })), className: "btn btn-icon-dark align-middle m-1" },
+        React.createElement("div", { className: "view-actions d-flex justify-content-end flex-grow-1" }, !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? (React.createElement("button", { type: "button", onClick: () => {
+                removeCallback(path);
+                dispatch(removeView({ workbenchIndex, viewIndex }));
+            }, className: "btn btn-icon-dark align-middle m-1" },
             React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))) : null))) : (React.createElement("div", { className: "view-parameters d-flex" },
         React.createElement("span", { className: "view-title row align-items-center m-1" },
             React.createElement("strong", null, (_a = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _a === void 0 ? void 0 : _a.itemName))));

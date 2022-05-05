@@ -131,7 +131,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
               return null;
             }}
             onChange={onChangeCallback}
-            value={mosaicState}
+            value={ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId}
           />
         </div>
         {showRightSidebar ? (

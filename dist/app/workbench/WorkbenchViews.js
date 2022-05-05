@@ -83,7 +83,7 @@ export function WorkbenchViews({ index, type }) {
                             return (React.createElement(WorkbenchView, { removeCallback: removeCallback, dragMode: mosaicDrag, workbenchIndex: index, path: path, view: currView, setMosaicDrag: setMosaicDrag }));
                         }
                         return null;
-                    }, onChange: onChangeCallback, value: mosaicState })),
+                    }, onChange: onChangeCallback, value: ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId })),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
 }

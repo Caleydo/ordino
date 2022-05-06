@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import { BaseUtils, NodeUtils, AppContext } from 'tdp_core';
+import { BaseUtils, NodeUtils, AppContext, GlobalEventHandler } from 'tdp_core';
 import { ObjectRefUtils } from 'tdp_core';
 import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
 import { EViewMode } from 'tdp_core';
@@ -40,6 +40,9 @@ export class OrdinoApp extends React.Component {
         this.chooseNextView = (event, viewId, idtype, selection) => this.handleNextView(event.target, viewId, idtype, selection);
         this.replaceViewInViewWrapper = (_event, _view) => this.updateDetailViewChoosers();
         this.updateSelection = (event, old, newValue) => this.updateItemSelection(event.target, old, newValue);
+        this.entryPointChanged = (_, namedSet) => {
+            GlobalEventHandler.getInstance().fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
+        };
         this.nodeRef = React.createRef();
         // add OrdinoApp app as (first) object to provenance graph
         // need old name for compatibility
@@ -321,7 +324,7 @@ export class OrdinoApp extends React.Component {
         view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-        // this.propagate(view, AView.EVENT_UPDATE_ENTRY_POINT);
+        view.on(AView.EVENT_UPDATE_ENTRY_POINT, this.entryPointChanged);
         this.setState((prevState) => ({ ...prevState, views: [...prevState.views, view] }));
         return BaseUtils.resolveIn(100).then(() => this.focusImpl(this.state.views.length - 1));
     }
@@ -338,6 +341,7 @@ export class OrdinoApp extends React.Component {
         view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
         view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
         view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
+        view.off(AView.EVENT_UPDATE_ENTRY_POINT, this.entryPointChanged);
         this.setState((prevState) => ({ ...prevState, views: prevState.views.filter((v) => v !== view) }));
         view.destroy();
         // remove with focus change if not already hidden

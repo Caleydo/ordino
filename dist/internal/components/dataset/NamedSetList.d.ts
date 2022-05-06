@@ -15,6 +15,6 @@ interface INamedSetListProps {
      */
     onEditNamedSet?: (namedSet: IStoredNamedSet) => void;
 }
-export declare function NamedSetList({ headerIcon, headerText, value, status, onOpen, onEditNamedSet, onDeleteNamedSet }: INamedSetListProps): JSX.Element;
+export declare function NamedSetList({ headerIcon, headerText, value: namedSets, status, onOpen, onEditNamedSet, onDeleteNamedSet }: INamedSetListProps): JSX.Element;
 export {};
 //# sourceMappingURL=NamedSetList.d.ts.map

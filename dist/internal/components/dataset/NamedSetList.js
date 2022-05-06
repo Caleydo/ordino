@@ -31,8 +31,8 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen, on
             setNamedSets((sets) => {
                 const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
                 return sortNamedSetsAlphabetically(updatedSets);
-                onEditNamedSet === null || onEditNamedSet === void 0 ? void 0 : onEditNamedSet(namedSet);
             });
+            onEditNamedSet === null || onEditNamedSet === void 0 ? void 0 : onEditNamedSet(namedSet);
         });
     };
     const deleteNamedSet = async (event, namedSet) => {

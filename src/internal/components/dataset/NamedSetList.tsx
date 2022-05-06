@@ -59,8 +59,8 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen, on
       setNamedSets((sets) => {
         const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
         return sortNamedSetsAlphabetically(updatedSets);
-        onEditNamedSet?.(namedSet);
       });
+      onEditNamedSet?.(namedSet);
     });
   };
 

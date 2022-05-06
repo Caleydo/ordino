@@ -20,6 +20,14 @@ interface INamedSetListProps {
   value: INamedSet[] | null;
   onOpen: (event: React.MouseEvent<HTMLElement>, namedSet: INamedSet) => void;
   status: 'idle' | 'pending' | 'success' | 'error';
+  /**
+   * Notify parent component to reload named sets on delete
+   */
+  onDeleteNamedSet?: (namedSet: IStoredNamedSet) => void;
+  /**
+   * Notify parent to reload named sets on edit
+   */
+  onEditNamedSet?: (namedSet: IStoredNamedSet) => void;
 }
 
 /**
@@ -39,25 +47,16 @@ function sortNamedSetsAlphabetically(sets: INamedSet[] | null): INamedSet[] | nu
   return sets.sort((a, b) => collator.compare(a.name, b.name));
 }
 
-export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: INamedSetListProps) {
-  const [namedSets, setNamedSets] = React.useState<INamedSet[]>([]);
-  React.useEffect(() => {
-    setNamedSets(sortNamedSetsAlphabetically(value));
-  }, [value]);
-
+export function NamedSetList({ headerIcon, headerText, value: namedSets, status, onOpen, onEditNamedSet, onDeleteNamedSet }: INamedSetListProps) {
   const editNamedSet = (event: React.MouseEvent, namedSet: IStoredNamedSet) => {
     event.preventDefault();
     StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {
       const params = { name, description, ...sec };
 
-      const editedSet: INamedSet = await RestStorageUtils.editNamedSet(namedSet.id, params);
+      const editedSet = await RestStorageUtils.editNamedSet(namedSet.id, params);
 
       NotificationHandler.successfullySaved(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.namedSet'), name);
-
-      setNamedSets((sets) => {
-        const updatedSets = sets.map((set) => (set === namedSet ? editedSet : set));
-        return sortNamedSetsAlphabetically(updatedSets);
-      });
+      onEditNamedSet?.(editedSet);
     });
   };
 
@@ -69,7 +68,7 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: 
     if (deleteIt) {
       await RestStorageUtils.deleteNamedSet(namedSet.id);
       NotificationHandler.successfullyDeleted(I18nextManager.getInstance().i18n.t('tdp:core.NamedSetList.dashboard'), namedSet.name);
-      setNamedSets((sets) => sets.filter((set) => set !== namedSet));
+      onDeleteNamedSet?.(namedSet);
     }
   };
 
@@ -84,10 +83,10 @@ export function NamedSetList({ headerIcon, headerText, value, status, onOpen }: 
           <i className="fas fa-circle-notch fa-spin" /> {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingSets')}{' '}
         </p>
       )}
-      {status === 'success' && value.length === 0 && <p className="p-1">{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>}
-      {status === 'success' && value.length > 0 && (
+      {status === 'success' && namedSets.length === 0 && <p className="p-1">{I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable')}</p>}
+      {status === 'success' && namedSets.length > 0 && (
         <div role="group" className="dataset-entry-item btn-group-vertical justify-content-start position-static p-1">
-          {namedSets.map((namedSet, i) => {
+          {sortNamedSetsAlphabetically(namedSets).map((namedSet, i) => {
             const canWrite = namedSet.type === ENamedSetType.NAMEDSET && UserSession.getInstance().canWrite(namedSet);
             return (
               // eslint-disable-next-line react/no-array-index-key

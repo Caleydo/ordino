@@ -7,7 +7,7 @@
  ******************************************************************* */
 
 import * as React from 'react';
-import { BaseUtils, NodeUtils, ICmdResult, AppContext, GlobalEventHandler } from 'tdp_core';
+import { BaseUtils, NodeUtils, ICmdResult, AppContext, GlobalEventHandler, INamedSet } from 'tdp_core';
 import { IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent } from 'tdp_core';
 import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
 import { EViewMode, ISelection } from 'tdp_core';
@@ -154,6 +154,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
 
   private readonly updateSelection = (event: IEvent, old: ISelection, newValue: ISelection) =>
     this.updateItemSelection(event.target as ViewWrapper, old, newValue);
+
+  private readonly entryPointChanged = (_: IEvent, namedSet: INamedSet) => {
+    GlobalEventHandler.getInstance().fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
+  };
 
   /**
    * This function can be used to load some initial content async
@@ -400,9 +404,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.on(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.on(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.on(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    view.on(AView.EVENT_UPDATE_ENTRY_POINT, (namedSet) => {
-      GlobalEventHandler.getInstance().fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
-    });
+    view.on(AView.EVENT_UPDATE_ENTRY_POINT, this.entryPointChanged);
 
     this.setState((prevState) => ({ ...prevState, views: [...prevState.views, view] }));
 
@@ -422,9 +424,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     view.off(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, this.chooseNextView);
     view.off(ViewWrapper.EVENT_REPLACE_VIEW, this.replaceViewInViewWrapper);
     view.off(AView.EVENT_ITEM_SELECT, this.updateSelection);
-    view.off(AView.EVENT_UPDATE_ENTRY_POINT, (namedSet) => {
-      GlobalEventHandler.getInstance().fire(AView.EVENT_UPDATE_ENTRY_POINT, namedSet);
-    });
+    view.off(AView.EVENT_UPDATE_ENTRY_POINT, this.entryPointChanged);
     this.setState((prevState) => ({ ...prevState, views: prevState.views.filter((v) => v !== view) }));
 
     view.destroy();

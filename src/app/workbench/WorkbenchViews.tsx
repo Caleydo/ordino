@@ -12,10 +12,7 @@ import {
   MosaicPath,
   updateTree,
 } from 'react-mosaic-component';
-import 'react-mosaic-component/react-mosaic-component.css';
 
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';

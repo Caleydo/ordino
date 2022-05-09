@@ -24,7 +24,7 @@ function getFilteredDescColumns(columnDesc: any[] | VisynViewPluginType['desc'],
   return cols;
 }
 
-export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onSelectionChanged, onParametersChanged }: VisViewPluginType['props']) {
   const filteredData = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
@@ -38,6 +38,7 @@ export function VisVisynView({ data, columnDesc, selection, filteredOutIds, para
       columns={getFilteredDescColumns(columnDesc, filteredData)}
       selected={selection}
       selectionCallback={onSelectionChanged}
+      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
       externalConfig={parameters.visConfig}
       hideSidebar
     />

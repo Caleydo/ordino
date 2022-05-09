@@ -1,6 +1,6 @@
 // Gets into the phovea.ts
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis, VisynViewPluginType } from 'tdp_core';
 
 type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
@@ -33,13 +33,15 @@ export function VisVisynView({ data, columnDesc, selection, filteredOutIds, para
     return getFilteredDescColumns(columnDesc, filterData);
   }, [data, filteredOutIds, columnDesc]);
 
+  const externalConfigCallback = useCallback((visConfig: IVisConfig) => onParametersChanged({ visConfig }), [onParametersChanged]);
+
   return (
     <Vis
       columns={columns}
       selected={selection}
       selectionCallback={onSelectionChanged}
       externalConfig={parameters.visConfig}
-      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
+      setExternalConfig={externalConfigCallback}
       hideSidebar
     />
   );
@@ -74,12 +76,14 @@ export function VisViewSidebar({
     }
   };
 
+  const externalConfigCallback = useCallback((visConfig: IVisConfig) => onParametersChanged({ visConfig }), [onParametersChanged]);
+
   return (
     <VisSidebar
       columns={columns}
       filterCallback={visFilterChanged}
       externalConfig={parameters.visConfig}
-      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
+      setExternalConfig={externalConfigCallback}
       style={{ width: '220px' }}
     />
   );

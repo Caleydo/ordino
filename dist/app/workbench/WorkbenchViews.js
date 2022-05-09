@@ -81,7 +81,7 @@ export function WorkbenchViews({ index, type }) {
                 React.createElement(Mosaic, { renderTile: (id, path) => {
                         const currView = views.find((v) => v.uniqueId === id);
                         if (currView) {
-                            return React.createElement(WorkbenchView, { removeCallback: removeCallback, dragMode: mosaicDrag, workbenchIndex: index, path: path, view: currView });
+                            return React.createElement(WorkbenchView, { removeCallback: removeCallback, mosaicDrag: mosaicDrag, workbenchIndex: index, path: path, view: currView });
                         }
                         return null;
                     }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId })),

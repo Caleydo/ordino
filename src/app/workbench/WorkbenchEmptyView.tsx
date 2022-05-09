@@ -12,14 +12,14 @@ export function WorkbenchEmptyView({
   workbenchIndex,
   view,
   chooserOptions,
-  dragMode,
+  mosaicDrag,
   path,
   removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   chooserOptions: IViewPluginDesc[];
-  dragMode: boolean;
+  mosaicDrag: boolean;
   path: MosaicBranch[];
   removeCallback: (path: MosaicPath) => void;
 }) {
@@ -56,7 +56,7 @@ export function WorkbenchEmptyView({
         )
       }
     >
-      <div id={view.id} className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${dragMode ? 'pe-none' : ''}`}>
+      <div id={view.id} className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag ? 'pe-none' : ''}`}>
         <div className="inner d-flex">
           <ViewChooser
             views={chooserOptions}

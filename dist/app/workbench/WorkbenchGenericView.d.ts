@@ -7,11 +7,11 @@ export interface IWorkbenchGenericViewProps {
     chooserOptions: IViewPluginDesc[];
     dragMode: boolean;
 }
-export declare function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dragMode, path, removeCallback, }: {
+export declare function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }: {
     workbenchIndex: number;
     view: IWorkbenchView;
     chooserOptions: IViewPluginDesc[];
-    dragMode: boolean;
+    mosaicDrag: boolean;
     path: MosaicBranch[];
     removeCallback: (path: MosaicPath) => void;
 }): JSX.Element;

@@ -118,7 +118,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);
               if (currView) {
-                return <WorkbenchView removeCallback={removeCallback} dragMode={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
+                return <WorkbenchView removeCallback={removeCallback} mosaicDrag={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
               }
               return null;
             }}

@@ -14,13 +14,13 @@ export function getVisynView(entityId: string) {
 export function WorkbenchView({
   workbenchIndex,
   view,
-  dragMode,
+  mosaicDrag,
   path,
   removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
-  dragMode: boolean;
+  mosaicDrag: boolean;
   path: MosaicBranch[];
   removeCallback: (path: MosaicPath) => void;
 }) {
@@ -43,7 +43,7 @@ export function WorkbenchView({
           chooserOptions={availableViews}
           workbenchIndex={workbenchIndex}
           view={view}
-          dragMode={dragMode}
+          mosaicDrag={mosaicDrag}
         />
       ) : (
         <WorkbenchGenericView
@@ -52,7 +52,7 @@ export function WorkbenchView({
           chooserOptions={availableViews}
           workbenchIndex={workbenchIndex}
           view={view}
-          dragMode={dragMode}
+          mosaicDrag={mosaicDrag}
         />
       )}
     </>

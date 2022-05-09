@@ -15,10 +15,11 @@ export function CosmicViewHeader({ selection, onParametersChanged }) {
     const options = selection.map((s) => {
         return { value: s, label: s };
     });
-    return (React.createElement("div", { style: { width: '200px' } },
-        React.createElement(Select, { options: options, onChange: (e) => {
-                onParametersChanged({ currentId: e.value });
-            } })));
+    return (React.createElement("div", { className: "d-flex align-items-center", style: { width: '200px' } },
+        React.createElement("div", { className: "flex-grow-1" },
+            React.createElement(Select, { options: options, onChange: (e) => {
+                    onParametersChanged({ currentId: e.value });
+                } }))));
 }
 export const cosmicConfiguration = () => {
     return {

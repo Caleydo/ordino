@@ -23,13 +23,15 @@ export function CosmicViewHeader({ selection, onParametersChanged }: CosmicViewP
   });
 
   return (
-    <div style={{ width: '200px' }}>
-      <Select
-        options={options}
-        onChange={(e) => {
-          onParametersChanged({ currentId: e.value });
-        }}
-      />
+    <div className="d-flex align-items-center" style={{ width: '200px' }}>
+      <div className="flex-grow-1">
+        <Select
+          options={options}
+          onChange={(e) => {
+            onParametersChanged({ currentId: e.value });
+          }}
+        />
+      </div>
     </div>
   );
 }

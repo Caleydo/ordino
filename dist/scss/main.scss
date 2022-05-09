@@ -11,6 +11,7 @@
 // extend with TargID specific rules
 @import "./base/base";
 
+@import "./vendors/react-mosaic";
 @import "./components/VisynNavbar";
 @import "./components/targid";
 @import "./components/StartMenu";

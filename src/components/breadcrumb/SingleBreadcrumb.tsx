@@ -33,6 +33,8 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     });
 
     ro.observe(ref.current);
+
+    return () => ro.disconnect();
   }, []);
 
   const onCommentPanelVisibilityChanged = React.useCallback(

@@ -21,27 +21,25 @@ export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
     const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
-    const [mosaicState, setMosaicState] = useState(null);
+    const [mosaicState, setMosaicState] = useState(views[0].uniqueId);
     const [mosaicViewCount, setMosaicViewCount] = useState(1);
     const [mosaicDrag, setMosaicDrag] = useState(false);
     React.useEffect(() => {
-        if (mosaicState === null) {
-            setMosaicState(views[0].uniqueId);
-            return;
-        }
+        // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
         if (views.length > mosaicViewCount) {
             const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
             const parent = getNodeAtPath(mosaicState, dropRight(path));
             const destination = getNodeAtPath(mosaicState, path);
             const direction = parent ? getOtherDirection(parent.direction) : 'row';
+            const newViewId = views[views.length - 1].uniqueId; // assumes that the new view is appended to the array
             let first;
             let second;
             if (direction === 'row') {
                 first = destination;
-                second = views[views.length - 1].uniqueId;
+                second = newViewId;
             }
             else {
-                first = views[views.length - 1].uniqueId;
+                first = newViewId;
                 second = destination;
             }
             const newNode = updateTree(mosaicState, [

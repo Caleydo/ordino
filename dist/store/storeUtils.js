@@ -1,11 +1,5 @@
 export function getAllFilters(workbench) {
-    const allFilteredIds = new Set();
-    workbench.views.forEach((f) => {
-        f.filters.forEach((id) => {
-            allFilteredIds.add(id);
-        });
-    });
-    return Array.from(allFilteredIds);
+    return Array.from(new Set(workbench.views.map((v) => v.filters).flat()));
 }
 export function findViewIndex(uniqueId, workbench) {
     return workbench.views.findIndex((v) => v.uniqueId === uniqueId);

@@ -24,22 +24,22 @@ function getFilteredDescColumns(columnDesc: any[] | VisynViewPluginType['desc'],
   return cols;
 }
 
-export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onSelectionChanged, onParametersChanged }: VisViewPluginType['props']) {
-  const filteredData = useMemo(() => {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }: VisViewPluginType['props']) {
+  const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
     filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
 
-    return filterData;
-  }, [data, filteredOutIds]);
+    return getFilteredDescColumns(columnDesc, filterData);
+  }, [data, filteredOutIds, columnDesc]);
 
   return (
     <Vis
-      columns={getFilteredDescColumns(columnDesc, filteredData)}
+      columns={columns}
       selected={selection}
       selectionCallback={onSelectionChanged}
-      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
       externalConfig={parameters.visConfig}
+      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
       hideSidebar
     />
   );
@@ -54,17 +54,13 @@ export function VisViewSidebar({
   onFilteredOutIdsChanged,
   onParametersChanged,
 }: VisViewPluginType['props']) {
-  const filteredData = useMemo(() => {
+  const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
     filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
 
-    return filterData;
-  }, [data, filteredOutIds]);
-
-  const finalCols = useMemo(() => {
-    return getFilteredDescColumns(columnDesc, filteredData);
-  }, [columnDesc, filteredData]);
+    return getFilteredDescColumns(columnDesc, filterData);
+  }, [data, filteredOutIds, columnDesc]);
 
   const visFilterChanged = (filterSet: string) => {
     if (filterSet === 'Filter Out') {
@@ -80,7 +76,7 @@ export function VisViewSidebar({
 
   return (
     <VisSidebar
-      columns={finalCols}
+      columns={columns}
       filterCallback={visFilterChanged}
       externalConfig={parameters.visConfig}
       setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}

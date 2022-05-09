@@ -38,7 +38,6 @@ export function WorkbenchGenericView({
   chooserOptions,
   dragMode,
   path,
-  setMosaicDrag,
   removeCallback,
 }: {
   workbenchIndex: number;
@@ -46,7 +45,6 @@ export function WorkbenchGenericView({
   chooserOptions: IViewPluginDesc[];
   dragMode: boolean;
   path: MosaicBranch[];
-  setMosaicDrag: (b: boolean) => void;
   removeCallback: (path: MosaicPath) => void;
 }) {
   const [editOpen, setEditOpen] = useState<boolean>(true);
@@ -163,13 +161,7 @@ export function WorkbenchGenericView({
     );
 
   return (
-    <MosaicWindow<number>
-      path={path}
-      title={view.name}
-      renderToolbar={() => header}
-      onDragStart={() => setMosaicDrag(true)}
-      onDragEnd={() => setMosaicDrag(false)}
-    >
+    <MosaicWindow<number> path={path} title={view.name} renderToolbar={() => header}>
       <div id={view.id} className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${dragMode ? 'pe-none' : ''}`}>
         <div className="inner d-flex">
           {editOpen && !isVisynRankingViewDesc(viewPlugin?.desc) ? ( // do not show chooser for ranking views

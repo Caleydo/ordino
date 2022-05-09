@@ -14,7 +14,6 @@ export function WorkbenchEmptyView({
   chooserOptions,
   dragMode,
   path,
-  setMosaicDrag,
   removeCallback,
 }: {
   workbenchIndex: number;
@@ -22,7 +21,6 @@ export function WorkbenchEmptyView({
   chooserOptions: IViewPluginDesc[];
   dragMode: boolean;
   path: MosaicBranch[];
-  setMosaicDrag: (b: boolean) => void;
   removeCallback: (path: MosaicPath) => void;
 }) {
   const dispatch = useAppDispatch();
@@ -57,8 +55,6 @@ export function WorkbenchEmptyView({
           <div className="view-parameters d-flex" />
         )
       }
-      onDragStart={() => setMosaicDrag(true)}
-      onDragEnd={() => setMosaicDrag(false)}
     >
       <div id={view.id} className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${dragMode ? 'pe-none' : ''}`}>
         <div className="inner d-flex">

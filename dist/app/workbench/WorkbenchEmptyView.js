@@ -7,7 +7,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { removeView, setView } from '../../store';
 import { findViewIndex } from '../../store/storeUtils';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
-export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, dragMode, path, setMosaicDrag, removeCallback, }) {
+export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, dragMode, path, removeCallback, }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const viewIndex = useMemo(() => {
@@ -19,7 +19,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, dragM
                         removeCallback(path);
                         dispatch(removeView({ workbenchIndex, viewIndex }));
                     }, className: "btn btn-icon-dark align-middle m-1" },
-                    React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))))) : (React.createElement("div", { className: "view-parameters d-flex" })), onDragStart: () => setMosaicDrag(true), onDragEnd: () => setMosaicDrag(false) },
+                    React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))))) : (React.createElement("div", { className: "view-parameters d-flex" })) },
         React.createElement("div", { id: view.id, className: `position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${dragMode ? 'pe-none' : ''}` },
             React.createElement("div", { className: "inner d-flex" },
                 React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {

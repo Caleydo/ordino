@@ -100,6 +100,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
 
   const onChangeCallback = useCallback((rootNode: any) => {
     setMosaicState(rootNode);
+    setMosaicDrag(true);
   }, []);
 
   const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
@@ -117,20 +118,12 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);
               if (currView) {
-                return (
-                  <WorkbenchView
-                    removeCallback={removeCallback}
-                    dragMode={mosaicDrag}
-                    workbenchIndex={index}
-                    path={path}
-                    view={currView}
-                    setMosaicDrag={setMosaicDrag}
-                  />
-                );
+                return <WorkbenchView removeCallback={removeCallback} dragMode={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
               }
               return null;
             }}
             onChange={onChangeCallback}
+            onRelease={() => setMosaicDrag(false)}
             value={ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId}
           />
         </div>

@@ -16,14 +16,12 @@ export function WorkbenchView({
   view,
   dragMode,
   path,
-  setMosaicDrag,
   removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   dragMode: boolean;
   path: MosaicBranch[];
-  setMosaicDrag: (b: boolean) => void;
   removeCallback: (path: MosaicPath) => void;
 }) {
   const ordino = useAppSelector((state) => state.ordino);
@@ -41,7 +39,6 @@ export function WorkbenchView({
       {view.id === '' ? (
         <WorkbenchEmptyView
           removeCallback={removeCallback}
-          setMosaicDrag={setMosaicDrag}
           path={path}
           chooserOptions={availableViews}
           workbenchIndex={workbenchIndex}
@@ -51,7 +48,6 @@ export function WorkbenchView({
       ) : (
         <WorkbenchGenericView
           removeCallback={removeCallback}
-          setMosaicDrag={setMosaicDrag}
           path={path}
           chooserOptions={availableViews}
           workbenchIndex={workbenchIndex}

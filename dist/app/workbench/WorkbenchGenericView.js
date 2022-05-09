@@ -9,7 +9,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
-export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dragMode, path, setMosaicDrag, removeCallback, }) {
+export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dragMode, path, removeCallback, }) {
     var _a;
     const [editOpen, setEditOpen] = useState(true);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
@@ -58,7 +58,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, dra
             React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))) : null))) : (React.createElement("div", { className: "view-parameters d-flex" },
         React.createElement("span", { className: "view-title row align-items-center m-1" },
             React.createElement("strong", null, (_a = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _a === void 0 ? void 0 : _a.itemName))));
-    return (React.createElement(MosaicWindow, { path: path, title: view.name, renderToolbar: () => header, onDragStart: () => setMosaicDrag(true), onDragEnd: () => setMosaicDrag(false) },
+    return (React.createElement(MosaicWindow, { path: path, title: view.name, renderToolbar: () => header },
         React.createElement("div", { id: view.id, className: `position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${dragMode ? 'pe-none' : ''}` },
             React.createElement("div", { className: "inner d-flex" },
                 editOpen && !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? ( // do not show chooser for ranking views

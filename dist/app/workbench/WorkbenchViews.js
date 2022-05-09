@@ -69,6 +69,7 @@ export function WorkbenchViews({ index, type }) {
     }, [mosaicState, views.length]);
     const onChangeCallback = useCallback((rootNode) => {
         setMosaicState(rootNode);
+        setMosaicDrag(true);
     }, []);
     const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
     const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
@@ -80,10 +81,10 @@ export function WorkbenchViews({ index, type }) {
                 React.createElement(Mosaic, { renderTile: (id, path) => {
                         const currView = views.find((v) => v.uniqueId === id);
                         if (currView) {
-                            return (React.createElement(WorkbenchView, { removeCallback: removeCallback, dragMode: mosaicDrag, workbenchIndex: index, path: path, view: currView, setMosaicDrag: setMosaicDrag }));
+                            return React.createElement(WorkbenchView, { removeCallback: removeCallback, dragMode: mosaicDrag, workbenchIndex: index, path: path, view: currView });
                         }
                         return null;
-                    }, onChange: onChangeCallback, value: ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId })),
+                    }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId })),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
 }

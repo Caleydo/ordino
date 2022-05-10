@@ -33,10 +33,10 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
             React.createElement("p", { className: "chevronText flex-grow-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })))) : null),
         React.createElement("div", { className: "position-absolute chevronDiv top-50 translate-middle-y d-flex", style: { right: '8px' } }, workbench && workbench.index === ordino.focusWorkbenchIndex ? (React.createElement(React.Fragment, null,
             React.createElement(AddViewButton, { color: "white" }),
-            React.createElement("button", { type: "button", className: "btn-close btn-close-white me-2", "aria-label": I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close'), onClick: () => {
+            ordino.focusWorkbenchIndex > 0 ? (React.createElement("button", { type: "button", className: "btn-close btn-close-white me-2", "aria-label": I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close'), onClick: () => {
                     dispatch(changeFocus({ index: workbench.index - 1 }));
                     dispatch(removeWorkbench({ index: workbench.index }));
-                } }))) : null),
+                } })) : null)) : null),
         React.createElement(ChevronBreadcrumb, { color: color, width: width, first: first })));
 }
 //# sourceMappingURL=SingleBreadcrumb.js.map

@@ -1,6 +1,6 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
 import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
-import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
+import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench, setCreateNextWorkbenchSidebarOpen } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { findWorkbenchTransitions, OrdinoVisynViewPluginDesc } from '../../../views';
@@ -117,6 +117,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                     );
                     setTimeout(() => {
                       dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
+                      dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
                     }, 0);
                   }}
                 >

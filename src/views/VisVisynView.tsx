@@ -28,7 +28,9 @@ export function VisVisynView({ data, columnDesc, selection, filteredOutIds, para
   const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
+    const filterSet = new Set(filteredOutIds);
+
+    filterData = filterData.filter((d) => !filterSet.has(d.id));
 
     return getFilteredDescColumns(columnDesc, filterData);
   }, [data, filteredOutIds, columnDesc]);
@@ -59,7 +61,9 @@ export function VisViewSidebar({
   const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
+    const filterSet = new Set(filteredOutIds);
+
+    filterData = filterData.filter((d) => !filterSet.has(d.id));
 
     return getFilteredDescColumns(columnDesc, filterData);
   }, [data, filteredOutIds, columnDesc]);

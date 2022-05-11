@@ -65,7 +65,7 @@ export function useCommentPanel({
   }, [instance, commentsOpen]);
 
   React.useEffect(() => {
-    if (!instance) {
+    if (!instance || !commentsOpen) {
       return;
     }
     const template = {
@@ -77,7 +77,7 @@ export function useCommentPanel({
     };
     instance.showMatchingComments(matching.entities.length > 0 ? matching : undefined);
     instance.adaptNewCommentForm(template);
-  }, [instance, itemIDType, selection]);
+  }, [instance, itemIDType, selection, commentsOpen]);
 
   React.useEffect(() => {
     if (!instance) {

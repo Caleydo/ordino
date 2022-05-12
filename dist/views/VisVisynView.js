@@ -22,7 +22,8 @@ function getFilteredDescColumns(columnDesc, filteredData) {
 export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }) {
     const columns = useMemo(() => {
         let filterData = Object.values(data);
-        filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
+        const filterSet = new Set(filteredOutIds);
+        filterData = filterData.filter((d) => !filterSet.has(d.id));
         return getFilteredDescColumns(columnDesc, filterData);
     }, [data, filteredOutIds, columnDesc]);
     const externalConfigCallback = useCallback((visConfig) => onParametersChanged({ visConfig }), [onParametersChanged]);
@@ -31,7 +32,8 @@ export function VisVisynView({ data, columnDesc, selection, filteredOutIds, para
 export function VisViewSidebar({ data, columnDesc, selection, filteredOutIds, parameters, onFilteredOutIdsChanged, onParametersChanged, }) {
     const columns = useMemo(() => {
         let filterData = Object.values(data);
-        filterData = filterData.filter((d) => !filteredOutIds.includes(d.id));
+        const filterSet = new Set(filteredOutIds);
+        filterData = filterData.filter((d) => !filterSet.has(d.id));
         return getFilteredDescColumns(columnDesc, filterData);
     }, [data, filteredOutIds, columnDesc]);
     const visFilterChanged = (filterSet) => {

@@ -17,12 +17,14 @@ export function WorkbenchView({
   mosaicDrag,
   path,
   removeCallback,
+  isTransitioning,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   mosaicDrag: boolean;
   path: MosaicBranch[];
   removeCallback: (path: MosaicPath) => void;
+  isTransitioning: boolean;
 }) {
   const ordino = useAppSelector((state) => state.ordino);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +55,7 @@ export function WorkbenchView({
           workbenchIndex={workbenchIndex}
           view={view}
           mosaicDrag={mosaicDrag}
+          isTransitioning={isTransitioning}
         />
       )}
     </>

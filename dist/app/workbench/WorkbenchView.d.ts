@@ -87,11 +87,12 @@ export declare function getVisynView(entityId: string): Promise<({
     visynViewType: string;
     defaultParameters?: Record<string, any>;
 } & Record<string, any> & import("tdp_core").IPluginDesc)[]>;
-export declare function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, }: {
+export declare function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, isTransitioning, }: {
     workbenchIndex: number;
     view: IWorkbenchView;
     mosaicDrag: boolean;
     path: MosaicBranch[];
     removeCallback: (path: MosaicPath) => void;
+    isTransitioning: boolean;
 }): JSX.Element;
 //# sourceMappingURL=WorkbenchView.d.ts.map

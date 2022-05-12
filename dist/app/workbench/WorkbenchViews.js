@@ -14,7 +14,7 @@ export var EWorkbenchType;
     EWorkbenchType["CONTEXT"] = "t-context";
     EWorkbenchType["NEXT"] = "t-next";
 })(EWorkbenchType || (EWorkbenchType = {}));
-export function WorkbenchViews({ index, type }) {
+export function WorkbenchViews({ index, type, isTransitioning }) {
     const ordino = useAppSelector((state) => state.ordino);
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
     const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
@@ -68,6 +68,7 @@ export function WorkbenchViews({ index, type }) {
     }, []);
     const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
     const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
+    console.log(isTransitioning);
     return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
             showLeftSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
@@ -76,7 +77,7 @@ export function WorkbenchViews({ index, type }) {
                 React.createElement(Mosaic, { renderTile: (id, path) => {
                         const currView = views.find((v) => v.uniqueId === id);
                         if (currView) {
-                            return React.createElement(WorkbenchView, { removeCallback: removeCallback, mosaicDrag: mosaicDrag, workbenchIndex: index, path: path, view: currView });
+                            return (React.createElement(WorkbenchView, { isTransitioning: isTransitioning, removeCallback: removeCallback, mosaicDrag: mosaicDrag, workbenchIndex: index, path: path, view: currView }));
                         }
                         return null;
                     }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId })),

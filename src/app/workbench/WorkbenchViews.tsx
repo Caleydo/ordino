@@ -30,9 +30,10 @@ export enum EWorkbenchType {
 export interface IWorkbenchViewsProps {
   index: number;
   type: EWorkbenchType;
+  isTransitioning: boolean;
 }
 
-export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
+export function WorkbenchViews({ index, type, isTransitioning }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
   const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
@@ -99,6 +100,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
 
   const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
   const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
+
+  console.log(isTransitioning)
   return (
     <div className="position-relative workbenchWrapper d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
@@ -112,7 +115,16 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);
               if (currView) {
-                return <WorkbenchView removeCallback={removeCallback} mosaicDrag={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
+                return (
+                  <WorkbenchView
+                    isTransitioning={isTransitioning}
+                    removeCallback={removeCallback}
+                    mosaicDrag={mosaicDrag}
+                    workbenchIndex={index}
+                    path={path}
+                    view={currView}
+                  />
+                );
               }
               return null;
             }}

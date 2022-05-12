@@ -7,6 +7,7 @@ export declare enum EWorkbenchType {
 export interface IWorkbenchViewsProps {
     index: number;
     type: EWorkbenchType;
+    isTransitioning: boolean;
 }
-export declare function WorkbenchViews({ index, type }: IWorkbenchViewsProps): JSX.Element;
+export declare function WorkbenchViews({ index, type, isTransitioning }: IWorkbenchViewsProps): JSX.Element;
 //# sourceMappingURL=WorkbenchViews.d.ts.map

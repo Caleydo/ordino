@@ -102,7 +102,7 @@
     "react-dropzone": "^11.3.1",
     "react-highlight-words": "^0.17.0",
     "react-intersection-observer": "^8.31.1",
-    "react-mosaic-component": "^5.1.0",
+    "react-mosaic-component": "^3.2.0",
     "react-plotly.js": "2.5.1",
     "react-redux": "7.2.5",
     "react-router-dom": "^5.2.0",

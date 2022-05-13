@@ -35,6 +35,12 @@ export interface IOrdinoAppState {
    * Id of the current focus view
    */
   focusWorkbenchIndex: number;
+
+  /**
+   * Additional filter query that is applied to all entities.
+   * analog to IReprovisynGlobalQuery
+   */
+  globalQuery?: { id: string; name: string; filter: { col: string; op: string; val: (string | number)[] } };
 }
 
 export enum EWorkbenchDirection {

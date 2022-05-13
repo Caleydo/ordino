@@ -5,6 +5,15 @@ const initialState = {
     workbenches: [],
     focusWorkbenchIndex: 0,
     colorMap: {},
+    globalQuery: {
+        filter: {
+            col: 'species',
+            op: 'IN',
+            val: ['mouse', 'human'],
+        },
+        id: 'species',
+        name: 'Species',
+    },
 };
 const ordinoSlice = createSlice({
     name: 'ordino',

@@ -59,7 +59,14 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     data: import("tdp_core").IRow[];
 }, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;
-}, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbench: IWorkbench;
+    selectedQuery: {
+        col: string;
+        op: string;
+        val: (string | number)[];
+    };
+}, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     firstViewIndex: number;
     secondViewIndex: number;

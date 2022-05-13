@@ -31,8 +31,6 @@ export default function (registry: IRegistry) {
     },
   );
 
-
-
   registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
     visynViewType: 'data',
     name: 'Vis',

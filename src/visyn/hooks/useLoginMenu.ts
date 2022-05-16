@@ -23,7 +23,14 @@ export function useLoginMenu(): { ref: (element: HTMLElement | null) => void; lo
       // Create a new one if there is a ref
       if (ref) {
         containerRef.current = ref;
-        const menu = new LoginMenu(new AppHeader(ref), { watch: true });
+        const appHeader = new AppHeader(ref, {
+          showAboutLink: false,
+          showOptionsLink: false,
+          showReportBugLink: false,
+          showHelpLink: false,
+        });
+        ref.querySelector('.phovea-navbar').setAttribute('hidden', 'hidden');
+        const menu = new LoginMenu(appHeader, { watch: true });
         return menu;
       }
       // Set instance to null if no ref is passed

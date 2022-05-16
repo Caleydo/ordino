@@ -6,9 +6,13 @@ export declare const workbenchReducers: {
     addFirstWorkbench(state: any, action: PayloadAction<{
         workbench: IWorkbench;
         selectedQuery: {
-            col: string;
-            op: string;
-            val: (number | string)[];
+            id: string;
+            name: string;
+            filter: {
+                col: string;
+                op: string;
+                val: (number | string)[];
+            };
         };
     }>): void;
     addWorkbench(state: any, action: PayloadAction<IWorkbench>): void;

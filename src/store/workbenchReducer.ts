@@ -4,7 +4,13 @@ import { IRow } from 'tdp_core';
 import { EWorkbenchDirection, IOrdinoAppState, ISelectedMapping, IWorkbench } from './interfaces';
 
 export const workbenchReducers = {
-  addFirstWorkbench(state, action: PayloadAction<{ workbench: IWorkbench; selectedQuery: { col: string; op: string; val: (number | string)[] } }>) {
+  addFirstWorkbench(
+    state,
+    action: PayloadAction<{
+      workbench: IWorkbench;
+      selectedQuery: { id: string; name: string; filter: { col: string; op: string; val: (number | string)[] } };
+    }>,
+  ) {
     state.focusWorkbenchIndex = 0;
     state.workbenches.splice(0, state.workbenches.length);
     state.workbenches.push(action.payload.workbench);

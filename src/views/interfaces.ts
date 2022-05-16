@@ -1,23 +1,24 @@
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IDTypeManager, IScoreRow, IServerColumn, isVisynViewPluginDesc, ViewUtils } from 'tdp_core';
-import { IOrdinoRelation } from '../base';
+import { IOrdinoGlobalQuery, IOrdinoRelation } from '../base';
 import { ISelectedMapping, IWorkbench } from '../store';
 
 export interface IOrdinoVisynViewDesc {
   relation: IOrdinoRelation;
 }
 
-export interface IOrdinoVisynViewParam {
+export interface IOrdinoRankingViewParam {
   prevSelection: string[];
   selectedMappings: ISelectedMapping[];
+  globalQuery: IOrdinoGlobalQuery;
 }
 
-export type OrdinoVisynViewPluginType<
+export type OrdinoRankingViewPluginType<
   Param extends Record<string, unknown> = Record<string, unknown>,
   Desc extends Record<string, unknown> = Record<string, unknown>,
 > = DefineVisynViewPlugin<
   'ranking',
-  Param & IOrdinoVisynViewParam,
+  Param & IOrdinoRankingViewParam,
   {
     /**
      * Data array matching the columns defined in the `columnDesc`.
@@ -71,8 +72,8 @@ export type OrdinoVisynViewPluginType<
   Desc & IOrdinoVisynViewDesc
 >;
 
-export type OrdinoVisynViewPluginDesc = OrdinoVisynViewPluginType['desc'];
-export type OrdinoVisynViewPlugin = OrdinoVisynViewPluginType['plugin'];
+export type OrdinoVisynViewPluginDesc = OrdinoRankingViewPluginType['desc'];
+export type OrdinoVisynViewPlugin = OrdinoRankingViewPluginType['plugin'];
 
 export function isVisynRankingViewDesc(desc: unknown): desc is OrdinoVisynViewPluginDesc {
   return isVisynViewPluginDesc(desc) && (<any>desc)?.visynViewType === 'ranking';

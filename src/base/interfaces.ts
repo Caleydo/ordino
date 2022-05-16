@@ -22,6 +22,18 @@ export interface IColumnReference {
   type?: EColumnType;
 }
 
+export interface IQueryFilter {
+  col: string;
+  op: string;
+  val: (number | string)[];
+}
+
+export interface IOrdinoGlobalQuery {
+  id: string;
+  name: string;
+  filter: IQueryFilter;
+}
+
 export interface IOrdinoMapping {
   name: string;
   entity: string;

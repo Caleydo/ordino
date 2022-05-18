@@ -17,6 +17,8 @@ export const workbenchReducers = {
     state.globalQuery = action.payload.selectedQuery;
   },
   addWorkbench(state, action: PayloadAction<IWorkbench>) {
+    // always add
+    action.payload.views[0].parameters.globalQuery = state.globalQuery;
     if (state.workbenches.length > action.payload.index) {
       state.workbenches.splice(action.payload.index);
     }

@@ -1,6 +1,6 @@
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IDTypeManager, IScoreRow, IServerColumn, isVisynViewPluginDesc, ViewUtils } from 'tdp_core';
-import { IOrdinoGlobalQuery, IOrdinoRelation } from '../base';
+import { IOrdinoGlobalQuery, IOrdinoRelation, IQueryFilter } from '../base';
 import { ISelectedMapping, IWorkbench } from '../store';
 
 export interface IOrdinoVisynViewDesc {
@@ -11,6 +11,7 @@ export interface IOrdinoRankingViewParam {
   prevSelection: string[];
   selectedMappings: ISelectedMapping[];
   globalQuery: IOrdinoGlobalQuery;
+  appliedFilter: IQueryFilter;
 }
 
 export type OrdinoRankingViewPluginType<

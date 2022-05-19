@@ -1,19 +1,12 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { IColumnDesc } from 'lineupjs';
 import { IRow } from 'tdp_core';
-import { EWorkbenchDirection, ISelectedMapping, IWorkbench } from './interfaces';
+import { EWorkbenchDirection, ISelectedMapping, IWorkbench, IOrdinoAppState } from './interfaces';
 export declare const workbenchReducers: {
     addFirstWorkbench(state: any, action: PayloadAction<{
         workbench: IWorkbench;
-        selectedQuery: {
-            id: string;
-            name: string;
-            filter: {
-                col: string;
-                op: string;
-                val: (number | string)[];
-            };
-        };
+        globalQuery: IOrdinoAppState['globalQuery'];
+        appliedQueryFilter: IOrdinoAppState['appliedQueryFilter'];
     }>): void;
     addWorkbench(state: any, action: PayloadAction<IWorkbench>): void;
     changeSelectedMappings(state: any, action: PayloadAction<{

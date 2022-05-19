@@ -1,3 +1,4 @@
+import { isBoolean } from 'lodash';
 import React from 'react';
 import { CommentPanel, defaultUploadComment, IMatchingCommentTemplate } from 'tdp_comments';
 
@@ -61,7 +62,9 @@ export function useCommentPanel({
   );
 
   React.useEffect(() => {
-    instance?.toggle(commentsOpen);
+    if (isBoolean(commentsOpen)) {
+      instance?.toggle(commentsOpen);
+    }
   }, [instance, commentsOpen]);
 
   React.useEffect(() => {

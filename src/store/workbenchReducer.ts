@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { IColumnDesc } from 'lineupjs';
 import { IRow } from 'tdp_core';
-import { EWorkbenchDirection, IOrdinoAppState, ISelectedMapping, IWorkbench } from './interfaces';
+import { EWorkbenchDirection, ISelectedMapping, IWorkbench } from './interfaces';
 
 export const workbenchReducers = {
   addFirstWorkbench(

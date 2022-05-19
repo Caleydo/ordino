@@ -6,7 +6,8 @@ export const workbenchReducers = {
         state.globalQuery = action.payload.selectedQuery;
     },
     addWorkbench(state, action) {
-        // always add
+        // always add the global query to the next workbench
+        // by default the first view will be a ranking view that can deal with the global query parameter
         action.payload.views[0].parameters.globalQuery = state.globalQuery;
         if (state.workbenches.length > action.payload.index) {
             state.workbenches.splice(action.payload.index);

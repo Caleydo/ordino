@@ -42,6 +42,13 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
 
   const [mosaicDrag, setMosaicDrag] = useState<boolean>(false);
 
+  const firstViewUniqueId = views[0].uniqueId;
+  React.useEffect(() => {
+    // reset mosaic to initial state when first view unique id changes
+    // e.g., when opening a new workbench with the same idtype
+    setMosaicState(firstViewUniqueId);
+  }, [firstViewUniqueId]);
+
   React.useEffect(() => {
     // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
     if (views.length > mosaicViewCount) {
@@ -77,8 +84,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
       setMosaicState(newNode);
       setMosaicViewCount(views.length);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [views.length]);
+  }, [mosaicState, mosaicViewCount, views]);
 
   const removeCallback = useCallback(
     (path: MosaicPath) => {
@@ -89,7 +95,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
       setMosaicState(newNode);
       setMosaicViewCount(views.length - 1);
     },
-    [mosaicState, views.length],
+    [mosaicState, views],
   );
 
   const onChangeCallback = useCallback((rootNode: MosaicNode<string>) => {
@@ -118,7 +124,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             }}
             onChange={onChangeCallback}
             onRelease={() => setMosaicDrag(false)}
-            value={ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId}
+            value={ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId}
           />
         </div>
         {showRightSidebar ? (

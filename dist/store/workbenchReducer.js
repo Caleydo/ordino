@@ -1,8 +1,7 @@
 export const workbenchReducers = {
     addFirstWorkbench(state, action) {
         state.focusWorkbenchIndex = 0;
-        state.workbenches.splice(0, state.workbenches.length);
-        state.workbenches.push(action.payload);
+        state.workbenches = [action.payload];
     },
     addWorkbench(state, action) {
         if (state.workbenches.length > action.payload.index) {
@@ -76,8 +75,8 @@ export const workbenchReducers = {
         }
     },
     setCommentsOpen(state, action) {
-        const { workbenchIndex, open } = action.payload;
-        state.workbenches[workbenchIndex].commentsOpen = open;
+        const { workbenchIndex, isOpen } = action.payload;
+        state.workbenches[workbenchIndex].commentsOpen = isOpen;
     },
 };
 //# sourceMappingURL=workbenchReducer.js.map

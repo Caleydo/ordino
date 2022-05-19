@@ -23,10 +23,6 @@ const ordinoSlice = createSlice({
         changeFocus(state, action) {
             state.focusWorkbenchIndex = action.payload.index;
         },
-        setCommentsOpen(state, action) {
-            const { workbenchIndex, open } = action.payload;
-            state.workbenches[workbenchIndex].commentsOpen = open;
-        },
     },
 });
 export const { addView, setColorMap, changeSelectedMappings, setDetailsSidebarOpen, setCreateNextWorkbenchSidebarOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, removeWorkbench, addEntityFormatting, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, setCommentsOpen, } = ordinoSlice.actions;

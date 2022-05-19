@@ -21,6 +21,12 @@ export function WorkbenchViews({ index, type }) {
     const [mosaicState, setMosaicState] = useState(views[0].uniqueId);
     const [mosaicViewCount, setMosaicViewCount] = useState(1);
     const [mosaicDrag, setMosaicDrag] = useState(false);
+    const firstViewUniqueId = views[0].uniqueId;
+    React.useEffect(() => {
+        // reset mosaic to initial state when first view unique id changes
+        // e.g., when opening a new workbench with the same idtype
+        setMosaicState(firstViewUniqueId);
+    }, [firstViewUniqueId]);
     React.useEffect(() => {
         // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
         if (views.length > mosaicViewCount) {
@@ -54,14 +60,13 @@ export function WorkbenchViews({ index, type }) {
             setMosaicState(newNode);
             setMosaicViewCount(views.length);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [views.length]);
+    }, [mosaicState, mosaicViewCount, views]);
     const removeCallback = useCallback((path) => {
         const removeUpdate = createRemoveUpdate(mosaicState, path);
         const newNode = updateTree(mosaicState, [removeUpdate]);
         setMosaicState(newNode);
         setMosaicViewCount(views.length - 1);
-    }, [mosaicState, views.length]);
+    }, [mosaicState, views]);
     const onChangeCallback = useCallback((rootNode) => {
         setMosaicState(rootNode);
         setMosaicDrag(true);
@@ -79,7 +84,7 @@ export function WorkbenchViews({ index, type }) {
                             return React.createElement(WorkbenchView, { removeCallback: removeCallback, mosaicDrag: mosaicDrag, workbenchIndex: index, path: path, view: currView });
                         }
                         return null;
-                    }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : views[0].uniqueId })),
+                    }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId })),
             showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
                 React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
 }

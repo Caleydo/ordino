@@ -1,8 +1,11 @@
 export const workbenchReducers = {
     addFirstWorkbench(state, action) {
         state.focusWorkbenchIndex = 0;
-        state.workbenches.splice(0, state.workbenches.length);
-        state.workbenches.push(action.payload.workbench);
+        // state.workbenches.splice(0, state.workbenches.length);
+        // state.workbenches.push(action.payload.workbench);
+        // state.globalQuery = action.payload.globalQuery;
+        // state.appliedQueryFilter = action.payload.appliedQueryFilter;
+        state.workbenches = [action.payload.workbench];
         state.globalQuery = action.payload.globalQuery;
         state.appliedQueryFilter = action.payload.appliedQueryFilter;
     },
@@ -81,8 +84,8 @@ export const workbenchReducers = {
         }
     },
     setCommentsOpen(state, action) {
-        const { workbenchIndex, open } = action.payload;
-        state.workbenches[workbenchIndex].commentsOpen = open;
+        const { workbenchIndex, isOpen } = action.payload;
+        state.workbenches[workbenchIndex].commentsOpen = isOpen;
     },
 };
 //# sourceMappingURL=workbenchReducer.js.map

@@ -27,10 +27,6 @@ const ordinoSlice = createSlice({
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusWorkbenchIndex = action.payload.index;
     },
-    setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-      const { workbenchIndex, open } = action.payload;
-      state.workbenches[workbenchIndex].commentsOpen = open;
-    },
   },
 });
 

@@ -13,8 +13,11 @@ export const workbenchReducers = {
     }>,
   ) {
     state.focusWorkbenchIndex = 0;
-    state.workbenches.splice(0, state.workbenches.length);
-    state.workbenches.push(action.payload.workbench);
+    // state.workbenches.splice(0, state.workbenches.length);
+    // state.workbenches.push(action.payload.workbench);
+    // state.globalQuery = action.payload.globalQuery;
+    // state.appliedQueryFilter = action.payload.appliedQueryFilter;
+    state.workbenches = [action.payload.workbench];
     state.globalQuery = action.payload.globalQuery;
     state.appliedQueryFilter = action.payload.appliedQueryFilter;
   },
@@ -94,8 +97,8 @@ export const workbenchReducers = {
       // }
     }
   },
-  setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-    const { workbenchIndex, open } = action.payload;
-    state.workbenches[workbenchIndex].commentsOpen = open;
+  setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; isOpen: boolean }>) {
+    const { workbenchIndex, isOpen } = action.payload;
+    state.workbenches[workbenchIndex].commentsOpen = isOpen;
   },
 };

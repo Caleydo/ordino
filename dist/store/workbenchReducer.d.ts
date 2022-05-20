@@ -65,7 +65,7 @@ export declare const workbenchReducers: {
     }): void;
     setCommentsOpen(state: any, action: PayloadAction<{
         workbenchIndex: number;
-        open: boolean;
+        isOpen: boolean;
     }>): void;
 };
 //# sourceMappingURL=workbenchReducer.d.ts.map

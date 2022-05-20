@@ -38,7 +38,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
   }, []);
 
   const onCommentPanelVisibilityChanged = React.useCallback(
-    (open: boolean) => dispatch(setCommentsOpen({ workbenchIndex: workbench?.index, open })),
+    (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: workbench?.index, isOpen })),
     [workbench?.index, dispatch],
   );
 

@@ -23,7 +23,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         ro.observe(ref.current);
         return () => ro.disconnect();
     }, []);
-    const onCommentPanelVisibilityChanged = React.useCallback((open) => dispatch(setCommentsOpen({ workbenchIndex: workbench === null || workbench === void 0 ? void 0 : workbench.index, open })), [workbench === null || workbench === void 0 ? void 0 : workbench.index, dispatch]);
+    const onCommentPanelVisibilityChanged = React.useCallback((isOpen) => dispatch(setCommentsOpen({ workbenchIndex: workbench === null || workbench === void 0 ? void 0 : workbench.index, isOpen })), [workbench === null || workbench === void 0 ? void 0 : workbench.index, dispatch]);
     return (React.createElement("div", { className: `position-relative ${onClick ? 'cursor-pointer' : ''}`, ref: ref, style: { flexGrow: flexWidth }, onClick: onClick },
         React.createElement("div", { className: "position-absolute chevronDiv top-50 start-50 translate-middle d-flex" }, workbench ? (workbench.index === ordino.focusWorkbenchIndex ? (React.createElement(React.Fragment, null,
             React.createElement(FilterAndSelected, null),

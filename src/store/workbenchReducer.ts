@@ -6,8 +6,7 @@ import { EWorkbenchDirection, ISelectedMapping, IWorkbench } from './interfaces'
 export const workbenchReducers = {
   addFirstWorkbench(state, action: PayloadAction<IWorkbench>) {
     state.focusWorkbenchIndex = 0;
-    state.workbenches.splice(0, state.workbenches.length);
-    state.workbenches.push(action.payload);
+    state.workbenches = [action.payload];
   },
   addWorkbench(state, action: PayloadAction<IWorkbench>) {
     if (state.workbenches.length > action.payload.index) {
@@ -82,8 +81,8 @@ export const workbenchReducers = {
       // }
     }
   },
-  setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-    const { workbenchIndex, open } = action.payload;
-    state.workbenches[workbenchIndex].commentsOpen = open;
+  setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; isOpen: boolean }>) {
+    const { workbenchIndex, isOpen } = action.payload;
+    state.workbenches[workbenchIndex].commentsOpen = isOpen;
   },
 };

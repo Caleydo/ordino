@@ -1,3 +1,4 @@
+import { isBoolean } from 'lodash';
 import React from 'react';
 import { CommentPanel, defaultUploadComment } from 'tdp_comments';
 export const ORDINO_APP_KEY = 'reprovisyn';
@@ -42,7 +43,9 @@ export function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused
         });
     }, [isFocused]);
     React.useEffect(() => {
-        instance === null || instance === void 0 ? void 0 : instance.toggle(commentsOpen);
+        if (isBoolean(commentsOpen)) {
+            instance === null || instance === void 0 ? void 0 : instance.toggle(commentsOpen);
+        }
     }, [instance, commentsOpen]);
     React.useEffect(() => {
         if (!instance || !commentsOpen) {

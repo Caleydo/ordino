@@ -110,8 +110,8 @@
     "react-select-async-paginate": "^0.5.3",
     "react-spring": "^9.3.2",
     "react-virtualized": "^9.22.3",
-    "tdp_comments": "github:datavisyn/tdp_comments#develop",
-    "tdp_core": "github:datavisyn/tdp_core#develop"
+    "tdp_comments": "git+ssh://git@github.com:datavisyn/tdp_comments#develop",
+    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop"
   },
   "resolutions": {
     "@types/react": "17.0.44"

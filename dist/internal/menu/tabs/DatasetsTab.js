@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { PluginRegistry, UniqueIdManager, useAsync } from 'tdp_core';
+import { I18nextManager, PluginRegistry, UniqueIdManager, useAsync } from 'tdp_core';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoScrollspy, OrdinoScrollspyItem } from '../../components';
 import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../../base/extensions';
@@ -19,7 +19,9 @@ export default function DatasetsTab(_props) {
         React.createElement("div", { className: "container pb-10 pt-5" },
             React.createElement("div", { className: "row justify-content-center" },
                 React.createElement("div", { className: "col-11 position-relative", "data-testid": "datasets-tab" },
-                    React.createElement("p", { className: "lead text-gray-600 mb-0" }, "Start a new analysis session by loading a dataset"),
+                    React.createElement("p", { className: "lead text-gray-600 mb-0" },
+                        " ",
+                        I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.datasetTabInfo')),
                     items.map((item, index) => {
                         return (
                         // `id` attribute must match the one in the scrollspy

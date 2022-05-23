@@ -48,6 +48,7 @@ function sortNamedSetsAlphabetically(sets: INamedSet[] | null): INamedSet[] | nu
 }
 
 export function NamedSetList({ headerIcon, headerText, value: namedSets, status, onOpen, onEditNamedSet, onDeleteNamedSet }: INamedSetListProps) {
+  const testId = headerText.replace(/\s+/g, '-').toLowerCase(); // replace whtiespace by dash and make lowercase
   const editNamedSet = (event: React.MouseEvent, namedSet: IStoredNamedSet) => {
     event.preventDefault();
     StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {

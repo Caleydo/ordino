@@ -71,10 +71,8 @@ export declare class CmdUtils {
     static setSelectionImpl(inputs: IObjectRef<any>[], parameter: {
         idtype?: string;
         ids?: string[];
-    }): Promise<{
-        inverse: IAction;
-    }>;
-    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): IAction;
+    }): any;
+    static setSelection(view: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): any;
     static setAndUpdateSelection(view: IObjectRef<ViewWrapper>, target: IObjectRef<ViewWrapper>, idtype: IDType, ids: string[]): IAction;
     /**
      * Factory function that compresses a series of action to fewer one.

@@ -73,6 +73,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     private readonly chooseNextView;
     private readonly replaceViewInViewWrapper;
     private readonly updateSelection;
+    private readonly entryPointChanged;
     /**
      * This function can be used to load some initial content async
      */

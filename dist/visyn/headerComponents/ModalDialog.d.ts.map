@@ -1,1 +1,0 @@
-{"version":3,"file":"ModalDialog.d.ts","sourceRoot":"","sources":["../../../src/visyn/headerComponents/ModalDialog.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAE1B,UAAU,iBAAiB;IACzB,KAAK,CAAC,EAAE,MAAM,CAAC;IACf,iBAAiB,CAAC,EAAE,OAAO,CAAC;IAC5B,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAC;CAC3B;AAED,eAAO,MAAM,WAAW,0FA0BtB,CAAC"}

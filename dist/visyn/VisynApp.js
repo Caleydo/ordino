@@ -11,7 +11,6 @@ const visynAppComponents = {
 };
 export function VisynApp({ extensions, children = null, watch = false }) {
     const { Header, LoginForm } = { ...visynAppComponents, ...extensions };
-    console.log(extensions, Header);
     const { status } = useInitVisynApp();
     return status === 'success' ? (React.createElement(React.Fragment, null,
         React.createElement(Header, null),

@@ -77,11 +77,8 @@ export function VisynLoginMenu({ watch = false, extensions = {} }) {
                 React.createElement(LoginForm, { onLogin: async (username, password) => {
                         setError(null);
                         return LoginUtils.login(username, password)
-                            .then((user) => {
-                            onHide();
-                        })
+                            .then(onHide)
                             .catch((e) => {
-                            console.log(e);
                             if (e.response && e.response.status !== 401) {
                                 // 401 = Unauthorized
                                 // server error

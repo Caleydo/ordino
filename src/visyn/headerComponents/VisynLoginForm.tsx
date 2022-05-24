@@ -1,26 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 
 export interface IVisynLoginFormProps {
-  onLogin: (username: string, password: string, rememberMe: boolean) => Promise<void>;
+  onLogin: (username: string, password: string) => Promise<void>;
 }
 export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
-  const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    const target = evt.target as typeof evt.target & {
-      username: { value: string };
-      password: { value: string };
-      rememberMe: { checked: boolean };
-    };
-    const username = target.username.value;
-    const password = target.password.value;
-    const rememberMe = target.rememberMe.checked;
-    onLogin(username, password, rememberMe);
-  };
-
+  const formRef = useRef<HTMLFormElement>(null);
   return (
-    <form className="form-signin" action="/login" method="post" onSubmit={onSubmit}>
+    <form className="form-signin" action="/login" method="post">
       <div className="mb-3">
         <label className="form-label" htmlFor="login_username">
           ${I18nextManager.getInstance().i18n.t('phovea:security_flask.username')}
@@ -49,7 +36,16 @@ export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
           autoComplete="current-password"
         />
       </div>
-      <button type="submit" className="btn btn-primary">
+      <button
+        type="submit"
+        className="btn btn-primary"
+        onClick={(evt) => {
+          evt.preventDefault();
+          evt.stopPropagation();
+          const formData = new FormData(formRef.current);
+          onLogin(formData.get('username') as string, formData.get('password') as string);
+        }}
+      >
         {' '}
         ${I18nextManager.getInstance().i18n.t('phovea:security_flask.submit')}
       </button>

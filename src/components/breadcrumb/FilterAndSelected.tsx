@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
+import { I18nextManager } from 'tdp_core';
 import { getAllFilters } from '../../store/storeUtils';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { I18nextManager } from 'tdp_core';
 
 function equalArrays<T>(a: T[], b: T[]) {
   if (a.length !== b.length) {

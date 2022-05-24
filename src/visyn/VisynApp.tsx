@@ -28,7 +28,7 @@ export function VisynApp({ extensions, children = null, watch = false }: IVisynA
     <>
       <Header />
       <VisynLoginMenu watch={watch} extensions={{ LoginForm }} />
-      <div className="content">{children}</div>
+      {children}
     </>
   ) : (
     <BusyOverlay />

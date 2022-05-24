@@ -43,7 +43,12 @@
       "tourLevelBeginner": "General introduction",
       "tourLevelAdvanced": "Advanced tours"
     },
+    "views": {
+      "loading": "Loading...",
+      "selectView": "Select A View"
+    },
     "breadcrumb": {
+      "close": "Close",
       "hideComments": "Hide comments panel",
       "showComments": "Show comments panel",
       "availableComments": "{{count}} comment is available for your selection",

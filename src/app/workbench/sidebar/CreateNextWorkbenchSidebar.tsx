@@ -1,12 +1,11 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
-import { IDTypeManager, IViewPluginDesc, useAsync, ViewUtils } from 'tdp_core';
-import { IReprovisynMapping } from 'reprovisyn';
-import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench } from '../../../store';
+import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
+import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench, setCreateNextWorkbenchSidebarOpen } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { findWorkbenchTransitions, OrdinoVisynViewPluginDesc } from '../../../views';
 
-export interface IAddWorkbenchSidebarProps {
+export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
 }
 
@@ -16,11 +15,11 @@ export interface IMappingDesc {
   mappingSubtype: string;
 }
 
-export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
+export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
-  const [selectedView, setSelectedView] = useState<IViewPluginDesc>(null);
+  const [selectedView, setSelectedView] = useState<OrdinoVisynViewPluginDesc>(null);
   const [relationList, setRelationList] = useState<IMappingDesc[]>([]);
 
   const relationListCallback = (s: IMappingDesc) => {
@@ -34,19 +33,7 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
 
   const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
 
-  const findDependentViews = React.useMemo(
-    () => () =>
-      ViewUtils.findVisynViews(idType).then((views) => {
-        console.log(views);
-        console.log(views.filter((v) => isVisynRankingViewDesc(v)));
-        return views.filter((v) => isVisynRankingViewDesc(v));
-      }),
-    [idType],
-  );
-
-  const { status, value: availableViews } = useAsync(findDependentViews, []);
-
-  console.log(availableViews);
+  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {
@@ -56,7 +43,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
     const entities: { idType: string; label: string }[] = [];
 
     availableViews.forEach((v) => {
-      console.log(v);
       if (!entities.some((e) => e.idType === v.itemIDType && e.label === v.group.name)) {
         entities.push({ idType: v.itemIDType, label: v.group.name });
       }
@@ -66,14 +52,17 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
   }, [status, availableViews]);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevFormatting = workbench.formatting;
 
-    workbench.selection.forEach((s) => {
-      currString += `${s}, `;
-    });
+    const currString = workbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? workbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
-    return currString.length < 202 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 200)}...`;
-  }, [workbench.selection]);
+    return currString.length < 202 ? currString : `${currString.slice(0, 200)}...`;
+  }, [workbench.data, workbench.formatting, workbench.selection]);
 
   return (
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
@@ -105,8 +94,8 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                       // load the data
                       addWorkbench({
                         itemIDType: selectedView.itemIDType,
-                        detailsOpen: true,
-                        addWorkbenchOpen: false,
+                        detailsSidebarOpen: true,
+                        createNextWorkbenchSidebarOpen: false,
                         selectedMappings,
                         views: [
                           {
@@ -118,7 +107,6 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                           },
                         ],
                         viewDirection: EWorkbenchDirection.VERTICAL,
-                        transitionOptions: [],
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
@@ -128,7 +116,8 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                       }),
                     );
                     setTimeout(() => {
-                      dispatch(changeFocus({ index: ordino.focusViewIndex + 1 }));
+                      dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
+                      dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
                     }, 0);
                   }}
                 >
@@ -137,17 +126,17 @@ export function AddWorkbenchSidebar({ workbench }: IAddWorkbenchSidebarProps) {
                     .map((v) => {
                       return (
                         <div key={`${v.name}-mapping`}>
-                          {v.relation.mapping.map((map: IReprovisynMapping) => {
-                            const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                          {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                            const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                             return (
-                              <Fragment key={`${map.name}-group`}>
-                                <div className="mt-2 mappingTypeText">{map.name}</div>
+                              <Fragment key={`${name}-group`}>
+                                <div className="mt-2 mappingTypeText">{name}</div>
                                 {columns.map((col) => {
                                   return (
                                     <div key={`${col.label}Column`} className="form-check">
                                       <input
                                         onChange={() => {
-                                          relationListCallback({ targetEntity: e.idType, mappingEntity: map.entity, mappingSubtype: col.columnName });
+                                          relationListCallback({ targetEntity: e.idType, mappingEntity: entity, mappingSubtype: col.columnName });
                                           setSelectedView(v);
                                         }}
                                         className="form-check-input"

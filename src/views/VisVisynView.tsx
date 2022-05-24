@@ -1,22 +1,22 @@
 // Gets into the phovea.ts
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { VisynDataViewPluginType, EColumnTypes, IVisConfig, VisSidebar, Vis, VisynViewPluginType } from 'tdp_core';
 
 type VisViewPluginType = VisynDataViewPluginType<{ visConfig: IVisConfig | null }>;
 
-function getFilteredDescColumns(dataDesc: any[] | VisynViewPluginType['desc'], filteredData: any[]): any[] {
+function getFilteredDescColumns(columnDesc: any[] | VisynViewPluginType['desc'], filteredData: any[]): any[] {
   const cols = [];
-  for (const c of dataDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
+  for (const c of columnDesc.filter((d) => d.type === 'number' || d.type === 'categorical')) {
     cols.push({
       info: {
-        name: c.summary ? `${c.summary}: ${c.label}` : c.label,
+        name: c.label,
         description: c.summary,
         id: c.column,
       },
       values: () =>
         filteredData.map((d) => {
-          return { id: d._visyn_id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
+          return { id: d.id, val: d[c.column] ? d[c.column] : c.type === 'number' ? null : '--' };
         }),
       type: c.type === 'number' ? EColumnTypes.NUMERICAL : EColumnTypes.CATEGORICAL,
     });
@@ -24,21 +24,26 @@ function getFilteredDescColumns(dataDesc: any[] | VisynViewPluginType['desc'], f
   return cols;
 }
 
-export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parameters, onSelectionChanged }: VisViewPluginType['props']) {
-  const filteredData = useMemo(() => {
+export function VisVisynView({ data, columnDesc, selection, filteredOutIds, parameters, onParametersChanged, onSelectionChanged }: VisViewPluginType['props']) {
+  const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
+    const filterSet = new Set(filteredOutIds);
 
-    return filterData;
-  }, [data, filteredOutIds]);
+    filterData = filterData.filter((d) => !filterSet.has(d.id));
+
+    return getFilteredDescColumns(columnDesc, filterData);
+  }, [data, filteredOutIds, columnDesc]);
+
+  const externalConfigCallback = useCallback((visConfig: IVisConfig) => onParametersChanged({ visConfig }), [onParametersChanged]);
 
   return (
     <Vis
-      columns={getFilteredDescColumns(dataDesc, filteredData)}
+      columns={columns}
       selected={selection}
       selectionCallback={onSelectionChanged}
       externalConfig={parameters.visConfig}
+      setExternalConfig={externalConfigCallback}
       hideSidebar
     />
   );
@@ -46,43 +51,43 @@ export function VisVisynView({ data, dataDesc, selection, filteredOutIds, parame
 
 export function VisViewSidebar({
   data,
-  dataDesc,
+  columnDesc,
   selection,
   filteredOutIds,
   parameters,
   onFilteredOutIdsChanged,
   onParametersChanged,
 }: VisViewPluginType['props']) {
-  const filteredData = useMemo(() => {
+  const columns = useMemo(() => {
     let filterData = Object.values(data) as any[];
 
-    filterData = filterData.filter((d) => !filteredOutIds.includes(d._visyn_id));
+    const filterSet = new Set(filteredOutIds);
 
-    return filterData;
-  }, [data, filteredOutIds]);
+    filterData = filterData.filter((d) => !filterSet.has(d.id));
 
-  const finalCols = useMemo(() => {
-    return getFilteredDescColumns(dataDesc, filteredData);
-  }, [dataDesc, filteredData]);
+    return getFilteredDescColumns(columnDesc, filterData);
+  }, [data, filteredOutIds, columnDesc]);
 
   const visFilterChanged = (filterSet: string) => {
     if (filterSet === 'Filter Out') {
       onFilteredOutIdsChanged(selection);
     } else if (filterSet === 'Filter In') {
       const allData = Object.values(data) as any;
-      const nonSelectedData = allData.filter((d) => !selection.includes(d._visyn_id)).map((d) => d._visyn_id);
+      const nonSelectedData = allData.filter((d) => !selection.includes(d.id)).map((d) => d.id);
       onFilteredOutIdsChanged(nonSelectedData);
     } else {
       onFilteredOutIdsChanged([]);
     }
   };
 
+  const externalConfigCallback = useCallback((visConfig: IVisConfig) => onParametersChanged({ visConfig }), [onParametersChanged]);
+
   return (
     <VisSidebar
-      columns={finalCols}
+      columns={columns}
       filterCallback={visFilterChanged}
       externalConfig={parameters.visConfig}
-      setExternalConfig={(visConfig: IVisConfig) => onParametersChanged({ visConfig })}
+      setExternalConfig={externalConfigCallback}
       style={{ width: '220px' }}
     />
   );

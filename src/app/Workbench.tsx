@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../hooks';
-import { IWorkbench } from '../store/ordinoSlice';
+import { IWorkbench } from '../store';
 import { EWorkbenchType, WorkbenchViews } from './workbench/WorkbenchViews';
 
 interface IWorkbenchProps {
@@ -13,7 +13,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
 
   return (
     <div
-      className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusViewIndex === 0 ? 'start' : ''}`}
+      className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
       <WorkbenchViews index={workbench.index} type={type} />

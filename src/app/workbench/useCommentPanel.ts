@@ -1,3 +1,4 @@
+import { isBoolean } from 'lodash';
 import React from 'react';
 import { CommentPanel, defaultUploadComment, IMatchingCommentTemplate } from 'tdp_comments';
 
@@ -61,11 +62,13 @@ export function useCommentPanel({
   );
 
   React.useEffect(() => {
-    instance?.toggle(commentsOpen);
+    if (isBoolean(commentsOpen)) {
+      instance?.toggle(commentsOpen);
+    }
   }, [instance, commentsOpen]);
 
   React.useEffect(() => {
-    if (!instance) {
+    if (!instance || !commentsOpen) {
       return;
     }
     const template = {
@@ -77,7 +80,7 @@ export function useCommentPanel({
     };
     instance.showMatchingComments(matching.entities.length > 0 ? matching : undefined);
     instance.adaptNewCommentForm(template);
-  }, [instance, itemIDType, selection]);
+  }, [instance, itemIDType, selection, commentsOpen]);
 
   React.useEffect(() => {
     if (!instance) {

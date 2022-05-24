@@ -31,25 +31,6 @@ export default function (registry: IRegistry) {
     },
   );
 
-  registry.pushVisynView('cosmic', () => import('./views/CosmicProxyView').then((m) => m.cosmicConfiguration), {
-    visynViewType: 'simple',
-    factory: 'cosmicConfiguration',
-    name: 'COSMIC',
-    site: 'https://cancer.sanger.ac.uk/cell_lines/sample/overview?id={cosmicid}&genome=38',
-    argument: 'cosmicid',
-    idtype: 'ordino_public.cellline.tdp_cellline',
-    selection: 'chooser',
-    group: {
-      name: 'External Resources',
-      order: 0,
-    },
-    filter: {
-      species: 'human',
-    },
-    description: 'Show information on your search from COSMIC',
-    topics: ['cellline', 'external'],
-  });
-
   registry.pushVisynView('vis', () => import('./views/VisVisynView').then((m) => m.visConfiguration), {
     visynViewType: 'data',
     name: 'Vis',

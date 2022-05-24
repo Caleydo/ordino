@@ -1,9 +1,12 @@
+import { MosaicBranch, MosaicPath } from 'react-mosaic-component';
 import { IViewPluginDesc } from 'tdp_core';
 import { IWorkbenchView } from '../../store';
-export interface IWorkbenchGenericViewProps {
+export declare function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }: {
     workbenchIndex: number;
     view: IWorkbenchView;
     chooserOptions: IViewPluginDesc[];
-}
-export declare function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions }: IWorkbenchGenericViewProps): JSX.Element;
+    mosaicDrag: boolean;
+    path: MosaicBranch[];
+    removeCallback: (path: MosaicPath) => void;
+}): JSX.Element;
 //# sourceMappingURL=WorkbenchEmptyView.d.ts.map

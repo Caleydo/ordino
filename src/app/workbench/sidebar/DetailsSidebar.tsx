@@ -1,43 +1,31 @@
 import React, { Fragment, useMemo } from 'react';
-import { IDType, useAsync, ViewUtils } from 'tdp_core';
-import { IReprovisynMapping } from 'reprovisyn';
+import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings, IWorkbench } from '../../../store/ordinoSlice';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../../views/interfaces';
+import { changeSelectedMappings } from '../../../store';
+import { findWorkbenchTransitions } from '../../../views';
+import { ICreateNextWorkbenchSidebarProps } from './CreateNextWorkbenchSidebar';
 
-export interface IDetailsSidebarProps {
-  workbench: IWorkbench;
-}
-
-export interface IMappingDesc {
-  mappingName: string;
-  mappingSubtype: string;
-}
-
-export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
+export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
-
-  const idType = useMemo(() => {
-    return new IDType(ordino.workbenches[workbench.index - 1].entityId, '.*', '', true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const findDependentViews = React.useMemo(
-    () => () => ViewUtils.findVisynViews(idType).then((views) => views.filter((v) => isVisynRankingViewDesc(v))),
-    [idType],
-  );
-  const { status, value: availableViews } = useAsync(findDependentViews, []);
+  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
 
   const selectionString = useMemo(() => {
-    let currString = '';
+    const prevWorkbench = ordino.workbenches[workbench.index - 1];
+    if (!prevWorkbench) {
+      return '';
+    }
+    const prevFormatting = prevWorkbench.formatting;
 
-    ordino.workbenches[workbench.index - 1].selection.forEach((s) => {
-      currString += `${s}, `;
-    });
+    const currString = prevWorkbench.selection
+      .map((selectedId) => {
+        // the column value might be empty, so we also default to selectedId if this is the case
+        return prevFormatting ? prevWorkbench.data[selectedId][prevFormatting.titleColumn || prevFormatting.idColumn] || selectedId : selectedId;
+      })
+      .join(', ');
 
-    return currString.length < 152 ? currString.slice(0, currString.length - 2) : `${currString.slice(0, 150)}...`;
+    return currString.length < 152 ? currString : `${currString.slice(0, 150)}...`;
   }, [ordino.workbenches, workbench.index]);
 
   return (
@@ -62,21 +50,21 @@ export function DetailsSidebar({ workbench }: IDetailsSidebarProps) {
               .map((v) => {
                 return (
                   <div key={`${v.name}mapping`}>
-                    {v.relation.mapping.map((map: IReprovisynMapping) => {
-                      const columns = v.isSourceToTarget ? map.sourceToTargetColumns : map.targetToSourceColumns;
+                    {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                      const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                       return (
-                        <Fragment key={`${map.entity}-${map.name}`}>
-                          <div className="mt-2 mappingTypeText">{map.name}</div>
+                        <Fragment key={`${entity}-${name}`}>
+                          <div className="mt-2 mappingTypeText">{name}</div>
                           {columns.map((col) => {
                             return (
                               <div key={`${col.label}Column`} className="form-check">
                                 <input
-                                  checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === map.entity)}
+                                  checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity)}
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusViewIndex,
-                                        newMapping: { columnSelection: col.columnName, entityId: map.entity },
+                                        workbenchIndex: ordino.focusWorkbenchIndex,
+                                        newMapping: { columnSelection: col.columnName, entityId: entity },
                                       }),
                                     )
                                   }

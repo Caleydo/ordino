@@ -22,7 +22,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosai
                     React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))))) : (React.createElement("div", { className: "view-parameters d-flex" })) },
         React.createElement("div", { id: view.id, className: `position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag ? 'pe-none' : ''}` },
             React.createElement("div", { className: "inner d-flex" },
-                React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
+                React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, selectedView: null, onSelectedView: (newView) => {
                         dispatch(setView({
                             workbenchIndex,
                             viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),

@@ -70,7 +70,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
                             React.createElement("button", { className: `nav-link ${!settingsTabSelected ? 'active' : ''}`, onClick: () => setSettingsTabSelected(false), "data-bs-toggle": "tab", "data-bs-target": "#profile", type: "button", role: "tab", "aria-controls": "profile", "aria-selected": "false" }, "Settings"))) : null),
                     React.createElement("div", { className: "h-100 tab-content viewTabPanel", style: { width: '220px' } },
                         React.createElement("div", { className: `h-100 tab-pane ${settingsTabSelected || !viewPlugin || !(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? 'active' : ''}`, role: "tabpanel", "aria-labelledby": "settings-tab" },
-                            React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
+                            React.createElement(ViewChooser, { views: chooserOptions, selectedView: viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
                                     dispatch(setView({
                                         workbenchIndex,
                                         viewIndex: findViewIndex(view.uniqueId, currentWorkbench),

@@ -11,10 +11,11 @@ const visynAppComponents = {
 };
 export function VisynApp({ extensions, children = null, watch = false }) {
     const { Header, LoginForm } = { ...visynAppComponents, ...extensions };
+    console.log(extensions, Header);
     const { status } = useInitVisynApp();
     return status === 'success' ? (React.createElement(React.Fragment, null,
         React.createElement(Header, null),
         React.createElement(VisynLoginMenu, { watch: watch, extensions: { LoginForm } }),
-        React.createElement("div", { className: "content" }, children))) : (React.createElement(BusyOverlay, null));
+        children)) : (React.createElement(BusyOverlay, null));
 }
 //# sourceMappingURL=VisynApp.js.map

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { AppContext, BaseUtils, useAsync } from 'tdp_core';
-import { BusyOverlay } from '../visyn';
 
 export function useGenerateRandomUser() {
   // generate random username
@@ -36,7 +35,7 @@ export function useGenerateRandomUser() {
 }
 
 export interface IOrdinoLoginFormProps {
-  onLogin: (username: string, password: string, rememberMe: boolean) => Promise<void>;
+  onLogin: (username: string, password: string) => Promise<void>;
 }
 
 /**
@@ -46,24 +45,10 @@ export interface IOrdinoLoginFormProps {
  */
 export function OrdinoLoginForm({ onLogin }: IOrdinoLoginFormProps) {
   const { status, user } = useGenerateRandomUser();
+  const formRef = useRef<HTMLFormElement>(null);
 
   return status === 'success' ? (
-    <form
-      className="form-signin"
-      onSubmit={(evt) => {
-        evt.preventDefault();
-        evt.stopPropagation();
-        const target = evt.target as typeof evt.target & {
-          username: { value: string };
-          password: { value: string };
-          rememberMe: { checked: boolean };
-        };
-        const username = target.username.value;
-        const password = target.password.value;
-        const rememberMe = target.rememberMe.checked;
-        onLogin(username, password, rememberMe);
-      }}
-    >
+    <form ref={formRef} className="form-signin">
       <div className="mb-3">
         <label className="form-label" htmlFor="login_username">
           Username
@@ -97,23 +82,24 @@ export function OrdinoLoginForm({ onLogin }: IOrdinoLoginFormProps) {
         />
       </div>
 
-      <div className="mb-3 form-check">
-        <input type="checkbox" className="form-check-input" name="rememberMe" value="remember-me" id="login_remember" />
-        <label className="form-check-label" htmlFor="login_remember">
-          Remember me
-        </label>
-      </div>
       <span className="form-text text-muted">
         A random username and password is generated for you. However, you can use the same username and password next time to continue your work. Your previous
         username and password are stored as a cookie for your convenience.
       </span>
       <div className="d-grid gap-2">
-        <button className="btn btn-primary mt-2" data-bs-dismiss="modal" type="submit">
+        <button
+          className="btn btn-primary mt-2"
+          type="submit"
+          onClick={(evt) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+            const formData = new FormData(formRef.current);
+            onLogin(formData.get('username') as string, formData.get('password') as string);
+          }}
+        >
           Login
         </button>
       </div>
     </form>
-  ) : (
-    <BusyOverlay />
-  );
+  ) : null;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppContext, GlobalEventHandler, LoginUtils, SessionWatcher, useAsync, UserSession } from 'tdp_core';
+import { AppContext, GlobalEventHandler, I18nextManager, LoginUtils, SessionWatcher, useAsync, UserSession } from 'tdp_core';
 import { useAppDispatch } from '../hooks';
 import { LoginDialog, VisynLoginForm } from './headerComponents';
 import { login, logout } from './usersSlice';
@@ -15,12 +15,12 @@ export function VisynLoginLink({ userName, onLogout }) {
 const loginMenuComponents = {
     LoginForm: VisynLoginForm,
 };
-// TODO: Show dialog wanring / errors when there is an error(when we have a proper react dialog implementation)
 export function VisynLoginMenu({ watch = false, extensions = {} }) {
     const { LoginForm } = { ...loginMenuComponents, ...extensions };
     const dispatch = useAppDispatch();
     const [loggedInAs, setLoggedInAs] = React.useState(null);
     const [show, setShow] = useState(false);
+    const [error, setError] = useState(null);
     /**
      * auto login if (rememberMe=true)
      */
@@ -70,11 +70,28 @@ export function VisynLoginMenu({ watch = false, extensions = {} }) {
     }, [dispatch, loggedInAs]);
     useAsync(autoLogin, []);
     return (React.createElement("ul", { className: "navbar-nav align-items-end" },
-        React.createElement(LoginDialog, { show: show }, (onHide) => {
-            return (React.createElement(LoginForm, { onLogin: async (username, password, rememberMe) => {
-                    await LoginUtils.login(username, password, rememberMe);
-                    onHide();
-                } }));
+        React.createElement(LoginDialog, { show: show, hasWarning: error === 'not_reachable', hasError: error != null && error !== 'not_reachable' }, (onHide) => {
+            return (React.createElement(React.Fragment, null,
+                React.createElement("div", { className: "alert alert-warning", role: "alert" }, I18nextManager.getInstance().i18n.t('phovea:security_flask.alertOffline')),
+                React.createElement("div", { className: "alert alert-danger", role: "alert" }, I18nextManager.getInstance().i18n.t('phovea:security_flask.alertWrongCredentials')),
+                React.createElement(LoginForm, { onLogin: async (username, password) => {
+                        setError(null);
+                        return LoginUtils.login(username, password)
+                            .then((user) => {
+                            onHide();
+                        })
+                            .catch((e) => {
+                            console.log(e);
+                            if (e.response && e.response.status !== 401) {
+                                // 401 = Unauthorized
+                                // server error
+                                setError('not_reachable');
+                            }
+                            else {
+                                setError(e);
+                            }
+                        });
+                    } })));
         })));
 }
 //# sourceMappingURL=LoginMenu.js.map

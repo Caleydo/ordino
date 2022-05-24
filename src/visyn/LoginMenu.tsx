@@ -1,5 +1,5 @@
 import React, { ComponentType, useState } from 'react';
-import { AppContext, GlobalEventHandler, LoginUtils, SessionWatcher, useAsync, UserSession } from 'tdp_core';
+import { AppContext, GlobalEventHandler, I18nextManager, LoginUtils, SessionWatcher, useAsync, UserSession } from 'tdp_core';
 import { useAppDispatch } from '../hooks';
 import { IVisynLoginFormProps, LoginDialog, VisynLoginForm } from './headerComponents';
 import { login, logout } from './usersSlice';
@@ -35,12 +35,12 @@ const loginMenuComponents = {
   LoginForm: VisynLoginForm,
 };
 
-// TODO: Show dialog wanring / errors when there is an error(when we have a proper react dialog implementation)
 export function VisynLoginMenu({ watch = false, extensions = {} }: ILoginMenuProps) {
   const { LoginForm } = { ...loginMenuComponents, ...extensions };
   const dispatch = useAppDispatch();
   const [loggedInAs, setLoggedInAs] = React.useState<string>(null);
   const [show, setShow] = useState(false);
+  const [error, setError] = useState<string>(null);
 
   /**
    * auto login if (rememberMe=true)
@@ -103,15 +103,36 @@ export function VisynLoginMenu({ watch = false, extensions = {} }: ILoginMenuPro
 
   return (
     <ul className="navbar-nav align-items-end">
-      <LoginDialog show={show}>
+      <LoginDialog show={show} hasWarning={error === 'not_reachable'} hasError={error != null && error !== 'not_reachable'}>
         {(onHide) => {
           return (
-            <LoginForm
-              onLogin={async (username: string, password: string, rememberMe: boolean) => {
-                await LoginUtils.login(username, password, rememberMe);
-                onHide();
-              }}
-            />
+            <>
+              <div className="alert alert-warning" role="alert">
+                {I18nextManager.getInstance().i18n.t('phovea:security_flask.alertOffline')}
+              </div>
+              <div className="alert alert-danger" role="alert">
+                {I18nextManager.getInstance().i18n.t('phovea:security_flask.alertWrongCredentials')}
+              </div>
+              <LoginForm
+                onLogin={async (username: string, password: string) => {
+                  setError(null);
+                  return LoginUtils.login(username, password)
+                    .then((user) => {
+                      onHide();
+                    })
+                    .catch((e) => {
+                      console.log(e);
+                      if (e.response && e.response.status !== 401) {
+                        // 401 = Unauthorized
+                        // server error
+                        setError('not_reachable');
+                      } else {
+                        setError(e);
+                      }
+                    });
+                }}
+              />
+            </>
           );
         }}
       </LoginDialog>

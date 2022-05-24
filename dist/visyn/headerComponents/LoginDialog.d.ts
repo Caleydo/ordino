@@ -9,6 +9,14 @@ interface ILoginDialogProps {
      */
     title?: string;
     /**
+     * Adds has-warning css class
+     */
+    hasWarning?: boolean;
+    /**
+     * Adds the `has-error` css class
+     */
+    hasError?: boolean;
+    /**
      * Pass login form as child
      */
     children: (onHide: () => void) => React.ReactNode;
@@ -16,6 +24,6 @@ interface ILoginDialogProps {
 /**
  * Basic login dialog
  */
-export declare function LoginDialog({ show, title, children }: ILoginDialogProps): JSX.Element;
+export declare function LoginDialog({ show, title, children, hasWarning, hasError }: ILoginDialogProps): JSX.Element;
 export {};
 //# sourceMappingURL=LoginDialog.d.ts.map

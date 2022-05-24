@@ -49,14 +49,6 @@ export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
           autoComplete="current-password"
         />
       </div>
-      <div className="mb-3">
-        <div className="checkbox form-check">
-          <input type="checkbox" className="form-check-input" id="login_remember" />
-          <label className="form-label form-check-label" htmlFor="login_remember">
-            ${I18nextManager.getInstance().i18n.t('phovea:security_flask.rememberMe')}
-          </label>
-        </div>
-      </div>
       <button type="submit" className="btn btn-primary">
         {' '}
         ${I18nextManager.getInstance().i18n.t('phovea:security_flask.submit')}

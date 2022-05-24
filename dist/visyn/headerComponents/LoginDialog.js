@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useBSModal } from 'tdp_core';
-import { ModalDialog } from './ModalDialog';
 /**
  * Basic login dialog
  */
-export function LoginDialog({ show = false, title = 'Please Login', children }) {
+export function LoginDialog({ show = false, title = 'Please Login', children, hasWarning, hasError }) {
     const [ref, instance] = useBSModal();
+    const modalRef = useRef(null);
     React.useEffect(() => {
         if (instance && show) {
             instance.show();
         }
     }, [instance, show]);
-    return (React.createElement(ModalDialog, { ref: ref, title: title, enableCloseButton: false }, children(() => instance.hide())));
+    useEffect(() => {
+        modalRef.current.classList.toggle('has-warning', hasWarning);
+        modalRef.current.classList.toggle('has-error', hasError);
+    }, [hasWarning, hasError]);
+    const setRef = useCallback((element) => {
+        modalRef.current = element;
+        ref(element);
+    }, [ref]);
+    return (React.createElement("div", { ref: setRef, className: `modal fade `, id: "loginDialog", tabIndex: -1, role: "dialog", "aria-labelledby": "loginDialog", "data-keyboard": "false", "data-bs-backdrop": "static" },
+        React.createElement("div", { className: "modal-dialog modal-sm" },
+            React.createElement("div", { className: "modal-content" },
+                React.createElement("div", { className: "modal-header" },
+                    React.createElement("h5", { className: "modal-title" }, title)),
+                React.createElement("div", { className: "modal-body" }, children(() => instance.hide()))))));
 }
 //# sourceMappingURL=LoginDialog.js.map

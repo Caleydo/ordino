@@ -23,6 +23,7 @@ interface IVisynAppProps {
 
 export function VisynApp({ extensions, children = null, watch = false }: IVisynAppProps) {
   const { Header, LoginForm } = { ...visynAppComponents, ...extensions };
+  console.log(extensions, Header);
   const { status } = useInitVisynApp();
   return status === 'success' ? (
     <>

@@ -6,7 +6,7 @@ export declare function useGenerateRandomUser(): {
     };
 };
 export interface IOrdinoLoginFormProps {
-    onLogin: (username: string, password: string, rememberMe: boolean) => Promise<void>;
+    onLogin: (username: string, password: string) => Promise<void>;
 }
 /**
  * phovea_security_store_generated

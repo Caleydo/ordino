@@ -62,6 +62,7 @@ export function WorkbenchEmptyView({
             views={chooserOptions}
             showBurgerMenu={false}
             mode={EViewChooserMode.EMBEDDED}
+            selectedView={null}
             onSelectedView={(newView: IViewPluginDesc) => {
               dispatch(
                 setView({

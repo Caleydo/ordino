@@ -208,6 +208,7 @@ export function WorkbenchGenericView({
                   {/* TODO refactor view header such that the logic (using hooks) and the visual representation are separated */}
                   <ViewChooser
                     views={chooserOptions}
+                    selectedView={viewPlugin?.desc}
                     showBurgerMenu={false}
                     mode={EViewChooserMode.EMBEDDED}
                     onSelectedView={(newView: IViewPluginDesc) => {

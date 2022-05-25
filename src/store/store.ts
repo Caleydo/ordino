@@ -10,7 +10,7 @@ export type OrdinoReducer = typeof ordinoReducer;
 
 // export from visyn package all of the visyn reducers that are needed then spread them here. "createVisionReducers"
 const allReducers = combineReducers({
-  ordino: trrackable(ordinoReducer),
+  ordino: trrackable(ordinoReducer), // Enchance ordinoReducers with trrack
   menu: menuReducer,
   app: appReducer,
   ...allVisynReducers(),
@@ -21,9 +21,10 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).prepend([trrackMiddleware]),
+    }).prepend([trrackMiddleware]),  // Add trrack middleware
 });
 
+// Helper utility to see provenance nodes in console
 (window as any).provenance = () => {
   if (trrackInstance) console.table(JSON.parse(JSON.stringify(trrackInstance.trrack.graph.nodes)));
 };

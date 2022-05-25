@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useAppDispatch } from '../hooks';
 import { initialOrdinoState, IOrdinoAppState } from '../store';
-import { initializeTrrack, setReduxFromTrrackAction, Trrack, TrrackProvider, TRRACK_ACTION } from '../store/provenance';
+import { initializeTrrack, Trrack, TrrackProvider, TRRACK_ACTION } from '../store/provenance';
 import { Breadcrumb } from './Breadcrumb';
 import FloatingActionButton from './components/FloatingActionButton';
 import { Filmstrip } from './Filmstrip';
 
+// Global instance of trrack. Ideally this can be refactored to get as prop.
 export let trrackInstance: {
   uid: string;
   trrack: Trrack;
@@ -14,6 +15,7 @@ export let trrackInstance: {
 export function Ordino() {
   const dispatch = useAppDispatch();
 
+  // Initialize Trrack and connect to Redux using dispatch
   const { uid, trrack } = React.useMemo(() => {
     return {
       uid: Math.random().toString(),
@@ -29,6 +31,7 @@ export function Ordino() {
     };
   }, [dispatch]);
 
+  // Update the global instance
   React.useEffect(() => {
     if (trrackInstance && trrackInstance.uid === uid) return;
 

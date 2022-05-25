@@ -16,7 +16,7 @@ export function OrdinoHeader(props) {
             dispatch(setMode(EStartMenuMode.OVERLAY));
             dispatch(setActiveTab(null));
         }
-    }, [ordino.workbenches, dispatch]);
+    }, [ordino.workbenches.length, dispatch]);
     React.useEffect(() => {
         if (ordino.workbenches.length === 0) {
             dispatch(setActiveTab(props.tabs[0].id));

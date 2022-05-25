@@ -1,1 +1,1 @@
-{"version":3,"file":"Ordino.d.ts","sourceRoot":"","sources":["../../src/app/Ordino.tsx"],"names":[],"mappings":"AAIA,wBAAgB,MAAM,gBASrB"}
+{"version":3,"file":"Ordino.d.ts","sourceRoot":"","sources":["../../src/app/Ordino.tsx"],"names":[],"mappings":"AAGA,OAAO,EAA8C,MAAM,EAAiC,MAAM,qBAAqB,CAAC;AAKxH,eAAO,IAAI,cAAc,EAAE;IACzB,GAAG,EAAE,MAAM,CAAC;IACZ,MAAM,EAAE,MAAM,CAAC;CAChB,GAAG,IAAW,CAAC;AAEhB,wBAAgB,MAAM,gBAsCrB"}

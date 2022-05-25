@@ -1,4 +1,5 @@
 import { IOrdinoAppState, IWorkbench } from './interfaces';
+export declare const initialOrdinoState: IOrdinoAppState;
 export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: import("./interfaces").IWorkbenchView;

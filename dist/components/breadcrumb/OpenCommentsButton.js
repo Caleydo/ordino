@@ -19,11 +19,12 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
         };
     }, [idType, onCommentPanelVisibilityChanged]);
     React.useEffect(() => {
-        if (selection.length) {
+        if (selection.length !== 0) {
             return;
         }
-        onCommentPanelVisibilityChanged(false);
-    }, [onCommentPanelVisibilityChanged, selection]);
+        if (commentPanelVisible)
+            onCommentPanelVisibilityChanged(false);
+    }, [commentPanelVisible, onCommentPanelVisibilityChanged, selection]);
     const title = commentPanelVisible
         ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
         : commentCount

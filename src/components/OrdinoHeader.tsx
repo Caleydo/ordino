@@ -22,7 +22,7 @@ export function OrdinoHeader(props: IOrdinoHeaderProps) {
       dispatch(setMode(EStartMenuMode.OVERLAY));
       dispatch(setActiveTab(null));
     }
-  }, [ordino.workbenches, dispatch]);
+  }, [ordino.workbenches.length, dispatch]);
 
   React.useEffect(() => {
     if (ordino.workbenches.length === 0) {

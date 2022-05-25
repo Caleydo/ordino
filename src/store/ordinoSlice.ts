@@ -3,7 +3,7 @@ import { IOrdinoAppState, IWorkbench } from './interfaces';
 import { viewsReducers } from './viewsReducer';
 import { workbenchReducers } from './workbenchReducer';
 
-const initialState: IOrdinoAppState = {
+export const initialOrdinoState: IOrdinoAppState = {
   workbenches: [],
   focusWorkbenchIndex: 0,
   colorMap: {},
@@ -11,7 +11,7 @@ const initialState: IOrdinoAppState = {
 
 const ordinoSlice = createSlice({
   name: 'ordino',
-  initialState,
+  initialState: initialOrdinoState,
   reducers: {
     ...viewsReducers,
     ...workbenchReducers,

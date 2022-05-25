@@ -44,16 +44,18 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
   }, [idType, onCommentPanelVisibilityChanged]);
 
   React.useEffect(() => {
-    if (selection.length) {
+    if (selection.length !== 0) {
       return;
     }
-    onCommentPanelVisibilityChanged(false);
-  }, [onCommentPanelVisibilityChanged, selection]);
+    if (commentPanelVisible)
+      onCommentPanelVisibilityChanged(false);
+  }, [commentPanelVisible, onCommentPanelVisibilityChanged, selection]);
+
   const title = commentPanelVisible
     ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
     : commentCount
-    ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.availableComments', { count: commentCount })
-    : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
+      ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.availableComments', { count: commentCount })
+      : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
 
   return selection.length > 0 ? (
     <button type="button" title={title} className="btn btn-icon-light position-relative" onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}>

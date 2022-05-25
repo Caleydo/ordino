@@ -1,14 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { viewsReducers } from './viewsReducer';
 import { workbenchReducers } from './workbenchReducer';
-const initialState = {
+export const initialOrdinoState = {
     workbenches: [],
     focusWorkbenchIndex: 0,
     colorMap: {},
 };
 const ordinoSlice = createSlice({
     name: 'ordino',
-    initialState,
+    initialState: initialOrdinoState,
     reducers: {
         ...viewsReducers,
         ...workbenchReducers,

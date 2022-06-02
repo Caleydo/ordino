@@ -1,13 +1,8 @@
 import React, { useMemo } from 'react';
+import { I18nextManager } from 'tdp_core';
+import _ from 'lodash';
 import { getAllFilters } from '../../store/storeUtils';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { I18nextManager } from 'tdp_core';
-function equalArrays(a, b) {
-    if (a.length !== b.length) {
-        return false;
-    }
-    return a.every((ai, i) => ai === b[i]);
-}
 export function FilterAndSelected() {
     const ordino = useAppSelector((state) => state.ordino);
     const dataLength = useMemo(() => {
@@ -19,8 +14,11 @@ export function FilterAndSelected() {
     const selectedLength = useMemo(() => {
         return ordino.workbenches[ordino.focusWorkbenchIndex].selection.length;
     }, [ordino.focusWorkbenchIndex, ordino.workbenches]);
+    const arraysNotEqual = useMemo(() => {
+        return _.isEqual(ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val);
+    }, [ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val]);
     return (React.createElement("div", { className: "align-middle m-1 d-flex align-items-center" },
-        !equalArrays(ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val) ? (React.createElement("i", { className: "fa fa-filter", "aria-hidden": "true", title: I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
+        arraysNotEqual ? (React.createElement("i", { className: "fa fa-filter", "aria-hidden": "true", title: I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
                 entityName: ordino.workbenches[ordino.focusWorkbenchIndex].name,
                 globalQueryName: ordino.globalQuery.name,
                 selectedValues: ordino.appliedQueryFilter.val.join(','),

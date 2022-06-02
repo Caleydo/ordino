@@ -13,10 +13,6 @@ export const workbenchReducers = {
     }>,
   ) {
     state.focusWorkbenchIndex = 0;
-    // state.workbenches.splice(0, state.workbenches.length);
-    // state.workbenches.push(action.payload.workbench);
-    // state.globalQuery = action.payload.globalQuery;
-    // state.appliedQueryFilter = action.payload.appliedQueryFilter;
     state.workbenches = [action.payload.workbench];
     state.globalQuery = action.payload.globalQuery;
     state.appliedQueryFilter = action.payload.appliedQueryFilter;

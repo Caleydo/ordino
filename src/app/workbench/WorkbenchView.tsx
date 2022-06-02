@@ -25,13 +25,13 @@ export function WorkbenchView({
   removeCallback: (path: MosaicPath) => void;
 }) {
   const ordino = useAppSelector((state) => state.ordino);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
-  const { value } = useAsync(views, []);
+  const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
   const availableViews = useMemo(() => {
-    return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : [];
+    return value || [];
   }, [value]);
+
+  console.log(availableViews);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

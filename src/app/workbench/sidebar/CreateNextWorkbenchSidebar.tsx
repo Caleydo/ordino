@@ -4,6 +4,7 @@ import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench, setCreateNe
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { findWorkbenchTransitions, OrdinoVisynViewPluginDesc } from '../../../views';
+import { getVisynView } from '../WorkbenchView';
 
 export interface ICreateNextWorkbenchSidebarProps {
   workbench: IWorkbench;
@@ -31,9 +32,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
     }
   };
 
-  const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
-
-  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
+  const { status, value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
 
   const availableEntities: { idType: string; label: string }[] = useMemo(() => {
     if (status !== 'success') {
@@ -50,6 +49,8 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
 
     return entities;
   }, [status, availableViews]);
+
+  console.log(availableViews);
 
   const selectionString = useMemo(() => {
     const prevFormatting = workbench.formatting;
@@ -68,7 +69,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
     <div className="ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
       {status === 'success' ? (
         <div className="d-flex flex-column">
-          {availableEntities.map((e) => {
+          {availableViews.map((e) => {
             return (
               <div key={`${e.idType}Box`} className="entityJumpBox p-1 mb-2 rounded">
                 <div className="d-flex flex-column" style={{ justifyContent: 'space-between' }}>
@@ -99,7 +100,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                         selectedMappings,
                         views: [
                           {
-                            name: selectedView.itemName,
+                            name: selectedView.name,
                             id: selectedView.id,
                             parameters: { prevSelection: workbench.selection, selectedMappings },
                             uniqueId: (Math.random() + 1).toString(36).substring(7),
@@ -121,7 +122,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                     }, 0);
                   }}
                 >
-                  {availableViews
+                  {/* {availableViews
                     .filter((v) => v.itemIDType === e.idType)
                     .map((v) => {
                       return (
@@ -155,14 +156,14 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                           })}
                         </div>
                       );
-                    })}
-                  <button
+                    })} */}
+                  {/* <button
                     type="submit"
                     style={{ color: 'white', backgroundColor: ordino.colorMap[e.idType] }}
                     className={`mt-1 w-100 chevronButton btn btn-sm align-middle ${relationList.length === 0 ? 'disabled' : ''}`}
                   >
                     Create {e.label} workbench
-                  </button>
+                  </button> */}
                 </form>
               </div>
             );

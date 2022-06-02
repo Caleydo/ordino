@@ -15,11 +15,15 @@ import {
 
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
+import { IViewPluginDesc, useAsync } from 'tdp_core';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { DetailsSidebar } from './sidebar/DetailsSidebar';
-import { WorkbenchView } from './WorkbenchView';
+import { getVisynView, WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
-import { CreateNextWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
+import { setView } from '../../store/ordinoSlice';
+import { EViewChooserMode, ViewChooser } from '../ViewChooser';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -34,6 +38,8 @@ export interface IWorkbenchViewsProps {
 
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
+  const dispatch = useAppDispatch();
+
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
   const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
 
@@ -103,16 +109,12 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     setMosaicDrag(true);
   }, []);
 
-  const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
-  const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
+  // const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
   return (
     <div className="position-relative workbenchWrapper d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
-        {showLeftSidebar ? (
-          <div className="d-flex" style={{ width: '400px' }}>
-            <DetailsSidebar workbench={ordino.workbenches[index]} />
-          </div>
-        ) : null}
+        <WorkbenchUtilsSidebar idk="5" />
+
         <div ref={setRef} className="d-flex flex-grow-1">
           <Mosaic<string>
             renderTile={(id, path) => {
@@ -127,11 +129,6 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             value={ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId}
           />
         </div>
-        {showRightSidebar ? (
-          <div className="d-flex" style={{ width: '400px' }}>
-            <CreateNextWorkbenchSidebar workbench={ordino.workbenches[index]} />
-          </div>
-        ) : null}
       </div>
     </div>
   );

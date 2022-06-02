@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Workbench } from './Workbench';
+import { Workbench } from './workbench/Workbench';
 import { useAppSelector } from '../hooks';
 import { EWorkbenchType } from './workbench/WorkbenchViews';
 

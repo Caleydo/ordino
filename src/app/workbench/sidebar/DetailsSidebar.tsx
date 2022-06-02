@@ -29,7 +29,7 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
   }, [ordino.workbenches, workbench.index]);
 
   return (
-    <div className="me-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+    <div className="me-0" style={{ width: '250px' }}>
       {status === 'success' ? (
         <div className="d-flex flex-column">
           <div className="p-1 mb-2 rounded">

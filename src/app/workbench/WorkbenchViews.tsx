@@ -15,13 +15,9 @@ import {
 
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
-import { IViewPluginDesc, useAsync } from 'tdp_core';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { DetailsSidebar } from './sidebar/DetailsSidebar';
-import { getVisynView, WorkbenchView } from './WorkbenchView';
+import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
-import { setView } from '../../store/ordinoSlice';
-import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
 
@@ -109,12 +105,9 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     setMosaicDrag(true);
   }, []);
 
-  // const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
   return (
-    <div className="position-relative workbenchWrapper d-flex flex-grow-1">
+    <div className="position-relative d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
-        <WorkbenchUtilsSidebar idk="5" />
-
         <div ref={setRef} className="d-flex flex-grow-1">
           <Mosaic<string>
             renderTile={(id, path) => {

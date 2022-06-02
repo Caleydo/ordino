@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addView, EWorkbenchDirection, addWorkbench, changeFocus, setCreateNextWorkbenchSidebarOpen } from '../../store';
 import { isVisynRankingViewDesc } from '../../views';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
+import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
 import { getVisynView } from './WorkbenchView';
 import { EWorkbenchType, WorkbenchViews } from './WorkbenchViews';
 export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
@@ -11,8 +12,9 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const dispatch = useAppDispatch();
     const { status, value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
     return (React.createElement("div", { className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
+        workbench.index === ordino.focusWorkbenchIndex ? React.createElement(WorkbenchUtilsSidebar, { workbench: workbench }) : null,
         React.createElement(WorkbenchViews, { index: workbench.index, type: type }),
-        React.createElement("div", { className: "d-flex me-1" },
+        workbench.index === ordino.focusWorkbenchIndex ? (React.createElement("div", { className: "d-flex me-1", style: { borderLeft: '1px solid lightgray' } },
             React.createElement(ViewChooser, { views: availableViews || [], selectedView: null, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
                     if (isVisynRankingViewDesc(newView)) {
                         const defaultMapping = {
@@ -65,6 +67,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                     //     viewName: newView.name,
                     //   }),
                     // );
-                }, isEmbedded: false }))));
+                }, isEmbedded: false }))) : null));
 }
 //# sourceMappingURL=Workbench.js.map

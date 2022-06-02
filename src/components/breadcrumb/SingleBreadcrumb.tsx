@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
-import { AddViewButton } from './AddViewButton';
 import { changeFocus, IWorkbench, removeWorkbench, setCommentsOpen } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
 import { ShowDetailsSwitch } from './ShowDetailsSwitch';
@@ -64,14 +63,11 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         )}
       </div>
 
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: first ? (workbench.index > 0 ? '0px' : '20px') : '4px' }}>
+      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: workbench?.index === 0 ? '5px' : '20px' }}>
         {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
-          <>
-            {workbench.index > 0 ? <ShowDetailsSwitch /> : null}
-            <p className="chevronText flex-grow-1">
-              {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
-            </p>
-          </>
+          <p className="chevronText flex-grow-1">
+            {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
+          </p>
         ) : null}
       </div>
       <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ right: '8px' }}>

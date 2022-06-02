@@ -3,10 +3,9 @@ import { Corner, createRemoveUpdate, getNodeAtPath, getOtherDirection, getPathTo
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
-import { CreateNextWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 export var EWorkbenchType;
 (function (EWorkbenchType) {
     EWorkbenchType["PREVIOUS"] = "t-previous";
@@ -16,6 +15,7 @@ export var EWorkbenchType;
 })(EWorkbenchType || (EWorkbenchType = {}));
 export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
+    const dispatch = useAppDispatch();
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
     const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
     const [mosaicState, setMosaicState] = useState(views[0].uniqueId);
@@ -71,12 +71,8 @@ export function WorkbenchViews({ index, type }) {
         setMosaicState(rootNode);
         setMosaicDrag(true);
     }, []);
-    const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
-    const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
-    return (React.createElement("div", { className: "position-relative workbenchWrapper d-flex flex-grow-1" },
+    return (React.createElement("div", { className: "position-relative d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
-            showLeftSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
-                React.createElement(DetailsSidebar, { workbench: ordino.workbenches[index] }))) : null,
             React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" },
                 React.createElement(Mosaic, { renderTile: (id, path) => {
                         const currView = views.find((v) => v.uniqueId === id);
@@ -84,8 +80,6 @@ export function WorkbenchViews({ index, type }) {
                             return React.createElement(WorkbenchView, { removeCallback: removeCallback, mosaicDrag: mosaicDrag, workbenchIndex: index, path: path, view: currView });
                         }
                         return null;
-                    }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId })),
-            showRightSidebar ? (React.createElement("div", { className: "d-flex", style: { width: '400px' } },
-                React.createElement(CreateNextWorkbenchSidebar, { workbench: ordino.workbenches[index] }))) : null)));
+                    }, onChange: onChangeCallback, onRelease: () => setMosaicDrag(false), value: ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId })))));
 }
 //# sourceMappingURL=WorkbenchViews.js.map

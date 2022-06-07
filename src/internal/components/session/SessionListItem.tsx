@@ -22,7 +22,7 @@ export function SessionListItem({ desc, selectSession, children }: ISessionListI
         <button
           type="button"
           title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession')}
-          data-testid="continueSession-button"
+          data-testid="continue-session-button"
           disabled={selectSession == null}
           className="ps-0 btn btn-link align-self-start text-ordino-button-primary"
           onClick={(event) => selectSession(event, desc)}

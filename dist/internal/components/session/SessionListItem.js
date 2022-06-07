@@ -6,7 +6,7 @@ export function SessionListItem({ desc, selectSession, children }) {
     const me = UserSession.getInstance().currentUserNameOrAnonymous();
     return (React.createElement("div", { className: "row dropdown-parent session-item ms-0 mb-1 me-1 align-items-start", "data-testid": desc.id },
         React.createElement("div", { className: "d-flex px-0 flex-column align-items-start col-md-11" },
-            React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession'), "data-testid": "continueSession-button", disabled: selectSession == null, className: "ps-0 btn btn-link align-self-start text-ordino-button-primary", onClick: (event) => selectSession(event, desc) },
+            React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession'), "data-testid": "continue-session-button", disabled: selectSession == null, className: "ps-0 btn btn-link align-self-start text-ordino-button-primary", onClick: (event) => selectSession(event, desc) },
                 React.createElement("i", { className: `me-2 fas ${desc.local ? 'fa-history' : 'fa-cloud'}` }),
                 desc.name),
             desc.description ? React.createElement("p", { className: "ms-4" },

@@ -6,6 +6,7 @@ import { workbenchReducers } from './workbenchReducer';
 const initialState: IOrdinoAppState = {
   workbenches: [],
   focusWorkbenchIndex: 0,
+  midTransition: false,
   colorMap: {},
 };
 
@@ -26,6 +27,7 @@ const ordinoSlice = createSlice({
     },
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusWorkbenchIndex = action.payload.index;
+      state.midTransition = false;
     },
   },
 });

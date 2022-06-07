@@ -5,7 +5,7 @@ import { DetailsSidebar } from './DetailsSidebar';
 export function WorkbenchUtilsSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
-    const [openedTab, setOpenedTab] = useState(null);
+    const [openedTab, setOpenedTab] = useState(workbench.index > 0 ? 'mapping' : null);
     const openedTabComponent = useMemo(() => {
         switch (openedTab) {
             case 'add': {

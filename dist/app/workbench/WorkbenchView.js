@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IDType, isVisynDataViewDesc, isVisynSimpleViewDesc, useAsync, ViewUtils } from 'tdp_core';
+import { IDType, useAsync, ViewUtils } from 'tdp_core';
 import { useMemo } from 'react';
 import { WorkbenchGenericView } from './WorkbenchGenericView';
 import { WorkbenchEmptyView } from './WorkbenchEmptyView';
@@ -9,12 +9,11 @@ export function getVisynView(entityId) {
 }
 export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, }) {
     const ordino = useAppSelector((state) => state.ordino);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
-    const { value } = useAsync(views, []);
+    const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
     const availableViews = useMemo(() => {
-        return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : [];
+        return value || [];
     }, [value]);
+    console.log(availableViews);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag })) : (React.createElement(WorkbenchGenericView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag }))));

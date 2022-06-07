@@ -59,7 +59,10 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
             <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
           )
         ) : (
-          <i className="flex-grow-1 fas fa-plus" />
+          <div className="flex-grow-1 chevronText d-flex align-items-center">
+            <i className="fas fa-cog pe-2" />
+            <p className="text-nowrap w-100 flex-grow-1 m-0 p-0">Add Views</p>
+          </div>
         )}
       </div>
 

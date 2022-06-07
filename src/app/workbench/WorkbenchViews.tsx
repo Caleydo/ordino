@@ -54,10 +54,11 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   React.useEffect(() => {
     // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
     if (views.length > mosaicViewCount) {
-      const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
+      const path = getPathToCorner(mosaicState, ordino.midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
       const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<string>;
       const destination = getNodeAtPath(mosaicState, path) as MosaicNode<string>;
-      const direction: MosaicDirection = parent ? getOtherDirection(parent.direction) : 'row';
+
+      const direction: MosaicDirection = parent && parent.direction ? getOtherDirection(parent.direction) : ordino.midTransition ? 'column' : 'row';
       const newViewId: string = views[views.length - 1].uniqueId; // assumes that the new view is appended to the array
 
       let first: MosaicNode<string>;
@@ -66,8 +67,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
         first = destination;
         second = newViewId;
       } else {
-        first = newViewId;
-        second = destination;
+        first = ordino.midTransition ? destination : newViewId;
+        second = ordino.midTransition ? newViewId : destination;
       }
 
       const newNode = updateTree(mosaicState, [
@@ -86,7 +87,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
       setMosaicState(newNode);
       setMosaicViewCount(views.length);
     }
-  }, [mosaicState, mosaicViewCount, views]);
+  }, [mosaicState, mosaicViewCount, views, ordino.midTransition]);
 
   const removeCallback = useCallback(
     (path: MosaicPath) => {

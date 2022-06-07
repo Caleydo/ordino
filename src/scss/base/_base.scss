@@ -32,7 +32,7 @@
   position: relative;
   transition: width .7s ease;
   overflow: hidden;
-
+  
   &.start.t-focus {
     width: $workbench-width;
   }
@@ -41,9 +41,26 @@
     border-right: none;
   }
 
+  &.transition.t-context {
+    border-right: 2px solid $gray-700;
+    width: 50vw;
+  }
+
+  &.transition.t-focus {
+    width: 50vw;
+    border-right: 2px solid $gray-700;
+  }
+
+  &.transition.t-next {
+    width: 50vw;
+  }
+  &.transition.t-previous {
+    width: 50vw;
+  }
+
   &.t-context {
     border-right: 2px solid $gray-700;
-    width: $workbench-context-width;
+    width: 15vw;
   }
 
   &.t-focus {

@@ -8,7 +8,7 @@ export function WorkbenchUtilsSidebar({ workbench }: { workbench: IWorkbench }) 
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
-  const [openedTab, setOpenedTab] = useState<string>(null);
+  const [openedTab, setOpenedTab] = useState<string>(workbench.index > 0 ? 'mapping' : null);
 
   const openedTabComponent: React.ReactElement = useMemo(() => {
     switch (openedTab) {

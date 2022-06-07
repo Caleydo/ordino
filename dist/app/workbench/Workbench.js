@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { addView, EWorkbenchDirection, addWorkbench, changeFocus, setCreateNextWorkbenchSidebarOpen } from '../../store';
+import { addView, EWorkbenchDirection, addWorkbench } from '../../store';
 import { isVisynRankingViewDesc } from '../../views';
 import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
@@ -11,8 +11,8 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
     const { status, value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
-    return (React.createElement("div", { className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
-        workbench.index === ordino.focusWorkbenchIndex ? React.createElement(WorkbenchUtilsSidebar, { workbench: workbench }) : null,
+    return (React.createElement("div", { className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
+        workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? React.createElement(WorkbenchUtilsSidebar, { workbench: workbench }) : null,
         React.createElement(WorkbenchViews, { index: workbench.index, type: type }),
         workbench.index === ordino.focusWorkbenchIndex ? (React.createElement("div", { className: "d-flex me-1", style: { borderLeft: '1px solid lightgray' } },
             React.createElement(ViewChooser, { views: availableViews || [], selectedView: null, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
@@ -43,10 +43,10 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                             index: workbench.index + 1,
                             selection: [],
                         }));
-                        setTimeout(() => {
-                            dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
-                            dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
-                        }, 0);
+                        // setTimeout(() => {
+                        //   dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
+                        //   dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
+                        // }, 0);
                     }
                     else {
                         dispatch(addView({

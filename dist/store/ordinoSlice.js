@@ -4,6 +4,7 @@ import { workbenchReducers } from './workbenchReducer';
 const initialState = {
     workbenches: [],
     focusWorkbenchIndex: 0,
+    midTransition: false,
     colorMap: {},
 };
 const ordinoSlice = createSlice({
@@ -22,6 +23,7 @@ const ordinoSlice = createSlice({
         },
         changeFocus(state, action) {
             state.focusWorkbenchIndex = action.payload.index;
+            state.midTransition = false;
         },
     },
 });

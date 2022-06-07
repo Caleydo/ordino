@@ -4,6 +4,7 @@ export const workbenchReducers = {
         state.workbenches = [action.payload];
     },
     addWorkbench(state, action) {
+        state.midTransition = true;
         if (state.workbenches.length > action.payload.index) {
             state.workbenches.splice(action.payload.index);
         }

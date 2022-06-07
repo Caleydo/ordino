@@ -1,9 +1,9 @@
-import React, { Fragment, useMemo, useState } from 'react';
-import { IDTypeManager, useAsync } from 'tdp_core';
+import React, { useMemo, useState } from 'react';
+import { useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, addWorkbench, setCreateNextWorkbenchSidebarOpen } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { findWorkbenchTransitions } from '../../../views';
+import { getVisynView } from '../WorkbenchView';
 export function CreateNextWorkbenchSidebar({ workbench }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -18,8 +18,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
             setRelationList(arr);
         }
     };
-    const idType = useMemo(() => IDTypeManager.getInstance().resolveIdType(workbench.itemIDType), [workbench.itemIDType]);
-    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [workbench.itemIDType]);
+    const { status, value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
     const availableEntities = useMemo(() => {
         if (status !== 'success') {
             return null;
@@ -32,6 +31,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
         });
         return entities;
     }, [status, availableViews]);
+    console.log(availableViews);
     const selectionString = useMemo(() => {
         const prevFormatting = workbench.formatting;
         const currString = workbench.selection
@@ -42,7 +42,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
             .join(', ');
         return currString.length < 202 ? currString : `${currString.slice(0, 200)}...`;
     }, [workbench.data, workbench.formatting, workbench.selection]);
-    return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableEntities.map((e) => {
+    return (React.createElement("div", { className: "ms-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1" }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" }, availableViews.map((e) => {
         return (React.createElement("div", { key: `${e.idType}Box`, className: "entityJumpBox p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
                 React.createElement("p", { className: "mt-1 mb-1" },
@@ -65,7 +65,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                         selectedMappings,
                         views: [
                             {
-                                name: selectedView.itemName,
+                                name: selectedView.name,
                                 id: selectedView.id,
                                 parameters: { prevSelection: workbench.selection, selectedMappings },
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
@@ -84,29 +84,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                         dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
                         dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
                     }, 0);
-                } },
-                availableViews
-                    .filter((v) => v.itemIDType === e.idType)
-                    .map((v) => {
-                    var _a;
-                    return (React.createElement("div", { key: `${v.name}-mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
-                        const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
-                        return (React.createElement(Fragment, { key: `${name}-group` },
-                            React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
-                            columns.map((col) => {
-                                return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
-                                    React.createElement("input", { onChange: () => {
-                                            relationListCallback({ targetEntity: e.idType, mappingEntity: entity, mappingSubtype: col.columnName });
-                                            setSelectedView(v);
-                                        }, className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.name}Check` }),
-                                    React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.name}Check` }, col.label)));
-                            })));
-                    })));
-                }),
-                React.createElement("button", { type: "submit", style: { color: 'white', backgroundColor: ordino.colorMap[e.idType] }, className: `mt-1 w-100 chevronButton btn btn-sm align-middle ${relationList.length === 0 ? 'disabled' : ''}` },
-                    "Create ",
-                    e.label,
-                    " workbench"))));
+                } })));
     }))) : null));
 }
 //# sourceMappingURL=CreateNextWorkbenchSidebar.js.map

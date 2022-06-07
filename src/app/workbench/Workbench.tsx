@@ -21,10 +21,12 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
 
   return (
     <div
-      className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`}
+      className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${
+        ordino.focusWorkbenchIndex === 0 ? 'start' : ''
+      }`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
-      {workbench.index === ordino.focusWorkbenchIndex ? <WorkbenchUtilsSidebar workbench={workbench} /> : null}
+      {workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? <WorkbenchUtilsSidebar workbench={workbench} /> : null}
 
       <WorkbenchViews index={workbench.index} type={type} />
 
@@ -67,10 +69,10 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                   }),
                 );
 
-                setTimeout(() => {
-                  dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
-                  dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
-                }, 0);
+                // setTimeout(() => {
+                //   dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
+                //   dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
+                // }, 0);
               } else {
                 dispatch(
                   addView({

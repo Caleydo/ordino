@@ -25,8 +25,8 @@ export function WorkbenchUtilsSidebar({ workbench }) {
             }
         }
     }, [openedTab, workbench]);
-    return (React.createElement("div", { className: "d-flex p-1", style: { borderRight: '1px solid lightgray' } },
-        React.createElement("div", { className: "d-flex flex-column" },
+    return (React.createElement("div", { className: "d-flex p-1", style: { borderRight: !openedTab ? '' : '1px solid lightgray' } },
+        React.createElement("div", { className: "d-flex flex-column pe-1 me-1", style: { borderRight: '1px solid lightgray' } },
             React.createElement("button", { className: `btn shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add')) },
                 React.createElement("i", { className: "fas fa-plus-circle" })),
             workbench.index > 0 ? (React.createElement("button", { className: `btn shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping')) },

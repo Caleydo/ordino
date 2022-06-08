@@ -27,7 +27,7 @@ export function DetailsSidebar({ workbench }) {
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
                 React.createElement("p", { className: "mb-1" },
                     React.createElement("span", { className: "entityText" }, "Selected "),
-                    React.createElement("span", { className: "p-1 entityText", style: { color: '#e9ecef', backgroundColor: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] } },
+                    React.createElement("span", { className: "entityText", style: { color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] } },
                         ordino.workbenches[workbench.index - 1].name,
                         "s")),
                 React.createElement("p", { className: "mb-2 selectedPrevText" }, selectionString)),
@@ -40,7 +40,7 @@ export function DetailsSidebar({ workbench }) {
                     return (React.createElement(Fragment, { key: `${entity}-${name}` },
                         React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
                         columns.map((col) => {
-                            return (React.createElement("div", { key: `${col.label}Column`, className: "form-check" },
+                            return (React.createElement("div", { key: `${col.label}Column`, className: "form-check ms-2" },
                                 React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity), onChange: () => dispatch(changeSelectedMappings({
                                         workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },

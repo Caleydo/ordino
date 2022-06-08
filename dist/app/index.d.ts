@@ -1,3 +1,3 @@
 export * from './Ordino';
-export * from './ViewChooser';
+export * from './viewChooser/ViewChooser';
 //# sourceMappingURL=index.d.ts.map

@@ -22,7 +22,6 @@ import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
 
 export interface IWorkbenchGenericViewProps {

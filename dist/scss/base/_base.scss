@@ -43,7 +43,7 @@
 
   &.transition.t-context {
     border-right: 2px solid $gray-700;
-    width: 50vw;
+    width: $workbench-context-width;
   }
 
   &.transition.t-focus {
@@ -55,12 +55,12 @@
     width: 50vw;
   }
   &.transition.t-previous {
-    width: 50vw;
+    width: $workbench-context-width;
   }
 
   &.t-context {
     border-right: 2px solid $gray-700;
-    width: 15vw;
+    width: $workbench-context-width;
   }
 
   &.t-focus {

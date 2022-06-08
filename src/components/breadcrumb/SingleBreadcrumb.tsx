@@ -41,6 +41,8 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     [workbench?.index, dispatch],
   );
 
+  console.log(workbench);
+
   return (
     <div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
       <div className="position-absolute chevronDiv top-50 start-50 translate-middle d-flex">

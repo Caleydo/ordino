@@ -4,7 +4,7 @@ import { CollapsedBreadcrumb } from './CollapsedBreadcrumb';
 import { SingleBreadcrumb } from './SingleBreadcrumb';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { changeFocus, setCreateNextWorkbenchSidebarOpen } from '../../store';
+import { changeFocus, setCreateNextWorkbenchSidebarOpen, setTransition } from '../../store';
 
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 
@@ -81,13 +81,10 @@ export function Breadcrumb() {
           <SingleBreadcrumb
             workbench={ordino.workbenches[ordino.focusWorkbenchIndex]}
             color={ordino.colorMap[ordino.workbenches[ordino.focusWorkbenchIndex].entityId]}
-            flexWidth={(ordino.midTransition ? 45 : 70) + 5 * (2 - endFlexNum)}
+            flexWidth={ordino.midTransition ? (startFlexNum === 0 ? 50 : 35) : 75 + 5 * (2 - endFlexNum)}
             first={ordino.focusWorkbenchIndex === 0}
-            onClick={null}
+            onClick={ordino.midTransition ? () => dispatch(setTransition(false)) : null}
           />
-
-          {/* Always show the settings panel next to the current workbench */}
-          {/* <SingleBreadcrumb workbench={null} color="gray" flexWidth={10} first={false} onClick={null} /> */}
 
           {/* Show the next workbench chevron, if there is one. */}
           {ordino.focusWorkbenchIndex + 1 < ordino.workbenches.length ? (

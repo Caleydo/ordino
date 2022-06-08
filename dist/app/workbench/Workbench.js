@@ -3,7 +3,7 @@ import { useAsync } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addView, EWorkbenchDirection, addWorkbench } from '../../store';
 import { isVisynRankingViewDesc } from '../../views';
-import { EViewChooserMode, ViewChooser } from '../ViewChooser';
+import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
 import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
 import { getVisynView } from './WorkbenchView';
 import { EWorkbenchType, WorkbenchViews } from './WorkbenchViews';

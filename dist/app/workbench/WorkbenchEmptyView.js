@@ -6,7 +6,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { removeView, setView } from '../../store';
 import { findViewIndex } from '../../store/storeUtils';
-import { EViewChooserMode, ViewChooser } from '../ViewChooser';
+import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
 export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }) {
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);

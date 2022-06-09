@@ -55,6 +55,9 @@
       "availableComments_plural": "{{count}} comments are available for your selection",
       "workbenchName": "{{workbenchName}} Workbench",
       "appliedQueryFilterTitle": "Entity {{entityName}} filtered by {{globalQueryName}}: {{selectedValues}}"
+    },
+    "message": {
+      "retry": "Retry"
     }
   }
 }

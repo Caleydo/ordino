@@ -19,13 +19,13 @@ export function FilterAndSelected() {
     return ordino.workbenches[ordino.focusWorkbenchIndex].selection.length;
   }, [ordino.focusWorkbenchIndex, ordino.workbenches]);
 
-  const arraysNotEqual = useMemo(() => {
+  const isQueryFilterEqual = useMemo(() => {
     return _.isEqual(ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val);
   }, [ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val]);
 
   return (
     <div className="align-middle m-1 d-flex align-items-center">
-      {arraysNotEqual ? (
+      {!isQueryFilterEqual ? (
         <i
           className="fa fa-filter"
           aria-hidden="true"

@@ -1,15 +1,16 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { IColumnDesc } from 'lineupjs';
 import { IRow } from 'tdp_core';
-import { EWorkbenchDirection, ISelectedMapping, IWorkbench, IOrdinoAppState } from './interfaces';
+import { IOrdinoGlobalQuery, IQueryFilter } from '../base';
+import { EWorkbenchDirection, ISelectedMapping, IWorkbench } from './interfaces';
 
 export const workbenchReducers = {
   addFirstWorkbench(
     state,
     action: PayloadAction<{
       workbench: IWorkbench;
-      globalQuery: IOrdinoAppState['globalQuery'];
-      appliedQueryFilter: IOrdinoAppState['appliedQueryFilter'];
+      globalQuery: IOrdinoGlobalQuery;
+      appliedQueryFilter: IQueryFilter;
     }>,
   ) {
     state.focusWorkbenchIndex = 0;

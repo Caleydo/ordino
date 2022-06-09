@@ -61,20 +61,8 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     index: number;
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbench: IWorkbench;
-    globalQuery: {
-        id: string;
-        name: string;
-        filter: {
-            col: string;
-            op: string;
-            val: (string | number)[];
-        };
-    };
-    appliedQueryFilter: {
-        col: string;
-        op: string;
-        val: (string | number)[];
-    };
+    globalQuery: import("..").IOrdinoGlobalQuery;
+    appliedQueryFilter: import("..").IQueryFilter;
 }, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     firstViewIndex: number;

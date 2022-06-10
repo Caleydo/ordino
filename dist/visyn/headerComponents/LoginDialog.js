@@ -19,7 +19,7 @@ export function LoginDialog({ show = false, title = 'Please Login', children, ha
         modalRef.current = element;
         ref(element);
     }, [ref]);
-    return (React.createElement("div", { ref: setRef, className: `modal fade `, id: "loginDialog", tabIndex: -1, role: "dialog", "aria-labelledby": "loginDialog", "data-keyboard": "false", "data-bs-backdrop": "static" },
+    return (React.createElement("div", { ref: setRef, className: "modal fade", id: "loginDialog", tabIndex: -1, role: "dialog", "aria-labelledby": "loginDialog", "data-bs-keyboard": "false", "data-bs-backdrop": "static" },
         React.createElement("div", { className: "modal-dialog modal-sm" },
             React.createElement("div", { className: "modal-content" },
                 React.createElement("div", { className: "modal-header" },

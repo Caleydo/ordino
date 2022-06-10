@@ -54,12 +54,12 @@ export function LoginDialog({ show = false, title = 'Please Login', children, ha
   return (
     <div
       ref={setRef}
-      className={`modal fade `}
+      className="modal fade"
       id="loginDialog"
       tabIndex={-1}
       role="dialog"
       aria-labelledby="loginDialog"
-      data-keyboard="false"
+      data-bs-keyboard="false"
       data-bs-backdrop="static"
     >
       <div className="modal-dialog modal-sm">

@@ -10,7 +10,7 @@ export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
     <form className="form-signin" action="/login" method="post">
       <div className="mb-3">
         <label className="form-label" htmlFor="login_username">
-          ${I18nextManager.getInstance().i18n.t('phovea:security_flask.username')}
+          {I18nextManager.getInstance().i18n.t('phovea:security_flask.username')}
         </label>
         <input
           type="text"
@@ -24,8 +24,7 @@ export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
       </div>
       <div className="mb-3">
         <label className="form-label" htmlFor="login_password">
-          {' '}
-          ${I18nextManager.getInstance().i18n.t('phovea:security_flask.password')}
+          {I18nextManager.getInstance().i18n.t('phovea:security_flask.password')}
         </label>
         <input
           type="password"
@@ -46,8 +45,7 @@ export function VisynLoginForm({ onLogin }: IVisynLoginFormProps) {
           onLogin(formData.get('username') as string, formData.get('password') as string);
         }}
       >
-        {' '}
-        ${I18nextManager.getInstance().i18n.t('phovea:security_flask.submit')}
+        {I18nextManager.getInstance().i18n.t('phovea:security_flask.submit')}
       </button>
     </form>
   );

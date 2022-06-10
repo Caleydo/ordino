@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useBSModal } from 'tdp_core';
+import { I18nextManager, useBSModal } from 'tdp_core';
 
 interface ILoginDialogProps {
   /**
@@ -28,7 +28,13 @@ interface ILoginDialogProps {
 /**
  * Basic login dialog
  */
-export function LoginDialog({ show = false, title = 'Please Login', children, hasWarning, hasError }: ILoginDialogProps) {
+export function LoginDialog({
+  show = false,
+  title = I18nextManager.getInstance().i18n.t('phovea:security_flask.title'),
+  children,
+  hasWarning,
+  hasError,
+}: ILoginDialogProps) {
   const [ref, instance] = useBSModal();
   const modalRef = useRef<HTMLElement>(null);
 

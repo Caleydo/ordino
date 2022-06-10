@@ -24,6 +24,6 @@ interface ILoginDialogProps {
 /**
  * Basic login dialog
  */
-export declare function LoginDialog({ show, title, children, hasWarning, hasError }: ILoginDialogProps): JSX.Element;
+export declare function LoginDialog({ show, title, children, hasWarning, hasError, }: ILoginDialogProps): JSX.Element;
 export {};
 //# sourceMappingURL=LoginDialog.d.ts.map

@@ -1,11 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { DetailsSidebar } from './DetailsSidebar';
-export function WorkbenchUtilsSidebar({ workbench }) {
+export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
     const ordino = useAppSelector((state) => state.ordino);
-    const dispatch = useAppDispatch();
-    const [openedTab, setOpenedTab] = useState(workbench.index > 0 && ordino.midTransition ? 'mapping' : null);
+    const [openedTab, setOpenedTab] = useState(openTab);
     const openedTabComponent = useMemo(() => {
         switch (openedTab) {
             case 'add': {

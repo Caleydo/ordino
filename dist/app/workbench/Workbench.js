@@ -12,7 +12,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const dispatch = useAppDispatch();
     const { status, value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
     return (React.createElement("div", { className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
-        workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? React.createElement(WorkbenchUtilsSidebar, { workbench: workbench }) : null,
+        workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (React.createElement(WorkbenchUtilsSidebar, { workbench: workbench, openTab: workbench.index > 0 && ordino.midTransition ? 'mapping' : null })) : null,
         React.createElement(WorkbenchViews, { index: workbench.index, type: type }),
         workbench.index === ordino.focusWorkbenchIndex ? (React.createElement("div", { className: "d-flex me-1", style: { borderLeft: '1px solid lightgray' } },
             React.createElement(ViewChooser, { views: availableViews || [], selectedView: null, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {

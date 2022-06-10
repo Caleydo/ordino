@@ -1,14 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
-import { useAppDispatch } from '../../../hooks/useAppDispatch';
 import { DetailsSidebar } from './DetailsSidebar';
 import { IWorkbench } from '../../../store';
 
-export function WorkbenchUtilsSidebar({ workbench }: { workbench: IWorkbench }) {
+export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const ordino = useAppSelector((state) => state.ordino);
-  const dispatch = useAppDispatch();
 
-  const [openedTab, setOpenedTab] = useState<string>(workbench.index > 0 && ordino.midTransition ? 'mapping' : null);
+  const [openedTab, setOpenedTab] = useState<string>(openTab);
 
   const openedTabComponent: React.ReactElement = useMemo(() => {
     switch (openedTab) {

@@ -36,7 +36,7 @@ export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMen
        ${!embedded && !collapsed ? (expand === EExpandMode.RIGHT ? 'expand-right' : 'expand-left') : ''}`, ...collapsedProps },
             React.createElement("div", { className: `view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}` },
                 showHeader && (React.createElement(ViewChooserHeader, null,
-                    React.createElement("div", { className: "text-gray h3" }, "Add Views"),
+                    React.createElement("div", { className: "text-gray h4" }, "Add Views"),
                     showBurgerMenu ? React.createElement(BurgerButton, { onClick: () => setEmbedded(!embedded) }) : null,
                     !collapsed && showFilter ? React.createElement(ViewChooserFilter, { views: views, setFilteredViews: setFilteredViews }) : null)),
                 collapsed ? (React.createElement("div", { className: "selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center" },

@@ -19,7 +19,6 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',

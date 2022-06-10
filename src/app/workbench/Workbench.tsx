@@ -26,7 +26,9 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       }`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
-      {workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? <WorkbenchUtilsSidebar workbench={workbench} /> : null}
+      {workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (
+        <WorkbenchUtilsSidebar workbench={workbench} openTab={workbench.index > 0 && ordino.midTransition ? 'mapping' : null} />
+      ) : null}
 
       <WorkbenchViews index={workbench.index} type={type} />
 

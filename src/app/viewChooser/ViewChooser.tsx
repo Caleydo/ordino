@@ -139,7 +139,7 @@ export function ViewChooser({
         <div className={`view-chooser-content bg-white d-flex flex-column justify-content-stretch ${!embedded && !collapsed ? 'shadow' : ''}`}>
           {showHeader && (
             <ViewChooserHeader>
-              <div className="text-gray h3">Add Views</div>
+              <div className="text-gray h4">Add Views</div>
               {showBurgerMenu ? <BurgerButton onClick={() => setEmbedded(!embedded)} /> : null}
               {!collapsed && showFilter ? <ViewChooserFilter views={views} setFilteredViews={setFilteredViews} /> : null}
             </ViewChooserHeader>

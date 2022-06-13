@@ -53,7 +53,11 @@
       "showComments": "Show comments panel",
       "availableComments": "{{count}} comment is available for your selection",
       "availableComments_plural": "{{count}} comments are available for your selection",
-      "workbenchName": "{{workbenchName}} Workbench"
+      "workbenchName": "{{workbenchName}} Workbench",
+      "appliedQueryFilterTitle": "Entity {{entityName}} filtered by {{globalQueryName}}: {{selectedValues}}"
+    },
+    "message": {
+      "retry": "Retry"
     }
   }
 }

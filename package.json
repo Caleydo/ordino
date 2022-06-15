@@ -110,7 +110,7 @@
     "react-select-async-paginate": "^0.5.3",
     "react-spring": "^9.3.2",
     "react-virtualized": "^9.22.3",
-    "tdp_comments": "github:datavisyn/tdp_comments#semver:^10.0.0",
+    "tdp_comments": "git+ssh://git@github.com:datavisyn/tdp_comments#semver:^10.0.0",
     "tdp_core": "^15.0.0"
   },
   "resolutions": {

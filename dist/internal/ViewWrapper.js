@@ -12,7 +12,6 @@ import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
 import { MODE_ANIMATION_TIME } from './constants';
 function generateHash(desc, selection) {
-    // const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}_${BaseUtils.randomId()}`;
     const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
     return `${desc.id}_${s}`;
 }

@@ -12,6 +12,7 @@ import * as $ from 'jquery';
 import 'jquery.scrollto/jquery.scrollTo.js';
 import { MODE_ANIMATION_TIME } from './constants';
 function generateHash(desc, selection) {
+    // const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}_${BaseUtils.randomId()}`;
     const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
     return `${desc.id}_${s}`;
 }
@@ -61,7 +62,7 @@ export class ViewWrapper extends EventHandler {
             this.scrollIntoView();
         };
         // create provenance reference
-        this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection));
+        this.ref = graph.findOrAddObject(ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection)));
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
         this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);

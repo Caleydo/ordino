@@ -1,7 +1,7 @@
 {
   "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "version": "12.0.0",
+  "version": "12.0.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -88,7 +88,7 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "^15.0.0",
+    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-dropzone": "^11.3.1",

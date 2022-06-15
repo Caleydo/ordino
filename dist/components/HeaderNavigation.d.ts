@@ -1,3 +1,4 @@
+/// <reference types="react" />
 interface IHeaderNavigationProps {
     /**
      * Defines if the header is sticky and visible when scrolling the page down

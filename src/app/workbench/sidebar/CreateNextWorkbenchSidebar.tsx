@@ -1,5 +1,5 @@
 import React, { FormEvent, Fragment, useMemo, useState } from 'react';
-import { IDTypeManager, useAsync, ViewUtils } from 'tdp_core';
+import { IDTypeManager, useAsync } from 'tdp_core';
 import { changeFocus, EWorkbenchDirection, IWorkbench, addWorkbench, setCreateNextWorkbenchSidebarOpen } from '../../../store';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
@@ -101,7 +101,12 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                           {
                             name: selectedView.itemName,
                             id: selectedView.id,
-                            parameters: { prevSelection: workbench.selection, selectedMappings },
+                            parameters: {
+                              prevSelection: workbench.selection,
+                              selectedMappings,
+                              globalQuery: ordino.globalQuery,
+                              appliedQueryFilter: ordino.appliedQueryFilter,
+                            },
                             uniqueId: (Math.random() + 1).toString(36).substring(7),
                             filters: [],
                           },

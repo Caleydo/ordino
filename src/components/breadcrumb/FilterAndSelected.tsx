@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react';
+import { I18nextManager } from 'tdp_core';
+import _ from 'lodash';
 import { getAllFilters } from '../../store/storeUtils';
 import { useAppSelector } from '../../hooks/useAppSelector';
 
@@ -17,8 +19,23 @@ export function FilterAndSelected() {
     return ordino.workbenches[ordino.focusWorkbenchIndex].selection.length;
   }, [ordino.focusWorkbenchIndex, ordino.workbenches]);
 
+  const isQueryFilterEqual = useMemo(() => {
+    return _.isEqual(ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val);
+  }, [ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val]);
+
   return (
     <div className="align-middle m-1 d-flex align-items-center">
+      {!isQueryFilterEqual ? (
+        <i
+          className="fa fa-filter"
+          aria-hidden="true"
+          title={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
+            entityName: ordino.workbenches[ordino.focusWorkbenchIndex].name,
+            globalQueryName: ordino.globalQuery.name,
+            selectedValues: ordino.appliedQueryFilter.val.join(','),
+          })}
+        />
+      ) : null}
       <span className="m-1">
         {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusWorkbenchIndex].name}s / {selectedLength}{' '}
         {ordino.workbenches[ordino.focusWorkbenchIndex].name}s selected

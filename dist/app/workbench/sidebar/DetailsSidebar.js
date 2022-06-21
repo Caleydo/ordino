@@ -35,7 +35,7 @@ export function DetailsSidebar({ workbench }) {
                 .filter((v) => v.itemIDType === workbench.entityId)
                 .map((v) => {
                 var _a;
-                return (React.createElement("div", { key: `${v.name}mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
+                return (React.createElement("div", { key: `${v.name}-mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
                     const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                     return (React.createElement(Fragment, { key: `${entity}-${name}` },
                         React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
@@ -44,8 +44,8 @@ export function DetailsSidebar({ workbench }) {
                                 React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity), onChange: () => dispatch(changeSelectedMappings({
                                         workbenchIndex: ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
-                                    })), className: "form-check-input", type: "checkbox", value: "", id: "flexCheckDefault" }),
-                                React.createElement("label", { className: "mappingText form-check-label", htmlFor: "flexCheckDefault" }, col.label)));
+                                    })), className: "form-check-input", type: "checkbox", value: "", id: `${col.label}${v.name}Check` }),
+                                React.createElement("label", { className: "mappingText form-check-label", htmlFor: `${col.label}${v.name}Check` }, col.label)));
                         })));
                 })));
             })))) : null));

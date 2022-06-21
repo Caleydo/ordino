@@ -49,7 +49,7 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
               .filter((v) => v.itemIDType === workbench.entityId)
               .map((v) => {
                 return (
-                  <div key={`${v.name}mapping`}>
+                  <div key={`${v.name}-mapping`}>
                     {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
                       const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                       return (
@@ -71,9 +71,9 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
                                   className="form-check-input"
                                   type="checkbox"
                                   value=""
-                                  id="flexCheckDefault"
+                                  id={`${col.label}${v.name}Check`}
                                 />
-                                <label className="mappingText form-check-label" htmlFor="flexCheckDefault">
+                                <label className="mappingText form-check-label" htmlFor={`${col.label}${v.name}Check`}>
                                   {col.label}
                                 </label>
                               </div>

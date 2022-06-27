@@ -46,7 +46,7 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
               .filter((v) => v.itemIDType === workbench.entityId)
               .map((v) => {
                 return (
-                  <div key={`${v.name}mapping`}>
+                  <div key={`${v.name}-mapping`}>
                     {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
                       const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
                       return (
@@ -54,7 +54,7 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
                           <div className="mt-2 mappingTypeText">{name}</div>
                           {columns.map((col) => {
                             return (
-                              <div key={`${col.label}Column`} className="form-check ms-2">
+                              <div key={`${col.label}-column`} className="form-check ms-2">
                                 <input
                                   checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity)}
                                   onChange={() =>
@@ -68,9 +68,9 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
                                   className="form-check-input"
                                   type="checkbox"
                                   value=""
-                                  id="flexCheckDefault"
+                                  id={`checkbox-${col.label}-${v.name}`}
                                 />
-                                <label className="mappingText form-check-label" htmlFor="flexCheckDefault">
+                                <label className="mappingText form-check-label" htmlFor={`checkbox-${col.label}-${v.name}`}>
                                   {col.label}
                                 </label>
                               </div>

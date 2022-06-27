@@ -1,16 +1,18 @@
 /// <reference types="react" />
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IScoreRow, IServerColumn } from 'tdp_core';
-import { IOrdinoRelation } from '../base';
+import { IOrdinoGlobalQuery, IOrdinoRelation, IQueryFilter } from '../base';
 import { ISelectedMapping, IWorkbench } from '../store';
 export interface IOrdinoVisynViewDesc {
     relation: IOrdinoRelation;
 }
-export interface IOrdinoVisynViewParam {
+export interface IOrdinoRankingViewParam {
     prevSelection: string[];
     selectedMappings: ISelectedMapping[];
+    globalQuery: IOrdinoGlobalQuery;
+    appliedQueryFilter: IQueryFilter;
 }
-export declare type OrdinoVisynViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param & IOrdinoVisynViewParam, {
+export declare type OrdinoRankingViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param & IOrdinoRankingViewParam, {
     /**
      * Data array matching the columns defined in the `columnDesc`.
      */
@@ -54,8 +56,8 @@ export declare type OrdinoVisynViewPluginType<Param extends Record<string, unkno
      */
     onAddFormatting(formatting: IWorkbench['formatting']): void;
 }, Desc & IOrdinoVisynViewDesc>;
-export declare type OrdinoVisynViewPluginDesc = OrdinoVisynViewPluginType['desc'];
-export declare type OrdinoVisynViewPlugin = OrdinoVisynViewPluginType['plugin'];
+export declare type OrdinoVisynViewPluginDesc = OrdinoRankingViewPluginType['desc'];
+export declare type OrdinoVisynViewPlugin = OrdinoRankingViewPluginType['plugin'];
 export declare function isVisynRankingViewDesc(desc: unknown): desc is OrdinoVisynViewPluginDesc;
 export declare function isVisynRankingView(plugin: unknown): plugin is OrdinoVisynViewPlugin;
 /**
@@ -68,10 +70,10 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
         desc: any & import("tdp_core").IBaseViewPluginDesc & {
             readonly [key: string]: any;
             visynViewType: "ranking";
-            defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+            defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
         } & Record<string, unknown> & IOrdinoVisynViewDesc;
         viewType: "ranking";
-        defaultParameters: Record<string, unknown> & IOrdinoVisynViewParam;
+        defaultParameters: Record<string, unknown> & IOrdinoRankingViewParam;
         factory: never;
     } & {
         view: import("react").ComponentType<{
@@ -121,13 +123,13 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: "ranking";
-                defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+                defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
             } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc;
         } & {
             selection: string[];
-            parameters: Record<string, unknown> & IOrdinoVisynViewParam;
+            parameters: Record<string, unknown> & IOrdinoRankingViewParam;
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
-            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoVisynViewParam>): void;
+            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }> | import("react").LazyExoticComponent<import("react").ComponentType<{
             /**
              * Data array matching the columns defined in the `columnDesc`.
@@ -175,13 +177,13 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: "ranking";
-                defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+                defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
             } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc;
         } & {
             selection: string[];
-            parameters: Record<string, unknown> & IOrdinoVisynViewParam;
+            parameters: Record<string, unknown> & IOrdinoRankingViewParam;
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
-            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoVisynViewParam>): void;
+            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }>>;
         header?: import("react").ComponentType<{
             /**
@@ -230,13 +232,13 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: "ranking";
-                defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+                defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
             } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc;
         } & {
             selection: string[];
-            parameters: Record<string, unknown> & IOrdinoVisynViewParam;
+            parameters: Record<string, unknown> & IOrdinoRankingViewParam;
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
-            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoVisynViewParam>): void;
+            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }> | import("react").LazyExoticComponent<import("react").ComponentType<{
             /**
              * Data array matching the columns defined in the `columnDesc`.
@@ -284,13 +286,13 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: "ranking";
-                defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+                defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
             } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc;
         } & {
             selection: string[];
-            parameters: Record<string, unknown> & IOrdinoVisynViewParam;
+            parameters: Record<string, unknown> & IOrdinoRankingViewParam;
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
-            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoVisynViewParam>): void;
+            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }>>;
         tab?: import("react").ComponentType<{
             /**
@@ -339,13 +341,13 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: "ranking";
-                defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+                defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
             } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc;
         } & {
             selection: string[];
-            parameters: Record<string, unknown> & IOrdinoVisynViewParam;
+            parameters: Record<string, unknown> & IOrdinoRankingViewParam;
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
-            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoVisynViewParam>): void;
+            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }> | import("react").LazyExoticComponent<import("react").ComponentType<{
             /**
              * Data array matching the columns defined in the `columnDesc`.
@@ -393,18 +395,18 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             desc: any & import("tdp_core").IBaseViewPluginDesc & {
                 readonly [key: string]: any;
                 visynViewType: "ranking";
-                defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+                defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
             } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc;
         } & {
             selection: string[];
-            parameters: Record<string, unknown> & IOrdinoVisynViewParam;
+            parameters: Record<string, unknown> & IOrdinoRankingViewParam;
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
-            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoVisynViewParam>): void;
+            onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }>>;
     } & import("tdp_core").IPlugin>;
 } & import("tdp_core").IBaseViewPluginDesc & {
     readonly [key: string]: any;
     visynViewType: "ranking";
-    defaultParameters?: Record<string, unknown> & IOrdinoVisynViewParam;
+    defaultParameters?: Record<string, unknown> & IOrdinoRankingViewParam;
 } & Record<string, unknown> & IOrdinoVisynViewDesc & import("tdp_core").IPluginDesc)[]>;
 //# sourceMappingURL=interfaces.d.ts.map

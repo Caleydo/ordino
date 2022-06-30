@@ -71,7 +71,7 @@ export class ViewWrapper extends EventHandler {
             this.scrollIntoView();
         };
         // create provenance reference
-        this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection));
+        this.ref = graph.findOrAddObject(ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection)));
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
         this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);

@@ -94,8 +94,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                     .filter((v) => v.itemIDType === e.idType)
                     .map((v) => {
                     var _a;
-                    return (React.createElement("div", { key: `${v.name}-mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
-                        const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
+                    return (React.createElement("div", { key: `${v.name}-mapping` }, (_a = v.relation) === null || _a === void 0 ? void 0 : _a.mapping.map(({ name, entity, columns }) => {
                         return (React.createElement(Fragment, { key: `${name}-group` },
                             React.createElement("div", { className: "mt-2 mappingTypeText" }, name),
                             columns.map((col) => {

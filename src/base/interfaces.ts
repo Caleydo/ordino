@@ -47,14 +47,12 @@ export interface IOrdinoMapping {
   entity: string;
   sourceKey: string;
   targetKey: string;
-  sourceToTargetColumns?: IColumnReference[];
-  targetToSourceColumns?: IColumnReference[];
+  columns?: IColumnReference[];
 }
 
 export interface IOrdinoRelation<Mapping extends IOrdinoMapping = IOrdinoMapping> {
   source: IRelationEntityReference;
-  sourceToTargetLabel: string;
+  label: string;
   target: IRelationEntityReference;
-  targetToSourceLabel: string;
   mapping?: Mapping[];
 }

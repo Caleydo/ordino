@@ -1,1 +1,1 @@
-{"version":3,"file":"DetailsSidebar.d.ts","sourceRoot":"","sources":["../../../../src/app/workbench/sidebar/DetailsSidebar.tsx"],"names":[],"mappings":"AAMA,OAAO,EAAE,gCAAgC,EAAE,MAAM,8BAA8B,CAAC;AAEhF,wBAAgB,cAAc,CAAC,EAAE,SAAS,EAAE,EAAE,gCAAgC,eAoF7E"}
+{"version":3,"file":"DetailsSidebar.d.ts","sourceRoot":"","sources":["../../../../src/app/workbench/sidebar/DetailsSidebar.tsx"],"names":[],"mappings":"AAMA,OAAO,EAAE,gCAAgC,EAAE,MAAM,8BAA8B,CAAC;AAEhF,wBAAgB,cAAc,CAAC,EAAE,SAAS,EAAE,EAAE,gCAAgC,eAmF7E"}

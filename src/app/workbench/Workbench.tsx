@@ -1,5 +1,6 @@
 import React from 'react';
 import { IViewPluginDesc, useAsync } from 'tdp_core';
+import { DragSizing } from 'react-drag-sizing';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addView, EWorkbenchDirection, addWorkbench, IWorkbench, changeFocus, setCreateNextWorkbenchSidebarOpen } from '../../store';
 import { isVisynRankingView, isVisynRankingViewDesc } from '../../views';
@@ -27,11 +28,12 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
       {workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (
-        <WorkbenchUtilsSidebar workbench={workbench} openTab={workbench.index > 0 && ordino.midTransition ? 'mapping' : null} />
+        <DragSizing border="right">
+          <WorkbenchUtilsSidebar workbench={workbench} openTab={workbench.index > 0 && ordino.midTransition ? 'mapping' : null} />
+        </DragSizing>
       ) : null}
 
       <WorkbenchViews index={workbench.index} type={type} />
-
       {workbench.index === ordino.focusWorkbenchIndex ? (
         <div className="d-flex me-1" style={{ borderLeft: '1px solid lightgray' }}>
           <ViewChooser

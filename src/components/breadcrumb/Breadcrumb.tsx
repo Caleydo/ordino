@@ -5,11 +5,20 @@ import { SingleBreadcrumb } from './SingleBreadcrumb';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { changeFocus, setCreateNextWorkbenchSidebarOpen, setTransition } from '../../store';
+import { CurrentBreadcrumb } from './CurrentBreadcrumb';
 
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 
+const SMALL_CHEVRON_WIDTH = 5;
+const CONTEXT_CHEVRON_COUNT = 3;
+const POST_CHEVRON_COUNT = 2;
+const CHEVRON_TRANSITION_WIDTH = 50;
+
 export function Breadcrumb() {
   const ordino = useAppSelector((state) => state.ordino);
+  const previousWorkbench = useAppSelector((state) => state.ordino.workbenches[state.ordino.focusWorkbenchIndex - 1]);
+  const currentWorkbench = useAppSelector((state) => state.ordino.workbenches[state.ordino.focusWorkbenchIndex]);
+
   const dispatch = useAppDispatch();
 
   const startFlexNum = useMemo(() => {
@@ -42,74 +51,30 @@ export function Breadcrumb() {
       {ordino.workbenches.length > 0 ? (
         <div className="d-flex breadcrumb overflow-hidden">
           {/* Always show the first workbench, if its not the context or the current */}
-          {ordino.focusWorkbenchIndex > 1 ? (
-            <SingleBreadcrumb
-              workbench={ordino.workbenches[0]}
-              color={ordino.colorMap[ordino.workbenches[0].entityId]}
-              flexWidth={15 / startFlexNum}
-              first
-              onClick={() => dispatch(changeFocus({ index: 0 }))}
-            />
-          ) : null}
+          {ordino.workbenches.map((workbench) => {
+            let flexWidth = 0;
 
-          {/* In the specific case that there is two workbenches before the current one, show them both. */}
-          {ordino.focusWorkbenchIndex === 3 ? (
-            <SingleBreadcrumb
-              workbench={ordino.workbenches[1]}
-              color={ordino.colorMap[ordino.workbenches[1].entityId]}
-              flexWidth={15 / startFlexNum}
-              first={false}
-              onClick={() => dispatch(changeFocus({ index: 1 }))}
-            />
-          ) : null}
+            if (workbench.index < ordino.focusWorkbenchIndex) {
+              flexWidth = (SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT) / startFlexNum;
+            } else if (workbench.index === ordino.focusWorkbenchIndex) {
+              flexWidth = ordino.midTransition ? (startFlexNum === 0 ? CHEVRON_TRANSITION_WIDTH : 35) : 75 + 5 * (2 - endFlexNum);
+            } else if (workbench.index === ordino.focusWorkbenchIndex + 1) {
+              flexWidth = ordino.midTransition ? CHEVRON_TRANSITION_WIDTH : SMALL_CHEVRON_WIDTH;
+            } else {
+              flexWidth = SMALL_CHEVRON_WIDTH;
+            }
 
-          {/* If there are more than 2 workbenches before my current, show a ... breadcrumb */}
-          {ordino.focusWorkbenchIndex > 3 ? <CollapsedBreadcrumb color="gray" flexWidth={15 / startFlexNum} /> : null}
-
-          {/* Always show the context, if there is one */}
-          {ordino.focusWorkbenchIndex > 0 ? (
-            <SingleBreadcrumb
-              workbench={ordino.workbenches[ordino.focusWorkbenchIndex - 1]}
-              color={ordino.colorMap[ordino.workbenches[ordino.focusWorkbenchIndex - 1].entityId]}
-              flexWidth={15 / startFlexNum}
-              first={ordino.focusWorkbenchIndex - 1 === 0}
-              onClick={() => dispatch(changeFocus({ index: ordino.focusWorkbenchIndex - 1 }))}
-            />
-          ) : null}
-
-          {/* Always show the current workbench */}
-          <SingleBreadcrumb
-            workbench={ordino.workbenches[ordino.focusWorkbenchIndex]}
-            color={ordino.colorMap[ordino.workbenches[ordino.focusWorkbenchIndex].entityId]}
-            flexWidth={ordino.midTransition ? (startFlexNum === 0 ? 50 : 35) : 75 + 5 * (2 - endFlexNum)}
-            first={ordino.focusWorkbenchIndex === 0}
-            onClick={ordino.midTransition ? () => dispatch(setTransition(false)) : null}
-          />
-
-          {/* Show the next workbench chevron, if there is one. */}
-          {ordino.focusWorkbenchIndex + 1 < ordino.workbenches.length ? (
-            <SingleBreadcrumb
-              workbench={ordino.workbenches[ordino.focusWorkbenchIndex + 1]}
-              color={ordino.colorMap[ordino.workbenches[ordino.focusWorkbenchIndex + 1].entityId]}
-              flexWidth={ordino.midTransition ? 50 : 5}
-              first={false}
-              onClick={() => dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }))}
-            />
-          ) : null}
-
-          {/* This is for collapsed workbenches if there are too many here to display */}
-          {ordino.focusWorkbenchIndex + 3 < ordino.workbenches.length ? <CollapsedBreadcrumb color="gray" flexWidth={5} /> : null}
-
-          {/* This is for the specific case of there being exactly 2 more workbenches after our current, we want to display them both */}
-          {ordino.focusWorkbenchIndex + 3 === ordino.workbenches.length ? (
-            <SingleBreadcrumb
-              workbench={ordino.workbenches[ordino.workbenches.length - 1]}
-              color={ordino.colorMap[ordino.workbenches[ordino.workbenches.length - 1].entityId]}
-              flexWidth={5}
-              first={false}
-              onClick={() => dispatch(changeFocus({ index: ordino.workbenches.length - 1 }))}
-            />
-          ) : null}
+            return (
+              <SingleBreadcrumb
+                key={workbench.index}
+                workbench={workbench}
+                color={ordino.colorMap[workbench.entityId]}
+                flexWidth={flexWidth}
+                first={workbench.index === 0}
+                onClick={() => dispatch(changeFocus({ index: workbench.index }))}
+              />
+            );
+          })}
         </div>
       ) : null}
     </>

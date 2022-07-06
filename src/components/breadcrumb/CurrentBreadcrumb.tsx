@@ -1,33 +1,30 @@
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
-import { animated, easings, useSpring } from 'react-spring';
 import { changeFocus, IWorkbench, removeWorkbench, setCommentsOpen } from '../../store';
 import { ChevronBreadcrumb } from './ChevronBreadcrumb';
-import { ShowDetailsSwitch } from './ShowDetailsSwitch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
 import { SplitBreadcrumb } from './SplitBreadcrumb';
 
-export interface ISingleBreadcrumbProps {
+export function CurrentBreadcrumb({
+  first = false,
+  flexWidth = 1,
+  onClick = null,
+  color = 'cornflowerblue',
+  workbench = null,
+}: {
   first?: boolean;
   flexWidth?: number;
   onClick?: () => void;
   color?: string;
   workbench?: IWorkbench;
-}
-
-export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null }: ISingleBreadcrumbProps) {
+}) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const [width, setWidth] = useState<number>();
-
-  const animatedStyle = useSpring({
-    flexGrow: flexWidth,
-    config: { duration: 700, easing: easings.easeInOutSine },
-  });
 
   const ref = useRef(null);
 
@@ -49,21 +46,28 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
   );
 
   return (
-    <animated.div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ ...animatedStyle }} onClick={onClick}>
+    <div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ flexGrow: flexWidth }} onClick={onClick}>
       <div className="position-absolute chevronDiv top-50 start-50 translate-middle d-flex">
-        {workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (
-          <>
-            <FilterAndSelected />
-            <OpenCommentsButton
-              idType={workbench.itemIDType}
-              selection={workbench.selection}
-              commentPanelVisible={workbench.commentsOpen}
-              onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
-            />
-          </>
-        ) : workbench.index !== ordino.focusWorkbenchIndex ? (
-          <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
-        ) : null}
+        {workbench ? (
+          workbench.index === ordino.focusWorkbenchIndex ? (
+            <>
+              <FilterAndSelected />
+              <OpenCommentsButton
+                idType={workbench.itemIDType}
+                selection={workbench.selection}
+                commentPanelVisible={workbench.commentsOpen}
+                onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
+              />
+            </>
+          ) : (
+            <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
+          )
+        ) : (
+          <div className="flex-grow-1 chevronText d-flex align-items-center">
+            <i className="fas fa-cog pe-2" />
+            <p className="text-nowrap w-100 flex-grow-1 m-0 p-0">Add Views</p>
+          </div>
+        )}
       </div>
 
       <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: workbench?.index === 0 ? '5px' : '20px' }}>
@@ -89,6 +93,6 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         ) : null}
       </div>
       <SplitBreadcrumb color={color} width={width} first={first} />
-    </animated.div>
+    </div>
   );
 }

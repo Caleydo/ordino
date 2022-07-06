@@ -29,7 +29,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
   }, [openedTab, workbench]);
 
   return (
-    <div className="d-flex p-1" style={{ borderRight: !openedTab ? '' : '1px solid lightgray' }}>
+    <div className="d-flex p-1 h-100" style={{ borderRight: !openedTab ? '' : '1px solid lightgray' }}>
       <div className="d-flex flex-column pe-1 me-1" style={{ borderRight: '1px solid lightgray' }}>
         <button
           className={`btn shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}

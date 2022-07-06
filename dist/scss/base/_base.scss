@@ -21,7 +21,7 @@
   position: relative;
   display: flex;
   overflow-x: visible;
-  transition: transform .7s ease;
+  transition: transform .7s cubic-bezier(0.45, 0.05, 0.55, 0.95);
   transition-delay: .7s;
   overflow-y: hidden;
 }
@@ -30,7 +30,7 @@
   z-index: 10;
   width: $workbench-width;
   position: relative;
-  transition: width .7s ease;
+  transition: width .7s cubic-bezier(0.45, 0.05, 0.55, 0.95);
   overflow: hidden;
   
   &.start.t-focus {

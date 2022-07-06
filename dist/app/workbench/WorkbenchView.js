@@ -13,7 +13,6 @@ export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCa
     const availableViews = useMemo(() => {
         return value || [];
     }, [value]);
-    console.log(availableViews);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag })) : (React.createElement(WorkbenchGenericView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag }))));

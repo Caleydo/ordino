@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IDType, isVisynDataViewDesc, isVisynSimpleViewDesc, useAsync, ViewUtils } from 'tdp_core';
+import { IDType, useAsync, ViewUtils } from 'tdp_core';
 import { MosaicBranch, MosaicPath } from 'react-mosaic-component';
 import { useMemo } from 'react';
 import { IWorkbenchView } from '../../store';
@@ -30,8 +30,6 @@ export function WorkbenchView({
   const availableViews = useMemo(() => {
     return value || [];
   }, [value]);
-
-  console.log(availableViews);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

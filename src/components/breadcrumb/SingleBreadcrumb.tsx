@@ -48,7 +48,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
 
   return (
     <animated.div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ ...animatedStyle }} onClick={onClick}>
-      <div className="position-absolute chevronDiv top-50 start-50 translate-middle d-flex">
+      <div className={`position-absolute chevronDiv ${workbench.index !== ordino.focusWorkbenchIndex} top-50 start-50 translate-middle d-flex`}>
         {workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (
           <>
             <FilterAndSelected />
@@ -76,7 +76,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
           ordino.focusWorkbenchIndex > 0 ? (
             <button
               type="button"
-              className="btn-close btn-close-white me-2"
+              className="btn-close btn-close-white me-2 pe-auto"
               aria-label={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close')}
               onClick={() => {
                 dispatch(changeFocus({ index: workbench.index - 1 }));

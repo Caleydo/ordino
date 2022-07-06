@@ -13,12 +13,14 @@
 }
 
 .chevronText {
+    pointer-events: none;
     font-size: 18px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
 .chevronDiv {
+    pointer-events: none;
     align-items: center;
     z-index: 2;
     color: white

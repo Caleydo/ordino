@@ -6,31 +6,32 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { changeFocus } from '../../store';
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 const SMALL_CHEVRON_WIDTH = 3;
-const CONTEXT_CHEVRON_COUNT = 3;
+const CONTEXT_CHEVRON_COUNT = 5;
 const POST_CHEVRON_COUNT = 2;
 const CHEVRON_TRANSITION_WIDTH = 50;
+const FULL_BREADCRUMB_WIDTH = 100;
 export function Breadcrumb() {
     const ordino = useAppSelector((state) => state.ordino);
-    const previousWorkbench = useAppSelector((state) => state.ordino.workbenches[state.ordino.focusWorkbenchIndex - 1]);
-    const currentWorkbench = useAppSelector((state) => state.ordino.workbenches[state.ordino.focusWorkbenchIndex]);
     const dispatch = useAppDispatch();
+    // this number is for finding out how many workbenches are before our current one, so we can give them the right width.
     const startFlexNum = useMemo(() => {
         let counter = 0;
-        if (ordino.focusWorkbenchIndex < 4) {
+        if (ordino.focusWorkbenchIndex < CONTEXT_CHEVRON_COUNT + 1) {
             counter += ordino.focusWorkbenchIndex;
         }
         else {
-            counter = 3;
+            counter = CONTEXT_CHEVRON_COUNT;
         }
         return counter;
     }, [ordino.focusWorkbenchIndex]);
+    // this number is for finding out how many workbenches are after our current one, so we can give them the right width.
     const endFlexNum = useMemo(() => {
         let counter = 0;
-        if (ordino.focusWorkbenchIndex > ordino.workbenches.length - 4) {
+        if (ordino.focusWorkbenchIndex > ordino.workbenches.length - (POST_CHEVRON_COUNT + 1)) {
             counter += ordino.workbenches.length - (ordino.focusWorkbenchIndex + 1);
         }
         else {
-            counter = 3;
+            counter = POST_CHEVRON_COUNT;
         }
         return counter;
     }, [ordino.workbenches.length, ordino.focusWorkbenchIndex]);
@@ -42,7 +43,11 @@ export function Breadcrumb() {
             flexWidth = (SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT) / startFlexNum;
         }
         else if (workbench.index === ordino.focusWorkbenchIndex) {
-            flexWidth = ordino.midTransition ? (startFlexNum === 0 ? CHEVRON_TRANSITION_WIDTH : 35) : 75 + 5 * (2 - endFlexNum);
+            flexWidth = ordino.midTransition
+                ? startFlexNum === 0
+                    ? CHEVRON_TRANSITION_WIDTH
+                    : CHEVRON_TRANSITION_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT
+                : FULL_BREADCRUMB_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT - SMALL_CHEVRON_WIDTH * (POST_CHEVRON_COUNT - endFlexNum);
         }
         else if (workbench.index === ordino.focusWorkbenchIndex + 1) {
             flexWidth = ordino.midTransition ? CHEVRON_TRANSITION_WIDTH : SMALL_CHEVRON_WIDTH;
@@ -50,7 +55,7 @@ export function Breadcrumb() {
         else {
             flexWidth = SMALL_CHEVRON_WIDTH;
         }
-        return (React.createElement(SingleBreadcrumb, { key: workbench.index, workbench: workbench, color: ordino.colorMap[workbench.entityId], flexWidth: flexWidth, first: workbench.index === 0, onClick: () => dispatch(changeFocus({ index: workbench.index })) }));
+        return (React.createElement(SingleBreadcrumb, { key: workbench.index, workbench: workbench, color: ordino.colorMap[workbench.entityId], flexWidth: flexWidth, first: workbench.index === 0, onClick: workbench.index !== ordino.focusWorkbenchIndex || ordino.midTransition ? () => dispatch(changeFocus({ index: workbench.index })) : null }));
     }))) : null));
 }
 //# sourceMappingURL=Breadcrumb.js.map

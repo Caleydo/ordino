@@ -1,9 +1,8 @@
 import React from 'react';
 import { IViewPluginDesc, useAsync } from 'tdp_core';
-import { DragSizing } from 'react-drag-sizing';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { addView, EWorkbenchDirection, addWorkbench, IWorkbench, changeFocus, setCreateNextWorkbenchSidebarOpen } from '../../store';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../views';
+import { addView, EWorkbenchDirection, addWorkbench, IWorkbench } from '../../store';
+import { isVisynRankingViewDesc } from '../../views';
 import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
 import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
 import { getVisynView } from './WorkbenchView';
@@ -18,7 +17,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
-  const { status, value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
+  const { value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
 
   return (
     <div
@@ -28,9 +27,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
       {workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (
-        <DragSizing border="right">
-          <WorkbenchUtilsSidebar workbench={workbench} openTab={workbench.index > 0 && ordino.midTransition ? 'mapping' : null} />
-        </DragSizing>
+        <WorkbenchUtilsSidebar workbench={workbench} openTab={workbench.index > 0 && ordino.midTransition ? 'mapping' : null} />
       ) : null}
 
       <WorkbenchViews index={workbench.index} type={type} />

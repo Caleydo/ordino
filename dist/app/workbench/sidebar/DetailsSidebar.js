@@ -42,7 +42,7 @@ export function DetailsSidebar({ workbench }) {
                         columns.map((col) => {
                             return (React.createElement("div", { key: `${col.label}-column`, className: "form-check ms-2" },
                                 React.createElement("input", { checked: workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity), onChange: () => dispatch(changeSelectedMappings({
-                                        workbenchIndex: ordino.focusWorkbenchIndex,
+                                        workbenchIndex: ordino.midTransition ? ordino.focusWorkbenchIndex + 1 : ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
                                     })), className: "form-check-input", type: "checkbox", value: "", id: `checkbox-${col.label}-${v.name}` }),
                                 React.createElement("label", { className: "mappingText form-check-label", htmlFor: `checkbox-${col.label}-${v.name}` }, col.label)));

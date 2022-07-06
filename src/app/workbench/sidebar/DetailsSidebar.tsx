@@ -60,7 +60,7 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusWorkbenchIndex,
+                                        workbenchIndex: ordino.midTransition ? ordino.focusWorkbenchIndex + 1 : ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
                                       }),
                                     )

@@ -3,13 +3,11 @@ import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { animated, easings, useSpring } from 'react-spring';
 import { changeFocus, IWorkbench, removeWorkbench, setCommentsOpen } from '../../store';
-import { ChevronBreadcrumb } from './ChevronBreadcrumb';
-import { ShowDetailsSwitch } from './ShowDetailsSwitch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
-import { SplitBreadcrumb } from './SplitBreadcrumb';
+import { BreadcrumbSvg } from './BreadcrumbSvg';
 
 export interface ISingleBreadcrumbProps {
   first?: boolean;
@@ -88,7 +86,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
           ) : null
         ) : null}
       </div>
-      <SplitBreadcrumb color={color} width={width} first={first} />
+      <BreadcrumbSvg color={color} width={width} first={first} />
     </animated.div>
   );
 }

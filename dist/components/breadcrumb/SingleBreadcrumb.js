@@ -7,7 +7,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
-import { SplitBreadcrumb } from './SplitBreadcrumb';
+import { BreadcrumbSvg } from './BreadcrumbSvg';
 export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
@@ -36,6 +36,6 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
                 dispatch(changeFocus({ index: workbench.index - 1 }));
                 dispatch(removeWorkbench({ index: workbench.index }));
             } })) : null) : null),
-        React.createElement(SplitBreadcrumb, { color: color, width: width, first: first })));
+        React.createElement(BreadcrumbSvg, { color: color, width: width, first: first })));
 }
 //# sourceMappingURL=SingleBreadcrumb.js.map

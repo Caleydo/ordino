@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function SplitBreadcrumb({
+export function BreadcrumbSvg({
   width = 1500,
   height = 40,
   chevronIndent = 8,

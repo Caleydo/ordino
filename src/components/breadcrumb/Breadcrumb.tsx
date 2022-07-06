@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { CollapsedBreadcrumb } from './CollapsedBreadcrumb';
 import { SingleBreadcrumb } from './SingleBreadcrumb';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { changeFocus, setCreateNextWorkbenchSidebarOpen, setTransition } from '../../store';
-import { CurrentBreadcrumb } from './CurrentBreadcrumb';
+import { changeFocus } from '../../store';
 
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 
-const SMALL_CHEVRON_WIDTH = 5;
+const SMALL_CHEVRON_WIDTH = 3;
 const CONTEXT_CHEVRON_COUNT = 3;
 const POST_CHEVRON_COUNT = 2;
 const CHEVRON_TRANSITION_WIDTH = 50;
@@ -43,8 +41,6 @@ export function Breadcrumb() {
     return counter;
   }, [ordino.workbenches.length, ordino.focusWorkbenchIndex]);
 
-  // Obviously change this to the right way of importing these colors
-  // always show first, last, context, +, otherwise show ...
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>

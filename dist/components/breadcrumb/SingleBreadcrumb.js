@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { animated, easings, useSpring } from 'react-spring';
-import { changeFocus, removeWorkbench, setCommentsOpen } from '../../store';
+import { changeFocus, removeWorkbench, setAnimating, setCommentsOpen } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
@@ -13,6 +13,12 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     const dispatch = useAppDispatch();
     const [width, setWidth] = useState();
     const animatedStyle = useSpring({
+        onStart: () => {
+            dispatch(setAnimating(true));
+        },
+        onRest: () => {
+            dispatch(setAnimating(false));
+        },
         flexGrow: flexWidth,
         config: { duration: 700, easing: easings.easeInOutSine },
     });

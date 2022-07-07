@@ -23,6 +23,7 @@ import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
+import { AnimatingOverlay } from './AnimatingOverlay';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -161,7 +162,16 @@ export function WorkbenchGenericView({
 
   return (
     <MosaicWindow<number> path={path} title={view.name} renderToolbar={() => header}>
-      <div id={view.id} className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag ? 'pe-none' : ''}`}>
+      <div
+        id={view.id}
+        className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag || ordino.isAnimating ? 'resizeCursor' : ''}`}
+      >
+        <AnimatingOverlay
+          color={ordino.colorMap[currentWorkbench.entityId]}
+          isAnimating={ordino.isAnimating || mosaicDrag}
+          iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : 'fas fa-bars'}
+        />
+
         <div className="inner d-flex">
           {editOpen && !isVisynRankingViewDesc(viewPlugin?.desc) && viewPlugin?.tab ? ( // do not show chooser for ranking views
             <div className="d-flex flex-column">

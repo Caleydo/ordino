@@ -6,6 +6,7 @@ const initialState = {
     focusWorkbenchIndex: 0,
     midTransition: false,
     colorMap: {},
+    isAnimating: false,
 };
 const ordinoSlice = createSlice({
     name: 'ordino',
@@ -24,12 +25,16 @@ const ordinoSlice = createSlice({
         changeFocus(state, action) {
             state.focusWorkbenchIndex = action.payload.index;
             state.midTransition = false;
+            state.isAnimating = true;
         },
         setTransition(state, action) {
             state.midTransition = action.payload;
         },
+        setAnimating(state, action) {
+            state.isAnimating = action.payload;
+        },
     },
 });
-export const { addView, setColorMap, changeSelectedMappings, setDetailsSidebarOpen, setCreateNextWorkbenchSidebarOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, removeWorkbench, addEntityFormatting, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, setCommentsOpen, setTransition, } = ordinoSlice.actions;
+export const { addView, setColorMap, changeSelectedMappings, setDetailsSidebarOpen, setCreateNextWorkbenchSidebarOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, removeWorkbench, addEntityFormatting, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, setCommentsOpen, setTransition, setAnimating, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

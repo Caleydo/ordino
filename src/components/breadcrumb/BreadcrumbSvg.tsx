@@ -34,6 +34,7 @@ function darkenColor(col, amt) {
   // eslint-disable-next-line no-bitwise
   return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
+
 export function BreadcrumbSvg({
   width = 1500,
   height = 40,
@@ -42,6 +43,7 @@ export function BreadcrumbSvg({
   margin = 4,
   color = 'cornflowerblue',
   clickable = false,
+  backgroundColor = 'white',
 }: {
   width?: number;
   chevronIndent?: number;
@@ -50,6 +52,7 @@ export function BreadcrumbSvg({
   color?: string;
   margin?: number;
   clickable?: boolean;
+  backgroundColor?: string;
 }) {
   const [isHover, setHover] = useState<boolean>(false);
 
@@ -72,7 +75,7 @@ export function BreadcrumbSvg({
 
       {!first ? (
         <g>
-          <path d={`m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`} fill="white" />
+          <path d={`m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`} fill={backgroundColor} />
         </g>
       ) : null}
     </svg>

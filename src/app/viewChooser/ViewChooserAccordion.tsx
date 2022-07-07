@@ -27,7 +27,6 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
   const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
   const groups = groupBy(props.views, (view) => view.group.name);
 
-  console.log(props.views);
   return (
     <div className="view-buttons flex-grow-1 flex-row border-top border-light overflow-auto">
       {Object.keys(groups)
@@ -63,7 +62,7 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                     <div>{view.name}</div>
                     {isVisynRankingViewDesc(view) ? (
                       <div className="d-flex h-100 align-items-center" style={{ width: `${BREADCRUMB_WIDTH}px` }}>
-                        <BreadcrumbSvg color={view.color} width={BREADCRUMB_WIDTH} height={20} first={false} clickable={false} />
+                        <BreadcrumbSvg backgroundColor="white" color={view.color} width={BREADCRUMB_WIDTH} height={20} first={false} clickable={false} />
                       </div>
                     ) : null}
                   </button>

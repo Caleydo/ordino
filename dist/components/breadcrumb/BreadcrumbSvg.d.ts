@@ -1,4 +1,4 @@
-export declare function BreadcrumbSvg({ width, height, chevronIndent, first, margin, color, clickable, }: {
+export declare function BreadcrumbSvg({ width, height, chevronIndent, first, margin, color, clickable, backgroundColor, }: {
     width?: number;
     chevronIndent?: number;
     first?: boolean;
@@ -6,5 +6,6 @@ export declare function BreadcrumbSvg({ width, height, chevronIndent, first, mar
     color?: string;
     margin?: number;
     clickable?: boolean;
+    backgroundColor?: string;
 }): JSX.Element;
 //# sourceMappingURL=BreadcrumbSvg.d.ts.map

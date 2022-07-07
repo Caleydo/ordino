@@ -31,7 +31,7 @@ function darkenColor(col, amt) {
     // eslint-disable-next-line no-bitwise
     return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
-export function BreadcrumbSvg({ width = 1500, height = 40, chevronIndent = 8, first = false, margin = 4, color = 'cornflowerblue', clickable = false, }) {
+export function BreadcrumbSvg({ width = 1500, height = 40, chevronIndent = 8, first = false, margin = 4, color = 'cornflowerblue', clickable = false, backgroundColor = 'white', }) {
     const [isHover, setHover] = useState(false);
     const fillColor = useMemo(() => {
         return isHover && clickable ? darkenColor(color, 20) : color;
@@ -41,6 +41,6 @@ export function BreadcrumbSvg({ width = 1500, height = 40, chevronIndent = 8, fi
         React.createElement("g", { transform: `translate(${width - chevronIndent - margin}, 0)` },
             React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: fillColor })),
         !first ? (React.createElement("g", null,
-            React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: "white" }))) : null));
+            React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: backgroundColor }))) : null));
 }
 //# sourceMappingURL=BreadcrumbSvg.js.map

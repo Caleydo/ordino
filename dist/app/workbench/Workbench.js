@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addView, EWorkbenchDirection, addWorkbench } from '../../store';
@@ -11,11 +11,21 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
     const { value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
+    // need to add the color for the ranking views.
+    const editedViews = useMemo(() => {
+        return availableViews === null || availableViews === void 0 ? void 0 : availableViews.map((view) => {
+            console.log(view);
+            if (isVisynRankingViewDesc(view)) {
+                return { ...view, color: ordino.colorMap[view.itemIDType] };
+            }
+            return view;
+        });
+    }, [availableViews, ordino.colorMap]);
     return (React.createElement("div", { className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
         workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (React.createElement(WorkbenchUtilsSidebar, { workbench: workbench, openTab: workbench.index > 0 && ordino.midTransition ? 'mapping' : null })) : null,
         React.createElement(WorkbenchViews, { index: workbench.index, type: type }),
         workbench.index === ordino.focusWorkbenchIndex ? (React.createElement("div", { className: "d-flex me-1", style: { borderLeft: '1px solid lightgray' } },
-            React.createElement(ViewChooser, { views: availableViews || [], selectedView: null, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
+            React.createElement(ViewChooser, { views: editedViews || [], selectedView: null, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
                     if (isVisynRankingViewDesc(newView)) {
                         const defaultMapping = {
                             entityId: newView.relation.mapping[0].entity,

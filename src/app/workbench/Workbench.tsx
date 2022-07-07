@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { IViewPluginDesc, useAsync } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addView, EWorkbenchDirection, addWorkbench, IWorkbench } from '../../store';
@@ -19,6 +19,18 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
 
   const { value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
 
+  // need to add the color for the ranking views.
+  const editedViews = useMemo(() => {
+    return availableViews?.map((view) => {
+      console.log(view);
+      if (isVisynRankingViewDesc(view)) {
+        return { ...view, color: ordino.colorMap[view.itemIDType] };
+      }
+
+      return view;
+    });
+  }, [availableViews, ordino.colorMap]);
+
   return (
     <div
       className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${
@@ -34,7 +46,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       {workbench.index === ordino.focusWorkbenchIndex ? (
         <div className="d-flex me-1" style={{ borderLeft: '1px solid lightgray' }}>
           <ViewChooser
-            views={availableViews || []}
+            views={editedViews || []}
             selectedView={null}
             showBurgerMenu={false}
             mode={EViewChooserMode.EMBEDDED}

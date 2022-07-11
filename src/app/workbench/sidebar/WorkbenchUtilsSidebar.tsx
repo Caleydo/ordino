@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { DetailsSidebar } from './DetailsSidebar';
 import { IWorkbench } from '../../../store';
@@ -23,16 +23,22 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         return <div style={{ width: '250px' }}>Comment something</div>;
       }
       default: {
-        return <div style={{ width: '250px' }}>Thats weird</div>;
+        return <div style={{ width: '250px' }}>There was an error finding the correct tab</div>;
       }
     }
   }, [openedTab, workbench]);
 
+  useEffect(() => {
+    if (ordino.midTransition === true && workbench.index === ordino.focusWorkbenchIndex) {
+      setOpenedTab(null);
+    }
+  }, [ordino.midTransition, workbench.index, ordino.focusWorkbenchIndex]);
+
   return (
-    <div className="d-flex p-1 h-100" style={{ borderRight: !openedTab ? '' : '1px solid lightgray' }}>
-      <div className="d-flex flex-column pe-1 me-1" style={{ borderRight: '1px solid lightgray' }}>
+    <div className="d-flex h-100" style={{ borderRight: !openedTab ? '' : '1px solid lightgray' }}>
+      <div className="d-flex flex-column me-1" style={{ borderRight: '1px solid lightgray' }}>
         <button
-          className={`btn shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
+          className={`btn borderRadiusNone shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
           type="button"
           onClick={() => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add'))}
         >
@@ -40,7 +46,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         </button>
         {workbench.index > 0 ? (
           <button
-            className={`btn shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
+            className={`btn borderRadiusNone shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
             type="button"
             onClick={() => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping'))}
           >
@@ -49,14 +55,14 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         ) : null}
 
         <button
-          className={`btn shadow-none ${openedTab === 'filter' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
+          className={`btn borderRadiusNone shadow-none ${openedTab === 'filter' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
           type="button"
           onClick={() => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter'))}
         >
           <i className="fas fa-filter" />
         </button>
         <button
-          className={`btn shadow-none ${openedTab === 'comment' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
+          className={`btn borderRadiusNone shadow-none ${openedTab === 'comment' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
           type="button"
           onClick={() => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment'))}
         >

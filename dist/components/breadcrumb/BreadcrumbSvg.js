@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 /**
- * Taken this from https://css-tricks.com/snippets/javascript/lighten-darken-color/ for the purpose of lightening our colors on hover
+ * Taken this from https://css-tricks.com/snippets/javascript/lighten-darken-color/ for the purpose of darkening our colors on hover
  * @param col color to darken
  * @param amt amount to darken. 0 does nothing, positive numbers darken, negative numbers lighten.
  * @returns
@@ -31,16 +31,18 @@ function darkenColor(col, amt) {
     // eslint-disable-next-line no-bitwise
     return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
-export function BreadcrumbSvg({ width = 1500, height = 40, chevronIndent = 8, first = false, margin = 4, color = 'cornflowerblue', clickable = false, backgroundColor = 'white', }) {
+export function BreadcrumbSvg({ 
+// Numbers here are all in pixels
+width = 1500, height = 40, chevronIndent = 8, margin = 4, isFirst = false, color = 'cornflowerblue', isClickable = false, backgroundColor = 'white', }) {
     const [isHover, setHover] = useState(false);
     const fillColor = useMemo(() => {
-        return isHover && clickable ? darkenColor(color, 20) : color;
-    }, [isHover, clickable, color]);
+        return isHover && isClickable ? darkenColor(color, 20) : color;
+    }, [isHover, isClickable, color]);
     return (React.createElement("svg", { className: "position-absolute chevronSvg", width: width, style: { height: `${height}px` }, onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false) },
         React.createElement("rect", { width: width - margin - chevronIndent, height: height, fill: fillColor }),
         React.createElement("g", { transform: `translate(${width - chevronIndent - margin}, 0)` },
-            React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: fillColor })),
-        !first ? (React.createElement("g", null,
+            React.createElement("path", { d: `m -5 ${height} h 5 l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} h -5 z`, fill: fillColor })),
+        !isFirst ? (React.createElement("g", null,
             React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: backgroundColor }))) : null));
 }
 //# sourceMappingURL=BreadcrumbSvg.js.map

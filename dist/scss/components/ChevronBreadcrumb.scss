@@ -22,7 +22,22 @@
     pointer-events: none;
     align-items: center;
     z-index: 2;
-    color: white
+    color: white;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.chevronDiv div, span, p {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.ellipsisText {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .chevronButton {

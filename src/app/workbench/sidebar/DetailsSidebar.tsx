@@ -2,11 +2,10 @@ import React, { Fragment, useMemo } from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings } from '../../../store';
+import { changeSelectedMappings, IWorkbench } from '../../../store';
 import { findWorkbenchTransitions } from '../../../views';
-import { ICreateNextWorkbenchSidebarProps } from './CreateNextWorkbenchSidebar';
 
-export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
+export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);

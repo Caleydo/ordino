@@ -53,8 +53,22 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
   );
 
   return (
-    <animated.div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ ...animatedStyle }} onClick={onClick}>
-      <div className={`position-absolute chevronDiv ${workbench.index !== ordino.focusWorkbenchIndex} top-50 start-50 translate-middle d-flex`}>
+    <animated.div
+      className={`ellipsisText position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`}
+      ref={ref}
+      style={{ ...animatedStyle, flexBasis: 0 }}
+      onClick={onClick}
+      title={workbench.name}
+    >
+      {workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (
+        <div className={` chevronDiv d-flex flex-grow-1`} style={{ flexBasis: 0, marginLeft: workbench.index === 0 ? '.75rem' : '1.5rem' }}>
+          <p className="chevronText flex-grow-1">
+            {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
+          </p>
+        </div>
+      ) : null}
+
+      <div className="me-2 ms-2 chevronDiv justify-content-center d-flex" style={{ flexBasis: 0, flexGrow: 2 }}>
         {workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (
           <>
             <FilterAndSelected />
@@ -65,34 +79,26 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
               onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
             />
           </>
-        ) : workbench.index !== ordino.focusWorkbenchIndex ? (
-          <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
+        ) : workbench.index !== ordino.focusWorkbenchIndex && flexWidth > 0 && !ordino.midTransition ? (
+          <p className="text-center chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
         ) : null}
       </div>
 
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: workbench?.index === 0 ? '5px' : '20px' }}>
-        {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
-          <p className="chevronText flex-grow-1">
-            {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
-          </p>
-        ) : null}
-      </div>
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ right: '8px' }}>
-        {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
-          ordino.focusWorkbenchIndex > 0 ? (
-            <button
-              type="button"
-              className="btn-close btn-close-white me-2 pe-auto"
-              aria-label={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close')}
-              onClick={() => {
-                dispatch(changeFocus({ index: workbench.index - 1 }));
-                dispatch(removeWorkbench({ index: workbench.index }));
-              }}
-            />
-          ) : null
-        ) : null}
-      </div>
-      <BreadcrumbSvg color={color} width={width} first={first} clickable={!!onClick} />
+      {workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (
+        <div className={`${flexWidth > 0 ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`} style={{ flexBasis: 0 }}>
+          <button
+            type="button"
+            className={`${workbench.index === 0 ? 'd-none' : ''} btn-close btn-close-white me-2 pe-auto`}
+            aria-label={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close')}
+            onClick={() => {
+              dispatch(changeFocus({ index: workbench.index - 1 }));
+              dispatch(removeWorkbench({ index: workbench.index }));
+            }}
+          />
+        </div>
+      ) : null}
+
+      <BreadcrumbSvg color={color} width={width} isFirst={first} isClickable={!!onClick} />
     </animated.div>
   );
 }

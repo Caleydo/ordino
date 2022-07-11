@@ -1,6 +1,6 @@
 import React from 'react';
-import {CommentActions, IComment} from 'tdp_comments';
-import {I18nextManager} from 'tdp_core';
+import { CommentActions, IComment } from 'tdp_comments';
+import { I18nextManager } from 'tdp_core';
 
 export interface IOpenCommentsButtonProps {
   /**

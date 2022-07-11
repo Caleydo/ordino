@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { DetailsSidebar } from './DetailsSidebar';
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
@@ -23,15 +23,20 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
             }
         }
     }, [openedTab, workbench]);
+    useEffect(() => {
+        if (ordino.midTransition === true && workbench.index === ordino.focusWorkbenchIndex) {
+            setOpenedTab(null);
+        }
+    }, [ordino.midTransition, workbench.index, ordino.focusWorkbenchIndex]);
     return (React.createElement("div", { className: "d-flex h-100", style: { borderRight: !openedTab ? '' : '1px solid lightgray' } },
-        React.createElement("div", { className: "d-flex flex-column pe-1 me-1", style: { borderRight: '1px solid lightgray' } },
-            React.createElement("button", { className: `btn shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add')) },
+        React.createElement("div", { className: "d-flex flex-column me-1", style: { borderRight: '1px solid lightgray' } },
+            React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add')) },
                 React.createElement("i", { className: "fas fa-plus-circle" })),
-            workbench.index > 0 ? (React.createElement("button", { className: `btn shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping')) },
+            workbench.index > 0 ? (React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping')) },
                 React.createElement("i", { className: "fas fa-database" }))) : null,
-            React.createElement("button", { className: `btn shadow-none ${openedTab === 'filter' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter')) },
+            React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'filter' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter')) },
                 React.createElement("i", { className: "fas fa-filter" })),
-            React.createElement("button", { className: `btn shadow-none ${openedTab === 'comment' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment')) },
+            React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'comment' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment')) },
                 React.createElement("i", { className: "fas fa-comment" }))),
         openedTab !== null ? React.createElement("div", null, openedTabComponent) : null));
 }

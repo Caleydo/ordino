@@ -2,7 +2,12 @@
 let pluginsToTransform = [
   'tdp_*',
   'phovea_*',
-  'lineupjs'
+  'lineupjs',
+  // d3
+  'd3-*',
+  'internmap',
+  'delaunator',
+  'robust-predicates'
 ].join('|');
 
 if (pluginsToTransform.length > 0) {

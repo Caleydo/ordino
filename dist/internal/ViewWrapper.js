@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
-import * as d3 from 'd3v3';
+import * as d3v3 from 'd3v3';
 import * as $ from 'jquery';
 // eslint-disable-next-line import/extensions
 import 'jquery.scrollto/jquery.scrollTo.js';
@@ -61,10 +61,10 @@ export class ViewWrapper extends EventHandler {
             this.scrollIntoView();
         };
         // create provenance reference
-        this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection));
+        this.ref = graph.findOrAddObject(ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection)));
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
-        this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+        this.$viewWrapper = d3v3.select(parent).append('div').classed('viewWrapper', true);
         this.built = Promise.resolve(this.createView(selection, itemSelection, plugin, options));
     }
     /**
@@ -267,7 +267,7 @@ export class ViewWrapper extends EventHandler {
                 .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))
                 .on('click', function (d) {
                 $buttons.classed('active', false);
-                d3.select(this).classed('active', true);
+                d3v3.select(this).classed('active', true);
                 that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.id, idtype, selection);
             });
             $buttons.exit().remove();

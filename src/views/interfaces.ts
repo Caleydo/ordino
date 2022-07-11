@@ -11,7 +11,7 @@ export interface IOrdinoRankingViewParam {
   prevSelection: string[];
   selectedMappings: ISelectedMapping[];
   globalQuery: IOrdinoGlobalQuery;
-  appliedQueryFilter: IQueryFilter;
+  appliedQueryCategories: (number | string)[];
 }
 
 export type OrdinoRankingViewPluginType<

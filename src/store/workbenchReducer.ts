@@ -16,6 +16,7 @@ export const workbenchReducers = {
     state.focusWorkbenchIndex = 0;
     state.workbenches = [action.payload.workbench];
     state.globalQueryName = action.payload.globalQueryName;
+    state.globalQueryCategories = action.payload.globalQueryCategories;
     state.appliedQueryCategories = action.payload.appliedQueryCategories;
   },
   addWorkbench(state, action: PayloadAction<IWorkbench>) {

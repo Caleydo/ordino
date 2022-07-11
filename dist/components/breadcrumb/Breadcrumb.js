@@ -8,7 +8,7 @@ export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b46
 // These units are intended as percentages, and are used as flex width
 const SMALL_CHEVRON_WIDTH = 5;
 const CONTEXT_CHEVRON_COUNT = 3;
-const POST_CHEVRON_COUNT = 2;
+const POST_CHEVRON_COUNT = 3;
 const CHEVRON_TRANSITION_WIDTH = 50;
 const FULL_BREADCRUMB_WIDTH = 100;
 export function Breadcrumb() {
@@ -36,6 +36,7 @@ export function Breadcrumb() {
         }
         return counter;
     }, [ordino.workbenches.length, ordino.focusWorkbenchIndex]);
+    console.log(endFlexNum);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     React.createElement(React.Fragment, null, ordino.workbenches.length > 0 ? (React.createElement("div", { className: "d-flex breadcrumb overflow-hidden" }, ordino.workbenches.map((workbench) => {
@@ -46,7 +47,7 @@ export function Breadcrumb() {
         else if (workbench.index === ordino.focusWorkbenchIndex) {
             flexWidth = ordino.midTransition
                 ? CHEVRON_TRANSITION_WIDTH
-                : FULL_BREADCRUMB_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT - SMALL_CHEVRON_WIDTH * (POST_CHEVRON_COUNT - endFlexNum);
+                : FULL_BREADCRUMB_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT - SMALL_CHEVRON_WIDTH * endFlexNum;
         }
         else if (workbench.index === ordino.focusWorkbenchIndex + 1) {
             flexWidth = ordino.midTransition ? CHEVRON_TRANSITION_WIDTH : SMALL_CHEVRON_WIDTH;

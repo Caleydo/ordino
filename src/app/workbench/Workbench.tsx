@@ -19,17 +19,16 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
 
   const { value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
 
-  // need to add the color for the ranking views.
+  // need to add the color to the views for the viewChooser.
   const editedViews = useMemo(() => {
     return availableViews?.map((view) => {
-      console.log(view);
       if (isVisynRankingViewDesc(view)) {
         return { ...view, color: ordino.colorMap[view.itemIDType] };
       }
 
-      return view;
+      return { ...view, color: ordino.colorMap[workbench.itemIDType] };
     });
-  }, [availableViews, ordino.colorMap]);
+  }, [availableViews, ordino.colorMap, workbench.itemIDType]);
 
   return (
     <div

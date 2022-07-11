@@ -11,16 +11,15 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
     const { value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
-    // need to add the color for the ranking views.
+    // need to add the color to the views for the viewChooser.
     const editedViews = useMemo(() => {
         return availableViews === null || availableViews === void 0 ? void 0 : availableViews.map((view) => {
-            console.log(view);
             if (isVisynRankingViewDesc(view)) {
                 return { ...view, color: ordino.colorMap[view.itemIDType] };
             }
-            return view;
+            return { ...view, color: ordino.colorMap[workbench.itemIDType] };
         });
-    }, [availableViews, ordino.colorMap]);
+    }, [availableViews, ordino.colorMap, workbench.itemIDType]);
     return (React.createElement("div", { className: `d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${ordino.focusWorkbenchIndex === 0 ? 'start' : ''}`, style: { borderTopColor: ordino.colorMap[workbench.entityId] } },
         workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (React.createElement(WorkbenchUtilsSidebar, { workbench: workbench, openTab: workbench.index > 0 && ordino.midTransition ? 'mapping' : null })) : null,
         React.createElement(WorkbenchViews, { index: workbench.index, type: type }),

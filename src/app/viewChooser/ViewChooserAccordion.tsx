@@ -27,6 +27,7 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
   const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
   const groups = groupBy(props.views, (view) => view.group.name);
 
+  console.log(groups);
   return (
     <div className="view-buttons flex-grow-1 flex-row border-top border-light overflow-auto">
       {Object.keys(groups)
@@ -52,7 +53,7 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                 {groups[v].map((view, idx) => (
                   <button
                     type="button"
-                    className={`d-flex align-items-center justify-content-between btn py-1 ps-4 text-start btn-text-gray shadow-none text-nowrap rounded-0 rounded-end me-1 ${
+                    className={`d-flex align-items-center justify-content-between btn py-1 ps-4 pe-0 text-start btn-text-gray shadow-none text-nowrap rounded-0 rounded-end ${
                       view.id === props.selectedView?.id ? 'active' : ''
                     }`}
                     // eslint-disable-next-line react/no-array-index-key
@@ -61,9 +62,11 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                   >
                     <div>{view.name}</div>
                     {isVisynRankingViewDesc(view) ? (
-                      <div className="d-flex h-100 align-items-center" style={{ width: `${BREADCRUMB_WIDTH}px` }}>
-                        <BreadcrumbSvg color={view.color} width={BREADCRUMB_WIDTH} height={20} isFirst={false} isClickable={false} />
+                      <div className="d-flex h-100 align-items-center" style={{ marginRight: '1.25rem', width: `1.25rem` }}>
+                        <BreadcrumbSvg color={view.color} width={BREADCRUMB_WIDTH} height={18} isFirst={false} isClickable={false} />
                       </div>
+                    ) : view.icon ? (
+                      <i className={`${view.icon}`} style={{ marginRight: '1.25rem', fontSize: '16px', color: view.color }} />
                     ) : null}
                   </button>
                 ))}

@@ -47,8 +47,26 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
   );
 
   return (
-    <animated.div className={`position-relative ${onClick ? 'cursor-pointer' : ''}`} ref={ref} style={{ ...animatedStyle }} onClick={onClick}>
-      <div className={`position-absolute chevronDiv ${workbench.index !== ordino.focusWorkbenchIndex} top-50 start-50 translate-middle d-flex`}>
+    <animated.div
+      className={`position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`}
+      ref={ref}
+      style={{ ...animatedStyle, flexBasis: 0 }}
+      onClick={onClick}
+    >
+      <div
+        className={`${
+          flexWidth > 0 ? (workbench.index > 0 && workbench.index === ordino.focusWorkbenchIndex ? 'ms-3' : 'ms-2') : ''
+        } chevronDiv d-flex flex-grow-1`}
+        style={{ flexBasis: 0 }}
+      >
+        {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
+          <p className="chevronText flex-grow-1">
+            {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="chevronDiv flex-grow-1 justify-content-center d-flex">
         {workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (
           <>
             <FilterAndSelected />
@@ -59,19 +77,12 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
               onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
             />
           </>
-        ) : workbench.index !== ordino.focusWorkbenchIndex ? (
-          <p className="chevronText flex-grow-1">{workbench.name.slice(0, 5)}</p>
+        ) : workbench.index !== ordino.focusWorkbenchIndex && flexWidth > 0 ? (
+          <p className="text-center chevronText flex-grow-1 justify-content-center">{workbench.name.slice(0, 5)}</p>
         ) : null}
       </div>
 
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ left: workbench?.index === 0 ? '5px' : '20px' }}>
-        {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
-          <p className="chevronText flex-grow-1">
-            {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
-          </p>
-        ) : null}
-      </div>
-      <div className="position-absolute chevronDiv top-50 translate-middle-y d-flex" style={{ right: '8px' }}>
+      <div className={`${flexWidth > 0 ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`} style={{ flexBasis: 0 }}>
         {workbench && workbench.index === ordino.focusWorkbenchIndex ? (
           ordino.focusWorkbenchIndex > 0 ? (
             <button

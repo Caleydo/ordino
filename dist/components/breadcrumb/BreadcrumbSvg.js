@@ -39,7 +39,7 @@ export function BreadcrumbSvg({ width = 1500, height = 40, chevronIndent = 8, fi
     return (React.createElement("svg", { className: "position-absolute chevronSvg", width: width, style: { height: `${height}px` }, onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false) },
         React.createElement("rect", { width: width - margin - chevronIndent, height: height, fill: fillColor }),
         React.createElement("g", { transform: `translate(${width - chevronIndent - margin}, 0)` },
-            React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: fillColor })),
+            React.createElement("path", { d: `m -5 ${height} h 5 l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} h -5 z`, fill: fillColor })),
         !first ? (React.createElement("g", null,
             React.createElement("path", { d: `m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`, fill: "white" }))) : null));
 }

@@ -52,12 +52,10 @@ export function Breadcrumb() {
             let flexWidth = 0;
 
             if (workbench.index < ordino.focusWorkbenchIndex) {
-              flexWidth = (SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT) / startFlexNum;
+              flexWidth = ordino.midTransition ? 0 : (SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT) / startFlexNum;
             } else if (workbench.index === ordino.focusWorkbenchIndex) {
               flexWidth = ordino.midTransition
-                ? startFlexNum === 0
-                  ? CHEVRON_TRANSITION_WIDTH
-                  : CHEVRON_TRANSITION_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT
+                ? CHEVRON_TRANSITION_WIDTH
                 : FULL_BREADCRUMB_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT - SMALL_CHEVRON_WIDTH * (POST_CHEVRON_COUNT - endFlexNum);
             } else if (workbench.index === ordino.focusWorkbenchIndex + 1) {
               flexWidth = ordino.midTransition ? CHEVRON_TRANSITION_WIDTH : SMALL_CHEVRON_WIDTH;

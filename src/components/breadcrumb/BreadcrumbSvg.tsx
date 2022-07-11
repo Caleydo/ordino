@@ -67,7 +67,7 @@ export function BreadcrumbSvg({
     >
       <rect width={width - margin - chevronIndent} height={height} fill={fillColor} />
       <g transform={`translate(${width - chevronIndent - margin}, 0)`}>
-        <path d={`m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`} fill={fillColor} />
+        <path d={`m -5 ${height} h 5 l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} h -5 z`} fill={fillColor} />
       </g>
 
       {!first ? (

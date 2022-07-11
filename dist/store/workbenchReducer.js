@@ -4,6 +4,7 @@ export const workbenchReducers = {
         state.workbenches = [action.payload.workbench];
         state.globalQuery = action.payload.globalQuery;
         state.appliedQueryFilter = action.payload.appliedQueryFilter;
+        state.midTransition = false;
     },
     addWorkbench(state, action) {
         state.midTransition = true;

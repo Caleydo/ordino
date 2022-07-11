@@ -70,8 +70,9 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                                 parameters: {
                                     prevSelection: workbench.selection,
                                     selectedMappings,
-                                    globalQuery: ordino.globalQuery,
-                                    appliedQueryFilter: ordino.appliedQueryFilter,
+                                    globalQueryName: ordino.globalQueryName,
+                                    globalQueryCategories: ordino.globalQueryCategories,
+                                    appliedQueryCategories: ordino.appliedQueryCategories,
                                 },
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
                                 filters: [],

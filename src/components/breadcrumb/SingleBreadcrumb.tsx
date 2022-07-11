@@ -92,7 +92,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
         </div>
       ) : null}
 
-      <BreadcrumbSvg color={color} width={width} first={first} clickable={!!onClick} />
+      <BreadcrumbSvg color={color} width={width} isFirst={first} isClickable={!!onClick} />
     </animated.div>
   );
 }

@@ -1,10 +1,10 @@
-export declare function BreadcrumbSvg({ width, height, chevronIndent, first, margin, color, clickable, }: {
+export declare function BreadcrumbSvg({ width, height, chevronIndent, margin, isFirst, color, isClickable, }: {
     width?: number;
     chevronIndent?: number;
-    first?: boolean;
+    isFirst?: boolean;
     height?: number;
     color?: string;
     margin?: number;
-    clickable?: boolean;
+    isClickable?: boolean;
 }): JSX.Element;
 //# sourceMappingURL=BreadcrumbSvg.d.ts.map

@@ -38,6 +38,6 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
                     dispatch(changeFocus({ index: workbench.index - 1 }));
                     dispatch(removeWorkbench({ index: workbench.index }));
                 } }))) : null,
-        React.createElement(BreadcrumbSvg, { color: color, width: width, first: first, clickable: !!onClick })));
+        React.createElement(BreadcrumbSvg, { color: color, width: width, isFirst: first, isClickable: !!onClick })));
 }
 //# sourceMappingURL=SingleBreadcrumb.js.map

@@ -21,7 +21,7 @@ export interface IViewChooserAccordionProps {
   selectedView?: IViewPluginDesc;
 }
 
-const BREADCRUMB_WIDTH = 180;
+const BREADCRUMB_WIDTH = 30;
 
 export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
   const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
@@ -49,30 +49,24 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
 
             <div id={`collapse-${i}-${uniqueSuffix}`} className="collapse show" aria-labelledby={v}>
               <div className="d-grid gap-2 px-0 py-1">
-                {groups[v].map((view, idx) =>
-                  isVisynRankingViewDesc(view) ? (
-                    <div className="ps-2 pb-1 d-flex align-items-center cursor-pointer justify-content-center" onClick={() => props.onSelectedView(view)}>
-                      <div className="position-absolute d-flex align-items-center" style={{ width: `${BREADCRUMB_WIDTH}px` }}>
-                        <BreadcrumbSvg key={view.id} backgroundColor="white" color={view.color} width={BREADCRUMB_WIDTH} height={30} first={false} clickable />
+                {groups[v].map((view, idx) => (
+                  <button
+                    type="button"
+                    className={`d-flex align-items-center justify-content-between btn py-1 ps-4 text-start btn-text-gray shadow-none text-nowrap rounded-0 rounded-end me-1 ${
+                      view.id === props.selectedView?.id ? 'active' : ''
+                    }`}
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={idx}
+                    onClick={() => props.onSelectedView(view)}
+                  >
+                    <div>{view.name}</div>
+                    {isVisynRankingViewDesc(view) ? (
+                      <div className="d-flex h-100 align-items-center" style={{ width: `${BREADCRUMB_WIDTH}px` }}>
+                        <BreadcrumbSvg color={view.color} width={BREADCRUMB_WIDTH} height={20} isFirst={false} isClickable={false} />
                       </div>
-                      <div className="pe-none" style={{ zIndex: 10, color: 'white' }}>
-                        {view.name}
-                      </div>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className={`btn py-1 ps-4 text-start btn-text-gray shadow-none text-nowrap rounded-0 rounded-end me-1 ${
-                        view.id === props.selectedView?.id ? 'active' : ''
-                      }`}
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={idx}
-                      onClick={() => props.onSelectedView(view)}
-                    >
-                      {view.name}
-                    </button>
-                  ),
-                )}
+                    ) : null}
+                  </button>
+                ))}
               </div>
             </div>
           </div>

@@ -28,7 +28,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
     }, []);
     const onCommentPanelVisibilityChanged = React.useCallback((isOpen) => dispatch(setCommentsOpen({ workbenchIndex: workbench === null || workbench === void 0 ? void 0 : workbench.index, isOpen })), [workbench === null || workbench === void 0 ? void 0 : workbench.index, dispatch]);
     return (React.createElement(animated.div, { className: `ellipsisText position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`, ref: ref, style: { ...animatedStyle, flexBasis: 0 }, onClick: onClick, title: workbench.name },
-        workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (React.createElement("div", { className: `${flexWidth > 0 ? (workbench.index > 0 ? 'ms-3' : 'ms-2') : ''} chevronDiv d-flex flex-grow-1`, style: { flexBasis: 0 } },
+        workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (React.createElement("div", { className: ` chevronDiv d-flex flex-grow-1`, style: { flexBasis: 0, marginLeft: workbench.index === 0 ? '.75rem' : '1.5rem' } },
             React.createElement("p", { className: "chevronText flex-grow-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })))) : null,
         React.createElement("div", { className: "me-2 ms-2 chevronDiv justify-content-center d-flex", style: { flexBasis: 0, flexGrow: 2 } }, workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (React.createElement(React.Fragment, null,
             React.createElement(FilterAndSelected, null),

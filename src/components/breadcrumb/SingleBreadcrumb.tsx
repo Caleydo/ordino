@@ -55,7 +55,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
       title={workbench.name}
     >
       {workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (
-        <div className={`${flexWidth > 0 ? (workbench.index > 0 ? 'ms-3' : 'ms-2') : ''} chevronDiv d-flex flex-grow-1`} style={{ flexBasis: 0 }}>
+        <div className={` chevronDiv d-flex flex-grow-1`} style={{ flexBasis: 0, marginLeft: workbench.index === 0 ? '.75rem' : '1.5rem' }}>
           <p className="chevronText flex-grow-1">
             {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
           </p>

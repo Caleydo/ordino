@@ -25,11 +25,11 @@ export function WorkbenchView({
   removeCallback: (path: MosaicPath) => void;
 }) {
   const ordino = useAppSelector((state) => state.ordino);
-  const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
+  const { value: visynViews } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
   const availableViews = useMemo(() => {
-    return value || [];
-  }, [value]);
+    return visynViews || [];
+  }, [visynViews]);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

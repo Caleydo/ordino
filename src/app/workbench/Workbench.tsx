@@ -69,11 +69,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                     selection: [],
                   }),
                 );
-
-                // setTimeout(() => {
-                //   dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));
-                //   dispatch(setCreateNextWorkbenchSidebarOpen({ workbenchIndex: workbench.index, open: false }));
-                // }, 0);
               } else {
                 dispatch(
                   addView({
@@ -87,15 +82,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                   }),
                 );
               }
-
-              // dispatch(
-              //   setView({
-              //     workbenchIndex,
-              //     viewIndex: findViewIndex(view.uniqueId, currentWorkbench),
-              //     viewId: newView.id,
-              //     viewName: newView.name,
-              //   }),
-              // );
             }}
             isEmbedded={false}
           />

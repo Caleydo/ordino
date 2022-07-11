@@ -19,7 +19,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
                 return React.createElement("div", { style: { width: '250px' } }, "Comment something");
             }
             default: {
-                return React.createElement("div", { style: { width: '250px' } }, "Thats weird");
+                return React.createElement("div", { style: { width: '250px' } }, "There was an error finding the correct tab");
             }
         }
     }, [openedTab, workbench]);

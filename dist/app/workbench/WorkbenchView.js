@@ -9,10 +9,10 @@ export function getVisynView(entityId) {
 }
 export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, }) {
     const ordino = useAppSelector((state) => state.ordino);
-    const { value } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
+    const { value: visynViews } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
     const availableViews = useMemo(() => {
-        return value || [];
-    }, [value]);
+        return visynViews || [];
+    }, [visynViews]);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag })) : (React.createElement(WorkbenchGenericView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag }))));

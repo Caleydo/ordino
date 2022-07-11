@@ -23,7 +23,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         return <div style={{ width: '250px' }}>Comment something</div>;
       }
       default: {
-        return <div style={{ width: '250px' }}>Thats weird</div>;
+        return <div style={{ width: '250px' }}>There was an error finding the correct tab</div>;
       }
     }
   }, [openedTab, workbench]);

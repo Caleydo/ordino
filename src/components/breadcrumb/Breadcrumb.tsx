@@ -7,8 +7,9 @@ import { changeFocus } from '../../store';
 
 export const colorPalette = ['#337ab7', '#ec6836', '#75c4c2', '#e9d36c', '#24b466', '#e891ae', '#db933c', '#b08aa6', '#8a6044', '#7b7b7b'];
 
-const SMALL_CHEVRON_WIDTH = 3;
-const CONTEXT_CHEVRON_COUNT = 5;
+// These units are intended as percentages, and are used as flex width
+const SMALL_CHEVRON_WIDTH = 5;
+const CONTEXT_CHEVRON_COUNT = 3;
 const POST_CHEVRON_COUNT = 2;
 const CHEVRON_TRANSITION_WIDTH = 50;
 const FULL_BREADCRUMB_WIDTH = 100;

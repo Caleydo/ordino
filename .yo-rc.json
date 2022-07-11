@@ -55,7 +55,6 @@
       }
     },
     "libraryAliases": {
-      "d3": "d3/d3",
       "scrollTo": "jquery.scrollto/jquery.scrollTo.js",
       "jquery": "jquery/dist/jquery"
     },

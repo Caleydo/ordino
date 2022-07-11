@@ -43,7 +43,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
 
       <WorkbenchViews index={workbench.index} type={type} />
       {workbench.index === ordino.focusWorkbenchIndex ? (
-        <div className="d-flex me-1" style={{ borderLeft: '1px solid lightgray' }}>
+        <div className="d-flex" style={{ borderLeft: '1px solid lightgray' }}>
           <ViewChooser
             views={editedViews || []}
             selectedView={null}

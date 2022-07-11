@@ -36,10 +36,11 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
           // eslint-disable-next-line react/no-array-index-key
           <div className={`accordion-item ${i < Object.keys(groups).length - 1 ? 'border-0 border-bottom border-light' : ''}`} key={i}>
             <button
-              className={`accordion-button py-2 btn-text-gray shadow-none text-nowrap ${
+              className={`accordion-button btn-text-gray py-2 shadow-none text-nowrap ${
                 groups[v].some((g) => g.id === props.selectedView?.id) ? 'active' : ''
               }`}
               type="button"
+              style={{ fontWeight: 500, color: 'black' }}
               data-bs-toggle="collapse"
               data-bs-target={`#collapse-${i}-${uniqueSuffix}`}
               aria-expanded="true"
@@ -53,9 +54,10 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                 {groups[v].map((view, idx) => (
                   <button
                     type="button"
-                    className={`d-flex align-items-center justify-content-between btn py-1 ps-4 pe-0 text-start btn-text-gray shadow-none text-nowrap rounded-0 rounded-end ${
+                    className={`d-flex align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 rounded-end ${
                       view.id === props.selectedView?.id ? 'active' : ''
                     }`}
+                    style={{ color: 'black' }}
                     // eslint-disable-next-line react/no-array-index-key
                     key={idx}
                     onClick={() => props.onSelectedView(view)}
@@ -66,7 +68,7 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                         <BreadcrumbSvg color={view.color} width={BREADCRUMB_WIDTH} height={18} isFirst={false} isClickable={false} />
                       </div>
                     ) : view.icon ? (
-                      <i className={`${view.icon}`} style={{ marginRight: '1.25rem', fontSize: '16px', color: view.color }} />
+                      <i className={`${view.icon}`} style={{ marginRight: '1.25rem', fontSize: '18px', color: view.color }} />
                     ) : null}
                   </button>
                 ))}

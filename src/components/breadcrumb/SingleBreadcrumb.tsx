@@ -48,21 +48,25 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
 
   return (
     <animated.div
-      className={`ellipsisText position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`}
+      className={`text-truncate position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`}
       ref={ref}
       style={{ ...animatedStyle, flexBasis: 0 }}
       onClick={onClick}
-      title={workbench.name}
+      title={
+        workbench.index !== ordino.focusWorkbenchIndex && !(workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition)
+          ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })
+          : null
+      }
     >
       {workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (
-        <div className={` chevronDiv d-flex flex-grow-1`} style={{ flexBasis: 0, marginLeft: workbench.index === 0 ? '.75rem' : '1.5rem' }}>
-          <p className="chevronText flex-grow-1">
+        <div className="text-truncate chevronDiv d-flex flex-grow-1" style={{ flexBasis: 0, marginLeft: workbench.index === 0 ? '.75rem' : '1.5rem' }}>
+          <p className="chevronText text-truncate flex-grow-1">
             {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
           </p>
         </div>
       ) : null}
 
-      <div className="me-2 ms-2 chevronDiv justify-content-center d-flex" style={{ flexBasis: 0, flexGrow: 2 }}>
+      <div className="me-2 ms-2 text-truncate chevronDiv justify-content-center d-flex" style={{ flexBasis: 0, flexGrow: 2 }}>
         {workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (
           <>
             <FilterAndSelected />
@@ -74,7 +78,7 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
             />
           </>
         ) : workbench.index !== ordino.focusWorkbenchIndex && flexWidth > 0 && !ordino.midTransition ? (
-          <p className="text-center chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
+          <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
         ) : null}
       </div>
 

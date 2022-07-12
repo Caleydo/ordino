@@ -52,10 +52,12 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
                         <Fragment key={`${entity}-${name}`}>
                           <div className="mt-2 mappingTypeText">{name}</div>
                           {columns.map((col) => {
+                            const isChecked = workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity);
+
                             return (
                               <div key={`${col.label}-column`} className="form-check ms-2">
                                 <input
-                                  checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity)}
+                                  checked={isChecked}
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
@@ -64,6 +66,10 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
                                       }),
                                     )
                                   }
+                                  style={{
+                                    backgroundColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
+                                    borderColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
+                                  }}
                                   className="form-check-input"
                                   type="checkbox"
                                   value=""

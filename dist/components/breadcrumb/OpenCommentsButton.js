@@ -1,6 +1,6 @@
 import React from 'react';
-import { CommentActions } from 'tdp_comments';
-import { I18nextManager } from 'tdp_core';
+import { CommentActions, CommentsRest } from 'tdp_comments';
+import { I18nextManager, useAsync } from 'tdp_core';
 export function OpenCommentsButton({ idType, selection, commentPanelVisible, onCommentPanelVisibilityChanged }) {
     const [commentCount, setCommentCount] = React.useState(0);
     React.useEffect(() => {
@@ -26,6 +26,19 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
             onCommentPanelVisibilityChanged(false);
         }
     }, [commentPanelVisible, onCommentPanelVisibilityChanged, selection]);
+    const loadCommentCount = React.useCallback(async () => {
+        var _a;
+        if (selection.length === 0) {
+            return;
+        }
+        const comments = await CommentsRest.getCommentsMatching({
+            entities: [{ id_types: [idType], entity_ids: selection }],
+        });
+        const count = (_a = comments.filter((comment) => comment.entities.some((e) => selection.includes(e.entity_id)))) === null || _a === void 0 ? void 0 : _a.length;
+        setCommentCount(count);
+    }, [idType, selection]);
+    const { status } = useAsync(loadCommentCount, []);
+    console.log(status, commentCount);
     const title = commentPanelVisible
         ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
         : commentCount

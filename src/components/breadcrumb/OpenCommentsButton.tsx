@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { CommentActions, CommentsRest, IComment } from 'tdp_comments';
-import { I18nextManager, useAsync } from 'tdp_core';
+import { I18nextManager, IEvent, useAsync } from 'tdp_core';
 
 export interface IOpenCommentsButtonProps {
   /**
@@ -25,34 +25,31 @@ export interface IOpenCommentsButtonProps {
 
 export function OpenCommentsButton({ idType, selection, commentPanelVisible, onCommentPanelVisibilityChanged }: IOpenCommentsButtonProps) {
   const [commentCount, setCommentCount] = React.useState<number>(0);
+  const [commentCountDirty, setCommentCountDirty] = React.useState(false);
 
   React.useEffect(() => {
-    const listener = (_, comments: IComment[]) => {
-      // TODO: should we count the replies? The original button from tdp_comments shows the count of unread comments and + replies
-      // comments.map((c) => c.replies.filter((r) => !r.read).length);
-      const count = comments.filter((c) => c.entities.some((e) => e.id_type === idType)).length;
-      setCommentCount(count);
+    const listener = (_: IEvent, comment: Readonly<IComment>) => {
+      const selectionCommentCountChanged = comment.entities.some((e) => selection.includes(e.entity_id));
+      if (selectionCommentCountChanged) {
+        setCommentCountDirty(true);
+      }
     };
-    CommentActions.onChangedComments(listener);
-    const visibilityListener = (_, visible: boolean) => onCommentPanelVisibilityChanged(visible);
-    CommentActions.onCommentPanelVisibiltyChanged(visibilityListener);
-
+    CommentActions.onAddComment(listener);
+    CommentActions.onDeleteComment(listener);
     return () => {
-      CommentActions.offChangedComments(listener);
-      CommentActions.offCommentPanelVisibiltyChanged(visibilityListener);
+      CommentActions.offAddComment(listener);
+      CommentActions.offDeleteComment(listener);
     };
-  }, [idType, onCommentPanelVisibilityChanged]);
+  }, [selection]);
 
   React.useEffect(() => {
-    if (selection.length !== 0) {
-      return;
-    }
-    if (commentPanelVisible) {
-      onCommentPanelVisibilityChanged(false);
-    }
-  }, [commentPanelVisible, onCommentPanelVisibilityChanged, selection]);
+    setCommentCountDirty(true);
+  }, [selection]);
 
   const loadCommentCount = React.useCallback(async () => {
+    if (!commentCountDirty) {
+      return;
+    }
     if (selection.length === 0) {
       return;
     }
@@ -60,10 +57,10 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
       entities: [{ id_types: [idType], entity_ids: selection }],
     });
     const count = comments.filter((comment) => comment.entities.some((e) => selection.includes(e.entity_id)))?.length;
+    setCommentCountDirty(false);
     setCommentCount(count);
-  }, [idType, selection]);
+  }, [idType, selection, commentCountDirty]);
   const { status } = useAsync(loadCommentCount, []);
-  console.log(status, commentCount);
 
   const title = commentPanelVisible
     ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
@@ -72,21 +69,32 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
     : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
 
   return selection.length > 0 ? (
-    <button type="button" title={title} className="btn btn-icon-light position-relative" onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}>
-      <span>
-        <i className="flex-grow-1 fas fa-comments" />
-        <span
-          className="position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
-          style={{
-            top: '27%',
-            left: '76%',
-            fontSize: 'xx-small',
-            visibility: commentCount ? null : 'hidden',
-          }}
-        >
-          {commentCount}
+    status === 'success' ? (
+      <button
+        type="button"
+        title={title}
+        className="btn btn-icon-light position-relative"
+        onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}
+      >
+        <span>
+          <i className="flex-grow-1 fas fa-comments" />
+          <span
+            className="position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
+            style={{
+              top: '27%',
+              left: '76%',
+              fontSize: 'xx-small',
+              visibility: commentCount ? null : 'hidden',
+            }}
+          >
+            {commentCount}
+          </span>
         </span>
-      </span>
-    </button>
+      </button>
+    ) : (
+      <button type="button" className="btn btn-icon-light position-relative" disabled>
+        <i className="fas fa-circle-notch fa-spin" />
+      </button>
+    )
   ) : null;
 }

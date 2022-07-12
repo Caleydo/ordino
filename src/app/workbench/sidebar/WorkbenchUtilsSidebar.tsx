@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { DetailsSidebar } from './DetailsSidebar';
 import { IWorkbench } from '../../../store';
+import { SidebarButton } from './SidebarButton';
 
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const ordino = useAppSelector((state) => state.ordino);
@@ -37,37 +38,33 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
   return (
     <div className="d-flex h-100" style={{ borderRight: !openedTab ? '' : '1px solid lightgray' }}>
       <div className="d-flex flex-column me-1" style={{ borderRight: '1px solid lightgray' }}>
-        <button
-          className={`btn borderRadiusNone shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
-          type="button"
+        <SidebarButton
+          isSelected={openedTab === 'add'}
+          color={ordino.colorMap[workbench.entityId]}
+          icon="fas fa-plus-circle"
           onClick={() => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add'))}
-        >
-          <i className="fas fa-plus-circle" />
-        </button>
+        />
         {workbench.index > 0 ? (
-          <button
-            className={`btn borderRadiusNone shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
-            type="button"
+          <SidebarButton
+            isSelected={openedTab === 'mapping'}
+            color={ordino.colorMap[workbench.entityId]}
+            icon="fas fa-database"
             onClick={() => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping'))}
-          >
-            <i className="fas fa-database" />
-          </button>
+          />
         ) : null}
 
-        <button
-          className={`btn borderRadiusNone shadow-none ${openedTab === 'filter' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
-          type="button"
+        <SidebarButton
+          isSelected={openedTab === 'filter'}
+          color={ordino.colorMap[workbench.entityId]}
+          icon="fas fa-filter"
           onClick={() => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter'))}
-        >
-          <i className="fas fa-filter" />
-        </button>
-        <button
-          className={`btn borderRadiusNone shadow-none ${openedTab === 'comment' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`}
-          type="button"
+        />
+        <SidebarButton
+          isSelected={openedTab === 'comment'}
+          color={ordino.colorMap[workbench.entityId]}
+          icon="fas fa-comment"
           onClick={() => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment'))}
-        >
-          <i className="fas fa-comment" />
-        </button>
+        />
       </div>
       {openedTab !== null ? <div>{openedTabComponent}</div> : null}
     </div>

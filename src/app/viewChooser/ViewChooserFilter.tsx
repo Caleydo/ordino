@@ -20,7 +20,7 @@ export function ViewChooserFilter(props: IViewChooserFilterProps) {
 
   return (
     <div className="view-filter input-group flex-nowrap">
-      <input className="form-control border-end-0" type="search" placeholder="Search Views" value={filter} onChange={(evt) => setFilter(evt.target.value)} />
+      <input className="form-control border-end-0" type="search" placeholder="Search views" value={filter} onChange={(evt) => setFilter(evt.target.value)} />
       <span className="input-group-text text-secondary bg-transparent border-start-0">
         <button className="btn btn-icon-gray shadow-none py-0 px-1" type="button">
           <i className="fas fa-search" />

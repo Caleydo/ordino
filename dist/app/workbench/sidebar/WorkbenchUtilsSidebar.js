@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { DetailsSidebar } from './DetailsSidebar';
+import { SidebarButton } from './SidebarButton';
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
     const ordino = useAppSelector((state) => state.ordino);
     const [openedTab, setOpenedTab] = useState(openTab);
@@ -30,14 +31,10 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
     }, [ordino.midTransition, workbench.index, ordino.focusWorkbenchIndex]);
     return (React.createElement("div", { className: "d-flex h-100", style: { borderRight: !openedTab ? '' : '1px solid lightgray' } },
         React.createElement("div", { className: "d-flex flex-column me-1", style: { borderRight: '1px solid lightgray' } },
-            React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'add' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add')) },
-                React.createElement("i", { className: "fas fa-plus-circle" })),
-            workbench.index > 0 ? (React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'mapping' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping')) },
-                React.createElement("i", { className: "fas fa-database" }))) : null,
-            React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'filter' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter')) },
-                React.createElement("i", { className: "fas fa-filter" })),
-            React.createElement("button", { className: `btn borderRadiusNone shadow-none ${openedTab === 'comment' ? 'bg-primary btn-icon-light' : 'btn-icon-dark'}`, type: "button", onClick: () => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment')) },
-                React.createElement("i", { className: "fas fa-comment" }))),
+            React.createElement(SidebarButton, { isSelected: openedTab === 'add', color: ordino.colorMap[workbench.entityId], icon: "fas fa-plus-circle", onClick: () => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add')) }),
+            workbench.index > 0 ? (React.createElement(SidebarButton, { isSelected: openedTab === 'mapping', color: ordino.colorMap[workbench.entityId], icon: "fas fa-database", onClick: () => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping')) })) : null,
+            React.createElement(SidebarButton, { isSelected: openedTab === 'filter', color: ordino.colorMap[workbench.entityId], icon: "fas fa-filter", onClick: () => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter')) }),
+            React.createElement(SidebarButton, { isSelected: openedTab === 'comment', color: ordino.colorMap[workbench.entityId], icon: "fas fa-comment", onClick: () => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment')) })),
         openedTab !== null ? React.createElement("div", null, openedTabComponent) : null));
 }
 //# sourceMappingURL=WorkbenchUtilsSidebar.js.map

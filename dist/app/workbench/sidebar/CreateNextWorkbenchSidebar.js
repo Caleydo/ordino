@@ -56,6 +56,11 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                             columnSelection: r.mappingSubtype,
                         };
                     });
+                    const queryParams = {
+                        globalQueryName: ordino.globalQueryName,
+                        globalQueryCategories: ordino.globalQueryCategories || [],
+                        appliedQueryCategories: ordino.appliedQueryCategories,
+                    };
                     dispatch(
                     // load the data
                     addWorkbench({
@@ -70,9 +75,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                                 parameters: {
                                     prevSelection: workbench.selection,
                                     selectedMappings,
-                                    globalQueryName: ordino.globalQueryName,
-                                    globalQueryCategories: ordino.globalQueryCategories,
-                                    appliedQueryCategories: ordino.appliedQueryCategories,
+                                    ...queryParams,
                                 },
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
                                 filters: [],
@@ -85,6 +88,7 @@ export function CreateNextWorkbenchSidebar({ workbench }) {
                         name: selectedView.itemName,
                         index: workbench.index + 1,
                         selection: [],
+                        ...queryParams,
                     }));
                     setTimeout(() => {
                         dispatch(changeFocus({ index: ordino.focusWorkbenchIndex + 1 }));

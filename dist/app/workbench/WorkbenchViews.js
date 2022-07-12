@@ -7,6 +7,8 @@ import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
 import { CreateNextWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
+import { setCommentsOpen } from '../../store/ordinoSlice';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 export var EWorkbenchType;
 (function (EWorkbenchType) {
     EWorkbenchType["PREVIOUS"] = "t-previous";
@@ -16,8 +18,10 @@ export var EWorkbenchType;
 })(EWorkbenchType || (EWorkbenchType = {}));
 export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
+    const dispatch = useAppDispatch();
     const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
-    const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
+    const onCommentPanelVisibilityChanged = React.useCallback((isOpen) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })), [index, dispatch]);
+    const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS, onCommentPanelVisibilityChanged });
     const [mosaicState, setMosaicState] = useState(views[0].uniqueId);
     const [mosaicViewCount, setMosaicViewCount] = useState(1);
     const [mosaicDrag, setMosaicDrag] = useState(false);

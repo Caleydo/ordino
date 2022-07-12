@@ -51,7 +51,7 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
                     left: '76%',
                     fontSize: 'xx-small',
                     visibility: commentCount ? null : 'hidden',
-                } }, commentCount)))) : (React.createElement("button", { type: "button", className: "btn btn-icon-light position-relative", disabled: true },
+                } }, commentCount)))) : (React.createElement("button", { type: "button", className: "btn btn-icon-light position-relative" },
         React.createElement("i", { className: "fas fa-circle-notch fa-spin" })))) : null;
 }
 //# sourceMappingURL=OpenCommentsButton.js.map

@@ -92,7 +92,7 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
         </span>
       </button>
     ) : (
-      <button type="button" className="btn btn-icon-light position-relative" disabled>
+      <button type="button" className="btn btn-icon-light position-relative">
         <i className="fas fa-circle-notch fa-spin" />
       </button>
     )

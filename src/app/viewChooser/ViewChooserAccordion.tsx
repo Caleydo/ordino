@@ -1,8 +1,8 @@
 import { groupBy } from 'lodash';
 import { IViewPluginDesc, UniqueIdManager } from 'tdp_core';
 import React from 'react';
-import { BreadcrumbSvg } from '../../components/breadcrumb/BreadcrumbSvg';
-import { isVisynRankingView, isVisynRankingViewDesc } from '../../views';
+import { isVisynRankingViewDesc } from '../../views';
+import { BreadcrumbSvgPathOnly } from '../../components/breadcrumb/BreadcrumbSvgPathOnly';
 
 export interface IViewChooserAccordionProps {
   /**
@@ -27,7 +27,6 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
   const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
   const groups = groupBy(props.views, (view) => view.group.name);
 
-  console.log(groups);
   return (
     <div className="view-buttons flex-grow-1 flex-row border-top border-light overflow-auto">
       {Object.keys(groups)
@@ -65,10 +64,10 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                     <div>{view.name}</div>
                     {isVisynRankingViewDesc(view) ? (
                       <div className="d-flex h-100 align-items-center" style={{ marginRight: '1.25rem', width: `1.25rem` }}>
-                        <BreadcrumbSvg color={view.color} width={BREADCRUMB_WIDTH} height={18} isFirst={false} isClickable={false} />
+                        <BreadcrumbSvgPathOnly color={view.color} width={BREADCRUMB_WIDTH} height={18} isFirst={false} />
                       </div>
                     ) : view.icon ? (
-                      <i className={`${view.icon}`} style={{ marginRight: '1.25rem', fontSize: '18px', color: view.color }} />
+                      <i className={`${view.icon}`} style={{ marginRight: '1.25rem', fontSize: '16px', color: view.color }} />
                     ) : null}
                   </button>
                 ))}

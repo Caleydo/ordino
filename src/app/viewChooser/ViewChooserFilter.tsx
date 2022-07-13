@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IViewPluginDesc } from 'tdp_core';
+import { I18nextManager, IViewPluginDesc } from 'tdp_core';
 
 export interface IViewChooserFilterProps {
   views: IViewPluginDesc[] | [];
@@ -20,7 +20,13 @@ export function ViewChooserFilter(props: IViewChooserFilterProps) {
 
   return (
     <div className="view-filter input-group flex-nowrap">
-      <input className="form-control border-end-0" type="search" placeholder="Search views" value={filter} onChange={(evt) => setFilter(evt.target.value)} />
+      <input
+        className="form-control border-end-0"
+        type="search"
+        placeholder={I18nextManager.getInstance().i18n.t('tdp:ordino.views.searchViews')}
+        value={filter}
+        onChange={(evt) => setFilter(evt.target.value)}
+      />
       <span className="input-group-text text-secondary bg-transparent border-start-0">
         <button className="btn btn-icon-gray shadow-none py-0 px-1" type="button">
           <i className="fas fa-search" />

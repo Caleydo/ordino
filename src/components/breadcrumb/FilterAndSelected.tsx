@@ -24,7 +24,7 @@ export function FilterAndSelected() {
   }, [ordino.globalQuery.filter.val, ordino.appliedQueryFilter.val]);
 
   return (
-    <div className="align-middle m-1 d-flex align-items-center">
+    <div className="text-truncate align-middle m-1 d-flex align-items-center">
       {!isQueryFilterEqual ? (
         <i
           className="fa fa-filter"
@@ -36,7 +36,7 @@ export function FilterAndSelected() {
           })}
         />
       ) : null}
-      <span className="m-1">
+      <span className="m-1 text-truncate">
         {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusWorkbenchIndex].name}s / {selectedLength}{' '}
         {ordino.workbenches[ordino.focusWorkbenchIndex].name}s selected
       </span>

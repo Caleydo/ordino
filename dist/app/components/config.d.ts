@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
-import { IBurgerButtonProps } from './BurgerButton';
-import { ISelectedViewIndicatorProps } from './SelectedViewIndicator';
-import { ISelectionCountIndicatorProps } from './SelectionCountIndicator';
+import { IBurgerButtonProps } from '../BurgerButton';
+import { ISelectedViewIndicatorProps } from '../SelectedViewIndicator';
+import { ISelectionCountIndicatorProps } from '../SelectionCountIndicator';
 import { IViewChooserAccordionProps } from './ViewChooserAccordion';
 import { IViewChooserFilterProps } from './ViewChooserFilter';
 import { IViewChooserHeaderProps } from './ViewChooserHeader';

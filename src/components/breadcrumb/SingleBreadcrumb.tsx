@@ -15,9 +15,17 @@ export interface ISingleBreadcrumbProps {
   onClick?: () => void;
   color?: string;
   workbench?: IWorkbench;
+  hideText?: boolean;
 }
 
-export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null }: ISingleBreadcrumbProps) {
+export function SingleBreadcrumb({
+  first = false,
+  flexWidth = 1,
+  onClick = null,
+  color = 'cornflowerblue',
+  workbench = null,
+  hideText = false,
+}: ISingleBreadcrumbProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const [width, setWidth] = useState<number>();
@@ -83,13 +91,13 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
               onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
             />
           </>
-        ) : workbench.index !== ordino.focusWorkbenchIndex && flexWidth > 0 && !ordino.midTransition ? (
+        ) : workbench.index !== ordino.focusWorkbenchIndex && !hideText && !(workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (
           <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
         ) : null}
       </div>
 
       {workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (
-        <div className={`${flexWidth > 0 ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`} style={{ flexBasis: 0 }}>
+        <div className={`${!hideText ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`} style={{ flexBasis: 0 }}>
           <button
             type="button"
             className={`${workbench.index === 0 ? 'd-none' : ''} btn-close btn-close-white me-2 pe-auto`}

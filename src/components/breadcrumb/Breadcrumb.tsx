@@ -8,6 +8,7 @@ import { changeFocus } from '../../store';
 // These units are intended as percentages, and are used as flex width for the breadcrumbs.
 // Ideally, SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT = 15, since the context is always 15% of the screen currently
 const SMALL_CHEVRON_WIDTH = 5;
+const HIDDEN_CHEVRON_WIDTH = 1;
 const CONTEXT_CHEVRON_COUNT = 3;
 const POST_CHEVRON_COUNT = 3;
 const CHEVRON_TRANSITION_WIDTH = 50;
@@ -50,13 +51,13 @@ export function Breadcrumb() {
           {ordino.workbenches.map((workbench) => {
             let flexWidth = 0;
 
-            // Chevrons before our current
-            if (workbench.index < ordino.focusWorkbenchIndex) {
-              flexWidth = ordino.midTransition
-                ? // If transitioning, dont show chevrons before the current
-                  0
-                : // Otherwise figure out how big this should be based on how many context chevrons there are
-                  (SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT) / startFlexNum;
+            // Chevrons before our context
+            if (workbench.index < ordino.focusWorkbenchIndex - 1) {
+              flexWidth = HIDDEN_CHEVRON_WIDTH;
+            }
+            // Our context
+            else if (workbench.index === ordino.focusWorkbenchIndex - 1) {
+              flexWidth = SMALL_CHEVRON_WIDTH;
             }
             // Current chevron
             else if (workbench.index === ordino.focusWorkbenchIndex) {
@@ -76,7 +77,7 @@ export function Breadcrumb() {
             }
             // Chevrons after our current + 1
             else {
-              flexWidth = SMALL_CHEVRON_WIDTH;
+              flexWidth = HIDDEN_CHEVRON_WIDTH;
             }
 
             return (
@@ -85,6 +86,7 @@ export function Breadcrumb() {
                 workbench={workbench}
                 color={ordino.colorMap[workbench.entityId]}
                 flexWidth={flexWidth}
+                hideText={flexWidth === HIDDEN_CHEVRON_WIDTH}
                 first={workbench.index === 0}
                 onClick={
                   workbench.index !== ordino.focusWorkbenchIndex || ordino.midTransition ? () => dispatch(changeFocus({ index: workbench.index })) : null

@@ -8,7 +8,7 @@ import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
 import { BreadcrumbSvg } from './BreadcrumbSvg';
-export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null }) {
+export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false, }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
     const [width, setWidth] = useState();
@@ -40,8 +40,8 @@ export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null,
             React.createElement("p", { className: "chevronText text-truncate flex-grow-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })))) : null,
         React.createElement("div", { className: "me-2 ms-2 text-truncate chevronDiv justify-content-center d-flex", style: { flexBasis: 0, flexGrow: 2 } }, workbench.index === ordino.focusWorkbenchIndex && !animatedStyle.flexGrow.isAnimating ? (React.createElement(React.Fragment, null,
             React.createElement(FilterAndSelected, null),
-            React.createElement(OpenCommentsButton, { idType: workbench.itemIDType, selection: workbench.selection, commentPanelVisible: workbench.commentsOpen, onCommentPanelVisibilityChanged: onCommentPanelVisibilityChanged }))) : workbench.index !== ordino.focusWorkbenchIndex && flexWidth > 0 && !ordino.midTransition ? (React.createElement("p", { className: "text-center text-truncate chevronText flex-grow-1 justify-content-center" }, workbench.name)) : null),
-        workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (React.createElement("div", { className: `${flexWidth > 0 ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`, style: { flexBasis: 0 } },
+            React.createElement(OpenCommentsButton, { idType: workbench.itemIDType, selection: workbench.selection, commentPanelVisible: workbench.commentsOpen, onCommentPanelVisibilityChanged: onCommentPanelVisibilityChanged }))) : workbench.index !== ordino.focusWorkbenchIndex && !hideText && !(workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (React.createElement("p", { className: "text-center text-truncate chevronText flex-grow-1 justify-content-center" }, workbench.name)) : null),
+        workbench.index === ordino.focusWorkbenchIndex || (workbench.index === ordino.focusWorkbenchIndex + 1 && ordino.midTransition) ? (React.createElement("div", { className: `${!hideText ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`, style: { flexBasis: 0 } },
             React.createElement("button", { type: "button", className: `${workbench.index === 0 ? 'd-none' : ''} btn-close btn-close-white me-2 pe-auto`, "aria-label": I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close'), onClick: () => {
                     dispatch(changeFocus({ index: workbench.index - 1 }));
                     dispatch(removeWorkbench({ index: workbench.index }));

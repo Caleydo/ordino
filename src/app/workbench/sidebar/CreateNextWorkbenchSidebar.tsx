@@ -104,7 +104,7 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                         selectedMappings,
                         views: [
                           {
-                            name: selectedView.itemName,
+                            name: selectedView.name,
                             id: selectedView.id,
                             parameters: {
                               prevSelection: workbench.selection,
@@ -119,9 +119,10 @@ export function CreateNextWorkbenchSidebar({ workbench }: ICreateNextWorkbenchSi
                         columnDescs: [],
                         data: {},
                         entityId: relationList[0].targetEntity,
-                        name: selectedView.itemName,
+                        name: selectedView.name,
                         index: workbench.index + 1,
                         selection: [],
+                        commentsOpen: false,
                         ...queryParams,
                       }),
                     );

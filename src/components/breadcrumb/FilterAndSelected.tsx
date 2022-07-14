@@ -27,7 +27,7 @@ export function FilterAndSelected() {
     <div className="text-truncate align-middle m-1 d-flex align-items-center">
       {!isQueryFilterEqual ? (
         <i
-          className="fa fa-filter"
+          className="fa fa-filter pe-auto"
           aria-hidden="true"
           title={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
             entityName: ordino.workbenches[ordino.focusWorkbenchIndex].name,

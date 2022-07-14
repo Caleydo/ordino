@@ -18,7 +18,7 @@ export function FilterAndSelected() {
         return _.isEqual(ordino.globalQueryCategories, ordino.appliedQueryCategories);
     }, [ordino.globalQueryCategories, ordino.appliedQueryCategories]);
     return (React.createElement("div", { className: "text-truncate align-middle m-1 d-flex align-items-center" },
-        !isQueryFilterEqual ? (React.createElement("i", { className: "fa fa-filter", "aria-hidden": "true", title: I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
+        !isQueryFilterEqual ? (React.createElement("i", { className: "fa fa-filter pe-auto", "aria-hidden": "true", title: I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
                 entityName: ordino.workbenches[ordino.focusWorkbenchIndex].name,
                 globalQueryName: ordino.globalQueryName,
                 selectedValues: ordino.appliedQueryCategories ? ordino.appliedQueryCategories.join(',') : '',

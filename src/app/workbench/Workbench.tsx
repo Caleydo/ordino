@@ -64,9 +64,10 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                     columnDescs: [],
                     data: {},
                     entityId: newView.itemIDType,
-                    name: newView.itemName,
+                    name: newView.name,
                     index: workbench.index + 1,
                     selection: [],
+                    commentsOpen: false,
                   }),
                 );
               } else {

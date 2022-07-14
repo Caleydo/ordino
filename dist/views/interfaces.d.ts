@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import { IColumnDesc } from 'lineupjs';
 import { DefineVisynViewPlugin, IScoreRow, IServerColumn } from 'tdp_core';
-import { IOrdinoGlobalQuery, IOrdinoRelation } from '../base';
+import { IOrdinoRelation } from '../base';
 import { ISelectedMapping, IWorkbench } from '../store';
 export interface IOrdinoVisynViewDesc {
     relation: IOrdinoRelation;
@@ -9,7 +9,7 @@ export interface IOrdinoVisynViewDesc {
 export interface IOrdinoRankingViewParam {
     prevSelection: string[];
     selectedMappings: ISelectedMapping[];
-    globalQuery: IOrdinoGlobalQuery;
+    globalQueryName: string;
     appliedQueryCategories: (number | string)[];
 }
 export declare type OrdinoRankingViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param & IOrdinoRankingViewParam, {
@@ -294,6 +294,10 @@ export declare const findWorkbenchTransitions: (idType: string) => Promise<({
             onSelectionChanged(selection: import("react").SetStateAction<string[]>): void;
             onParametersChanged(parameters: import("react").SetStateAction<Record<string, unknown> & IOrdinoRankingViewParam>): void;
         }>>;
+        /**
+         * Callback when the Column Description changed.
+         * @param desc New Column Description.
+         */
         tab?: import("react").ComponentType<{
             /**
              * Data array matching the columns defined in the `columnDesc`.

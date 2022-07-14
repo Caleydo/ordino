@@ -74,6 +74,6 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, setCommentsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     isOpen: boolean;
-}, string>;
+}, string>, setTransition: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 //# sourceMappingURL=ordinoSlice.d.ts.map

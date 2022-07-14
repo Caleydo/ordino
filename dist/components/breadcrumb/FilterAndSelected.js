@@ -17,13 +17,13 @@ export function FilterAndSelected() {
     const isQueryFilterEqual = useMemo(() => {
         return _.isEqual(ordino.globalQueryCategories, ordino.appliedQueryCategories);
     }, [ordino.globalQueryCategories, ordino.appliedQueryCategories]);
-    return (React.createElement("div", { className: "align-middle m-1 d-flex align-items-center" },
+    return (React.createElement("div", { className: "text-truncate align-middle m-1 d-flex align-items-center" },
         !isQueryFilterEqual ? (React.createElement("i", { className: "fa fa-filter", "aria-hidden": "true", title: I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
                 entityName: ordino.workbenches[ordino.focusWorkbenchIndex].name,
                 globalQueryName: ordino.globalQueryName,
                 selectedValues: ordino.appliedQueryCategories ? ordino.appliedQueryCategories.join(',') : '',
             }) })) : null,
-        React.createElement("span", { className: "m-1" },
+        React.createElement("span", { className: "m-1 text-truncate" },
             dataLength - filterLength,
             " of ",
             dataLength,

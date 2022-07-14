@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IDType, isVisynDataViewDesc, isVisynSimpleViewDesc, useAsync, ViewUtils } from 'tdp_core';
+import { IDType, useAsync, ViewUtils } from 'tdp_core';
 import { MosaicBranch, MosaicPath } from 'react-mosaic-component';
 import { useMemo } from 'react';
 import { IWorkbenchView } from '../../store';
@@ -25,13 +25,11 @@ export function WorkbenchView({
   removeCallback: (path: MosaicPath) => void;
 }) {
   const ordino = useAppSelector((state) => state.ordino);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const views = useMemo(() => () => getVisynView(ordino.workbenches[workbenchIndex].entityId), []);
-  const { value } = useAsync(views, []);
+  const { value: visynViews } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
 
   const availableViews = useMemo(() => {
-    return value ? value.filter((v) => isVisynSimpleViewDesc(v) || isVisynDataViewDesc(v)) : [];
-  }, [value]);
+    return visynViews || [];
+  }, [visynViews]);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment

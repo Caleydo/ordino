@@ -1,0 +1,1 @@
+{"version":3,"file":"ViewChooserHeader.d.ts","sourceRoot":"","sources":["../../../src/app/viewChooser/ViewChooserHeader.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAE1B,MAAM,WAAW,uBAAuB;IACtC,QAAQ,CAAC,EAAE,KAAK,CAAC,SAAS,CAAC;CAC5B;AAED,wBAAgB,iBAAiB,CAAC,EAAE,QAAQ,EAAE,EAAE,uBAAuB,eAEtE"}

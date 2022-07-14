@@ -26,6 +26,7 @@ export interface IOrdinoAppState {
     colorMap: {
         [key: string]: string;
     };
+    midTransition: boolean;
     /**
      * Id of the current focus view
      */

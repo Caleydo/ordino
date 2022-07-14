@@ -44,11 +44,14 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
   }, [idType, onCommentPanelVisibilityChanged]);
 
   React.useEffect(() => {
-    if (selection.length) {
+    if (selection.length !== 0) {
       return;
     }
-    onCommentPanelVisibilityChanged(false);
-  }, [onCommentPanelVisibilityChanged, selection]);
+    if (commentPanelVisible) {
+      onCommentPanelVisibilityChanged(false);
+    }
+  }, [commentPanelVisible, onCommentPanelVisibilityChanged, selection]);
+
   const title = commentPanelVisible
     ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
     : commentCount
@@ -56,7 +59,12 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
     : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
 
   return selection.length > 0 ? (
-    <button type="button" title={title} className="btn btn-icon-light position-relative" onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}>
+    <button
+      type="button"
+      title={title}
+      className="pe-auto btn btn-icon-light position-relative"
+      onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}
+    >
       <span>
         <i className="flex-grow-1 fas fa-comments" />
         <span

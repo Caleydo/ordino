@@ -1,2 +1,2 @@
 export * from './Ordino';
-export * from './ViewChooser';
+export * from './viewChooser/ViewChooser';

@@ -4,6 +4,7 @@ import { workbenchReducers } from './workbenchReducer';
 const initialState = {
     workbenches: [],
     focusWorkbenchIndex: 0,
+    midTransition: false,
     colorMap: {},
 };
 const ordinoSlice = createSlice({
@@ -22,9 +23,13 @@ const ordinoSlice = createSlice({
         },
         changeFocus(state, action) {
             state.focusWorkbenchIndex = action.payload.index;
+            state.midTransition = false;
+        },
+        setTransition(state, action) {
+            state.midTransition = action.payload;
         },
     },
 });
-export const { addView, setColorMap, changeSelectedMappings, setDetailsSidebarOpen, setCreateNextWorkbenchSidebarOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, removeWorkbench, addEntityFormatting, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, setCommentsOpen, } = ordinoSlice.actions;
+export const { addView, setColorMap, changeSelectedMappings, setDetailsSidebarOpen, setCreateNextWorkbenchSidebarOpen, setViewParameters, createColumnDescs, setView, addColumnDesc, removeView, replaceWorkbench, removeWorkbench, addEntityFormatting, addScoreColumn, addSelection, addFilter, setWorkbenchData, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setWorkbenchDirection, setCommentsOpen, setTransition, } = ordinoSlice.actions;
 export const ordinoReducer = ordinoSlice.reducer;
 //# sourceMappingURL=ordinoSlice.js.map

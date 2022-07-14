@@ -18,8 +18,10 @@ export const workbenchReducers = {
     state.globalQueryName = action.payload.globalQueryName;
     state.globalQueryCategories = action.payload.globalQueryCategories;
     state.appliedQueryCategories = action.payload.appliedQueryCategories;
+    state.midTransition = false;
   },
   addWorkbench(state, action: PayloadAction<IWorkbench>) {
+    state.midTransition = true;
     if (state.workbenches.length > action.payload.index) {
       state.workbenches.splice(action.payload.index);
     }

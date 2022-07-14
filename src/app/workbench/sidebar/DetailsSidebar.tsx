@@ -2,11 +2,10 @@ import React, { Fragment, useMemo } from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings } from '../../../store';
+import { changeSelectedMappings, IWorkbench } from '../../../store';
 import { findWorkbenchTransitions } from '../../../views';
-import { ICreateNextWorkbenchSidebarProps } from './CreateNextWorkbenchSidebar';
 
-export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) {
+export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
@@ -29,17 +28,14 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
   }, [ordino.workbenches, workbench.index]);
 
   return (
-    <div className="me-0 position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1">
+    <div className="me-0" style={{ width: '250px' }}>
       {status === 'success' ? (
         <div className="d-flex flex-column">
           <div className="p-1 mb-2 rounded">
             <div className="d-flex flex-column" style={{ justifyContent: 'space-between' }}>
               <p className="mb-1">
                 <span className="entityText">Selected </span>
-                <span
-                  className="p-1 entityText"
-                  style={{ color: '#e9ecef', backgroundColor: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}
-                >
+                <span className="entityText" style={{ color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}>
                   {ordino.workbenches[workbench.index - 1].name}s
                 </span>
               </p>
@@ -55,18 +51,24 @@ export function DetailsSidebar({ workbench }: ICreateNextWorkbenchSidebarProps) 
                         <Fragment key={`${entity}-${name}`}>
                           <div className="mt-2 mappingTypeText">{name}</div>
                           {columns.map((col) => {
+                            const isChecked = workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity);
+
                             return (
-                              <div key={`${col.label}-column`} className="form-check">
+                              <div key={`${col.label}-column`} className="form-check ms-2">
                                 <input
-                                  checked={workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity)}
+                                  checked={isChecked}
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.focusWorkbenchIndex,
+                                        workbenchIndex: ordino.midTransition ? ordino.focusWorkbenchIndex + 1 : ordino.focusWorkbenchIndex,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
                                       }),
                                     )
                                   }
+                                  style={{
+                                    backgroundColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
+                                    borderColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
+                                  }}
                                   className="form-check-input"
                                   type="checkbox"
                                   value=""

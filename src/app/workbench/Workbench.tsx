@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { IViewPluginDesc, useAsync } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addView, EWorkbenchDirection, addWorkbench, IWorkbench } from '../../store';
+import { isFirstWorkbench, isFocusWorkbench } from '../../store/storeUtils';
 import { isVisynRankingViewDesc } from '../../views';
 import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
 import { WorkbenchUtilsSidebar } from './sidebar/WorkbenchUtilsSidebar';
@@ -37,12 +38,12 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       }`}
       style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
     >
-      {workbench.index === ordino.focusWorkbenchIndex || ordino.midTransition ? (
-        <WorkbenchUtilsSidebar workbench={workbench} openTab={workbench.index > 0 && ordino.midTransition ? 'mapping' : null} />
+      {isFocusWorkbench(workbench) || ordino.midTransition ? (
+        <WorkbenchUtilsSidebar workbench={workbench} openTab={!isFirstWorkbench(workbench) && ordino.midTransition ? 'mapping' : null} />
       ) : null}
 
       <WorkbenchViews index={workbench.index} type={type} />
-      {workbench.index === ordino.focusWorkbenchIndex ? (
+      {isFocusWorkbench(workbench) ? (
         <div className="d-flex" style={{ borderLeft: '1px solid lightgray' }}>
           <ViewChooser
             views={editedViews || []}

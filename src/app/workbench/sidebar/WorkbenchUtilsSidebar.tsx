@@ -3,6 +3,7 @@ import { useAppSelector } from '../../../hooks/useAppSelector';
 import { DetailsSidebar } from './DetailsSidebar';
 import { IWorkbench } from '../../../store';
 import { SidebarButton } from './SidebarButton';
+import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
 
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const ordino = useAppSelector((state) => state.ordino);
@@ -30,10 +31,10 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
   }, [openedTab, workbench]);
 
   useEffect(() => {
-    if (ordino.midTransition === true && workbench.index === ordino.focusWorkbenchIndex) {
+    if (ordino.midTransition === true && isFocusWorkbench(workbench)) {
       setOpenedTab(null);
     }
-  }, [ordino.midTransition, workbench.index, ordino.focusWorkbenchIndex]);
+  }, [ordino.midTransition, workbench, ordino.focusWorkbenchIndex]);
 
   return (
     <div className="d-flex h-100" style={{ borderRight: !openedTab ? '' : '1px solid lightgray' }}>
@@ -44,7 +45,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
           icon="fas fa-plus-circle"
           onClick={() => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add'))}
         />
-        {workbench.index > 0 ? (
+        {!isFirstWorkbench(workbench) ? (
           <SidebarButton
             isSelected={openedTab === 'mapping'}
             color={ordino.colorMap[workbench.entityId]}

@@ -45,6 +45,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                                     filters: [],
                                 },
                             ],
+                            commentsOpen: false,
                             viewDirection: EWorkbenchDirection.VERTICAL,
                             columnDescs: [],
                             data: {},

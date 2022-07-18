@@ -40,7 +40,7 @@ export function BreadcrumbSvg({
   width = 1500,
   height = 40,
   chevronIndent = 8,
-  margin = 4,
+  margin = 0,
   isFirst = false,
   color = 'cornflowerblue',
   isClickable = false,
@@ -71,9 +71,14 @@ export function BreadcrumbSvg({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <rect width={width - margin - chevronIndent} height={height} fill={fillColor} />
+      <rect width={width - margin - chevronIndent} height={height} fill={fillColor} rx={3} ry={3} />
       <g transform={`translate(${width - chevronIndent - margin}, 0)`}>
-        <path d={`m -5 ${height} h 5 l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} h -5 z`} fill={fillColor} />
+        <path
+          d={`m -5 ${height} h 2 a 3 3 0 0 1 3 -2 l ${chevronIndent} -${height / 2 - 3} a 3 3 0 0 0 0 -2 l -${chevronIndent} -${
+            height / 2 - 3
+          } a 3 3 0 0 1 -3 -2 h -2 z`}
+          fill={fillColor}
+        />
       </g>
 
       {!isFirst ? (

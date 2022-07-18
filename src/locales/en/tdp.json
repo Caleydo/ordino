@@ -2,7 +2,7 @@
   "core": {
     "lineup": {
       "LineupPanelActions": {
-        "databaseColumns": "Annotation Columns",
+        "databaseColumns": "Annotation columns",
         "columnTitle": "{{text}}",
         "addText": "Add {{text}}"
       }
@@ -24,28 +24,29 @@
       "editDetails": "Edit Details",
       "editDatasetDetails": "Edit Dataset Details",
       "delete": "Delete",
-      "deleteSession": "Delete Session",
+      "deleteSession": "Delete session",
       "export": "Export",
-      "exportSession": "Export Session",
+      "exportSession": "Export session",
       "save": "Save",
-      "alreadySaved": "Session is Already Saved",
-      "saveSession": "Save Session",
-      "mySessions": "My Sessions",
-      "otherSessions": "Other Sessions",
+      "alreadySaved": "Session is already saved",
+      "saveSession": "Save session",
+      "mySessions": "My sessions",
+      "otherSessions": "Other sessions",
       "by": "by",
       "clone": "Clone",
-      "cloneSession": "Clone Session",
-      "cloneToTemporary": "Clone to Temporary Session",
-      "continueSession": "Continue Session",
-      "privateAccess": "Private Access",
-      "publicAccess": "Public Access",
-      "startTour": "Start Tour",
+      "cloneSession": "Clone session",
+      "cloneToTemporary": "Clone to temporary session",
+      "continueSession": "Continue session",
+      "privateAccess": "Private access",
+      "publicAccess": "Public access",
+      "startTour": "Start tour",
       "tourLevelBeginner": "General introduction",
       "tourLevelAdvanced": "Advanced tours"
     },
     "views": {
       "loading": "Loading...",
-      "selectView": "Select A View"
+      "selectView": "Select a view",
+      "searchViews": "Search views"
     },
     "breadcrumb": {
       "close": "Close",

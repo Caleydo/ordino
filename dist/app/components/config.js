@@ -1,6 +1,6 @@
-import { BurgerButton } from '../BurgerButton';
-import { SelectedViewIndicator } from '../SelectedViewIndicator';
-import { SelectionCountIndicator } from '../SelectionCountIndicator';
+import { BurgerButton } from './BurgerButton';
+import { SelectedViewIndicator } from './SelectedViewIndicator';
+import { SelectionCountIndicator } from './SelectionCountIndicator';
 import { ViewChooserAccordion } from './ViewChooserAccordion';
 import { ViewChooserFilter } from './ViewChooserFilter';
 import { ViewChooserFooter } from './ViewChooserFooter';

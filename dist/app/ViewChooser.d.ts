@@ -1,5 +1,5 @@
 import { IViewPluginDesc } from 'tdp_core';
-import { ViewChooserExtensions } from '.';
+import { ViewChooserExtensions } from './components';
 export declare enum EViewChooserMode {
     EMBEDDED = 0,
     OVERLAY = 1

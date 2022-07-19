@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { rest } from 'msw';
-import { addFirstWorkbench, store } from '../../../store';
+import { addFirstWorkbench, setColorMap, store } from '../../../store';
 import { WorkbenchUtilsSidebar } from './WorkbenchUtilsSidebar';
 import { EWorkbenchDirection } from '../../../store/interfaces';
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -14,6 +14,9 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 // eslint-disable-next-line react/function-component-definition
 const Template = (args) => {
+    store.dispatch(setColorMap({
+        colorMap: { test: 'cornflowerblue' },
+    }));
     store.dispatch(addFirstWorkbench({
         workbench: {
             itemIDType: 'test1',
@@ -35,21 +38,24 @@ const Template = (args) => {
             selection: [],
             columnDescs: [],
             entityId: 'test',
-            name: 'test',
+            name: 'Cell Line',
             viewDirection: EWorkbenchDirection.VERTICAL,
         },
         globalQuery: null,
         appliedQueryFilter: null,
     }));
-    return React.createElement(WorkbenchUtilsSidebar, { ...args });
+    return (React.createElement("div", { className: "w-100 h-100 d-flex justify-content-center align-items-center" },
+        React.createElement(WorkbenchUtilsSidebar, { ...args }),
+        ' '));
 };
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 export const Mapping = Template.bind({});
 Mapping.parameters = {
     msw: {
         handlers: [
-            rest.get('http://localhost:6006/api/idtype/test/', (req, res, ctx) => {
-                return res(ctx.json([]));
+            rest.get('/api/idtype/test', (req, res, ctx) => {
+                console.log('im in here');
+                return res(ctx.json(['22Rv1']));
             }),
         ],
     },
@@ -74,7 +80,7 @@ Mapping.args = {
         columnDescs: [],
         data: {},
         entityId: 'test',
-        name: 'test',
+        name: 'Cell Line',
         index: 1,
         selection: [],
     },

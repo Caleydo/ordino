@@ -46,8 +46,7 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
               .map((v) => {
                 return (
                   <div key={`${v.name}-mapping`}>
-                    {v.relation?.mapping.map(({ name, entity, sourceToTargetColumns, targetToSourceColumns }) => {
-                      const columns = v.isSourceToTarget ? sourceToTargetColumns : targetToSourceColumns;
+                    {v.relation?.mapping.map(({ name, entity, columns }) => {
                       return (
                         <Fragment key={`${entity}-${name}`}>
                           <div className="mt-2 mappingTypeText">{name}</div>

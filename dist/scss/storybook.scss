@@ -1,2 +1,8 @@
+// Import tdp_core with bootstrap and custom variables first
+@import "~tdp_core/dist/scss/storybook";
+
+// Add custom Ordino color variables 
+@import "./vendors/bootstrap_modify_maps";
+
 // Import custom theme variables and bootstrap variables overrides
 @import "./main";

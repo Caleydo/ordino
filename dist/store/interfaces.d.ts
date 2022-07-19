@@ -1,6 +1,5 @@
 import { IColumnDesc } from 'lineupjs';
 import { IRow, IViewPluginDesc } from 'tdp_core';
-import { IOrdinoGlobalQuery, IQueryFilter } from '../base';
 export declare enum EViewDirections {
     N = "n",
     S = "s",
@@ -33,15 +32,18 @@ export interface IOrdinoAppState {
      */
     focusWorkbenchIndex: number;
     /**
-     * Stores the available global query that will be applied for the current session
-     * analog to IOrdinoGlobalQuery
+     * Stores the available global query name used in the current session
      */
-    globalQuery?: IOrdinoGlobalQuery;
+    globalQueryName?: string;
+    /**
+     * Stores the available global query categories available for the current session
+     */
+    globalQueryCategories?: (number | string)[];
     /**
      * Filter query that is applied to all entities.
      * analog to IQueryFilter
      */
-    appliedQueryFilter?: IQueryFilter;
+    appliedQueryCategories?: (number | string)[];
 }
 export declare enum EWorkbenchDirection {
     VERTICAL = "vertical",

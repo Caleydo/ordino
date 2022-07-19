@@ -34,7 +34,7 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
           {projectName !== null ? (
             <ul className="navbar-nav align-items-center">
               <li className="nav-item align-middle">
-                <p className="m-0 h-100 text-white align-middle">Some Project Name</p>
+                <p className="m-0 h-100 text-white align-middle">{projectName}</p>
               </li>
             </ul>
           ) : null}

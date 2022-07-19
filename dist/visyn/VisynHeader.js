@@ -13,7 +13,7 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
                 LeftExtensions ? React.createElement(LeftExtensions, null) : null,
                 projectName !== null ? (React.createElement("ul", { className: "navbar-nav align-items-center" },
                     React.createElement("li", { className: "nav-item align-middle" },
-                        React.createElement("p", { className: "m-0 h-100 text-white align-middle" }, "Some Project Name")))) : null,
+                        React.createElement("p", { className: "m-0 h-100 text-white align-middle" }, projectName)))) : null,
                 React.createElement("ul", { className: "navbar-nav ms-auto align-items-end" },
                     CustomerLogo ? React.createElement(CustomerLogo, null) : null,
                     VisynLogo ? React.createElement(VisynLogo, null) : null),

@@ -1,4 +1,5 @@
 import React, { ComponentType } from 'react';
+import { useAppSelector } from '../hooks';
 import { IVisynHeaderComponents, visynHeaderComponents } from './headerConfig';
 
 export interface IVisynHeaderProps {
@@ -10,6 +11,8 @@ export interface IVisynHeaderProps {
 
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }: IVisynHeaderProps) {
   const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
+
+  const projectName = useAppSelector((state) => state.menu.currentProject);
 
   return (
     <nav className=" visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark">
@@ -28,6 +31,14 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
         </button>
         <div className="collapse navbar-collapse">
           {LeftExtensions ? <LeftExtensions /> : null}
+          {projectName !== null ? (
+            <ul className="navbar-nav align-items-center">
+              <li className="nav-item align-middle">
+                <p className="m-0 h-100 text-white align-middle">Some Project Name</p>
+              </li>
+            </ul>
+          ) : null}
+
           <ul className="navbar-nav ms-auto align-items-end">
             {CustomerLogo ? <CustomerLogo /> : null}
             {VisynLogo ? <VisynLogo /> : null}

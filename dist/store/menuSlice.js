@@ -24,6 +24,7 @@ export var EStartMenuOpen;
 const initialState = {
     activeTab: null,
     mode: EStartMenuMode.START,
+    currentProject: null,
 };
 const menuSlice = createSlice({
     name: 'menu',
@@ -35,8 +36,11 @@ const menuSlice = createSlice({
         setMode(state, action) {
             state.mode = action.payload;
         },
+        setCurrentProject(state, action) {
+            state.currentProject = action.payload;
+        },
     },
 });
-export const { setActiveTab, setMode } = menuSlice.actions;
+export const { setActiveTab, setMode, setCurrentProject } = menuSlice.actions;
 export const menuReducer = menuSlice.reducer;
 //# sourceMappingURL=menuSlice.js.map

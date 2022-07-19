@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface IMenuState {
   activeTab: string;
   mode: EStartMenuMode;
+  currentProject: string;
 }
 
 export enum EStartMenuMode {
@@ -32,6 +33,7 @@ export enum EStartMenuOpen {
 const initialState: IMenuState = {
   activeTab: null,
   mode: EStartMenuMode.START,
+  currentProject: null,
 };
 
 const menuSlice = createSlice({
@@ -44,9 +46,12 @@ const menuSlice = createSlice({
     setMode(state, action: PayloadAction<EStartMenuMode>) {
       state.mode = action.payload;
     },
+    setCurrentProject(state, action: PayloadAction<string>) {
+      state.currentProject = action.payload;
+    },
   },
 });
 
-export const { setActiveTab, setMode } = menuSlice.actions;
+export const { setActiveTab, setMode, setCurrentProject } = menuSlice.actions;
 
 export const menuReducer = menuSlice.reducer;

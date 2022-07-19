@@ -1,6 +1,5 @@
 import { IColumnDesc } from 'lineupjs';
 import { IRow, IViewPluginDesc } from 'tdp_core';
-import { IOrdinoGlobalQuery, IQueryFilter } from '../base';
 
 export enum EViewDirections {
   N = 'n',

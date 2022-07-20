@@ -1,1 +1,0 @@
-{"version":3,"file":"Workbench.d.ts","sourceRoot":"","sources":["../../src/app/Workbench.tsx"],"names":[],"mappings":"AAEA,OAAO,EAAE,UAAU,EAAE,MAAM,UAAU,CAAC;AACtC,OAAO,EAAE,cAAc,EAAkB,MAAM,4BAA4B,CAAC;AAE5E,UAAU,eAAe;IACvB,SAAS,EAAE,UAAU,CAAC;IACtB,IAAI,CAAC,EAAE,cAAc,CAAC;CACvB;AAED,wBAAgB,SAAS,CAAC,EAAE,SAAS,EAAE,IAA8B,EAAE,EAAE,eAAe,eAWvF"}

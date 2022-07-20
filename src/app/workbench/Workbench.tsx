@@ -54,7 +54,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
               if (isVisynRankingViewDesc(newView)) {
                 const defaultMapping = {
                   entityId: newView.relation.mapping[0].entity,
-                  columnSelection: newView.relation.mapping[0].sourceToTargetColumns[0].columnName,
+                  columnSelection: newView.relation.mapping[0].columns[0].columnName,
                 };
 
                 dispatch(
@@ -77,9 +77,10 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                     columnDescs: [],
                     data: {},
                     entityId: newView.itemIDType,
-                    name: newView.itemName,
+                    name: newView.name,
                     index: workbench.index + 1,
                     selection: [],
+                    commentsOpen: false,
                   }),
                 );
               } else {

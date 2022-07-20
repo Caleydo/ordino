@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Provider } from 'react-redux';
 import { rest } from 'msw';
-import { addFirstWorkbench, setColorMap, store } from '../../../store';
+import { I18nextManager, IDTypeManager, PluginRegistry, useAsync, ViewUtils } from 'tdp_core';
+import { addFirstWorkbench, addWorkbench, changeFocus, setColorMap, store } from '../../../store';
 import { WorkbenchUtilsSidebar } from './WorkbenchUtilsSidebar';
 import { EWorkbenchDirection } from '../../../store/interfaces';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { findWorkbenchTransitions } from '../../../views/interfaces';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -18,9 +20,53 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 // eslint-disable-next-line react/function-component-definition
 const Template: ComponentStory<typeof WorkbenchUtilsSidebar> = (args) => {
+  useEffect(() => {
+    PluginRegistry.getInstance().pushVisynView<any>('test1', () => null, {
+      // omit `load` function because they added automatically in `PluginRegistry.push()`
+      visynViewType: 'ranking',
+      idtype: 'test2', // input idtype from previous ranking (used by detail view chooser)
+      itemIDType: 'test1', // own idtype for current ranking
+      name: 'test1',
+      selection: 'any',
+      relation: 'test1',
+      group: {
+        name: I18nextManager.getInstance().i18n.t('reprovisyn:proxyViews.workbenchTransition'), // group views by target entity
+        order: 10, // TODO define and load order from reprovisyn config
+      },
+      icon: 'fas fa-table',
+    });
+
+    PluginRegistry.getInstance().pushVisynView<any>('test2', () => null, {
+      // omit `load` function because they added automatically in `PluginRegistry.push()`
+      visynViewType: 'ranking',
+      idtype: 'test1', // input idtype from previous ranking (used by detail view chooser)
+      itemIDType: 'test2', // own idtype for current ranking
+      name: 'test2',
+      selection: 'any',
+      relation: {
+        mapping: [
+          {
+            name: 'Name',
+            entity: 'test2',
+            columns: [{ label: 'Column1' }, { label: 'Column2' }],
+          },
+        ],
+      },
+      group: {
+        name: I18nextManager.getInstance().i18n.t('reprovisyn:proxyViews.workbenchTransition'), // group views by target entity
+        order: 10, // TODO define and load order from reprovisyn config
+      },
+      icon: 'fas fa-table',
+    });
+  }, []);
+
+  const { status, value: availableViews } = useAsync(ViewUtils.findVisynViews, [IDTypeManager.getInstance().resolveIdType('test1')]);
+
+  console.log(status, availableViews);
+
   store.dispatch(
     setColorMap({
-      colorMap: { test: 'cornflowerblue' },
+      colorMap: { test1: 'cornflowerblue' },
     }),
   );
 
@@ -36,16 +82,16 @@ const Template: ComponentStory<typeof WorkbenchUtilsSidebar> = (args) => {
         data: {},
         views: [
           {
-            name: 'test',
-            id: 'test',
+            name: 'test1',
+            id: 'test1',
             parameters: { prevSelection: [], selectedMappings: {} },
             uniqueId: (Math.random() + 1).toString(36).substring(7),
             filters: [],
           },
         ],
-        selection: [],
+        selection: ['22Rv1', '45923'],
         columnDescs: [],
-        entityId: 'test',
+        entityId: 'test1',
         name: 'Cell Line',
         viewDirection: EWorkbenchDirection.VERTICAL,
       },
@@ -54,9 +100,41 @@ const Template: ComponentStory<typeof WorkbenchUtilsSidebar> = (args) => {
     }),
   );
 
+  store.dispatch(
+    addWorkbench({
+      itemIDType: 'test1',
+      detailsSidebarOpen: false,
+      createNextWorkbenchSidebarOpen: false,
+      selectedMappings: [],
+      commentsOpen: false,
+      index: 1,
+      data: {},
+      views: [
+        {
+          name: 'test2',
+          id: 'test2',
+          parameters: { prevSelection: [], selectedMappings: {} },
+          uniqueId: (Math.random() + 1).toString(36).substring(7),
+          filters: [],
+        },
+      ],
+      selection: [],
+      columnDescs: [],
+      entityId: 'test2',
+      name: 'Cell Line',
+      viewDirection: EWorkbenchDirection.VERTICAL,
+    }),
+  );
+
+  store.dispatch(changeFocus({ index: 1 }));
+
+  useEffect(() => {
+
+  })
+
   return (
     <div className="w-100 h-100 d-flex justify-content-center align-items-center">
-      <WorkbenchUtilsSidebar {...args} />{' '}
+      {store.getState().ordino.workbenches.length > 0 ? <WorkbenchUtilsSidebar openTab={null} workbench={store.getState().ordino.workbenches[1]} /> : null}
     </div>
   );
 };
@@ -67,36 +145,10 @@ export const Mapping = Template.bind({}) as typeof Template;
 Mapping.parameters = {
   msw: {
     handlers: [
-      rest.get('/api/idtype/test', (req, res, ctx) => {
+      rest.get('/api/idtype/test1', (req, res, ctx) => {
         console.log('im in here');
-        return res(ctx.json(['22Rv1']));
+        return res(ctx.json([]));
       }),
     ],
-  },
-};
-
-Mapping.args = {
-  openTab: null,
-  workbench: {
-    itemIDType: 'test',
-    detailsSidebarOpen: true,
-    createNextWorkbenchSidebarOpen: false,
-    selectedMappings: [{ entityId: 'test', columnSelection: 'test' }],
-    views: [
-      {
-        name: 'test',
-        id: 'test',
-        parameters: { prevSelection: [], selectedMappings: {} },
-        uniqueId: (Math.random() + 1).toString(36).substring(7),
-        filters: [],
-      },
-    ],
-    viewDirection: EWorkbenchDirection.VERTICAL,
-    columnDescs: [],
-    data: {},
-    entityId: 'test',
-    name: 'Cell Line',
-    index: 1,
-    selection: [],
   },
 };

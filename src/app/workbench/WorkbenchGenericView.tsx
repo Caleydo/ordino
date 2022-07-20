@@ -155,7 +155,7 @@ export function WorkbenchGenericView({
     ) : (
       <div className="view-parameters d-flex">
         <span className="view-title row align-items-center m-1">
-          <strong>{viewPlugin?.desc?.itemName}</strong>
+          <strong>{viewPlugin?.desc?.name}</strong>
         </span>
       </div>
     );

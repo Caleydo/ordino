@@ -80,7 +80,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                     name: newView.name,
                     index: workbench.index + 1,
                     selection: [],
-                    commentsOpen: false,
                   }),
                 );
               } else {

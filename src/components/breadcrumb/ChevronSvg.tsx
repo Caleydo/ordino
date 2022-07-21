@@ -65,7 +65,7 @@ export function ChevronSvg({
 
   return (
     <svg
-      className="position-absolute chevronSvg"
+      className="position-absolute mt-1"
       width={width}
       style={{ height: `${height}px` }}
       onMouseEnter={() => setHover(true)}

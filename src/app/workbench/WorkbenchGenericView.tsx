@@ -32,6 +32,8 @@ export interface IWorkbenchGenericViewProps {
   dragMode: boolean;
 }
 
+const DEFAULT_ICON = 'fas fa-bars';
+
 export function WorkbenchGenericView({
   workbenchIndex,
   view,
@@ -169,7 +171,7 @@ export function WorkbenchGenericView({
         <AnimatingOverlay
           color={ordino.colorMap[currentWorkbench.entityId]}
           isAnimating={ordino.isAnimating || mosaicDrag}
-          iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : 'fas fa-bars'}
+          iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : DEFAULT_ICON}
         />
 
         <div className="inner d-flex">

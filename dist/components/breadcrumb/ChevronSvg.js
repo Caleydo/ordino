@@ -38,7 +38,7 @@ width = 1500, height = 40, chevronIndent = 8, margin = 0, isFirst = false, color
     const fillColor = useMemo(() => {
         return isHover && isClickable ? darkenColor(color, 20) : color;
     }, [isHover, isClickable, color]);
-    return (React.createElement("svg", { className: "position-absolute chevronSvg", width: width, style: { height: `${height}px` }, onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false) },
+    return (React.createElement("svg", { className: "position-absolute mt-1", width: width, style: { height: `${height}px` }, onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false) },
         React.createElement("rect", { width: width - margin - chevronIndent, height: height, fill: fillColor, rx: 3, ry: 3 }),
         React.createElement("g", { transform: `translate(${width - chevronIndent - margin}, 0)` },
             React.createElement("path", { d: `m -5 ${height} h 2 a 3 3 0 0 1 3 -2 l ${chevronIndent} -${height / 2 - 3} a 3 3 0 0 0 0 -2 l -${chevronIndent} -${height / 2 - 3} a 3 3 0 0 1 -3 -2 h -2 z`, fill: fillColor })),

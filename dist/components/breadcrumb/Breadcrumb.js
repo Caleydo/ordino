@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { SingleBreadcrumb } from './SingleBreadcrumb';
+import { Chevron } from './Chevron';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { changeFocus } from '../../store';
@@ -58,7 +58,7 @@ export function Breadcrumb() {
             else {
                 flexWidth = HIDDEN_CHEVRON_WIDTH;
             }
-            return (React.createElement(SingleBreadcrumb, { key: workbench.index, workbench: workbench, color: ordino.colorMap[workbench.entityId], flexWidth: flexWidth, hideText: flexWidth === HIDDEN_CHEVRON_WIDTH, first: isFirstWorkbench(workbench), onClick: !isFocusWorkbench(workbench) || ordino.midTransition ? () => dispatch(changeFocus({ index: workbench.index })) : null }));
+            return (React.createElement(Chevron, { key: workbench.index, workbench: workbench, color: ordino.colorMap[workbench.entityId], flexWidth: flexWidth, hideText: flexWidth === HIDDEN_CHEVRON_WIDTH, first: isFirstWorkbench(workbench), onClick: !isFocusWorkbench(workbench) || ordino.midTransition ? () => dispatch(changeFocus({ index: workbench.index })) : null }));
         });
     }, [afterFocusWidth, beforeContextCount, ordino.colorMap, ordino.midTransition, dispatch, ordino.workbenches]);
     return (

@@ -35,7 +35,7 @@ export function darkenColor(col, amt) {
   return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
 
-export function BreadcrumbSvg({
+export function ChevronSvg({
   // Numbers here are all in pixels
   width = 1500,
   height = 40,

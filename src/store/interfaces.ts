@@ -32,6 +32,10 @@ export interface IOrdinoAppState {
   colorMap: { [key: string]: string };
 
   midTransition: boolean;
+
+  /**
+   * isAnimating is true when transitioning between workbenches, during the animation.
+   */
   isAnimating: boolean;
 
   /**

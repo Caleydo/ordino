@@ -5,7 +5,7 @@
  * @returns
  */
 export declare function darkenColor(col: any, amt: any): string;
-export declare function BreadcrumbSvg({ width, height, chevronIndent, margin, isFirst, color, isClickable, backgroundColor, }: {
+export declare function ChevronSvg({ width, height, chevronIndent, margin, isFirst, color, isClickable, backgroundColor, }: {
     width?: number;
     chevronIndent?: number;
     isFirst?: boolean;

@@ -9,7 +9,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
 import { BreadcrumbSvg } from './BreadcrumbSvg';
 import { isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
-export function SingleBreadcrumb({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false, }) {
+export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false }) {
     const ordino = useAppSelector((state) => state.ordino);
     const dispatch = useAppDispatch();
     const [width, setWidth] = useState();

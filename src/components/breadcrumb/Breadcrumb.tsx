@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { SingleBreadcrumb } from './SingleBreadcrumb';
+import { Chevron } from './Chevron';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { changeFocus } from '../../store';
@@ -67,7 +67,7 @@ export function Breadcrumb() {
       }
 
       return (
-        <SingleBreadcrumb
+        <Chevron
           key={workbench.index}
           workbench={workbench}
           color={ordino.colorMap[workbench.entityId]}

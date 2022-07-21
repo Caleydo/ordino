@@ -2,7 +2,7 @@ import { groupBy } from 'lodash';
 import { UniqueIdManager } from 'tdp_core';
 import React from 'react';
 import { isVisynRankingViewDesc } from '../../views';
-import { BreadcrumbSvgPathOnly } from '../../components/breadcrumb/BreadcrumbSvgPathOnly';
+import { ChevronIcon } from '../../components/breadcrumb/ChevronIcon';
 /**
  * Using this function to convert to HSL so that we can lighten our colors easily.
  * Taken from https://www.jameslmilner.com/posts/converting-rgb-hex-hsl-colors/#hex-to-hsl
@@ -71,8 +71,8 @@ export function ViewChooserAccordion(props) {
                     // eslint-disable-next-line react/no-array-index-key
                     key: idx, onClick: () => props.onSelectedView(view) },
                     React.createElement("div", null, view.name),
-                    isVisynRankingViewDesc(view) ? (React.createElement("div", { className: "d-flex h-100 align-items-center", style: { marginRight: '1.25rem', width: `1rem` } },
-                        React.createElement(BreadcrumbSvgPathOnly, { color: view.color }))) : view.icon ? (React.createElement("i", { className: `${view.icon}`, style: { marginRight: '1.25rem', fontSize: '16px', color: view.color } })) : null));
+                    isVisynRankingViewDesc(view) ? (React.createElement("div", { className: "me-3", style: { width: `1rem` } },
+                        React.createElement(ChevronIcon, { color: view.color }))) : view.icon ? (React.createElement("i", { className: `me-3 fs-5 ${view.icon}`, style: { color: view.color } })) : null));
             }))))))));
 }
 //# sourceMappingURL=ViewChooserAccordion.js.map

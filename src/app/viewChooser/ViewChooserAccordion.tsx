@@ -2,8 +2,8 @@ import { groupBy } from 'lodash';
 import { IViewPluginDesc, UniqueIdManager } from 'tdp_core';
 import React from 'react';
 import { isVisynRankingViewDesc } from '../../views';
-import { BreadcrumbSvgPathOnly } from '../../components/breadcrumb/BreadcrumbSvgPathOnly';
-import { darkenColor } from '../../components/breadcrumb/BreadcrumbSvg';
+import { ChevronIcon } from '../../components/breadcrumb/ChevronIcon';
+import { darkenColor } from '../../components/breadcrumb/ChevronSvg';
 
 export interface IViewChooserAccordionProps {
   /**
@@ -124,11 +124,11 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                   >
                     <div>{view.name}</div>
                     {isVisynRankingViewDesc(view) ? (
-                      <div className="d-flex h-100 align-items-center" style={{ marginRight: '1.25rem', width: `1rem` }}>
-                        <BreadcrumbSvgPathOnly color={view.color} />
+                      <div className="me-3" style={{ width: `1rem` }}>
+                        <ChevronIcon color={view.color} />
                       </div>
                     ) : view.icon ? (
-                      <i className={`${view.icon}`} style={{ marginRight: '1.25rem', fontSize: '16px', color: view.color }} />
+                      <i className={`me-3 fs-5 ${view.icon}`} style={{ color: view.color }} />
                     ) : null}
                   </button>
                 ))}

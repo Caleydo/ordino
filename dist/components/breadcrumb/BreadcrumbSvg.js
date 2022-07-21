@@ -31,7 +31,7 @@ export function darkenColor(col, amt) {
     // eslint-disable-next-line no-bitwise
     return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
-export function BreadcrumbSvg({ 
+export function ChevronSvg({ 
 // Numbers here are all in pixels
 width = 1500, height = 40, chevronIndent = 8, margin = 0, isFirst = false, color = 'cornflowerblue', isClickable = false, backgroundColor = 'white', }) {
     const [isHover, setHover] = useState(false);

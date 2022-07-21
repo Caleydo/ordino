@@ -112,12 +112,15 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                     className={`d-flex view-chooser-button align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 ${
                       view.id === props.selectedView?.id ? 'active' : ''
                     }`}
-                    style={{
-                      color: 'black',
-                      '--custom_color-h': HexToHSL(view.color).h,
-                      '--custom_color-s': `${HexToHSL(view.color).s}%`,
-                      '--custom_color-l': `${HexToHSL(view.color).l}%`,
-                    }}
+                    style={
+                      // need the as typing at the end because of the custom styles.
+                      {
+                        color: 'black',
+                        '--custom_color-h': HexToHSL(view.color).h,
+                        '--custom_color-s': `${HexToHSL(view.color).s}%`,
+                        '--custom_color-l': `${HexToHSL(view.color).l}%`,
+                      } as React.CSSProperties
+                    }
                     // eslint-disable-next-line react/no-array-index-key
                     key={idx}
                     onClick={() => props.onSelectedView(view)}

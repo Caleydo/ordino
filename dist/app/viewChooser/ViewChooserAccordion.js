@@ -62,7 +62,9 @@ export function ViewChooserAccordion(props) {
         React.createElement("div", { id: `collapse-${i}-${uniqueSuffix}`, className: "collapse show", "aria-labelledby": v },
             React.createElement("div", { className: "d-grid gap-2 px-0 py-1" }, groups[v].map((view, idx) => {
                 var _a;
-                return (React.createElement("button", { type: "button", className: `d-flex view-chooser-button align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 ${view.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id) ? 'active' : ''}`, style: {
+                return (React.createElement("button", { type: "button", className: `d-flex view-chooser-button align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 ${view.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id) ? 'active' : ''}`, style: 
+                    // need the as typing at the end because of the custom styles.
+                    {
                         color: 'black',
                         '--custom_color-h': HexToHSL(view.color).h,
                         '--custom_color-s': `${HexToHSL(view.color).s}%`,

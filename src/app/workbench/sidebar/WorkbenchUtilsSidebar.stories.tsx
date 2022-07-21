@@ -66,7 +66,7 @@ const Template: ComponentStory<typeof WorkbenchUtilsSidebar> = (args) => {
 
   store.dispatch(
     setColorMap({
-      colorMap: { test1: 'cornflowerblue' },
+      colorMap: { test2: 'cornflowerblue', test1: 'lightgray' },
     }),
   );
 
@@ -128,9 +128,7 @@ const Template: ComponentStory<typeof WorkbenchUtilsSidebar> = (args) => {
 
   store.dispatch(changeFocus({ index: 1 }));
 
-  useEffect(() => {
-
-  })
+  console.log('hello');
 
   return (
     <div className="w-100 h-100 d-flex justify-content-center align-items-center">

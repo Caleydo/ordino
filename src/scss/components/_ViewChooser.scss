@@ -41,4 +41,8 @@
     margin-left: 0px;
     box-shadow: none;
   }
+
+  .view-chooser-button:hover {
+    background: hsl(var(--custom_color-h), var(--custom_color-s), calc(var(--custom_color-l) + (calc((100% - var(--custom_color-l)) / 1.2))));
+  }
 }

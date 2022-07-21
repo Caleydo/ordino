@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
  * @param amt amount to darken. 0 does nothing, positive numbers darken, negative numbers lighten.
  * @returns
  */
-function darkenColor(col, amt) {
+export function darkenColor(col, amt) {
   col = col.slice(1);
   amt = -amt;
 

@@ -116,9 +116,9 @@ export function ViewChooserAccordion(props: IViewChooserAccordionProps) {
                       // need the as typing at the end because of the custom styles.
                       {
                         color: 'black',
-                        '--custom_color-h': HexToHSL(view.color).h,
-                        '--custom_color-s': `${HexToHSL(view.color).s}%`,
-                        '--custom_color-l': `${HexToHSL(view.color).l}%`,
+                        '--next-workbench-color-h': HexToHSL(view.color).h,
+                        '--next-workbench-color-s': `${HexToHSL(view.color).s}%`,
+                        '--next-workbench-color-l': `${HexToHSL(view.color).l}%`,
                       } as React.CSSProperties
                     }
                     // eslint-disable-next-line react/no-array-index-key

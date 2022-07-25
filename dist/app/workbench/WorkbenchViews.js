@@ -69,8 +69,10 @@ export function WorkbenchViews({ index, type }) {
     }, [mosaicState, views]);
     const onChangeCallback = useCallback((rootNode) => {
         setMosaicState(rootNode);
-        setMosaicDrag(true);
-    }, []);
+        if (!mosaicDrag) {
+            setMosaicDrag(true);
+        }
+    }, [mosaicDrag]);
     return (React.createElement("div", { className: "position-relative d-flex flex-grow-1" },
         React.createElement("div", { className: "d-flex flex-col w-100" },
             React.createElement("div", { ref: setRef, className: "d-flex flex-grow-1" },

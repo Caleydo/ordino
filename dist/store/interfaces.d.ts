@@ -28,6 +28,10 @@ export interface IOrdinoAppState {
     };
     midTransition: boolean;
     /**
+     * isAnimating is true when transitioning between workbenches, during the animation.
+     */
+    isAnimating: boolean;
+    /**
      * Id of the current focus view
      */
     focusWorkbenchIndex: number;

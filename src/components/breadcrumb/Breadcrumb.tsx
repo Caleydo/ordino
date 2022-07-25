@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { SingleBreadcrumb } from './SingleBreadcrumb';
+import { Chevron } from './Chevron';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { changeFocus } from '../../store';
+import { isBeforeContextWorkbench, isContextWorkbench, isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
 
 // These units are intended as percentages, and are used as flex width for the breadcrumbs.
 // Ideally, SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT = 15, since the context is always 15% of the screen currently
 const SMALL_CHEVRON_WIDTH = 5;
-const CONTEXT_CHEVRON_COUNT = 3;
-const POST_CHEVRON_COUNT = 3;
+const CONTEXT_WIDTH = 15;
+const HIDDEN_CHEVRON_WIDTH = 1;
 const CHEVRON_TRANSITION_WIDTH = 50;
 const FULL_BREADCRUMB_WIDTH = 100;
 
@@ -18,82 +19,68 @@ export function Breadcrumb() {
 
   const dispatch = useAppDispatch();
 
-  // this number is for finding out how many workbenches are before our current one, so we can give them the right width.
-  const startFlexNum = useMemo(() => {
-    let counter = 0;
-    if (ordino.focusWorkbenchIndex < CONTEXT_CHEVRON_COUNT + 1) {
-      counter += ordino.focusWorkbenchIndex;
-    } else {
-      counter = CONTEXT_CHEVRON_COUNT;
-    }
-
-    return counter;
+  const beforeContextCount = useMemo(() => {
+    return ordino.focusWorkbenchIndex <= 1 ? 0 : ordino.focusWorkbenchIndex - 1;
   }, [ordino.focusWorkbenchIndex]);
 
-  // this number is for finding out how many workbenches are after our current one, so we can give them the right width.
-  const endFlexNum = useMemo(() => {
-    let counter = 0;
-    if (ordino.focusWorkbenchIndex > ordino.workbenches.length - (POST_CHEVRON_COUNT + 1)) {
-      counter += ordino.workbenches.length - (ordino.focusWorkbenchIndex + 1);
-    } else {
-      counter = POST_CHEVRON_COUNT;
+  const afterFocusWidth = useMemo(() => {
+    if (ordino.workbenches.length - ordino.focusWorkbenchIndex - 1 === 0) {
+      return 0;
     }
+    if (ordino.workbenches.length - ordino.focusWorkbenchIndex - 1 === 1) {
+      return SMALL_CHEVRON_WIDTH;
+    }
+    return SMALL_CHEVRON_WIDTH + (ordino.workbenches.length - ordino.focusWorkbenchIndex - 2 * HIDDEN_CHEVRON_WIDTH);
+  }, [ordino.focusWorkbenchIndex, ordino.workbenches.length]);
 
-    return counter;
-  }, [ordino.workbenches.length, ordino.focusWorkbenchIndex]);
+  const chevrons = useMemo(() => {
+    return ordino.workbenches.map((workbench) => {
+      let flexWidth = 0;
 
+      // Chevrons before our context
+      if (isBeforeContextWorkbench(workbench)) {
+        flexWidth = HIDDEN_CHEVRON_WIDTH;
+      }
+      // Our context
+      else if (isContextWorkbench(workbench)) {
+        flexWidth = ordino.midTransition ? HIDDEN_CHEVRON_WIDTH : CONTEXT_WIDTH - beforeContextCount;
+      }
+      // Current chevron
+      else if (isFocusWorkbench(workbench)) {
+        flexWidth = ordino.midTransition
+          ? // if transitioning use that width
+            CHEVRON_TRANSITION_WIDTH - (isFirstWorkbench(workbench) ? 0 : beforeContextCount + 1)
+          : // Otherwise figure out how big the current should be
+            FULL_BREADCRUMB_WIDTH - CONTEXT_WIDTH - afterFocusWidth;
+      }
+      // Chevron immediately after our current. Could be half width if we are transitioning.
+      else if (isNextWorkbench(workbench)) {
+        flexWidth = ordino.midTransition
+          ? // if Transitioning use transition width
+            CHEVRON_TRANSITION_WIDTH
+          : // Otherwise just a small chevron
+            SMALL_CHEVRON_WIDTH;
+      }
+      // Chevrons after our current + 1
+      else {
+        flexWidth = HIDDEN_CHEVRON_WIDTH;
+      }
+
+      return (
+        <Chevron
+          key={workbench.index}
+          workbench={workbench}
+          color={ordino.colorMap[workbench.entityId]}
+          flexWidth={flexWidth}
+          hideText={flexWidth === HIDDEN_CHEVRON_WIDTH}
+          first={isFirstWorkbench(workbench)}
+          onClick={!isFocusWorkbench(workbench) || ordino.midTransition ? () => dispatch(changeFocus({ index: workbench.index })) : null}
+        />
+      );
+    });
+  }, [afterFocusWidth, beforeContextCount, ordino.colorMap, ordino.midTransition, dispatch, ordino.workbenches]);
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {ordino.workbenches.length > 0 ? (
-        <div className="d-flex breadcrumb overflow-hidden">
-          {ordino.workbenches.map((workbench) => {
-            let flexWidth = 0;
-
-            // Chevrons before our current
-            if (workbench.index < ordino.focusWorkbenchIndex) {
-              flexWidth = ordino.midTransition
-                ? // If transitioning, dont show chevrons before the current
-                  0
-                : // Otherwise figure out how big this should be based on how many context chevrons there are
-                  (SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT) / startFlexNum;
-            }
-            // Current chevron
-            else if (workbench.index === ordino.focusWorkbenchIndex) {
-              flexWidth = ordino.midTransition
-                ? // if transitioning use that width
-                  CHEVRON_TRANSITION_WIDTH
-                : // Otherwise figure out how big the current should be
-                  FULL_BREADCRUMB_WIDTH - SMALL_CHEVRON_WIDTH * CONTEXT_CHEVRON_COUNT - SMALL_CHEVRON_WIDTH * endFlexNum;
-            }
-            // Chevron immediately after our current. Could be half width if we are transitioning.
-            else if (workbench.index === ordino.focusWorkbenchIndex + 1) {
-              flexWidth = ordino.midTransition
-                ? // if Transitioning use transition width
-                  CHEVRON_TRANSITION_WIDTH
-                : // Otherwise just a small chevron
-                  SMALL_CHEVRON_WIDTH;
-            }
-            // Chevrons after our current + 1
-            else {
-              flexWidth = SMALL_CHEVRON_WIDTH;
-            }
-
-            return (
-              <SingleBreadcrumb
-                key={workbench.index}
-                workbench={workbench}
-                color={ordino.colorMap[workbench.entityId]}
-                flexWidth={flexWidth}
-                first={workbench.index === 0}
-                onClick={
-                  workbench.index !== ordino.focusWorkbenchIndex || ordino.midTransition ? () => dispatch(changeFocus({ index: workbench.index })) : null
-                }
-              />
-            );
-          })}
-        </div>
-      ) : null}
-    </>
+    <>{ordino.workbenches.length > 0 ? <div className="ms-1 me-1 d-flex breadcrumb overflow-hidden">{chevrons}</div> : null}</>
   );
 }

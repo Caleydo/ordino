@@ -100,10 +100,15 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     [mosaicState, views],
   );
 
-  const onChangeCallback = useCallback((rootNode: MosaicNode<string>) => {
-    setMosaicState(rootNode);
-    setMosaicDrag(true);
-  }, []);
+  const onChangeCallback = useCallback(
+    (rootNode: MosaicNode<string>) => {
+      setMosaicState(rootNode);
+      if (!mosaicDrag) {
+        setMosaicDrag(true);
+      }
+    },
+    [mosaicDrag],
+  );
 
   return (
     <div className="position-relative d-flex flex-grow-1">

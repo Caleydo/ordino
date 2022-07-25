@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
  * @param amt amount to darken. 0 does nothing, positive numbers darken, negative numbers lighten.
  * @returns
  */
-function darkenColor(col, amt) {
+export function darkenColor(col, amt) {
   col = col.slice(1);
   amt = -amt;
 
@@ -35,15 +35,16 @@ function darkenColor(col, amt) {
   return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
 
-export function BreadcrumbSvg({
+export function ChevronSvg({
   // Numbers here are all in pixels
   width = 1500,
   height = 40,
   chevronIndent = 8,
-  margin = 4,
+  margin = 0,
   isFirst = false,
   color = 'cornflowerblue',
   isClickable = false,
+  backgroundColor = 'white',
 }: {
   width?: number;
   // chevronIndent is the width of the triangle at the beginning and end of the chevron. Higher number looks "sharper"
@@ -54,6 +55,7 @@ export function BreadcrumbSvg({
   // distance between chevrons
   margin?: number;
   isClickable?: boolean;
+  backgroundColor?: string;
 }) {
   const [isHover, setHover] = useState<boolean>(false);
 
@@ -63,20 +65,25 @@ export function BreadcrumbSvg({
 
   return (
     <svg
-      className="position-absolute chevronSvg"
+      className="position-absolute mt-1"
       width={width}
       style={{ height: `${height}px` }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <rect width={width - margin - chevronIndent} height={height} fill={fillColor} />
+      <rect width={width - margin - chevronIndent} height={height} fill={fillColor} rx={3} ry={3} />
       <g transform={`translate(${width - chevronIndent - margin}, 0)`}>
-        <path d={`m -5 ${height} h 5 l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} h -5 z`} fill={fillColor} />
+        <path
+          d={`m -5 ${height} h 2 a 3 3 0 0 1 3 -2 l ${chevronIndent} -${height / 2 - 3} a 3 3 0 0 0 0 -2 l -${chevronIndent} -${
+            height / 2 - 3
+          } a 3 3 0 0 1 -3 -2 h -2 z`}
+          fill={fillColor}
+        />
       </g>
 
       {!isFirst ? (
         <g>
-          <path d={`m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`} fill="white" />
+          <path d={`m 0 ${height} l ${chevronIndent} -${height / 2} l -${chevronIndent} -${height / 2} z`} fill={backgroundColor} />
         </g>
       ) : null}
     </svg>

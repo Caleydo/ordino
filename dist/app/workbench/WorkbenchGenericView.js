@@ -8,8 +8,10 @@ import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
+import { AnimatingOverlay } from './AnimatingOverlay';
+const DEFAULT_ANIMATING_OVERLAY_ICON = 'far fa-window-maximize';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }) {
-    var _a;
+    var _a, _b, _c;
     const [editOpen, setEditOpen] = useState(true);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
     const dispatch = useAppDispatch();
@@ -58,7 +60,8 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
         React.createElement("span", { className: "view-title row align-items-center m-1" },
             React.createElement("strong", null, (_a = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _a === void 0 ? void 0 : _a.name))));
     return (React.createElement(MosaicWindow, { path: path, title: view.name, renderToolbar: () => header },
-        React.createElement("div", { id: view.id, className: `position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag ? 'pe-none' : ''}` },
+        React.createElement("div", { id: view.id, className: `position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag || ordino.isAnimating ? 'resizeCursor' : ''}` },
+            React.createElement(AnimatingOverlay, { color: ordino.colorMap[currentWorkbench.entityId], isAnimating: ordino.isAnimating || mosaicDrag, iconName: ((_b = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _b === void 0 ? void 0 : _b.icon) ? (_c = viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) === null || _c === void 0 ? void 0 : _c.icon : DEFAULT_ANIMATING_OVERLAY_ICON }),
             React.createElement("div", { className: "inner d-flex" },
                 editOpen && !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) && (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.tab) ? ( // do not show chooser for ranking views
                 React.createElement("div", { className: "d-flex flex-column" },

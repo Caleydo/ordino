@@ -8,6 +8,7 @@ const initialState: IOrdinoAppState = {
   focusWorkbenchIndex: 0,
   midTransition: false,
   colorMap: {},
+  isAnimating: false,
 };
 
 const ordinoSlice = createSlice({
@@ -28,9 +29,13 @@ const ordinoSlice = createSlice({
     changeFocus(state, action: PayloadAction<{ index: number }>) {
       state.focusWorkbenchIndex = action.payload.index;
       state.midTransition = false;
+      state.isAnimating = true;
     },
     setTransition(state, action: PayloadAction<boolean>) {
       state.midTransition = action.payload;
+    },
+    setAnimating(state, action: PayloadAction<boolean>) {
+      state.isAnimating = action.payload;
     },
   },
 });
@@ -60,6 +65,7 @@ export const {
   setWorkbenchDirection,
   setCommentsOpen,
   setTransition,
+  setAnimating,
 } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

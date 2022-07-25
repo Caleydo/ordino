@@ -1,4 +1,4 @@
-import { IDTypeManager, isVisynViewPluginDesc, ViewUtils } from 'tdp_core';
+import { IDTypeManager, isVisynViewPluginDesc, ViewUtils, } from 'tdp_core';
 export function isVisynRankingViewDesc(desc) {
     return isVisynViewPluginDesc(desc) && (desc === null || desc === void 0 ? void 0 : desc.visynViewType) === 'ranking';
 }

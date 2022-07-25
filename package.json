@@ -43,7 +43,7 @@
     "posttest": "npm run lint",
     "copy": "npm run copy-assets && npm run copy-styles && npm run copy-app-assets",
     "build": "npm run clean && npm run compile",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook",
     "copy-assets": "if [ -d src/assets ]; then shx --verbose cp -R src/assets/. dist/assets/; fi && if [ -d src/templates ]; then shx --verbose cp -R src/templates/. dist/templates/; fi",
     "copy-styles": "if [ -d src/scss ]; then shx --verbose cp -R src/scss/. dist/scss/; fi",
@@ -118,5 +118,8 @@
   },
   "resolutions": {
     "@types/react": "17.0.44"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

@@ -19,6 +19,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { setCommentsOpen } from '../../store/ordinoSlice';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -36,7 +37,12 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const dispatch = useAppDispatch();
 
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
-  const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS });
+
+  const onCommentPanelVisibilityChanged = React.useCallback(
+    (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),
+    [index, dispatch],
+  );
+  const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS, onCommentPanelVisibilityChanged });
 
   const [mosaicState, setMosaicState] = useState<MosaicNode<string>>(views[0].uniqueId);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);

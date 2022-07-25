@@ -96,6 +96,7 @@ export const workbenchReducers = {
   },
   setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; isOpen: boolean }>) {
     const { workbenchIndex, isOpen } = action.payload;
+    console.log('setting open');
     state.workbenches[workbenchIndex].commentsOpen = isOpen;
   },
 };

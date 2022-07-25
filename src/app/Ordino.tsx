@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Breadcrumb } from './Breadcrumb';
+import { Breadcrumb } from '../components/breadcrumb/Breadcrumb';
 import { Filmstrip } from './Filmstrip';
 
 export function Ordino() {

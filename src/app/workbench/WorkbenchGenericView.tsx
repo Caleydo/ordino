@@ -12,7 +12,6 @@ import {
   addSelection,
   createColumnDescs,
   removeView,
-  setView,
   setViewParameters,
   setWorkbenchData,
   IWorkbenchView,
@@ -22,8 +21,8 @@ import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { EViewChooserMode, ViewChooser } from '../ViewChooser';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
+import { AnimatingOverlay } from './AnimatingOverlay';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -31,6 +30,8 @@ export interface IWorkbenchGenericViewProps {
   chooserOptions: IViewPluginDesc[];
   dragMode: boolean;
 }
+
+const DEFAULT_ANIMATING_OVERLAY_ICON = 'far fa-window-maximize';
 
 export function WorkbenchGenericView({
   workbenchIndex,
@@ -107,7 +108,7 @@ export function WorkbenchGenericView({
       <div className="d-flex w-100">
         <div className="view-parameters d-flex">
           <div>
-            {!isVisynRankingViewDesc(viewPlugin?.desc) ? ( // do not show chooser for ranking views
+            {!isVisynRankingViewDesc(viewPlugin?.desc) && viewPlugin?.tab ? ( // do not show chooser for ranking views
               <button
                 type="button"
                 onClick={() => setEditOpen(!editOpen)}
@@ -155,75 +156,27 @@ export function WorkbenchGenericView({
     ) : (
       <div className="view-parameters d-flex">
         <span className="view-title row align-items-center m-1">
-          <strong>{viewPlugin?.desc?.itemName}</strong>
+          <strong>{viewPlugin?.desc?.name}</strong>
         </span>
       </div>
     );
 
   return (
     <MosaicWindow<number> path={path} title={view.name} renderToolbar={() => header}>
-      <div id={view.id} className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag ? 'pe-none' : ''}`}>
-        <div className="inner d-flex">
-          {editOpen && !isVisynRankingViewDesc(viewPlugin?.desc) ? ( // do not show chooser for ranking views
-            <div className="d-flex flex-column">
-              <ul className="nav nav-tabs" id="myTab" role="tablist">
-                <li className="nav-item" role="presentation">
-                  <button
-                    className={`nav-link ${settingsTabSelected || !viewPlugin || !viewPlugin?.tab ? 'active' : ''}`}
-                    onClick={() => setSettingsTabSelected(true)}
-                    data-bs-toggle="tab"
-                    data-bs-target="#home"
-                    type="button"
-                    role="tab"
-                    aria-controls="home"
-                    aria-selected="true"
-                  >
-                    Views
-                  </button>
-                </li>
-                {viewPlugin && viewPlugin?.tab ? (
-                  <li className="nav-item" role="presentation">
-                    <button
-                      className={`nav-link ${!settingsTabSelected ? 'active' : ''}`}
-                      onClick={() => setSettingsTabSelected(false)}
-                      data-bs-toggle="tab"
-                      data-bs-target="#profile"
-                      type="button"
-                      role="tab"
-                      aria-controls="profile"
-                      aria-selected="false"
-                    >
-                      Settings
-                    </button>
-                  </li>
-                ) : null}
-              </ul>
+      <div
+        id={view.id}
+        className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag || ordino.isAnimating ? 'resizeCursor' : ''}`}
+      >
+        <AnimatingOverlay
+          color={ordino.colorMap[currentWorkbench.entityId]}
+          isAnimating={ordino.isAnimating || mosaicDrag}
+          iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : DEFAULT_ANIMATING_OVERLAY_ICON}
+        />
 
+        <div className="inner d-flex">
+          {editOpen && !isVisynRankingViewDesc(viewPlugin?.desc) && viewPlugin?.tab ? ( // do not show chooser for ranking views
+            <div className="d-flex flex-column">
               <div className="h-100 tab-content viewTabPanel" style={{ width: '220px' }}>
-                <div
-                  className={`h-100 tab-pane ${settingsTabSelected || !viewPlugin || !viewPlugin?.tab ? 'active' : ''}`}
-                  role="tabpanel"
-                  aria-labelledby="settings-tab"
-                >
-                  {/* TODO refactor view header such that the logic (using hooks) and the visual representation are separated */}
-                  <ViewChooser
-                    views={chooserOptions}
-                    selectedView={viewPlugin?.desc}
-                    showBurgerMenu={false}
-                    mode={EViewChooserMode.EMBEDDED}
-                    onSelectedView={(newView: IViewPluginDesc) => {
-                      dispatch(
-                        setView({
-                          workbenchIndex,
-                          viewIndex: findViewIndex(view.uniqueId, currentWorkbench),
-                          viewId: newView.id,
-                          viewName: newView.name,
-                        }),
-                      );
-                    }}
-                    isEmbedded={false}
-                  />
-                </div>
                 {viewPlugin && viewPlugin?.tab ? (
                   <div className={`tab-pane ${!settingsTabSelected ? 'active' : ''}`} role="tabpanel" aria-labelledby="view-tab">
                     <Suspense fallback={I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading')}>

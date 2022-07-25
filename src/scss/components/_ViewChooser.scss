@@ -41,4 +41,8 @@
     margin-left: 0px;
     box-shadow: none;
   }
+
+  .view-chooser-button:hover {
+    background: hsl(var(--next-workbench-color-h), var(--next-workbench-color-s), calc(var(--next-workbench-color-l) + (calc((100% - var(--next-workbench-color-l)) / 1.2))));
+  }
 }

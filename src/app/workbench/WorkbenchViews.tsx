@@ -16,12 +16,10 @@ import {
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { DetailsSidebar } from './sidebar/DetailsSidebar';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
-import { CreateNextWorkbenchSidebar } from './sidebar/CreateNextWorkbenchSidebar';
-import { setCommentsOpen } from '../../store/ordinoSlice';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { setCommentsOpen } from '../../store/ordinoSlice';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -37,6 +35,7 @@ export interface IWorkbenchViewsProps {
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
+
   const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
 
   const onCommentPanelVisibilityChanged = React.useCallback(
@@ -60,10 +59,11 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   React.useEffect(() => {
     // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
     if (views.length > mosaicViewCount) {
-      const path = getPathToCorner(mosaicState, Corner.TOP_RIGHT);
+      const path = getPathToCorner(mosaicState, ordino.midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
       const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<string>;
       const destination = getNodeAtPath(mosaicState, path) as MosaicNode<string>;
-      const direction: MosaicDirection = parent ? getOtherDirection(parent.direction) : 'row';
+
+      const direction: MosaicDirection = parent && parent.direction ? getOtherDirection(parent.direction) : ordino.midTransition ? 'column' : 'row';
       const newViewId: string = views[views.length - 1].uniqueId; // assumes that the new view is appended to the array
 
       let first: MosaicNode<string>;
@@ -72,8 +72,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
         first = destination;
         second = newViewId;
       } else {
-        first = newViewId;
-        second = destination;
+        first = ordino.midTransition ? destination : newViewId;
+        second = ordino.midTransition ? newViewId : destination;
       }
 
       const newNode = updateTree(mosaicState, [
@@ -92,7 +92,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
       setMosaicState(newNode);
       setMosaicViewCount(views.length);
     }
-  }, [mosaicState, mosaicViewCount, views]);
+  }, [mosaicState, mosaicViewCount, views, ordino.midTransition]);
 
   const removeCallback = useCallback(
     (path: MosaicPath) => {
@@ -106,21 +106,19 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     [mosaicState, views],
   );
 
-  const onChangeCallback = useCallback((rootNode: MosaicNode<string>) => {
-    setMosaicState(rootNode);
-    setMosaicDrag(true);
-  }, []);
+  const onChangeCallback = useCallback(
+    (rootNode: MosaicNode<string>) => {
+      setMosaicState(rootNode);
+      if (!mosaicDrag) {
+        setMosaicDrag(true);
+      }
+    },
+    [mosaicDrag],
+  );
 
-  const showLeftSidebar = ordino.workbenches[index].detailsSidebarOpen && index > 0 && type === EWorkbenchType.FOCUS;
-  const showRightSidebar = ordino.workbenches[index].createNextWorkbenchSidebarOpen && type === EWorkbenchType.FOCUS;
   return (
-    <div className="position-relative workbenchWrapper d-flex flex-grow-1">
+    <div className="position-relative d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
-        {showLeftSidebar ? (
-          <div className="d-flex" style={{ width: '400px' }}>
-            <DetailsSidebar workbench={ordino.workbenches[index]} />
-          </div>
-        ) : null}
         <div ref={setRef} className="d-flex flex-grow-1">
           <Mosaic<string>
             renderTile={(id, path) => {
@@ -135,11 +133,6 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             value={ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId}
           />
         </div>
-        {showRightSidebar ? (
-          <div className="d-flex" style={{ width: '400px' }}>
-            <CreateNextWorkbenchSidebar workbench={ordino.workbenches[index]} />
-          </div>
-        ) : null}
       </div>
     </div>
   );

@@ -61,8 +61,9 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
     index: number;
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbench: IWorkbench;
-    globalQuery: import("..").IOrdinoGlobalQuery;
-    appliedQueryFilter: import("..").IQueryFilter;
+    globalQueryName: string;
+    globalQueryCategories: string[];
+    appliedQueryCategories: string[];
 }, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     firstViewIndex: number;
@@ -73,6 +74,6 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, setCommentsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     isOpen: boolean;
-}, string>;
+}, string>, setTransition: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>, setAnimating: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>;
 export declare const ordinoReducer: import("redux").Reducer<IOrdinoAppState, import("redux").AnyAction>;
 //# sourceMappingURL=ordinoSlice.d.ts.map

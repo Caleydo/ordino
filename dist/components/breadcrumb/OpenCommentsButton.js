@@ -42,16 +42,15 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
         : commentCount
             ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.availableComments', { count: commentCount })
             : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
-    return selection.length > 0 ? (status === 'success' ? (React.createElement("button", { type: "button", title: title, className: "btn btn-icon-light position-relative", onClick: () => onCommentPanelVisibilityChanged(!commentPanelVisible) },
-        React.createElement("span", null,
-            React.createElement("i", { className: "flex-grow-1 fas fa-comments" }),
-            React.createElement("span", { className: "position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
-                , style: {
-                    top: '27%',
-                    left: '76%',
-                    fontSize: 'xx-small',
-                    visibility: commentCount ? null : 'hidden',
-                } }, commentCount)))) : (React.createElement("button", { type: "button", className: "btn btn-icon-light position-relative" },
-        React.createElement("i", { className: "fas fa-circle-notch fa-spin" })))) : null;
+    return selection.length > 0 ? (React.createElement("button", { type: "button", title: title, className: "pe-auto btn btn-icon-light position-relative", onClick: () => onCommentPanelVisibilityChanged(!commentPanelVisible) },
+        React.createElement("i", { className: "flex-grow-1 fas fa-comments" }),
+        React.createElement("span", { className: "position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
+            , style: {
+                top: '27%',
+                left: '76%',
+                fontSize: 'xx-small',
+                visibility: commentCount ? null : 'hidden',
+            } }, commentCount))) : (React.createElement("button", { type: "button", className: "btn btn-icon-light position-relative" },
+        React.createElement("i", { className: "fas fa-circle-notch fa-spin" })));
 }
 //# sourceMappingURL=OpenCommentsButton.js.map

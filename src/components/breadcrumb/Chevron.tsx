@@ -78,12 +78,14 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
         {isFocusWorkbench(workbench) && !animatedStyle.flexGrow.isAnimating ? (
           <>
             <FilterAndSelected />
-            <OpenCommentsButton
-              idType={workbench.itemIDType}
-              selection={workbench.selection}
-              commentPanelVisible={workbench.commentsOpen}
-              onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
-            />
+            {workbench.selection.length > 0 ? (
+              <OpenCommentsButton
+                idType={workbench.itemIDType}
+                selection={workbench.selection}
+                commentPanelVisible={workbench.commentsOpen}
+                onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
+              />
+            ) : null}
           </>
         ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && ordino.midTransition) ? (
           <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>

@@ -69,32 +69,28 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
     : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
 
   return selection.length > 0 ? (
-    status === 'success' ? (
-      <button
-        type="button"
-        title={title}
-        className="btn btn-icon-light position-relative"
-        onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}
+    <button
+      type="button"
+      title={title}
+      className="pe-auto btn btn-icon-light position-relative"
+      onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}
+    >
+      <i className="flex-grow-1 fas fa-comments" />
+      <span
+        className="position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
+        style={{
+          top: '27%',
+          left: '76%',
+          fontSize: 'xx-small',
+          visibility: commentCount ? null : 'hidden',
+        }}
       >
-        <span>
-          <i className="flex-grow-1 fas fa-comments" />
-          <span
-            className="position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
-            style={{
-              top: '27%',
-              left: '76%',
-              fontSize: 'xx-small',
-              visibility: commentCount ? null : 'hidden',
-            }}
-          >
-            {commentCount}
-          </span>
-        </span>
-      </button>
-    ) : (
-      <button type="button" className="btn btn-icon-light position-relative">
-        <i className="fas fa-circle-notch fa-spin" />
-      </button>
-    )
-  ) : null;
+        {commentCount}
+      </span>
+    </button>
+  ) : (
+    <button type="button" className="btn btn-icon-light position-relative">
+      <i className="fas fa-circle-notch fa-spin" />
+    </button>
+  );
 }

@@ -12,7 +12,6 @@ import {
   addSelection,
   createColumnDescs,
   removeView,
-  setView,
   setViewParameters,
   setWorkbenchData,
   IWorkbenchView,
@@ -32,7 +31,7 @@ export interface IWorkbenchGenericViewProps {
   dragMode: boolean;
 }
 
-const DEFAULT_ICON = 'fas fa-bars';
+const DEFAULT_ANIMATING_OVERLAY_ICON = 'far fa-window-maximize';
 
 export function WorkbenchGenericView({
   workbenchIndex,
@@ -171,7 +170,7 @@ export function WorkbenchGenericView({
         <AnimatingOverlay
           color={ordino.colorMap[currentWorkbench.entityId]}
           isAnimating={ordino.isAnimating || mosaicDrag}
-          iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : DEFAULT_ICON}
+          iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : DEFAULT_ANIMATING_OVERLAY_ICON}
         />
 
         <div className="inner d-flex">

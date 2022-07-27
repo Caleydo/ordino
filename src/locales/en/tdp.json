@@ -47,7 +47,7 @@
       "loading": "Loading...",
       "selectView": "Select a view",
       "searchViews": "Search views",
-      "disabledTransition": "Please select 1 or more {{workbenchName}}(s) to jump to {{jumpTarget}}"
+      "disabledTransition": "Please select one or more {{workbenchName}}(s) to jump to {{jumpTarget}}"
     },
     "breadcrumb": {
       "close": "Close",

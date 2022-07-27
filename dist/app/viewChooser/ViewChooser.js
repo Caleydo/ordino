@@ -11,7 +11,7 @@ export var EExpandMode;
     EExpandMode[EExpandMode["LEFT"] = 0] = "LEFT";
     EExpandMode[EExpandMode["RIGHT"] = 1] = "RIGHT";
 })(EExpandMode || (EExpandMode = {}));
-export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu = true, showFilter = true, showHeader = true, showFooter = true, mode = EViewChooserMode.EMBEDDED, expand = EExpandMode.RIGHT, classNames = '', extensions: { ViewChooserHeader = chooserComponents.ViewChooserHeader, BurgerButton = chooserComponents.BurgerButton, SelectedViewIndicator = chooserComponents.SelectedViewIndicator, SelectionCountIndicator = chooserComponents.SelectionCountIndicator, ViewChooserAccordion = chooserComponents.ViewChooserAccordion, ViewChooserFilter = chooserComponents.ViewChooserFilter, ViewChooserFooter = chooserComponents.ViewChooserFooter, } = {}, }) {
+export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu = true, showFilter = true, showHeader = true, showFooter = true, isTransitionActive = true, mode = EViewChooserMode.EMBEDDED, expand = EExpandMode.RIGHT, classNames = '', workbenchName = '', extensions: { ViewChooserHeader = chooserComponents.ViewChooserHeader, BurgerButton = chooserComponents.BurgerButton, SelectedViewIndicator = chooserComponents.SelectedViewIndicator, SelectionCountIndicator = chooserComponents.SelectionCountIndicator, ViewChooserAccordion = chooserComponents.ViewChooserAccordion, ViewChooserFilter = chooserComponents.ViewChooserFilter, ViewChooserFooter = chooserComponents.ViewChooserFooter, } = {}, }) {
     const [collapsed, setCollapsed] = React.useState(mode !== EViewChooserMode.EMBEDDED);
     const [embedded, setEmbedded] = React.useState(mode === EViewChooserMode.EMBEDDED);
     const [filteredViews, setFilteredViews] = React.useState(views);
@@ -40,7 +40,7 @@ export function ViewChooser({ views, onSelectedView, selectedView, showBurgerMen
                     !collapsed && showFilter ? React.createElement(ViewChooserFilter, { views: views, setFilteredViews: setFilteredViews }) : null)),
                 collapsed ? (React.createElement("div", { className: "selected-view-wrapper flex-grow-1 mt-2 d-flex flex-column justify-content-start align-items-center" },
                     React.createElement(SelectionCountIndicator, { selectionCount: 5, viewMode: EViewMode.FOCUS, idType: "Cellines" }),
-                    React.createElement(SelectedViewIndicator, { selectedView: selectedView === null || selectedView === void 0 ? void 0 : selectedView.name, availableViews: views.length }))) : (React.createElement(ViewChooserAccordion, { views: filteredViews, selectedView: selectedView, onSelectedView: onSelectedView })),
+                    React.createElement(SelectedViewIndicator, { selectedView: selectedView === null || selectedView === void 0 ? void 0 : selectedView.name, availableViews: views.length }))) : (React.createElement(ViewChooserAccordion, { workbenchName: workbenchName, isTransitionActive: isTransitionActive, views: filteredViews, selectedView: selectedView, onSelectedView: onSelectedView })),
                 showFooter ? React.createElement(ViewChooserFooter, null) : null))));
 }
 //# sourceMappingURL=ViewChooser.js.map

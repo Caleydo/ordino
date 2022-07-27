@@ -46,7 +46,8 @@
         "views": {
             "loading": "Loading...",
             "selectView": "Select a view",
-            "searchViews": "Search views"
+            "searchViews": "Search views",
+            "disabledTransition": "Please select 1 or more {{workbenchName}}(s) to allow workbench switches"
         },
         "breadcrumb": {
             "close": "Close",

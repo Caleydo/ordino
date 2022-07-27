@@ -57,6 +57,8 @@ export interface IViewChooserProps {
    */
   showFooter?: boolean;
 
+  isTransitionActive?: boolean;
+
   /**
    * EMBEDDED = ViewChooser has full width and does not collapse
    * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
@@ -83,6 +85,7 @@ export interface IViewChooserProps {
    *
    */
   extensions?: ViewChooserExtensions;
+  workbenchName?: string;
 }
 
 export function ViewChooser({
@@ -93,9 +96,11 @@ export function ViewChooser({
   showFilter = true,
   showHeader = true,
   showFooter = true,
+  isTransitionActive = true,
   mode = EViewChooserMode.EMBEDDED,
   expand = EExpandMode.RIGHT,
   classNames = '',
+  workbenchName = '',
   extensions: {
     ViewChooserHeader = chooserComponents.ViewChooserHeader,
     BurgerButton = chooserComponents.BurgerButton,
@@ -150,7 +155,13 @@ export function ViewChooser({
               <SelectedViewIndicator selectedView={selectedView?.name} availableViews={views.length} />
             </div>
           ) : (
-            <ViewChooserAccordion views={filteredViews} selectedView={selectedView} onSelectedView={onSelectedView} />
+            <ViewChooserAccordion
+              workbenchName={workbenchName}
+              isTransitionActive={isTransitionActive}
+              views={filteredViews}
+              selectedView={selectedView}
+              onSelectedView={onSelectedView}
+            />
           )}
           {showFooter ? <ViewChooserFooter /> : null}
         </div>

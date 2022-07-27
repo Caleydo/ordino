@@ -1,5 +1,5 @@
 import { groupBy } from 'lodash';
-import { UniqueIdManager } from 'tdp_core';
+import { I18nextManager, UniqueIdManager } from 'tdp_core';
 import React from 'react';
 import { isVisynRankingViewDesc } from '../../views';
 import { ChevronIcon } from '../../components/breadcrumb/ChevronIcon';
@@ -50,28 +50,30 @@ function HexToHSL(hex) {
     h = Math.round(360 * h);
     return { h, s, l };
 }
-export function ViewChooserAccordion(props) {
+export function ViewChooserAccordion({ views, onSelectedView, workbenchName, selectedView, isTransitionActive }) {
     const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
-    const groups = groupBy(props.views, (view) => view.group.name);
+    const groups = groupBy(views, (view) => view.group.name);
     return (React.createElement("div", { className: "view-buttons flex-grow-1 flex-row border-top border-light overflow-auto" }, Object.keys(groups)
         .sort((a, b) => groups[a][0].group.order - groups[b][0].group.order)
         .map((v, i) => (
     // eslint-disable-next-line react/no-array-index-key
     React.createElement("div", { className: `accordion-item border-0 ${i < Object.keys(groups).length - 1 ? 'border-bottom border-light' : ''}`, key: i },
-        React.createElement("button", { className: `accordion-button btn-text-gray py-2 shadow-none text-nowrap ${groups[v].some((g) => { var _a; return g.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id); }) ? 'active' : ''}`, type: "button", style: { fontWeight: 500, color: 'black' }, "data-bs-toggle": "collapse", "data-bs-target": `#collapse-${i}-${uniqueSuffix}`, "aria-expanded": "true", "aria-controls": `collapse-${i}-${uniqueSuffix}` }, v),
+        React.createElement("button", { className: `accordion-button btn-text-gray py-2 shadow-none text-nowrap ${groups[v].some((g) => g.id === (selectedView === null || selectedView === void 0 ? void 0 : selectedView.id)) ? 'active' : ''}`, type: "button", style: { fontWeight: 500, color: 'black' }, "data-bs-toggle": "collapse", "data-bs-target": `#collapse-${i}-${uniqueSuffix}`, "aria-expanded": "true", "aria-controls": `collapse-${i}-${uniqueSuffix}` }, v),
         React.createElement("div", { id: `collapse-${i}-${uniqueSuffix}`, className: "collapse show", "aria-labelledby": v },
             React.createElement("div", { className: "d-grid gap-2 px-0 py-1" }, groups[v].map((view, idx) => {
-                var _a;
-                return (React.createElement("button", { type: "button", className: `d-flex view-chooser-button align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 ${view.id === ((_a = props.selectedView) === null || _a === void 0 ? void 0 : _a.id) ? 'active' : ''}`, style: 
+                const isDisabled = isVisynRankingViewDesc(view) && !isTransitionActive;
+                return (React.createElement("button", { type: "button", className: `d-flex view-chooser-button align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 ${view.id === (selectedView === null || selectedView === void 0 ? void 0 : selectedView.id) ? 'active' : ''}`, style: 
                     // need the as typing at the end because of the custom styles.
                     {
+                        opacity: isDisabled ? '.3' : '1',
+                        cursor: isDisabled ? 'not-allowed' : '1',
                         color: 'black',
                         '--next-workbench-color-h': HexToHSL(view.color).h,
                         '--next-workbench-color-s': `${HexToHSL(view.color).s}%`,
                         '--next-workbench-color-l': `${HexToHSL(view.color).l}%`,
                     }, 
                     // eslint-disable-next-line react/no-array-index-key
-                    key: idx, onClick: () => props.onSelectedView(view) },
+                    key: idx, onClick: () => (isDisabled ? null : onSelectedView(view)), title: isDisabled ? I18nextManager.getInstance().i18n.t('tdp:ordino.views.disabledTransition', { workbenchName }) : null },
                     React.createElement("div", null, view.name),
                     isVisynRankingViewDesc(view) ? (React.createElement("div", { className: "me-3", style: { width: `1rem` } },
                         React.createElement(ChevronIcon, { color: view.color }))) : view.icon ? (React.createElement("i", { className: `me-3 fs-5 ${view.icon}`, style: { color: view.color } })) : null));

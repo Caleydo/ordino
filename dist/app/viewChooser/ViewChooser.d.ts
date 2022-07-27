@@ -45,6 +45,7 @@ export interface IViewChooserProps {
      * @default true
      */
     showFooter?: boolean;
+    isTransitionActive?: boolean;
     /**
      * EMBEDDED = ViewChooser has full width and does not collapse
      * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
@@ -67,6 +68,7 @@ export interface IViewChooserProps {
      *
      */
     extensions?: ViewChooserExtensions;
+    workbenchName?: string;
 }
-export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, mode, expand, classNames, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter, }, }: IViewChooserProps): JSX.Element;
+export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, isTransitionActive, mode, expand, classNames, workbenchName, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter, }, }: IViewChooserProps): JSX.Element;
 //# sourceMappingURL=ViewChooser.d.ts.map

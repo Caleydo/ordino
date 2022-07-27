@@ -58,6 +58,11 @@ export interface IViewChooserProps {
   showFooter?: boolean;
 
   /**
+   * If true, views for the workbench transitions views are disabled.
+   */
+  isWorkbenchTransitionDisabled?: boolean;
+
+  /**
    * EMBEDDED = ViewChooser has full width and does not collapse
    * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
    */
@@ -83,6 +88,10 @@ export interface IViewChooserProps {
    *
    */
   extensions?: ViewChooserExtensions;
+  /**
+   * Name used for tooltip of disabled views.
+   */
+  workbenchName?: string;
 }
 
 export function ViewChooser({
@@ -93,9 +102,11 @@ export function ViewChooser({
   showFilter = true,
   showHeader = true,
   showFooter = true,
+  isWorkbenchTransitionDisabled = false,
   mode = EViewChooserMode.EMBEDDED,
   expand = EExpandMode.RIGHT,
   classNames = '',
+  workbenchName = '',
   extensions: {
     ViewChooserHeader = chooserComponents.ViewChooserHeader,
     BurgerButton = chooserComponents.BurgerButton,
@@ -150,7 +161,13 @@ export function ViewChooser({
               <SelectedViewIndicator selectedView={selectedView?.name} availableViews={views.length} />
             </div>
           ) : (
-            <ViewChooserAccordion views={filteredViews} selectedView={selectedView} onSelectedView={onSelectedView} />
+            <ViewChooserAccordion
+              workbenchName={workbenchName}
+              isWorkbenchTransitionDisabled={isWorkbenchTransitionDisabled}
+              views={filteredViews}
+              selectedView={selectedView}
+              onSelectedView={onSelectedView}
+            />
           )}
           {showFooter ? <ViewChooserFooter /> : null}
         </div>

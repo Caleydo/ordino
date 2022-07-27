@@ -49,6 +49,8 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
             views={editedViews || []}
             selectedView={null}
             showBurgerMenu={false}
+            workbenchName={workbench.name}
+            isWorkbenchTransitionDisabled={workbench.selection.length === 0}
             mode={EViewChooserMode.EMBEDDED}
             onSelectedView={(newView: IViewPluginDesc) => {
               if (isVisynRankingViewDesc(newView)) {

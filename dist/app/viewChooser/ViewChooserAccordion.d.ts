@@ -8,10 +8,12 @@ export interface IViewChooserAccordionProps {
      * Open view callback
      */
     onSelectedView: (view: IViewPluginDesc) => void;
+    workbenchName: string;
     /**
      * Currently open view
      */
     selectedView?: IViewPluginDesc;
+    isWorkbenchTransitionDisabled: boolean;
 }
-export declare function ViewChooserAccordion(props: IViewChooserAccordionProps): JSX.Element;
+export declare function ViewChooserAccordion({ views, onSelectedView, workbenchName, selectedView, isWorkbenchTransitionDisabled }: IViewChooserAccordionProps): JSX.Element;
 //# sourceMappingURL=ViewChooserAccordion.d.ts.map

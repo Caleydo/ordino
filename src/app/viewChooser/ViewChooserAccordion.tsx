@@ -21,7 +21,7 @@ export interface IViewChooserAccordionProps {
    * Currently open view
    */
   selectedView?: IViewPluginDesc;
-  isTransitionActive: boolean;
+  isWorkbenchTransitionDisabled: boolean;
 }
 
 /**
@@ -81,7 +81,7 @@ function HexToHSL(hex: string): { h: number; s: number; l: number } {
   return { h, s, l };
 }
 
-export function ViewChooserAccordion({ views, onSelectedView, workbenchName, selectedView, isTransitionActive }: IViewChooserAccordionProps) {
+export function ViewChooserAccordion({ views, onSelectedView, workbenchName, selectedView, isWorkbenchTransitionDisabled }: IViewChooserAccordionProps) {
   const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
   const groups = groupBy(views, (view) => view.group.name);
 
@@ -107,7 +107,7 @@ export function ViewChooserAccordion({ views, onSelectedView, workbenchName, sel
             <div id={`collapse-${i}-${uniqueSuffix}`} className="collapse show" aria-labelledby={v}>
               <div className="d-grid gap-2 px-0 py-1">
                 {groups[v].map((view, idx) => {
-                  const isDisabled = isVisynRankingViewDesc(view) && !isTransitionActive;
+                  const isDisabled = isVisynRankingViewDesc(view) && isWorkbenchTransitionDisabled;
 
                   return (
                     <button

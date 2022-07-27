@@ -50,7 +50,7 @@ function HexToHSL(hex) {
     h = Math.round(360 * h);
     return { h, s, l };
 }
-export function ViewChooserAccordion({ views, onSelectedView, workbenchName, selectedView, isTransitionActive }) {
+export function ViewChooserAccordion({ views, onSelectedView, workbenchName, selectedView, isWorkbenchTransitionDisabled }) {
     const uniqueSuffix = UniqueIdManager.getInstance().uniqueId();
     const groups = groupBy(views, (view) => view.group.name);
     return (React.createElement("div", { className: "view-buttons flex-grow-1 flex-row border-top border-light overflow-auto" }, Object.keys(groups)
@@ -61,7 +61,7 @@ export function ViewChooserAccordion({ views, onSelectedView, workbenchName, sel
         React.createElement("button", { className: `accordion-button btn-text-gray py-2 shadow-none text-nowrap ${groups[v].some((g) => g.id === (selectedView === null || selectedView === void 0 ? void 0 : selectedView.id)) ? 'active' : ''}`, type: "button", style: { fontWeight: 500, color: 'black' }, "data-bs-toggle": "collapse", "data-bs-target": `#collapse-${i}-${uniqueSuffix}`, "aria-expanded": "true", "aria-controls": `collapse-${i}-${uniqueSuffix}` }, v),
         React.createElement("div", { id: `collapse-${i}-${uniqueSuffix}`, className: "collapse show", "aria-labelledby": v },
             React.createElement("div", { className: "d-grid gap-2 px-0 py-1" }, groups[v].map((view, idx) => {
-                const isDisabled = isVisynRankingViewDesc(view) && !isTransitionActive;
+                const isDisabled = isVisynRankingViewDesc(view) && isWorkbenchTransitionDisabled;
                 return (React.createElement("button", { type: "button", className: `d-flex view-chooser-button align-items-center btn-text-gray justify-content-between btn py-1 ps-4 pe-0 text-start shadow-none text-nowrap rounded-0 ${view.id === (selectedView === null || selectedView === void 0 ? void 0 : selectedView.id) ? 'active' : ''}`, style: 
                     // need the as typing at the end because of the custom styles.
                     {

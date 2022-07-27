@@ -50,7 +50,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
             selectedView={null}
             showBurgerMenu={false}
             workbenchName={workbench.name}
-            isTransitionActive={workbench.selection.length > 0}
+            isWorkbenchTransitionDisabled={workbench.selection.length === 0}
             mode={EViewChooserMode.EMBEDDED}
             onSelectedView={(newView: IViewPluginDesc) => {
               if (isVisynRankingViewDesc(newView)) {

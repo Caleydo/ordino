@@ -58,9 +58,9 @@ export interface IViewChooserProps {
   showFooter?: boolean;
 
   /**
-   * If false, transition views are disabled.
+   * If true, views for the workbench transitions views are disabled.
    */
-  isTransitionActive?: boolean;
+  isWorkbenchTransitionDisabled?: boolean;
 
   /**
    * EMBEDDED = ViewChooser has full width and does not collapse
@@ -102,7 +102,7 @@ export function ViewChooser({
   showFilter = true,
   showHeader = true,
   showFooter = true,
-  isTransitionActive = true,
+  isWorkbenchTransitionDisabled = false,
   mode = EViewChooserMode.EMBEDDED,
   expand = EExpandMode.RIGHT,
   classNames = '',
@@ -163,7 +163,7 @@ export function ViewChooser({
           ) : (
             <ViewChooserAccordion
               workbenchName={workbenchName}
-              isTransitionActive={isTransitionActive}
+              isWorkbenchTransitionDisabled={isWorkbenchTransitionDisabled}
               views={filteredViews}
               selectedView={selectedView}
               onSelectedView={onSelectedView}

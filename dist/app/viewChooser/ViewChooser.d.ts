@@ -46,9 +46,9 @@ export interface IViewChooserProps {
      */
     showFooter?: boolean;
     /**
-     * If false, transition views are disabled.
+     * If true, views for the workbench transitions views are disabled.
      */
-    isTransitionActive?: boolean;
+    isWorkbenchTransitionDisabled?: boolean;
     /**
      * EMBEDDED = ViewChooser has full width and does not collapse
      * OVERLAY= ViewChooser is collapsed by default and expands left or right on hover
@@ -76,5 +76,5 @@ export interface IViewChooserProps {
      */
     workbenchName?: string;
 }
-export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, isTransitionActive, mode, expand, classNames, workbenchName, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter, }, }: IViewChooserProps): JSX.Element;
+export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, isWorkbenchTransitionDisabled, mode, expand, classNames, workbenchName, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter, }, }: IViewChooserProps): JSX.Element;
 //# sourceMappingURL=ViewChooser.d.ts.map

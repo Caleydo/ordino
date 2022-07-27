@@ -29,10 +29,10 @@ export function FilterAndSelected() {
             dataLength,
             " ",
             ordino.workbenches[ordino.focusWorkbenchIndex].name,
-            "s / ",
+            " / ",
             selectedLength,
             ' ',
             ordino.workbenches[ordino.focusWorkbenchIndex].name,
-            "s selected")));
+            " selected")));
 }
 //# sourceMappingURL=FilterAndSelected.js.map

@@ -37,8 +37,8 @@ export function FilterAndSelected() {
         />
       ) : null}
       <span className="m-1 text-truncate">
-        {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusWorkbenchIndex].name}s / {selectedLength}{' '}
-        {ordino.workbenches[ordino.focusWorkbenchIndex].name}s selected
+        {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusWorkbenchIndex].name} / {selectedLength}{' '}
+        {ordino.workbenches[ordino.focusWorkbenchIndex].name} selected
       </span>
     </div>
   );

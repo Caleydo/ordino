@@ -27,9 +27,7 @@ export function DetailsSidebar({ workbench }) {
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
                 React.createElement("p", { className: "mb-1" },
                     React.createElement("span", { className: "entityText" }, "Selected "),
-                    React.createElement("span", { className: "entityText", style: { color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] } },
-                        ordino.workbenches[workbench.index - 1].name,
-                        "s")),
+                    React.createElement("span", { className: "entityText", style: { color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] } }, ordino.workbenches[workbench.index - 1].name)),
                 React.createElement("p", { className: "mb-2 selectedPrevText" }, selectionString)),
             availableViews
                 .filter((v) => v.itemIDType === workbench.entityId)

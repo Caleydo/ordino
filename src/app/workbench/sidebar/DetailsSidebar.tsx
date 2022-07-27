@@ -36,7 +36,7 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
               <p className="mb-1">
                 <span className="entityText">Selected </span>
                 <span className="entityText" style={{ color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}>
-                  {ordino.workbenches[workbench.index - 1].name}s
+                  {ordino.workbenches[workbench.index - 1].name}
                 </span>
               </p>
               <p className="mb-2 selectedPrevText">{selectionString}</p>

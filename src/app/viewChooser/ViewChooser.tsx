@@ -57,6 +57,9 @@ export interface IViewChooserProps {
    */
   showFooter?: boolean;
 
+  /**
+   * If false, transition views are disabled.
+   */
   isTransitionActive?: boolean;
 
   /**
@@ -85,6 +88,9 @@ export interface IViewChooserProps {
    *
    */
   extensions?: ViewChooserExtensions;
+  /**
+   * Name used for tooltip of disabled views.
+   */
   workbenchName?: string;
 }
 

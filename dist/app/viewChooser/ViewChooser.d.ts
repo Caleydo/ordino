@@ -45,6 +45,9 @@ export interface IViewChooserProps {
      * @default true
      */
     showFooter?: boolean;
+    /**
+     * If false, transition views are disabled.
+     */
     isTransitionActive?: boolean;
     /**
      * EMBEDDED = ViewChooser has full width and does not collapse
@@ -68,6 +71,9 @@ export interface IViewChooserProps {
      *
      */
     extensions?: ViewChooserExtensions;
+    /**
+     * Name used for tooltip of disabled views.
+     */
     workbenchName?: string;
 }
 export declare function ViewChooser({ views, onSelectedView, selectedView, showBurgerMenu, showFilter, showHeader, showFooter, isTransitionActive, mode, expand, classNames, workbenchName, extensions: { ViewChooserHeader, BurgerButton, SelectedViewIndicator, SelectionCountIndicator, ViewChooserAccordion, ViewChooserFilter, ViewChooserFooter, }, }: IViewChooserProps): JSX.Element;

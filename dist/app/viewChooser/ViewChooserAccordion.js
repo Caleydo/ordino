@@ -66,14 +66,14 @@ export function ViewChooserAccordion({ views, onSelectedView, workbenchName, sel
                     // need the as typing at the end because of the custom styles.
                     {
                         opacity: isDisabled ? '.3' : '1',
-                        cursor: isDisabled ? 'not-allowed' : '1',
+                        cursor: isDisabled ? 'not-allowed' : 'pointer',
                         color: 'black',
                         '--next-workbench-color-h': HexToHSL(view.color).h,
                         '--next-workbench-color-s': `${HexToHSL(view.color).s}%`,
                         '--next-workbench-color-l': `${HexToHSL(view.color).l}%`,
                     }, 
                     // eslint-disable-next-line react/no-array-index-key
-                    key: idx, onClick: () => (isDisabled ? null : onSelectedView(view)), title: isDisabled ? I18nextManager.getInstance().i18n.t('tdp:ordino.views.disabledTransition', { workbenchName }) : null },
+                    key: idx, onClick: () => (isDisabled ? null : onSelectedView(view)), title: isDisabled ? I18nextManager.getInstance().i18n.t('tdp:ordino.views.disabledTransition', { workbenchName, jumpTarget: view.name }) : null },
                     React.createElement("div", null, view.name),
                     isVisynRankingViewDesc(view) ? (React.createElement("div", { className: "me-3", style: { width: `1rem` } },
                         React.createElement(ChevronIcon, { color: view.color }))) : view.icon ? (React.createElement("i", { className: `me-3 fs-5 ${view.icon}`, style: { color: view.color } })) : null));

@@ -119,7 +119,7 @@ export function ViewChooserAccordion({ views, onSelectedView, workbenchName, sel
                         // need the as typing at the end because of the custom styles.
                         {
                           opacity: isDisabled ? '.3' : '1',
-                          cursor: isDisabled ? 'not-allowed' : '1',
+                          cursor: isDisabled ? 'not-allowed' : 'pointer',
                           color: 'black',
                           '--next-workbench-color-h': HexToHSL(view.color).h,
                           '--next-workbench-color-s': `${HexToHSL(view.color).s}%`,
@@ -129,7 +129,9 @@ export function ViewChooserAccordion({ views, onSelectedView, workbenchName, sel
                       // eslint-disable-next-line react/no-array-index-key
                       key={idx}
                       onClick={() => (isDisabled ? null : onSelectedView(view))}
-                      title={isDisabled ? I18nextManager.getInstance().i18n.t('tdp:ordino.views.disabledTransition', { workbenchName }) : null}
+                      title={
+                        isDisabled ? I18nextManager.getInstance().i18n.t('tdp:ordino.views.disabledTransition', { workbenchName, jumpTarget: view.name }) : null
+                      }
                     >
                       <div>{view.name}</div>
                       {isVisynRankingViewDesc(view) ? (

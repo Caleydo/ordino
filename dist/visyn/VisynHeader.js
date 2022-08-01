@@ -4,6 +4,7 @@ import { visynHeaderComponents } from './headerConfig';
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }) {
     const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
     const projectName = useAppSelector((state) => state.menu.currentProject);
+    const currentTab = useAppSelector((state) => state.menu.activeTab);
     return (React.createElement("nav", { className: " visyn-navbar navbar navbar-expand-lg navbar-dark bg-dark" },
         React.createElement("div", { className: "container-fluid" },
             AppLogo ? React.createElement(AppLogo, null) : null,
@@ -11,9 +12,10 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
                 React.createElement("span", { className: "navbar-toggler-icon" })),
             React.createElement("div", { className: "collapse navbar-collapse" },
                 LeftExtensions ? React.createElement(LeftExtensions, null) : null,
-                projectName !== null ? (React.createElement("ul", { className: "navbar-nav align-items-center" },
+                projectName !== null && currentTab !== 'datasets_tab' ? (React.createElement("ul", { className: "navbar-nav align-items-center" },
                     React.createElement("li", { className: "nav-item align-middle" },
                         React.createElement("p", { className: "m-0 h-100 text-white align-middle" },
+                            React.createElement("i", { className: "fas fa-check me-2" }),
                             "Project: ",
                             projectName)))) : null,
                 React.createElement("ul", { className: "navbar-nav ms-auto align-items-end" },

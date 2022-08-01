@@ -48,6 +48,12 @@
             "selectView": "Select a view",
             "searchViews": "Search views"
         },
+        "projects": {
+            "myProjects": "My projects",
+            "newProject": "New project",
+            "projectDescription": "Create projects and assign collaborators to share analysis sessions and findings with them.",
+            "noProjectAvailable": "No projects available"
+        },
         "breadcrumb": {
             "close": "Close",
             "hideComments": "Hide comments panel",

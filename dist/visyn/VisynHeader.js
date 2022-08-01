@@ -1,4 +1,5 @@
 import React from 'react';
+import { I18nextManager } from 'tdp_core';
 import { useAppSelector } from '../hooks';
 import { visynHeaderComponents } from './headerConfig';
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }) {
@@ -16,8 +17,7 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
                     React.createElement("li", { className: "nav-item align-middle" },
                         React.createElement("p", { className: "m-0 h-100 text-white align-middle" },
                             React.createElement("i", { className: "fas fa-check me-2" }),
-                            "Project: ",
-                            projectName)))) : null,
+                            I18nextManager.getInstance().i18n.t('tdp:ordino.header.projectName', { projectName }))))) : null,
                 React.createElement("ul", { className: "navbar-nav ms-auto align-items-end" },
                     CustomerLogo ? React.createElement(CustomerLogo, null) : null,
                     VisynLogo ? React.createElement(VisynLogo, null) : null),

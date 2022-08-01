@@ -54,6 +54,9 @@
             "projectDescription": "Create projects and assign collaborators to share analysis sessions and findings with them.",
             "noProjectAvailable": "No projects available"
         },
+        "header": {
+            "projectName": "Project: {{projectName}}"
+        },
         "breadcrumb": {
             "close": "Close",
             "hideComments": "Hide comments panel",

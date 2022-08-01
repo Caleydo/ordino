@@ -1,4 +1,5 @@
 import React, { ComponentType } from 'react';
+import {I18nextManager} from 'tdp_core';
 import { useAppSelector } from '../hooks';
 import { IVisynHeaderComponents, visynHeaderComponents } from './headerConfig';
 
@@ -37,7 +38,7 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
               <li className="nav-item align-middle">
                 <p className="m-0 h-100 text-white align-middle">
                   <i className="fas fa-check me-2" />
-                  Project: {projectName}
+                  {I18nextManager.getInstance().i18n.t('tdp:ordino.header.projectName', { projectName })}
                 </p>
               </li>
             </ul>

@@ -97,7 +97,6 @@
     "@blueprintjs/icons": "^4.2.4",
     "@lineup-lite/table": "1.6.0",
     "@reduxjs/toolkit": "1.6.2",
-    "@types/react-table": "^7.7.12",
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
     "plotly.js": "^2.8.3",
@@ -113,7 +112,6 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-spring": "^9.3.2",
-    "react-table": "^7.8.0",
     "react-virtualized": "^9.22.3",
     "tdp_comments": "git+ssh://git@github.com:datavisyn/tdp_comments#develop",
     "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop"

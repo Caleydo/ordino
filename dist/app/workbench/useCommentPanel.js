@@ -1,8 +1,8 @@
 import { isBoolean } from 'lodash';
 import React from 'react';
-import { CommentPanel, defaultUploadComment } from 'tdp_comments';
+import { CommentActions, CommentPanel, defaultUploadComment } from 'tdp_comments';
 export const ORDINO_APP_KEY = 'reprovisyn';
-export function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused, }) {
+export function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused, onCommentPanelVisibilityChanged, }) {
     const [instance, setInstance] = React.useState(null);
     const setRef = React.useCallback(async (ref) => {
         setInstance((currentInstance) => {
@@ -65,11 +65,14 @@ export function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused
         if (!instance) {
             return;
         }
+        const listener = (_, visible) => onCommentPanelVisibilityChanged(visible);
+        CommentActions.onCommentPanelVisibiltyChanged(listener);
         // destroy CommentsPanel when the workbench is not focused to avoid global events affecting all instances
         if (!isFocused) {
+            CommentActions.offCommentPanelVisibiltyChanged(listener);
             instance.destroy();
         }
-    }, [instance, isFocused]);
+    }, [instance, isFocused, onCommentPanelVisibilityChanged]);
     return [setRef, instance];
 }
 //# sourceMappingURL=useCommentPanel.js.map

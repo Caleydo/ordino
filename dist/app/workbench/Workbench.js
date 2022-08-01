@@ -53,7 +53,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                             name: newView.name,
                             index: workbench.index + 1,
                             selection: [],
-                            commentsOpen: false,
                         }));
                     }
                     else {

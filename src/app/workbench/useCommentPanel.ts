@@ -1,6 +1,7 @@
 import { isBoolean } from 'lodash';
 import React from 'react';
-import { CommentPanel, defaultUploadComment, IMatchingCommentTemplate } from 'tdp_comments';
+import { CommentActions, CommentPanel, defaultUploadComment, IMatchingCommentTemplate } from 'tdp_comments';
+import { IEvent } from 'tdp_core';
 
 export const ORDINO_APP_KEY = 'reprovisyn';
 export interface IUseCommentPanelProps {
@@ -8,6 +9,7 @@ export interface IUseCommentPanelProps {
   itemIDType: string;
   commentsOpen: boolean;
   isFocused: boolean;
+  onCommentPanelVisibilityChanged: (open: boolean) => void;
 }
 
 export function useCommentPanel({
@@ -15,6 +17,7 @@ export function useCommentPanel({
   itemIDType,
   commentsOpen,
   isFocused,
+  onCommentPanelVisibilityChanged,
 }: IUseCommentPanelProps): [(element: HTMLElement | null) => void, CommentPanel | null] {
   const [instance, setInstance] = React.useState<CommentPanel | null>(null);
 
@@ -87,11 +90,15 @@ export function useCommentPanel({
       return;
     }
 
+    const listener = (_: IEvent, visible: boolean) => onCommentPanelVisibilityChanged(visible);
+    CommentActions.onCommentPanelVisibiltyChanged(listener);
+
     // destroy CommentsPanel when the workbench is not focused to avoid global events affecting all instances
     if (!isFocused) {
+      CommentActions.offCommentPanelVisibiltyChanged(listener);
       instance.destroy();
     }
-  }, [instance, isFocused]);
+  }, [instance, isFocused, onCommentPanelVisibilityChanged]);
 
   return [setRef, instance];
 }

@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
  * @param amt amount to darken. 0 does nothing, positive numbers darken, negative numbers lighten.
  * @returns
  */
-function darkenColor(col, amt) {
+export function darkenColor(col, amt) {
   col = col.slice(1);
   amt = -amt;
 
@@ -35,7 +35,7 @@ function darkenColor(col, amt) {
   return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
 }
 
-export function BreadcrumbSvg({
+export function ChevronSvg({
   // Numbers here are all in pixels
   width = 1500,
   height = 40,
@@ -65,7 +65,7 @@ export function BreadcrumbSvg({
 
   return (
     <svg
-      className="position-absolute chevronSvg"
+      className="position-absolute mt-1"
       width={width}
       style={{ height: `${height}px` }}
       onMouseEnter={() => setHover(true)}

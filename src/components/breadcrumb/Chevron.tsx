@@ -7,10 +7,10 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
-import { BreadcrumbSvg } from './BreadcrumbSvg';
+import { ChevronSvg } from './ChevronSvg';
 import { isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
 
-export interface ISingleBreadcrumbProps {
+export interface IChevronProps {
   first?: boolean;
   flexWidth?: number;
   onClick?: () => void;
@@ -19,14 +19,7 @@ export interface ISingleBreadcrumbProps {
   hideText?: boolean;
 }
 
-export function SingleBreadcrumb({
-  first = false,
-  flexWidth = 1,
-  onClick = null,
-  color = 'cornflowerblue',
-  workbench = null,
-  hideText = false,
-}: ISingleBreadcrumbProps) {
+export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false }: IChevronProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
   const [width, setWidth] = useState<number>();
@@ -74,7 +67,7 @@ export function SingleBreadcrumb({
       }
     >
       {isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && ordino.midTransition) ? (
-        <div className="text-truncate chevronDiv d-flex flex-grow-1" style={{ flexBasis: 0, marginLeft: isFirstWorkbench(workbench) ? '.75rem' : '1.5rem' }}>
+        <div className={`text-truncate chevronDiv d-flex flex-grow-1 ${isFirstWorkbench(workbench) ? 'ms-2' : 'ms-3'}`} style={{ flexBasis: 0 }}>
           <p className="chevronText text-truncate flex-grow-1">
             {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
           </p>
@@ -85,12 +78,14 @@ export function SingleBreadcrumb({
         {isFocusWorkbench(workbench) && !animatedStyle.flexGrow.isAnimating ? (
           <>
             <FilterAndSelected />
-            <OpenCommentsButton
-              idType={workbench.itemIDType}
-              selection={workbench.selection}
-              commentPanelVisible={workbench.commentsOpen}
-              onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
-            />
+            {workbench.selection.length > 0 ? (
+              <OpenCommentsButton
+                idType={workbench.itemIDType}
+                selection={workbench.selection}
+                commentPanelVisible={workbench.commentsOpen}
+                onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
+              />
+            ) : null}
           </>
         ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && ordino.midTransition) ? (
           <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
@@ -111,7 +106,7 @@ export function SingleBreadcrumb({
         </div>
       ) : null}
 
-      <BreadcrumbSvg color={color} width={width} isFirst={first} isClickable={!!onClick} />
+      <ChevronSvg color={color} width={width} isFirst={first} isClickable={!!onClick} />
     </animated.div>
   );
 }

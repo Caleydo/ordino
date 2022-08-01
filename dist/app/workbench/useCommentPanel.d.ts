@@ -5,6 +5,7 @@ export interface IUseCommentPanelProps {
     itemIDType: string;
     commentsOpen: boolean;
     isFocused: boolean;
+    onCommentPanelVisibilityChanged: (open: boolean) => void;
 }
-export declare function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused, }: IUseCommentPanelProps): [(element: HTMLElement | null) => void, CommentPanel | null];
+export declare function useCommentPanel({ selection, itemIDType, commentsOpen, isFocused, onCommentPanelVisibilityChanged, }: IUseCommentPanelProps): [(element: HTMLElement | null) => void, CommentPanel | null];
 //# sourceMappingURL=useCommentPanel.d.ts.map

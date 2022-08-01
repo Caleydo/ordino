@@ -4,6 +4,7 @@ export interface IMenuState {
   activeTab: string;
   mode: EStartMenuMode;
   currentProject: string;
+  allProjects: string[];
 }
 
 export enum EStartMenuMode {
@@ -34,6 +35,7 @@ const initialState: IMenuState = {
   activeTab: null,
   mode: EStartMenuMode.START,
   currentProject: null,
+  allProjects: [],
 };
 
 const menuSlice = createSlice({
@@ -49,9 +51,12 @@ const menuSlice = createSlice({
     setCurrentProject(state, action: PayloadAction<string>) {
       state.currentProject = action.payload;
     },
+    setAllProjects(state, action: PayloadAction<string[]>) {
+      state.allProjects = action.payload;
+    },
   },
 });
 
-export const { setActiveTab, setMode, setCurrentProject } = menuSlice.actions;
+export const { setActiveTab, setMode, setCurrentProject, setAllProjects } = menuSlice.actions;
 
 export const menuReducer = menuSlice.reducer;

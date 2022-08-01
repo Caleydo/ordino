@@ -49,12 +49,6 @@
       "searchViews": "Search views",
       "disabledTransition": "Please select one or more {{workbenchName}}(s) to open the {{jumpTarget}} workbench"
     },
-    "projects": {
-      "myProjects": "My projects",
-      "newProject": "New project",
-      "projectDescription": "Create projects and assign collaborators to share analysis sessions and findings with them.",
-      "noProjectAvailable": "No projects available"
-    },
     "header": {
       "projectName": "Project: {{projectName}}"
     },

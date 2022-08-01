@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import {I18nextManager} from 'tdp_core';
+import { I18nextManager } from 'tdp_core';
 import { useAppSelector } from '../hooks';
 import { IVisynHeaderComponents, visynHeaderComponents } from './headerConfig';
 

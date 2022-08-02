@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { animated, easings, useSpring } from 'react-spring';
-import { changeFocus, IWorkbench, removeWorkbench, setAnimating, setCommentsOpen } from '../../store';
+import { changeFocus, IWorkbench, removeWorkbench, setAnimating } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';

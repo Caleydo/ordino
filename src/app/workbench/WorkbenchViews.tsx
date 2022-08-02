@@ -17,7 +17,6 @@ import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
-import { useCommentPanel } from './useCommentPanel';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setCommentsOpen } from '../../store/ordinoSlice';
 
@@ -36,13 +35,12 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
   const dispatch = useAppDispatch();
 
-  const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
+  const { views } = ordino.workbenches[index];
 
   const onCommentPanelVisibilityChanged = React.useCallback(
     (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),
     [index, dispatch],
   );
-  const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS, onCommentPanelVisibilityChanged });
 
   const [mosaicState, setMosaicState] = useState<MosaicNode<string>>(views[0].uniqueId);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);
@@ -119,7 +117,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   return (
     <div className="position-relative d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
-        <div ref={setRef} className="d-flex flex-grow-1">
+        <div className="d-flex flex-grow-1">
           <Mosaic<string>
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);

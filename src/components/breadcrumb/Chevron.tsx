@@ -6,7 +6,6 @@ import { changeFocus, IWorkbench, removeWorkbench, setAnimating, setCommentsOpen
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { OpenCommentsButton } from './OpenCommentsButton';
 import { ChevronSvg } from './ChevronSvg';
 import { isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
 
@@ -49,11 +48,6 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
     return () => ro.disconnect();
   }, []);
 
-  const onCommentPanelVisibilityChanged = React.useCallback(
-    (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: workbench?.index, isOpen })),
-    [workbench?.index, dispatch],
-  );
-
   return (
     <animated.div
       className={`text-truncate position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`}
@@ -76,17 +70,7 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
 
       <div className="me-2 ms-2 text-truncate chevronDiv justify-content-center d-flex" style={{ flexBasis: 0, flexGrow: 2 }}>
         {isFocusWorkbench(workbench) && !animatedStyle.flexGrow.isAnimating ? (
-          <>
-            <FilterAndSelected />
-            {workbench.selection.length > 0 ? (
-              <OpenCommentsButton
-                idType={workbench.itemIDType}
-                selection={workbench.selection}
-                commentPanelVisible={workbench.commentsOpen}
-                onCommentPanelVisibilityChanged={onCommentPanelVisibilityChanged}
-              />
-            ) : null}
-          </>
+          <FilterAndSelected />
         ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && ordino.midTransition) ? (
           <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
         ) : null}

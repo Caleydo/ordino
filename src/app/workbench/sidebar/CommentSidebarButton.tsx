@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { CommentActions, CommentsRest, IComment } from 'tdp_comments';
-import { I18nextManager, IEvent, useAsync } from 'tdp_core';
+import { IEvent, useAsync } from 'tdp_core';
+import { ISidebarButtonProps, SidebarButton } from './SidebarButton';
 
 export interface IOpenCommentsButtonProps {
   /**
@@ -20,10 +21,23 @@ export interface IOpenCommentsButtonProps {
   /**
    * Show/hide CommentPanel.
    */
-  onCommentPanelVisibilityChanged: (open: boolean) => void;
+  onClick: (s: string) => void;
+  isSelected: boolean;
+  color: string;
 }
 
-export function OpenCommentsButton({ idType, selection, commentPanelVisible, onCommentPanelVisibilityChanged }: IOpenCommentsButtonProps) {
+export function CommentSidebarButton({
+  idType,
+  selection,
+  onClick,
+  isSelected,
+  icon,
+  color,
+}: ISidebarButtonProps & {
+  idType: string;
+
+  selection: string[];
+}) {
   const [commentCount, setCommentCount] = React.useState<number>(0);
   const [commentCountDirty, setCommentCountDirty] = React.useState(false);
 
@@ -62,20 +76,8 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
   }, [idType, selection, commentCountDirty]);
   const { status } = useAsync(loadCommentCount, []);
 
-  const title = commentPanelVisible
-    ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.hideComments')
-    : commentCount
-    ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.availableComments', { count: commentCount })
-    : I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.showComments');
-
-  return selection.length > 0 ? (
-    <button
-      type="button"
-      title={title}
-      className="pe-auto btn btn-icon-light position-relative"
-      onClick={() => onCommentPanelVisibilityChanged(!commentPanelVisible)}
-    >
-      <i className="flex-grow-1 fas fa-comments" />
+  const Badge = useCallback(() => {
+    return (
       <span
         className="position-absolute translate-middle badge rounded-pill bg-danger" // this will not work if the breadcrumb itself is of color read
         style={{
@@ -85,12 +87,10 @@ export function OpenCommentsButton({ idType, selection, commentPanelVisible, onC
           visibility: commentCount ? null : 'hidden',
         }}
       >
-        {commentCount}
+        {status === 'success' ? commentCount : <i className="fas fa-circle-notch fa-spin" />}
       </span>
-    </button>
-  ) : (
-    <button type="button" className="btn btn-icon-light position-relative">
-      <i className="fas fa-circle-notch fa-spin" />
-    </button>
-  );
+    );
+  }, [status, commentCount]);
+
+  return <SidebarButton isSelected={isSelected} color={color} icon={icon} onClick={onClick} extensions={{ Badge }} />;
 }

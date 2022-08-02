@@ -17,8 +17,6 @@ import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setCommentsOpen } from '../../store/ordinoSlice';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -35,7 +33,6 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
 
   const { views } = ordino.workbenches[index];
-
 
   const [mosaicState, setMosaicState] = useState<MosaicNode<string>>(views[0].uniqueId);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);

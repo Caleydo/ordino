@@ -97,6 +97,8 @@
     "@blueprintjs/icons": "^4.2.4",
     "@lineup-lite/table": "1.6.0",
     "@reduxjs/toolkit": "1.6.2",
+    "@trrack/core": "0.0.2",
+    "@trrack/redux": "0.0.2",
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
     "plotly.js": "^2.8.3",

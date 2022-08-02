@@ -4,8 +4,6 @@ import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setCommentsOpen } from '../../store/ordinoSlice';
 export var EWorkbenchType;
 (function (EWorkbenchType) {
     EWorkbenchType["PREVIOUS"] = "t-previous";
@@ -15,9 +13,7 @@ export var EWorkbenchType;
 })(EWorkbenchType || (EWorkbenchType = {}));
 export function WorkbenchViews({ index, type }) {
     const ordino = useAppSelector((state) => state.ordino);
-    const dispatch = useAppDispatch();
     const { views } = ordino.workbenches[index];
-    const onCommentPanelVisibilityChanged = React.useCallback((isOpen) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })), [index, dispatch]);
     const [mosaicState, setMosaicState] = useState(views[0].uniqueId);
     const [mosaicViewCount, setMosaicViewCount] = useState(1);
     const [mosaicDrag, setMosaicDrag] = useState(false);

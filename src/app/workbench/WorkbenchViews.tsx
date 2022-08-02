@@ -33,14 +33,9 @@ export interface IWorkbenchViewsProps {
 
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   const ordino = useAppSelector((state) => state.ordino);
-  const dispatch = useAppDispatch();
 
   const { views } = ordino.workbenches[index];
 
-  const onCommentPanelVisibilityChanged = React.useCallback(
-    (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),
-    [index, dispatch],
-  );
 
   const [mosaicState, setMosaicState] = useState<MosaicNode<string>>(views[0].uniqueId);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);

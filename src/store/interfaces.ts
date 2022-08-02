@@ -136,7 +136,6 @@ export interface IWorkbench {
    */
   createNextWorkbenchSidebarOpen: boolean;
 
-  commentsOpen?: boolean;
 }
 
 interface IBaseState {

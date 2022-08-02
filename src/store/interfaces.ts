@@ -135,7 +135,6 @@ export interface IWorkbench {
    * createNextWorkbenchSidebarOpen keeps track of whether or not the details tab is switched open
    */
   createNextWorkbenchSidebarOpen: boolean;
-
 }
 
 interface IBaseState {

@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  GlobalEventHandler,
-  I18nextManager,
-  PropertyHandler,
-  ProvenanceGraph,
-  ErrorAlertHandler,
-  NotificationHandler,
-  ProvenanceGraphMenuUtils,
-} from 'tdp_core';
+import { GlobalEventHandler, I18nextManager, ProvenanceGraph, ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 
 import { GraphContext, HighlightSessionCardContext } from '../../constants';
 import { ListItemDropdown } from '../../../components';

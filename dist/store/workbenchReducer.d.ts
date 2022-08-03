@@ -6,8 +6,8 @@ export declare const workbenchReducers: {
     addFirstWorkbench(state: any, action: PayloadAction<{
         workbench: IWorkbench;
         globalQueryName: string;
-        globalQueryCategories: string[];
-        appliedQueryCategories: string[];
+        globalQueryCategories: (number | string)[];
+        appliedQueryCategories: (number | string)[];
     }>): void;
     addWorkbench(state: any, action: PayloadAction<IWorkbench>): void;
     changeSelectedMappings(state: any, action: PayloadAction<{

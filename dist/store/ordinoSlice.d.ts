@@ -62,8 +62,8 @@ export declare const addView: import("@reduxjs/toolkit").ActionCreatorWithOption
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbench: IWorkbench;
     globalQueryName: string;
-    globalQueryCategories: string[];
-    appliedQueryCategories: string[];
+    globalQueryCategories: (string | number)[];
+    appliedQueryCategories: (string | number)[];
 }, string>, addWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<IWorkbench, string>, switchViews: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     firstViewIndex: number;

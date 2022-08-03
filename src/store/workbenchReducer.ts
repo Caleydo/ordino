@@ -9,8 +9,8 @@ export const workbenchReducers = {
     action: PayloadAction<{
       workbench: IWorkbench;
       globalQueryName: string;
-      globalQueryCategories: string[];
-      appliedQueryCategories: string[];
+      globalQueryCategories: (number | string)[];
+      appliedQueryCategories: (number | string)[];
     }>,
   ) {
     state.focusWorkbenchIndex = 0;

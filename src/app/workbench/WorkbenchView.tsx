@@ -16,13 +16,11 @@ export function WorkbenchView({
   view,
   mosaicDrag,
   path,
-  removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   mosaicDrag: boolean;
   path: MosaicBranch[];
-  removeCallback: (path: MosaicPath) => void;
 }) {
   const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[workbenchIndex]);
   const { value: visynViews } = useAsync(getVisynView, [workbench.entityId]);
@@ -35,23 +33,9 @@ export function WorkbenchView({
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {view.id === '' ? (
-        <WorkbenchEmptyView
-          removeCallback={removeCallback}
-          path={path}
-          chooserOptions={availableViews}
-          workbenchIndex={workbenchIndex}
-          view={view}
-          mosaicDrag={mosaicDrag}
-        />
+        <WorkbenchEmptyView path={path} chooserOptions={availableViews} workbenchIndex={workbenchIndex} view={view} mosaicDrag={mosaicDrag} />
       ) : (
-        <WorkbenchGenericView
-          removeCallback={removeCallback}
-          path={path}
-          chooserOptions={availableViews}
-          workbenchIndex={workbenchIndex}
-          view={view}
-          mosaicDrag={mosaicDrag}
-        />
+        <WorkbenchGenericView path={path} chooserOptions={availableViews} workbenchIndex={workbenchIndex} view={view} mosaicDrag={mosaicDrag} />
       )}
     </>
   );

@@ -19,7 +19,6 @@ const defaultConfig = {
 };
 export function ProvVis({ nodeMap, root, currentNode, config }) {
     const { stratifiedMap: nodePositions, links } = useComputeNodePosition(nodeMap, currentNode, root);
-    console.log(currentNode);
     const mergedConfig = useMemo(() => {
         return { ...defaultConfig, ...config };
     }, [config]);

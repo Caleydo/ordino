@@ -7,7 +7,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { removeView, setView } from '../../store/ordinoTrrackedSlice';
 import { findViewIndex } from '../../store/storeUtils';
 import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
-export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }) {
+export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, }) {
     const dispatch = useAppDispatch();
     const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[workbenchIndex]);
     const focusIndex = useAppSelector((state) => state.ordinoTracked.focusWorkbenchIndex);
@@ -17,7 +17,6 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosai
     return (React.createElement(MosaicWindow, { path: path, title: view.name, renderToolbar: () => workbenchIndex === focusIndex ? (React.createElement("div", { className: "d-flex w-100" },
             React.createElement("div", { className: "view-actions d-flex justify-content-end flex-grow-1" },
                 React.createElement("button", { type: "button", onClick: () => {
-                        removeCallback(path);
                         dispatch(removeView({ workbenchIndex, viewIndex }));
                     }, className: "btn btn-icon-dark align-middle m-1" },
                     React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))))) : (React.createElement("div", { className: "view-parameters d-flex" })) },

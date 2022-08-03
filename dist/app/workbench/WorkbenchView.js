@@ -7,7 +7,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 export function getVisynView(entityId) {
     return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
-export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, }) {
+export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, }) {
     const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[workbenchIndex]);
     const { value: visynViews } = useAsync(getVisynView, [workbench.entityId]);
     const availableViews = useMemo(() => {
@@ -15,6 +15,6 @@ export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCa
     }, [visynViews]);
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag })) : (React.createElement(WorkbenchGenericView, { removeCallback: removeCallback, path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag }))));
+    React.createElement(React.Fragment, null, view.id === '' ? (React.createElement(WorkbenchEmptyView, { path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag })) : (React.createElement(WorkbenchGenericView, { path: path, chooserOptions: availableViews, workbenchIndex: workbenchIndex, view: view, mosaicDrag: mosaicDrag }))));
 }
 //# sourceMappingURL=WorkbenchView.js.map

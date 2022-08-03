@@ -15,6 +15,7 @@ import {
 
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
+import { current } from '@reduxjs/toolkit';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
@@ -30,6 +31,33 @@ export enum EWorkbenchType {
 export interface IWorkbenchViewsProps {
   index: number;
   type: EWorkbenchType;
+}
+
+function getAllMosaicNodes(node: MosaicNode<string>, nodes: string[]): string[] {
+  if (typeof node === 'string') {
+    nodes.push(node);
+    return nodes;
+  }
+  getAllMosaicNodes(node.first, nodes);
+  getAllMosaicNodes(node.second, nodes);
+
+  return nodes;
+}
+
+function getMosaicPathForNode(node: MosaicNode<string>, target: string, arr: string[]): string[] {
+  console.log(node, target, arr);
+  if (typeof node === 'string' && node === target) {
+    return arr;
+  }
+  if (typeof node !== 'string') {
+    const left = getMosaicPathForNode(node.first, target, [...arr, 'first']);
+    const right = getMosaicPathForNode(node.second, target, [...arr, 'second']);
+
+    if (left !== null) return left;
+    if (right !== null) return right;
+  }
+
+  return null;
 }
 
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
@@ -60,15 +88,14 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     setMosaicState(firstViewUniqueId);
   }, [firstViewUniqueId]);
 
-  React.useEffect(() => {
-    // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
-    if (views.length > mosaicViewCount) {
+  const addMosaicNode = useCallback(
+    (newViewId: string) => {
+      console.log('adding');
       const path = getPathToCorner(mosaicState, midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
       const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<string>;
       const destination = getNodeAtPath(mosaicState, path) as MosaicNode<string>;
 
       const direction: MosaicDirection = parent && parent.direction ? getOtherDirection(parent.direction) : midTransition ? 'column' : 'row';
-      const newViewId: string = views[views.length - 1].uniqueId; // assumes that the new view is appended to the array
 
       let first: MosaicNode<string>;
       let second: MosaicNode<string>;
@@ -94,9 +121,10 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
       ]);
 
       setMosaicState(newNode);
-      setMosaicViewCount(views.length);
-    }
-  }, [mosaicState, mosaicViewCount, views, midTransition]);
+      setMosaicViewCount(mosaicViewCount + 1);
+    },
+    [mosaicState, midTransition, mosaicViewCount],
+  );
 
   const removeCallback = useCallback(
     (path: MosaicPath) => {
@@ -109,6 +137,24 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     },
     [mosaicState, views],
   );
+
+  React.useEffect(() => {
+    const currentNodes = getAllMosaicNodes(mosaicState, []);
+    const viewIds = views.map((v) => v.uniqueId);
+    const viewsToAdd = viewIds.filter((v) => !currentNodes.includes(v));
+    const viewsToRemove = currentNodes.filter((n) => !viewIds.includes(n));
+
+    console.log(currentNodes, viewIds, viewsToAdd);
+
+    viewsToAdd.forEach((v) => {
+      addMosaicNode(v);
+    });
+
+    viewsToRemove.forEach((v) => {
+      const path = getMosaicPathForNode(mosaicState, v, []);
+      removeCallback(path as MosaicPath);
+    });
+  }, [mosaicState, mosaicViewCount, views, midTransition, addMosaicNode, removeCallback]);
 
   const onChangeCallback = useCallback(
     (rootNode: MosaicNode<string>) => {
@@ -127,8 +173,9 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           <Mosaic<string>
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);
+              console.log(path);
               if (currView) {
-                return <WorkbenchView removeCallback={removeCallback} mosaicDrag={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
+                return <WorkbenchView mosaicDrag={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
               }
               return null;
             }}

@@ -6,7 +6,6 @@ export default function findBundleParent(nodeId, bundleMap) {
             parentList.push(bundle);
         }
     }
-    console.log('testing');
     return parentList;
 }
 //# sourceMappingURL=findBundleParent.js.map

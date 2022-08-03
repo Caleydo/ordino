@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import * as React from 'react';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, PluginRegistry, useAsync } from 'tdp_core';
 import { MosaicWindow } from 'react-mosaic-component';
 import { findViewIndex, getAllFilters } from '../../store/storeUtils';
@@ -10,7 +10,7 @@ import { isVisynRankingViewDesc } from '../../views/interfaces';
 import { AnimatingOverlay } from './AnimatingOverlay';
 import { addFilter, addEntityFormatting, addScoreColumn, addSelection, createColumnDescs, removeView, setViewParameters, setWorkbenchData, } from '../../store/ordinoTrrackedSlice';
 const DEFAULT_ANIMATING_OVERLAY_ICON = 'far fa-window-maximize';
-export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }) {
+export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, }) {
     var _a, _b, _c;
     const [editOpen, setEditOpen] = useState(true);
     const [settingsTabSelected, setSettingsTabSelected] = useState(false);
@@ -26,18 +26,23 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
     const viewIndex = useMemo(() => {
         return findViewIndex(view.uniqueId, currentWorkbench);
     }, [view.uniqueId, currentWorkbench]);
-    const onSelectionChanged = useMemo(() => (sel) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
-    const onParametersChanged = useMemo(() => (p) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p })), [dispatch, workbenchIndex, view.uniqueId, currentWorkbench]);
-    const onIdFilterChanged = useMemo(() => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [dispatch, view.uniqueId, workbenchIndex]);
+    const onSelectionChanged = useCallback((sel) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
+    const onParametersChanged = useCallback((p) => {
+        if (JSON.stringify(p) === JSON.stringify(view.parameters)) {
+            return;
+        }
+        console.log(p, view.parameters);
+        dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p }));
+    }, [dispatch, workbenchIndex, view.uniqueId, currentWorkbench, view.parameters]);
+    const onIdFilterChanged = useCallback((filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [dispatch, view.uniqueId, workbenchIndex]);
     const parameters = useMemo(() => {
-        var _a;
-        const previousWorkbench = (_a = ordino.workbenches) === null || _a === void 0 ? void 0 : _a[workbenchIndex - 1];
+        const previousWorkbench = ordino.workbenches[workbenchIndex - 1];
         const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
         const { selectedMappings } = currentWorkbench;
         return { prevSelection, selectedMappings };
     }, [workbenchIndex, ordino.workbenches, currentWorkbench]);
     const onDataChanged = useMemo(() => (data) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
-    const onAddFormatting = useMemo(() => (formatting) => dispatch(addEntityFormatting({ workbenchIndex, formatting })), [dispatch]);
+    const onAddFormatting = useMemo(() => (formatting) => dispatch(addEntityFormatting({ workbenchIndex, formatting })), [dispatch, workbenchIndex]);
     const onColumnDescChanged = useMemo(() => (desc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
     const onAddScoreColumn = useMemo(() => (desc, data) => dispatch(addScoreColumn({ workbenchIndex, desc, data })), [dispatch, workbenchIndex]);
     // This memo is required to solve an infinite loop problem related to the filters. Because the currentWorkbench.views contains parameters, but
@@ -54,7 +59,6 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
             (viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.header) ? (React.createElement(Suspense, { fallback: I18nextManager.getInstance().i18n.t('tdp:ordino.views.loading') },
                 React.createElement(viewPlugin.header, { desc: viewPlugin.desc, data: currentWorkbench.data, columnDesc: currentWorkbench.columnDescs, selection: currentWorkbench.selection, filteredOutIds: filteredOutIds, parameters: { ...view.parameters, ...parameters }, onSelectionChanged: onSelectionChanged, onParametersChanged: onParametersChanged, onFilteredOutIdsChanged: onIdFilterChanged }))) : null),
         React.createElement("div", { className: "view-actions d-flex justify-content-end flex-grow-1" }, !isVisynRankingViewDesc(viewPlugin === null || viewPlugin === void 0 ? void 0 : viewPlugin.desc) ? (React.createElement("button", { type: "button", onClick: () => {
-                removeCallback(path);
                 dispatch(removeView({ workbenchIndex, viewIndex }));
             }, className: "btn btn-icon-dark align-middle m-1" },
             React.createElement("i", { className: "flex-grow-1 fas fa-times m-1" }))) : null))) : (React.createElement("div", { className: "view-parameters d-flex" },

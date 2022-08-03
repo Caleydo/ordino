@@ -9,7 +9,5 @@ export default function findBundleParent(nodeId: string, bundleMap?: BundleMap):
     }
   }
 
-  console.log('testing');
-
   return parentList;
 }

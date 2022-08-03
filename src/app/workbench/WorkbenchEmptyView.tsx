@@ -15,14 +15,12 @@ export function WorkbenchEmptyView({
   chooserOptions,
   mosaicDrag,
   path,
-  removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   chooserOptions: IViewPluginDesc[];
   mosaicDrag: boolean;
   path: MosaicBranch[];
-  removeCallback: (path: MosaicPath) => void;
 }) {
   const dispatch = useAppDispatch();
 
@@ -44,7 +42,6 @@ export function WorkbenchEmptyView({
               <button
                 type="button"
                 onClick={() => {
-                  removeCallback(path);
                   dispatch(removeView({ workbenchIndex, viewIndex }));
                 }}
                 className="btn btn-icon-dark align-middle m-1"

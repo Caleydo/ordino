@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import * as React from 'react';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 import { IColumnDesc } from 'lineupjs';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import { MosaicBranch, MosaicPath, MosaicWindow } from 'react-mosaic-component';
@@ -38,14 +38,12 @@ export function WorkbenchGenericView({
   chooserOptions,
   mosaicDrag,
   path,
-  removeCallback,
 }: {
   workbenchIndex: number;
   view: IWorkbenchView;
   chooserOptions: IViewPluginDesc[];
   mosaicDrag: boolean;
   path: MosaicBranch[];
-  removeCallback: (path: MosaicPath) => void;
 }) {
   const [editOpen, setEditOpen] = useState<boolean>(true);
   const [settingsTabSelected, setSettingsTabSelected] = useState<boolean>(false);
@@ -72,24 +70,33 @@ export function WorkbenchGenericView({
     return findViewIndex(view.uniqueId, currentWorkbench);
   }, [view.uniqueId, currentWorkbench]);
 
-  const onSelectionChanged = useMemo(() => (sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
-  const onParametersChanged = useMemo(
-    () => (p: any) => dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p })),
-    [dispatch, workbenchIndex, view.uniqueId, currentWorkbench],
+  const onSelectionChanged = useCallback((sel: string[]) => dispatch(addSelection({ workbenchIndex, newSelection: sel })), [dispatch, workbenchIndex]);
+  const onParametersChanged = useCallback(
+    (p: any) => {
+      if (JSON.stringify(p) === JSON.stringify(view.parameters)) {
+        return;
+      }
+      console.log(p, view.parameters);
+      dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p }));
+    },
+    [dispatch, workbenchIndex, view.uniqueId, currentWorkbench, view.parameters],
   );
-  const onIdFilterChanged = useMemo(
-    () => (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })),
+  const onIdFilterChanged = useCallback(
+    (filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })),
     [dispatch, view.uniqueId, workbenchIndex],
   );
   const parameters = useMemo(() => {
-    const previousWorkbench = ordino.workbenches?.[workbenchIndex - 1];
+    const previousWorkbench = ordino.workbenches[workbenchIndex - 1];
     const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
     const { selectedMappings } = currentWorkbench;
     return { prevSelection, selectedMappings };
   }, [workbenchIndex, ordino.workbenches, currentWorkbench]);
 
   const onDataChanged = useMemo(() => (data: any[]) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
-  const onAddFormatting = useMemo(() => (formatting: IWorkbench['formatting']) => dispatch(addEntityFormatting({ workbenchIndex, formatting })), [dispatch]);
+  const onAddFormatting = useMemo(
+    () => (formatting: IWorkbench['formatting']) => dispatch(addEntityFormatting({ workbenchIndex, formatting })),
+    [dispatch, workbenchIndex],
+  );
   const onColumnDescChanged = useMemo(() => (desc: IColumnDesc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
   const onAddScoreColumn = useMemo(
     () => (desc: IColumnDesc, data: any[]) => dispatch(addScoreColumn({ workbenchIndex, desc, data })),
@@ -141,7 +148,6 @@ export function WorkbenchGenericView({
             <button
               type="button"
               onClick={() => {
-                removeCallback(path);
                 dispatch(removeView({ workbenchIndex, viewIndex }));
               }}
               className="btn btn-icon-dark align-middle m-1"

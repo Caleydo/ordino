@@ -50,8 +50,6 @@ const defaultConfig: ProvVisConfig<any, any, any> = {
 export function ProvVis<T, S extends string, A extends BaseArtifactType<any>>({ nodeMap, root, currentNode, config }: ProvVisProps<T, S, A>) {
   const { stratifiedMap: nodePositions, links } = useComputeNodePosition(nodeMap, currentNode, root);
 
-  console.log(currentNode);
-
   const mergedConfig = useMemo(() => {
     return { ...defaultConfig, ...config };
   }, [config]);

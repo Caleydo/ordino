@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MosaicBranch, MosaicPath } from 'react-mosaic-component';
+import { MosaicBranch } from 'react-mosaic-component';
 import { IWorkbenchView } from '../../store';
 export declare function getVisynView(entityId: string): Promise<({
     load(): Promise<{
@@ -87,11 +87,10 @@ export declare function getVisynView(entityId: string): Promise<({
     visynViewType: string;
     defaultParameters?: Record<string, any>;
 } & Record<string, any> & import("tdp_core").IPluginDesc)[]>;
-export declare function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, }: {
+export declare function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, }: {
     workbenchIndex: number;
     view: IWorkbenchView;
     mosaicDrag: boolean;
     path: MosaicBranch[];
-    removeCallback: (path: MosaicPath) => void;
 }): JSX.Element;
 //# sourceMappingURL=WorkbenchView.d.ts.map

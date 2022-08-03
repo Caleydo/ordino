@@ -25,7 +25,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
         isFocusWorkbench(workbench) || ordino.midTransition ? (React.createElement(WorkbenchUtilsSidebar, { workbench: workbench, openTab: !isFirstWorkbench(workbench) && ordino.midTransition ? 'mapping' : null })) : null,
         React.createElement(WorkbenchViews, { index: workbench.index, type: type }),
         isFocusWorkbench(workbench) ? (React.createElement("div", { className: "d-flex", style: { borderLeft: '1px solid lightgray' } },
-            React.createElement(ViewChooser, { views: editedViews || [], selectedView: null, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
+            React.createElement(ViewChooser, { views: editedViews || [], selectedView: null, showBurgerMenu: false, workbenchName: workbench.name, isWorkbenchTransitionDisabled: workbench.selection.length === 0, mode: EViewChooserMode.EMBEDDED, onSelectedView: (newView) => {
                     if (isVisynRankingViewDesc(newView)) {
                         const defaultMapping = {
                             entityId: newView.relation.mapping[0].entity,

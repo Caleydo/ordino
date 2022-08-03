@@ -22,7 +22,6 @@ function getAllMosaicNodes(node, nodes) {
     return nodes;
 }
 function getMosaicPathForNode(node, target, arr) {
-    console.log(node, target, arr);
     if (typeof node === 'string' && node === target) {
         return arr;
     }
@@ -98,7 +97,6 @@ export function WorkbenchViews({ index, type }) {
         const viewIds = views.map((v) => v.uniqueId);
         const viewsToAdd = viewIds.filter((v) => !currentNodes.includes(v));
         const viewsToRemove = currentNodes.filter((n) => !viewIds.includes(n));
-        console.log(currentNodes, viewIds, viewsToAdd);
         viewsToAdd.forEach((v) => {
             addMosaicNode(v);
         });
@@ -118,7 +116,6 @@ export function WorkbenchViews({ index, type }) {
             React.createElement("div", { className: "d-flex flex-grow-1" },
                 React.createElement(Mosaic, { renderTile: (id, path) => {
                         const currView = views.find((v) => v.uniqueId === id);
-                        console.log(path);
                         if (currView) {
                             return React.createElement(WorkbenchView, { mosaicDrag: mosaicDrag, workbenchIndex: index, path: path, view: currView });
                         }

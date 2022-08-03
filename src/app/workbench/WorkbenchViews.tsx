@@ -18,9 +18,7 @@ import { dropRight } from 'lodash';
 import { current } from '@reduxjs/toolkit';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
-import { useCommentPanel } from './useCommentPanel';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setCommentsOpen } from '../../store/ordinoTrrackedSlice';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -45,7 +43,6 @@ function getAllMosaicNodes(node: MosaicNode<string>, nodes: string[]): string[] 
 }
 
 function getMosaicPathForNode(node: MosaicNode<string>, target: string, arr: string[]): string[] {
-  console.log(node, target, arr);
   if (typeof node === 'string' && node === target) {
     return arr;
   }
@@ -144,8 +141,6 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
     const viewsToAdd = viewIds.filter((v) => !currentNodes.includes(v));
     const viewsToRemove = currentNodes.filter((n) => !viewIds.includes(n));
 
-    console.log(currentNodes, viewIds, viewsToAdd);
-
     viewsToAdd.forEach((v) => {
       addMosaicNode(v);
     });
@@ -173,7 +168,6 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
           <Mosaic<string>
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);
-              console.log(path);
               if (currView) {
                 return <WorkbenchView mosaicDrag={mosaicDrag} workbenchIndex={index} path={path} view={currView} />;
               }

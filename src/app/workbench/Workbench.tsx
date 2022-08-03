@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { IViewPluginDesc, useAsync } from 'tdp_core';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { addView, EWorkbenchDirection, addWorkbench, IWorkbench } from '../../store';
+import { EWorkbenchDirection, IWorkbench } from '../../store';
+import { addView, addWorkbench } from '../../store/ordinoTrrackedSlice';
 import { isFirstWorkbench, isFocusWorkbench } from '../../store/storeUtils';
 import { isVisynRankingViewDesc } from '../../views';
 import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
@@ -15,7 +16,10 @@ interface IWorkbenchProps {
 }
 
 export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbenchProps) {
-  const ordino = useAppSelector((state) => state.ordino);
+  // const ordino = useAppSelector((state) => state.ordino);
+  const { midTransition, colorMap } = useAppSelector((state) => state.ordinoTracked);
+  const { focusWorkbenchIndex } = useAppSelector((state) => state.ordinoTracked);
+
   const dispatch = useAppDispatch();
 
   const { value: availableViews } = useAsync(getVisynView, [workbench.entityId]);
@@ -24,22 +28,20 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
   const editedViews = useMemo(() => {
     return availableViews?.map((view) => {
       if (isVisynRankingViewDesc(view)) {
-        return { ...view, color: ordino.colorMap[view.itemIDType] };
+        return { ...view, color: colorMap[view.itemIDType] };
       }
 
-      return { ...view, color: ordino.colorMap[workbench.itemIDType] };
+      return { ...view, color: colorMap[workbench.itemIDType] };
     });
-  }, [availableViews, ordino.colorMap, workbench.itemIDType]);
+  }, [availableViews, colorMap, workbench.itemIDType]);
 
   return (
     <div
-      className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${ordino.midTransition ? 'transition' : ''} ${type} ${
-        ordino.focusWorkbenchIndex === 0 ? 'start' : ''
-      }`}
-      style={{ borderTopColor: ordino.colorMap[workbench.entityId] }}
+      className={`d-flex flex-grow-1 flex-shrink-0 ordino-workbench ${midTransition ? 'transition' : ''} ${type} ${focusWorkbenchIndex === 0 ? 'start' : ''}`}
+      style={{ borderTopColor: colorMap[workbench.entityId] }}
     >
-      {isFocusWorkbench(workbench) || ordino.midTransition ? (
-        <WorkbenchUtilsSidebar workbench={workbench} openTab={!isFirstWorkbench(workbench) && ordino.midTransition ? 'mapping' : null} />
+      {isFocusWorkbench(workbench) || midTransition ? (
+        <WorkbenchUtilsSidebar workbench={workbench} openTab={!isFirstWorkbench(workbench) && midTransition ? 'mapping' : null} />
       ) : null}
 
       <WorkbenchViews index={workbench.index} type={type} />
@@ -63,7 +65,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                   addWorkbench({
                     itemIDType: newView.itemIDType,
                     detailsSidebarOpen: true,
-                    createNextWorkbenchSidebarOpen: false,
                     selectedMappings: [defaultMapping],
                     views: [
                       {
@@ -87,7 +88,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
               } else {
                 dispatch(
                   addView({
-                    workbenchIndex: ordino.focusWorkbenchIndex,
+                    workbenchIndex: focusWorkbenchIndex,
                     view: {
                       name: newView.name,
                       id: newView.id,

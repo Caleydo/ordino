@@ -19,7 +19,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
 import { useCommentPanel } from './useCommentPanel';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setCommentsOpen } from '../../store/ordinoSlice';
+import { setCommentsOpen } from '../../store/ordinoTrrackedSlice';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -33,16 +33,20 @@ export interface IWorkbenchViewsProps {
 }
 
 export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
-  const ordino = useAppSelector((state) => state.ordino);
+  const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[index]);
+  const focusIndex = useAppSelector((state) => state.ordinoTracked.focusWorkbenchIndex);
+
+  const midTransition = useAppSelector((state) => state.ordinoTracked.midTransition);
+
   const dispatch = useAppDispatch();
 
-  const { views, selection, commentsOpen, itemIDType } = ordino.workbenches[index];
+  const { views, selection, commentsOpen, itemIDType } = workbench;
 
-  const onCommentPanelVisibilityChanged = React.useCallback(
-    (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),
-    [index, dispatch],
-  );
-  const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS, onCommentPanelVisibilityChanged });
+  // const onCommentPanelVisibilityChanged = React.useCallback(
+  //   (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),
+  //   [index, dispatch],
+  // );
+  // const [setRef] = useCommentPanel({ selection, itemIDType, commentsOpen, isFocused: type === EWorkbenchType.FOCUS, onCommentPanelVisibilityChanged });
 
   const [mosaicState, setMosaicState] = useState<MosaicNode<string>>(views[0].uniqueId);
   const [mosaicViewCount, setMosaicViewCount] = useState<number>(1);
@@ -59,11 +63,11 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   React.useEffect(() => {
     // If a new view got added to the workbench, currently via the "Add View" button, we need to put the view into our mosaic state
     if (views.length > mosaicViewCount) {
-      const path = getPathToCorner(mosaicState, ordino.midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
+      const path = getPathToCorner(mosaicState, midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
       const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<string>;
       const destination = getNodeAtPath(mosaicState, path) as MosaicNode<string>;
 
-      const direction: MosaicDirection = parent && parent.direction ? getOtherDirection(parent.direction) : ordino.midTransition ? 'column' : 'row';
+      const direction: MosaicDirection = parent && parent.direction ? getOtherDirection(parent.direction) : midTransition ? 'column' : 'row';
       const newViewId: string = views[views.length - 1].uniqueId; // assumes that the new view is appended to the array
 
       let first: MosaicNode<string>;
@@ -72,8 +76,8 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
         first = destination;
         second = newViewId;
       } else {
-        first = ordino.midTransition ? destination : newViewId;
-        second = ordino.midTransition ? newViewId : destination;
+        first = midTransition ? destination : newViewId;
+        second = midTransition ? newViewId : destination;
       }
 
       const newNode = updateTree(mosaicState, [
@@ -92,7 +96,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
       setMosaicState(newNode);
       setMosaicViewCount(views.length);
     }
-  }, [mosaicState, mosaicViewCount, views, ordino.midTransition]);
+  }, [mosaicState, mosaicViewCount, views, midTransition]);
 
   const removeCallback = useCallback(
     (path: MosaicPath) => {
@@ -119,7 +123,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
   return (
     <div className="position-relative d-flex flex-grow-1">
       <div className="d-flex flex-col w-100">
-        <div ref={setRef} className="d-flex flex-grow-1">
+        <div className="d-flex flex-grow-1">
           <Mosaic<string>
             renderTile={(id, path) => {
               const currView = views.find((v) => v.uniqueId === id);
@@ -130,7 +134,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
             }}
             onChange={onChangeCallback}
             onRelease={() => setMosaicDrag(false)}
-            value={ordino.focusWorkbenchIndex === index ? mosaicState : firstViewUniqueId}
+            value={focusIndex === index ? mosaicState : firstViewUniqueId}
           />
         </div>
       </div>

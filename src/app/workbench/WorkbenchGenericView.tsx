@@ -5,6 +5,13 @@ import { IColumnDesc } from 'lineupjs';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
 import { MosaicBranch, MosaicPath, MosaicWindow } from 'react-mosaic-component';
 
+import { IWorkbenchView, IWorkbench } from '../../store';
+import { findViewIndex, getAllFilters } from '../../store/storeUtils';
+
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { isVisynRankingViewDesc } from '../../views/interfaces';
+import { AnimatingOverlay } from './AnimatingOverlay';
 import {
   addFilter,
   addEntityFormatting,
@@ -14,15 +21,7 @@ import {
   removeView,
   setViewParameters,
   setWorkbenchData,
-  IWorkbenchView,
-  IWorkbench,
-} from '../../store';
-import { findViewIndex, getAllFilters } from '../../store/storeUtils';
-
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { isVisynRankingViewDesc } from '../../views/interfaces';
-import { AnimatingOverlay } from './AnimatingOverlay';
+} from '../../store/ordinoTrrackedSlice';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -51,7 +50,9 @@ export function WorkbenchGenericView({
   const [editOpen, setEditOpen] = useState<boolean>(true);
   const [settingsTabSelected, setSettingsTabSelected] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const ordino = useAppSelector((state) => state.ordino);
+  const ordino = useAppSelector((state) => state.ordinoTracked);
+  const { colorMap, isAnimating, midTransition } = useAppSelector((state) => state.ordinoTracked);
+
   const currentWorkbench = ordino.workbenches[workbenchIndex];
   const plugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
 
@@ -88,10 +89,7 @@ export function WorkbenchGenericView({
   }, [workbenchIndex, ordino.workbenches, currentWorkbench]);
 
   const onDataChanged = useMemo(() => (data: any[]) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
-  const onAddFormatting = useMemo(
-    () => (formatting: IWorkbench['formatting']) => dispatch(addEntityFormatting({ workbenchIndex, formatting })),
-    [dispatch, workbenchIndex],
-  );
+  const onAddFormatting = useMemo(() => (formatting: IWorkbench['formatting']) => dispatch(addEntityFormatting({ workbenchIndex, formatting })), [dispatch]);
   const onColumnDescChanged = useMemo(() => (desc: IColumnDesc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);
   const onAddScoreColumn = useMemo(
     () => (desc: IColumnDesc, data: any[]) => dispatch(addScoreColumn({ workbenchIndex, desc, data })),
@@ -112,7 +110,7 @@ export function WorkbenchGenericView({
               <button
                 type="button"
                 onClick={() => setEditOpen(!editOpen)}
-                style={{ color: ordino.colorMap[currentWorkbench.entityId] }}
+                style={{ color: colorMap[currentWorkbench.entityId] }}
                 className="btn btn-icon-primary align-middle m-1"
               >
                 <i className="flex-grow-1 fas fa-bars m-1" />
@@ -165,11 +163,11 @@ export function WorkbenchGenericView({
     <MosaicWindow<number> path={path} title={view.name} renderToolbar={() => header}>
       <div
         id={view.id}
-        className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag || ordino.isAnimating ? 'resizeCursor' : ''}`}
+        className={`position-relative flex-column shadow bg-body workbenchView rounded flex-grow-1 ${mosaicDrag || isAnimating ? 'resizeCursor' : ''}`}
       >
         <AnimatingOverlay
-          color={ordino.colorMap[currentWorkbench.entityId]}
-          isAnimating={ordino.isAnimating || mosaicDrag}
+          color={colorMap[currentWorkbench.entityId]}
+          isAnimating={isAnimating || mosaicDrag}
           iconName={viewPlugin?.desc?.icon ? viewPlugin?.desc?.icon : DEFAULT_ANIMATING_OVERLAY_ICON}
         />
 

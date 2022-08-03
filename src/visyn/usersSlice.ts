@@ -9,7 +9,7 @@ const initialState: IUserState = {
   loggedIn: false,
 };
 
-const userSlice = createSlice({
+export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {

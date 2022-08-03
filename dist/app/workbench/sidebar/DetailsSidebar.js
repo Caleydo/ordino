@@ -2,14 +2,14 @@ import React, { Fragment, useMemo } from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings } from '../../../store';
 import { findWorkbenchTransitions } from '../../../views';
+import { changeSelectedMappings } from '../../../store/ordinoTrrackedSlice';
 export function DetailsSidebar({ workbench }) {
-    const ordino = useAppSelector((state) => state.ordino);
+    const prevWorkbench = useAppSelector((state) => (workbench.index === 0 ? null : state.ordinoTracked.workbenches[workbench.index - 1]));
+    const colorMap = useAppSelector((state) => state.ordinoTracked.colorMap);
     const dispatch = useAppDispatch();
-    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
+    const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [prevWorkbench.entityId]);
     const selectionString = useMemo(() => {
-        const prevWorkbench = ordino.workbenches[workbench.index - 1];
         if (!prevWorkbench) {
             return '';
         }
@@ -21,14 +21,14 @@ export function DetailsSidebar({ workbench }) {
         })
             .join(', ');
         return currString.length < 152 ? currString : `${currString.slice(0, 150)}...`;
-    }, [ordino.workbenches, workbench.index]);
+    }, [prevWorkbench]);
     return (React.createElement("div", { className: "me-0", style: { width: '250px' } }, status === 'success' ? (React.createElement("div", { className: "d-flex flex-column" },
         React.createElement("div", { className: "p-1 mb-2 rounded" },
             React.createElement("div", { className: "d-flex flex-column", style: { justifyContent: 'space-between' } },
                 React.createElement("p", { className: "mb-1" },
                     React.createElement("span", { className: "entityText" }, "Selected "),
-                    React.createElement("span", { className: "entityText", style: { color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] } },
-                        ordino.workbenches[workbench.index - 1].name,
+                    React.createElement("span", { className: "entityText", style: { color: colorMap[prevWorkbench.entityId] } },
+                        prevWorkbench.name,
                         "s")),
                 React.createElement("p", { className: "mb-2 selectedPrevText" }, selectionString)),
             availableViews
@@ -42,11 +42,11 @@ export function DetailsSidebar({ workbench }) {
                             const isChecked = workbench.selectedMappings.some((m) => m.columnSelection === col.columnName && m.entityId === entity);
                             return (React.createElement("div", { key: `${col.label}-column`, className: "form-check ms-2" },
                                 React.createElement("input", { checked: isChecked, onChange: () => dispatch(changeSelectedMappings({
-                                        workbenchIndex: ordino.midTransition ? ordino.focusWorkbenchIndex + 1 : ordino.focusWorkbenchIndex,
+                                        workbenchIndex: workbench.index,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
                                     })), style: {
-                                        backgroundColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
-                                        borderColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
+                                        backgroundColor: isChecked ? colorMap[workbench.entityId] : null,
+                                        borderColor: isChecked ? colorMap[workbench.entityId] : null,
                                     }, className: "form-check-input", type: "checkbox", value: "", id: `checkbox-${col.label}-${v.name}` }),
                                 React.createElement("label", { className: "mappingText form-check-label", htmlFor: `checkbox-${col.label}-${v.name}` }, col.label)));
                         })));

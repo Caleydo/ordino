@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     ready: false,
 };
-const appSlice = createSlice({
+export const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {

@@ -15,20 +15,20 @@ export function isFirstWorkbench(workbench: IWorkbench): boolean {
 
 export function isFocusWorkbench(workbench: IWorkbench): boolean {
   const state = store.getState();
-  return workbench.index === state.ordino.focusWorkbenchIndex;
+  return workbench.index === state.ordinoTracked.focusWorkbenchIndex;
 }
 
 export function isBeforeContextWorkbench(workbench: IWorkbench): boolean {
   const state = store.getState();
-  return workbench.index < state.ordino.focusWorkbenchIndex - 1;
+  return workbench.index < state.ordinoTracked.focusWorkbenchIndex - 1;
 }
 
 export function isContextWorkbench(workbench: IWorkbench): boolean {
   const state = store.getState();
-  return workbench.index === state.ordino.focusWorkbenchIndex - 1;
+  return workbench.index === state.ordinoTracked.focusWorkbenchIndex - 1;
 }
 
 export function isNextWorkbench(workbench: IWorkbench): boolean {
   const state = store.getState();
-  return workbench.index === state.ordino.focusWorkbenchIndex + 1;
+  return workbench.index === state.ordinoTracked.focusWorkbenchIndex + 1;
 }

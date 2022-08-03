@@ -14,24 +14,24 @@ export interface IOrdinoHeaderProps extends IVisynHeaderProps {
 
 export function OrdinoHeader({ tabs, extensions }: IOrdinoHeaderProps) {
   const app = useAppSelector((state) => state.app);
-  const ordino = useAppSelector((state) => state.ordino);
+  const workbenchLength = useAppSelector((state) => state.ordinoTracked.workbenches.length);
   const menu = useAppSelector((state) => state.menu);
   const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     // opening first ranking --> close start menu
-    if (ordino.workbenches.length === 1) {
+    if (workbenchLength === 1) {
       dispatch(setMode(EStartMenuMode.OVERLAY));
       dispatch(setActiveTab(null));
     }
-  }, [ordino.workbenches, dispatch]);
+  }, [workbenchLength, dispatch]);
 
   React.useEffect(() => {
-    if (ordino.workbenches.length === 0) {
+    if (workbenchLength === 0) {
       dispatch(setActiveTab(tabs[0].id));
     }
-  }, [ordino.workbenches.length, dispatch, tabs]);
+  }, [workbenchLength, dispatch, tabs]);
 
   const MemoizedLoginLink = React.useCallback(() => <VisynLoginLink userName={user.userName} onLogout={LoginUtils.logout} />, [user.userName]);
   const MemoizedHeaderTabs = React.useCallback(

@@ -1,7 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { IColumnDesc } from 'lineupjs';
-import { IRow } from 'tdp_core';
-import { EWorkbenchDirection, ISelectedMapping, IWorkbench } from './interfaces';
+import { ISelectedMapping, IWorkbench } from './interfaces';
 
 export const workbenchReducers = {
   addFirstWorkbench(
@@ -45,23 +44,7 @@ export const workbenchReducers = {
       });
     }
   },
-  setDetailsSidebarOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-    state.workbenches[action.payload.workbenchIndex].detailsSidebarOpen = action.payload.open;
-  },
-  setCreateNextWorkbenchSidebarOpen(state, action: PayloadAction<{ workbenchIndex: number; open: boolean }>) {
-    state.workbenches[action.payload.workbenchIndex].createNextWorkbenchSidebarOpen = action.payload.open;
-  },
-  createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
-    const { workbenchIndex, desc } = action.payload;
-    state.workbenches[workbenchIndex].columnDescs = desc;
-  },
-  addColumnDesc(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
-    const { workbenchIndex } = action.payload;
-    state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
-  },
-  setWorkbenchDirection(state, action: PayloadAction<{ workbenchIndex: number; direction: EWorkbenchDirection }>) {
-    state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
-  },
+
   removeWorkbench(state, action: PayloadAction<{ index: number }>) {
     state.workbenches.splice(action.payload.index, state.workbenches.length);
   },
@@ -76,12 +59,7 @@ export const workbenchReducers = {
   addFilter(state, action: PayloadAction<{ workbenchIndex: number; viewId: string; filter: string[] }>) {
     state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
   },
-  setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: IRow[] }>) {
-    const { workbenchIndex, data } = action.payload;
-    for (const row of data) {
-      state.workbenches[workbenchIndex].data[row.id] = row;
-    }
-  },
+
   addScoreColumn(state, action: PayloadAction<{ workbenchIndex: number; desc: IColumnDesc & { [key: string]: any }; data: any[] }>) {
     const { workbenchIndex, desc, data } = action.payload;
     state.workbenches[workbenchIndex].columnDescs.push(desc);
@@ -93,10 +71,5 @@ export const workbenchReducers = {
       //   state.workbenches[state.focusViewIndex].data[row.id] = row;
       // }
     }
-  },
-  setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; isOpen: boolean }>) {
-    const { workbenchIndex, isOpen } = action.payload;
-    console.log('setting open');
-    state.workbenches[workbenchIndex].commentsOpen = isOpen;
   },
 };

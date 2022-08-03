@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createTrrackableSlice } from '@trrack/redux';
 import { viewsReducers } from './viewsReducer';
 import { workbenchReducers } from './workbenchReducer';
 const initialState = {
@@ -8,7 +8,7 @@ const initialState = {
     colorMap: {},
     isAnimating: false,
 };
-const ordinoSlice = createSlice({
+export const ordinoSlice = createTrrackableSlice({
     name: 'ordino',
     initialState,
     reducers: {

@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { animated, easings, useSpring } from 'react-spring';
-import { changeFocus, IWorkbench, removeWorkbench, setAnimating, setCommentsOpen } from '../../store';
+import { IWorkbench, setAnimating } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { OpenCommentsButton } from './OpenCommentsButton';
 import { ChevronSvg } from './ChevronSvg';
 import { isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
+import { changeFocus, removeWorkbench, setCommentsOpen } from '../../store/ordinoTrrackedSlice';
 
 export interface IChevronProps {
   first?: boolean;
@@ -20,7 +21,7 @@ export interface IChevronProps {
 }
 
 export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false }: IChevronProps) {
-  const ordino = useAppSelector((state) => state.ordino);
+  const midTransition = useAppSelector((state) => state.ordinoTracked.midTransition);
   const dispatch = useAppDispatch();
   const [width, setWidth] = useState<number>();
 
@@ -61,12 +62,12 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
       style={{ ...animatedStyle, flexBasis: 0 }}
       onClick={onClick}
       title={
-        !isFocusWorkbench(workbench) && !(isNextWorkbench(workbench) && ordino.midTransition)
+        !isFocusWorkbench(workbench) && !(isNextWorkbench(workbench) && midTransition)
           ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })
           : null
       }
     >
-      {isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && ordino.midTransition) ? (
+      {isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && midTransition) ? (
         <div className={`text-truncate chevronDiv d-flex flex-grow-1 ${isFirstWorkbench(workbench) ? 'ms-2' : 'ms-3'}`} style={{ flexBasis: 0 }}>
           <p className="chevronText text-truncate flex-grow-1">
             {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
@@ -87,12 +88,12 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
               />
             ) : null}
           </>
-        ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && ordino.midTransition) ? (
+        ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && midTransition) ? (
           <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
         ) : null}
       </div>
 
-      {isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && ordino.midTransition) ? (
+      {isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && midTransition) ? (
         <div className={`${!hideText ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`} style={{ flexBasis: 0 }}>
           <button
             type="button"

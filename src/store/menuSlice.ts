@@ -34,7 +34,7 @@ const initialState: IMenuState = {
   mode: EStartMenuMode.START,
 };
 
-const menuSlice = createSlice({
+export const menuSlice = createSlice({
   name: 'menu',
   initialState,
   reducers: {

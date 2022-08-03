@@ -8,8 +8,8 @@ export function getVisynView(entityId) {
     return ViewUtils.findVisynViews(new IDType(entityId, '.*', '', true));
 }
 export function WorkbenchView({ workbenchIndex, view, mosaicDrag, path, removeCallback, }) {
-    const ordino = useAppSelector((state) => state.ordino);
-    const { value: visynViews } = useAsync(getVisynView, [ordino.workbenches[workbenchIndex].entityId]);
+    const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[workbenchIndex]);
+    const { value: visynViews } = useAsync(getVisynView, [workbench.entityId]);
     const availableViews = useMemo(() => {
         return visynViews || [];
     }, [visynViews]);

@@ -10,18 +10,18 @@ export function isFirstWorkbench(workbench) {
 }
 export function isFocusWorkbench(workbench) {
     const state = store.getState();
-    return workbench.index === state.ordino.focusWorkbenchIndex;
+    return workbench.index === state.ordinoTracked.focusWorkbenchIndex;
 }
 export function isBeforeContextWorkbench(workbench) {
     const state = store.getState();
-    return workbench.index < state.ordino.focusWorkbenchIndex - 1;
+    return workbench.index < state.ordinoTracked.focusWorkbenchIndex - 1;
 }
 export function isContextWorkbench(workbench) {
     const state = store.getState();
-    return workbench.index === state.ordino.focusWorkbenchIndex - 1;
+    return workbench.index === state.ordinoTracked.focusWorkbenchIndex - 1;
 }
 export function isNextWorkbench(workbench) {
     const state = store.getState();
-    return workbench.index === state.ordino.focusWorkbenchIndex + 1;
+    return workbench.index === state.ordinoTracked.focusWorkbenchIndex + 1;
 }
 //# sourceMappingURL=storeUtils.js.map

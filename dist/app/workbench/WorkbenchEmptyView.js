@@ -4,16 +4,17 @@ import { MosaicWindow } from 'react-mosaic-component';
 import { I18nextManager } from 'tdp_core';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { removeView, setView } from '../../store';
+import { removeView, setView } from '../../store/ordinoTrrackedSlice';
 import { findViewIndex } from '../../store/storeUtils';
 import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
 export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, removeCallback, }) {
     const dispatch = useAppDispatch();
-    const ordino = useAppSelector((state) => state.ordino);
+    const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[workbenchIndex]);
+    const focusIndex = useAppSelector((state) => state.ordinoTracked.focusWorkbenchIndex);
     const viewIndex = useMemo(() => {
-        return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-    }, [ordino.workbenches, view.uniqueId, workbenchIndex]);
-    return (React.createElement(MosaicWindow, { path: path, title: view.name, renderToolbar: () => workbenchIndex === ordino.focusWorkbenchIndex ? (React.createElement("div", { className: "d-flex w-100" },
+        return findViewIndex(view.uniqueId, workbench);
+    }, [workbench, view.uniqueId]);
+    return (React.createElement(MosaicWindow, { path: path, title: view.name, renderToolbar: () => workbenchIndex === focusIndex ? (React.createElement("div", { className: "d-flex w-100" },
             React.createElement("div", { className: "view-actions d-flex justify-content-end flex-grow-1" },
                 React.createElement("button", { type: "button", onClick: () => {
                         removeCallback(path);
@@ -25,7 +26,7 @@ export function WorkbenchEmptyView({ workbenchIndex, view, chooserOptions, mosai
                 React.createElement(ViewChooser, { views: chooserOptions, showBurgerMenu: false, mode: EViewChooserMode.EMBEDDED, selectedView: null, onSelectedView: (newView) => {
                         dispatch(setView({
                             workbenchIndex,
-                            viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
+                            viewIndex: findViewIndex(view.uniqueId, workbench),
                             viewId: newView.id,
                             viewName: newView.name,
                         }));

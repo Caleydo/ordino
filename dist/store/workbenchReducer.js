@@ -30,23 +30,6 @@ export const workbenchReducers = {
             });
         }
     },
-    setDetailsSidebarOpen(state, action) {
-        state.workbenches[action.payload.workbenchIndex].detailsSidebarOpen = action.payload.open;
-    },
-    setCreateNextWorkbenchSidebarOpen(state, action) {
-        state.workbenches[action.payload.workbenchIndex].createNextWorkbenchSidebarOpen = action.payload.open;
-    },
-    createColumnDescs(state, action) {
-        const { workbenchIndex, desc } = action.payload;
-        state.workbenches[workbenchIndex].columnDescs = desc;
-    },
-    addColumnDesc(state, action) {
-        const { workbenchIndex } = action.payload;
-        state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
-    },
-    setWorkbenchDirection(state, action) {
-        state.workbenches[action.payload.workbenchIndex].viewDirection = action.payload.direction;
-    },
     removeWorkbench(state, action) {
         state.workbenches.splice(action.payload.index, state.workbenches.length);
     },
@@ -61,12 +44,6 @@ export const workbenchReducers = {
     addFilter(state, action) {
         state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
     },
-    setWorkbenchData(state, action) {
-        const { workbenchIndex, data } = action.payload;
-        for (const row of data) {
-            state.workbenches[workbenchIndex].data[row.id] = row;
-        }
-    },
     addScoreColumn(state, action) {
         const { workbenchIndex, desc, data } = action.payload;
         state.workbenches[workbenchIndex].columnDescs.push(desc);
@@ -78,11 +55,6 @@ export const workbenchReducers = {
             //   state.workbenches[state.focusViewIndex].data[row.id] = row;
             // }
         }
-    },
-    setCommentsOpen(state, action) {
-        const { workbenchIndex, isOpen } = action.payload;
-        console.log('setting open');
-        state.workbenches[workbenchIndex].commentsOpen = isOpen;
     },
 };
 //# sourceMappingURL=workbenchReducer.js.map

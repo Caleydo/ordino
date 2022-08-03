@@ -4,24 +4,29 @@ import _ from 'lodash';
 import { getAllFilters } from '../../store/storeUtils';
 import { useAppSelector } from '../../hooks/useAppSelector';
 
+/**
+ * TODO:: This should probably just be passed a workbench, not access the store
+ * @returns
+ */
 export function FilterAndSelected() {
-  const ordino = useAppSelector((state) => state.ordino);
+  const currentWorkbench = useAppSelector((state) => state.ordinoTracked.workbenches[state.ordinoTracked.focusWorkbenchIndex]);
+  const untrackedState = useAppSelector((state) => state.ordinoTracked);
 
   const dataLength = useMemo(() => {
-    return Object.keys(ordino.workbenches[ordino.focusWorkbenchIndex].data).length;
-  }, [ordino.focusWorkbenchIndex, ordino.workbenches]);
+    return Object.keys(currentWorkbench.data).length;
+  }, [currentWorkbench]);
 
   const filterLength = useMemo(() => {
-    return getAllFilters(ordino.workbenches[ordino.focusWorkbenchIndex]).length;
-  }, [ordino.focusWorkbenchIndex, ordino.workbenches]);
+    return getAllFilters(currentWorkbench).length;
+  }, [currentWorkbench]);
 
   const selectedLength = useMemo(() => {
-    return ordino.workbenches[ordino.focusWorkbenchIndex].selection.length;
-  }, [ordino.focusWorkbenchIndex, ordino.workbenches]);
+    return currentWorkbench.selection.length;
+  }, [currentWorkbench]);
 
   const isQueryFilterEqual = useMemo(() => {
-    return _.isEqual(ordino.globalQueryCategories, ordino.appliedQueryCategories);
-  }, [ordino.globalQueryCategories, ordino.appliedQueryCategories]);
+    return _.isEqual(untrackedState.globalQueryCategories, untrackedState.appliedQueryCategories);
+  }, [untrackedState.globalQueryCategories, untrackedState.appliedQueryCategories]);
 
   return (
     <div className="text-truncate align-middle m-1 d-flex align-items-center">
@@ -30,15 +35,15 @@ export function FilterAndSelected() {
           className="fa fa-filter pe-auto"
           aria-hidden="true"
           title={I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.appliedQueryFilterTitle', {
-            entityName: ordino.workbenches[ordino.focusWorkbenchIndex].name,
-            globalQueryName: ordino.globalQueryName,
-            selectedValues: ordino.appliedQueryCategories ? ordino.appliedQueryCategories.join(',') : '',
+            entityName: currentWorkbench.name,
+            globalQueryName: untrackedState.globalQueryName,
+            selectedValues: untrackedState.appliedQueryCategories ? untrackedState.appliedQueryCategories.join(',') : '',
           })}
         />
       ) : null}
       <span className="m-1 text-truncate">
-        {dataLength - filterLength} of {dataLength} {ordino.workbenches[ordino.focusWorkbenchIndex].name}s / {selectedLength}{' '}
-        {ordino.workbenches[ordino.focusWorkbenchIndex].name}s selected
+        {dataLength - filterLength} of {dataLength} {currentWorkbench.name}s / {selectedLength}
+        {currentWorkbench.name}s selected
       </span>
     </div>
   );

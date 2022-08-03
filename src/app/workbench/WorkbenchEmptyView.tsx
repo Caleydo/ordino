@@ -4,7 +4,8 @@ import { MosaicBranch, MosaicPath, MosaicWindow } from 'react-mosaic-component';
 import { I18nextManager, IViewPluginDesc } from 'tdp_core';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { IWorkbenchView, removeView, setView } from '../../store';
+import { IWorkbenchView } from '../../store';
+import { removeView, setView } from '../../store/ordinoTrrackedSlice';
 import { findViewIndex } from '../../store/storeUtils';
 import { EViewChooserMode, ViewChooser } from '../viewChooser/ViewChooser';
 
@@ -25,18 +26,19 @@ export function WorkbenchEmptyView({
 }) {
   const dispatch = useAppDispatch();
 
-  const ordino = useAppSelector((state) => state.ordino);
+  const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[workbenchIndex]);
+  const focusIndex = useAppSelector((state) => state.ordinoTracked.focusWorkbenchIndex);
 
   const viewIndex = useMemo(() => {
-    return findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]);
-  }, [ordino.workbenches, view.uniqueId, workbenchIndex]);
+    return findViewIndex(view.uniqueId, workbench);
+  }, [workbench, view.uniqueId]);
 
   return (
     <MosaicWindow<string>
       path={path}
       title={view.name}
       renderToolbar={() =>
-        workbenchIndex === ordino.focusWorkbenchIndex ? (
+        workbenchIndex === focusIndex ? (
           <div className="d-flex w-100">
             <div className="view-actions d-flex justify-content-end flex-grow-1">
               <button
@@ -67,7 +69,7 @@ export function WorkbenchEmptyView({
               dispatch(
                 setView({
                   workbenchIndex,
-                  viewIndex: findViewIndex(view.uniqueId, ordino.workbenches[workbenchIndex]),
+                  viewIndex: findViewIndex(view.uniqueId, workbench),
                   viewId: newView.id,
                   viewName: newView.name,
                 }),

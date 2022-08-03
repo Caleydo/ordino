@@ -13,28 +13,7 @@ export interface IWorkbenchView {
     filters: string[];
     parameters?: any;
 }
-export interface IOrdinoAppState {
-    /**
-     * List of open views.
-     */
-    workbenches: IWorkbench[];
-    /**
-     * Map for the colors which are assigned to each entity. Derived from the config file.
-     * Keys are the entity id matching IWorkbench.entityId.
-     * Values are any typical string representation of a color.
-     */
-    colorMap: {
-        [key: string]: string;
-    };
-    midTransition: boolean;
-    /**
-     * isAnimating is true when transitioning between workbenches, during the animation.
-     */
-    isAnimating: boolean;
-    /**
-     * Id of the current focus view
-     */
-    focusWorkbenchIndex: number;
+export interface IOrdinoAppUntrackedState {
     /**
      * Stores the available global query name used in the current session
      */
@@ -48,6 +27,29 @@ export interface IOrdinoAppState {
      * analog to IQueryFilter
      */
     appliedQueryCategories?: (number | string)[];
+}
+export interface IOrdinoAppTrackedState {
+    /**
+     * List of open views.
+     */
+    workbenches: IWorkbench[];
+    /**
+     * Id of the current focus view
+     */
+    focusWorkbenchIndex: number;
+    /**
+     * Map for the colors which are assigned to each entity. Derived from the config file.
+     * Keys are the entity id matching IWorkbench.entityId.
+     * Values are any typical string representation of a color.
+     */
+    colorMap: {
+        [key: string]: string;
+    };
+    midTransition: boolean;
+    /**
+     * isAnimating is true when transitioning between workbenches, during the animation.
+     */
+    isAnimating: boolean;
 }
 export declare enum EWorkbenchDirection {
     VERTICAL = "vertical",
@@ -110,12 +112,6 @@ export interface IWorkbench {
      * detailsSidebarOpen keeps track of whether or not the details tab is switched open.
      */
     detailsSidebarOpen: boolean;
-    /**
-     * "createNextWorkbenchSidebar" is the sidebar that appears to the right of a workbench when you want to add a new workbench.
-     * It contains options for which mapping types you want in the next workbench.
-     * createNextWorkbenchSidebarOpen keeps track of whether or not the details tab is switched open
-     */
-    createNextWorkbenchSidebarOpen: boolean;
     commentsOpen?: boolean;
 }
 interface IBaseState {

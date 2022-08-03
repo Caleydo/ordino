@@ -2,16 +2,18 @@ import React, { Fragment, useMemo } from 'react';
 import { useAsync } from 'tdp_core';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeSelectedMappings, IWorkbench } from '../../../store';
+import { IWorkbench } from '../../../store';
 import { findWorkbenchTransitions } from '../../../views';
+import { changeSelectedMappings } from '../../../store/ordinoTrrackedSlice';
 
 export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
-  const ordino = useAppSelector((state) => state.ordino);
+  const prevWorkbench = useAppSelector((state) => (workbench.index === 0 ? null : state.ordinoTracked.workbenches[workbench.index - 1]));
+  const colorMap = useAppSelector((state) => state.ordinoTracked.colorMap);
+
   const dispatch = useAppDispatch();
-  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [ordino.workbenches[workbench.index - 1].entityId]);
+  const { status, value: availableViews } = useAsync(findWorkbenchTransitions, [prevWorkbench.entityId]);
 
   const selectionString = useMemo(() => {
-    const prevWorkbench = ordino.workbenches[workbench.index - 1];
     if (!prevWorkbench) {
       return '';
     }
@@ -25,7 +27,7 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
       .join(', ');
 
     return currString.length < 152 ? currString : `${currString.slice(0, 150)}...`;
-  }, [ordino.workbenches, workbench.index]);
+  }, [prevWorkbench]);
 
   return (
     <div className="me-0" style={{ width: '250px' }}>
@@ -35,8 +37,8 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
             <div className="d-flex flex-column" style={{ justifyContent: 'space-between' }}>
               <p className="mb-1">
                 <span className="entityText">Selected </span>
-                <span className="entityText" style={{ color: ordino.colorMap[ordino.workbenches[workbench.index - 1].entityId] }}>
-                  {ordino.workbenches[workbench.index - 1].name}s
+                <span className="entityText" style={{ color: colorMap[prevWorkbench.entityId] }}>
+                  {prevWorkbench.name}s
                 </span>
               </p>
               <p className="mb-2 selectedPrevText">{selectionString}</p>
@@ -60,14 +62,14 @@ export function DetailsSidebar({ workbench }: { workbench: IWorkbench }) {
                                   onChange={() =>
                                     dispatch(
                                       changeSelectedMappings({
-                                        workbenchIndex: ordino.midTransition ? ordino.focusWorkbenchIndex + 1 : ordino.focusWorkbenchIndex,
+                                        workbenchIndex: workbench.index,
                                         newMapping: { columnSelection: col.columnName, entityId: entity },
                                       }),
                                     )
                                   }
                                   style={{
-                                    backgroundColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
-                                    borderColor: isChecked ? ordino.colorMap[workbench.entityId] : null,
+                                    backgroundColor: isChecked ? colorMap[workbench.entityId] : null,
+                                    borderColor: isChecked ? colorMap[workbench.entityId] : null,
                                   }}
                                   className="form-check-input"
                                   type="checkbox"

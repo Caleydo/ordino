@@ -215,7 +215,11 @@ export class CmdUtils {
     const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
     // assert view
     return ActionUtils.action(
-      ActionMetaData.actionMeta(`Replace ${existingView.name} with ${view.name}`, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update),
+      ActionMetaData.actionMeta(
+        `Replace ${existingView.value?.context?.desc?.name} with ${view.name}`,
+        ObjectRefUtils.category.visual,
+        ObjectRefUtils.operation.update,
+      ),
       CMD_REPLACE_VIEW,
       CmdUtils.replaceViewImpl,
       [app, existingView],

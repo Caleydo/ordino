@@ -117,7 +117,7 @@ export class ViewWrapper extends EventHandler {
     super();
 
     // create provenance reference
-    this.ref = ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection));
+    this.ref = graph.findOrAddObject(ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection)));
 
     this.init(graph, selection, plugin, options);
 

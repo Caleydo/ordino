@@ -79,10 +79,5 @@ export const workbenchReducers = {
             // }
         }
     },
-    setCommentsOpen(state, action) {
-        const { workbenchIndex, isOpen } = action.payload;
-        console.log('setting open');
-        state.workbenches[workbenchIndex].commentsOpen = isOpen;
-    },
 };
 //# sourceMappingURL=workbenchReducer.js.map

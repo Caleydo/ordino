@@ -1,9 +1,9 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: 'type: bug'
-assignees: ''
+name: 🐛Bug Report
+about: Create a bug report to help us improve
+title: ""
+labels: ["type: bug"]
+assignees: ""
 
 ---
 
@@ -12,6 +12,7 @@ assignees: ''
  * Release number or git hash: 
  * Browser: 
  * Deployed / Local: 
+---
 
 ### Steps to reproduce the bug
 
@@ -30,3 +31,6 @@ assignees: ''
 ### Expected Behavior
 
 > Please provide a short description which behavior you expected from your steps
+
+Thanks for taking the time to fill out this bug report 🤗
+Make sure there aren't any open/closed issues for this topic 😃

@@ -4,6 +4,8 @@ import { DetailsSidebar } from './DetailsSidebar';
 import { IWorkbench } from '../../../store';
 import { SidebarButton } from './SidebarButton';
 import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
+import { CommentSidebarButton } from './CommentSidebarButton';
+import { CommentPanelTabPane } from './CommentPanelTabPane';
 
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const ordino = useAppSelector((state) => state.ordino);
@@ -22,7 +24,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         return <div style={{ width: '250px' }}>Filter something</div>;
       }
       case 'comment': {
-        return <div style={{ width: '250px' }}>Comment something</div>;
+        return <CommentPanelTabPane itemIDType={workbench.itemIDType} selection={workbench.selection} />;
       }
       default: {
         return <div style={{ width: '250px' }}>There was an error finding the correct tab</div>;
@@ -60,14 +62,16 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
           icon="fas fa-filter"
           onClick={() => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter'))}
         />
-        <SidebarButton
+        <CommentSidebarButton
           isSelected={openedTab === 'comment'}
           color={ordino.colorMap[workbench.entityId]}
+          idType={workbench.itemIDType}
+          selection={workbench.selection}
           icon="fas fa-comment"
           onClick={() => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment'))}
         />
       </div>
-      {openedTab !== null ? <div>{openedTabComponent}</div> : null}
+      {openedTab !== null ? openedTabComponent : null}
     </div>
   );
 }

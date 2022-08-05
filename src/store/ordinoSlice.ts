@@ -63,7 +63,6 @@ export const {
   addWorkbench,
   switchViews,
   setWorkbenchDirection,
-  setCommentsOpen,
   setTransition,
   setAnimating,
 } = ordinoSlice.actions;

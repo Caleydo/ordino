@@ -66,8 +66,6 @@ export const ordinoTrrackedSlice = createTrrackableSlice({
 
 export const {
   setColorMap,
-  setTransition,
-  setAnimating,
   setDetailsSidebarOpen,
   createColumnDescs,
   addColumnDesc,
@@ -88,6 +86,9 @@ export const {
   addFirstWorkbench,
   addWorkbench,
   switchViews,
-} = ordinoTrrackedSlice.actions;
+  setWorkbenchDirection,
+  setTransition,
+  setAnimating,
+} = ordinoSlice.actions;
 
 export const ordinoTrrackedReducer = ordinoTrrackedSlice.reducer;

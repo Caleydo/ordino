@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { NodeId } from '@trrack/core';
-import { TrrackSliceState } from '@trrack/redux';
+import { TrrackStoreType } from '@trrack/redux';
 import { useAppSelector } from '../../../hooks/useAppSelector';
 import { DetailsSidebar } from './DetailsSidebar';
 import { IWorkbench, trrack, useTrrackSelector } from '../../../store';
 import { SidebarButton } from './SidebarButton';
 import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
-import { ProvVis } from './trrackVis/src/components/ProvVis';
+import { CommentSidebarButton } from './CommentSidebarButton';
+import { CommentPanelTabPane } from './CommentPanelTabPane';
 
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const { midTransition, colorMap } = useAppSelector((state) => state.ordinoTracked);
@@ -14,7 +15,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
 
   const [openedTab, setOpenedTab] = useState<string>(openTab);
 
-  const currentTrrackNode: NodeId = useTrrackSelector((s: TrrackSliceState) => s.current);
+  const currentTrrackNode: NodeId = useTrrackSelector((s: TrrackStoreType) => s.current);
 
   const openedTabComponent: React.ReactElement = useMemo(() => {
     switch (openedTab) {
@@ -37,7 +38,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         );
       }
       case 'comment': {
-        return <div style={{ width: '250px' }}>Comment something</div>;
+        return <CommentPanelTabPane itemIDType={workbench.itemIDType} selection={workbench.selection} />;
       }
       default: {
         return <div style={{ width: '250px' }}>There was an error finding the correct tab</div>;
@@ -75,14 +76,16 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
           icon="fas fa-filter"
           onClick={() => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter'))}
         />
-        <SidebarButton
+        <CommentSidebarButton
           isSelected={openedTab === 'comment'}
-          color={colorMap[workbench.entityId]}
+          color={ordino.colorMap[workbench.entityId]}
+          idType={workbench.itemIDType}
+          selection={workbench.selection}
           icon="fas fa-comment"
           onClick={() => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment'))}
         />
       </div>
-      {openedTab !== null ? <div>{openedTabComponent}</div> : null}
+      {openedTab !== null ? openedTabComponent : null}
     </div>
   );
 }

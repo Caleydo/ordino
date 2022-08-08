@@ -15,10 +15,8 @@ import {
 
 import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
-import { current } from '@reduxjs/toolkit';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
 
 export enum EWorkbenchType {
   PREVIOUS = 't-previous',
@@ -63,9 +61,7 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
 
   const midTransition = useAppSelector((state) => state.ordinoTracked.midTransition);
 
-  const dispatch = useAppDispatch();
-
-  const { views, selection, commentsOpen, itemIDType } = workbench;
+  const { views } = workbench;
 
   // const onCommentPanelVisibilityChanged = React.useCallback(
   //   (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),

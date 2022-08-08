@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { IViewPluginDesc, useAsync } from 'tdp_core';
+
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { EWorkbenchDirection, IWorkbench } from '../../store';
 import { addView, addWorkbench } from '../../store/ordinoTrrackedSlice';
@@ -87,12 +88,13 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                 );
               } else {
                 dispatch(
+                  // Just set the config here
                   addView({
                     workbenchIndex: focusWorkbenchIndex,
                     view: {
                       name: newView.name,
                       id: newView.id,
-                      uniqueId: (Math.random() + 1).toString(36).substring(7),
+                      uniqueId: (Math.random() + 1).toString(36).substring(7), // Why? Just use nanoid or something.
                       filters: [],
                     },
                   }),

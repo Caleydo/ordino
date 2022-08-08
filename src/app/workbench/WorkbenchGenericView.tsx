@@ -1,20 +1,16 @@
 /* eslint-disable no-param-reassign */
+import { IColumnDesc } from 'lineupjs';
 import * as React from 'react';
 import { Suspense, useCallback, useMemo, useState } from 'react';
-import { IColumnDesc } from 'lineupjs';
+import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
 import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, IViewPluginDesc, PluginRegistry, useAsync } from 'tdp_core';
-import { MosaicBranch, MosaicPath, MosaicWindow } from 'react-mosaic-component';
-
-import { IWorkbenchView, IWorkbench } from '../../store';
-import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import { isVisynRankingViewDesc } from '../../views/interfaces';
-import { AnimatingOverlay } from './AnimatingOverlay';
+import { IWorkbench, IWorkbenchView } from '../../store';
 import {
-  addFilter,
   addEntityFormatting,
+  addFilter,
   addScoreColumn,
   addSelection,
   createColumnDescs,
@@ -22,6 +18,9 @@ import {
   setViewParameters,
   setWorkbenchData,
 } from '../../store/ordinoTrrackedSlice';
+import { findViewIndex, getAllFilters } from '../../store/storeUtils';
+import { isVisynRankingViewDesc } from '../../views/interfaces';
+import { AnimatingOverlay } from './AnimatingOverlay';
 
 export interface IWorkbenchGenericViewProps {
   workbenchIndex: number;
@@ -77,6 +76,11 @@ export function WorkbenchGenericView({
         return;
       }
       console.log(p, view.parameters);
+      /**
+       * To prevent calling this multiple times.
+       */
+      if (!p.visConfig) return;
+
       dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p }));
     },
     [dispatch, workbenchIndex, view.uniqueId, currentWorkbench, view.parameters],

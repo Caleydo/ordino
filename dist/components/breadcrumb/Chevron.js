@@ -2,17 +2,18 @@ import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { animated, easings, useSpring } from 'react-spring';
-import { setAnimating } from '../../store';
+import { setAnimating, trrack, useTrrackSelector } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { OpenCommentsButton } from './OpenCommentsButton';
 import { ChevronSvg } from './ChevronSvg';
 import { isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
-import { changeFocus, removeWorkbench, setCommentsOpen } from '../../store/ordinoTrrackedSlice';
+import { changeFocus, removeWorkbench } from '../../store/ordinoTrrackedSlice';
+import { isRootNode } from '@trrack/core';
 export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false }) {
     const midTransition = useAppSelector((state) => state.ordinoTracked.midTransition);
     const dispatch = useAppDispatch();
+    const currentTrrackNode = useTrrackSelector((state) => state.current);
     const [width, setWidth] = useState();
     const animatedStyle = useSpring({
         onStart: () => {
@@ -34,15 +35,19 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
         ro.observe(ref.current);
         return () => ro.disconnect();
     }, []);
-    const onCommentPanelVisibilityChanged = React.useCallback((isOpen) => dispatch(setCommentsOpen({ workbenchIndex: workbench === null || workbench === void 0 ? void 0 : workbench.index, isOpen })), [workbench === null || workbench === void 0 ? void 0 : workbench.index, dispatch]);
     return (React.createElement(animated.div, { className: `text-truncate position-relative d-flex justify-content-center ${onClick ? 'cursor-pointer' : ''}`, ref: ref, style: { ...animatedStyle, flexBasis: 0 }, onClick: onClick, title: !isFocusWorkbench(workbench) && !(isNextWorkbench(workbench) && midTransition)
             ? I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })
             : null },
         isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && midTransition) ? (React.createElement("div", { className: `text-truncate chevronDiv d-flex flex-grow-1 ${isFirstWorkbench(workbench) ? 'ms-2' : 'ms-3'}`, style: { flexBasis: 0 } },
-            React.createElement("p", { className: "chevronText text-truncate flex-grow-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })))) : null,
-        React.createElement("div", { className: "me-2 ms-2 text-truncate chevronDiv justify-content-center d-flex", style: { flexBasis: 0, flexGrow: 2 } }, isFocusWorkbench(workbench) && !animatedStyle.flexGrow.isAnimating ? (React.createElement(React.Fragment, null,
-            React.createElement(FilterAndSelected, null),
-            workbench.selection.length > 0 ? (React.createElement(OpenCommentsButton, { idType: workbench.itemIDType, selection: workbench.selection, commentPanelVisible: workbench.commentsOpen, onCommentPanelVisibilityChanged: onCommentPanelVisibilityChanged })) : null)) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && midTransition) ? (React.createElement("p", { className: "text-center text-truncate chevronText flex-grow-1 justify-content-center" }, workbench.name)) : null),
+            React.createElement("p", { className: "chevronText text-truncate flex-grow-1" }, I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })),
+            React.createElement("div", { className: "flex-grow-1", style: {
+                    pointerEvents: 'auto',
+                } },
+                React.createElement("button", { className: `btn chevronText btn-icon-gray text-white shadow-none transition-one ${isRootNode(trrack.graph.backend.nodes[currentTrrackNode]) ? 'disabled' : ''}`, type: "button", disabled: isRootNode(trrack.graph.backend.nodes[currentTrrackNode]), onClick: () => trrack.undo() },
+                    React.createElement("i", { className: "fas fa-undo" })),
+                React.createElement("button", { className: `btn chevronText btn-icon-gray text-white shadow-none transition-one ${trrack.graph.backend.nodes[currentTrrackNode].children.length === 0 ? 'disabled' : ''}`, type: "button", disabled: trrack.graph.backend.nodes[currentTrrackNode].children.length === 0, onClick: () => trrack.redo() },
+                    React.createElement("i", { className: "fas fa-redo" }))))) : null,
+        React.createElement("div", { className: "me-2 ms-2 text-truncate chevronDiv justify-content-center d-flex", style: { flexBasis: 0, flexGrow: 2 } }, isFocusWorkbench(workbench) && !animatedStyle.flexGrow.isAnimating ? (React.createElement(FilterAndSelected, null)) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && midTransition) ? (React.createElement("p", { className: "text-center text-truncate chevronText flex-grow-1 justify-content-center" }, workbench.name)) : null),
         isFocusWorkbench(workbench) || (isNextWorkbench(workbench) && midTransition) ? (React.createElement("div", { className: `${!hideText ? 'me-2' : ''} chevronDiv flex-grow-1 d-flex justify-content-end`, style: { flexBasis: 0 } },
             React.createElement("button", { type: "button", className: `${isFirstWorkbench(workbench) ? 'd-none' : ''} btn-close btn-close-white me-2 pe-auto`, "aria-label": I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.close'), onClick: () => {
                     dispatch(changeFocus({ index: workbench.index - 1 }));

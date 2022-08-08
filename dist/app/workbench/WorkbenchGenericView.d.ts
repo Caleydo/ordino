@@ -1,5 +1,5 @@
-import { IViewPluginDesc } from 'tdp_core';
 import { MosaicBranch } from 'react-mosaic-component';
+import { IViewPluginDesc } from 'tdp_core';
 import { IWorkbenchView } from '../../store';
 export interface IWorkbenchGenericViewProps {
     workbenchIndex: number;

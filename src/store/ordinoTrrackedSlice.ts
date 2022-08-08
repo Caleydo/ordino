@@ -47,10 +47,6 @@ export const ordinoTrrackedSlice = createTrrackableSlice({
         state.workbenches[workbenchIndex].data[row.id] = row;
       }
     },
-    setCommentsOpen(state, action: PayloadAction<{ workbenchIndex: number; isOpen: boolean }>) {
-      const { workbenchIndex, isOpen } = action.payload;
-      state.workbenches[workbenchIndex].commentsOpen = isOpen;
-    },
     setColorMap(state, action: PayloadAction<{ colorMap: { [key: string]: string } }>) {
       state.colorMap = action.payload.colorMap;
     },
@@ -70,7 +66,6 @@ export const {
   createColumnDescs,
   addColumnDesc,
   setWorkbenchData,
-  setCommentsOpen,
   addView,
   changeSelectedMappings,
   setViewParameters,
@@ -86,9 +81,8 @@ export const {
   addFirstWorkbench,
   addWorkbench,
   switchViews,
-  setWorkbenchDirection,
   setTransition,
   setAnimating,
-} = ordinoSlice.actions;
+} = ordinoTrrackedSlice.actions;
 
 export const ordinoTrrackedReducer = ordinoTrrackedSlice.reducer;

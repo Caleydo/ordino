@@ -1,14 +1,13 @@
-/* eslint-disable no-param-reassign */
 import * as React from 'react';
 import { Suspense, useCallback, useMemo, useState } from 'react';
-import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, PluginRegistry, useAsync } from 'tdp_core';
 import { MosaicWindow } from 'react-mosaic-component';
-import { findViewIndex, getAllFilters } from '../../store/storeUtils';
+import { EXTENSION_POINT_VISYN_VIEW, I18nextManager, PluginRegistry, useAsync } from 'tdp_core';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { addEntityFormatting, addFilter, addScoreColumn, addSelection, createColumnDescs, removeView, setViewParameters, setWorkbenchData, } from '../../store/ordinoTrrackedSlice';
+import { findViewIndex, getAllFilters } from '../../store/storeUtils';
 import { isVisynRankingViewDesc } from '../../views/interfaces';
 import { AnimatingOverlay } from './AnimatingOverlay';
-import { addFilter, addEntityFormatting, addScoreColumn, addSelection, createColumnDescs, removeView, setViewParameters, setWorkbenchData, } from '../../store/ordinoTrrackedSlice';
 const DEFAULT_ANIMATING_OVERLAY_ICON = 'far fa-window-maximize';
 export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mosaicDrag, path, }) {
     var _a, _b, _c;
@@ -32,6 +31,11 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
             return;
         }
         console.log(p, view.parameters);
+        /**
+         * To prevent calling this multiple times.
+         */
+        if (!p.visConfig)
+            return;
         dispatch(setViewParameters({ workbenchIndex, viewIndex: findViewIndex(view.uniqueId, currentWorkbench), parameters: p }));
     }, [dispatch, workbenchIndex, view.uniqueId, currentWorkbench, view.parameters]);
     const onIdFilterChanged = useCallback((filter) => dispatch(addFilter({ workbenchIndex, viewId: view.uniqueId, filter })), [dispatch, view.uniqueId, workbenchIndex]);

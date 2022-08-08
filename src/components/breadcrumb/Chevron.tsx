@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { I18nextManager } from 'tdp_core';
 import { animated, easings, useSpring } from 'react-spring';
-import { IWorkbench, setAnimating } from '../../store';
+import { IWorkbench, setAnimating, trrack, useTrrackSelector } from '../../store';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { FilterAndSelected } from './FilterAndSelected';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { ChevronSvg } from './ChevronSvg';
 import { isFirstWorkbench, isFocusWorkbench, isNextWorkbench } from '../../store/storeUtils';
 import { changeFocus, removeWorkbench } from '../../store/ordinoTrrackedSlice';
+import { isRootNode } from '@trrack/core';
 
 export interface IChevronProps {
   first?: boolean;
@@ -22,6 +23,7 @@ export interface IChevronProps {
 export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 'cornflowerblue', workbench = null, hideText = false }: IChevronProps) {
   const midTransition = useAppSelector((state) => state.ordinoTracked.midTransition);
   const dispatch = useAppDispatch();
+  const currentTrrackNode = useTrrackSelector((state) => state.current);
   const [width, setWidth] = useState<number>();
 
   const animatedStyle = useSpring({
@@ -66,13 +68,40 @@ export function Chevron({ first = false, flexWidth = 1, onClick = null, color = 
           <p className="chevronText text-truncate flex-grow-1">
             {I18nextManager.getInstance().i18n.t('tdp:ordino.breadcrumb.workbenchName', { workbenchName: workbench.name })}
           </p>
+          <div
+            className="flex-grow-1"
+            style={{
+              pointerEvents: 'auto',
+            }}
+          >
+            <button
+              className={`btn chevronText btn-icon-gray text-white shadow-none transition-one ${
+                isRootNode(trrack.graph.backend.nodes[currentTrrackNode]) ? 'disabled' : ''
+              }`}
+              type="button"
+              disabled={isRootNode(trrack.graph.backend.nodes[currentTrrackNode])}
+              onClick={() => trrack.undo()}
+            >
+              <i className="fas fa-undo" />
+            </button>
+            <button
+              className={`btn chevronText btn-icon-gray text-white shadow-none transition-one ${
+                trrack.graph.backend.nodes[currentTrrackNode].children.length === 0 ? 'disabled' : ''
+              }`}
+              type="button"
+              disabled={trrack.graph.backend.nodes[currentTrrackNode].children.length === 0}
+              onClick={() => trrack.redo()}
+            >
+              <i className="fas fa-redo" />
+            </button>
+          </div>
         </div>
       ) : null}
 
       <div className="me-2 ms-2 text-truncate chevronDiv justify-content-center d-flex" style={{ flexBasis: 0, flexGrow: 2 }}>
         {isFocusWorkbench(workbench) && !animatedStyle.flexGrow.isAnimating ? (
           <FilterAndSelected />
-        ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && ordino.midTransition) ? (
+        ) : !isFocusWorkbench(workbench) && !hideText && !(isNextWorkbench(workbench) && midTransition) ? (
           <p className="text-center text-truncate chevronText flex-grow-1 justify-content-center">{workbench.name}</p>
         ) : null}
       </div>

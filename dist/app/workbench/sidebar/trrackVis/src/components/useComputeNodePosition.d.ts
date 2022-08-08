@@ -8,6 +8,6 @@ export declare type StratifiedMap<T, S extends string, A extends BaseArtifactTyp
 };
 export declare function useComputeNodePosition<T, S extends string, A extends BaseArtifactType<any>>(nodeMap: Nodes<T, S, A>, current: NodeId, root: NodeId): {
     stratifiedMap: StratifiedMap<T, S, A>;
-    links: import("d3-hierarchy").HierarchyLink<ProvenanceNode<T, S, A>>[];
+    links: any;
 };
 //# sourceMappingURL=useComputeNodePosition.d.ts.map

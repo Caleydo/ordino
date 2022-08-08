@@ -47,7 +47,6 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                                     filters: [],
                                 },
                             ],
-                            commentsOpen: false,
                             viewDirection: EWorkbenchDirection.VERTICAL,
                             columnDescs: [],
                             data: {},
@@ -58,13 +57,16 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }) {
                         }));
                     }
                     else {
-                        dispatch(addView({
+                        dispatch(
+                        // Just set the config her
+                        addView({
                             workbenchIndex: focusWorkbenchIndex,
                             view: {
                                 name: newView.name,
                                 id: newView.id,
                                 uniqueId: (Math.random() + 1).toString(36).substring(7),
                                 filters: [],
+                                parameters: newView.defaultParameters,
                             },
                         }));
                     }

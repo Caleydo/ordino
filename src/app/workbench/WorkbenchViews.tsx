@@ -83,7 +83,6 @@ export function WorkbenchViews({ index, type }: IWorkbenchViewsProps) {
 
   const addMosaicNode = useCallback(
     (newViewId: string) => {
-      console.log('adding');
       const path = getPathToCorner(mosaicState, midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
       const parent = getNodeAtPath(mosaicState, dropRight(path)) as MosaicParent<string>;
       const destination = getNodeAtPath(mosaicState, path) as MosaicNode<string>;

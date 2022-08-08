@@ -4,6 +4,8 @@ import { DetailsSidebar } from './DetailsSidebar';
 import { trrack, useTrrackSelector } from '../../../store';
 import { SidebarButton } from './SidebarButton';
 import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
+import { CommentSidebarButton } from './CommentSidebarButton';
+import { CommentPanelTabPane } from './CommentPanelTabPane';
 import { ProvVis } from './trrackVis/src/components/ProvVis';
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
     const { midTransition, colorMap } = useAppSelector((state) => state.ordinoTracked);
@@ -23,7 +25,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
                     React.createElement(ProvVis, { root: trrack.root.id, config: { changeCurrent: (node) => trrack.to(node), verticalSpace: 25, marginTop: 25, gutter: 25 }, nodeMap: trrack.graph.backend.nodes, currentNode: currentTrrackNode })));
             }
             case 'comment': {
-                return React.createElement("div", { style: { width: '250px' } }, "Comment something");
+                return React.createElement(CommentPanelTabPane, { itemIDType: workbench.itemIDType, selection: workbench.selection });
             }
             default: {
                 return React.createElement("div", { style: { width: '250px' } }, "There was an error finding the correct tab");
@@ -40,7 +42,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
             React.createElement(SidebarButton, { isSelected: openedTab === 'add', color: colorMap[workbench.entityId], icon: "fas fa-plus-circle", onClick: () => (openedTab === 'add' ? setOpenedTab(null) : setOpenedTab('add')) }),
             !isFirstWorkbench(workbench) ? (React.createElement(SidebarButton, { isSelected: openedTab === 'mapping', color: colorMap[workbench.entityId], icon: "fas fa-database", onClick: () => (openedTab === 'mapping' ? setOpenedTab(null) : setOpenedTab('mapping')) })) : null,
             React.createElement(SidebarButton, { isSelected: openedTab === 'filter', color: colorMap[workbench.entityId], icon: "fas fa-filter", onClick: () => (openedTab === 'filter' ? setOpenedTab(null) : setOpenedTab('filter')) }),
-            React.createElement(SidebarButton, { isSelected: openedTab === 'comment', color: colorMap[workbench.entityId], icon: "fas fa-comment", onClick: () => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment')) })),
-        openedTab !== null ? React.createElement("div", null, openedTabComponent) : null));
+            React.createElement(CommentSidebarButton, { isSelected: openedTab === 'comment', color: colorMap[workbench.entityId], idType: workbench.itemIDType, selection: workbench.selection, icon: "fas fa-comment", onClick: () => (openedTab === 'comment' ? setOpenedTab(null) : setOpenedTab('comment')) })),
+        openedTab !== null ? openedTabComponent : null));
 }
 //# sourceMappingURL=WorkbenchUtilsSidebar.js.map

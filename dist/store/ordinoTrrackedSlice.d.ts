@@ -25,10 +25,6 @@ export declare const ordinoTrrackedSlice: import("@trrack/redux").TrrackableSlic
         workbenchIndex: number;
         data: IRow[];
     }>): void;
-    setCommentsOpen(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<{
-        workbenchIndex: number;
-        isOpen: boolean;
-    }>): void;
     setColorMap(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: {
         payload: {
             colorMap: {
@@ -136,12 +132,12 @@ export declare const ordinoTrrackedSlice: import("@trrack/redux").TrrackableSlic
         };
         type: string;
     }): void;
-}, "ordino">;
+}, string, "ordino">;
 export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     colorMap: {
         [key: string]: string;
     };
-}, string>, setTransition: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>, setAnimating: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>, setDetailsSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+}, string>, setDetailsSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     open: boolean;
 }, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
@@ -153,9 +149,6 @@ export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOp
 }, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     data: IRow[];
-}, string>, setCommentsOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    isOpen: boolean;
 }, string>, addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: import("./interfaces").IWorkbenchView;
@@ -206,6 +199,6 @@ export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOp
     workbenchIndex: number;
     firstViewIndex: number;
     secondViewIndex: number;
-}, string>;
+}, string>, setTransition: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>, setAnimating: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>;
 export declare const ordinoTrrackedReducer: import("redux").Reducer<IOrdinoAppTrackedState, import("redux").AnyAction>;
 //# sourceMappingURL=ordinoTrrackedSlice.d.ts.map

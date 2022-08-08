@@ -87,7 +87,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                 );
               } else {
                 dispatch(
-                  // Just set the config here
+                  // Just set the config her
                   addView({
                     workbenchIndex: focusWorkbenchIndex,
                     view: {
@@ -95,6 +95,7 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
                       id: newView.id,
                       uniqueId: (Math.random() + 1).toString(36).substring(7), // Why? Just use nanoid or something.
                       filters: [],
+                      parameters: newView.defaultParameters,
                     },
                   }),
                 );

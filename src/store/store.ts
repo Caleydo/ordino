@@ -1,5 +1,5 @@
-import { configureTrrackableStore } from '@trrack/redux';
 import React from 'react';
+import { configureTrrackableStore } from '@trrack/redux';
 import { createSelectorHook } from 'react-redux';
 
 import { userSlice } from '../visyn/usersSlice';
@@ -11,6 +11,8 @@ import { ordinoUntrackedSlice } from './ordinoUntrackedSlice';
 // export from visyn package all of the visyn reducers that are needed then spread them here. "createVisionReducers"
 
 const allSlices = [ordinoTrrackedSlice, menuSlice, appSlice, userSlice];
+
+
 
 export const { store, trrack, trrackStore } = configureTrrackableStore({
   reducer: {
@@ -24,7 +26,7 @@ export const { store, trrack, trrackStore } = configureTrrackableStore({
     getDefaultMiddleware({
       serializableCheck: false,
     }),
-  slices: allSlices,
+  slices: allSlices as any[], // TODO: Figure out type error?
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

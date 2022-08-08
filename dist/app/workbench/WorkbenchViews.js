@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react';
 import { dropRight } from 'lodash';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { WorkbenchView } from './WorkbenchView';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
 export var EWorkbenchType;
 (function (EWorkbenchType) {
     EWorkbenchType["PREVIOUS"] = "t-previous";
@@ -39,8 +38,7 @@ export function WorkbenchViews({ index, type }) {
     const workbench = useAppSelector((state) => state.ordinoTracked.workbenches[index]);
     const focusIndex = useAppSelector((state) => state.ordinoTracked.focusWorkbenchIndex);
     const midTransition = useAppSelector((state) => state.ordinoTracked.midTransition);
-    const dispatch = useAppDispatch();
-    const { views, selection, commentsOpen, itemIDType } = workbench;
+    const { views } = workbench;
     // const onCommentPanelVisibilityChanged = React.useCallback(
     //   (isOpen: boolean) => dispatch(setCommentsOpen({ workbenchIndex: index, isOpen })),
     //   [index, dispatch],
@@ -56,7 +54,6 @@ export function WorkbenchViews({ index, type }) {
         setMosaicState(firstViewUniqueId);
     }, [firstViewUniqueId]);
     const addMosaicNode = useCallback((newViewId) => {
-        console.log('adding');
         const path = getPathToCorner(mosaicState, midTransition ? Corner.BOTTOM_RIGHT : Corner.TOP_RIGHT);
         const parent = getNodeAtPath(mosaicState, dropRight(path));
         const destination = getNodeAtPath(mosaicState, path);

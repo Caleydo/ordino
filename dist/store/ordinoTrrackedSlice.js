@@ -40,10 +40,6 @@ export const ordinoTrrackedSlice = createTrrackableSlice({
                 state.workbenches[workbenchIndex].data[row.id] = row;
             }
         },
-        setCommentsOpen(state, action) {
-            const { workbenchIndex, isOpen } = action.payload;
-            state.workbenches[workbenchIndex].commentsOpen = isOpen;
-        },
         setColorMap(state, action) {
             state.colorMap = action.payload.colorMap;
         },
@@ -55,6 +51,6 @@ export const ordinoTrrackedSlice = createTrrackableSlice({
         },
     },
 });
-export const { setColorMap, setTransition, setAnimating, setDetailsSidebarOpen, createColumnDescs, addColumnDesc, setWorkbenchData, setCommentsOpen, addView, changeSelectedMappings, setViewParameters, addEntityFormatting, setView, removeView, replaceWorkbench, removeWorkbench, addScoreColumn, addSelection, addFilter, changeFocus, addFirstWorkbench, addWorkbench, switchViews, } = ordinoTrrackedSlice.actions;
+export const { setColorMap, setDetailsSidebarOpen, createColumnDescs, addColumnDesc, setWorkbenchData, addView, changeSelectedMappings, setViewParameters, addEntityFormatting, setView, removeView, replaceWorkbench, removeWorkbench, addScoreColumn, addSelection, addFilter, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setTransition, setAnimating, } = ordinoTrrackedSlice.actions;
 export const ordinoTrrackedReducer = ordinoTrrackedSlice.reducer;
 //# sourceMappingURL=ordinoTrrackedSlice.js.map

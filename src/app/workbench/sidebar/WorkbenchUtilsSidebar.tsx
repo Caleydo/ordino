@@ -8,6 +8,7 @@ import { SidebarButton } from './SidebarButton';
 import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
 import { CommentSidebarButton } from './CommentSidebarButton';
 import { CommentPanelTabPane } from './CommentPanelTabPane';
+import { ProvVis } from './trrackVis/src/components/ProvVis';
 
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const { midTransition, colorMap } = useAppSelector((state) => state.ordinoTracked);
@@ -78,7 +79,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         />
         <CommentSidebarButton
           isSelected={openedTab === 'comment'}
-          color={ordino.colorMap[workbench.entityId]}
+          color={colorMap[workbench.entityId]}
           idType={workbench.itemIDType}
           selection={workbench.selection}
           icon="fas fa-comment"

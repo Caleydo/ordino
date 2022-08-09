@@ -21,7 +21,6 @@
   "types": "dist/index.d.ts",
   "files": [
     "src",
-    "phovea_registry.js",
     "dist"
   ],
   "engines": {
@@ -78,8 +77,8 @@
   "visyn": {
     "entries": {
       "app": {
-        "js": "dist/initialize.js",
-        "template": "dist/index.template.ejs",
+        "js": "src/initialize.ts",
+        "template": "src/index.template.ejs",
         "html": "index.html",
         "chunkName": "app"
       }

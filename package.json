@@ -85,17 +85,19 @@
         "chunkName": "app"
       }
     },
-    "exclude": [
-      "dTiles",
-      "bob",
-      [
-        "datatype",
-        "(matrix|stratification|vector|atom)"
-      ],
-      [
-        "clue",
-        "multiform"
+    "registry": {
+      "exclude": [
+        "dTiles",
+        "bob",
+        [
+          "datatype",
+          "(matrix|stratification|vector|atom)"
+        ],
+        [
+          "clue",
+          "multiform"
+        ]
       ]
-    ]
+    }
   }
 }

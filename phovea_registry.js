@@ -5,7 +5,7 @@
  **************************************************************************** */
 
 import {PluginRegistry} from 'tdp_core';
-import reg from './dist/phovea';
+import reg from './src/phovea';
 
 /**
  * build a registry by registering all phovea modules

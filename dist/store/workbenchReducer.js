@@ -44,17 +44,5 @@ export const workbenchReducers = {
     addFilter(state, action) {
         state.workbenches[action.payload.workbenchIndex].views.find((v) => v.uniqueId === action.payload.viewId).filters = action.payload.filter;
     },
-    addScoreColumn(state, action) {
-        const { workbenchIndex, desc, data } = action.payload;
-        state.workbenches[workbenchIndex].columnDescs.push(desc);
-        for (const row of data) {
-            const dataRow = state.workbenches[workbenchIndex].data[row.id];
-            if (dataRow) {
-                dataRow[desc.scoreID] = row.score;
-            } // TODO: BUG the score should not add a new row when the id does not exist in my current data else {
-            //   state.workbenches[state.focusViewIndex].data[row.id] = row;
-            // }
-        }
-    },
 };
 //# sourceMappingURL=workbenchReducer.js.map

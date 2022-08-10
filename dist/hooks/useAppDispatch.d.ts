@@ -4,5 +4,6 @@ export declare const useAppDispatch: () => ({} | (((action: import("redux").Acti
     menu: import("..").IMenuState;
     app: import("..").IAppState;
     user: import("..").IUserState;
+    lineup: unknown;
 }, undefined, import("redux").AnyAction>)) & import("redux").Dispatch<import("redux").AnyAction>;
 //# sourceMappingURL=useAppDispatch.d.ts.map

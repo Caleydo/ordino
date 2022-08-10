@@ -5,18 +5,21 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
     menu: import("./menuSlice").IMenuState;
     app: import("./appSlice").IAppState;
     user: import("../visyn/usersSlice").IUserState;
+    lineup: unknown;
 }, import("redux").AnyAction, import("@reduxjs/toolkit").MiddlewareArray<[import("@reduxjs/toolkit").ListenerMiddleware<unknown, import("redux-thunk").ThunkDispatch<unknown, unknown, import("redux").AnyAction>, unknown>, import("redux-thunk").ThunkMiddleware<{
     ordinoTracked: import("./interfaces").IOrdinoAppTrackedState;
     ordinoUntracked: import("./interfaces").IOrdinoAppUntrackedState;
     menu: import("./menuSlice").IMenuState;
     app: import("./appSlice").IAppState;
     user: import("../visyn/usersSlice").IUserState;
+    lineup: unknown;
 }, import("redux").AnyAction, undefined>]> | import("redux").Middleware<{}, {
     ordinoTracked: import("./interfaces").IOrdinoAppTrackedState;
     ordinoUntracked: import("./interfaces").IOrdinoAppUntrackedState;
     menu: import("./menuSlice").IMenuState;
     app: import("./appSlice").IAppState;
     user: import("../visyn/usersSlice").IUserState;
+    lineup: unknown;
 }, import("redux").Dispatch<import("redux").AnyAction>>[]>, trrack: {
     registry: import("@trrack/core").Registry<any>;
     readonly isTraversing: boolean;
@@ -26,12 +29,14 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
         menu: import("./menuSlice").IMenuState;
         app: import("./appSlice").IAppState;
         user: import("../visyn/usersSlice").IUserState;
+        lineup: unknown;
     }, any, any>): {
         ordinoTracked: import("./interfaces").IOrdinoAppTrackedState;
         ordinoUntracked: import("./interfaces").IOrdinoAppUntrackedState;
         menu: import("./menuSlice").IMenuState;
         app: import("./appSlice").IAppState;
         user: import("../visyn/usersSlice").IUserState;
+        lineup: unknown;
     };
     graph: {
         changeCurrent: import("@reduxjs/toolkit").ActionCreatorWithPayload<import("@trrack/core").NodeId, string>;
@@ -41,6 +46,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
             menu: import("./menuSlice").IMenuState;
             app: import("./appSlice").IAppState;
             user: import("../visyn/usersSlice").IUserState;
+            lineup: unknown;
         }, string, import("@trrack/core").BaseArtifactType<any>>, string>;
         initialState: {
             nodes: import("@trrack/core").Nodes<{
@@ -49,6 +55,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
                 menu: import("./menuSlice").IMenuState;
                 app: import("./appSlice").IAppState;
                 user: import("../visyn/usersSlice").IUserState;
+                lineup: unknown;
             }, string, import("@trrack/core").BaseArtifactType<any>>;
             current: import("@trrack/core").NodeId;
             root: import("@trrack/core").NodeId;
@@ -60,6 +67,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
                 menu: import("./menuSlice").IMenuState;
                 app: import("./appSlice").IAppState;
                 user: import("../visyn/usersSlice").IUserState;
+                lineup: unknown;
             }, string, import("@trrack/core").BaseArtifactType<any>>;
             current: import("@trrack/core").NodeId;
             root: import("@trrack/core").NodeId;
@@ -70,6 +78,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
             menu: import("./menuSlice").IMenuState;
             app: import("./appSlice").IAppState;
             user: import("../visyn/usersSlice").IUserState;
+            lineup: unknown;
         }, string, import("@trrack/core").BaseArtifactType<any>>;
         root: import("@trrack/core").RootNode<{
             ordinoTracked: import("./interfaces").IOrdinoAppTrackedState;
@@ -77,6 +86,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
             menu: import("./menuSlice").IMenuState;
             app: import("./appSlice").IAppState;
             user: import("../visyn/usersSlice").IUserState;
+            lineup: unknown;
         }, any, any>;
         currentChange(listener: any): () => void;
         update: ((action: import("redux").Action<"listenerMiddleware/add">) => import("@reduxjs/toolkit").UnsubscribeListener) & import("redux-thunk").ThunkDispatch<{
@@ -86,6 +96,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
                 menu: import("./menuSlice").IMenuState;
                 app: import("./appSlice").IAppState;
                 user: import("../visyn/usersSlice").IUserState;
+                lineup: unknown;
             }, string, import("@trrack/core").BaseArtifactType<any>>;
             current: import("@trrack/core").NodeId;
             root: import("@trrack/core").NodeId;
@@ -97,6 +108,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
         menu: import("./menuSlice").IMenuState;
         app: import("./appSlice").IAppState;
         user: import("../visyn/usersSlice").IUserState;
+        lineup: unknown;
     }, string, import("@trrack/core").BaseArtifactType<any>>;
     readonly root: import("@trrack/core").RootNode<{
         ordinoTracked: import("./interfaces").IOrdinoAppTrackedState;
@@ -104,6 +116,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
         menu: import("./menuSlice").IMenuState;
         app: import("./appSlice").IAppState;
         user: import("../visyn/usersSlice").IUserState;
+        lineup: unknown;
     }, any, any>;
     record({ label, state, sideEffects, eventType, }: {
         label: string;
@@ -115,6 +128,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
                 menu: import("./menuSlice").IMenuState;
                 app: import("./appSlice").IAppState;
                 user: import("../visyn/usersSlice").IUserState;
+                lineup: unknown;
             }>;
         } | {
             type: "stateWithPatches";
@@ -124,6 +138,7 @@ export declare const store: import("@reduxjs/toolkit").EnhancedStore<{
                 menu: import("./menuSlice").IMenuState;
                 app: import("./appSlice").IAppState;
                 user: import("../visyn/usersSlice").IUserState;
+                lineup: unknown;
             }, import("immer").Patch[], import("immer").Patch[]];
         };
         eventType: string;

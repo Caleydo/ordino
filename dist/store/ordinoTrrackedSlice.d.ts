@@ -1,10 +1,26 @@
 import { PayloadAction } from '@reduxjs/toolkit';
+import { IColumnDesc } from 'lineupjs';
 import { IRow } from 'tdp_core';
 import { IOrdinoAppTrackedState, IWorkbench } from './interfaces';
+export declare const createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    desc: any;
+}, string>;
+export declare const setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    data: IRow[];
+}, string>;
+export declare const addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    workbenchIndex: number;
+    desc: IColumnDesc & {
+        [key: string]: any;
+    };
+    data: any[];
+}, string>;
+export declare const changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
+    index: number;
+}, string>;
 export declare const ordinoTrrackedSlice: import("@trrack/redux").TrrackableSlice<IOrdinoAppTrackedState, {
-    changeFocus(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<{
-        index: number;
-    }>): void;
     addEntityFormatting(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<{
         workbenchIndex: number;
         formatting: IWorkbench['formatting'];
@@ -13,17 +29,9 @@ export declare const ordinoTrrackedSlice: import("@trrack/redux").TrrackableSlic
         workbenchIndex: number;
         open: boolean;
     }>): void;
-    createColumnDescs(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<{
-        workbenchIndex: number;
-        desc: any;
-    }>): void;
     addColumnDesc(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<{
         workbenchIndex: number;
         desc: any;
-    }>): void;
-    setWorkbenchData(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<{
-        workbenchIndex: number;
-        data: IRow[];
     }>): void;
     setColorMap(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: {
         payload: {
@@ -34,7 +42,6 @@ export declare const ordinoTrrackedSlice: import("@trrack/redux").TrrackableSlic
         type: string;
     }): void;
     setTransition(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<boolean>): void;
-    setAnimating(state: import("immer/dist/internal").WritableDraft<IOrdinoAppTrackedState>, action: PayloadAction<boolean>): void;
     addFirstWorkbench(state: any, action: {
         payload: {
             workbench: IWorkbench;
@@ -80,16 +87,6 @@ export declare const ordinoTrrackedSlice: import("@trrack/redux").TrrackableSlic
             workbenchIndex: number;
             viewId: string;
             filter: string[];
-        };
-        type: string;
-    }): void;
-    addScoreColumn(state: any, action: {
-        payload: {
-            workbenchIndex: number;
-            desc: import("lineupjs").IColumnDesc & {
-                [key: string]: any;
-            };
-            data: any[];
         };
         type: string;
     }): void;
@@ -140,15 +137,9 @@ export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOp
 }, string>, setDetailsSidebarOpen: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     open: boolean;
-}, string>, createColumnDescs: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    desc: any;
 }, string>, addColumnDesc: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     desc: any;
-}, string>, setWorkbenchData: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    data: IRow[];
 }, string>, addView: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     view: import("./interfaces").IWorkbenchView;
@@ -175,12 +166,6 @@ export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOp
     newWorkbench: IWorkbench;
 }, string>, removeWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     index: number;
-}, string>, addScoreColumn: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    workbenchIndex: number;
-    desc: import("lineupjs").IColumnDesc & {
-        [key: string]: any;
-    };
-    data: any[];
 }, string>, addSelection: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbenchIndex: number;
     newSelection: string[];
@@ -188,8 +173,6 @@ export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOp
     workbenchIndex: number;
     viewId: string;
     filter: string[];
-}, string>, changeFocus: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
-    index: number;
 }, string>, addFirstWorkbench: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<{
     workbench: IWorkbench;
     globalQueryName: string;
@@ -199,6 +182,7 @@ export declare const setColorMap: import("@reduxjs/toolkit").ActionCreatorWithOp
     workbenchIndex: number;
     firstViewIndex: number;
     secondViewIndex: number;
-}, string>, setTransition: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>, setAnimating: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>;
+}, string>, setTransition: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<boolean, string>;
+export * from './ordinoUntrackedSlice';
 export declare const ordinoTrrackedReducer: import("redux").Reducer<IOrdinoAppTrackedState, import("redux").AnyAction>;
 //# sourceMappingURL=ordinoTrrackedSlice.d.ts.map

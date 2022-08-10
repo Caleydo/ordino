@@ -1,10 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-const initialState = {};
+const initialState = {
+    isAnimating: false,
+};
 export const ordinoUntrackedSlice = createSlice({
     name: 'ordino',
     initialState,
-    reducers: {},
+    reducers: {
+        setAnimating(state, action) {
+            state.isAnimating = action.payload;
+        },
+    },
 });
-// export const {} = ordinoUntrackedSlice.actions;
-export const ordinoUntrackedReducer = ordinoUntrackedSlice.reducer;
 //# sourceMappingURL=ordinoUntrackedSlice.js.map

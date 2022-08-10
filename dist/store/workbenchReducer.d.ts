@@ -1,5 +1,4 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { IColumnDesc } from 'lineupjs';
 import { ISelectedMapping, IWorkbench } from './interfaces';
 export declare const workbenchReducers: {
     addFirstWorkbench(state: any, action: PayloadAction<{
@@ -29,15 +28,5 @@ export declare const workbenchReducers: {
         viewId: string;
         filter: string[];
     }>): void;
-    addScoreColumn(state: any, action: {
-        payload: {
-            workbenchIndex: number;
-            desc: IColumnDesc & {
-                [key: string]: any;
-            };
-            data: any[];
-        };
-        type: string;
-    }): void;
 };
 //# sourceMappingURL=workbenchReducer.d.ts.map

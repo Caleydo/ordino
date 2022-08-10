@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { IViewPluginDesc, useAsync } from 'tdp_core';
+import { IPluginDesc, IViewPluginDesc, useAsync } from 'tdp_core';
 
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { EWorkbenchDirection, IWorkbench } from '../../store';
@@ -14,6 +14,7 @@ import { EWorkbenchType, WorkbenchViews } from './WorkbenchViews';
 interface IWorkbenchProps {
   workbench: IWorkbench;
   type?: EWorkbenchType;
+
 }
 
 export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbenchProps) {
@@ -35,6 +36,8 @@ export function Workbench({ workbench, type = EWorkbenchType.PREVIOUS }: IWorkbe
       return { ...view, color: colorMap[workbench.itemIDType] };
     });
   }, [availableViews, colorMap, workbench.itemIDType]);
+
+
 
   return (
     <div

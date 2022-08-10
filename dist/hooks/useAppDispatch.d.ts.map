@@ -1,1 +1,1 @@
-{"version":3,"file":"useAppDispatch.d.ts","sourceRoot":"","sources":["../../src/hooks/useAppDispatch.ts"],"names":[],"mappings":"AAGA,eAAO,MAAM,cAAc;;;;;;gGAAmC,CAAC"}
+{"version":3,"file":"useAppDispatch.d.ts","sourceRoot":"","sources":["../../src/hooks/useAppDispatch.ts"],"names":[],"mappings":"AAGA,eAAO,MAAM,cAAc;;;;;;;gGAAmC,CAAC"}

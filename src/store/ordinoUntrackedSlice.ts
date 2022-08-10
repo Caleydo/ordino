@@ -1,14 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IOrdinoAppUntrackedState } from './interfaces';
 
-const initialState: IOrdinoAppUntrackedState = {};
+const initialState: IOrdinoAppUntrackedState = {
+  isAnimating: false,
+};
 
 export const ordinoUntrackedSlice = createSlice({
   name: 'ordino',
   initialState,
-  reducers: {},
+  reducers: {
+    setAnimating(state, action: PayloadAction<boolean>) {
+      state.isAnimating = action.payload;
+    },
+  },
 });
-
-// export const {} = ordinoUntrackedSlice.actions;
-
-export const ordinoUntrackedReducer = ordinoUntrackedSlice.reducer;

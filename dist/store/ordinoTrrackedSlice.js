@@ -1,3 +1,4 @@
+import { createAction } from '@reduxjs/toolkit';
 import { createTrrackableSlice } from '@trrack/redux';
 import { viewsReducers } from './viewsReducer';
 import { workbenchReducers } from './workbenchReducer';
@@ -6,8 +7,11 @@ const initialState = {
     focusWorkbenchIndex: 0,
     midTransition: false,
     colorMap: {},
-    isAnimating: false,
 };
+export const createColumnDescs = createAction('createColumnDescs');
+export const setWorkbenchData = createAction('setWorkbenchData');
+export const addScoreColumn = createAction('addScoreColumn');
+export const changeFocus = createAction('changeFocus');
 export const ordinoTrrackedSlice = createTrrackableSlice({
     name: 'ordino',
     initialState,
@@ -15,10 +19,6 @@ export const ordinoTrrackedSlice = createTrrackableSlice({
         ...viewsReducers,
         ...workbenchReducers,
         // TODO in general: does it make sense to group the reducer functions (e.g., by workbench, views, ...)? or even create multiple variables that are spread-in here.
-        changeFocus(state, action) {
-            state.focusWorkbenchIndex = action.payload.index;
-            state.midTransition = false;
-        },
         addEntityFormatting(state, action) {
             const { workbenchIndex, formatting } = action.payload;
             state.workbenches[workbenchIndex].formatting = formatting;
@@ -26,31 +26,54 @@ export const ordinoTrrackedSlice = createTrrackableSlice({
         setDetailsSidebarOpen(state, action) {
             state.workbenches[action.payload.workbenchIndex].detailsSidebarOpen = action.payload.open;
         },
-        createColumnDescs(state, action) {
-            const { workbenchIndex, desc } = action.payload;
-            state.workbenches[workbenchIndex].columnDescs = desc;
-        },
+        // createColumnDescs(state, action: PayloadAction<{ workbenchIndex: number; desc: any }>) {
+        //   const { workbenchIndex, desc } = action.payload;
+        //   state.workbenches[workbenchIndex].columnDescs = desc;
+        // },
         addColumnDesc(state, action) {
             const { workbenchIndex } = action.payload;
             state.workbenches[workbenchIndex].columnDescs.push(action.payload.desc);
         },
-        setWorkbenchData(state, action) {
-            const { workbenchIndex, data } = action.payload;
-            for (const row of data) {
-                state.workbenches[workbenchIndex].data[row.id] = row;
-            }
-        },
+        // setWorkbenchData(state, action: PayloadAction<{ workbenchIndex: number; data: IRow[] }>) {
+        //   const { workbenchIndex, data } = action.payload;
+        //   for (const row of data) {
+        //     state.workbenches[workbenchIndex].data[row.id] = row;
+        //   }
+        // },
         setColorMap(state, action) {
             state.colorMap = action.payload.colorMap;
         },
         setTransition(state, action) {
             state.midTransition = action.payload;
         },
-        setAnimating(state, action) {
-            state.isAnimating = action.payload;
-        },
+    },
+    extraReducers(builder) {
+        builder.addCase(createColumnDescs, (state, action) => {
+            const { workbenchIndex, desc } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs = desc;
+        }).addCase(setWorkbenchData, (state, action) => {
+            const { workbenchIndex, data } = action.payload;
+            for (const row of data) {
+                state.workbenches[workbenchIndex].data[row.id] = row;
+            }
+        }).addCase(addScoreColumn, (state, action) => {
+            const { workbenchIndex, desc, data } = action.payload;
+            state.workbenches[workbenchIndex].columnDescs.push(desc);
+            for (const row of data) {
+                const dataRow = state.workbenches[workbenchIndex].data[row.id];
+                if (dataRow) {
+                    dataRow[desc.scoreID] = row.score;
+                } // TODO: BUG the score should not add a new row when the id does not exist in my current data else {
+                //   state.workbenches[state.focusViewIndex].data[row.id] = row;
+                // }
+            }
+        }).addCase(changeFocus, (state, action) => {
+            state.focusWorkbenchIndex = action.payload.index;
+            state.midTransition = false;
+        });
     },
 });
-export const { setColorMap, setDetailsSidebarOpen, createColumnDescs, addColumnDesc, setWorkbenchData, addView, changeSelectedMappings, setViewParameters, addEntityFormatting, setView, removeView, replaceWorkbench, removeWorkbench, addScoreColumn, addSelection, addFilter, changeFocus, addFirstWorkbench, addWorkbench, switchViews, setTransition, setAnimating, } = ordinoTrrackedSlice.actions;
+export const { setColorMap, setDetailsSidebarOpen, addColumnDesc, addView, changeSelectedMappings, setViewParameters, addEntityFormatting, setView, removeView, replaceWorkbench, removeWorkbench, addSelection, addFilter, addFirstWorkbench, addWorkbench, switchViews, setTransition, } = ordinoTrrackedSlice.actions;
+export * from './ordinoUntrackedSlice';
 export const ordinoTrrackedReducer = ordinoTrrackedSlice.reducer;
 //# sourceMappingURL=ordinoTrrackedSlice.js.map

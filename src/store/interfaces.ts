@@ -34,6 +34,11 @@ export interface IOrdinoAppUntrackedState {
    * analog to IQueryFilter
    */
   appliedQueryCategories?: (number | string)[];
+
+  /**
+   * isAnimating is true when transitioning between workbenches, during the animation.
+   */
+   isAnimating: boolean;
 }
 
 export interface IOrdinoAppTrackedState {
@@ -56,10 +61,6 @@ export interface IOrdinoAppTrackedState {
 
   midTransition: boolean;
 
-  /**
-   * isAnimating is true when transitioning between workbenches, during the animation.
-   */
-  isAnimating: boolean;
 }
 
 export enum EWorkbenchDirection {

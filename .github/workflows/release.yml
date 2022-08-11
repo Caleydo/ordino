@@ -1,8 +1,0 @@
-name: release
-
-on: workflow_dispatch
-          
-jobs:
-  release:
-    uses: datavisyn/github-workflows/.github/workflows/release-source.yml@node16
-    secrets: inherit      

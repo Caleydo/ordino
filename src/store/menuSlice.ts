@@ -1,10 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export interface IReprovisynProject {
+  name: string;
+  id: number;
+  owner: IReprovisynUser;
+  description: string;
+  collabs: IReprovisynUser[];
+  createdAt: Date;
+  permissions: string;
+}
+
+export interface IReprovisynUser {
+  id: number;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  active: boolean;
+  email?: string;
+  lastLogin?: Date;
+  createdOn: Date;
+  changedOn?: Date;
+}
+
 export interface IMenuState {
   activeTab: string;
   mode: EStartMenuMode;
-  currentProject: string;
-  allProjects: string[];
+  currentProject: IReprovisynProject;
+  allProjects: IReprovisynProject[];
 }
 
 export enum EStartMenuMode {
@@ -48,11 +70,11 @@ const menuSlice = createSlice({
     setMode(state, action: PayloadAction<EStartMenuMode>) {
       state.mode = action.payload;
     },
-    setCurrentProject(state, action: PayloadAction<string>) {
-      state.currentProject = action.payload;
+    setCurrentProject(state, action: PayloadAction<{ project: IReprovisynProject }>) {
+      state.currentProject = action.payload.project;
     },
-    setAllProjects(state, action: PayloadAction<string[]>) {
-      state.allProjects = action.payload;
+    setAllProjects(state, action: PayloadAction<{ projects: IReprovisynProject[] }>) {
+      state.allProjects = action.payload.projects;
     },
   },
 });

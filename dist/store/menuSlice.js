@@ -38,10 +38,10 @@ const menuSlice = createSlice({
             state.mode = action.payload;
         },
         setCurrentProject(state, action) {
-            state.currentProject = action.payload;
+            state.currentProject = action.payload.project;
         },
         setAllProjects(state, action) {
-            state.allProjects = action.payload;
+            state.allProjects = action.payload.projects;
         },
     },
 });

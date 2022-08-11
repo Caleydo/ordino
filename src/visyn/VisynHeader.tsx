@@ -13,7 +13,7 @@ export interface IVisynHeaderProps {
 export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, extensions = {}, burgerMenuEnabled = false }: IVisynHeaderProps) {
   const { AppLogo, VisynLogo, CustomerLogo, BurgerButton, LeftExtensions, RightExtensions, SettingsMenu } = { ...visynHeaderComponents, ...extensions };
 
-  const projectName = useAppSelector((state) => state.menu.currentProject);
+  const projectName = useAppSelector((state) => state.menu.currentProject?.name);
   const currentTab = useAppSelector((state) => state.menu.activeTab);
 
   return (
@@ -33,7 +33,7 @@ export function VisynHeader({ ConfigMenuOptions = null, BurgerSidebar = null, ex
         </button>
         <div className="collapse navbar-collapse">
           {LeftExtensions ? <LeftExtensions /> : null}
-          {projectName !== null && currentTab !== 'datasets_tab' ? (
+          {projectName && currentTab !== 'datasets_tab' ? (
             <ul className="navbar-nav align-items-center">
               <li className="nav-item align-middle">
                 <p className="m-0 h-100 text-white align-middle">

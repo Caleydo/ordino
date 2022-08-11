@@ -209,6 +209,7 @@ export function CommonSessionCard({
         ref={parent}
         className={`card card-shadow ${highlight ? 'highlight-card' : ''}`}
         onAnimationStart={onHighlightAnimationStart}
+        data-testid={`${cardName.replace(/\s+/g, '-').toLowerCase()}-sessionscard`}
         onAnimationEnd={onHighlightAnimationEnd}
       >
         <div className="card-body p-3">

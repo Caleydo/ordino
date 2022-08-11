@@ -44,6 +44,7 @@ export default function TemporarySessionCard({ name, faIcon }: IStartMenuSession
                       <button
                         type="button"
                         className="me-2 pt-1 pb-1 btn btn-outline-secondary"
+                        data-testid="save-button"
                         title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')}
                         onClick={(event) => sessionAction(EAction.SAVE, event, session)}
                       >
@@ -53,6 +54,7 @@ export default function TemporarySessionCard({ name, faIcon }: IStartMenuSession
                         <button
                           type="button"
                           className="dropdown-item"
+                          data-testid="clone-button"
                           title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')}
                           onClick={(event) => sessionAction(EAction.CLONE, event, session)}
                         >
@@ -61,6 +63,7 @@ export default function TemporarySessionCard({ name, faIcon }: IStartMenuSession
                         <button
                           type="button"
                           className="dropdown-delete dropdown-item"
+                          data-testid="delete-button"
                           title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')}
                           onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}
                         >

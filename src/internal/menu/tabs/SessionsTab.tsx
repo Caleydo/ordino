@@ -37,7 +37,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
             <>
               <div className="container pb-10 pt-5">
                 <div className="row justify-content-center">
-                  <div className="col-11 position-relative">
+                  <div className="col-11 position-relative" data-testid="sessions-tab">
                     {items?.map((item, index) => {
                       return (
                         // `id` attribute must match the one in the scrollspy
@@ -46,6 +46,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
                           id={`${item.desc.id}_${suffix}`}
                           key={item.desc.id}
                           index={index}
+                          data-testid={`${item.desc.id}_${suffix}`}
                           handleOnChange={handleOnChange}
                         >
                           <item.factory {...item.desc} />
@@ -56,7 +57,7 @@ export default function SessionsTab(_props: IStartMenuTabProps) {
                 </div>
               </div>
               <BrowserRouter basename="/#">
-                <OrdinoFooter openInNewWindow />
+                <OrdinoFooter openInNewWindow testId="sessions-tab" />
               </BrowserRouter>
             </>
           )}

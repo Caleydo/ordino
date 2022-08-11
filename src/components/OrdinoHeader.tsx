@@ -30,14 +30,12 @@ export function OrdinoHeader({ tabs, extensions }: IOrdinoHeaderProps) {
   React.useEffect(() => {
     if (ordino.workbenches.length === 0) {
       dispatch(setActiveTab(tabs[0].id));
+      setMode(EStartMenuMode.START);
     }
   }, [ordino.workbenches.length, dispatch, tabs]);
 
   const MemoizedLoginLink = React.useCallback(() => <VisynLoginLink userName={user.userName} onLogout={LoginUtils.logout} />, [user.userName]);
-  const MemoizedHeaderTabs = React.useCallback(
-    () => <HeaderTabs tabs={tabs} activeTab={menu.activeTab} mode={EStartMenuMode.OVERLAY} />,
-    [menu.activeTab, tabs],
-  );
+  const MemoizedHeaderTabs = React.useCallback(() => <HeaderTabs tabs={tabs} activeTab={menu.activeTab} mode={menu.mode} />, [menu.activeTab, menu.mode, tabs]);
   return (
     <>
       <VisynHeader
@@ -47,7 +45,7 @@ export function OrdinoHeader({ tabs, extensions }: IOrdinoHeaderProps) {
           ...extensions,
         }}
       />
-      {app.ready ? <StartMenuTabWrapper tabs={tabs} activeTab={menu.activeTab} mode={EStartMenuMode.OVERLAY} /> : null}
+      {app.ready ? <StartMenuTabWrapper tabs={tabs} activeTab={menu.activeTab} mode={menu.mode} /> : null}
     </>
   );
 }

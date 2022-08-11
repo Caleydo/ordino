@@ -23,16 +23,17 @@ export function OrdinoHeader({ tabs, extensions }) {
     React.useEffect(() => {
         if (ordino.workbenches.length === 0) {
             dispatch(setActiveTab(tabs[0].id));
+            setMode(EStartMenuMode.START);
         }
     }, [ordino.workbenches.length, dispatch, tabs]);
     const MemoizedLoginLink = React.useCallback(() => React.createElement(VisynLoginLink, { userName: user.userName, onLogout: LoginUtils.logout }), [user.userName]);
-    const MemoizedHeaderTabs = React.useCallback(() => React.createElement(HeaderTabs, { tabs: tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }), [menu.activeTab, tabs]);
+    const MemoizedHeaderTabs = React.useCallback(() => React.createElement(HeaderTabs, { tabs: tabs, activeTab: menu.activeTab, mode: menu.mode }), [menu.activeTab, menu.mode, tabs]);
     return (React.createElement(React.Fragment, null,
         React.createElement(VisynHeader, { extensions: {
                 LeftExtensions: MemoizedHeaderTabs,
                 RightExtensions: MemoizedLoginLink,
                 ...extensions,
             } }),
-        app.ready ? React.createElement(StartMenuTabWrapper, { tabs: tabs, activeTab: menu.activeTab, mode: EStartMenuMode.OVERLAY }) : null));
+        app.ready ? React.createElement(StartMenuTabWrapper, { tabs: tabs, activeTab: menu.activeTab, mode: menu.mode }) : null));
 }
 //# sourceMappingURL=OrdinoHeader.js.map

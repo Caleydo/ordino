@@ -42,7 +42,7 @@
     "docs": "visyn_scripts docs",
     "lint:fix": "visyn_scripts lint --fix",
     "lint": "visyn_scripts lint",
-    "prepare": "git clone --branch dist_cache git@github.com:Caleydo/ordino.git dist_cache && mv ./dist_cache/visyn_scripts/dist ./dist && rimraf dist_cache",
+    "prepare": "git clone --depth 1 --branch dist_cache git@github.com:Caleydo/ordino.git dist_cache && mv ./dist_cache/visyn_scripts/dist ./dist && rimraf dist_cache",
     "start": "visyn_scripts start --env workspace_mode=single",
     "storybook:build": "NODE_OPTIONS=--max_old_space_size=4096 build-storybook",
     "storybook": "NODE_OPTIONS=--max_old_space_size=4096 start-storybook -p 6006",

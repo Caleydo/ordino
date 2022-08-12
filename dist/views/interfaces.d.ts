@@ -50,7 +50,7 @@ export interface IOrdinoRankingViewParam {
     prevSelection: string[];
     selectedMappings: ISelectedMapping[];
     globalQueryName: string;
-    appliedQueryCategories: (number | string)[];
+    appliedQueryCategories: string[];
 }
 export declare type OrdinoRankingViewPluginType<Param extends Record<string, unknown> = Record<string, unknown>, Desc extends Record<string, unknown> = Record<string, unknown>> = DefineVisynViewPlugin<'ranking', Param & IOrdinoRankingViewParam, {
     /**

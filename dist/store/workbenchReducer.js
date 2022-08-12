@@ -63,6 +63,7 @@ export const workbenchReducers = {
     },
     setWorkbenchData(state, action) {
         const { workbenchIndex, data } = action.payload;
+        state.workbenches[workbenchIndex].data = {}; // clear object beforehand
         for (const row of data) {
             state.workbenches[workbenchIndex].data[row.id] = row;
         }

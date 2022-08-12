@@ -53,8 +53,6 @@
   "devDependencies": {
     "@types/bootstrap": "~5.0.15",
     "@types/jquery.scrollto": "~1.4.28",
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
     "@types/react-select": "^4.0.13",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-highlight-words": "^0.16.1"
@@ -63,8 +61,6 @@
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
     "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#visyn_scripts",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
     "react-dropzone": "^11.3.1",
     "react-highlight-words": "^0.17.0",
     "react-intersection-observer": "^8.31.1",
@@ -73,12 +69,6 @@
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
     "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
-  },
-  "resolutions": {
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
   },
   "overrides": {
     "@types/react": "^16.9.23",

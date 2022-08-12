@@ -38,16 +38,16 @@ export interface IOrdinoAppState {
     /**
      * Stores the available global query name used in the current session
      */
-    globalQueryName?: string;
+    globalQueryName: string;
     /**
      * Stores the available global query categories available for the current session
      */
-    globalQueryCategories?: (number | string)[];
+    globalQueryCategories: string[];
     /**
      * Filter query that is applied to all entities.
      * analog to IQueryFilter
      */
-    appliedQueryCategories?: (number | string)[];
+    appliedQueryCategories: string[];
 }
 export declare enum EWorkbenchDirection {
     VERTICAL = "vertical",

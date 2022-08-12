@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { intersection } from 'lodash';
 import { IOrdinoAppState, IWorkbench } from './interfaces';
 import { viewsReducers } from './viewsReducer';
 import { workbenchReducers } from './workbenchReducer';
@@ -9,6 +10,9 @@ const initialState: IOrdinoAppState = {
   midTransition: false,
   colorMap: {},
   isAnimating: false,
+  globalQueryName: '',
+  globalQueryCategories: [],
+  appliedQueryCategories: [],
 };
 
 const ordinoSlice = createSlice({
@@ -36,6 +40,23 @@ const ordinoSlice = createSlice({
     },
     setAnimating(state, action: PayloadAction<boolean>) {
       state.isAnimating = action.payload;
+    },
+    setGlobalFilters(state, action: PayloadAction<{ appliedQueryCategories: string[] }>) {
+      const includesCurrentFilter =
+        state.appliedQueryCategories?.length === intersection(state.appliedQueryCategories, action.payload.appliedQueryCategories)?.length ||
+        action.payload.appliedQueryCategories?.length === 0; // if no filter is selected then the new data is a superset of the previous data
+
+      if (!includesCurrentFilter) {
+        // if the new filter does not include the previous, remove all workbenches except the first one
+        if (state.workbenches.length > 1) {
+          state.workbenches.length = 1;
+          state.focusWorkbenchIndex = 0;
+          state.midTransition = false;
+          state.isAnimating = true;
+        }
+        state.workbenches[0].selection = []; // clear the selection
+      }
+      state.appliedQueryCategories = action.payload.appliedQueryCategories;
     },
   },
 });
@@ -65,6 +86,7 @@ export const {
   setWorkbenchDirection,
   setTransition,
   setAnimating,
+  setGlobalFilters,
 } = ordinoSlice.actions;
 
 export const ordinoReducer = ordinoSlice.reducer;

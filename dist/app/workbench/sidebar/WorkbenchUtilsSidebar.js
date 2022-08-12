@@ -5,6 +5,7 @@ import { SidebarButton } from './SidebarButton';
 import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
 import { CommentSidebarButton } from './CommentSidebarButton';
 import { CommentPanelTabPane } from './CommentPanelTabPane';
+import { FilterSidebar } from './FilterSidebar';
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
     const ordino = useAppSelector((state) => state.ordino);
     const [openedTab, setOpenedTab] = useState(openTab);
@@ -17,7 +18,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }) {
                 return React.createElement(DetailsSidebar, { workbench: workbench });
             }
             case 'filter': {
-                return React.createElement("div", { style: { width: '250px' } }, "Filter something");
+                return React.createElement(FilterSidebar, { workbench: workbench });
             }
             case 'comment': {
                 return React.createElement(CommentPanelTabPane, { itemIDType: workbench.itemIDType, selection: workbench.selection });

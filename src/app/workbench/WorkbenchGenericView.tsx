@@ -53,6 +53,7 @@ export function WorkbenchGenericView({
   const dispatch = useAppDispatch();
   const ordino = useAppSelector((state) => state.ordino);
   const currentWorkbench = ordino.workbenches[workbenchIndex];
+  const { globalQueryName, appliedQueryCategories } = ordino;
   const plugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
 
   const { value: viewPlugin } = useAsync(
@@ -84,8 +85,8 @@ export function WorkbenchGenericView({
     const previousWorkbench = ordino.workbenches?.[workbenchIndex - 1];
     const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
     const { selectedMappings } = currentWorkbench;
-    return { prevSelection, selectedMappings };
-  }, [workbenchIndex, ordino.workbenches, currentWorkbench]);
+    return { prevSelection, selectedMappings, globalQueryName, appliedQueryCategories };
+  }, [workbenchIndex, ordino.workbenches, currentWorkbench, globalQueryName, appliedQueryCategories]);
 
   const onDataChanged = useMemo(() => (data: any[]) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
   const onAddFormatting = useMemo(

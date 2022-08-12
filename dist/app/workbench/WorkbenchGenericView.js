@@ -17,6 +17,7 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
     const dispatch = useAppDispatch();
     const ordino = useAppSelector((state) => state.ordino);
     const currentWorkbench = ordino.workbenches[workbenchIndex];
+    const { globalQueryName, appliedQueryCategories } = ordino;
     const plugin = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_VISYN_VIEW, view.id);
     const { value: viewPlugin } = useAsync(React.useCallback(() => plugin.load().then((p) => {
         p.desc.uniqueId = view.uniqueId; // inject uniqueId to pluginDesc
@@ -33,8 +34,8 @@ export function WorkbenchGenericView({ workbenchIndex, view, chooserOptions, mos
         const previousWorkbench = (_a = ordino.workbenches) === null || _a === void 0 ? void 0 : _a[workbenchIndex - 1];
         const prevSelection = previousWorkbench ? previousWorkbench.selection : [];
         const { selectedMappings } = currentWorkbench;
-        return { prevSelection, selectedMappings };
-    }, [workbenchIndex, ordino.workbenches, currentWorkbench]);
+        return { prevSelection, selectedMappings, globalQueryName, appliedQueryCategories };
+    }, [workbenchIndex, ordino.workbenches, currentWorkbench, globalQueryName, appliedQueryCategories]);
     const onDataChanged = useMemo(() => (data) => dispatch(setWorkbenchData({ workbenchIndex, data })), [dispatch, workbenchIndex]);
     const onAddFormatting = useMemo(() => (formatting) => dispatch(addEntityFormatting({ workbenchIndex, formatting })), [dispatch, workbenchIndex]);
     const onColumnDescChanged = useMemo(() => (desc) => dispatch(createColumnDescs({ workbenchIndex, desc })), [dispatch, workbenchIndex]);

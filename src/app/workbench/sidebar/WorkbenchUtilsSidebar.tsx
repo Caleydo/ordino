@@ -6,6 +6,7 @@ import { SidebarButton } from './SidebarButton';
 import { isFirstWorkbench, isFocusWorkbench } from '../../../store/storeUtils';
 import { CommentSidebarButton } from './CommentSidebarButton';
 import { CommentPanelTabPane } from './CommentPanelTabPane';
+import { FilterSidebar } from './FilterSidebar';
 
 export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: IWorkbench; openTab?: string }) {
   const ordino = useAppSelector((state) => state.ordino);
@@ -21,7 +22,7 @@ export function WorkbenchUtilsSidebar({ workbench, openTab = '' }: { workbench: 
         return <DetailsSidebar workbench={workbench} />;
       }
       case 'filter': {
-        return <div style={{ width: '250px' }}>Filter something</div>;
+        return <FilterSidebar workbench={workbench} />;
       }
       case 'comment': {
         return <CommentPanelTabPane itemIDType={workbench.itemIDType} selection={workbench.selection} />;

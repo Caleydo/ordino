@@ -38,7 +38,7 @@
     "cy:run": "cypress run",
     "delete-dependencies": "rimraf node_modules",
     "predist": "npm run lint && npm run test && npm run build",
-    "prepack": "(git clone --depth 1 --branch dist_cache git@github.com:Caleydo/ordino.git dist_cache && mv ./dist_cache/visyn_scripts/dist ./dist && rimraf dist_cache) || npm run build",
+    "prepare": "(git clone --depth 1 --branch dist_cache git@github.com:Caleydo/ordino.git dist_cache && mv ./dist_cache/visyn_scripts/dist ./dist && rimraf dist_cache) || npm run build",
     "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *",
     "docs": "visyn_scripts docs",
     "lint:fix": "visyn_scripts lint --fix",

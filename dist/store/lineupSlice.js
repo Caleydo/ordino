@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { createTrrackableSlice } from '@trrack/redux';
 import { store } from './store';
+import { Ranking } from 'lineupjs';
+// TODO: Add other lineup actions like Groups, Filters, Aggs, etc.
 export class LineUpManager {
     constructor() {
         this.record = new Map();
@@ -22,6 +24,23 @@ export class LineUpManager {
         if (!instance)
             throw new Error(`Lineup Instance ${id} not found`);
         return instance;
+    }
+    static dirtyRankingWaiter(ranking) {
+        let waiter = null;
+        ranking.on(`${Ranking.EVENT_DIRTY_ORDER}.trrack`, () => {
+            ranking.on(`${Ranking.EVENT_DIRTY_ORDER}.trrack`, null);
+            let resolver;
+            waiter = new Promise((res) => {
+                resolver = res;
+            });
+            ranking.on(`${Ranking.EVENT_ORDER_CHANGED}.trrack`, () => {
+                ranking.on(`${Ranking.EVENT_ORDER_CHANGED}.trrack`, null);
+                resolver();
+            });
+        });
+        return () => {
+            return waiter;
+        };
     }
     static createSetSortCriteriaListenerFor(instanceId, rankingId) {
         return (prev, cur) => {
@@ -63,12 +82,14 @@ export const lineupSlice = createTrrackableSlice({
             // const listenerBackup = ranking.getListener('.....track');
             // ranking.listener['...track'].pause();
             ranking.on('sortCriteriaChanged', null);
+            const wait = LineUpManager.dirtyRankingWaiter(ranking);
             ranking.setSortCriteria(action.payload.sortCriteria.map((v) => ({
                 asc: v.asc,
                 col: ranking.findByPath(v.col),
             })));
             ranking.on('sortCriteriaChanged', LineUpManager.createSetSortCriteriaListenerFor(action.payload.instanceId, ranking.id));
-            // TODO: Wait for ranking to be ready
+            return wait;
+            // TODO: Wait for ranking to be ready. Implement the current dirtyRankingWaiter to show asyncDispatch
             // await new Promise((resolve) => setTimeout(resolve, 1000));
         },
     },

@@ -5,6 +5,7 @@ export declare class LineUpManager {
     static getInstance(): LineUpManager;
     register(id: string, instance: LocalDataProvider): void;
     get(id: string): LocalDataProvider;
+    static dirtyRankingWaiter(ranking: any): () => Promise<void>;
     static createSetSortCriteriaListenerFor(instanceId: string, rankingId: string): (prev: any, cur: any) => void;
 }
 export declare const lineupSlice: any;

@@ -59,7 +59,7 @@
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#visyn_scripts",
+    "tdp_core": "git+ssh://git@github.com/datavisyn/tdp_core.git#visyn_scripts",
     "react-dropzone": "^11.3.1",
     "react-highlight-words": "^0.17.0",
     "react-intersection-observer": "^8.31.1",
@@ -67,7 +67,7 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
-    "visyn_scripts": "git+ssh://git@github.com:datavisyn/visyn_scripts.git#develop"
+    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
   },
   "overrides": {
     "@types/react": "^16.9.23",

@@ -30,3 +30,11 @@ node_modules/
 /.cache-loader
 package-lock.json
 /yarn.lock
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -75,6 +75,12 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },
+  "resolutions": {
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
   "visyn": {
     "entries": {
       "app": {

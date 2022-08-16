@@ -15,6 +15,16 @@ function generateHash(desc, selection) {
     const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
     return `${desc.id}_${s}`;
 }
+// function to get the previous siblings of an element, used to calculate a unique id for the viewwrapper
+const previousSiblings = (elem) => {
+    // create an empty array
+    const siblings = [];
+    // eslint-disable-next-line no-cond-assign
+    while ((elem = elem.previousElementSibling)) {
+        siblings.push(elem);
+    }
+    return siblings;
+};
 export class ViewWrapper extends EventHandler {
     /**
      * Initialize this view, create the root node and the (inner) view
@@ -86,6 +96,9 @@ export class ViewWrapper extends EventHandler {
      * @param options
      */
     createView(selection, itemSelection, plugin, options) {
+        // add data-testid to viewWrapper, use id of viewWrapper and number of previous siblings to make it unique
+        const numPrevSiblings = previousSiblings(this.$viewWrapper.node()).length;
+        this.$viewWrapper.attr('data-testid', `viewWrapper-${numPrevSiblings}`);
         this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
         this.$chooser = this.$viewWrapper
             .append('div')
@@ -98,6 +111,7 @@ export class ViewWrapper extends EventHandler {
             .attr('type', 'button')
             .attr('class', 'btn-close')
             .attr('aria-label', 'Close')
+            .attr('data-testid', 'close-button')
             .on('click', (d) => {
             this.remove();
         });
@@ -262,6 +276,7 @@ export class ViewWrapper extends EventHandler {
             const $buttons = $categories.selectAll('button').data((d) => d.views);
             $buttons.enter().append('button').classed('btn', true);
             $buttons.attr('data-viewid', (d) => d.id);
+            $buttons.attr('data-testid', (d) => d.id);
             $buttons
                 .text((d) => d.name)
                 .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))

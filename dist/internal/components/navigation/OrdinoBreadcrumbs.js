@@ -26,8 +26,8 @@ function OrdinoBreadcrumbItem(props) {
             props.view.off(ViewWrapper.EVENT_REPLACE_VIEW, replaceViewListener);
         };
     }, [props.view]);
-    return (React.createElement("li", { className: `hview ${historyClassNames[viewMode]}` },
-        React.createElement("a", { href: "#", onClick: (event) => {
+    return (React.createElement("li", { className: `hview ${historyClassNames[viewMode]}`, "data-testid": props.dataTestId },
+        React.createElement("a", { href: "#", "data-testid": `${props.view.desc.id}-link`, onClick: (event) => {
                 event.preventDefault();
                 props.onClick(props.view);
             } }, viewName)));

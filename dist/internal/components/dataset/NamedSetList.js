@@ -18,6 +18,7 @@ function sortNamedSetsAlphabetically(sets) {
     return sets.sort((a, b) => collator.compare(a.name, b.name));
 }
 export function NamedSetList({ headerIcon, headerText, value: namedSets, status, onOpen, onEditNamedSet, onDeleteNamedSet }) {
+    const testId = headerText.replace(/\s+/g, '-').toLowerCase(); // replace whtiespace by dash and make lowercase
     const editNamedSet = (event, namedSet) => {
         event.preventDefault();
         StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {
@@ -38,7 +39,7 @@ export function NamedSetList({ headerIcon, headerText, value: namedSets, status,
             onDeleteNamedSet === null || onDeleteNamedSet === void 0 ? void 0 : onDeleteNamedSet(namedSet);
         }
     };
-    return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4 position-relative" },
+    return (React.createElement("div", { className: "dataset-entry d-flex flex-column col-md-4 position-relative", "data-testid": testId },
         React.createElement("header", null,
             React.createElement("i", { className: `ms-1 me-2 ${headerIcon}` }),
             headerText),
@@ -53,10 +54,10 @@ export function NamedSetList({ headerIcon, headerText, value: namedSets, status,
             return (
             // eslint-disable-next-line react/no-array-index-key
             React.createElement("div", { key: i, className: "dropdown-parent justify-content-between btn-group position-static" },
-                React.createElement("button", { type: "button", className: "text-start ps-0 btn btn-link text-ordino-button-primary", title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
+                React.createElement("button", { type: "button", className: "text-start ps-0 btn btn-link text-ordino-button-primary", "data-testid": `${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`, title: DatasetUtils.toNamedSetTitle(namedSet), onClick: (event) => onOpen(event, namedSet) }, namedSet.name),
                 canWrite ? (React.createElement(ListItemDropdown, null,
-                    React.createElement("button", { type: "button", className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails'), onClick: (event) => editNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')),
-                    React.createElement("button", { type: "button", className: "dropdown-item dropdown-delete", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete'), onClick: (event) => deleteNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')))) : null));
+                    React.createElement("button", { type: "button", className: "dropdown-item", "data-testid": `${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`, title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails'), onClick: (event) => editNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')),
+                    React.createElement("button", { type: "button", className: "dropdown-item dropdown-delete", "data-testid": `${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`, title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete'), onClick: (event) => deleteNamedSet(event, namedSet) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')))) : null));
         }))),
         status === 'error' && React.createElement("p", null,
             " ",

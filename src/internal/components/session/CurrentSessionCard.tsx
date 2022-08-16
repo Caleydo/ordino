@@ -61,6 +61,7 @@ export default function CurrentSessionCard({ name, faIcon }: IStartMenuSessionSe
               type="button"
               className="me-2 pt-1 pb-1 btn btn-outline-secondary"
               title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession')}
+              data-testid="save-button"
               disabled={ProvenanceGraphMenuUtils.isPersistent(desc)}
               onClick={(event) => saveCurrentSession(event, graph)}
             >

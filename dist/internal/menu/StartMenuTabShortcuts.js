@@ -12,7 +12,7 @@ export function StartMenuTabShortcuts({ tabs, shortcuts, setActiveTab, setHighli
     React.createElement(React.Fragment, null, status === 'success' &&
         shortcuts.map((s) => {
             return (React.createElement("li", { key: s.id, className: "nav-item" },
-                React.createElement("a", { className: "nav-link", role: "button", onClick: (evt) => onClick(evt, s) },
+                React.createElement("a", { className: "nav-link", "data-testid": `${s.id}-link`, role: "button", onClick: (evt) => onClick(evt, s) },
                     ' ',
                     s.icon ? React.createElement("i", { className: `me-2 ${s.icon}` }) : null,
                     s.text)));

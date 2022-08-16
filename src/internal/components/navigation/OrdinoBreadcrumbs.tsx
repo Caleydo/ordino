@@ -7,6 +7,8 @@ interface IOrdinoBreadcrumbItemProps {
   view: ViewWrapper;
 
   onClick(view: ViewWrapper): void;
+
+  dataTestId?: string;
 }
 
 function OrdinoBreadcrumbItem(props: IOrdinoBreadcrumbItemProps) {
@@ -41,9 +43,10 @@ function OrdinoBreadcrumbItem(props: IOrdinoBreadcrumbItemProps) {
   }, [props.view]);
 
   return (
-    <li className={`hview ${historyClassNames[viewMode]}`}>
+    <li className={`hview ${historyClassNames[viewMode]}`} data-testid={props.dataTestId}>
       <a
         href="#"
+        data-testid={`${props.view.desc.id}-link`}
         onClick={(event) => {
           event.preventDefault();
           props.onClick(props.view);

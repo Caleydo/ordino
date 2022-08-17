@@ -23,7 +23,7 @@ import {
   IView,
   IViewContext,
 } from 'tdp_core';
-import * as d3 from 'd3';
+import * as d3v3 from 'd3v3';
 import * as $ from 'jquery';
 // eslint-disable-next-line import/extensions
 import 'jquery.scrollto/jquery.scrollTo.js';
@@ -45,11 +45,11 @@ export class ViewWrapper extends EventHandler {
 
   static EVENT_REPLACE_VIEW = 'replaceView';
 
-  private $viewWrapper: d3.Selection<ViewWrapper>;
+  private $viewWrapper: d3v3.Selection<ViewWrapper>;
 
-  private $node: d3.Selection<ViewWrapper>;
+  private $node: d3v3.Selection<ViewWrapper>;
 
-  private $chooser: d3.Selection<ViewWrapper>;
+  private $chooser: d3v3.Selection<ViewWrapper>;
 
   private _mode: EViewMode = null;
 
@@ -122,7 +122,7 @@ export class ViewWrapper extends EventHandler {
     this.init(graph, selection, plugin, options);
 
     // create ViewWrapper root node
-    this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+    this.$viewWrapper = d3v3.select(parent).append('div').classed('viewWrapper', true);
 
     this.built = Promise.resolve(this.createView(selection, itemSelection, plugin, options));
   }
@@ -367,7 +367,7 @@ export class ViewWrapper extends EventHandler {
         .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))
         .on('click', function (d) {
           $buttons.classed('active', false);
-          d3.select(this).classed('active', true);
+          d3v3.select(this).classed('active', true);
 
           that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.id, idtype, selection);
         });

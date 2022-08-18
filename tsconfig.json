@@ -1,25 +1,7 @@
 {
+  "extends": "visyn_scripts/config/tsconfig.template.json",
   "compilerOptions": {
-    "module": "ES2020",
-    "target": "ES2019",
-    "importHelpers": true,
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "moduleResolution": "node",
-    "jsx": "react",
-    "allowJs": true,
-    "declarationDir": "dist",
-    "outDir": "dist",
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "preserveWatchOutput": true,
-    "incremental": true,
-    "tsBuildInfoFile": "dist/tsBuildInfoFile"
+    "outDir": "./dist",
   },
   "include": [
     "src/**/*.ts",

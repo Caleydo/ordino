@@ -142,6 +142,7 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
               key={item.id}
               href={`#${item.id}`}
               onClick={scrollIntoView}
+              data-testid={`${item.id}-scrollspy-link`}
               className={`ps-0 mt-0 border-0 bg-transparent list-group-item list-group-item-action ${item.id === activeId ? 'active' : ''}`}
             >
               {item.name}

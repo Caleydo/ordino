@@ -20,6 +20,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "cypress",
     "src",
     "dist"
   ],
@@ -66,7 +67,7 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
-    "tdp_core": "git+ssh://git@github.com/datavisyn/tdp_core.git#visyn_scripts",
+    "tdp_core": "git+ssh://git@github.com/datavisyn/tdp_core.git#develop",
     "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
   },
   "overrides": {

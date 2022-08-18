@@ -17,11 +17,12 @@ export function SessionListItem({ desc, selectSession, children }: ISessionListI
   const dateFromNow = desc?.ts ? TDPApplicationUtils.fromNow(desc.ts) : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');
   const me = UserSession.getInstance().currentUserNameOrAnonymous();
   return (
-    <div className="row dropdown-parent session-item ms-0 mb-1 me-1 align-items-start">
+    <div className="row dropdown-parent session-item ms-0 mb-1 me-1 align-items-start" data-testid={desc.id}>
       <div className="d-flex px-0 flex-column align-items-start col-md-11">
         <button
           type="button"
           title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.continueSession')}
+          data-testid="continue-session-button"
           disabled={selectSession == null}
           className="ps-0 btn btn-link align-self-start text-ordino-button-primary"
           onClick={(event) => selectSession(event, desc)}

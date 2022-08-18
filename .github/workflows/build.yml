@@ -4,5 +4,5 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    uses: datavisyn/github-workflows/.github/workflows/build-node.yml@node16
+    uses: datavisyn/github-workflows/.github/workflows/build-node.yml@main
     secrets: inherit 

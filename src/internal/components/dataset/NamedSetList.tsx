@@ -48,6 +48,7 @@ function sortNamedSetsAlphabetically(sets: INamedSet[] | null): INamedSet[] | nu
 }
 
 export function NamedSetList({ headerIcon, headerText, value: namedSets, status, onOpen, onEditNamedSet, onDeleteNamedSet }: INamedSetListProps) {
+  const testId = headerText.replace(/\s+/g, '-').toLowerCase(); // replace whtiespace by dash and make lowercase
   const editNamedSet = (event: React.MouseEvent, namedSet: IStoredNamedSet) => {
     event.preventDefault();
     StoreUtils.editDialog(namedSet, I18nextManager.getInstance().i18n.t(`tdp:core.editDialog.listOfEntities.default`), async (name, description, sec) => {
@@ -73,7 +74,7 @@ export function NamedSetList({ headerIcon, headerText, value: namedSets, status,
   };
 
   return (
-    <div className="dataset-entry d-flex flex-column col-md-4 position-relative">
+    <div className="dataset-entry d-flex flex-column col-md-4 position-relative" data-testid={testId}>
       <header>
         <i className={`ms-1 me-2 ${headerIcon}`} />
         {headerText}
@@ -94,6 +95,7 @@ export function NamedSetList({ headerIcon, headerText, value: namedSets, status,
                 <button
                   type="button"
                   className="text-start ps-0 btn btn-link text-ordino-button-primary"
+                  data-testid={`${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`}
                   title={DatasetUtils.toNamedSetTitle(namedSet)}
                   onClick={(event) => onOpen(event, namedSet)}
                 >
@@ -104,6 +106,7 @@ export function NamedSetList({ headerIcon, headerText, value: namedSets, status,
                     <button
                       type="button"
                       className="dropdown-item"
+                      data-testid={`${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`}
                       title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDatasetDetails')}
                       onClick={(event) => editNamedSet(event, namedSet as IStoredNamedSet)}
                     >
@@ -112,6 +115,7 @@ export function NamedSetList({ headerIcon, headerText, value: namedSets, status,
                     <button
                       type="button"
                       className="dropdown-item dropdown-delete"
+                      data-testid={`${namedSet.name.replace(/\s+/g, '-').toLowerCase()}-button`}
                       title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}
                       onClick={(event) => deleteNamedSet(event, namedSet as IStoredNamedSet)}
                     >

@@ -11,6 +11,7 @@ export const ListItemDropdown = React.forwardRef(function ListItemDropdown(props
         className="btn btn-link dropdown-toggle"
         type="button"
         id="dropdownMenuButton"
+        data-testid="list-item-dropdown-button"
         data-bs-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false"

@@ -18,6 +18,7 @@ interface IHeaderNavigationProps {
 }
 
 export function HeaderNavigation({ fixed, bg = 'dark' }: IHeaderNavigationProps) {
+  const testId = 'ordino-navbar';
   const links: IOrdinoHeaderMenuLink[] = PluginRegistry.getInstance()
     .listPlugins(EP_ORDINO_HEADER_MENU)
     .map((d) => d as IOrdinoHeaderMenuDesc) // no need to load the plugin; everything is contained in the plugin desc
@@ -28,12 +29,13 @@ export function HeaderNavigation({ fixed, bg = 'dark' }: IHeaderNavigationProps)
       className={`ordino-header-navigation navbar navbar-expand-lg navbar-dark bg-${bg} ${fixed === 'top' ? 'fixed-top' : ''} ${
         fixed === 'bottom' ? 'fixed-bottom' : ''
       }`}
+      data-testid={`${testId}`}
     >
       <div className="container-fluid">
         <a href="#/" className="navbar-brand">
           <OrdinoLogo />
         </a>
-        <a href="/app/" className="order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light">
+        <a href="/app/" className="order-2 mx-3 mx-lg-0 ms-auto ms-lg-3 btn btn-light" data-testid="start-analysis-button">
           Start Analysis
         </a>
         <button
@@ -53,7 +55,7 @@ export function HeaderNavigation({ fixed, bg = 'dark' }: IHeaderNavigationProps)
               {links.map(({ text, page, faIcon }, i) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <li className="px-3 nav-item" key={i}>
-                  <NavLink to={page} className="nav-link" activeClassName="active">
+                  <NavLink to={page} className="nav-link" activeClassName="active" data-testid={`${page}-link`}>
                     {faIcon && <i className={`${faIcon} me-2`} />}
                     {text}
                   </NavLink>

@@ -1,7 +1,7 @@
 {
   "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "version": "12.0.1-SNAPSHOT",
+  "version": "12.1.1-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -20,83 +20,91 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "cypress",
     "src",
-    "phovea_registry.js",
     "dist"
   ],
   "engines": {
-    "npm": ">= 6.12",
-    "node": ">= 12.13"
+    "npm": ">=8",
+    "node": ">=16"
   },
   "scripts": {
-    "clean": "rimraf dist lib",
-    "delete-dependencies": "rimraf node_modules",
-    "compile": "tsc",
-    "compile:watch": "tsc -w",
-    "postcompile": "npm run copy",
-    "lint": "eslint --cache src/**/*.ts{,x} tests/**/*.ts{,x}",
-    "lint:fix": "eslint --fix --cache src/**/*.ts{,x} tests/**/*.ts{,x}",
-    "docs": "typedoc --options typedoc.json src/**.ts",
-    "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
-    "test": "test ! $(find tests -name \"*.ts\") || jest",
-    "test:watch": "jest --watch",
-    "posttest": "npm run lint",
-    "copy": "npm run copy-assets && npm run copy-styles && npm run copy-app-assets",
-    "build": "npm run clean && npm run compile",
-    "copy-assets": "if [ -d src/assets ]; then shx --verbose cp -R src/assets/. dist/assets/; fi && if [ -d src/templates ]; then shx --verbose cp -R src/templates/. dist/templates/; fi",
-    "copy-styles": "if [ -d src/scss ]; then shx --verbose cp -R src/scss/. dist/scss/; fi",
-    "copy-app-assets": "shx --verbose cp src/*.txt dist/ | true && shx --verbose cp src/*.html dist/ | true && shx --verbose cp src/*.ejs dist/ | true",
-    "release:major": "npm version major && npm publish && git push --follow-tags",
-    "release:minor": "npm version minor && npm publish && git push --follow-tags",
-    "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "predist": "npm run build && npm run docs",
-    "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *"
+    "all": "yarn run lint:fix && yarn run test && yarn run build && yarn run dist",
+    "build": "yarn run clean && yarn run compile && yarn run copy",
+    "clean": "visyn_scripts cleanbuild dist lib",
+    "compile:watch": "visyn_scripts compile --watch",
+    "compile": "visyn_scripts compile",
+    "copy": "visyn_scripts copy",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "delete-dependencies": "visyn_scripts cleannode_modules",
+    "predist": "yarn run lint && yarn run test && yarn run build",
+    "dist": "mkdir lib && cd dist && tar cvzf ../lib/ordino.tar.gz *",
+    "docs": "visyn_scripts docs",
+    "lint:fix": "visyn_scripts lint --fix",
+    "lint": "visyn_scripts lint",
+    "start": "visyn_scripts start --env workspace_mode=single",
+    "storybook:build": "NODE_OPTIONS=--max_old_space_size=4096 build-storybook",
+    "storybook": "NODE_OPTIONS=--max_old_space_size=4096 start-storybook -p 6006",
+    "test": "visyn_scripts test",
+    "webpack:dev": "visyn_scripts build --mode development --env workspace_mode=single",
+    "webpack:prod": "visyn_scripts build --mode production --env workspace_mode=single"
   },
   "devDependencies": {
     "@types/bootstrap": "~5.0.15",
-    "@types/jquery": "~3.5.5",
     "@types/jquery.scrollto": "~1.4.28",
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "@types/react-select": "^4.0.13",
+    "@types/react-highlight-words": "^0.16.1",
     "@types/react-router-dom": "^5.1.7",
-    "@typescript-eslint/eslint-plugin": "^5.9.0",
-    "@typescript-eslint/parser": "^5.9.0",
-    "eslint": "^8.7.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^16.1.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jest": "^25.3.4",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "identity-obj-proxy": "~3.0.0",
-    "jest-raw-loader": "~1.0.1",
-    "prettier": "^2.5.1",
-    "rimraf": "~3.0.2",
-    "shx": "~0.3.3",
-    "@types/jest": "~27.4.1",
-    "jest": "~27.5.1",
-    "ts-jest": "~27.1.3",
-    "tslib": "~2.3.1",
-    "typedoc": "~0.22.13",
-    "typescript": "~4.6.2",
-    "@types/react-highlight-words": "^0.16.1"
+    "@types/react-select": "^4.0.13"
   },
   "dependencies": {
     "jquery": "~3.5.1",
     "jquery.scrollto": "~2.1.2",
-    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
     "react-dropzone": "^11.3.1",
     "react-highlight-words": "^0.17.0",
     "react-intersection-observer": "^8.31.1",
     "react-router-dom": "^5.2.0",
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
-    "react-virtualized": "^9.22.3"
-  }
+    "react-virtualized": "^9.22.3",
+    "tdp_core": "git+ssh://git@github.com/datavisyn/tdp_core.git#develop",
+    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
+  },
+  "overrides": {
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
+  "resolutions": {
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
+  "visyn": {
+    "entries": {
+      "app": {
+        "js": "src/initialize.ts",
+        "template": "src/index.template.ejs",
+        "html": "index.html",
+        "chunkName": "app"
+      }
+    },
+    "registry": {
+      "exclude": [
+        "dTiles",
+        "bob",
+        [
+          "datatype",
+          "(matrix|stratification|vector|atom)"
+        ],
+        [
+          "clue",
+          "multiform"
+        ]
+      ]
+    }
+  },
+  "packageManager": "yarn@3.2.2"
 }

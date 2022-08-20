@@ -22,6 +22,7 @@ export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
               id={tab.desc.id}
               role="tabpanel"
               aria-labelledby={`${tab.desc.id}-tab`}
+              data-testid={tab.desc.id}
             >
               {props.mode === EStartMenuMode.OVERLAY && (
                 <div className="container-fluid">
@@ -32,6 +33,7 @@ export function StartMenuTabWrapper(props: IStartMenuTabWrapperProps) {
                       }<button
                         type="button"
                         className="btn-close"
+                        data-testid="close-button"
                         onClick={() => {
                           props.setActiveTab(null);
                         }}

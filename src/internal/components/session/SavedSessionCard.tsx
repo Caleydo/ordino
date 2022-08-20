@@ -43,6 +43,7 @@ export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSect
                     className="nav-link active"
                     id={`saved-session-tab-${id}`}
                     data-bs-toggle="tab"
+                    data-testid="my-sessions-link"
                     href={`#saved-session-mine-panel-${id}`}
                     role="tab"
                     aria-controls={`saved-session-mine-panel-${id}`}
@@ -57,6 +58,7 @@ export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSect
                     className="nav-link"
                     id={`saved-session-other-tab-${id}`}
                     data-bs-toggle="tab"
+                    data-testid="other-sessions-link"
                     href={`#saved-session-other-panel-${id}`}
                     role="tab"
                     aria-controls={`saved-session-other-panel-${id}`}
@@ -74,6 +76,7 @@ export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSect
                       className="tab-pane fade show active ordino-session-list p-1"
                       role="tabpanel"
                       id={`saved-session-mine-panel-${id}`}
+                      data-testid="my-sessions"
                       aria-labelledby={`saved-session-mine-tab-${id}`}
                     >
                       {status === 'pending' && (
@@ -92,6 +95,7 @@ export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSect
                               <button
                                 type="button"
                                 title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDetails')}
+                                data-testid="edit-button"
                                 onClick={(event) => sessionAction(EAction.EDIT, event, session, setSessions)}
                                 className="me-2 pt-1 pb-1 btn btn-outline-secondary"
                               >
@@ -101,6 +105,7 @@ export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSect
                                 <button
                                   type="button"
                                   className="dropdown-item"
+                                  data-testid="clone-button"
                                   title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary')}
                                   onClick={(event) => sessionAction(EAction.CLONE, event, session)}
                                 >
@@ -110,6 +115,7 @@ export default function SavedSessionCard({ name, faIcon }: IStartMenuSessionSect
                                   type="button"
                                   title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession')}
                                   className="dropdown-item dropdown-delete"
+                                  data-testid="delete-button"
                                   onClick={(event) => sessionAction(EAction.DELETE, event, session, setSessions)}
                                 >
                                   {I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')}

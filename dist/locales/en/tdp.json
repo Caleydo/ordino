@@ -1,0 +1,53 @@
+{
+    "core": {
+        "lineup": {
+            "LineupPanelActions": {
+                "databaseColumns": "Annotation Columns",
+                "columnTitle": "{{text}}",
+                "addText": "Add {{text}}"
+            }
+        }
+    },
+    "ordino": {
+        "appLink": {
+            "title": "Open Ordino start page in a new tab"
+        },
+        "startMenu": {
+            "currentCardInfo": "Save the current session to open it later again or share it with other users.",
+            "tempCardInfo": "A temporary session will only be stored in your local browser cache.It is not possible to share a link to states of this session with others. Only the 10 most recent sessions will be stored.",
+            "savedCardInfo": "The saved session will be stored on the server. By default, sessions are private, meaning that only the creator has access to it. If the status is set to public, others can also see the session and access certain states by opening a shared link.",
+            "uploadCardInfo": "You can import sessions as temporary sessions and continue the analysis afterwards.",
+            "datasetTabInfo": "Start a new analysis session by loading a dataset",
+            "loadingSets": "Loading sets...",
+            "noSetsAvailable": "No sets available",
+            "loadingError": "Error when loading sets",
+            "edit": "Edit",
+            "editDetails": "Edit Details",
+            "editDatasetDetails": "Edit Dataset Details",
+            "delete": "Delete",
+            "deleteSession": "Delete Session",
+            "export": "Export",
+            "exportSession": "Export Session",
+            "save": "Save",
+            "alreadySaved": "Session is Already Saved",
+            "saveSession": "Save Session",
+            "mySessions": "My Sessions",
+            "otherSessions": "Other Sessions",
+            "by": "by",
+            "clone": "Clone",
+            "cloneSession": "Clone Session",
+            "cloneToTemporary": "Clone to Temporary Session",
+            "continueSession": "Continue Session",
+            "privateAccess": "Private Access",
+            "publicAccess": "Public Access",
+            "startTour": "Start Tour",
+            "tourLevelBeginner": "General introduction",
+            "tourLevelAdvanced": "Advanced tours"
+        },
+        "loginMenu": {
+            "automaticLoginDisclaimer": "You will be automatically logged into Ordino as soon as you visit the site. If your access is expired, please refresh the page to log in again.",
+            "modalTitle": "Login to Ordino",
+            "refreshPage": "Refresh page"
+        }
+    }
+}

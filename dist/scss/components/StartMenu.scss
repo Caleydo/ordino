@@ -1,0 +1,204 @@
+.ordino-start-menu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: $light;
+  z-index: 99; // above all other content
+  overflow: auto;
+
+  .card-shadow {
+    // same as the Bootstrap class `.shadow-sm`, but without `!important` to allow highlighting
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.08);
+  }
+
+  .highlight-card {
+    animation: highlight-card 4s linear;
+  }
+
+  @keyframes highlight-card {
+    10%,
+    70% {
+      box-shadow: 0 0 0.75rem $select-color;
+      border: 1px solid $select-color;
+    }
+  }
+
+  &.ordino-start-menu-open {
+    display: grid;
+    grid-template-rows: 1fr auto; // use available space for tab content (1fr) and push footer always to the bottom (auto)
+  }
+
+  .ordino-icon-1 {
+    font-size: 2rem;
+  }
+
+  .ordino-icon-2 {
+    background-color: $gray-800;
+    color: $white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    font-size: 1rem;
+  }
+
+  .nav-link {
+    position: relative;
+    color: $gray-600;
+    font-size: 1.12rem;
+
+    .active {
+      color: inherit;
+      font-weight: 500;
+
+      &:before {
+        @extend .fas;
+        content: fa-content($fa-var-angle-right);
+        position: absolute;
+        top: 0.5rem;
+        left: 1rem;
+        font-size: 1.3rem;
+      }
+    }
+  }
+
+  .dataset-entry:not(:first-child) {
+    border-left: 1px solid $gray-300;
+  }
+
+  .dropdown-parent:hover,
+  .dropdown-parent:focus-within {
+    .list-item-dropdown {
+      visibility: visible;
+    }
+  }
+
+  .list-item-dropdown {
+    // showing a dropdown in an element whose overflow is set to hidden, does not work (the dropdown is cut off)
+    // therefore, we overwrite the `position relative` of a dropdown, and manually set as relative a parent element whose overflow is not hidden
+    position: initial;
+    visibility: hidden;
+
+    .dropdown-toggle {
+      color: $gray-600;
+    }
+
+    .dropdown-toggle::after {
+      display: none;
+    }
+    .dropdown-delete {
+      color: red;
+      &:hover {
+        background-color: rgb(255, 233, 233);
+      }
+    }
+  }
+
+  .session-tab {
+    height: 46px;
+    border-bottom: 2px solid $gray-300;
+
+    &.card-header-pills {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    .nav-item {
+      > a {
+        // clear bootstrap styles
+        &,
+        &:hover,
+        &:focus,
+        a.active {
+          font-weight: 500;
+          color: inherit;
+          background: none;
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: 44px;
+          left: 0;
+          width: 0px;
+          height: 0px;
+          background: black;
+          transition: width 0.3s;
+        }
+        &.active::after {
+          width: 100%;
+          height: 2px;
+        }
+        &.disabled {
+          opacity: 0.2;
+        }
+      }
+    }
+  }
+
+  .session-dropzone {
+    border: 1px dashed $gray-600;
+    border-radius: 6px;
+    padding: 0.6rem;
+
+    p:nth-child(1) {
+      font-weight: 500;
+      color: $gray-600;
+    }
+    p:nth-child(2) {
+      color: $gray-500;
+    }
+  }
+}
+
+.session-item:not(:last-child) {
+  border-bottom: 1px solid $gray-300;
+}
+
+.col.position-relative {
+  .btn-close {
+    position: relative;
+    z-index: 1; // position icon above the tab container to make it clickable
+    padding-top: 2em;
+    padding-right: 2em;
+  }
+}
+
+.ordino-start-menu-overlay {
+  // make background color more transparent in overlay mode ...
+  background-color: rgba($gray-100, 0.9);
+
+  // ... but use full-colored background with some gradient at the edges for text containers
+  .start-menu-close {
+    background: $gray-100;
+    background: radial-gradient(circle,
+      rgba($gray-100, 1) 40%,
+      rgba($gray-100, 0) 80%
+    );
+  }
+
+  .ordino-scrollspy-container > .container {
+    background: $gray-100;
+    background: linear-gradient(90deg,
+      rgba($gray-100, 0) 0%,
+      rgba($gray-100, 1) 5%,
+      rgba($gray-100, 1) 95%,
+      rgba($gray-100, 0) 100%
+    );
+  }
+
+  .ordino-scrollspy-nav {
+    background: $gray-100;
+    background: linear-gradient(90deg,
+      rgba($gray-100, 0) 0%,
+      rgba($gray-100, 1) 20%,
+      rgba($gray-100, 1) 80%,
+      rgba($gray-100, 0) 100%
+    ); // same as container scrollspy container above, but with different gradient stops
+  }
+}

@@ -7,9 +7,6 @@
  ******************************************************************* */
 import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
 import * as d3v3 from 'd3v3';
-import * as $ from 'jquery';
-// eslint-disable-next-line import/extensions
-import 'jquery.scrollto/jquery.scrollTo.js';
 import { MODE_ANIMATION_TIME } from './constants';
 function generateHash(desc, selection) {
     const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
@@ -25,6 +22,51 @@ const previousSiblings = (elem) => {
     }
     return siblings;
 };
+/**
+ * Scrolls an element to the given horizontal target position (i.e., x-axis).
+ * This function is a modified version from https://medium.com/@snowleo208/how-to-create-smooth-scroll-for-your-website-ce5b198d9d94
+ *
+ * @param element HTML element that will be scrolled
+ * @param target Horizontal target position
+ * @param duration Duration of the animation (default: 600 ms)
+ */
+function scrollTo(element, target, duration = 600) {
+    let start = null;
+    const firstPosX = element.scrollLeft || 0;
+    let posX = 0;
+    (function () {
+        const browser = ['ms', 'moz', 'webkit', 'o'];
+        for (let x = 0, { length } = browser; x < length && !window.requestAnimationFrame; x++) {
+            window.requestAnimationFrame = window[`${browser[x]}RequestAnimationFrame`];
+            window.cancelAnimationFrame = window[`${browser[x]}CancelAnimationFrame`] || window[`${browser[x]}CancelRequestAnimationFrame`];
+        }
+    })();
+    function showAnimation(timestamp) {
+        if (!start) {
+            start = timestamp || new Date().getTime();
+        } // get id of animation
+        const elapsed = timestamp - start;
+        const progress = elapsed / duration; // animation duration
+        // ease in function from https://github.com/component/ease/blob/master/index.js
+        const outQuad = function (n) {
+            return n * (2 - n);
+        };
+        const easeInPercentage = +outQuad(progress).toFixed(2);
+        // if target is 0 (back to left), the position is: current pos + (current pos * percentage of duration)
+        // if target > 0 (not back to left), the positon is current pos + (target pos * percentage of duration)
+        posX = target === 0 ? firstPosX - firstPosX * easeInPercentage : firstPosX + target * easeInPercentage;
+        element.scrollTo(posX, 0);
+        // console.log(posX, target, firstPosX, progress);
+        if ((target !== 0 && posX >= firstPosX + target) || (target === 0 && posX <= 0)) {
+            cancelAnimationFrame(start);
+            posX = 0;
+        }
+        else {
+            window.requestAnimationFrame(showAnimation);
+        }
+    }
+    window.requestAnimationFrame(showAnimation);
+}
 export class ViewWrapper extends EventHandler {
     /**
      * Initialize this view, create the root node and the (inner) view
@@ -242,10 +284,9 @@ export class ViewWrapper extends EventHandler {
         }, MODE_ANIMATION_TIME);
     }
     scrollIntoView() {
-        const prev = this.$viewWrapper.node().previousSibling;
-        const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
-        const $app = $(this.$viewWrapper.node()).parent();
-        $app.scrollTo(scrollToPos, 500, { axis: 'x' });
+        var _a, _b, _c;
+        const scrollToPos = (_c = (_b = (_a = this.$viewWrapper.node()) === null || _a === void 0 ? void 0 : _a.previousSibling) === null || _b === void 0 ? void 0 : _b.offsetLeft) !== null && _c !== void 0 ? _c : 0;
+        scrollTo(this.$viewWrapper.node().parentElement, scrollToPos, MODE_ANIMATION_TIME);
     }
     /**
      * Decide if a chooser for the next view should be shown and if so, which next views are available

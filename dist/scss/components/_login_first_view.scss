@@ -1,0 +1,45 @@
+/********************************************************************
+ * Copyright (c) The Caleydo Team, http://caleydo.org
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ ********************************************************************/
+
+
+.loginFirstView {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: 1;
+
+  display: none;
+
+  &:only-child {
+    display: block;
+  }
+
+  img {
+    width: 200px;
+    height: auto;
+    opacity: 0.2;
+    transform: rotate(60deg) scaleY(-1);
+  }
+
+  h1 {
+    position: absolute;
+    left: 240px;
+    top: 90px;
+    margin: 0;
+    padding: 0;
+    width: 400px;
+    color: #999;
+    font-size: 4em;
+  }
+}
+
+.form-signin {
+  div.popover-content {
+    width: 20em;
+  }
+}

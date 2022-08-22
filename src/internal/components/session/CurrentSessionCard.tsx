@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  GlobalEventHandler,
-  I18nextManager,
-  PropertyHandler,
-  ProvenanceGraph,
-  ErrorAlertHandler,
-  NotificationHandler,
-  ProvenanceGraphMenuUtils,
-} from 'tdp_core';
+import { GlobalEventHandler, I18nextManager, ProvenanceGraph, ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 
 import { GraphContext, HighlightSessionCardContext } from '../../constants';
 import { ListItemDropdown } from '../../../components';
@@ -37,14 +29,9 @@ export default function CurrentSessionCard({ name, faIcon }: IStartMenuSessionSe
           .catch(ErrorAlertHandler.getInstance().errorAlert)
           .then(() => {
             setDesc(g.desc);
-            const p = new PropertyHandler(window.location.hash);
-            const hash = new Map<string, string>();
-            p.forEach((key, value) => {
-              hash.set(key, `${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-            });
-            hash.set('clue_graph', `clue_graph=${encodeURIComponent(g.desc.id)}`);
-            hash.set('clue_state', `clue_state=${g.act.id}`);
-            const url = `${window.location.href.replace(window.location.hash, '')}#${Array.from(hash.values()).join('&')}`;
+
+            const url = manager.getCLUEGraphURL();
+
             NotificationHandler.pushNotification(
               'success',
               `${I18nextManager.getInstance().i18n.t('tdp:core.EditProvenanceMenu.successNotification', { name: g.desc.name })}

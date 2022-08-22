@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "visyn_scripts/config/tsconfig.eslint.template.json",
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

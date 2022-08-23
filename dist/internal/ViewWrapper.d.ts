@@ -6,7 +6,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import { IObjectRef, ProvenanceGraph, EventHandler, IPlugin, IPluginDesc, EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
-import 'jquery.scrollto/jquery.scrollTo.js';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;
     selection: ISelection;

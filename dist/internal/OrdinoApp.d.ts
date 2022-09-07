@@ -110,7 +110,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
      * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
      */
-    startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues?: any): void;
+    startNewSession(startViewId: string, startViewOptions: Record<string, any>, defaultSessionValues?: Record<string, any>): void;
     /**
      * This function is the counter part to `startNewSession()`.
      * It initializes the new session with the empty provenance graph which is created with the page reload.

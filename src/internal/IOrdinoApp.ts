@@ -45,5 +45,5 @@ export interface IOrdinoApp {
    * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
    * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
    */
-  startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any);
+  startNewSession(startViewId: string, startViewOptions: Record<string, any>, defaultSessionValues: Record<string, any>);
 }

@@ -70,15 +70,15 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
     });
   }
 
-  protected initSessionImpl(app: OrdinoApp) {
-    app.initApp().then(() => {
-      if (app.props.graph.isEmpty) {
-        app.initNewSessionAfterPageReload();
-      } else {
-        // just if no other option applies jump to the stored state
-        app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
-        this.jumpToStoredOrLastState();
-      }
-    });
+  protected async initSessionImpl(app: OrdinoApp) {
+    await app.initApp();
+
+    if (app.props.graph.isEmpty) {
+      app.initNewSessionAfterPageReload();
+    } else {
+      // just if no other option applies jump to the stored state
+      app.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
+      this.jumpToStoredOrLastState();
+    }
   }
 }

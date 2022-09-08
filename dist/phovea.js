@@ -66,7 +66,7 @@ export default function (registry) {
         faIcon: 'fa-file-upload',
         priority: 100,
     });
-    registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('ordino/dist/assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), {
+    registry.push(EP_ORDINO_LOGO, 'ordino_logo', () => import('./assets/logos/ordino.svg').then(PluginRegistry.getInstance().asResource), {
         text: 'Ordino',
         width: 30,
         height: 30,

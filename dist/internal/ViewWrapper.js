@@ -6,14 +6,66 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
-import * as d3 from 'd3';
-import * as $ from 'jquery';
-// eslint-disable-next-line import/extensions
-import 'jquery.scrollto/jquery.scrollTo.js';
+import * as d3v3 from 'd3v3';
 import { MODE_ANIMATION_TIME } from './constants';
 function generateHash(desc, selection) {
     const s = `${selection.idtype ? selection.idtype.id : ''}r${selection.ids}`;
     return `${desc.id}_${s}`;
+}
+// function to get the previous siblings of an element, used to calculate a unique id for the viewwrapper
+const previousSiblings = (elem) => {
+    // create an empty array
+    const siblings = [];
+    // eslint-disable-next-line no-cond-assign
+    while ((elem = elem.previousElementSibling)) {
+        siblings.push(elem);
+    }
+    return siblings;
+};
+/**
+ * Scrolls an element to the given horizontal target position (i.e., x-axis).
+ * This function is a modified version from https://medium.com/@snowleo208/how-to-create-smooth-scroll-for-your-website-ce5b198d9d94
+ *
+ * @param element HTML element that will be scrolled
+ * @param target Horizontal target position
+ * @param duration Duration of the animation (default: 600 ms)
+ */
+function scrollTo(element, target, duration = 600) {
+    let start = null;
+    const firstPosX = element.scrollLeft || 0;
+    let posX = 0;
+    (function () {
+        const browser = ['ms', 'moz', 'webkit', 'o'];
+        for (let x = 0, { length } = browser; x < length && !window.requestAnimationFrame; x++) {
+            window.requestAnimationFrame = window[`${browser[x]}RequestAnimationFrame`];
+            window.cancelAnimationFrame = window[`${browser[x]}CancelAnimationFrame`] || window[`${browser[x]}CancelRequestAnimationFrame`];
+        }
+    })();
+    function showAnimation(timestamp) {
+        if (!start) {
+            start = timestamp || new Date().getTime();
+        } // get id of animation
+        const elapsed = timestamp - start;
+        const progress = elapsed / duration; // animation duration
+        // ease in function from https://github.com/component/ease/blob/master/index.js
+        const outQuad = function (n) {
+            return n * (2 - n);
+        };
+        const easeInPercentage = +outQuad(progress).toFixed(2);
+        // if target is 0 (back to left), the position is: current pos + (current pos * percentage of duration)
+        // if target > 0 (not back to left), the positon is current pos + (target pos * percentage of duration)
+        posX = target === 0 ? firstPosX - firstPosX * easeInPercentage : firstPosX + target * easeInPercentage;
+        element.scrollTo(posX, 0);
+        // console.log(posX, target, firstPosX, progress);
+        if ((target !== 0 && posX >= firstPosX + target) || (target === 0 && posX <= 0)) {
+            cancelAnimationFrame(start);
+            posX = 0;
+        }
+        else {
+            window.requestAnimationFrame(showAnimation);
+        }
+    }
+    window.requestAnimationFrame(showAnimation);
 }
 export class ViewWrapper extends EventHandler {
     /**
@@ -64,7 +116,7 @@ export class ViewWrapper extends EventHandler {
         this.ref = graph.findOrAddObject(ObjectRefUtils.objectRef(this, plugin.desc.name, ObjectRefUtils.category.visual, generateHash(plugin.desc, selection)));
         this.init(graph, selection, plugin, options);
         // create ViewWrapper root node
-        this.$viewWrapper = d3.select(parent).append('div').classed('viewWrapper', true);
+        this.$viewWrapper = d3v3.select(parent).append('div').classed('viewWrapper', true);
         this.built = Promise.resolve(this.createView(selection, itemSelection, plugin, options));
     }
     /**
@@ -86,6 +138,9 @@ export class ViewWrapper extends EventHandler {
      * @param options
      */
     createView(selection, itemSelection, plugin, options) {
+        // add data-testid to viewWrapper, use id of viewWrapper and number of previous siblings to make it unique
+        const numPrevSiblings = previousSiblings(this.$viewWrapper.node()).length;
+        this.$viewWrapper.attr('data-testid', `viewWrapper-${numPrevSiblings}`);
         this.$node = this.$viewWrapper.append('div').classed('view', true).datum(this);
         this.$chooser = this.$viewWrapper
             .append('div')
@@ -98,6 +153,7 @@ export class ViewWrapper extends EventHandler {
             .attr('type', 'button')
             .attr('class', 'btn-close')
             .attr('aria-label', 'Close')
+            .attr('data-testid', 'close-button')
             .on('click', (d) => {
             this.remove();
         });
@@ -228,10 +284,9 @@ export class ViewWrapper extends EventHandler {
         }, MODE_ANIMATION_TIME);
     }
     scrollIntoView() {
-        const prev = this.$viewWrapper.node().previousSibling;
-        const scrollToPos = prev ? prev.offsetLeft || 0 : 0;
-        const $app = $(this.$viewWrapper.node()).parent();
-        $app.scrollTo(scrollToPos, 500, { axis: 'x' });
+        var _a, _b, _c;
+        const scrollToPos = (_c = (_b = (_a = this.$viewWrapper.node()) === null || _a === void 0 ? void 0 : _a.previousSibling) === null || _b === void 0 ? void 0 : _b.offsetLeft) !== null && _c !== void 0 ? _c : 0;
+        scrollTo(this.$viewWrapper.node().parentElement, scrollToPos, MODE_ANIMATION_TIME);
     }
     /**
      * Decide if a chooser for the next view should be shown and if so, which next views are available
@@ -262,12 +317,13 @@ export class ViewWrapper extends EventHandler {
             const $buttons = $categories.selectAll('button').data((d) => d.views);
             $buttons.enter().append('button').classed('btn', true);
             $buttons.attr('data-viewid', (d) => d.id);
+            $buttons.attr('data-testid', (d) => d.id);
             $buttons
                 .text((d) => d.name)
                 .attr('disabled', (d) => (d.mockup || !d.enabled ? 'disabled' : null))
                 .on('click', function (d) {
                 $buttons.classed('active', false);
-                d3.select(this).classed('active', true);
+                d3v3.select(this).classed('active', true);
                 that.fire(ViewWrapper.EVENT_CHOOSE_NEXT_VIEW, d.id, idtype, selection);
             });
             $buttons.exit().remove();

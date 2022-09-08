@@ -18,7 +18,7 @@ export default function DatasetsTab(_props) {
     React.createElement(React.Fragment, null, status === 'success' ? (React.createElement(OrdinoScrollspy, { items: items.map((card) => ({ id: `${card.desc.id}_${suffix}`, name: card.desc.name })) }, (handleOnChange) => (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "container pb-10 pt-5" },
             React.createElement("div", { className: "row justify-content-center" },
-                React.createElement("div", { className: "col-11 position-relative" },
+                React.createElement("div", { className: "col-11 position-relative", "data-testid": "datasets-tab" },
                     React.createElement("p", { className: "lead text-gray-600 mb-0" },
                         " ",
                         I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.datasetTabInfo')),
@@ -29,6 +29,6 @@ export default function DatasetsTab(_props) {
                             React.createElement(item.factory, { ...item.desc })));
                     })))),
         React.createElement(BrowserRouter, { basename: "/#" },
-            React.createElement(OrdinoFooter, { openInNewWindow: true })))))) : null));
+            React.createElement(OrdinoFooter, { openInNewWindow: true, testId: "datasets-tab" })))))) : null));
 }
 //# sourceMappingURL=DatasetsTab.js.map

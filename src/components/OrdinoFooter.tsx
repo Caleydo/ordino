@@ -13,22 +13,24 @@ interface IFooterLinkProps {
 
 // tslint:disable-next-line: variable-name
 function FooterLink(props: IFooterLinkProps) {
+  const testId = props.to === '/' ? '' : `${props.to.replace(/\s+/g, '-').toLowerCase()}-footerLink`; // check if FooterLink is logo, footer logo should not have data-testid in footerlink
   if (props.openInNewWindow) {
     return (
-      <Link to={props.to} className={props.className} target="_blank" rel="noopener noreferrer">
+      <Link to={props.to} className={props.className} data-testid={testId} target="_blank" rel="noopener noreferrer">
         {props.children}
       </Link>
     );
   }
 
   return (
-    <Link to={props.to} className={props.className}>
+    <Link to={props.to} className={props.className} data-testid={testId}>
       {props.children}
     </Link>
   );
 }
 
 export function OrdinoFooter(props) {
+  const testId = props.testId;
   const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
 
   const lists: IOrdinoFooterMenuLink[][] = PluginRegistry.getInstance()
@@ -37,7 +39,7 @@ export function OrdinoFooter(props) {
     .map((d) => d.lists)[0]; // take only the first footer menu
 
   return (
-    <div className="ordino-footer pt-4 pb-6 px-5">
+    <div className="ordino-footer pt-4 pb-6 px-5" data-testid={`ordino-footer-${testId}`}>
       <nav className="ordino-footer-navigation row">
         {lists &&
           lists.map((list, index) => {

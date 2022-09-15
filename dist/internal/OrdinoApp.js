@@ -257,10 +257,10 @@ export class OrdinoApp extends React.Component {
      * If no initial data is avaialble the start menu will be opened.
      * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
      */
-    initNewSessionAfterPageReload() {
+    async initNewSessionAfterPageReload() {
         if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
             const { startViewId, startViewOptions, defaultSessionValues, } = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
-            this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+            await this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
             UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
         }
         else {
@@ -283,12 +283,12 @@ export class OrdinoApp extends React.Component {
      * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
      * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
      */
-    pushStartViewToSession(startViewId, viewOptions, defaultSessionValues) {
+    async pushStartViewToSession(startViewId, viewOptions, defaultSessionValues) {
         this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-            this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+            await this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
         }
-        this.push(startViewId, null, null, viewOptions);
+        await this.push(startViewId, null, null, viewOptions);
     }
     pushView(viewId, idtype, selection, options) {
         return this.props.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));

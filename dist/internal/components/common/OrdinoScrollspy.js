@@ -48,7 +48,6 @@ import { InView } from 'react-intersection-observer';
  * @param props IOrdinoScrollspy properties
  */
 export function OrdinoScrollspy(props) {
-    var _a, _b;
     // state with all active items
     const [activeItems, setActiveItems] = React.useState({});
     // create ref to avoid rapid state updates and instead updating the state using state using debounce
@@ -69,13 +68,12 @@ export function OrdinoScrollspy(props) {
      * @param event Click event
      */
     const scrollIntoView = React.useCallback((event) => {
-        var _a;
         // prevent jumping to element with id and scroll smoothly instead
         event.preventDefault();
         event.stopPropagation();
         event.nativeEvent.preventDefault();
         event.nativeEvent.stopPropagation();
-        (_a = document.querySelector(event.currentTarget.getAttribute('href'))) === null || _a === void 0 ? void 0 : _a.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+        document.querySelector(event.currentTarget.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
         return false;
     }, []);
     // render only the scrollspy container to maintain positions
@@ -98,10 +96,10 @@ export function OrdinoScrollspy(props) {
                 : null,
         };
     };
-    const activeId = (_b = (_a = Object.entries(activeItems)
-        .filter(([_id, item]) => item === null || item === void 0 ? void 0 : item.ratio)
+    const activeId = Object.entries(activeItems)
+        .filter(([_id, item]) => item?.ratio)
         // get items with maximum ratio and on tie use the one with the lowest index
-        .sort((a, b) => b[1].ratio - a[1].ratio || a[1].index - b[1].index)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[0]; // pick the first item of the sorted array // get the item's `id` (from Object.entries())
+        .sort((a, b) => b[1].ratio - a[1].ratio || a[1].index - b[1].index)?.[0]?.[0]; // pick the first item of the sorted array // get the item's `id` (from Object.entries())
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: "ordino-scrollspy-container" }, props.children(handleOnChange)),
         React.createElement("ul", { className: "list-group d-none d-xxxl-block list-group-flush ordino-scrollspy-nav flex-column ms-4" }, props.items.map((item) => {

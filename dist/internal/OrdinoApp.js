@@ -187,7 +187,6 @@ export class OrdinoApp extends React.Component {
      * @param options
      */
     updateItemSelection(viewWrapper, oldSelection, newSelection, options) {
-        var _a;
         // just update the selection for the last open view
         if (this.lastView === viewWrapper) {
             this.props.graph.pushWithResult(CmdUtils.setSelection(viewWrapper.ref, newSelection.idtype, newSelection.ids), {
@@ -199,7 +198,7 @@ export class OrdinoApp extends React.Component {
             const i = this.state.views.indexOf(viewWrapper);
             const right = this.state.views[i + 1];
             // update selection with the last open (= right) view
-            if (right === this.lastView && right.matchSelectionLength(((_a = newSelection.ids) === null || _a === void 0 ? void 0 : _a.length) || 0)) {
+            if (right === this.lastView && right.matchSelectionLength(newSelection.ids?.length || 0)) {
                 right.setParameterSelection(newSelection);
                 this.props.graph.pushWithResult(CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, newSelection.idtype, newSelection.ids), {
                     inverse: CmdUtils.setAndUpdateSelection(viewWrapper.ref, right.ref, oldSelection.idtype, oldSelection.ids),
@@ -258,10 +257,10 @@ export class OrdinoApp extends React.Component {
      * If no initial data is avaialble the start menu will be opened.
      * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
      */
-    initNewSessionAfterPageReload() {
+    async initNewSessionAfterPageReload() {
         if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
-            const { startViewId, startViewOptions, defaultSessionValues } = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
-            this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+            const { startViewId, startViewOptions, defaultSessionValues, } = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+            await this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
             UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
         }
         else {
@@ -284,12 +283,12 @@ export class OrdinoApp extends React.Component {
      * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
      * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
      */
-    pushStartViewToSession(startViewId, viewOptions, defaultSessionValues) {
+    async pushStartViewToSession(startViewId, viewOptions, defaultSessionValues) {
         this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
         if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-            this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+            await this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
         }
-        this.push(startViewId, null, null, viewOptions);
+        await this.push(startViewId, null, null, viewOptions);
     }
     pushView(viewId, idtype, selection, options) {
         return this.props.graph.push(CmdUtils.createView(this.ref, viewId, idtype, selection, options));

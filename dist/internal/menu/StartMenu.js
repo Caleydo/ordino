@@ -28,7 +28,7 @@ export function StartMenuComponent({ header, mode, open }) {
     const { status, value: tabs } = useAsync(loadTabs, []);
     React.useEffect(() => {
         // legacy event from ATDPApplication
-        const listener = () => setActiveTab(tabs === null || tabs === void 0 ? void 0 : tabs[0]);
+        const listener = () => setActiveTab(tabs?.[0]);
         GlobalEventHandler.getInstance().on(Ordino.EVENT_OPEN_START_MENU, listener);
         return () => {
             GlobalEventHandler.getInstance().off(Ordino.EVENT_OPEN_START_MENU, listener);
@@ -38,7 +38,7 @@ export function StartMenuComponent({ header, mode, open }) {
     React.useEffect(() => {
         // set the active tab when the start menu should be opened
         // tabs are sorted, the one with the lowest priority will be the default open tab
-        setActiveTab(open === EStartMenuOpen.OPEN ? tabs === null || tabs === void 0 ? void 0 : tabs[0] : null);
+        setActiveTab(open === EStartMenuOpen.OPEN ? tabs?.[0] : null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [status, open]);
     // create shortcuts rightMenu
@@ -55,8 +55,8 @@ export function StartMenuComponent({ header, mode, open }) {
         // TODO: refactor this solution once the CLUE mode selector and side panels are React based
         document.body.classList.toggle('ordino-start-menu-open', isMenuOpen);
     }, [activeTab]);
-    const mainMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
-    const rightMenuTabs = tabs === null || tabs === void 0 ? void 0 : tabs.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
+    const mainMenuTabs = tabs?.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
+    const rightMenuTabs = tabs?.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
     const shortcuts = PluginRegistry.getInstance()
         .listPlugins(EP_ORDINO_START_MENU_TAB_SHORTCUT)
         .map((d) => d)

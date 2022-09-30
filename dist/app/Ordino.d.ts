@@ -10,6 +10,6 @@ import { OrdinoApp } from '../internal/OrdinoApp';
 export declare class Ordino extends ATDPApplication<OrdinoApp> {
     constructor(options?: Partial<ITDPOptions>);
     protected createApp(graph: ProvenanceGraph, manager: CLUEGraphManager, main: HTMLElement): Promise<OrdinoApp>;
-    protected initSessionImpl(app: OrdinoApp): void;
+    protected initSessionImpl(app: OrdinoApp): Promise<void>;
 }
 //# sourceMappingURL=Ordino.d.ts.map

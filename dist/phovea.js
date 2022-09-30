@@ -35,7 +35,7 @@ export default function (registry) {
         analytics: {
             category: 'view',
             action: 'setSelection',
-            value: (node) => { var _a; return ((_a = node.parameter.selection) === null || _a === void 0 ? void 0 : _a.length) || 0; },
+            value: (node) => node.parameter.selection?.length || 0,
         },
     });
     registry.push('actionCompressor', 'targidCreateRemoveCompressor', () => import('./internal/cmds').then((c) => c.CmdUtils), {

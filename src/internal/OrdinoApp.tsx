@@ -299,7 +299,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
    * @param defaultSessionValues Values that are stored in the in the provenance graph and the session storage
    */
-  startNewSession(startViewId: string, startViewOptions: any, defaultSessionValues: any = null) {
+  startNewSession(startViewId: string, startViewOptions: Record<string, any>, defaultSessionValues: Record<string, any> = null) {
     // use current emtpy session to start analysis and skip reload to create a new provenance graph
     if (this.props.graph.isEmpty) {
       this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
@@ -329,11 +329,16 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * If no initial data is avaialble the start menu will be opened.
    * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
    */
-  initNewSessionAfterPageReload() {
+  async initNewSessionAfterPageReload() {
     if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
-      const { startViewId, startViewOptions, defaultSessionValues } = UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+      const {
+        startViewId,
+        startViewOptions,
+        defaultSessionValues,
+      }: { startViewId: string; startViewOptions?: Record<string, unknown>; defaultSessionValues: Record<string, unknown> } =
+        UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
 
-      this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
+      await this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
 
       UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
     } else {
@@ -358,14 +363,18 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @param startViewOptions Options that are passed to the initial view (e.g. a NamedSet)
    * @param defaultSessionValues Values that are stored in the provenance graph and the session storage
    */
-  private pushStartViewToSession(startViewId, viewOptions, defaultSessionValues?) {
+  protected async pushStartViewToSession(
+    startViewId: string,
+    viewOptions: Record<string, unknown>,
+    defaultSessionValues?: Record<string, unknown>,
+  ): Promise<void> {
     this.setStartMenuState(EStartMenuOpen.CLOSED, EStartMenuMode.OVERLAY);
 
     if (defaultSessionValues && Object.keys(defaultSessionValues).length > 0) {
-      this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
+      await this.props.graph.push(TDPApplicationUtils.initSession(defaultSessionValues));
     }
 
-    this.push(startViewId, null, null, viewOptions);
+    await this.push(startViewId, null, null, viewOptions);
   }
 
   private pushView(viewId: string, idtype: IDType, selection: string[], options?) {

@@ -9,15 +9,14 @@ export default function SavedSessionCard({ name, faIcon }) {
     const { manager } = React.useContext(GraphContext);
     const [sessions, setSessions] = React.useState(null);
     const listSessions = React.useMemo(() => async () => {
-        var _a;
-        const all = (_a = (await manager.list())) === null || _a === void 0 ? void 0 : _a.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
+        const all = (await manager.list())?.filter((d) => ProvenanceGraphMenuUtils.isPersistent(d)).sort(byDateDesc);
         setSessions(all);
     }, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
     const me = UserSession.getInstance().currentUserNameOrAnonymous();
-    const savedSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator === me);
-    const otherSessions = sessions === null || sessions === void 0 ? void 0 : sessions.filter((d) => d.creator !== me);
+    const savedSessions = sessions?.filter((d) => d.creator === me);
+    const otherSessions = sessions?.filter((d) => d.creator !== me);
     const { status } = useAsync(listSessions, []);
     const id = React.useMemo(() => UniqueIdManager.getInstance().uniqueId(), []);
     return (React.createElement(React.Fragment, null,
@@ -44,13 +43,13 @@ export default function SavedSessionCard({ name, faIcon }) {
                                 status === 'success' && savedSessions.length === 0 && (React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable'))),
                                 status === 'success' &&
                                     savedSessions.length > 0 &&
-                                    (savedSessions === null || savedSessions === void 0 ? void 0 : savedSessions.map((session) => {
+                                    savedSessions?.map((session) => {
                                         return (React.createElement(SessionListItem, { key: session.id, desc: session, selectSession: (event) => sessionAction("select" /* SELECT */, event, session) },
                                             React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.editDetails'), "data-testid": "edit-button", onClick: (event) => sessionAction("edit" /* EDIT */, event, session, setSessions), className: "me-2 pt-1 pb-1 btn btn-outline-secondary" }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.edit')),
                                             React.createElement(ListItemDropdown, null,
                                                 React.createElement("button", { type: "button", className: "dropdown-item", "data-testid": "clone-button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary'), onClick: (event) => sessionAction("clone" /* CLONE */, event, session) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')),
                                                 React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession'), className: "dropdown-item dropdown-delete", "data-testid": "delete-button", onClick: (event) => sessionAction("delete" /* DELETE */, event, session, setSessions) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')))));
-                                    })),
+                                    }),
                                 status === 'error' && React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError'))),
                             React.createElement("div", { className: "tab-pane fade ordino-session-list p-1", role: "tabpanel", id: `saved-session-other-panel-${id}`, "aria-labelledby": `saved-session-other-tab-${id}` },
                                 status === 'pending' && (React.createElement("p", null,
@@ -60,10 +59,10 @@ export default function SavedSessionCard({ name, faIcon }) {
                                 status === 'success' && otherSessions.length === 0 && (React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.noSetsAvailable'))),
                                 status === 'success' &&
                                     otherSessions.length > 0 &&
-                                    (otherSessions === null || otherSessions === void 0 ? void 0 : otherSessions.map((session) => {
+                                    otherSessions?.map((session) => {
                                         return (React.createElement(SessionListItem, { key: session.id, desc: session },
                                             React.createElement("button", { type: "button", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneToTemporary'), onClick: (event) => sessionAction("clone" /* CLONE */, event, session), className: "me-2 pt-1 pb-1 btn btn-outline-secondary" }, "Clone")));
-                                    })),
+                                    }),
                                 status === 'error' && React.createElement("p", null, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.loadingError'))))))));
         })));
 }

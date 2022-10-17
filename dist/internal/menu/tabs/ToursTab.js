@@ -31,7 +31,7 @@ export function ToursSection(props) {
             // either hrefBase or onClickHandler
             const href = props.hrefBase ? props.hrefBase.replace('{id}', tour.desc.id) : null;
             const onClickHandler = !props.hrefBase ? (evt) => TourUtils.startTour(tour.desc.id) : null;
-            return (React.createElement(TourCard, { key: tour.desc.id, id: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: (images === null || images === void 0 ? void 0 : images[index]) || null, onClickHandler: onClickHandler, href: href }));
+            return (React.createElement(TourCard, { key: tour.desc.id, id: tour.desc.id, title: tour.desc.name, text: tour.desc.description, image: images?.[index] || null, onClickHandler: onClickHandler, href: href }));
         })))) : null));
 }
 export default function ToursTab(_props) {
@@ -42,8 +42,8 @@ export default function ToursTab(_props) {
         return Promise.all(tourEntries.map((tour) => tour.load()));
     }, []);
     const { status, value: tours } = useAsync(loadTours, []);
-    const beginnerTours = tours === null || tours === void 0 ? void 0 : tours.filter((tour) => tour.desc.level === 'beginner');
-    const advancedTours = tours === null || tours === void 0 ? void 0 : tours.filter((tour) => tour.desc.level === 'advanced');
+    const beginnerTours = tours?.filter((tour) => tour.desc.level === 'beginner');
+    const advancedTours = tours?.filter((tour) => tour.desc.level === 'advanced');
     return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     React.createElement(React.Fragment, null, status === 'success' ? (React.createElement(OrdinoScrollspy, null,

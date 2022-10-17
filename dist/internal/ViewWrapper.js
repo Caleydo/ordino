@@ -284,8 +284,7 @@ export class ViewWrapper extends EventHandler {
         }, MODE_ANIMATION_TIME);
     }
     scrollIntoView() {
-        var _a, _b, _c;
-        const scrollToPos = (_c = (_b = (_a = this.$viewWrapper.node()) === null || _a === void 0 ? void 0 : _a.previousSibling) === null || _b === void 0 ? void 0 : _b.offsetLeft) !== null && _c !== void 0 ? _c : 0;
+        const scrollToPos = this.$viewWrapper.node()?.previousSibling?.offsetLeft ?? 0;
         scrollTo(this.$viewWrapper.node().parentElement, scrollToPos, MODE_ANIMATION_TIME);
     }
     /**
@@ -296,7 +295,7 @@ export class ViewWrapper extends EventHandler {
     chooseNextViews(idtype, selection) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
-        const isSelNone = (selection === null || selection === void 0 ? void 0 : selection.length) === 0;
+        const isSelNone = selection?.length === 0;
         // show chooser if selection available
         this.$chooser.classed('hidden', isSelNone);
         if (isSelNone) {

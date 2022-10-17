@@ -143,10 +143,9 @@ export class CmdUtils {
      * @returns {IAction}
      */
     static replaceView(app, existingView, viewId, idtype, selection, options, itemSelection) {
-        var _a, _b, _c;
         const view = PluginRegistry.getInstance().getPlugin(EXTENSION_POINT_TDP_VIEW, viewId);
         // assert view
-        return ActionUtils.action(ActionMetaData.actionMeta(`Replace ${(_c = (_b = (_a = existingView.value) === null || _a === void 0 ? void 0 : _a.context) === null || _b === void 0 ? void 0 : _b.desc) === null || _c === void 0 ? void 0 : _c.name} with ${view.name}`, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
+        return ActionUtils.action(ActionMetaData.actionMeta(`Replace ${existingView.value?.context?.desc?.name} with ${view.name}`, ObjectRefUtils.category.visual, ObjectRefUtils.operation.update), CMD_REPLACE_VIEW, CmdUtils.replaceViewImpl, [app, existingView], {
             viewId,
             idtype: idtype ? idtype.id : null,
             selection: selection || [],

@@ -1,4 +1,4 @@
-import { I18nextManager } from 'tdp_core';
+import { I18nextManager } from 'visyn_core';
 import React from 'react';
 
 import { CommonSessionCard } from './CommonSessionCard';

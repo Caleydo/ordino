@@ -7,7 +7,8 @@
  ******************************************************************* */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I18nextManager, ATDPApplication } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { ATDPApplication } from 'tdp_core';
 // eslint-disable-next-line import/no-cycle
 import { OrdinoApp } from '../internal/OrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from '../internal/constants';

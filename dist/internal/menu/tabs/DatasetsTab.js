@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { I18nextManager, PluginRegistry, UniqueIdManager, useAsync } from 'tdp_core';
+import { I18nextManager, PluginRegistry, useAsync } from 'visyn_core';
+import { UniqueIdManager } from 'tdp_core';
 import { BrowserRouter } from 'react-router-dom';
 import { OrdinoScrollspy, OrdinoScrollspyItem } from '../../components';
 import { EP_ORDINO_STARTMENU_DATASET_SECTION } from '../../../base/extensions';

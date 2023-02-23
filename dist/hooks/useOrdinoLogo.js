@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { PluginRegistry, useAsync } from 'tdp_core';
+import { PluginRegistry } from 'visyn_core/plugin';
+import { useAsync } from 'visyn_core/hooks';
 import { EP_ORDINO_LOGO } from '../base';
 export function useOrdinoLogo() {
     const loadOrdinoLogo = useMemo(() => async () => {

@@ -6,6 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 
+import { PluginRegistry } from 'visyn_core/plugin';
+import { IDTypeManager, IDType } from 'visyn_core/idtype';
 import {
   ActionUtils,
   ActionNode,
@@ -15,9 +17,6 @@ import {
   ICmdResult,
   IObjectRef,
   ProvenanceGraph,
-  PluginRegistry,
-  IDTypeManager,
-  IDType,
   EXTENSION_POINT_TDP_VIEW,
   ISelection,
 } from 'tdp_core';
@@ -30,7 +29,7 @@ const CMD_REPLACE_VIEW = 'targidReplaceView';
 const CMD_SET_SELECTION = 'targidSetSelection';
 
 export class CmdUtils {
-  static asSelection(data: ReturnType<typeof CmdUtils['serializeSelection']>): ISelection {
+  static asSelection(data: ReturnType<(typeof CmdUtils)['serializeSelection']>): ISelection {
     return {
       ids: data.selection || [],
       idtype: data.idtype ? IDTypeManager.getInstance().resolveIdType(data.idtype) : null,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { PluginRegistry } from 'tdp_core';
+import { PluginRegistry } from 'visyn_core/plugin';
 import { OrdinoLogo } from './OrdinoLogo';
 import { EP_ORDINO_FOOTER_MENU } from '../base';
 // tslint:disable-next-line: variable-name

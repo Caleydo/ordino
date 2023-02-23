@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I18nextManager } from 'tdp_core';
+import { I18nextManager } from 'visyn_core';
 
 function SecurityCookieStoreLoginDialog() {
   return (

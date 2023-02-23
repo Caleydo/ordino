@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { I18nextManager } from 'tdp_core';
+import { I18nextManager } from 'visyn_core';
 function SecurityCookieStoreLoginDialog() {
     return (React.createElement("div", { style: { minHeight: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } },
         I18nextManager.getInstance().i18n.t('tdp:ordino.loginMenu.automaticLoginDisclaimer'),

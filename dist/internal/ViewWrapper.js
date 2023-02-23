@@ -5,7 +5,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { ObjectRefUtils, EventHandler, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
+import { EventHandler } from 'visyn_core';
+import { ObjectRefUtils, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
 import * as d3v3 from 'd3v3';
 import { MODE_ANIMATION_TIME } from './constants';
 function generateHash(desc, selection) {

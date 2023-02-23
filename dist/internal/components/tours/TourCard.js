@@ -1,4 +1,4 @@
-import { I18nextManager } from 'tdp_core';
+import { I18nextManager } from 'visyn_core';
 import * as React from 'react';
 export function TourCard({ id, image, title, text, onClickHandler, href }) {
     return (React.createElement("div", { className: "col position-relative", "data-testid": "tour-card" },

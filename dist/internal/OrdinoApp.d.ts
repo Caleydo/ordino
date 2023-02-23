@@ -6,10 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import { ICmdResult } from 'tdp_core';
-import { IObjectRef, ProvenanceGraph, IDType } from 'tdp_core';
-import { CLUEGraphManager } from 'tdp_core';
-import { AppHeader } from 'tdp_core';
+import { IDType } from 'visyn_core';
+import { ProvenanceGraph, CLUEGraphManager, AppHeader, IObjectRef, ICmdResult } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { IOrdinoApp } from './IOrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from './constants';
@@ -37,6 +35,8 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @type {IObjectRef<OrdinoApp>}
      */
     readonly ref: IObjectRef<OrdinoApp>;
+    private hash;
+    private session;
     /**
      * React DOM node reference
      */

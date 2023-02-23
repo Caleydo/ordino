@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { GlobalEventHandler, PluginRegistry, useAsync } from 'tdp_core';
+import { GlobalEventHandler, PluginRegistry, useAsync } from 'visyn_core';
 // eslint-disable-next-line import/no-cycle
 import { Ordino } from '../../app/Ordino';
 import { EStartMenuOpen, EStartMenuSection, HighlightSessionCardContext } from '../constants';

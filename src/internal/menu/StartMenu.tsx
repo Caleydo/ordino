@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { GlobalEventHandler, PluginRegistry, useAsync, AppHeader } from 'tdp_core';
+import { GlobalEventHandler, PluginRegistry, useAsync } from 'visyn_core';
+import { AppHeader } from 'tdp_core';
 
 // eslint-disable-next-line import/no-cycle
 import { Ordino } from '../../app/Ordino';
@@ -95,7 +96,8 @@ export function StartMenuComponent({ header, mode, open }: { header: AppHeader; 
         )}
       {
         // eslint-disable-next-line react/jsx-no-constructed-context-values, prettier/prettier
-      }<HighlightSessionCardContext.Provider value={{ highlight, setHighlight }}>
+      }
+      <HighlightSessionCardContext.Provider value={{ highlight, setHighlight }}>
         <StartMenuTabWrapper tabs={tabs} status={status} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode} />
       </HighlightSessionCardContext.Provider>
     </>

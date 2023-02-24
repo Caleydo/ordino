@@ -57,6 +57,7 @@ export function StartMenuComponent({ header, mode, open }) {
     }, [activeTab]);
     const mainMenuTabs = tabs?.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
     const rightMenuTabs = tabs?.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
+    const context = React.useMemo(() => ({ highlight, setHighlight }), [highlight]);
     const shortcuts = PluginRegistry.getInstance()
         .listPlugins(EP_ORDINO_START_MENU_TAB_SHORTCUT)
         .map((d) => d)
@@ -67,7 +68,7 @@ export function StartMenuComponent({ header, mode, open }) {
         tabs &&
             !activeTab &&
             ReactDOM.createPortal(React.createElement(StartMenuTabShortcuts, { tabs: tabs, shortcuts: shortcuts, status: status, setActiveTab: (a) => setActiveTab(a), setHighlight: setHighlight }), header.mainMenu.ownerDocument.querySelector('.shortcut-menu')),
-        React.createElement(HighlightSessionCardContext.Provider, { value: { highlight, setHighlight } },
+        React.createElement(HighlightSessionCardContext.Provider, { value: context },
             React.createElement(StartMenuTabWrapper, { tabs: tabs, status: status, activeTab: activeTab, setActiveTab: setActiveTab, mode: mode }))));
 }
 //# sourceMappingURL=StartMenu.js.map

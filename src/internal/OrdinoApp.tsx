@@ -83,9 +83,9 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    */
   readonly ref: IObjectRef<OrdinoApp>;
 
-  private hash = new HashPropertyHandler();
+  protected readonly hash = new HashPropertyHandler();
 
-  private session = new Session();
+  protected readonly session = new Session();
 
   /**
    * React DOM node reference

@@ -7,7 +7,7 @@
  ******************************************************************* */
 import * as React from 'react';
 import { IDType } from 'visyn_core';
-import { ProvenanceGraph, CLUEGraphManager, AppHeader, IObjectRef, ICmdResult } from 'tdp_core';
+import { ProvenanceGraph, CLUEGraphManager, AppHeader, IObjectRef, HashPropertyHandler, Session, ICmdResult } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { IOrdinoApp } from './IOrdinoApp';
 import { EStartMenuMode, EStartMenuOpen } from './constants';
@@ -35,8 +35,8 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
      * @type {IObjectRef<OrdinoApp>}
      */
     readonly ref: IObjectRef<OrdinoApp>;
-    private hash;
-    private session;
+    protected readonly hash: HashPropertyHandler;
+    protected readonly session: Session;
     /**
      * React DOM node reference
      */

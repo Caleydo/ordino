@@ -64,8 +64,8 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
-    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#visyn_core",
-    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#visyn_core"
+    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop",
+    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
   },
   "overrides": {
     "@types/react": "^16.9.23",

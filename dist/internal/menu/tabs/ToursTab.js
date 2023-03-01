@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { TourUtils, useAsync, PluginRegistry, I18nextManager } from 'tdp_core';
+import { useAsync, PluginRegistry, I18nextManager } from 'visyn_core';
+import { TourUtils } from 'tdp_core';
 import { OrdinoFooter } from '../../../components';
 import { TourCard, OrdinoScrollspy } from '../../components';
 export function ToursSection(props) {

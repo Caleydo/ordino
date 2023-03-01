@@ -5,7 +5,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { ActionUtils, ActionMetaData, ObjectRefUtils, PluginRegistry, IDTypeManager, EXTENSION_POINT_TDP_VIEW, } from 'tdp_core';
+import { PluginRegistry } from 'visyn_core/plugin';
+import { IDTypeManager } from 'visyn_core/idtype';
+import { ActionUtils, ActionMetaData, ObjectRefUtils, EXTENSION_POINT_TDP_VIEW, } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 const CMD_CREATE_VIEW = 'targidCreateView';
 const CMD_REMOVE_VIEW = 'targidRemoveView';

@@ -1,5 +1,6 @@
 /// <reference types="react" />
-import { ITDPTourExtension, IPlugin } from 'tdp_core';
+import { IPlugin } from 'visyn_core';
+import { ITDPTourExtension } from 'tdp_core';
 import type { IStartMenuTabProps } from '../../interfaces';
 export declare function ToursSection(props: {
     level: 'beginner' | 'advanced';

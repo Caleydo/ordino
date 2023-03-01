@@ -5,11 +5,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph, IDType, ISelection } from 'tdp_core';
+import { IDType } from 'visyn_core/idtype';
+import { ActionNode, IAction, ICmdResult, IObjectRef, ProvenanceGraph, ISelection } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { IOrdinoApp } from './IOrdinoApp';
 export declare class CmdUtils {
-    static asSelection(data: ReturnType<typeof CmdUtils['serializeSelection']>): ISelection;
+    static asSelection(data: ReturnType<(typeof CmdUtils)['serializeSelection']>): ISelection;
     static serializeSelection(selection?: ISelection): {
         idtype: string;
         selection: string[];

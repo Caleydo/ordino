@@ -1,4 +1,5 @@
-import { I18nextManager, UserSession, ENamedSetType, FormDialog, NotificationHandler, RestStorageUtils, StoreUtils, } from 'tdp_core';
+import { I18nextManager } from 'visyn_core';
+import { ENamedSetType, FormDialog, NotificationHandler, RestStorageUtils, StoreUtils, UserSession } from 'tdp_core';
 import React from 'react';
 import { ListItemDropdown } from '../../../components';
 import { DatasetUtils } from './DatasetUtils';

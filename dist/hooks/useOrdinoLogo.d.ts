@@ -5,7 +5,7 @@ export declare function useOrdinoLogo(): {
         width: any;
         height: any;
     }>;
-    status: import("tdp_core").useAsyncStatus;
+    status: import("visyn_core/hooks").useAsyncStatus;
     value: {
         icon: any;
         text: any;

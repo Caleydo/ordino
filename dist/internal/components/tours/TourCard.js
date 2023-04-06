@@ -1,7 +1,7 @@
 import { I18nextManager } from 'visyn_core';
 import * as React from 'react';
 export function TourCard({ id, image, title, text, onClickHandler, href }) {
-    return (React.createElement("div", { className: "col position-relative", "data-testid": "tour-card" },
+    return (React.createElement("div", { className: "mb-3 col position-relative", "data-testid": "tour-card" },
         React.createElement("div", { className: "card ordino-tour-card shadow-sm", "data-id": id, "data-testid": id },
             image ? React.createElement("img", { className: "card-img-top p-2", style: { height: '200px' }, src: image, alt: "Tour Image" }) : null,
             React.createElement("div", { className: "card-body p-2" },

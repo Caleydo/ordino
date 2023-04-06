@@ -14,7 +14,7 @@ export function TourCard({ id, image, title, text, onClickHandler, href }: ITour
   return (
     <div className="mb-3 col position-relative" data-testid="tour-card">
       <div className="card ordino-tour-card shadow-sm" data-id={id} data-testid={id}>
-        {image ? <img className="card-img-top p-2" style={{ height: '200px' }} src={image} alt="Tour Image" /> : null}
+        {image ? <img className="card-img-top p-2" src={image} alt="Teaser image of the tour" /> : null}
         <div className="card-body p-2">
           <h5 className="card-title">{title}</h5>
           <p className="card-text">{text}</p>

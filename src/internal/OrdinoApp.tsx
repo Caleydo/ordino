@@ -7,7 +7,8 @@
  ******************************************************************* */
 
 import * as React from 'react';
-import { IDType, IEvent, GlobalEventHandler } from 'visyn_core';
+import { IDType } from 'visyn_core/idtype';
+import { IEvent, GlobalEventHandler } from 'visyn_core/base';
 import {
   ProvenanceGraph,
   CLUEGraphManager,

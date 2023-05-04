@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
-import { I18nextManager, PluginRegistry, useAsync } from 'visyn_core';
+import { PluginRegistry } from 'visyn_core/plugin';
+import { useAsync } from 'visyn_core/hooks';
+import { I18nextManager } from 'visyn_core/i18n';
 import { UniqueIdManager } from 'tdp_core';
 import { BrowserRouter } from 'react-router-dom';
 

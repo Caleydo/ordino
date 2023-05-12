@@ -1,4 +1,4 @@
-import { EPermission, Permission } from 'visyn_core';
+import { EPermission, Permission } from 'visyn_core/security';
 import { ENamedSetType } from 'tdp_core';
 export class DatasetUtils {
     /**

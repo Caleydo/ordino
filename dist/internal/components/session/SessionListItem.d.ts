@@ -9,6 +9,6 @@ interface ISessionListItemProps {
     selectSession?: SessionAction;
     children?: React.ReactNode;
 }
-export declare function SessionListItem({ desc, selectSession, children }: ISessionListItemProps): JSX.Element;
+export declare function SessionListItem({ desc, selectSession, children }: ISessionListItemProps): React.JSX.Element;
 export {};
 //# sourceMappingURL=SessionListItem.d.ts.map

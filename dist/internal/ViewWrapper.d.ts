@@ -5,7 +5,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { EventHandler, IPlugin, IPluginDesc } from 'visyn_core';
+import { IPlugin, IPluginDesc } from 'visyn_core/plugin';
+import { EventHandler } from 'visyn_core/base';
 import { IObjectRef, ProvenanceGraph, EViewMode, ISelection, IView, IViewContext } from 'tdp_core';
 export declare class ViewWrapper extends EventHandler {
     private readonly graph;

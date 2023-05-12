@@ -78,6 +78,8 @@ export function OrdinoScrollspy(props) {
     }, []);
     // render only the scrollspy container to maintain positions
     if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
+        // @ts-ignore
+        // TODO for holger
         return React.createElement("div", { className: "ordino-scrollspy-container" }, props.children);
     }
     const handleOnChange = (id, index, inView, entry) => {

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import { GlobalEventHandler } from 'visyn_core';
+import { GlobalEventHandler } from 'visyn_core/base';
 import { ObjectRefUtils, HashPropertyHandler, Session, AView, TourUtils, TDPApplicationUtils, BaseUtils, EViewMode, NodeUtils, } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
@@ -30,7 +30,7 @@ function isCreateView(stateNode) {
     const { creator } = stateNode;
     return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
 }
-export class OrdinoApp extends React.Component {
+class OrdinoApp extends React.Component {
     constructor(props) {
         super(props);
         this.hash = new HashPropertyHandler();
@@ -445,4 +445,5 @@ OrdinoApp.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
  * Key of the URL hash property that starts a new tour with the given ID (if the tour is registered in a phovea.ts)
  */
 OrdinoApp.HASH_PROPERTY_START_NEW_TOUR = 'tour';
+export { OrdinoApp };
 //# sourceMappingURL=OrdinoApp.js.map

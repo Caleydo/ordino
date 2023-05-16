@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
-import { EventHandler } from 'visyn_core';
+import { EventHandler } from 'visyn_core/base';
 import { ObjectRefUtils, TDPApplicationUtils, AView, EViewMode, ViewUtils, } from 'tdp_core';
 import * as d3v3 from 'd3v3';
 import { MODE_ANIMATION_TIME } from './constants';
@@ -68,7 +68,7 @@ function scrollTo(element, target, duration = 600) {
     }
     window.requestAnimationFrame(showAnimation);
 }
-export class ViewWrapper extends EventHandler {
+class ViewWrapper extends EventHandler {
     /**
      * Initialize this view, create the root node and the (inner) view
      * @param graph
@@ -375,4 +375,5 @@ ViewWrapper.EVENT_FOCUS = 'focus';
 ViewWrapper.EVENT_REMOVE = 'remove';
 ViewWrapper.EVENT_MODE_CHANGED = 'modeChanged';
 ViewWrapper.EVENT_REPLACE_VIEW = 'replaceView';
+export { ViewWrapper };
 //# sourceMappingURL=ViewWrapper.js.map

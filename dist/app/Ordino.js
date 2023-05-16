@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { I18nextManager } from 'visyn_core/i18n';
 import { ATDPApplication } from 'tdp_core';
 // eslint-disable-next-line import/no-cycle
@@ -51,9 +51,9 @@ export class Ordino extends ATDPApplication {
             appLink.target = '_blank';
             appLink.rel = 'noopener noreferrer';
             appLink.onclick = null; // remove default click listener from `ATDPApplication.createHeader()`
-            ReactDOM.render(React.createElement(OrdinoApp, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
+            createRoot(main).render(React.createElement(OrdinoApp, { header: this.header, graph: graph, graphManager: manager, ref: (instance) => {
                     resolve(instance); // Promise is resolved when the component is intialized
-                } }), main);
+                } }));
         });
     }
     async initSessionImpl(app) {

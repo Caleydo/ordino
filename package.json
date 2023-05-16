@@ -67,17 +67,11 @@
     "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop",
     "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
   },
-  "overrides": {
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
-  },
   "resolutions": {
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "@types/react": "~18.2.0",
+    "@types/react-dom": "~18.2.0",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
   },
   "visyn": {
     "entries": {

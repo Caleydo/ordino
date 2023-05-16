@@ -66,7 +66,7 @@ interface IOrdinoScrollspyProps {
  *
  * @param props IOrdinoScrollspy properties
  */
-export declare function OrdinoScrollspy(props: IOrdinoScrollspyProps): JSX.Element;
+export declare function OrdinoScrollspy(props: IOrdinoScrollspyProps): React.JSX.Element;
 interface IOrdinoScrollspyItemProps {
     /**
      * Unique id of the item
@@ -86,6 +86,6 @@ interface IOrdinoScrollspyItemProps {
  * Extends the `InView` props with custom scrollspy props.
  * @param props
  */
-export declare function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): JSX.Element;
+export declare function OrdinoScrollspyItem({ id, index, handleOnChange, ...innerProps }: IOrdinoScrollspyItemProps & (IntersectionObserverProps | PlainChildrenProps)): React.JSX.Element;
 export {};
 //# sourceMappingURL=OrdinoScrollspy.d.ts.map

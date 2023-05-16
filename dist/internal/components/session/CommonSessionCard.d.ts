@@ -36,6 +36,6 @@ export type SessionAction = (event: React.MouseEvent<HTMLElement>, desc: IProven
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd, }: ICommonSessionCardProps): JSX.Element;
+export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd, }: ICommonSessionCardProps): React.JSX.Element;
 export {};
 //# sourceMappingURL=CommonSessionCard.d.ts.map

@@ -1,4 +1,6 @@
-import { I18nextManager, UserSession, useAsync } from 'visyn_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { UserSession } from 'visyn_core/security';
+import { useAsync } from 'visyn_core/hooks';
 import { IProvenanceGraphDataDescription, UniqueIdManager, ProvenanceGraphMenuUtils } from 'tdp_core';
 
 import React from 'react';

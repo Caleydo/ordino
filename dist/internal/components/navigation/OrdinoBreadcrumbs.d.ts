@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React from 'react';
 import { ViewWrapper } from '../../ViewWrapper';
 interface IOrdinoBreadcrumbsProps {
     /**
@@ -16,6 +16,6 @@ interface IOrdinoBreadcrumbsProps {
  * Calls `onClick` callback when a breadcrumb item is clicked.
  * @param props properties
  */
-export declare function OrdinoBreadcrumbs(props: IOrdinoBreadcrumbsProps): JSX.Element;
+export declare function OrdinoBreadcrumbs(props: IOrdinoBreadcrumbsProps): React.JSX.Element;
 export {};
 //# sourceMappingURL=OrdinoBreadcrumbs.d.ts.map

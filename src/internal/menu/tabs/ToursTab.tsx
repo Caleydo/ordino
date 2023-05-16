@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useAsync, PluginRegistry, IPlugin, I18nextManager } from 'visyn_core';
+import { PluginRegistry, IPlugin } from 'visyn_core/plugin';
+import { useAsync } from 'visyn_core/hooks';
+import { I18nextManager } from 'visyn_core/i18n';
 import { TourUtils, ITDPTourExtensionDesc, ITDPTourExtension } from 'tdp_core';
 
 import { OrdinoFooter } from '../../../components';

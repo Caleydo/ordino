@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 import * as React from 'react';
-import { IDType } from 'visyn_core';
+import { IDType } from 'visyn_core/idtype';
 import { ProvenanceGraph, CLUEGraphManager, AppHeader, IObjectRef, HashPropertyHandler, Session, ICmdResult } from 'tdp_core';
 import { ViewWrapper } from './ViewWrapper';
 import { IOrdinoApp } from './IOrdinoApp';
@@ -173,7 +173,7 @@ export declare class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoA
     /**
      * updates the views information, e.g. history
      */
-    render(): JSX.Element;
+    render(): React.JSX.Element;
 }
 export {};
 //# sourceMappingURL=OrdinoApp.d.ts.map

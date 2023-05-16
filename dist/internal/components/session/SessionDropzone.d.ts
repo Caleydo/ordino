@@ -1,3 +1,3 @@
-/// <reference types="react" />
-export declare function SessionDropzone(): JSX.Element;
+import React from 'react';
+export declare function SessionDropzone(): React.JSX.Element;
 //# sourceMappingURL=SessionDropzone.d.ts.map

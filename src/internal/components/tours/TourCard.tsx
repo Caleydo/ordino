@@ -1,4 +1,4 @@
-import { I18nextManager } from 'visyn_core';
+import { I18nextManager } from 'visyn_core/i18n';
 import * as React from 'react';
 
 interface ITourCardProps {

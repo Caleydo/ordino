@@ -1,4 +1,6 @@
-import { GlobalEventHandler, I18nextManager, UserSession } from 'visyn_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { UserSession } from 'visyn_core/security';
+import { GlobalEventHandler } from 'visyn_core/base';
 import { PHOVEA_UI_FormDialog, ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
 import React, { useRef } from 'react';
 import { GraphContext } from '../../constants';

@@ -1,5 +1,7 @@
+/* eslint-disable react/no-danger */
 import { I18nextManager } from 'visyn_core/i18n';
 import * as React from 'react';
+import parse from 'html-react-parser';
 
 interface ITourCardProps {
   id: string;
@@ -17,7 +19,7 @@ export function TourCard({ id, image, title, text, onClickHandler, href }: ITour
         {image ? <img className="card-img-top p-2" src={image} alt="Teaser image of the tour" /> : null}
         <div className="card-body p-2">
           <h5 className="card-title">{title}</h5>
-          <p className="card-text">{text}</p>
+          <p className="card-text">{parse(text)}</p>
           <a
             className="btn btn-light"
             title={I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.startTour')}

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-danger */
 import { I18nextManager } from 'visyn_core/i18n';
 import * as React from 'react';
 import parse from 'html-react-parser';

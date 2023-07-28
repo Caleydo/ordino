@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { I18nextManager } from 'tdp_core';
+import { createRoot } from 'react-dom/client';
+import { I18nextManager } from 'visyn_core/i18n';
 function SecurityCookieStoreLoginDialog() {
     return (React.createElement("div", { style: { minHeight: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } },
         I18nextManager.getInstance().i18n.t('tdp:ordino.loginMenu.automaticLoginDisclaimer'),
@@ -14,6 +14,6 @@ export function create(loginMenu, loginDialog) {
     const node = document.createElement('div');
     bodyNode.appendChild(node);
     formNode.style.display = 'none';
-    ReactDOM.render(React.createElement(SecurityCookieStoreLoginDialog, null), node);
+    createRoot(node).render(React.createElement(SecurityCookieStoreLoginDialog, null));
 }
 //# sourceMappingURL=SecurityCookieStoreLoginDialog.js.map

@@ -1,4 +1,7 @@
-import { IProvenanceGraphDataDescription, I18nextManager, ProvenanceGraphMenuUtils, useAsync } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { useAsync } from 'visyn_core/hooks';
+import { IProvenanceGraphDataDescription, ProvenanceGraphMenuUtils } from 'tdp_core';
+
 import React from 'react';
 
 import { GraphContext } from '../../constants';

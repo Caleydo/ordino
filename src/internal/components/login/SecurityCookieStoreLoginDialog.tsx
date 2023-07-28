@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { I18nextManager } from 'tdp_core';
+import { createRoot } from 'react-dom/client';
+import { I18nextManager } from 'visyn_core/i18n';
 
 function SecurityCookieStoreLoginDialog() {
   return (
@@ -22,5 +22,5 @@ export function create(loginMenu: HTMLElement, loginDialog: HTMLElement) {
   bodyNode.appendChild(node);
   formNode.style.display = 'none';
 
-  ReactDOM.render(<SecurityCookieStoreLoginDialog />, node);
+  createRoot(node).render(<SecurityCookieStoreLoginDialog />);
 }

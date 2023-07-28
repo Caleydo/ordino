@@ -1,12 +1,7 @@
-/* *****************************************************************************
- * Caleydo - Visualization for Molecular Biology - http://caleydo.org
- * Copyright (c) The Caleydo Team. All rights reserved.
- * Licensed under the new BSD license, available at http://caleydo.org/license
- **************************************************************************** */
-import { IRegistry, PluginRegistry, ActionNode, ILocaleEPDesc, EP_PHOVEA_CORE_LOCALE, EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM } from 'tdp_core';
-
-import { EP_ORDINO_STARTMENU_SESSION_SECTION } from './base/extensions';
-import { EP_ORDINO_LOGO, IOrdinoLogoDesc } from './base';
+import { ActionNode, EXTENSION_POINT_CUSTOMIZED_LOGIN_FORM } from 'tdp_core';
+import { PluginRegistry, EP_PHOVEA_CORE_LOCALE, ILocaleEPDesc } from 'visyn_core/plugin';
+import type { IRegistry } from 'visyn_core/plugin';
+import { EP_ORDINO_STARTMENU_SESSION_SECTION, EP_ORDINO_LOGO, IOrdinoLogoDesc } from './index';
 
 export default function (registry: IRegistry) {
   // registry.push('extension-type', 'extension-id', function() { return import('./extension_impl'); }, {});

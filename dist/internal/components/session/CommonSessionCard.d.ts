@@ -31,11 +31,11 @@ export declare const enum EAction {
     EXPORT = "export",
     DELETE = "delete"
 }
-export declare type SessionActionChooser = (type: EAction, event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
-export declare type SessionAction = (event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export type SessionActionChooser = (type: EAction, event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
+export type SessionAction = (event: React.MouseEvent<HTMLElement>, desc: IProvenanceGraphDataDescription, updateSessions?: any) => boolean | Promise<boolean>;
 /**
  * Wrapper component that exposes actions to be used in children components.
  */
-export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd, }: ICommonSessionCardProps): JSX.Element;
+export declare function CommonSessionCard({ cardName, faIcon, cardInfo, children, highlight, onHighlightAnimationStart, onHighlightAnimationEnd, }: ICommonSessionCardProps): React.JSX.Element;
 export {};
 //# sourceMappingURL=CommonSessionCard.d.ts.map

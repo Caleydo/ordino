@@ -6,8 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 
-import { IPluginDesc, INamedSet, CLUEGraphManager } from 'tdp_core';
-
+import type { IPluginDesc } from 'visyn_core/plugin';
+import { INamedSet, CLUEGraphManager } from 'tdp_core';
 import { EStartMenuSection } from '../internal/constants';
 
 import type { IStartMenuTabProps } from '../internal/interfaces';

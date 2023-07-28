@@ -1,7 +1,7 @@
 {
   "name": "ordino",
   "description": "Target discovery platform for exploring rankings of genes, disease models, and other entities.",
-  "version": "13.0.1",
+  "version": "14.0.0",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",
@@ -64,20 +64,15 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
-    "tdp_core": "^16.1.0",
-    "visyn_scripts": "^1.0.1"
-  },
-  "overrides": {
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "html-react-parser": "^4.2.0",
+    "tdp_core": "^20.1.0",
+    "visyn_scripts": "^4.1.0"
   },
   "resolutions": {
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "@types/react": "~18.2.0",
+    "@types/react-dom": "~18.2.0",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
   },
   "visyn": {
     "entries": {

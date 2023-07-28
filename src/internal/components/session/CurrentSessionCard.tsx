@@ -1,5 +1,7 @@
 import React from 'react';
-import { GlobalEventHandler, I18nextManager, ProvenanceGraph, ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { GlobalEventHandler } from 'visyn_core/base';
+import { ProvenanceGraph, ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 
 import { GraphContext, HighlightSessionCardContext } from '../../constants';
 import { ListItemDropdown } from '../../../components';

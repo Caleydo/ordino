@@ -7,8 +7,9 @@
  ******************************************************************* */
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { ProvenanceGraph, I18nextManager, CLUEGraphManager, ATDPApplication, ITDPOptions } from 'tdp_core';
+import { createRoot } from 'react-dom/client';
+import { I18nextManager } from 'visyn_core/i18n';
+import { ProvenanceGraph, CLUEGraphManager, ATDPApplication, ITDPOptions } from 'tdp_core';
 
 // eslint-disable-next-line import/no-cycle
 import { OrdinoApp } from '../internal/OrdinoApp';
@@ -56,7 +57,7 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
       appLink.rel = 'noopener noreferrer';
       appLink.onclick = null; // remove default click listener from `ATDPApplication.createHeader()`
 
-      ReactDOM.render(
+      createRoot(main).render(
         <OrdinoApp
           header={this.header}
           graph={graph}
@@ -65,7 +66,6 @@ export class Ordino extends ATDPApplication<OrdinoApp> {
             resolve(instance); // Promise is resolved when the component is intialized
           }}
         />,
-        main,
       );
     });
   }

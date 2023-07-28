@@ -1,4 +1,6 @@
-import { I18nextManager, IProvenanceGraphDataDescription, UserSession, ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { UserSession } from 'visyn_core/security';
+import { IProvenanceGraphDataDescription, ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
 import React from 'react';
 
 import { SessionAction } from './CommonSessionCard';

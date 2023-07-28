@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import { PluginRegistry } from 'tdp_core';
+import { PluginRegistry } from 'visyn_core/plugin';
 import { OrdinoLogo } from './OrdinoLogo';
 import { EP_ORDINO_HEADER_MENU } from '../base';
 export function HeaderNavigation({ fixed, bg = 'dark' }) {

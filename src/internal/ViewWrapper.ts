@@ -6,14 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  ******************************************************************* */
 
+import { IDType } from 'visyn_core/idtype';
+import { IPlugin, IPluginDesc } from 'visyn_core/plugin';
+import { EventHandler } from 'visyn_core/base';
+
 import {
   IObjectRef,
   ObjectRefUtils,
   ProvenanceGraph,
-  IDType,
-  EventHandler,
-  IPlugin,
-  IPluginDesc,
   INamedSet,
   TDPApplicationUtils,
   AView,

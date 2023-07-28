@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { GlobalEventHandler, PluginRegistry, useAsync, AppHeader } from 'tdp_core';
+import { PluginRegistry } from 'visyn_core/plugin';
+import { useAsync } from 'visyn_core/hooks';
+import { GlobalEventHandler } from 'visyn_core/base';
+import { AppHeader } from 'tdp_core';
 
 // eslint-disable-next-line import/no-cycle
 import { Ordino } from '../../app/Ordino';
@@ -73,6 +76,7 @@ export function StartMenuComponent({ header, mode, open }: { header: AppHeader; 
 
   const mainMenuTabs = tabs?.filter((t) => t.desc.menu === EStartMenuSection.MAIN);
   const rightMenuTabs = tabs?.filter((t) => t.desc.menu === EStartMenuSection.RIGHT);
+  const context = React.useMemo(() => ({ highlight, setHighlight }), [highlight]);
   const shortcuts = PluginRegistry.getInstance()
     .listPlugins(EP_ORDINO_START_MENU_TAB_SHORTCUT)
     .map((d) => d as unknown as IStartMenuTabShortcutDesc)
@@ -95,7 +99,8 @@ export function StartMenuComponent({ header, mode, open }: { header: AppHeader; 
         )}
       {
         // eslint-disable-next-line react/jsx-no-constructed-context-values, prettier/prettier
-      }<HighlightSessionCardContext.Provider value={{ highlight, setHighlight }}>
+      }
+      <HighlightSessionCardContext.Provider value={context}>
         <StartMenuTabWrapper tabs={tabs} status={status} activeTab={activeTab} setActiveTab={setActiveTab} mode={mode} />
       </HighlightSessionCardContext.Provider>
     </>

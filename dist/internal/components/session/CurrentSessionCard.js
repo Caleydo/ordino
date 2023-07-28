@@ -1,5 +1,7 @@
 import React from 'react';
-import { GlobalEventHandler, I18nextManager, ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { GlobalEventHandler } from 'visyn_core/base';
+import { ErrorAlertHandler, NotificationHandler, ProvenanceGraphMenuUtils } from 'tdp_core';
 import { GraphContext, HighlightSessionCardContext } from '../../constants';
 import { ListItemDropdown } from '../../../components';
 import { CommonSessionCard } from './CommonSessionCard';
@@ -34,12 +36,12 @@ export default function CurrentSessionCard({ name, faIcon }) {
         return false;
     };
     return (React.createElement(CommonSessionCard, { cardName: name, highlight: highlight, onHighlightAnimationEnd: onHighlightAnimationEnd, faIcon: faIcon, cardInfo: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.currentCardInfo') }, (sessionAction) => {
-        return (React.createElement(SessionListItem, { desc: desc, selectSession: (event) => sessionAction("select" /* SELECT */, event, desc) },
+        return (React.createElement(SessionListItem, { desc: desc, selectSession: (event) => sessionAction("select" /* EAction.SELECT */, event, desc) },
             React.createElement("button", { type: "button", className: "me-2 pt-1 pb-1 btn btn-outline-secondary", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.saveSession'), "data-testid": "save-button", disabled: ProvenanceGraphMenuUtils.isPersistent(desc), onClick: (event) => saveCurrentSession(event, graph) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.save')),
             React.createElement(ListItemDropdown, null,
-                React.createElement("button", { type: "button", className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneSession'), onClick: (event) => sessionAction("clone" /* CLONE */, event, desc) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')),
-                React.createElement("button", { type: "button", className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.exportSession'), onClick: (event) => sessionAction("export" /* EXPORT */, event, desc) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.export')),
-                React.createElement("button", { type: "button", className: "dropdown-delete dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession'), onClick: (event) => sessionAction("delete" /* DELETE */, event, desc) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')))));
+                React.createElement("button", { type: "button", className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.cloneSession'), onClick: (event) => sessionAction("clone" /* EAction.CLONE */, event, desc) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.clone')),
+                React.createElement("button", { type: "button", className: "dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.exportSession'), onClick: (event) => sessionAction("export" /* EAction.EXPORT */, event, desc) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.export')),
+                React.createElement("button", { type: "button", className: "dropdown-delete dropdown-item", title: I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.deleteSession'), onClick: (event) => sessionAction("delete" /* EAction.DELETE */, event, desc) }, I18nextManager.getInstance().i18n.t('tdp:ordino.startMenu.delete')))));
     }));
 }
 //# sourceMappingURL=CurrentSessionCard.js.map

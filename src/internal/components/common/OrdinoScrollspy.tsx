@@ -106,6 +106,8 @@ export function OrdinoScrollspy(props: IOrdinoScrollspyProps) {
 
   // render only the scrollspy container to maintain positions
   if (typeof props.children !== 'function' || !props.items || props.items.length === 0) {
+    // @ts-ignore
+    // TODO for holger
     return <div className="ordino-scrollspy-container">{props.children}</div>;
   }
 

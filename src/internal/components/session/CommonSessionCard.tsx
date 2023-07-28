@@ -1,13 +1,7 @@
-import {
-  GlobalEventHandler,
-  I18nextManager,
-  IProvenanceGraphDataDescription,
-  UserSession,
-  PHOVEA_UI_FormDialog,
-  ProvenanceGraphMenuUtils,
-  ErrorAlertHandler,
-  NotificationHandler,
-} from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { UserSession } from 'visyn_core/security';
+import { GlobalEventHandler } from 'visyn_core/base';
+import { IProvenanceGraphDataDescription, PHOVEA_UI_FormDialog, ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
 import React, { useRef, AnimationEventHandler } from 'react';
 import { GraphContext } from '../../constants';
 

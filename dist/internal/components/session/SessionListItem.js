@@ -1,4 +1,6 @@
-import { I18nextManager, UserSession, ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { UserSession } from 'visyn_core/security';
+import { ProvenanceGraphMenuUtils, TDPApplicationUtils } from 'tdp_core';
 import React from 'react';
 export function SessionListItem({ desc, selectSession, children }) {
     const dateString = desc.ts ? new Date(desc.ts).toUTCString() : I18nextManager.getInstance().i18n.t('tdp:core.SessionList.unknown');

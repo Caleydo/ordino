@@ -1,4 +1,7 @@
-import { GlobalEventHandler, I18nextManager, UserSession, PHOVEA_UI_FormDialog, ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler, } from 'tdp_core';
+import { I18nextManager } from 'visyn_core/i18n';
+import { UserSession } from 'visyn_core/security';
+import { GlobalEventHandler } from 'visyn_core/base';
+import { PHOVEA_UI_FormDialog, ProvenanceGraphMenuUtils, ErrorAlertHandler, NotificationHandler } from 'tdp_core';
 import React, { useRef } from 'react';
 import { GraphContext } from '../../constants';
 /**
@@ -107,17 +110,17 @@ export function CommonSessionCard({ cardName, faIcon, cardInfo, children, highli
     };
     const sessionAction = (type, event, desc, updateSessions) => {
         switch (type) {
-            case "select" /* SELECT */:
+            case "select" /* EAction.SELECT */:
                 return selectSession(event, desc);
-            case "save" /* SAVE */:
+            case "save" /* EAction.SAVE */:
                 return saveSession(event, desc);
-            case "edit" /* EDIT */:
+            case "edit" /* EAction.EDIT */:
                 return editSession(event, desc, updateSessions);
-            case "clone" /* CLONE */:
+            case "clone" /* EAction.CLONE */:
                 return cloneSession(event, desc);
-            case "export" /* EXPORT */:
+            case "export" /* EAction.EXPORT */:
                 return exportSession(event, desc);
-            case "delete" /* DELETE */:
+            case "delete" /* EAction.DELETE */:
                 return deleteSession(event, desc, updateSessions);
             default:
                 return undefined;

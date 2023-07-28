@@ -7,13 +7,28 @@
  ******************************************************************* */
 
 import * as React from 'react';
-import { BaseUtils, NodeUtils, ICmdResult, AppContext, GlobalEventHandler, INamedSet } from 'tdp_core';
-import { IObjectRef, ObjectRefUtils, ProvenanceGraph, StateNode, IDType, IEvent } from 'tdp_core';
-import { AView, TDPApplicationUtils, TourUtils } from 'tdp_core';
-import { EViewMode, ISelection } from 'tdp_core';
-import { CLUEGraphManager } from 'tdp_core';
-import { UserSession } from 'tdp_core';
-import { AppHeader } from 'tdp_core';
+import { IDType } from 'visyn_core/idtype';
+import { IEvent, GlobalEventHandler } from 'visyn_core/base';
+import {
+  ProvenanceGraph,
+  CLUEGraphManager,
+  AppHeader,
+  StateNode,
+  ObjectRefUtils,
+  IObjectRef,
+  HashPropertyHandler,
+  Session,
+  ISelection,
+  INamedSet,
+  AView,
+  TourUtils,
+  TDPApplicationUtils,
+  BaseUtils,
+  EViewMode,
+  ICmdResult,
+  NodeUtils,
+} from 'tdp_core';
+
 import { ViewWrapper } from './ViewWrapper';
 import { CmdUtils } from './cmds';
 import { IOrdinoApp } from './IOrdinoApp';
@@ -68,6 +83,10 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * @type {IObjectRef<OrdinoApp>}
    */
   readonly ref: IObjectRef<OrdinoApp>;
+
+  protected readonly hash = new HashPropertyHandler();
+
+  protected readonly session = new Session();
 
   /**
    * React DOM node reference
@@ -307,7 +326,7 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
     }
 
     // store state to session before creating a new graph
-    UserSession.getInstance().store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
+    this.session.store(OrdinoApp.SESSION_KEY_START_NEW_SESSION, {
       startViewId,
       startViewOptions,
       defaultSessionValues,
@@ -330,25 +349,26 @@ export class OrdinoApp extends React.Component<IOrdinoAppProps, IOrdinoAppState>
    * If there is a tour hash key in the URL and a tour with the given tour ID is started (if registered).
    */
   async initNewSessionAfterPageReload() {
-    if (UserSession.getInstance().has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
+    if (this.session.has(OrdinoApp.SESSION_KEY_START_NEW_SESSION)) {
       const {
         startViewId,
         startViewOptions,
         defaultSessionValues,
-      }: { startViewId: string; startViewOptions?: Record<string, unknown>; defaultSessionValues: Record<string, unknown> } =
-        UserSession.getInstance().retrieve(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+      }: { startViewId: string; startViewOptions?: Record<string, unknown>; defaultSessionValues: Record<string, unknown> } = this.session.retrieve(
+        OrdinoApp.SESSION_KEY_START_NEW_SESSION,
+      );
 
       await this.pushStartViewToSession(startViewId, startViewOptions, defaultSessionValues);
 
-      UserSession.getInstance().remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
+      this.session.remove(OrdinoApp.SESSION_KEY_START_NEW_SESSION);
     } else {
       this.setStartMenuState(EStartMenuOpen.OPEN, EStartMenuMode.START);
 
       // start a tour if a tour ID is passed as URL hash
-      if (AppContext.getInstance().hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
-        const tourId = AppContext.getInstance().hash.getProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
+      if (this.hash.has(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR)) {
+        const tourId = this.hash.getProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
         // remove hash to avoid starting the tour again after another page load (e.g., starting a new session)
-        AppContext.getInstance().hash.removeProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
+        this.hash.removeProp(OrdinoApp.HASH_PROPERTY_START_NEW_TOUR);
         // start selected tour
         TourUtils.startTour(tourId);
       }

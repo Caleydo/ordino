@@ -11,6 +11,6 @@ interface IStartMenuTabShortcutsProps extends Omit<IStartMenuTabWrapperProps, 'm
      */
     setHighlight: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export declare function StartMenuTabShortcuts({ tabs, shortcuts, setActiveTab, setHighlight, status }: IStartMenuTabShortcutsProps): JSX.Element;
+export declare function StartMenuTabShortcuts({ tabs, shortcuts, setActiveTab, setHighlight, status }: IStartMenuTabShortcutsProps): React.JSX.Element;
 export {};
 //# sourceMappingURL=StartMenuTabShortcuts.d.ts.map

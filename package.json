@@ -65,8 +65,8 @@
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
     "html-react-parser": "^4.2.0",
-    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop",
-    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
+    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#no_dist",
+    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#no_dist"
   },
   "resolutions": {
     "@types/react": "~18.2.0",

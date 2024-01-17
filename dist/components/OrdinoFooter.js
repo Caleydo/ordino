@@ -12,7 +12,7 @@ function FooterLink(props) {
     return (React.createElement(Link, { to: props.to, className: props.className, "data-testid": testId }, props.children));
 }
 export function OrdinoFooter(props) {
-    const testId = props.testId;
+    const { testId } = props;
     const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
     const lists = PluginRegistry.getInstance()
         .listPlugins(EP_ORDINO_FOOTER_MENU)

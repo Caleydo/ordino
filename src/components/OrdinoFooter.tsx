@@ -30,7 +30,7 @@ function FooterLink(props: IFooterLinkProps) {
 }
 
 export function OrdinoFooter(props) {
-  const testId = props.testId;
+  const { testId } = props;
   const openInNewWindow = !!props.openInNewWindow; // undefined and null = false (default)
 
   const lists: IOrdinoFooterMenuLink[][] = PluginRegistry.getInstance()

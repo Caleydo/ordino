@@ -57,6 +57,7 @@
     "@types/react-select": "^4.0.13"
   },
   "dependencies": {
+    "html-react-parser": "^4.2.0",
     "react-dropzone": "^11.3.1",
     "react-highlight-words": "^0.17.0",
     "react-intersection-observer": "^8.31.1",
@@ -64,9 +65,8 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
-    "html-react-parser": "^4.2.0",
-    "tdp_core": "git+ssh://git@github.com:datavisyn/tdp_core#develop",
-    "visyn_scripts": "git+ssh://git@github.com/datavisyn/visyn_scripts.git#develop"
+    "tdp_core": "^23.0.1",
+    "visyn_scripts": "^7.0.1"
   },
   "resolutions": {
     "@types/react": "~18.2.0",

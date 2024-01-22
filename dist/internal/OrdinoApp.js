@@ -30,7 +30,7 @@ function isCreateView(stateNode) {
     const { creator } = stateNode;
     return creator != null && creator.meta.category === ObjectRefUtils.category.visual && creator.meta.operation === ObjectRefUtils.operation.create;
 }
-class OrdinoApp extends React.Component {
+export class OrdinoApp extends React.Component {
     constructor(props) {
         super(props);
         this.hash = new HashPropertyHandler();
@@ -445,5 +445,4 @@ OrdinoApp.SESSION_KEY_START_NEW_SESSION = 'ORDINO_START_NEW_SESSION';
  * Key of the URL hash property that starts a new tour with the given ID (if the tour is registered in a phovea.ts)
  */
 OrdinoApp.HASH_PROPERTY_START_NEW_TOUR = 'tour';
-export { OrdinoApp };
 //# sourceMappingURL=OrdinoApp.js.map

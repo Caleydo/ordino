@@ -16,6 +16,7 @@ __pycache__/
 *.pyc
 *.swp
 *.lock
+!yarn.lock
 # due to using tox and pytest
 .tox
 .cache
@@ -28,8 +29,6 @@ node_modules/
 *.log
 /.awcache
 /.cache-loader
-package-lock.json
-/yarn.lock
 # yarn
 .pnp.*
 .yarn/*

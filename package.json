@@ -65,7 +65,7 @@
     "react-select": "^4.1.0",
     "react-select-async-paginate": "^0.5.3",
     "react-virtualized": "^9.22.3",
-    "tdp_core": "^23.0.1",
+    "tdp_core": "^23.0.2",
     "visyn_scripts": "^7.0.1"
   },
   "resolutions": {

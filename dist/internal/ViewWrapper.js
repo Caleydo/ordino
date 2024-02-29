@@ -68,7 +68,7 @@ function scrollTo(element, target, duration = 600) {
     }
     window.requestAnimationFrame(showAnimation);
 }
-class ViewWrapper extends EventHandler {
+export class ViewWrapper extends EventHandler {
     /**
      * Initialize this view, create the root node and the (inner) view
      * @param graph
@@ -375,5 +375,4 @@ ViewWrapper.EVENT_FOCUS = 'focus';
 ViewWrapper.EVENT_REMOVE = 'remove';
 ViewWrapper.EVENT_MODE_CHANGED = 'modeChanged';
 ViewWrapper.EVENT_REPLACE_VIEW = 'replaceView';
-export { ViewWrapper };
 //# sourceMappingURL=ViewWrapper.js.map
